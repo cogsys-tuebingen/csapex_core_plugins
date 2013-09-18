@@ -75,7 +75,8 @@ private:
     bool publish_a_;
 
     /// Value minHessian for SurfDetector
-    int minHessian;
+    int hessianThreshold;
+//    State state;
 };
 
 } // namespace csapex

@@ -7,7 +7,7 @@ Surfhomography::Surfhomography(){
 }
 
 /** @function main */
-cv::Mat Surfhomography::calculation(const Mat img_object, const Mat img_scene, int minHessian)
+cv::Mat Surfhomography::calculation(const Mat img_object, const Mat img_scene, const Mat mask_object, Mat mask_scene, int hessianThreshold)
 {
 
 //  Mat img_object = imread( pic1, CV_LOAD_IMAGE_GRAYSCALE );
@@ -18,15 +18,16 @@ cv::Mat Surfhomography::calculation(const Mat img_object, const Mat img_scene, i
   { std::cout<< " --(!) Error reading images " << std::endl; }
 
   //-- Step 1: Detect the keypoints using SURF Detector
-  // Darf nicht unter 350 fallen?
-//  int minHessian = 700;
 
-  SurfFeatureDetector detector( minHessian, 4 );
+
+  SurfFeatureDetector detector( hessianThreshold, 4 );
 
   std::vector<KeyPoint> keypoints_object, keypoints_scene;
 
-  detector.detect( img_object, keypoints_object );
-  detector.detect( img_scene, keypoints_scene );
+  mask_scene = 255 -mask_scene;
+
+  detector.detect( img_object, keypoints_object, mask_object );
+  detector.detect( img_scene, keypoints_scene ,mask_scene);
 
   //-- Step 2: Calculate descriptors (feature vectors)
   SurfDescriptorExtractor extractor;

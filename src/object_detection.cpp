@@ -7,6 +7,9 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/qt_helper.hpp>
+#include <utils/extractor.h>
+#include <utils/extractor_factory.h>
+#include <utils/extractor_manager.h>
 
 /// SYSTEM
 #include <pluginlib/class_list_macros.h>
@@ -35,7 +38,7 @@ ObjectDetection::ObjectDetection()
     // Create the category, if it doesn't exist.
     Tag::createIfNotExists("Vision");
     addTag(Tag::get("Vision"));
-    minHessian = 400;
+    hessianThreshold = 400;
 }
 
 void ObjectDetection::fill(QBoxLayout *layout)
@@ -96,7 +99,7 @@ void ObjectDetection::fill(QBoxLayout *layout)
 }
 
 void ObjectDetection::updateSliders(){
-    minHessian = hessian_slider_->value();
+    hessianThreshold = hessian_slider_->value();
 }
 
 void ObjectDetection::updateDetector(){
@@ -110,7 +113,7 @@ void ObjectDetection::updateDynamicGui(QBoxLayout *layout){
     if(detectorbox_->currentIndex() == 0){
 
     // Qslider for Minhessian value
-    hessian_slider_ =  QtHelper::makeSlider(internal_layout,"minHessian",minHessian,1,5000);
+    hessian_slider_ =  QtHelper::makeSlider(internal_layout,"minHessian",hessianThreshold,1,5000);
 
     //Connect Slider to Value
     QObject::connect(hessian_slider_, SIGNAL( valueChanged(int) ), this, SLOT( updateSliders() ) );
@@ -164,7 +167,7 @@ void ObjectDetection::messageArrived(ConnectorIn *source)
             }
             Surfhomography surfhomo;
             CvMatMessage::Ptr img_msg_result(new CvMatMessage);
-            img_msg_result->value = surfhomo.calculation(img_msg_a->value, img_msg_b->value, minHessian);
+            img_msg_result->value = surfhomo.calculation(img_msg_a->value, img_msg_b->value,mask_msg_a->value, mask_msg_b->value,hessianThreshold);
             out_->publish(img_msg_result);
         }
 
