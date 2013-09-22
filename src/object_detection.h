@@ -11,7 +11,8 @@
 /// SYSTEM
 #include <boost/shared_ptr.hpp>
 #include <opencv2/opencv.hpp>
-
+#include <config/reconfigurable.h>
+#include <utils/extractor.h>
 
 /// SYSTEM
 #include <QPushButton>
@@ -31,13 +32,19 @@ public:
 
     /// insert GUI elements
     virtual void fill(QBoxLayout* layout);
+    virtual Memento::Ptr getState() const;
+    virtual void setState(Memento::Ptr memento);
 
 private Q_SLOTS:
     /// callback when a message arrives
     void messageArrived(ConnectorIn* source);
     virtual void updateDynamicGui(QBoxLayout *layout);
-    void updateDetector();
+    void updateDetector(int slot);
 
+private Q_SLOTS:
+    void update(int slot);
+    void update();
+    void updateModel();
 
     /// callback from UI button
     void buttonPressed();
@@ -46,6 +53,11 @@ private Q_SLOTS:
 private:
     // Presets
     enum Preset{NONE, SURF, DUMMY1, DUMMY2};
+
+    std::vector<QObject*> callbacks;
+
+    QMutex extractor_mutex;
+    Extractor::Ptr extractor;
 
     //Methods
     /// connectors that were added to the parent box
@@ -64,19 +76,36 @@ private:
     QComboBox                   *extractorbox_;
     QComboBox                   *matcherbox_;
     QWidget                     *container_sliders_;
-
+    QFrame                      *opt;
     /// flags to remember, whether both images have been received
     bool has_a_;
     bool has_b_;
     bool has_c_;
     bool has_d_;
 
+    bool change;
+
     /// flag to remember, which image to re-publish
     bool publish_a_;
 
     /// Value minHessian for SurfDetector
     int hessianThreshold;
-//    State state;
+
+    template <typename T>
+    void updateParam(const std::string& name, T value);
+
+    struct State : public Memento {
+
+        std::string key;
+        std::map<std::string, std::vector<vision::Parameter> > params;
+
+        virtual void writeYaml(YAML::Emitter& out) const;
+        virtual void readYaml(const YAML::Node& node);
+    };
+
+    State state;
+
+
 };
 
 } // namespace csapex

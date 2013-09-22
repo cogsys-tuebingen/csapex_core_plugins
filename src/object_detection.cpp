@@ -11,6 +11,8 @@
 #include <utils/extractor_factory.h>
 #include <utils/extractor_manager.h>
 
+#include <csapex_vision_features/keypoint_message.h>
+
 /// SYSTEM
 #include <pluginlib/class_list_macros.h>
 
@@ -53,12 +55,12 @@ void ObjectDetection::fill(QBoxLayout *layout)
     in_b_->setLabel("Mask 1");
     in_b_->setType(connection_types::CvMatMessage::make());
 
-    // Connector for the second input image (sub id = 1)
+    // Connector for the second input image (sub id = 2)
     in_c_ = new ConnectorIn(box_, 2);
     in_c_->setLabel("Scene");
     in_c_->setType(connection_types::CvMatMessage::make());
 
-    // Connector for the second input image (sub id = 1)
+    // Connector for the second input image (sub id = 3)
     in_d_ = new ConnectorIn(box_, 3);
     in_d_->setLabel("Mask 2");
     in_d_->setType(connection_types::CvMatMessage::make());
@@ -66,7 +68,7 @@ void ObjectDetection::fill(QBoxLayout *layout)
     // Connector for the output input image (sub id = 0)
     out_ = new ConnectorOut(box_, 0);
     out_->setLabel("output");
-    out_->setType(connection_types::CvMatMessage::make());
+    out_->setType(csapex::connection_types::KeypointMessage::make());
 
     // Register the connectors
     box_->addInput(in_a_);
@@ -76,10 +78,17 @@ void ObjectDetection::fill(QBoxLayout *layout)
     box_->addOutput(out_);
 
     // Combobox to choose between different keydetectors
-    detectorbox_ = new QComboBox();
-    detectorbox_->addItem("SURF");
-    detectorbox_->addItem("Dummy1");
-    detectorbox_->addItem("Dummy2");
+    ExtractorManager& manager = ExtractorManager::instance();
+
+    detectorbox_ = new QComboBox;
+    typedef std::pair<std::string, ExtractorManager::ExtractorInitializer> Pair;
+    foreach(Pair fc, manager.featureDetectors()) {
+        std::string key = fc.second.getType();
+        detectorbox_->addItem(key.c_str());
+
+        state.params[key] = ExtractorManager::instance().featureDetectorParameters(key);
+    }
+
     layout->addLayout(QtHelper::wrap("Detector", detectorbox_));
 
     extractorbox_ = new QComboBox();
@@ -90,86 +99,241 @@ void ObjectDetection::fill(QBoxLayout *layout)
     matcherbox_->addItem("SURF");
     layout->addLayout(QtHelper::wrap("Matcher", matcherbox_));
 
-    // Connect the button via signals to a private slot "buttonPressed"
+    opt = new QFrame;
+    opt->setLayout(new QVBoxLayout);
+    layout->addWidget(opt);
 
     //Connect Combobox to Signal
-    QObject::connect(detectorbox_, SIGNAL(currentIndexChanged(int)), this , SLOT(updateDetector()));
+    QObject::connect(detectorbox_, SIGNAL(currentIndexChanged(int)), this , SLOT(updateDetector(int)));
 
-    Q_EMIT modelChanged();
+    QObject::connect(box_, SIGNAL(placed()), this, SIGNAL(modelChanged()));
 }
 
 void ObjectDetection::updateSliders(){
     hessianThreshold = hessian_slider_->value();
 }
 
-void ObjectDetection::updateDetector(){
-        Q_EMIT modelChanged();
-}
+void ObjectDetection::updateDetector(int slot){
+    state.key = detectorbox_->currentText().toStdString();
 
-void ObjectDetection::updateDynamicGui(QBoxLayout *layout){
-    QVBoxLayout *internal_layout;
-    internal_layout = new QVBoxLayout;
+    QtHelper::clearLayout(opt->layout());
+    QBoxLayout* layout = dynamic_cast<QBoxLayout*> (opt->layout());
+    assert(layout);
 
-    if(detectorbox_->currentIndex() == 0){
-
-    // Qslider for Minhessian value
-    hessian_slider_ =  QtHelper::makeSlider(internal_layout,"minHessian",hessianThreshold,1,5000);
-
-    //Connect Slider to Value
-    QObject::connect(hessian_slider_, SIGNAL( valueChanged(int) ), this, SLOT( updateSliders() ) );
-
-    container_sliders_ = QtHelper::wrapLayout(internal_layout);
-
-    layout->addWidget(container_sliders_);
+    foreach(QObject* cb, callbacks) {
+        delete cb;
     }
-    else{
-        if(container_sliders_ != NULL) {
-            container_sliders_->deleteLater();
-            container_sliders_ =  NULL;
+    callbacks.clear();
+
+    foreach(const vision::Parameter& para, state.params[state.key]) {
+        std::string name = para.name();
+
+        if(para.is<int>()) {
+            QSlider* slider = QtHelper::makeSlider(layout, name , para.as<int>(), para.min<int>(), para.max<int>());
+            slider->setValue(para.as<int>());
+
+            boost::function<void()> cb = boost::bind(&ObjectDetection::updateParam<int>, this, name, boost::bind(&QSlider::value, slider));
+            qt_helper::Call* call = new qt_helper::Call(cb);
+            callbacks.push_back(call);
+
+            QObject::connect(slider, SIGNAL(valueChanged(int)), call, SLOT(call()));
+
+        } else if(para.is<double>()) {
+            QDoubleSlider* slider = QtHelper::makeDoubleSlider(layout, name , para.as<double>(), para.min<double>(), para.max<double>(), para.step<double>());
+            slider->setDoubleValue(para.as<double>());
+
+            boost::function<void()> cb = boost::bind(&ObjectDetection::updateParam<double>, this, name, boost::bind(&QDoubleSlider::doubleValue, slider));
+            qt_helper::Call* call = new qt_helper::Call(cb);
+            callbacks.push_back(call);
+
+            QObject::connect(slider, SIGNAL(valueChanged(int)), call, SLOT(call()));
+
+        } else if(para.is<bool>()) {
+            QCheckBox* box = new QCheckBox;
+            box->setChecked(para.as<bool>());
+
+            layout->addLayout(QtHelper::wrap(name, box));
+
+            boost::function<void()> cb = boost::bind(&ObjectDetection::updateParam<bool>, this, name, boost::bind(&QCheckBox::isChecked, box));
+            qt_helper::Call* call = new qt_helper::Call(cb);
+            callbacks.push_back(call);
+
+            QObject::connect(box, SIGNAL(toggled(bool)), call, SLOT(call()));
+
+        } else {
+            opt->layout()->addWidget(new QLabel((name + "'s type is not yet implemented").c_str()));
         }
     }
 
+
+    update();
 }
 
-void ObjectDetection::buttonPressed()
+template <typename T>
+void ObjectDetection::updateParam(const std::string& name, T value)
 {
-    // Update, which image to re-publish
-    publish_a_ = !btn_->isChecked();
+    BOOST_FOREACH(vision::Parameter& para, state.params[state.key]) {
+        if(para.name() == name) {
+            para.set<T>(value);
 
-    // Update the UI
-    btn_->setText(QString("Image ") + (publish_a_ ? "1" : "2"));
+            change = true;
+            Q_EMIT guiChanged();
+
+            return;
+        }
+    }
+}
+
+void ObjectDetection::updateDynamicGui(QBoxLayout *layout){
+    updateDetector(0);
+}
+
+void ObjectDetection::updateModel()
+{
+    if(change) {
+        change = false;
+        update();
+    }
+}
+
+void ObjectDetection::update()
+{
+    Extractor::Ptr next = ExtractorFactory::create(state.key, "", vision::StaticParameterProvider(state.params[state.key]));
+
+    QMutexLocker lock(&extractor_mutex);
+    extractor = next;
 }
 
 void ObjectDetection::messageArrived(ConnectorIn *source)
 {
-    // One of the two connectors has received a message, find out which
     if(source == in_a_) {
         has_a_ = true;
-    } else if(source == in_c_) {
-        has_c_ = true;
+    } else if(source == in_b_) {
+        has_b_ = true;
     }
-    // Make sure that we have both images
-    if(has_a_ && has_c_) {
-        has_a_ = has_c_ = false;
+    if(source == in_c_) {
+        has_c_ = true;
+    } else if(source == in_d_) {
+        has_d_ = true;
+    }
 
-        // Publish the selected image
-        CvMatMessage::Ptr img_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (in_a_->getMessage());
-        CvMatMessage::Ptr mask_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (in_b_->getMessage());
-        CvMatMessage::Ptr img_msg_b = boost::dynamic_pointer_cast<CvMatMessage> (in_c_->getMessage());
-        CvMatMessage::Ptr mask_msg_b = boost::dynamic_pointer_cast<CvMatMessage> (in_d_->getMessage());
 
-        if(img_msg_a.get() && !img_msg_a->value.empty() && img_msg_b.get() && !img_msg_b->value.empty()) {
-            if(!mask_msg_a.get()) {
-                mask_msg_a.reset(new CvMatMessage);
+    if(!extractor) {
+        setError(true, "no extractor set");
+        return;
+    }
+
+    if(change) {
+        return;
+    }
+
+    bool use_mask = in_b_->isConnected();
+    if(has_a_ && (has_b_ || !use_mask)) {
+        setError(false);
+
+        has_a_ = false;
+        has_c_ = false;
+
+        ConnectionType::Ptr msg = in_a_->getMessage();
+        CvMatMessage::Ptr img_msg = boost::dynamic_pointer_cast<CvMatMessage> (msg);
+
+        ObjectDetection::Ptr key_msg(new KeypointMessage);
+
+        {
+            QMutexLocker lock(&extractor_mutex);
+            if(use_mask) {
+                ConnectionType::Ptr msg = in_b_->getMessage();
+                CvMatMessage::Ptr mask_msg = boost::dynamic_pointer_cast<CvMatMessage> (msg);
+
+                extractor->extractKeypoints(img_msg->value, mask_msg->value, key_msg->value);
+
+            } else {
+                extractor->extractKeypoints(img_msg->value, cv::Mat(), key_msg->value);
             }
-            if(!mask_msg_b.get()) {
-                mask_msg_b.reset(new CvMatMessage);
-            }
-            Surfhomography surfhomo;
-            CvMatMessage::Ptr img_msg_result(new CvMatMessage);
-            img_msg_result->value = surfhomo.calculation(img_msg_a->value, img_msg_b->value,mask_msg_a->value, mask_msg_b->value,hessianThreshold);
-            out_->publish(img_msg_result);
         }
 
+        out_->publish(key_msg);
+    }
+
+
+    ////////////////////////////////////////////////////////////////
+
+
+    // One of the two connectors has received a message, find out which
+//    if(source == in_a_) {
+//        has_a_ = true;
+//    } else if(source == in_c_) {
+//        has_c_ = true;
+//    }
+//    // Make sure that we have both images
+//    if(has_a_ && has_c_) {
+//        has_a_ = has_c_ = false;
+
+//        // Publish the selected image
+//        CvMatMessage::Ptr img_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (in_a_->getMessage());
+//        CvMatMessage::Ptr mask_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (in_b_->getMessage());
+//        CvMatMessage::Ptr img_msg_b = boost::dynamic_pointer_cast<CvMatMessage> (in_c_->getMessage());
+//        CvMatMessage::Ptr mask_msg_b = boost::dynamic_pointer_cast<CvMatMessage> (in_d_->getMessage());
+
+//        if(img_msg_a.get() && !img_msg_a->value.empty() && img_msg_b.get() && !img_msg_b->value.empty()) {
+//            if(!mask_msg_a.get()) {
+//                mask_msg_a.reset(new CvMatMessage);
+//            }
+//            if(!mask_msg_b.get()) {
+//                mask_msg_b.reset(new CvMatMessage);
+//            }
+//            Surfhomography surfhomo;
+//            CvMatMessage::Ptr img_msg_result(new CvMatMessage);
+//            img_msg_result->value = surfhomo.calculation(img_msg_a->value, img_msg_b->value,mask_msg_a->value, mask_msg_b->value,hessianThreshold);
+//            out_->publish(img_msg_result);
+//        }
+
+//    }
+}
+Memento::Ptr ObjectDetection::getState() const
+{
+    return boost::shared_ptr<State>(new State(state));
+}
+
+void ObjectDetection::setState(Memento::Ptr memento)
+{
+    boost::shared_ptr<ObjectDetection::State> m = boost::dynamic_pointer_cast<ObjectDetection::State> (memento);
+    assert(m.get());
+
+    //    state = *m;
+    state.key = m->key;
+
+    typedef std::pair<std::string, std::vector<vision::Parameter> > Pair;
+    foreach(Pair pair, m->params) {
+        foreach(const vision::Parameter& para, pair.second) {
+            std::vector<vision::Parameter>& target = state.params[pair.first];
+            BOOST_FOREACH(vision::Parameter& existing_param, target) {
+                if(existing_param.name() == para.name()) {
+                    existing_param.setFrom(para);
+                }
+            }
+        }
+    }
+
+    int slot = 0;
+    for(int i = 0, n = detectorbox_->count(); i < n; ++i) {
+        if(detectorbox_->itemText(i).toStdString() == state.key) {
+            slot = i;
+            break;
+        }
+    }
+    detectorbox_->setCurrentIndex(slot);
+}
+
+void ObjectDetection::State::writeYaml(YAML::Emitter& out) const {
+    out << YAML::Key << "key" << YAML::Value << key;
+    out << YAML::Key << "params" << YAML::Value << params;
+}
+void ObjectDetection::State::readYaml(const YAML::Node& node) {
+    if(node.FindValue("params")) {
+        node["params"] >> params;
+    }
+    if(node.FindValue("key")) {
+        node["key"] >> key;
     }
 }
