@@ -91,9 +91,15 @@ void ObjectDetection::fill(QBoxLayout *layout)
 
     layout->addLayout(QtHelper::wrap("Detector", detectorbox_));
 
-    extractorbox_ = new QComboBox();
-    extractorbox_->addItem("SURF");
-    layout->addLayout(QtHelper::wrap("Extractor", extractorbox_));
+    extractorbox_ = new QComboBox;
+    typedef std::pair<std::string, ExtractorManager::ExtractorInitializer> Pair;
+    foreach(Pair fc, manager.descriptorExtractors()) {
+        std::string des = fc.second.getType();
+        extractorbox_->addItem(fc.second.getType().c_str());
+
+        state.params[des] = ExtractorManager::instance().featureDescriptorParameters(des);
+    }
+    layout->addLayout(QtHelper::wrap("Descriptor", extractorbox_));
 
     matcherbox_ = new QComboBox();
     matcherbox_->addItem("SURF");
@@ -237,7 +243,7 @@ void ObjectDetection::messageArrived(ConnectorIn *source)
         ConnectionType::Ptr msg = in_a_->getMessage();
         CvMatMessage::Ptr img_msg = boost::dynamic_pointer_cast<CvMatMessage> (msg);
 
-        ObjectDetection::Ptr key_msg(new KeypointMessage);
+        KeypointMessage::Ptr key_msg(new KeypointMessage);
 
         {
             QMutexLocker lock(&extractor_mutex);
@@ -259,7 +265,7 @@ void ObjectDetection::messageArrived(ConnectorIn *source)
     ////////////////////////////////////////////////////////////////
 
 
-    // One of the two connectors has received a message, find out which
+//    // One of the two connectors has received a message, find out which
 //    if(source == in_a_) {
 //        has_a_ = true;
 //    } else if(source == in_c_) {
