@@ -67,7 +67,7 @@ void ObjectDetection::fill(QBoxLayout *layout)
     // Connector for the output input image (sub id = 0)
     out_ = new ConnectorOut(box_, 0);
     out_->setLabel("output");
-    out_->setType(csapex::connection_types::KeypointMessage::make());
+    out_->setType(csapex::connection_types::CvMatMessage::make());
 
     // Register the connectors
     box_->addInput(in_a_);
@@ -304,8 +304,8 @@ void ObjectDetection::update()
 
 void ObjectDetection::updatedet()
 {
-    Extractor::Ptr next = ExtractorFactory::create(state.des, "", vision::StaticParameterProvider(state.params_extractor[state.des]));
-
+    Extractor::Ptr next = ExtractorFactory::create("", state.des, vision::StaticParameterProvider(state.params_extractor[state.des]));
+//            ExtractorFactory::create(state.des, "", vision::StaticParameterProvider(state.params_extractor[state.des]));
     QMutexLocker lock(&extractor_mutex);
     descriptor = next;
 }
@@ -329,6 +329,10 @@ void ObjectDetection::messageArrived(ConnectorIn *source)
         setError(true, "no extractor set");
         return;
     }
+    if(!descriptor) {
+        setError(true, "no descriptor set");
+        return;
+    }
 
     if(change) {
         return;
@@ -345,8 +349,6 @@ void ObjectDetection::messageArrived(ConnectorIn *source)
         CvMatMessage::Ptr img_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (msg);
         ConnectionType::Ptr msg_c = in_c_->getMessage();
         CvMatMessage::Ptr img_msg_c = boost::dynamic_pointer_cast<CvMatMessage> (msg_c);
-//        CvMatMessage::Ptr img_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (in_a_->getMessage());
-//        CvMatMessage::Ptr img_msg_c = boost::dynamic_pointer_cast<CvMatMessage> (in_c_->getMessage());
 
         KeypointMessage::Ptr key_msg_a(new KeypointMessage);
         KeypointMessage::Ptr key_msg_c(new KeypointMessage);
@@ -365,20 +367,15 @@ void ObjectDetection::messageArrived(ConnectorIn *source)
             } else {
                 extractor->extractKeypoints(img_msg_a->value, cv::Mat(), key_msg_a->value);
                 extractor->extractKeypoints(img_msg_c->value, cv::Mat(), key_msg_c->value);
-                std::vector<cv::KeyPoint> tmp = key_msg_c->value;
-                if(tmp.empty()){
-                    std::cout << "no key msg or des msg" << std::endl;
-                }else{
-                    descriptor->extractDescriptors(img_msg_a->value, key_msg_c->value, des_msg_a->value);
-                }
-//                extractor->extractDescriptors(img_msg_c->value, key_msg_c->value, des_msg_c->value);
+                descriptor->extractDescriptors(img_msg_a->value, key_msg_a->value, des_msg_a->value);
+                descriptor->extractDescriptors(img_msg_c->value, key_msg_c->value, des_msg_c->value);
             }
         }
 
-//        Surfhomography surfhomo;
-//                    CvMatMessage::Ptr img_msg_result(new CvMatMessage);
-//                    img_msg_result->value = surfhomo.calculation(img_msg_a->value, img_msg_c->value,key_msg_a->value,key_msg_c->value,des_msg_a->value,des_msg_c->value);
-//                    out_->publish(img_msg_result);
+        Surfhomography surfhomo;
+        CvMatMessage::Ptr img_msg_result(new CvMatMessage);
+        img_msg_result->value = surfhomo.calculation(img_msg_a->value, img_msg_c->value,key_msg_a->value,key_msg_c->value, des_msg_a->value, des_msg_c->value);
+        out_->publish(img_msg_result);
 
 //        out_->publish(key_msg_c);
     }
