@@ -40,10 +40,11 @@ private Q_SLOTS:
     void messageArrived(ConnectorIn* source);
     virtual void updateDynamicGui(QBoxLayout *layout);
     void updateDetector(int slot);
+    void updateExtractor(int slot);
 
 private Q_SLOTS:
-    void update(int slot);
     void update();
+    void updatedet();
     void updateModel();
 
     /// callback from UI button
@@ -51,13 +52,12 @@ private Q_SLOTS:
     void updateSliders();
 
 private:
-    // Presets
-    enum Preset{NONE, SURF, DUMMY1, DUMMY2};
-
-    std::vector<QObject*> callbacks;
+    std::vector<QObject*> callbacks_detector;
+    std::vector<QObject*> callbacks_extractor;
 
     QMutex extractor_mutex;
     Extractor::Ptr extractor;
+    Extractor::Ptr descriptor;
 
     //Methods
     /// connectors that were added to the parent box
@@ -67,16 +67,13 @@ private:
     ConnectorIn* in_d_;
     ConnectorOut* out_;
 
-    Preset active_preset_;
-
     /// Layout
-    QSlider                     *hessian_slider_;
-    QPushButton                 *btn_;
     QComboBox                   *detectorbox_;
     QComboBox                   *extractorbox_;
     QComboBox                   *matcherbox_;
-    QWidget                     *container_sliders_;
     QFrame                      *opt;
+    QFrame                      *opt1;
+
     /// flags to remember, whether both images have been received
     bool has_a_;
     bool has_b_;
@@ -84,6 +81,7 @@ private:
     bool has_d_;
 
     bool change;
+    bool changedet;
 
     /// flag to remember, which image to re-publish
     bool publish_a_;
@@ -93,11 +91,15 @@ private:
 
     template <typename T>
     void updateParam(const std::string& name, T value);
+    template <typename T>
+    void updateParamdet(const std::string& name, T value);
 
     struct State : public Memento {
 
         std::string key;
-        std::map<std::string, std::vector<vision::Parameter> > params;
+        std::string des;
+        std::map<std::string, std::vector<vision::Parameter> > params_detector;
+        std::map<std::string, std::vector<vision::Parameter> > params_extractor;
 
         virtual void writeYaml(YAML::Emitter& out) const;
         virtual void readYaml(const YAML::Node& node);

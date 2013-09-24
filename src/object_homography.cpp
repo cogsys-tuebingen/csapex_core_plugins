@@ -7,45 +7,45 @@ Surfhomography::Surfhomography(){
 }
 
 /** @function main */
-cv::Mat Surfhomography::calculation(const Mat img_object, const Mat img_scene, const Mat mask_object, Mat mask_scene, int hessianThreshold)
+cv::Mat Surfhomography::calculation(const Mat img_object, const Mat img_scene, std::vector<cv::KeyPoint> &keypoints_object, std::vector<cv::KeyPoint> &keypoints_scene ,Mat &descriptor_object, Mat &descriptor_scene)
 {
 
 //  Mat img_object = imread( pic1, CV_LOAD_IMAGE_GRAYSCALE );
 //  Mat img_scene = imread( pic2, CV_LOAD_IMAGE_GRAYSCALE );
 //  std::cout << "pic1: " << pic1 << " pic2: " << pic2 << " minHessian: "<< minHessian << std::endl;
 
-  if( !img_object.data || !img_scene.data )
-  { std::cout<< " --(!) Error reading images " << std::endl; }
+//  if( !img_object.data || !img_scene.data )
+//  { std::cout<< " --(!) Error reading images " << std::endl; }
 
-  //-- Step 1: Detect the keypoints using SURF Detector
+//  //-- Step 1: Detect the keypoints using SURF Detector
 
 
-  SurfFeatureDetector detector( hessianThreshold, 4 );
+//  SurfFeatureDetector detector( hessianThreshold, 4 );
 
-  std::vector<KeyPoint> keypoints_object, keypoints_scene;
+//  std::vector<KeyPoint> keypoints_object, keypoints_scene;
 
-  mask_scene = 255 -mask_scene;
+//  mask_scene = 255 -mask_scene;
 
-  detector.detect( img_object, keypoints_object, mask_object );
-  detector.detect( img_scene, keypoints_scene ,mask_scene);
+//  detector.detect( img_object, keypoints_object, mask_object );
+//  detector.detect( img_scene, keypoints_scene ,mask_scene);
 
-  //-- Step 2: Calculate descriptors (feature vectors)
-  SurfDescriptorExtractor extractor;
+//  //-- Step 2: Calculate descriptors (feature vectors)
+//  SurfDescriptorExtractor extractor;
 
-  Mat descriptors_object, descriptors_scene;
+//  Mat descriptors_object, descriptors_scene;
 
-  extractor.compute( img_object, keypoints_object, descriptors_object );
-  extractor.compute( img_scene, keypoints_scene, descriptors_scene );
+//  extractor.compute( img_object, keypoints_object, descriptors_object );
+//  extractor.compute( img_scene, keypoints_scene, descriptors_scene );
 
   //-- Step 3: Matching descriptor vectors using FLANN matcher
   FlannBasedMatcher matcher;
   std::vector< DMatch > matches;
-  matcher.match( descriptors_object, descriptors_scene, matches );
+  matcher.match( descriptor_object, descriptor_scene, matches );
 
   double max_dist = 0; double min_dist = 5;
 
   //-- Quick calculation of max and min distances between keypoints
-  for( int i = 0; i < descriptors_object.rows; i++ )
+  for( int i = 0; i < descriptor_object.rows; i++ )
   { double dist = matches[i].distance;
     if( dist < min_dist ) min_dist = dist;
     if( dist > max_dist ) max_dist = dist;
@@ -54,7 +54,7 @@ cv::Mat Surfhomography::calculation(const Mat img_object, const Mat img_scene, c
   //-- Draw only "good" matches (i.e. whose distance is less than 3*min_dist )
   std::vector< DMatch > good_matches;
 
-  for( int i = 0; i < descriptors_object.rows; i++ )
+  for( int i = 0; i < descriptor_object.rows; i++ )
   { //if( matches[i].distance < 3*min_dist )
      { good_matches.push_back( matches[i]); }
   }

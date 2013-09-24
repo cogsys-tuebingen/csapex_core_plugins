@@ -10,8 +10,10 @@
 #include <utils/extractor.h>
 #include <utils/extractor_factory.h>
 #include <utils/extractor_manager.h>
+#include <QSplitter>
 
 #include <csapex_vision_features/keypoint_message.h>
+#include <csapex_vision_features/descriptor_message.h>
 
 /// SYSTEM
 #include <pluginlib/class_list_macros.h>
@@ -28,13 +30,10 @@ ObjectDetection::ObjectDetection()
       in_c_(NULL),
       in_d_(NULL),
       out_(NULL),
-      btn_(NULL),
       has_a_(false),
       has_b_(false),
       has_c_(false),
-      has_d_(false),
-      publish_a_(true),
-      container_sliders_(NULL)
+      has_d_(false)
 {
     // Insert this plug-in into the "Vision" category.
     // Create the category, if it doesn't exist.
@@ -86,7 +85,7 @@ void ObjectDetection::fill(QBoxLayout *layout)
         std::string key = fc.second.getType();
         detectorbox_->addItem(key.c_str());
 
-        state.params[key] = ExtractorManager::instance().featureDetectorParameters(key);
+        state.params_detector[key] = ExtractorManager::instance().featureDetectorParameters(key);
     }
 
     layout->addLayout(QtHelper::wrap("Detector", detectorbox_));
@@ -97,7 +96,7 @@ void ObjectDetection::fill(QBoxLayout *layout)
         std::string des = fc.second.getType();
         extractorbox_->addItem(fc.second.getType().c_str());
 
-        state.params[des] = ExtractorManager::instance().featureDescriptorParameters(des);
+        state.params_extractor[des] = ExtractorManager::instance().featureDescriptorParameters(des);
     }
     layout->addLayout(QtHelper::wrap("Descriptor", extractorbox_));
 
@@ -109,14 +108,16 @@ void ObjectDetection::fill(QBoxLayout *layout)
     opt->setLayout(new QVBoxLayout);
     layout->addWidget(opt);
 
+    opt1 = new QFrame;
+    opt1->setLayout(new QVBoxLayout);
+    layout->addWidget(opt1);
+
+
     //Connect Combobox to Signal
     QObject::connect(detectorbox_, SIGNAL(currentIndexChanged(int)), this , SLOT(updateDetector(int)));
+    QObject::connect(extractorbox_, SIGNAL(currentIndexChanged(int)), this , SLOT(updateExtractor(int)));
 
     QObject::connect(box_, SIGNAL(placed()), this, SIGNAL(modelChanged()));
-}
-
-void ObjectDetection::updateSliders(){
-    hessianThreshold = hessian_slider_->value();
 }
 
 void ObjectDetection::updateDetector(int slot){
@@ -126,12 +127,19 @@ void ObjectDetection::updateDetector(int slot){
     QBoxLayout* layout = dynamic_cast<QBoxLayout*> (opt->layout());
     assert(layout);
 
-    foreach(QObject* cb, callbacks) {
+    foreach(QObject* cb, callbacks_detector) {
         delete cb;
     }
-    callbacks.clear();
+    callbacks_detector.clear();
 
-    foreach(const vision::Parameter& para, state.params[state.key]) {
+    QFrame* line = new QFrame();
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+    layout->addWidget(line);
+
+    layout->addWidget(new QLabel("Extractor:"));
+
+    foreach(const vision::Parameter& para, state.params_detector[state.key]) {
         std::string name = para.name();
 
         if(para.is<int>()) {
@@ -140,7 +148,7 @@ void ObjectDetection::updateDetector(int slot){
 
             boost::function<void()> cb = boost::bind(&ObjectDetection::updateParam<int>, this, name, boost::bind(&QSlider::value, slider));
             qt_helper::Call* call = new qt_helper::Call(cb);
-            callbacks.push_back(call);
+            callbacks_detector.push_back(call);
 
             QObject::connect(slider, SIGNAL(valueChanged(int)), call, SLOT(call()));
 
@@ -150,7 +158,7 @@ void ObjectDetection::updateDetector(int slot){
 
             boost::function<void()> cb = boost::bind(&ObjectDetection::updateParam<double>, this, name, boost::bind(&QDoubleSlider::doubleValue, slider));
             qt_helper::Call* call = new qt_helper::Call(cb);
-            callbacks.push_back(call);
+            callbacks_detector.push_back(call);
 
             QObject::connect(slider, SIGNAL(valueChanged(int)), call, SLOT(call()));
 
@@ -162,7 +170,7 @@ void ObjectDetection::updateDetector(int slot){
 
             boost::function<void()> cb = boost::bind(&ObjectDetection::updateParam<bool>, this, name, boost::bind(&QCheckBox::isChecked, box));
             qt_helper::Call* call = new qt_helper::Call(cb);
-            callbacks.push_back(call);
+            callbacks_detector.push_back(call);
 
             QObject::connect(box, SIGNAL(toggled(bool)), call, SLOT(call()));
 
@@ -175,10 +183,89 @@ void ObjectDetection::updateDetector(int slot){
     update();
 }
 
+void ObjectDetection::updateExtractor(int slot){
+    state.des = extractorbox_->currentText().toStdString();
+
+    QtHelper::clearLayout(opt1->layout());
+    QBoxLayout* layout = dynamic_cast<QBoxLayout*> (opt1->layout());
+    assert(layout);
+
+    foreach(QObject* cb, callbacks_extractor) {
+        delete cb;
+    }
+    callbacks_extractor.clear();
+
+    QFrame* line = new QFrame();
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+    layout->addWidget(line);
+
+    layout->addWidget(new QLabel("Descriptor:"));
+
+    foreach(const vision::Parameter& para, state.params_extractor[state.des]) {
+        std::string name = para.name();
+
+        if(para.is<int>()) {
+            QSlider* slider = QtHelper::makeSlider(layout, name , para.as<int>(), para.min<int>(), para.max<int>());
+            slider->setValue(para.as<int>());
+
+            boost::function<void()> cb = boost::bind(&ObjectDetection::updateParamdet<int>, this, name, boost::bind(&QSlider::value, slider));
+            qt_helper::Call* call = new qt_helper::Call(cb);
+            callbacks_extractor.push_back(call);
+
+            QObject::connect(slider, SIGNAL(valueChanged(int)), call, SLOT(call()));
+
+        } else if(para.is<double>()) {
+            QDoubleSlider* slider = QtHelper::makeDoubleSlider(layout, name , para.as<double>(), para.min<double>(), para.max<double>(), para.step<double>());
+            slider->setDoubleValue(para.as<double>());
+
+            boost::function<void()> cb = boost::bind(&ObjectDetection::updateParamdet<double>, this, name, boost::bind(&QDoubleSlider::doubleValue, slider));
+            qt_helper::Call* call = new qt_helper::Call(cb);
+            callbacks_extractor.push_back(call);
+
+            QObject::connect(slider, SIGNAL(valueChanged(int)), call, SLOT(call()));
+
+        } else if(para.is<bool>()) {
+            QCheckBox* box = new QCheckBox;
+            box->setChecked(para.as<bool>());
+
+            layout->addLayout(QtHelper::wrap(name, box));
+
+            boost::function<void()> cb = boost::bind(&ObjectDetection::updateParamdet<bool>, this, name, boost::bind(&QCheckBox::isChecked, box));
+            qt_helper::Call* call = new qt_helper::Call(cb);
+            callbacks_extractor.push_back(call);
+
+            QObject::connect(box, SIGNAL(toggled(bool)), call, SLOT(call()));
+
+        } else {
+            opt1->layout()->addWidget(new QLabel((name + "'s type is not yet implemented").c_str()));
+        }
+    }
+
+
+    updatedet();
+}
+
+template <typename T>
+void ObjectDetection::updateParamdet(const std::string& name, T value)
+{
+    BOOST_FOREACH(vision::Parameter& para, state.params_extractor[state.des]) {
+        if(para.name() == name) {
+            para.set<T>(value);
+
+            changedet = true;
+            Q_EMIT guiChanged();
+
+            return;
+        }
+    }
+}
+
+
 template <typename T>
 void ObjectDetection::updateParam(const std::string& name, T value)
 {
-    BOOST_FOREACH(vision::Parameter& para, state.params[state.key]) {
+    BOOST_FOREACH(vision::Parameter& para, state.params_detector[state.key]) {
         if(para.name() == name) {
             para.set<T>(value);
 
@@ -192,6 +279,7 @@ void ObjectDetection::updateParam(const std::string& name, T value)
 
 void ObjectDetection::updateDynamicGui(QBoxLayout *layout){
     updateDetector(0);
+    updateExtractor(0);
 }
 
 void ObjectDetection::updateModel()
@@ -200,15 +288,28 @@ void ObjectDetection::updateModel()
         change = false;
         update();
     }
+    if(changedet) {
+        changedet = false;
+        updatedet();
+    }
 }
 
 void ObjectDetection::update()
 {
-    Extractor::Ptr next = ExtractorFactory::create(state.key, "", vision::StaticParameterProvider(state.params[state.key]));
+    Extractor::Ptr next = ExtractorFactory::create(state.key, "", vision::StaticParameterProvider(state.params_detector[state.key]));
 
     QMutexLocker lock(&extractor_mutex);
     extractor = next;
 }
+
+void ObjectDetection::updatedet()
+{
+    Extractor::Ptr next = ExtractorFactory::create(state.des, "", vision::StaticParameterProvider(state.params_extractor[state.des]));
+
+    QMutexLocker lock(&extractor_mutex);
+    descriptor = next;
+}
+
 
 void ObjectDetection::messageArrived(ConnectorIn *source)
 {
@@ -234,16 +335,24 @@ void ObjectDetection::messageArrived(ConnectorIn *source)
     }
 
     bool use_mask = in_b_->isConnected();
-    if(has_a_ && (has_b_ || !use_mask)) {
+    if((has_a_ && (has_b_ || !use_mask )) && (has_c_ && (has_d_ || !use_mask))) {
         setError(false);
 
         has_a_ = false;
         has_c_ = false;
 
         ConnectionType::Ptr msg = in_a_->getMessage();
-        CvMatMessage::Ptr img_msg = boost::dynamic_pointer_cast<CvMatMessage> (msg);
+        CvMatMessage::Ptr img_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (msg);
+        ConnectionType::Ptr msg_c = in_c_->getMessage();
+        CvMatMessage::Ptr img_msg_c = boost::dynamic_pointer_cast<CvMatMessage> (msg_c);
+//        CvMatMessage::Ptr img_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (in_a_->getMessage());
+//        CvMatMessage::Ptr img_msg_c = boost::dynamic_pointer_cast<CvMatMessage> (in_c_->getMessage());
 
-        KeypointMessage::Ptr key_msg(new KeypointMessage);
+        KeypointMessage::Ptr key_msg_a(new KeypointMessage);
+        KeypointMessage::Ptr key_msg_c(new KeypointMessage);
+        DescriptorMessage::Ptr des_msg_a(new DescriptorMessage);
+        DescriptorMessage::Ptr des_msg_c(new DescriptorMessage);
+
 
         {
             QMutexLocker lock(&extractor_mutex);
@@ -251,14 +360,27 @@ void ObjectDetection::messageArrived(ConnectorIn *source)
                 ConnectionType::Ptr msg = in_b_->getMessage();
                 CvMatMessage::Ptr mask_msg = boost::dynamic_pointer_cast<CvMatMessage> (msg);
 
-                extractor->extractKeypoints(img_msg->value, mask_msg->value, key_msg->value);
+                extractor->extractKeypoints(img_msg_a->value, mask_msg->value, key_msg_a->value);
 
             } else {
-                extractor->extractKeypoints(img_msg->value, cv::Mat(), key_msg->value);
+                extractor->extractKeypoints(img_msg_a->value, cv::Mat(), key_msg_a->value);
+                extractor->extractKeypoints(img_msg_c->value, cv::Mat(), key_msg_c->value);
+                std::vector<cv::KeyPoint> tmp = key_msg_c->value;
+                if(tmp.empty()){
+                    std::cout << "no key msg or des msg" << std::endl;
+                }else{
+                    descriptor->extractDescriptors(img_msg_a->value, key_msg_c->value, des_msg_a->value);
+                }
+//                extractor->extractDescriptors(img_msg_c->value, key_msg_c->value, des_msg_c->value);
             }
         }
 
-        out_->publish(key_msg);
+//        Surfhomography surfhomo;
+//                    CvMatMessage::Ptr img_msg_result(new CvMatMessage);
+//                    img_msg_result->value = surfhomo.calculation(img_msg_a->value, img_msg_c->value,key_msg_a->value,key_msg_c->value,des_msg_a->value,des_msg_c->value);
+//                    out_->publish(img_msg_result);
+
+//        out_->publish(key_msg_c);
     }
 
 
@@ -310,9 +432,9 @@ void ObjectDetection::setState(Memento::Ptr memento)
     state.key = m->key;
 
     typedef std::pair<std::string, std::vector<vision::Parameter> > Pair;
-    foreach(Pair pair, m->params) {
+    foreach(Pair pair, m->params_detector) {
         foreach(const vision::Parameter& para, pair.second) {
-            std::vector<vision::Parameter>& target = state.params[pair.first];
+            std::vector<vision::Parameter>& target = state.params_detector[pair.first];
             BOOST_FOREACH(vision::Parameter& existing_param, target) {
                 if(existing_param.name() == para.name()) {
                     existing_param.setFrom(para);
@@ -329,17 +451,51 @@ void ObjectDetection::setState(Memento::Ptr memento)
         }
     }
     detectorbox_->setCurrentIndex(slot);
+
+    //    state = *m;
+    state.des = m->des;
+
+    typedef std::pair<std::string, std::vector<vision::Parameter> > Pair;
+    foreach(Pair pair, m->params_extractor) {
+        foreach(const vision::Parameter& para, pair.second) {
+            std::vector<vision::Parameter>& target = state.params_extractor[pair.first];
+            BOOST_FOREACH(vision::Parameter& existing_param, target) {
+                if(existing_param.name() == para.name()) {
+                    existing_param.setFrom(para);
+                }
+            }
+        }
+    }
+
+    slot = 0;
+    for(int i = 0, n = extractorbox_->count(); i < n; ++i) {
+        if(extractorbox_->itemText(i).toStdString() == state.des) {
+            slot = i;
+            break;
+        }
+    }
+    extractorbox_->setCurrentIndex(slot);
+
 }
 
 void ObjectDetection::State::writeYaml(YAML::Emitter& out) const {
     out << YAML::Key << "key" << YAML::Value << key;
-    out << YAML::Key << "params" << YAML::Value << params;
+    out << YAML::Key << "params" << YAML::Value << params_detector;
+    out << YAML::Key << "des" << YAML::Value << des;
+    out << YAML::Key << "params_extractor" << YAML::Value << params_extractor;
 }
 void ObjectDetection::State::readYaml(const YAML::Node& node) {
     if(node.FindValue("params")) {
-        node["params"] >> params;
+        node["params"] >> params_detector;
     }
     if(node.FindValue("key")) {
         node["key"] >> key;
     }
+    if(node.FindValue("params_extractor")) {
+        node["params_extractor"] >> params_extractor;
+    }
+    if(node.FindValue("des")) {
+        node["des"] >> des;
+    }
+
 }

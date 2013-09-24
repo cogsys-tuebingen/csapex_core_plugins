@@ -20,6 +20,6 @@ public:
 Surfhomography();
 void readme();
 /** @function main */
-cv::Mat calculation(const cv::Mat img_object, const cv::Mat img_scene, const cv::Mat mask_object,cv::Mat mask_scene,int minHessian);
+cv::Mat calculation(const cv::Mat img_object, const cv::Mat img_scene, std::vector<cv::KeyPoint> &keypoints_object, std::vector<cv::KeyPoint> &keypoints_scene, cv::Mat &descriptor_object, cv::Mat &descriptor_scene);
 
 };
