@@ -53,4 +53,7 @@
   <class type="csapex::ObjectDetection" base_class_type="csapex::BoxedObject">
     <description>none yet</description>
   </class>
+  <class type="csapex::KeypointCluster" base_class_type="csapex::BoxedObject">
+    <description>none yet</description>
+  </class>
 </library>

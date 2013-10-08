@@ -30,6 +30,7 @@ ObjectDetection::ObjectDetection()
       in_c_(NULL),
       in_d_(NULL),
       out_(NULL),
+      out_key(NULL),
       has_a_(false),
       has_b_(false),
       has_c_(false),
@@ -69,12 +70,17 @@ void ObjectDetection::fill(QBoxLayout *layout)
     out_->setLabel("output");
     out_->setType(csapex::connection_types::CvMatMessage::make());
 
+    out_key = new ConnectorOut(box_, 1);
+    out_key->setLabel("Keypoints");
+    out_key->setType(csapex::connection_types::KeypointMessage::make());
+
     // Register the connectors
     box_->addInput(in_a_);
     box_->addInput(in_b_);
     box_->addInput(in_c_);
     box_->addInput(in_d_);
     box_->addOutput(out_);
+    box_->addOutput(out_key);
 
     // Combobox to choose between different keydetectors
     ExtractorManager& manager = ExtractorManager::instance();
@@ -376,44 +382,11 @@ void ObjectDetection::messageArrived(ConnectorIn *source)
         CvMatMessage::Ptr img_msg_result(new CvMatMessage);
         img_msg_result->value = surfhomo.calculation(img_msg_a->value, img_msg_c->value,key_msg_a->value,key_msg_c->value, des_msg_a->value, des_msg_c->value);
         out_->publish(img_msg_result);
+        out_key->publish(key_msg_c);
 
 //        out_->publish(key_msg_c);
     }
 
-
-    ////////////////////////////////////////////////////////////////
-
-
-//    // One of the two connectors has received a message, find out which
-//    if(source == in_a_) {
-//        has_a_ = true;
-//    } else if(source == in_c_) {
-//        has_c_ = true;
-//    }
-//    // Make sure that we have both images
-//    if(has_a_ && has_c_) {
-//        has_a_ = has_c_ = false;
-
-//        // Publish the selected image
-//        CvMatMessage::Ptr img_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (in_a_->getMessage());
-//        CvMatMessage::Ptr mask_msg_a = boost::dynamic_pointer_cast<CvMatMessage> (in_b_->getMessage());
-//        CvMatMessage::Ptr img_msg_b = boost::dynamic_pointer_cast<CvMatMessage> (in_c_->getMessage());
-//        CvMatMessage::Ptr mask_msg_b = boost::dynamic_pointer_cast<CvMatMessage> (in_d_->getMessage());
-
-//        if(img_msg_a.get() && !img_msg_a->value.empty() && img_msg_b.get() && !img_msg_b->value.empty()) {
-//            if(!mask_msg_a.get()) {
-//                mask_msg_a.reset(new CvMatMessage);
-//            }
-//            if(!mask_msg_b.get()) {
-//                mask_msg_b.reset(new CvMatMessage);
-//            }
-//            Surfhomography surfhomo;
-//            CvMatMessage::Ptr img_msg_result(new CvMatMessage);
-//            img_msg_result->value = surfhomo.calculation(img_msg_a->value, img_msg_b->value,mask_msg_a->value, mask_msg_b->value,hessianThreshold);
-//            out_->publish(img_msg_result);
-//        }
-
-//    }
 }
 Memento::Ptr ObjectDetection::getState() const
 {
@@ -449,7 +422,6 @@ void ObjectDetection::setState(Memento::Ptr memento)
     }
     detectorbox_->setCurrentIndex(slot);
 
-    //    state = *m;
     state.des = m->des;
 
     typedef std::pair<std::string, std::vector<vision::Parameter> > Pair;

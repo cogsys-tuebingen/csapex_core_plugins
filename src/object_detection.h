@@ -66,6 +66,7 @@ private:
     ConnectorIn* in_c_;
     ConnectorIn* in_d_;
     ConnectorOut* out_;
+    ConnectorOut* out_key;
 
     /// Layout
     QComboBox                   *detectorbox_;

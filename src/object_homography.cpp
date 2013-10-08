@@ -55,7 +55,7 @@ cv::Mat Surfhomography::calculation(const Mat img_object, const Mat img_scene, s
   std::vector< DMatch > good_matches;
 
   for( int i = 0; i < descriptor_object.rows; i++ )
-  { //if( matches[i].distance < 3*min_dist )
+  { if( matches[i].distance < 3*min_dist )
      { good_matches.push_back( matches[i]); }
   }
 

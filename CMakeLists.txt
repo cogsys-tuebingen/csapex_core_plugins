@@ -56,6 +56,7 @@ add_library(vision_plugins
     src/simple_sink.cpp
     src/object_detection.cpp
     src/object_homography.cpp
+    src/keypoint_cluster.cpp
    ${MOC}
 )
 
