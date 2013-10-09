@@ -48,8 +48,8 @@ cv::Mat GridCompareHist::combine(const cv::Mat img1, const cv::Mat mask1, const 
         if(hist_sliders_.size() == private_state_gch_->channel_count) {
             state_buffer_gch_ = *private_state_gch_;
             GridHist g1, g2;
-            prepareGrid(g1, img1, mask1, state_buffer_gch_.grid_width, state_buffer_gch_.grid_width);
-            prepareGrid(g2, img2, mask2, state_buffer_gch_.grid_width, state_buffer_gch_.grid_width);
+            prepareGrid(g1, img1, mask1, state_buffer_gch_.grid_width, state_buffer_gch_.grid_height);
+            prepareGrid(g2, img2, mask2, state_buffer_gch_.grid_width, state_buffer_gch_.grid_height);
 
             cv::Mat out;
             render_grid(g1, g2, cv::Size(10,10), out);
