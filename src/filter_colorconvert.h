@@ -1,8 +1,13 @@
 #ifndef FILTER_COLORCONVERT_H
 #define FILTER_COLORCONVERT_H
 
+/// PROJECT
+#include <csapex/csapex_fwd.h>
+
 /// COMPONENT
 #include <csapex_vision/filter.h>
+#include <csapex_vision/cv_mat_message.h>
+
 
 class QComboBox;
 
@@ -11,7 +16,7 @@ namespace vision_plugins {
  * @brief The ColorConvert class can be used to convert colored images from one color space
  *        to another.
  */
-class ColorConvert : public csapex::Filter
+class ColorConvert : public csapex::BoxedObject
 {
     Q_OBJECT
 
@@ -27,11 +32,11 @@ public:
     /**
      * @brief See base class definition.
      */
-    virtual void insert(QBoxLayout *parent);
+    virtual void fill(QBoxLayout *parent);
     /**
      * @brief See base class definition.
      */
-    virtual void filter(cv::Mat &img, cv::Mat &mask);
+    virtual void allConnectorsArrived();
 
     /// MEMENTO
     void                 setState(csapex::Memento::Ptr memento);
@@ -39,18 +44,21 @@ public:
 
 protected:
     /// internal typdefs
-    enum ColorSpace {YUV, RGB, BGR, HSL, HSV};
+    enum ColorSpace {YUV, RGB, BGR, HSL, HSV, MONO};
     typedef std::pair<ColorSpace, ColorSpace> csPair;
     typedef std::pair<csPair, int>     csiPair;
     typedef std::pair<int, ColorSpace> icsPair;
 
     std::map<csPair, int> cs_pair_to_operation_;
+    std::map<ColorSpace, csapex::Encoding> cs_to_encoding_;
     std::map<int, ColorSpace> index_to_cs_in_;
     std::map<int, ColorSpace> index_to_cs_out_;
 
     QComboBox *combo_in_;
     QComboBox *combo_out_;
 
+    csapex::ConnectorIn* input_img_;
+    csapex::ConnectorOut* output_img_;
 
     virtual bool usesMask();
     void fillCombo(QComboBox *combo, std::map<int, ColorSpace> &map);

@@ -1,6 +1,11 @@
 /// HEADER
 #include "filter_colorconvert.h"
 
+/// PROJECT
+#include <csapex/model/connector_in.h>
+#include <csapex/model/connector_out.h>
+#include <csapex/model/box.h>
+
 /// SYSTEM
 #include <pluginlib/class_list_macros.h>
 #include <QComboBox>
@@ -10,6 +15,7 @@ PLUGINLIB_EXPORT_CLASS(vision_plugins::ColorConvert, csapex::BoxedObject)
 
 using namespace vision_plugins;
 using namespace csapex;
+using namespace csapex::connection_types;
 
 ColorConvert::ColorConvert()
 {
@@ -30,14 +36,31 @@ ColorConvert::ColorConvert()
     cs_pair_to_operation_.insert(csiPair(csPair(BGR, HSL), (int) CV_BGR2HLS));
     cs_pair_to_operation_.insert(csiPair(csPair(HSL, RGB), (int) CV_HLS2RGB));
     cs_pair_to_operation_.insert(csiPair(csPair(HSL, BGR), (int) CV_HLS2BGR));
+
+    cs_pair_to_operation_.insert(csiPair(csPair(RGB, MONO), (int) CV_RGB2GRAY));
+    cs_pair_to_operation_.insert(csiPair(csPair(BGR, MONO), (int) CV_BGR2GRAY));
+    cs_pair_to_operation_.insert(csiPair(csPair(MONO, RGB), (int) CV_GRAY2RGB));
+    cs_pair_to_operation_.insert(csiPair(csPair(MONO, BGR), (int) CV_GRAY2BGR));
+
+    cs_to_encoding_[YUV] = enc::yuv;
+    cs_to_encoding_[RGB] = enc::rgb;
+    cs_to_encoding_[BGR] = enc::bgr;
+    cs_to_encoding_[HSL] = enc::hsl;
+    cs_to_encoding_[HSV] = enc::hsv;
+    cs_to_encoding_[MONO] = enc::mono;
 }
 
 ColorConvert::~ColorConvert()
 {
 }
 
-void ColorConvert::insert(QBoxLayout *parent)
+void ColorConvert::fill(QBoxLayout *parent)
 {
+    box_->setSynchronizedInputs(true);
+
+    input_img_ = box_->addInput<CvMatMessage>("Image");
+    output_img_ = box_->addOutput<CvMatMessage>("Image");
+
     combo_in_ = new QComboBox;
     combo_out_ = new QComboBox;
     fillCombo(combo_in_, index_to_cs_in_);
@@ -49,8 +72,11 @@ void ColorConvert::insert(QBoxLayout *parent)
     parent->addWidget(combo_out_);
 }
 
-void ColorConvert::filter(cv::Mat &img, cv::Mat &mask)
+void ColorConvert::allConnectorsArrived()
 {
+    CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
+    CvMatMessage::Ptr out(new CvMatMessage);
+
     /// MEMENTO
     state_.input_index = combo_in_->currentIndex();
     state_.output_index = combo_out_->currentIndex();
@@ -59,15 +85,20 @@ void ColorConvert::filter(cv::Mat &img, cv::Mat &mask)
     cspair.first  = index_to_cs_in_[state_.input_index];
     cspair.second = index_to_cs_out_[state_.output_index];
 
-    if(cspair.first == cspair.second)
-        return;
-
-    if(cs_pair_to_operation_.find(cspair) != cs_pair_to_operation_.end()) {
-        int mode = cs_pair_to_operation_[cspair];
-        cv::cvtColor(img, img, mode);
+    if(cspair.first != cspair.second) {
+        if(cs_pair_to_operation_.find(cspair) != cs_pair_to_operation_.end()) {
+            int mode = cs_pair_to_operation_[cspair];
+            cv::cvtColor(img->value, out->value, mode);
+        } else {
+            throw std::runtime_error("Conversion not supported!");
+        }
     } else {
-        throw std::runtime_error("Conversion not supported!");
+        out = img;
     }
+
+    out->encoding = cs_to_encoding_[cspair.second];
+
+    output_img_->publish(out);
 }
 
 Memento::Ptr ColorConvert::getState() const
@@ -92,14 +123,16 @@ bool ColorConvert::usesMask()
 
 void ColorConvert::fillCombo(QComboBox *combo, std::map<int, ColorSpace> &map)
 {
-    combo->addItem("RGB");
-    map.insert(icsPair(combo->findText("RGB"), RGB));
     combo->addItem("BGR");
     map.insert(icsPair(combo->findText("BGR"), BGR));
+    combo->addItem("RGB");
+    map.insert(icsPair(combo->findText("RGB"), RGB));
     combo->addItem("HSV");
     map.insert(icsPair(combo->findText("HSV"), HSV));
     combo->addItem("HSL");
     map.insert(icsPair(combo->findText("HSL"), HSL));
     combo->addItem("YUV");
     map.insert(icsPair(combo->findText("YUV"), YUV));
+    combo->addItem("MONO");
+    map.insert(icsPair(combo->findText("MONO"), MONO));
 }

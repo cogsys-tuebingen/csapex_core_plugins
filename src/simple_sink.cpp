@@ -27,12 +27,10 @@ void SimpleSink::fill(QBoxLayout *layout)
 {
     if(input_ == NULL || output_ == NULL) {
         /// add input
-        input_ = new ConnectorIn(box_, 0);
-        box_->addInput(input_);
+        input_ = box_->addInput<CvMatMessage>("Image");
 
         /// add output
-        output_ = new ConnectorOut(box_, 0);
-        box_->addOutput(output_);
+        output_ = box_->addOutput<CvMatMessage>("Image");
 
         /// debug output
         label = new QLabel;
@@ -48,7 +46,7 @@ void SimpleSink::messageArrived(ConnectorIn *source)
     txt << "sunk: " << sunk;
     label->setText(txt.str().c_str());
 
-    CvMatMessage::Ptr m = boost::shared_dynamic_cast<CvMatMessage>(source->getMessage());
+    CvMatMessage::Ptr m = source->getMessage<CvMatMessage>();
 
     std::vector<cv::Mat> channels;
     cv::split(m->value, channels);

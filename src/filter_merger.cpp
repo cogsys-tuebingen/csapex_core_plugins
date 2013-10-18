@@ -25,8 +25,7 @@ void Merger::fill(QBoxLayout *layout)
 {
     if(output_ == NULL) {
         /// add output
-        output_ = new ConnectorOut(box_, 0);
-        box_->addOutput(output_);
+        output_ = box_->addOutput<CvMatMessage>("Merged Image");
 
         /// inputs
         input_count_ = QtHelper::makeSpinBox(layout, "Inputs: ", 2, 2, MERGER_INPUT_MAX);
@@ -88,8 +87,7 @@ void Merger::updateInputs(int value)
     } else {
         int to_add = value - current_amount;
         for(int i = 0 ; i < to_add ; i++) {
-            ConnectorIn* input = new ConnectorIn(box_, box_->countInputs() + i);
-            box_->addInput(input);
+            ConnectorIn* input = box_->addInput<CvMatMessage>("Channel");
             input_arrivals_.insert(std::pair<ConnectorIn*, bool>(input, false));
         }
     }
@@ -101,7 +99,7 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages)
     for(int i = 0 ; i < box_->countInputs() ; i++) {
         ConnectorIn *in = box_->getInput(i);
         if(in->isConnected()) {
-            CvMatMessage::Ptr msg = boost::dynamic_pointer_cast<CvMatMessage>(in->getMessage());
+            CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
             messages.push_back(msg->value);
         }
     }

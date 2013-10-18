@@ -53,12 +53,10 @@ void ColorAdjustment::fill(QBoxLayout *parent)
 {
     if(input_ == NULL || output_ == NULL) {
         /// add input
-        input_ = new ConnectorIn(box_, 0);
-        box_->addInput(input_);
+        input_ = box_->addInput<CvMatMessage>("Image");
 
         /// add output
-        output_ = new ConnectorOut(box_, 0);
-        box_->addOutput(output_);
+        output_ = box_->addOutput<CvMatMessage>("Image");
 
         check_normalize_ = new QCheckBox("Normalization Mode");
         parent->addWidget(check_normalize_);
@@ -89,7 +87,7 @@ void ColorAdjustment::fill(QBoxLayout *parent)
 
 void ColorAdjustment::messageArrived(ConnectorIn *source)
 {
-    CvMatMessage::Ptr m = boost::shared_dynamic_cast<CvMatMessage>(source->getMessage());
+    CvMatMessage::Ptr m = source->getMessage<CvMatMessage>();
 
     std::vector<cv::Mat> channels;
     cv::split(m->value, channels);

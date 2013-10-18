@@ -61,12 +61,10 @@ void Histogram::fill(QBoxLayout *layout)
 {
     if(input_ == NULL || output_histogram_ == NULL) {
         /// add input
-        input_ = new ConnectorIn(box_, 0);
-        box_->addInput(input_);
+        input_ = box_->addInput<CvMatMessage>("Image");
 
         /// add output
-        output_histogram_ = new ConnectorOut(box_,0);
-        box_->addOutput(output_histogram_);
+        output_histogram_ = box_->addOutput<CvMatMessage>("Histogram");
 
         /// add sliders and stuff
         QHBoxLayout *zoom_layout = new QHBoxLayout;
@@ -79,7 +77,7 @@ void Histogram::fill(QBoxLayout *layout)
 
 void Histogram::messageArrived(ConnectorIn *source)
 {
-    CvMatMessage::Ptr m = boost::shared_dynamic_cast<CvMatMessage>(source->getMessage());
+    CvMatMessage::Ptr m = source->getMessage<CvMatMessage>();
     CvMatMessage::Ptr histogram(new CvMatMessage);
 
     if(m->value.channels() != channel_count_) {

@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <csapex_vision/filter.h>
+#include <csapex_vision/cv_mat_message.h>
 
 namespace csapex {
 class Splitter : public csapex::BoxedObject
@@ -19,7 +20,7 @@ public:
     Memento::Ptr getState() const;
 
 private Q_SLOTS:
-    void messageArrived(ConnectorIn *source);
+    void allConnectorsArrived();
 
 private:
     ConnectorIn *input_;
@@ -32,6 +33,7 @@ private:
         void writeYaml(YAML::Emitter &out) const;
 
     public:
+        Encoding encoding_;
         int channel_count_;
     };
 
