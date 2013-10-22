@@ -54,9 +54,6 @@ add_library(vision_plugins
     src/filter_local_patterns.cpp
     src/simple_image_difference.cpp
     src/simple_sink.cpp
-    src/object_detection.cpp
-    src/object_homography.cpp
-    src/keypoint_cluster.cpp
    ${MOC}
 )
 
