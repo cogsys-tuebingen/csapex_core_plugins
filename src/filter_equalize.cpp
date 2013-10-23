@@ -5,9 +5,9 @@
 #include <utils/LibCvTools/histogram.hpp>
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
+#include <csapex/utility/register_apex_plugin.h>
 
-PLUGINLIB_EXPORT_CLASS(vision_plugins::Equalize, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(vision_plugins::Equalize, csapex::BoxedObject)
 
 using namespace vision_plugins;
 

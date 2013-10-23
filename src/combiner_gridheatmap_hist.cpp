@@ -5,11 +5,11 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <QComboBox>
 #include <QPushButton>
 
-PLUGINLIB_EXPORT_CLASS(csapex::GridHeatMapHist, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::GridHeatMapHist, csapex::BoxedObject)
 
 using namespace csapex;
 using namespace QSignalBridges;

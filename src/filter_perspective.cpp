@@ -5,9 +5,9 @@
 #include <csapex/utility/qt_helper.hpp>
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
+#include <csapex/utility/register_apex_plugin.h>
 
-PLUGINLIB_EXPORT_CLASS(vision_plugins::PerspectiveTransform, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(vision_plugins::PerspectiveTransform, csapex::BoxedObject)
 
 using namespace vision_plugins;
 using namespace csapex;

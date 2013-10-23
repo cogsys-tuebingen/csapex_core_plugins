@@ -1,10 +1,10 @@
 #include "combiner_set_operation.h"
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <QComboBox>
 
-PLUGINLIB_EXPORT_CLASS(csapex::SetOperation, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::SetOperation, csapex::BoxedObject)
 
 using namespace csapex;
 

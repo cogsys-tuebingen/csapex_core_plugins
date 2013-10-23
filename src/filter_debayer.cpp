@@ -2,11 +2,11 @@
 #include "filter_debayer.h"
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <QComboBox>
 #include <QLabel>
 
-PLUGINLIB_EXPORT_CLASS(vision_plugins::Debayer, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(vision_plugins::Debayer, csapex::BoxedObject)
 
 using namespace vision_plugins;
 using namespace csapex;

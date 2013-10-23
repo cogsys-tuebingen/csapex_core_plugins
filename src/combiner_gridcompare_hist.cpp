@@ -1,10 +1,10 @@
 #include "combiner_gridcompare_hist.h"
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <QComboBox>
 
-PLUGINLIB_EXPORT_CLASS(csapex::GridCompareHist, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::GridCompareHist, csapex::BoxedObject)
 
 using namespace csapex;
 using namespace cv_grid;

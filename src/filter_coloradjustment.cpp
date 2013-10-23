@@ -10,11 +10,11 @@
 #include <utils/LibCvTools/histogram.hpp>
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <QComboBox>
 #include <QCheckBox>
 
-PLUGINLIB_EXPORT_CLASS(csapex::ColorAdjustment, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::ColorAdjustment, csapex::BoxedObject)
 
 using namespace csapex;
 using namespace connection_types;

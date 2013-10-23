@@ -9,10 +9,10 @@
 #include <opencv2/opencv.hpp>
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <QLabel>
 
-PLUGINLIB_EXPORT_CLASS(csapex::SimpleSink, csapex::BoxedObject);
+CSAPEX_REGISTER_CLASS(csapex::SimpleSink, csapex::BoxedObject)
 
 
 using namespace csapex;
