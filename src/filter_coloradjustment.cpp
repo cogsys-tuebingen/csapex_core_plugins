@@ -6,7 +6,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-#include <csapex/model/box.h>
+#include <csapex/view/box.h>
 #include <utils/LibCvTools/histogram.hpp>
 
 /// SYSTEM
@@ -53,10 +53,10 @@ void ColorAdjustment::fill(QBoxLayout *parent)
 {
     if(input_ == NULL || output_ == NULL) {
         /// add input
-        input_ = box_->addInput<CvMatMessage>("Image");
+        input_ = addInput<CvMatMessage>("Image");
 
         /// add output
-        output_ = box_->addOutput<CvMatMessage>("Image");
+        output_ = addOutput<CvMatMessage>("Image");
 
         check_normalize_ = new QCheckBox("Normalization Mode");
         parent->addWidget(check_normalize_);

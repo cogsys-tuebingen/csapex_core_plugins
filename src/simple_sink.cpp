@@ -5,7 +5,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-#include <csapex/model/box.h>
+#include <csapex/view/box.h>
 #include <opencv2/opencv.hpp>
 
 /// SYSTEM
@@ -27,10 +27,10 @@ void SimpleSink::fill(QBoxLayout *layout)
 {
     if(input_ == NULL || output_ == NULL) {
         /// add input
-        input_ = box_->addInput<CvMatMessage>("Image");
+        input_ = addInput<CvMatMessage>("Image");
 
         /// add output
-        output_ = box_->addOutput<CvMatMessage>("Image");
+        output_ = addOutput<CvMatMessage>("Image");
 
         /// debug output
         label = new QLabel;

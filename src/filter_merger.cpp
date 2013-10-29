@@ -1,7 +1,7 @@
 #include "filter_merger.h"
 
 /// PROJECT
-#include <csapex/model/box.h>
+#include <csapex/view/box.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
@@ -25,7 +25,7 @@ void Merger::fill(QBoxLayout *layout)
 {
     if(output_ == NULL) {
         /// add output
-        output_ = box_->addOutput<CvMatMessage>("Merged Image");
+        output_ = addOutput<CvMatMessage>("Merged Image");
 
         /// inputs
         input_count_ = QtHelper::makeSpinBox(layout, "Inputs: ", 2, 2, MERGER_INPUT_MAX);
@@ -75,19 +75,19 @@ void Merger::messageArrived(ConnectorIn *source)
 void Merger::updateInputs(int value)
 {
     state_.input_count = value;
-    int current_amount = box_->countInputs();
+    int current_amount = countInputs();
     if(current_amount > value) {
         for(int i = current_amount; i > value ; i--) {
-            ConnectorIn *ptr = box_->getInput(i - 1);
+            ConnectorIn *ptr = getInput(i - 1);
             if(ptr->isConnected())
                 ptr->removeAllConnectionsUndoable();
-            box_->removeInput(ptr);
+            removeInput(ptr);
             input_arrivals_.erase(ptr);
         }
     } else {
         int to_add = value - current_amount;
         for(int i = 0 ; i < to_add ; i++) {
-            ConnectorIn* input = box_->addInput<CvMatMessage>("Channel");
+            ConnectorIn* input = addInput<CvMatMessage>("Channel");
             input_arrivals_.insert(std::pair<ConnectorIn*, bool>(input, false));
         }
     }
@@ -96,8 +96,8 @@ void Merger::updateInputs(int value)
 
 void Merger::collectMessage(std::vector<cv::Mat> &messages)
 {
-    for(int i = 0 ; i < box_->countInputs() ; i++) {
-        ConnectorIn *in = box_->getInput(i);
+    for(int i = 0 ; i < countInputs() ; i++) {
+        ConnectorIn *in = getInput(i);
         if(in->isConnected()) {
             CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
             messages.push_back(msg->value);

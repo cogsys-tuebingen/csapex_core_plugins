@@ -1,7 +1,7 @@
 #include "filter_splitter.h"
 
 /// PROJECT
-#include <csapex/model/box.h>
+#include <csapex/view/box.h>
 #include <csapex/command/meta.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>
@@ -25,10 +25,10 @@ Splitter::Splitter() :
 void Splitter::fill(QBoxLayout *)
 {
     if(input_ == NULL) {
-        box_->setSynchronizedInputs(true);
+        setSynchronizedInputs(true);
 
         /// add input
-        input_ = box_->addInput<CvMatMessage>("Image");
+        input_ = addInput<CvMatMessage>("Image");
     }
 }
 
@@ -40,6 +40,8 @@ void Splitter::allConnectorsArrived()
 
     bool recompute = state_.channel_count_ != channels.size();
     if(static_cast<unsigned>(m->encoding.size()) != channels.size()) {
+        recompute = true;
+    } else if(m->encoding.size() != state_.encoding_.size()) {
         recompute = true;
     } else {
         for(int i = 0, n = m->encoding.size(); i < n; ++i) {
@@ -53,6 +55,7 @@ void Splitter::allConnectorsArrived()
         state_.encoding_ = m->encoding;
         state_.channel_count_ = channels.size();
         Q_EMIT modelChanged();
+        return;
     }
 
 
@@ -61,36 +64,36 @@ void Splitter::allConnectorsArrived()
         channel_out->value = channels[i];
         channel_out->encoding.clear();
         channel_out->encoding.push_back(state_.encoding_[i]);
-        box_->getOutput(i)->publish(channel_out);
+        getOutput(i)->publish(channel_out);
     }
 }
 
 void Splitter::updateDynamicGui(QBoxLayout *layout)
 {
-    int n = box_->countOutputs();
+    int n = countOutputs();
 
     if(state_.encoding_.size() > n) {
         for(int i = n ; i < state_.encoding_.size() ; ++i) {
-            ConnectorOut *out = box_->addOutput<CvMatMessage>(state_.encoding_[i].name);
+            ConnectorOut *out = addOutput<CvMatMessage>(state_.encoding_[i].name);
         }
     } else {
         bool del = true;
         for(int i = n-1 ; i >= state_.encoding_.size(); --i) {
-            if(box_->getOutput(i)->isConnected()) {
+            if(getOutput(i)->isConnected()) {
                 del = false;
             }
 
             if(del) {
-                box_->removeOutput(box_->getOutput(i));
+                removeOutput(getOutput(i));
             } else {
-                box_->getOutput(i)->setEnabled(false);
+                getOutput(i)->setEnabled(false);
             }
         }
     }
 
     for(int i = 0, n = state_.encoding_.size(); i < n; ++i) {
-        box_->getOutput(i)->setLabel(state_.encoding_[i].name);
-        box_->getOutput(i)->setEnabled(true);
+        getOutput(i)->setLabel(state_.encoding_[i].name);
+        getOutput(i)->setEnabled(true);
     }
 
 }
@@ -112,7 +115,6 @@ void Splitter::setState(Memento::Ptr memento)
         state_.encoding_.push_back(Channel("Channel", 0, 255));
     }
 
-    box_->eventModelChanged();
     Q_EMIT modelChanged();
 }
 

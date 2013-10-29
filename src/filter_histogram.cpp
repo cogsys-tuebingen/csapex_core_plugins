@@ -7,7 +7,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-#include <csapex/model/box.h>
+#include <csapex/view/box.h>
 #include <opencv2/opencv.hpp>
 #include <csapex/utility/qt_helper.hpp>
 
@@ -61,10 +61,10 @@ void Histogram::fill(QBoxLayout *layout)
 {
     if(input_ == NULL || output_histogram_ == NULL) {
         /// add input
-        input_ = box_->addInput<CvMatMessage>("Image");
+        input_ = addInput<CvMatMessage>("Image");
 
         /// add output
-        output_histogram_ = box_->addOutput<CvMatMessage>("Histogram");
+        output_histogram_ = addOutput<CvMatMessage>("Histogram");
 
         /// add sliders and stuff
         QHBoxLayout *zoom_layout = new QHBoxLayout;

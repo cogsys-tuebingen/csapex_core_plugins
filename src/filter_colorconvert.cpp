@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-#include <csapex/model/box.h>
+#include <csapex/view/box.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -56,10 +56,10 @@ ColorConvert::~ColorConvert()
 
 void ColorConvert::fill(QBoxLayout *parent)
 {
-    box_->setSynchronizedInputs(true);
+    setSynchronizedInputs(true);
 
-    input_img_ = box_->addInput<CvMatMessage>("Image");
-    output_img_ = box_->addOutput<CvMatMessage>("Image");
+    input_img_ = addInput<CvMatMessage>("Image");
+    output_img_ = addOutput<CvMatMessage>("Image");
 
     combo_in_ = new QComboBox;
     combo_out_ = new QComboBox;
@@ -85,10 +85,22 @@ void ColorConvert::allConnectorsArrived()
     cspair.first  = index_to_cs_in_[state_.input_index];
     cspair.second = index_to_cs_out_[state_.output_index];
 
+    out->encoding = cs_to_encoding_[cspair.second];
+
+    if(img->encoding.size() != cs_to_encoding_[cspair.first].size()) {
+        std::stringstream error;
+        error << "Conversion not applicable! Input encoding #" << img->encoding.size() << ", target #"  <<  cs_to_encoding_[cspair.first].size();
+        throw std::runtime_error(error.str());
+    }
+
     if(cspair.first != cspair.second) {
         if(cs_pair_to_operation_.find(cspair) != cs_pair_to_operation_.end()) {
             int mode = cs_pair_to_operation_[cspair];
             cv::cvtColor(img->value, out->value, mode);
+
+            if(out->encoding.size() != out->value.channels()) {
+                throw std::runtime_error("Conversion didn't work!");
+            }
         } else {
             throw std::runtime_error("Conversion not supported!");
         }
@@ -96,7 +108,6 @@ void ColorConvert::allConnectorsArrived()
         out = img;
     }
 
-    out->encoding = cs_to_encoding_[cspair.second];
 
     output_img_->publish(out);
 }
