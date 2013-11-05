@@ -8,7 +8,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <QPushButton>
 
-CSAPEX_REGISTER_CLASS(csapex::GridHeatMapValue, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::GridHeatMapValue, csapex::Node)
 
 using namespace csapex;
 using namespace QSignalBridges;

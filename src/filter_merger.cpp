@@ -11,7 +11,7 @@
 #include <QLabel>
 #include <csapex/utility/register_apex_plugin.h>
 
-CSAPEX_REGISTER_CLASS(csapex::Merger, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::Merger, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;

@@ -7,7 +7,7 @@
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::Undistort, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(vision_plugins::Undistort, csapex::Node)
 
 using namespace vision_plugins;
 

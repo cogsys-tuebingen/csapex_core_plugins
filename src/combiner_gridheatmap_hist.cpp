@@ -9,7 +9,7 @@
 #include <QComboBox>
 #include <QPushButton>
 
-CSAPEX_REGISTER_CLASS(csapex::GridHeatMapHist, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::GridHeatMapHist, csapex::Node)
 
 using namespace csapex;
 using namespace QSignalBridges;

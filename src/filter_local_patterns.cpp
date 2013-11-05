@@ -9,7 +9,7 @@
 #include <QComboBox>
 #include <QTime>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatterns, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatterns, csapex::Node)
 
 using namespace vision_plugins;
 using namespace csapex;

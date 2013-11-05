@@ -4,7 +4,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <QComboBox>
 
-CSAPEX_REGISTER_CLASS(csapex::SetOperation, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::SetOperation, csapex::Node)
 
 using namespace csapex;
 

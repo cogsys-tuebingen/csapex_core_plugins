@@ -18,7 +18,7 @@
 #include <QCheckBox>
 #include <QSpinBox>
 
-CSAPEX_REGISTER_CLASS(csapex::Histogram, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::Histogram, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;

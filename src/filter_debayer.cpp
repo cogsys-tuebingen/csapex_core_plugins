@@ -6,7 +6,7 @@
 #include <QComboBox>
 #include <QLabel>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::Debayer, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(vision_plugins::Debayer, csapex::Node)
 
 using namespace vision_plugins;
 using namespace csapex;

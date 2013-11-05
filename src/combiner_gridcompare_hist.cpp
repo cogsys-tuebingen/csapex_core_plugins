@@ -4,7 +4,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <QComboBox>
 
-CSAPEX_REGISTER_CLASS(csapex::GridCompareHist, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::GridCompareHist, csapex::Node)
 
 using namespace csapex;
 using namespace cv_grid;

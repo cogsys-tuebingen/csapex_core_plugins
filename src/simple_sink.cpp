@@ -12,7 +12,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <QLabel>
 
-CSAPEX_REGISTER_CLASS(csapex::SimpleSink, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::SimpleSink, csapex::Node)
 
 
 using namespace csapex;

@@ -14,7 +14,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 
-CSAPEX_REGISTER_CLASS(csapex::ColorAdjustment, csapex::BoxedObject)
+CSAPEX_REGISTER_CLASS(csapex::ColorAdjustment, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
