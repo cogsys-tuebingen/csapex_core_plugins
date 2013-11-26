@@ -3,7 +3,7 @@
 
 /// COMPONENTS
 #include <csapex_vision/filter.h>
-#include <utils/LibCvTools/local_patterns.hpp>
+#include <utils_cv/local_patterns.hpp>
 
 //class QDoubleSilder;
 class QComboBox;

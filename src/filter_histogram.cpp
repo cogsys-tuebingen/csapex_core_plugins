@@ -2,7 +2,7 @@
 #include "filter_histogram.h"
 
 /// PROJECT
-#include <utils/LibCvTools/histogram.hpp>
+#include <utils_cv/histogram.hpp>
 
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>

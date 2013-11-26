@@ -7,7 +7,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <csapex/view/box.h>
-#include <utils/LibCvTools/histogram.hpp>
+#include <utils_cv/histogram.hpp>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

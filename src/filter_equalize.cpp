@@ -2,7 +2,7 @@
 #include "filter_equalize.h"
 
 /// PROJECT
-#include <utils/LibCvTools/histogram.hpp>
+#include <utils_cv/histogram.hpp>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

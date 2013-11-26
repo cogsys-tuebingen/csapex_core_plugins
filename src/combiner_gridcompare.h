@@ -3,9 +3,9 @@
 
 /// PROJECT
 #include <csapex_vision/image_combiner.h>
-#include <utils/LibCvTools/grid.hpp>
-#include <utils/LibCvTools/grid_attributes.hpp>
-#include <utils/LibCvTools/grid_compute.hpp>
+#include <utils_cv/grid.hpp>
+#include <utils_cv/grid_attributes.hpp>
+#include <utils_cv/grid_compute.hpp>
 #include <csapex/utility/qt_helper.hpp>
 
 /// SYSTEM
