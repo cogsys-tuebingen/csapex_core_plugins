@@ -1,4 +1,4 @@
-    cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.3)
 project(vision_plugins)
 
 find_package(catkin REQUIRED roscpp csapex_vision csapex_vision_features utils)
