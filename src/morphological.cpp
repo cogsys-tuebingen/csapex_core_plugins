@@ -7,6 +7,7 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -19,8 +20,8 @@ Morpholocial::Morpholocial()
 {
     addTag(Tag::get("Vision"));
 
-    addParameter(param::Parameter::declare<int>("size", 1, 20, 2, 1));
-    addParameter(param::Parameter::declare<int>("iterations", 1, 10, 1, 1));
+    addParameter(param::ParameterFactory::declare<int>("size", 1, 20, 2, 1));
+    addParameter(param::ParameterFactory::declare<int>("iterations", 1, 10, 1, 1));
 }
 
 void Morpholocial::allConnectorsArrived()
