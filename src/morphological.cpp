@@ -21,7 +21,21 @@ Morpholocial::Morpholocial()
     addTag(Tag::get("Vision"));
 
     addParameter(param::ParameterFactory::declare<int>("size", 1, 20, 2, 1));
-    addParameter(param::ParameterFactory::declare<int>("iterations", 1, 10, 1, 1));
+    addParameter(param::ParameterFactory::declare<int>("iterations", 0, 10, 1, 1));
+
+    std::vector< std::pair<std::string, int> > types;
+    types.push_back(std::make_pair("MORPH_OPEN", (int) cv::MORPH_OPEN));
+    types.push_back(std::make_pair("MORPH_CLOSE", (int) cv::MORPH_CLOSE));
+    types.push_back(std::make_pair("MORPH_GRADIENT", (int) cv::MORPH_GRADIENT));
+    types.push_back(std::make_pair("MORPH_TOPHAT", (int) cv::MORPH_TOPHAT));
+    types.push_back(std::make_pair("MORPH_BLACKHAT", (int) cv::MORPH_BLACKHAT));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types));
+
+    std::vector< std::pair<std::string, int> > elem;
+    elem.push_back(std::make_pair("MORPH_RECT", (int) cv::MORPH_RECT));
+    elem.push_back(std::make_pair("MORPH_CROSS", (int) cv::MORPH_CROSS));
+    elem.push_back(std::make_pair("MORPH_ELLIPSE", (int) cv::MORPH_ELLIPSE));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("elem", elem));
 }
 
 void Morpholocial::allConnectorsArrived()
@@ -29,8 +43,8 @@ void Morpholocial::allConnectorsArrived()
     connection_types::CvMatMessage::Ptr a = input_->getMessage<connection_types::CvMatMessage>();
 
     connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage);
-    int op = cv::MORPH_OPEN;//, MORPH_CLOSE, MORPH_GRADIENT, MORPH_TOPHAT, MORPH_BLACKHAT;
-    int morph_elem = cv::MORPH_RECT;
+    int op = param<int>("type");
+    int morph_elem = param<int>("elem");
     int morph_size = param<int>("size");
     cv::Mat kernel = cv::getStructuringElement(morph_elem, cv::Size(2*morph_size+1, 2*morph_size+1), cv::Point(morph_size, morph_size));
     cv::Point anchor(-1,-1);
