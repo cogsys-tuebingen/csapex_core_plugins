@@ -26,21 +26,42 @@ VJDetector::VJDetector()
 {
     addTag(Tag::get("Vision"));
 
-    addParameter(param::ParameterFactory::declare<std::string>("file", ""));
+    addParameter(param::ParameterFactory::declarePath("file", ""));
+}
+
+VJDetector::~VJDetector()
+{
+    if(vj_detector) {
+        delete vj_detector;
+    }
+    if(image_scanner) {
+        delete image_scanner;
+    }
 }
 
 void VJDetector::allConnectorsArrived()
 {
-    if(!vj_detector) {
-        std::string filename = param<std::string>("file");
-        if(!filename.empty()) {
-            std::ifstream in(filename.c_str());
+    std::string filename = param<std::string>("file");
+
+    if(!vj_detector || filename != file_) {
+        file_ = filename;
+
+        if(vj_detector) {
+            delete vj_detector;
+            vj_detector = NULL;
+            delete image_scanner;
+            image_scanner = NULL;
+        }
+
+        if(!file_.empty()) {
+            std::ifstream in(file_.c_str());
             if(!in.is_open()) {
-                throw std::runtime_error(std::string("Error Viola Jones Classifier from file: ") + filename);
+                throw std::runtime_error(std::string("Error Viola Jones Classifier from file: ") + file_);
 
             } else {
-                vj_detector = CascadeDetector::load(&in, false, false);
+                std::cout << "loading classifier from " << file_ << std::endl;
 
+                vj_detector = CascadeDetector::load(&in, false, false);
                 image_scanner = new ImageScanner(vj_detector,
                                                  7.5, // minscale
                                                  55.0, // maxscale

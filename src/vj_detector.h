@@ -12,6 +12,7 @@ class VJDetector : public csapex::Node
 {
 public:
     VJDetector();
+    ~VJDetector();
 
     virtual void allConnectorsArrived();
     virtual void setup();
@@ -20,6 +21,8 @@ private:
     ConnectorOut* output_;
 
     ConnectorIn* input_;
+
+    std::string file_;
 
     CascadeDetector* vj_detector;
     ImageScanner* image_scanner;
