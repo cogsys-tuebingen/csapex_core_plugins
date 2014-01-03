@@ -43,7 +43,7 @@ void LocalPatterns::filter(Mat &img, Mat &mask)
         std::vector<cv::Mat> channel_hists;
         std::vector<int>     bins;
 
-        foreach(cv::Mat channel, channels) {
+        Q_FOREACH(cv::Mat channel, channels) {
             QTime t = QTime::currentTime();
             lbp_.stdExtraction<uchar>(channel);
             Q_EMIT timeUpdate(QTime::currentTime().msec() - t.msec());
@@ -58,7 +58,7 @@ void LocalPatterns::filter(Mat &img, Mat &mask)
         std::vector<cv::Mat> channel_hists_neg;
         std::vector<int>     bins;
 
-        foreach(cv::Mat channel, channels) {
+        Q_FOREACH(cv::Mat channel, channels) {
             QTime t = QTime::currentTime();
             ltp_.stdExtraction<uchar>(channel, state_.k);
             Q_EMIT timeUpdate(QTime::currentTime().msec() - t.msec());

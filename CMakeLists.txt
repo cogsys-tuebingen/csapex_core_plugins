@@ -3,10 +3,8 @@ project(vision_plugins)
 
 find_package(catkin REQUIRED roscpp csapex_vision csapex_vision_features utils_cv utils_viola_jones)
 
-find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui)
-include(${QT_USE_FILE})
+ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
-set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_CXX_FLAGS "-O3")
 
 file(GLOB_RECURSE MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.h)

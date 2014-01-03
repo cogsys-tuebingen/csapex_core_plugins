@@ -86,14 +86,14 @@ void Splitter::updateDynamicGui(QBoxLayout *layout)
             if(del) {
                 removeOutput(getOutput(i));
             } else {
-                getOutput(i)->setEnabled(false);
+                getOutput(i)->disable();;
             }
         }
     }
 
     for(int i = 0, n = state_.encoding_.size(); i < n; ++i) {
         getOutput(i)->setLabel(state_.encoding_[i].name);
-        getOutput(i)->setEnabled(true);
+        getOutput(i)->enable();
     }
 
 }
