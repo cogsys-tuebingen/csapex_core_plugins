@@ -7,8 +7,7 @@ ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 #set(CMAKE_CXX_FLAGS "-O3")
 
-file(GLOB_RECURSE MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.h)
-QT4_WRAP_CPP(MOC ${MOC})
+csapex_moc_all(MOC src/*.h)
 
 ###################################
 ## catkin specific configuration ##
