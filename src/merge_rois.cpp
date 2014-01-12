@@ -24,19 +24,21 @@ using namespace connection_types;
 MergeROIs::MergeROIs()
 {
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("ROI"));
 }
 
 void MergeROIs::allConnectorsArrived()
 {
-    VectorMessage<RoiMessage>::Ptr rois = input_->getMessage<VectorMessage<RoiMessage> >();
+    VectorMessage::Ptr rois = input_->getMessage<VectorMessage>();
 
     RectangleCluster cluster;
-    for(std::vector<RoiMessage::Ptr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
-        const Roi& r = (*it)->value;
+    for(std::vector<ConnectionType::Ptr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
+        RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(*it);
+        const Roi& r = roi->value;
         cluster.integrate(r.rect());
     }
 
-    VectorMessage<RoiMessage>::Ptr out(new VectorMessage<RoiMessage>);
+    VectorMessage::Ptr out(new VectorMessage(RoiMessage::make()));
     for(std::vector<cv::Rect>::iterator it = cluster.begin(); it != cluster.end(); ++it) {
         RoiMessage::Ptr msg(new RoiMessage);
         msg->value = Roi(*it);
@@ -50,7 +52,9 @@ void MergeROIs::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<VectorMessage<RoiMessage> >("ROIs");
+    input_ = addInput<VectorMessage>("ROIs");
+    input_->setType(VectorMessage::Ptr(new VectorMessage(RoiMessage::make())));
 
-    output_ = addOutput<VectorMessage<RoiMessage> >("merged ROIs");
+    output_ = addOutput<VectorMessage>("merged ROIs");
+    output_->setType(VectorMessage::Ptr(new VectorMessage(RoiMessage::make())));
 }

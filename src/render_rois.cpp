@@ -23,6 +23,7 @@ using namespace connection_types;
 RenderROIs::RenderROIs()
 {
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("ROI"));
 
     addParameter(param::ParameterFactory::declare<int>("thickness", 1, 20, 1, 1));
 }
@@ -30,7 +31,7 @@ RenderROIs::RenderROIs()
 void RenderROIs::allConnectorsArrived()
 {
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
-    VectorMessage<RoiMessage>::Ptr rois = input_rois_->getMessage<VectorMessage<RoiMessage> >();
+    VectorMessage::Ptr rois = input_rois_->getMessage<VectorMessage>();
 
     CvMatMessage::Ptr out(new CvMatMessage);
 
@@ -38,7 +39,8 @@ void RenderROIs::allConnectorsArrived()
 
     img->value.copyTo(out->value);
 
-    BOOST_FOREACH(const RoiMessage::Ptr& roi, rois->value) {
+    BOOST_FOREACH(const ConnectionType::Ptr& e, rois->value) {
+        RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(e);
         cv::rectangle(out->value, roi->value.rect(), roi->value.color(), thickness);
     }
 
@@ -50,7 +52,8 @@ void RenderROIs::setup()
     setSynchronizedInputs(true);
 
     input_img_ = addInput<CvMatMessage>("Image");
-    input_rois_ = addInput<VectorMessage<RoiMessage> >("ROIs");
+    input_rois_ = addInput<VectorMessage>("ROIs");
+    input_rois_->setType(VectorMessage::Ptr(new VectorMessage(RoiMessage::make())));
 
     output_ = addOutput<CvMatMessage>("Rendered Image");
 }

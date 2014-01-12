@@ -53,6 +53,7 @@ add_library(vision_plugins
     src/vj_detector.cpp
     src/render_rois.cpp
     src/merge_rois.cpp
+    src/extract_roi.cpp
     src/simple_image_difference.cpp
     src/simple_sink.cpp
    ${MOC}

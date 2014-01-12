@@ -25,6 +25,7 @@ VJDetector::VJDetector()
     : vj_detector(NULL), image_scanner(NULL)
 {
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("ROI"));
 
     addParameter(param::ParameterFactory::declarePath("file", ""));
 }
@@ -80,7 +81,7 @@ void VJDetector::allConnectorsArrived()
         throw std::runtime_error("image must be grayscale.");
     }
 
-    VectorMessage<RoiMessage>::Ptr out(new VectorMessage<RoiMessage>);
+    VectorMessage::Ptr out(new VectorMessage(RoiMessage::make()));
 
     QImage img(a->value.data, a->value.cols, a->value.rows, QImage::Format_Indexed8);
     image_scanner->setImage(&img);
@@ -104,5 +105,6 @@ void VJDetector::setup()
 
     input_ = addInput<CvMatMessage>("Image");
 
-    output_ = addOutput< VectorMessage<RoiMessage> >("ROIs");
+    output_ = addOutput<VectorMessage>("ROIs");
+    output_->setType(VectorMessage::Ptr(new VectorMessage(RoiMessage::make())));
 }
