@@ -12,11 +12,13 @@
  <build_depend>csapex</build_depend>
  <build_depend>utils_cv</build_depend>
  <build_depend>utils_viola_jones</build_depend>
+ <build_depend>utils_vision</build_depend>
  <build_depend>roscpp</build_depend>
 
  <run_depend>csapex_vision</run_depend>
  <run_depend>csapex</run_depend>
  <run_depend>utils_viola_jones</run_depend>
+ <run_depend>utils_vision</run_depend>
 
  <export>
    <csapex plugin="${prefix}/plugins.xml" />

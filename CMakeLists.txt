@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(vision_plugins)
 
-find_package(catkin REQUIRED roscpp csapex_vision csapex_vision_features utils_cv utils_viola_jones)
+find_package(catkin REQUIRED roscpp csapex_vision csapex_vision_features utils_cv utils_viola_jones utils_vision)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -52,6 +52,7 @@ add_library(vision_plugins
     src/morphological.cpp
     src/vj_detector.cpp
     src/render_rois.cpp
+    src/merge_rois.cpp
     src/simple_image_difference.cpp
     src/simple_sink.cpp
    ${MOC}
