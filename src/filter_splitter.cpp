@@ -38,7 +38,7 @@ void Splitter::allConnectorsArrived()
     std::vector<cv::Mat> channels;
     cv::split(m->value, channels);
 
-    bool recompute = state_.channel_count_ != channels.size();
+    bool recompute = state_.channel_count_ != (int) channels.size();
     if(static_cast<unsigned>(m->encoding.size()) != channels.size()) {
         recompute = true;
     } else if(m->encoding.size() != state_.encoding_.size()) {
@@ -59,7 +59,7 @@ void Splitter::allConnectorsArrived()
     }
 
 
-    for(int i = 0 ; i < channels.size() ; i++) {
+    for(unsigned i = 0 ; i < channels.size() ; i++) {
         CvMatMessage::Ptr channel_out(new CvMatMessage);
         channel_out->value = channels[i];
         channel_out->encoding.clear();
@@ -70,15 +70,15 @@ void Splitter::allConnectorsArrived()
 
 void Splitter::updateDynamicGui(QBoxLayout *layout)
 {
-    int n = countOutputs();
+    unsigned n = countOutputs();
 
     if(state_.encoding_.size() > n) {
-        for(int i = n ; i < state_.encoding_.size() ; ++i) {
-            ConnectorOut *out = addOutput<CvMatMessage>(state_.encoding_[i].name);
+        for(unsigned i = n ; i < state_.encoding_.size() ; ++i) {
+            addOutput<CvMatMessage>(state_.encoding_[i].name);
         }
     } else {
         bool del = true;
-        for(int i = n-1 ; i >= state_.encoding_.size(); --i) {
+        for(int i = n-1 ; i >= (int) state_.encoding_.size(); --i) {
             if(getOutput(i)->isConnected()) {
                 del = false;
             }
@@ -111,7 +111,7 @@ void Splitter::setState(Memento::Ptr memento)
 
     state_ = *m;
 
-    while(state_.encoding_.size() < state_.channel_count_) {
+    while((int) state_.encoding_.size() < state_.channel_count_) {
         state_.encoding_.push_back(Channel("Channel", 0, 255));
     }
 

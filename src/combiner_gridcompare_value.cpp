@@ -44,7 +44,7 @@ cv::Mat GridCompareValue::combine(const cv::Mat img1, const cv::Mat mask1, const
         updateSliderMaxima(img1.cols, img1.rows);
 
         /// COMPUTE
-        if(eps_sliders_.size() == private_state_gcv_->channel_count) {
+        if((int) eps_sliders_.size() == private_state_gcv_->channel_count) {
             state_buffer_gcv_ = *private_state_gcv_;
             GridScalar g1, g2;
             prepareGrid(g1, img1, mask1, state_buffer_gcv_.grid_width, state_buffer_gcv_.grid_height);
@@ -136,7 +136,7 @@ void GridCompareValue::prepareGrid(cv_grid::GridScalar &g, const cv::Mat &img, c
 
 void GridCompareValue::prepareParams(cv::Scalar &eps, cv::Vec<bool, 4> &ignore)
 {
-    for(int i = 0 ; i < eps_sliders_.size() ; i++) {
+    for(unsigned i = 0 ; i < eps_sliders_.size() ; i++) {
         eps[i] = eps_sliders_[i]->doubleValue();
         ignore[i] = eps[i] == 255.0;
     }

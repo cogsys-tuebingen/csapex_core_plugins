@@ -24,7 +24,7 @@ using namespace csapex;
 using namespace connection_types;
 
 Histogram::Histogram() :
-    input_(NULL), output_histogram_(NULL),container_bin_counts_(NULL),channel_count_(0)
+    input_(NULL), output_histogram_(NULL),channel_count_(0),container_bin_counts_(NULL)
 {
     colors_.push_back(cv_histogram::COLOR_WHITE);
     colors_.push_back(cv_histogram::COLOR_GREEN);
@@ -84,14 +84,14 @@ void Histogram::messageArrived(ConnectorIn *source)
         channel_count_ = m->value.channels();
         Q_EMIT modelChanged();
 
-        if(channel_count_ > colors_.size())
+        if(channel_count_ > (int) colors_.size())
             colors_.push_back(randomColor());
 
     }
 
     updateState();
 
-    if(bin_counts_.size() != state_.channel_count)
+    if((int) bin_counts_.size() != state_.channel_count)
         return;
 
     cv::Mat bins, ranges;

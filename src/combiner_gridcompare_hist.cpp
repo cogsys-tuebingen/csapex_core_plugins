@@ -45,7 +45,7 @@ cv::Mat GridCompareHist::combine(const cv::Mat img1, const cv::Mat mask1, const 
         updateSliderMaxima(img1.cols, img1.rows);
 
         /// COMPUTE
-        if(hist_sliders_.size() == private_state_gch_->channel_count) {
+        if((int) hist_sliders_.size() == private_state_gch_->channel_count) {
             state_buffer_gch_ = *private_state_gch_;
             GridHist g1, g2;
             prepareGrid(g1, img1, mask1, state_buffer_gch_.grid_width, state_buffer_gch_.grid_height);
@@ -74,7 +74,7 @@ void GridCompareHist::updateDynamicGui(QBoxLayout *layout)
         int    default_bin = 32;
         double default_eps = 0.0;
 
-        if(private_state_gch_->bins.size() < private_state_gch_->channel_count ) {
+        if((int) private_state_gch_->bins.size() < private_state_gch_->channel_count ) {
             private_state_gch_->bins.push_back(default_bin);
             private_state_gch_->eps.push_back(default_eps);
         } else {

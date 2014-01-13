@@ -43,7 +43,7 @@ cv::Mat GridHeatMapValue::combine(const cv::Mat img1, const cv::Mat mask1, const
         updateSliderMaxima(img1.cols, img1.rows, img2.cols, img2.rows);
 
         /// COMPUTE
-        if(eps_sliders_.size() == private_state_gcv_->channel_count && run_state_ == RESET) {
+        if((int) eps_sliders_.size() == private_state_gcv_->channel_count && run_state_ == RESET) {
             state_buffer_ghv_ = *private_state_ghv_;
 
             run_state_ = RUNNING;

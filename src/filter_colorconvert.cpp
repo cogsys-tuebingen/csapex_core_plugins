@@ -98,7 +98,7 @@ void ColorConvert::allConnectorsArrived()
             int mode = cs_pair_to_operation_[cspair];
             cv::cvtColor(img->value, out->value, mode);
 
-            if(out->encoding.size() != out->value.channels()) {
+            if((int) out->encoding.size() != out->value.channels()) {
                 throw std::runtime_error("Conversion didn't work!");
             }
         } else {

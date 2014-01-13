@@ -99,7 +99,7 @@ void ColorAdjustment::messageArrived(ConnectorIn *source)
 
     updateState();
 
-    for(int i = 0 ; i < slider_pairs_.size() && i < channels.size() ; i++) {
+    for(unsigned i = 0 ; i < slider_pairs_.size() && i < channels.size() ; i++) {
         double min = slider_pairs_[i].first->doubleValue();
         double max = slider_pairs_[i].second->doubleValue();
         if(check_normalize_->isChecked()) {
@@ -137,11 +137,11 @@ void ColorAdjustment::updateDynamicGui(QBoxLayout *layout)
             ch_limit = 180.0;
         }
 
-        if(state_.mins.size() < state_.channel_count) {
+        if((int) state_.mins.size() < state_.channel_count) {
                 state_.mins.push_back(0.0);
         }
 
-        if(state_.maxs.size() < state_.channel_count) {
+        if((int) state_.maxs.size() < state_.channel_count) {
             state_.maxs.push_back(ch_limit);
         }
 
