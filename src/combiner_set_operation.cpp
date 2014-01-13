@@ -1,4 +1,11 @@
+/// HEADER
 #include "combiner_set_operation.h"
+
+/// PROJECT
+#include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/connector_in.h>
+#include <csapex/model/connector_out.h>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -7,87 +14,63 @@
 CSAPEX_REGISTER_CLASS(csapex::SetOperation, csapex::Node)
 
 using namespace csapex;
+using namespace connection_types;
 
-SetOperation::SetOperation() :
-    ImageCombiner()
+SetOperation::SetOperation()
 {
+    addTag(Tag::get("Vision"));
+
+    std::vector< std::pair<std::string, int> > methods;
+    methods.push_back(std::make_pair("Complement", (int) COMPLEMENT));
+    methods.push_back(std::make_pair("Intersection", (int) INTERSECTION));
+    methods.push_back(std::make_pair("Union", (int) UNION));
+    addParameter(param::ParameterFactory::declareParameterSet("operation", methods));
 }
 
-cv::Mat SetOperation::combine(const cv::Mat img1, const cv::Mat mask1, const cv::Mat img2, const cv::Mat mask2)
+void SetOperation::allConnectorsArrived()
 {
-    if(!img1.empty()) {
-        /// PREPARE
-        if(img1.channels() != 1)
-            throw std::runtime_error("No Single Channel!");
+    CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
 
-        if (state_.operation_index == 0)
-            return ~img1;
+    if(img1->encoding.size() != 1) {
+        throw std::runtime_error("No Single Channel!");
     }
 
-    if(!img2.empty()) {
-        /// PREPARE
-        if(img2.channels() != 1)
-            throw std::runtime_error("No Single Channel!");
-        if(img1.rows != img2.rows || img1.cols != img2.cols)
+
+    CvMatMessage::Ptr out(new CvMatMessage);
+
+    int op = param<int>("operation");
+    if(op == COMPLEMENT) {
+        out->value = ~img1->value;
+
+    } else {
+        if(!i2_->isConnected() || !i2_->hasMessage()) {
+            return;
+        }
+
+        CvMatMessage::Ptr img2 = i2_->getMessage<CvMatMessage>();
+
+        if(img1->value.rows != img2->value.rows || img1->value.cols != img2->value.cols) {
             throw std::runtime_error("Dimension is not matching!");
+        }
+
+        if(op == INTERSECTION) {
+            out->value = img1->value & img2->value;
+
+        } else if(op == UNION) {
+            out->value = img1->value | img2->value;
+        }
     }
 
-    if (state_.operation_index == 1)
-        return img1 & img2;
-    if (state_.operation_index == 2)
-        return img1 | img2;
+    if(out->value.rows != 0 && out->value.cols != 0) {
+        out_->publish(out);
+    }
 }
 
-void SetOperation::updateDynamicGui(QBoxLayout *layout)
+void SetOperation::setup()
 {
-    QVBoxLayout *internal_layout;
-    internal_layout = new QVBoxLayout;
-}
+    setSynchronizedInputs(true);
 
-Memento::Ptr SetOperation::getState() const
-{
-    return boost::shared_ptr<State>(new State(state_));
-}
-
-void SetOperation::setState(Memento::Ptr memento)
-{
-    boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
-    assert(m.get());
-
-    state_ = *m;
-    combo_compare_->setCurrentIndex(state_.operation_index);
-}
-
-void SetOperation::updateState(int i)
-{
-    state_.operation_index = combo_compare_->currentIndex();
-
-/*    private_state_gcv_->grid_width  = slide_width_->value();
-    private_state_gcv_->grid_height = slide_height_->value();
-    prepareParams(private_state_gcv_->eps, private_state_gcv_->ignore);
-*/}
-
-void SetOperation::fill(QBoxLayout *layout)
-{
-    ImageCombiner::fill(layout);
-
-    combo_compare_ = new QComboBox();
-    combo_compare_->addItem("Complement");
-    combo_compare_->addItem("Intersection");
-    combo_compare_->addItem("Union");
-
-    layout->addWidget(combo_compare_);
-    state_.operation_index = combo_compare_->currentIndex();
-
-    connect(combo_compare_, SIGNAL(currentIndexChanged(int)), this, SLOT(updateState(int)));
-}
-
-void SetOperation::State::readYaml(const YAML::Node &node)
-{
-    node["operation_index"] >> operation_index;
-}
-
-void SetOperation::State::writeYaml(YAML::Emitter &out) const
-{
-    out << YAML::Key << "operation_index" << YAML::Value << operation_index;
+    i1_ = addInput<CvMatMessage>("Mask 1");
+    i2_ = addInput<CvMatMessage>("Mask 2", true);
+    out_ = addOutput<CvMatMessage>("Combined");
 }
