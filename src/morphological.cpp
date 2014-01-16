@@ -54,6 +54,8 @@ void Morpholocial::allConnectorsArrived()
 
     cv::morphologyEx(a->value, msg->value, op, kernel, anchor, iterations, border_type, border_value);
 
+    msg->encoding = a->encoding;
+
     output_->publish(msg);
 }
 

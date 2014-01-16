@@ -19,7 +19,7 @@ csapex_moc_all(MOC src/*.h)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES image_transformation
+  LIBRARIES cvblob
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
@@ -32,7 +32,11 @@ include_directories(include
     ${catkin_INCLUDE_DIRS}
 )
 
+add_subdirectory(src/cvBlob)
+
 add_library(vision_plugins
+    src/adaptive_threshold.cpp
+    src/blob_detector.cpp
     src/combiner_gridcompare.cpp
     src/combiner_gridcompare_hist.cpp
     src/combiner_gridheatmap_hist.cpp
@@ -60,5 +64,5 @@ add_library(vision_plugins
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}
-  ${catkin_LIBRARIES}
+  ${catkin_LIBRARIES} cvblob
 )
