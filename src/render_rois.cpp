@@ -37,7 +37,11 @@ void RenderROIs::allConnectorsArrived()
 
     int thickness = param<int>("thickness");
 
-    img->value.copyTo(out->value);
+    if(img->encoding.size() == 1) {
+        cv::cvtColor(img->value, out->value, CV_GRAY2BGR);
+    } else {
+        img->value.copyTo(out->value);
+    }
 
     BOOST_FOREACH(const ConnectionType::Ptr& e, rois->value) {
         RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(e);
