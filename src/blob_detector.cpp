@@ -90,7 +90,7 @@ void BlobDetector::allConnectorsArrived()
     cvLabel(grayPtr, labelImgPtr, blobs);
 
 
-    VectorMessage::Ptr out(new VectorMessage(RoiMessage::make()));
+    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
     for (CvBlobs::const_iterator it=blobs.begin(); it!=blobs.end(); ++it) {
         const CvBlob& blob = *it->second;
@@ -157,6 +157,5 @@ void BlobDetector::setup()
     input_ = addInput<CvMatMessage>("Image");
 
     output_debug_ = addOutput<CvMatMessage>("OutputImage");
-    output_ = addOutput<VectorMessage>("ROIs");
-    output_->setType(VectorMessage::Ptr(new VectorMessage(RoiMessage::make())));
+    output_ = addOutput<VectorMessage, RoiMessage>("ROIs");
 }

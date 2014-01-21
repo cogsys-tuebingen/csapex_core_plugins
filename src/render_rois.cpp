@@ -56,8 +56,7 @@ void RenderROIs::setup()
     setSynchronizedInputs(true);
 
     input_img_ = addInput<CvMatMessage>("Image");
-    input_rois_ = addInput<VectorMessage>("ROIs");
-    input_rois_->setType(VectorMessage::Ptr(new VectorMessage(RoiMessage::make())));
+    input_rois_ = addInput<VectorMessage, RoiMessage>("ROIs");
 
     output_ = addOutput<CvMatMessage>("Rendered Image");
 }

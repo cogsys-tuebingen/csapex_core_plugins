@@ -38,7 +38,7 @@ void MergeROIs::allConnectorsArrived()
         cluster.integrate(r.rect());
     }
 
-    VectorMessage::Ptr out(new VectorMessage(RoiMessage::make()));
+    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
     for(std::vector<cv::Rect>::iterator it = cluster.begin(); it != cluster.end(); ++it) {
         RoiMessage::Ptr msg(new RoiMessage);
         msg->value = Roi(*it);
@@ -52,9 +52,6 @@ void MergeROIs::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<VectorMessage>("ROIs");
-    input_->setType(VectorMessage::Ptr(new VectorMessage(RoiMessage::make())));
-
-    output_ = addOutput<VectorMessage>("merged ROIs");
-    output_->setType(VectorMessage::Ptr(new VectorMessage(RoiMessage::make())));
+    input_ = addInput<VectorMessage, RoiMessage>("ROIs");
+    output_ = addOutput<VectorMessage, RoiMessage>("merged ROIs");
 }

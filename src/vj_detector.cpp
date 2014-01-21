@@ -81,7 +81,7 @@ void VJDetector::allConnectorsArrived()
         throw std::runtime_error("image must be grayscale.");
     }
 
-    VectorMessage::Ptr out(new VectorMessage(RoiMessage::make()));
+    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
     QImage img(a->value.data, a->value.cols, a->value.rows, QImage::Format_Indexed8);
     image_scanner->setImage(&img);
@@ -93,9 +93,7 @@ void VJDetector::allConnectorsArrived()
         out->value.push_back(msg);
     }
 
-    if(!out->value.empty()) {
-        output_->publish(out);
-    }
+    output_->publish(out);
 }
 
 
@@ -105,6 +103,5 @@ void VJDetector::setup()
 
     input_ = addInput<CvMatMessage>("Image");
 
-    output_ = addOutput<VectorMessage>("ROIs");
-    output_->setType(VectorMessage::Ptr(new VectorMessage(RoiMessage::make())));
+    output_ = addOutput<VectorMessage, RoiMessage>("ROIs");
 }
