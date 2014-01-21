@@ -1,25 +1,41 @@
 /// HEADER
 #include "simple_image_difference.h"
 
+/// PROJECT
+#include <csapex/model/connector_in.h>
+#include <csapex/model/connector_out.h>
+#include <csapex_vision/cv_mat_message.h>
+
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 
 using namespace vision_plugins;
+using namespace csapex;
+using namespace connection_types;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::SimpleImageDifference, csapex::Node);
+CSAPEX_REGISTER_CLASS(vision_plugins::SimpleImageDifference, csapex::Node)
 
 SimpleImageDifference::SimpleImageDifference()
 {
 }
 
-cv::Mat SimpleImageDifference::combine(const cv::Mat img1, const cv::Mat mask1, const cv::Mat img2, const cv::Mat mask2)
+void SimpleImageDifference::allConnectorsArrived()
 {
-    cv::Mat out;
-    cv::absdiff(img1, img2, out);
-    return out;
+    CvMatMessage::Ptr img1 = in_a_->getMessage<CvMatMessage>();
+    CvMatMessage::Ptr img2 = in_b_->getMessage<CvMatMessage>();
+
+    CvMatMessage::Ptr out(new CvMatMessage);
+    cv::absdiff(img1->value, img2->value, out->value);
+
+    out_->publish(out);
 }
 
-void SimpleImageDifference::insert(QBoxLayout *layout)
+void SimpleImageDifference::setup()
 {
+    setSynchronizedInputs(true);
 
+    in_a_ = addInput<CvMatMessage>("A");
+    in_b_ = addInput<CvMatMessage>("B");
+
+    out_ = addOutput<CvMatMessage>("A-B");
 }

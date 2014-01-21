@@ -60,6 +60,7 @@ add_library(vision_plugins
     src/extract_roi.cpp
     src/simple_image_difference.cpp
     src/simple_sink.cpp
+    src/number_generator.cpp
    ${MOC}
 )
 
