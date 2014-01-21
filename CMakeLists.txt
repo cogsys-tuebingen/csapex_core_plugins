@@ -55,6 +55,7 @@ add_library(vision_plugins
     src/filter_local_patterns.cpp
     src/morphological.cpp
     src/vj_detector.cpp
+    src/lk_tracking.cpp
     src/render_rois.cpp
     src/merge_rois.cpp
     src/extract_roi.cpp
