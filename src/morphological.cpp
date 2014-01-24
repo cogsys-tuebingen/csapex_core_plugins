@@ -52,7 +52,9 @@ void Morpholocial::allConnectorsArrived()
     int border_type = cv::BORDER_CONSTANT;
     const cv::Scalar& border_value = cv::morphologyDefaultBorderValue();
 
-    cv::morphologyEx(a->value, msg->value, op, kernel, anchor, iterations, border_type, border_value);
+    if(!a->value.empty()) {
+        cv::morphologyEx(a->value, msg->value, op, kernel, anchor, iterations, border_type, border_value);
+    }
 
     msg->encoding = a->encoding;
 
