@@ -26,6 +26,8 @@ RenderROIs::RenderROIs()
     addTag(Tag::get("ROI"));
 
     addParameter(param::ParameterFactory::declare<int>("thickness", 1, 20, 1, 1));
+    addParameter(param::ParameterFactory::declareColorParameter("color", 0,0,0));
+    addParameter(param::ParameterFactory::declare("force color", false));
 }
 
 void RenderROIs::allConnectorsArrived()
@@ -36,6 +38,7 @@ void RenderROIs::allConnectorsArrived()
     CvMatMessage::Ptr out(new CvMatMessage);
 
     int thickness = param<int>("thickness");
+    bool force_color = param<bool>("force color");
 
     if(img->encoding.size() == 1) {
         cv::cvtColor(img->value, out->value, CV_GRAY2BGR);
@@ -43,9 +46,23 @@ void RenderROIs::allConnectorsArrived()
         img->value.copyTo(out->value);
     }
 
+    cv::Scalar color;
+    if(force_color) {
+        std::vector<int> c = param<std::vector<int> >("color");
+        color = cv::Scalar(c[2], c[1], c[0]);
+    }
+
     BOOST_FOREACH(const ConnectionType::Ptr& e, rois->value) {
         RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(e);
-        cv::rectangle(out->value, roi->value.rect(), roi->value.color(), thickness);
+        cv::rectangle(out->value, roi->value.rect(), force_color ? color : roi->value.color(), thickness);
+
+        std::string text = roi->value.label();
+
+        if(!text.empty()) {
+            cv::Point pt = roi->value.rect().tl();
+            cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar::all(0), 4, CV_AA);
+            cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., roi->value.color(), 1, CV_AA);
+        }
     }
 
     output_->publish(out);

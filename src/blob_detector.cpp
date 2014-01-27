@@ -99,7 +99,7 @@ void BlobDetector::allConnectorsArrived()
         double r, g, b;
         _HSV2RGB_((double)((blob.label *77)%360), .5, 1., r, g, b);
         cv::Scalar color(b,g,r);
-        roi->value = Roi(blob.minx, blob.miny, (blob.maxx - blob.minx), (blob.maxy - blob.miny), color);
+        roi->value = Roi(blob.minx, blob.miny, (blob.maxx - blob.minx + 1), (blob.maxy - blob.miny + 1), color);
 
         out->value.push_back(roi);
     }
