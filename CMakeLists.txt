@@ -46,7 +46,6 @@ add_library(vision_plugins
     src/filter_merger.cpp
     src/filter_splitter.cpp
     src/filter_equalize.cpp
-    src/filter_undistort.cpp
     src/filter_perspective.cpp
     src/filter_histogram.cpp
     src/filter_coloradjustment.cpp
@@ -63,6 +62,9 @@ add_library(vision_plugins
     src/simple_sink.cpp
     src/number_generator.cpp
    ${MOC}
+
+    ###  RENEWED
+    src/undistort.cpp
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}
