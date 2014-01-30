@@ -7,7 +7,7 @@
 CSAPEX_REGISTER_CLASS(csapex::GridCompareHist, csapex::Node)
 
 using namespace csapex;
-using namespace cv_grid;
+using namespace utils_cv;
 
 GridCompareHist::GridCompareHist() :
     GridCompare(State::Ptr(new State)),
@@ -140,7 +140,7 @@ void GridCompareHist::prepareGrid(GridHist &g, const cv::Mat &img, const cv::Mat
     prepareHistParams(p.bins, p.ranges, p.eps);
     p.method = index_to_compare_[private_state_gch_->combo_index];
     p.image  = img;
-    cv_grid::prepare_grid<AttrHistogram>(g, height, width, p, mask, 1.0);
+    utils_cv::prepare_grid<AttrHistogram>(g, height, width, p, mask, 1.0);
 }
 
 void GridCompareHist::addHistSliders(QSlider *bins, QDoubleSlider *eps)

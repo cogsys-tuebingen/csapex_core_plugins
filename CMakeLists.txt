@@ -65,8 +65,9 @@ add_library(vision_plugins
     src/number_generator.cpp
    ${MOC}
 
-    ###  RENEWED
+    ###  NEW API ###
     src/undistort.cpp
+    src/camera_calibration.cpp
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}

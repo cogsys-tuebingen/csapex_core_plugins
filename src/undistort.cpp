@@ -47,8 +47,8 @@ void Undistort::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Scan");
-    output_ = addOutput<CvMatMessage>("Render");
+    input_ = addInput<CvMatMessage>("Distorted");
+    output_ = addOutput<CvMatMessage>("Undistorted");
 
     updateUndistorter();
 }
@@ -81,6 +81,6 @@ void Undistort::updateUndistorter()
     cv::Mat coef;
 
     if(read_matrices(path, intr, coef)) {
-        undist_.reset(new Undistorter(intr, coef));
+        undist_.reset(new utils_cv::Undistortion(intr, coef));
     }
 }

@@ -6,7 +6,7 @@
 CSAPEX_REGISTER_CLASS(csapex::GridCompareValue, csapex::Node)
 
 using namespace csapex;
-using namespace cv_grid;
+using namespace utils_cv;
 
 GridCompareValue::GridCompareValue() :
     GridCompare(State::Ptr(new State)),
@@ -125,13 +125,13 @@ void GridCompareValue::fill(QBoxLayout *layout)
     connect(slide_width_, SIGNAL(valueChanged(int)), this, SLOT(updateState(int)));
 }
 
-void GridCompareValue::prepareGrid(cv_grid::GridScalar &g, const cv::Mat &img, const cv::Mat &mask, const int width, const int height)
+void GridCompareValue::prepareGrid(utils_cv::GridScalar &g, const cv::Mat &img, const cv::Mat &mask, const int width, const int height)
 {
     AttrScalar::Params p;
     p.eps    = private_state_gcv_->eps;
     p.ignore = private_state_gcv_->ignore;
     p.image  = img;
-    cv_grid::prepare_grid<AttrScalar>(g, height, width, p, mask, 1.0);
+    utils_cv::prepare_grid<AttrScalar>(g, height, width, p, mask, 1.0);
 }
 
 void GridCompareValue::prepareParams(cv::Scalar &eps, cv::Vec<bool, 4> &ignore)
