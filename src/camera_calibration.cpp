@@ -17,12 +17,20 @@ csapex::CameraCalibration::CameraCalibration()
     addTag(Tag::get("Vision"));
 
     addParameter(param::ParameterFactory::declarePath("results", ""));
-    addParameter(param::ParameterFactory::declareTrigger("add"));
-    addParameter(param::ParameterFactory::declareTrigger("reset"));
-    addParameter(param::ParameterFactory::declareTrigger("calibrate"));
+    addParameter(param::ParameterFactory::declareTrigger("add"), boost::bind(&CameraCalibration::add, this));
+    addParameter(param::ParameterFactory::declareTrigger("reset"), boost::bind(&CameraCalibration::reset, this));
+    addParameter(param::ParameterFactory::declareTrigger("calibrate"), boost::bind(&CameraCalibration::calibrate, this));
     addParameter(param::ParameterFactory::declareRange("squares x", 1, 12, 5, 1));
     addParameter(param::ParameterFactory::declareRange("squares y", 1, 12, 8, 1));
     addParameter(param::ParameterFactory::declareRange("squares scale", 0.05, 0.5, 0.1, 0.05));
+
+
+    std::vector< std::pair<std::string, int> > types;
+    types.push_back(std::make_pair("chessboard", (int) utils_cv::CameraCalibration::CHESSBOARD));
+    types.push_back(std::make_pair("circles grid", (int) utils_cv::CameraCalibration::CIRCLES_GRID));
+    types.push_back(std::make_pair("asym. circles grid", (int) utils_cv::CameraCalibration::ASYMMETRIC_CIRCLES_GRID));
+
+    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types), boost::bind(&CameraCalibration::updateCalibration, this));
 
 }
 
@@ -61,5 +69,10 @@ void csapex::CameraCalibration::calibrate()
 
 void csapex::CameraCalibration::updateCalibration()
 {
-//    calibration_.reset(new CameraCalibration());
+    cv::Size board_size;
+    utils_cv::CameraCalibration::Mode mode = (utils_cv::CameraCalibration::Mode) param<int>("type");
+    board_size.width  = param<int>("squares x");
+    board_size.height = param<int>("squares y");
+    double square_size = param<double>("squares scale");
+    calibration_.reset(new utils_cv::CameraCalibration(mode, board_size, square_size));
 }

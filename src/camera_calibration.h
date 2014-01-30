@@ -15,12 +15,12 @@ public:
     virtual void setup();
 
 private:
-    CameraCalibration::Ptr calibration_;
+    utils_cv::CameraCalibration::Ptr calibration_;
 
-    ConnectorOut* output_;
-    ConnectorIn*  input_;
+    ConnectorOut*                    output_;
+    ConnectorIn*                     input_;
 
-    cv::Mat       buffer_frame_;
+    cv::Mat                          buffer_frame_;
 
     void add();
     void reset();
