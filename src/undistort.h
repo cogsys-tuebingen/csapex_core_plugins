@@ -20,8 +20,6 @@ private:
     bool read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs);
     void updateUndistorter();
 
-    cv::Size    last_size_;
-
     ConnectorOut* output_;
     ConnectorIn* input_;
 };

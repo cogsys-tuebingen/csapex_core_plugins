@@ -13,8 +13,7 @@ CSAPEX_REGISTER_CLASS(csapex::Undistort, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-Undistort::Undistort() :
-    last_size_(0,0)
+Undistort::Undistort()
 {
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
@@ -33,12 +32,9 @@ void Undistort::allConnectorsArrived()
     } else {
         int margin       = param<int>("margin");
         cv::Size  margin_size(2 * margin + in->value.cols, 2 * margin + in->value.rows);
-        if(margin_size != last_size_) {
-            last_size_ = margin_size;
-            undist_->reset_map(margin_size, margin, margin);
-        }
+        undist_->reset_map(margin_size, margin, margin);
 
-        cv::Mat working(last_size_.height, last_size_.width, in->value.type(), cv::Scalar::all(0));
+        cv::Mat working(margin_size.height, margin_size.width, in->value.type(), cv::Scalar::all(0));
         cv::Mat roi_working(working, cv::Rect(margin, margin, in->value.cols, in->value.rows));
         in->value.copyTo(roi_working);
         undist_->undistort(working, working);

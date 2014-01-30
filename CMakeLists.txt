@@ -5,6 +5,8 @@ find_package(catkin REQUIRED roscpp csapex_vision csapex_vision_features utils_c
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
+#set(CMAKE_BUILD_TYPE Debug)
+
 #set(CMAKE_CXX_FLAGS "-O3")
 
 csapex_moc_all(MOC src/*.h)
