@@ -23,7 +23,6 @@ private:
     cv::Mat                          buffer_frame_;
 
     void add();
-    void reset();
     void calibrate();
     void updateCalibration();
 };

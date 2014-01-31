@@ -27,18 +27,12 @@ void Undistort::allConnectorsArrived()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage);
 
-    if(undist_.get() == NULL) {
-        out->value = in->value.clone();
-    } else {
+    out->value = in->value.clone();
+    if(undist_.get() != NULL) {
         int margin       = param<int>("margin");
         cv::Size  margin_size(2 * margin + in->value.cols, 2 * margin + in->value.rows);
         undist_->reset_map(margin_size, margin, margin);
-
-        cv::Mat working(margin_size.height, margin_size.width, in->value.type(), cv::Scalar::all(0));
-        cv::Mat roi_working(working, cv::Rect(margin, margin, in->value.cols, in->value.rows));
-        in->value.copyTo(roi_working);
-        undist_->undistort(working, working);
-        out->value = working;
+        undist_->undistort(out->value, out->value);
     }
     output_->publish(out);
 }

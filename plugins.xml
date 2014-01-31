@@ -88,4 +88,9 @@
         The gained parameters can be used with the 'Undistort'-Plugin.
     </description>
   </class>
+  <class type="csapex::Scale" base_class_type="csapex::Node">
+    <description>
+        Scale images from 1 to 200 percent of the original size.
+    </description>
+  </class>
 </library>

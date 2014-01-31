@@ -5,7 +5,7 @@ find_package(catkin REQUIRED roscpp csapex_vision csapex_vision_features utils_c
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
-#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Debug)
 
 #set(CMAKE_CXX_FLAGS "-O3")
 
@@ -67,7 +67,9 @@ add_library(vision_plugins
 
     ###  NEW API ###
     src/undistort.cpp
+    src/scale.cpp
     src/camera_calibration.cpp
+
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}
