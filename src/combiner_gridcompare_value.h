@@ -59,7 +59,7 @@ protected:
 
     /// fill with standard gui elements
     virtual void fill(QBoxLayout *layout);
-    void prepareGrid(cv_grid::GridScalar &g, const cv::Mat &img, const cv::Mat &mask, const int width, const int height);
+    void prepareGrid(utils_cv::GridScalar &g, const cv::Mat &img, const cv::Mat &mask, const int width, const int height);
 
     /// specific preparation
     void prepareParams(cv::Scalar &eps, cv::Vec<bool, 4> &ignore);

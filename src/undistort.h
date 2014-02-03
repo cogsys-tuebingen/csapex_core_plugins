@@ -2,7 +2,7 @@
 #define FILTER_UNDISTORT_H
 
 /// COMPONENT
-#include <utils_cv/undistorter.h>
+#include <utils_cv/undistortion.h>
 #include <csapex/model/node.h>
 
 namespace csapex {
@@ -15,12 +15,10 @@ public:
     virtual void setup();
 
 private:
-    Undistorter::Ptr undist_;
+    utils_cv::Undistortion::Ptr undist_;
 
     bool read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs);
     void updateUndistorter();
-
-    cv::Size    last_size_;
 
     ConnectorOut* output_;
     ConnectorIn* input_;

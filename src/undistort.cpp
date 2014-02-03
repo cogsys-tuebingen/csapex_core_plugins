@@ -13,8 +13,7 @@ CSAPEX_REGISTER_CLASS(csapex::Undistort, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-Undistort::Undistort() :
-    last_size_(0,0)
+Undistort::Undistort()
 {
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
@@ -28,21 +27,12 @@ void Undistort::allConnectorsArrived()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage);
 
-    if(undist_.get() == NULL) {
-        out->value = in->value.clone();
-    } else {
+    out->value = in->value.clone();
+    if(undist_.get() != NULL) {
         int margin       = param<int>("margin");
         cv::Size  margin_size(2 * margin + in->value.cols, 2 * margin + in->value.rows);
-        if(margin_size != last_size_) {
-            last_size_ = margin_size;
-            undist_->reset_map(margin_size, margin, margin);
-        }
-
-        cv::Mat working(last_size_.height, last_size_.width, in->value.type(), cv::Scalar::all(0));
-        cv::Mat roi_working(working, cv::Rect(margin, margin, in->value.cols, in->value.rows));
-        in->value.copyTo(roi_working);
-        undist_->undistort(working, working);
-        out->value = working;
+        undist_->reset_map(margin_size, margin, margin);
+        undist_->undistort(out->value, out->value);
     }
     output_->publish(out);
 }
@@ -51,8 +41,8 @@ void Undistort::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Scan");
-    output_ = addOutput<CvMatMessage>("Render");
+    input_ = addInput<CvMatMessage>("Distorted");
+    output_ = addOutput<CvMatMessage>("Undistorted");
 
     updateUndistorter();
 }
@@ -85,6 +75,6 @@ void Undistort::updateUndistorter()
     cv::Mat coef;
 
     if(read_matrices(path, intr, coef)) {
-        undist_.reset(new Undistorter(intr, coef));
+        undist_.reset(new utils_cv::Undistortion(intr, coef));
     }
 }

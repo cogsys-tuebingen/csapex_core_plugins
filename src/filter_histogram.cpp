@@ -26,10 +26,10 @@ using namespace connection_types;
 Histogram::Histogram() :
     input_(NULL), output_histogram_(NULL),channel_count_(0),container_bin_counts_(NULL)
 {
-    colors_.push_back(cv_histogram::COLOR_WHITE);
-    colors_.push_back(cv_histogram::COLOR_GREEN);
-    colors_.push_back(cv_histogram::COLOR_CYAN);
-    colors_.push_back(cv_histogram::COLOR_RED);
+    colors_.push_back(utils_cv::COLOR_WHITE);
+    colors_.push_back(utils_cv::COLOR_GREEN);
+    colors_.push_back(utils_cv::COLOR_CYAN);
+    colors_.push_back(utils_cv::COLOR_RED);
 
     /// FIXME: this should be done in a CorePlugin!!!!
     Tag::createIfNotExists("Analysis");
@@ -98,10 +98,10 @@ void Histogram::messageArrived(ConnectorIn *source)
     prepare(bins, ranges);
 
     std::vector<cv::MatND>  histograms;
-    cv_histogram::full_channel_histogram(m->value, histograms, cv::Mat(), bins, ranges);
+    utils_cv::full_channel_histogram(m->value, histograms, cv::Mat(), bins, ranges);
 
     cv::Mat histogram_img(600,800,CV_8UC3, cv::Scalar(0,0,0));
-    cv_histogram::render_histogram<float>(histograms, bins, colors_, histogram_img, slide_zoom_->doubleValue());
+    utils_cv::render_histogram<float>(histograms, bins, colors_, histogram_img, slide_zoom_->doubleValue());
     histogram->value = histogram_img;
     output_histogram_->publish(histogram);
 }
@@ -127,7 +127,7 @@ void Histogram::updateDynamicGui(QBoxLayout *layout)
 
 void Histogram::prepare(cv::Mat &bins, cv::Mat &ranges)
 {
-    cv_histogram::prepare_params(bins, ranges, channel_count_);
+    utils_cv::prepare_params(bins, ranges, channel_count_);
     for(int i = 0 ; i < channel_count_ ; i++) {
         bins.at<int>(i) = bin_counts_[i]->value();
     }

@@ -28,7 +28,7 @@ public Q_SLOTS:
 
 
 private:
-    PerspectiveTransformer transformer_;
+    utils_cv::PerspectiveTransformer transformer_;
 
     QDoubleSlider *slider_rot_x_;
     QDoubleSlider *slider_rot_y_;

@@ -13,7 +13,7 @@ CSAPEX_REGISTER_CLASS(csapex::GridHeatMapHist, csapex::Node)
 
 using namespace csapex;
 using namespace QSignalBridges;
-using namespace cv_grid;
+using namespace utils_cv;
 using namespace connection_types;
 
 GridHeatMapHist::GridHeatMapHist() :

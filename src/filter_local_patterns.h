@@ -32,8 +32,8 @@ public Q_SLOTS:
     void update();
     void updateTime(double value);
 private:
-    cv_local_patterns::LBP lbp_;
-    cv_local_patterns::LTP ltp_;
+    utils_cv::LBP lbp_;
+    utils_cv::LTP ltp_;
 
     QLabel        *time_;
     QDoubleSlider *slider_k_;

@@ -25,7 +25,7 @@ void Equalize::insert(QBoxLayout *parent)
 
 void Equalize::filter(cv::Mat &img, cv::Mat &mask)
 {
-    cv_histogram::full_channel_equalize(img, img);
+    utils_cv::full_channel_equalize(img, img);
 }
 
 bool Equalize::usesMask()
