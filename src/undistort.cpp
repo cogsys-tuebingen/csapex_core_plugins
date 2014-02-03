@@ -18,8 +18,17 @@ Undistort::Undistort()
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
 
-    addParameter(param::ParameterFactory::declarePath("file", ""), boost::bind(&Undistort::updateUndistorter, this));
-    addParameter(param::ParameterFactory::declare("margin", 0, 1000, 0, 1), boost::bind(&Undistort::updateUndistorter, this));
+    addParameter(param::ParameterFactory::declarePath("file", ""), boost::bind(&Undistort::update, this));
+    addParameter(param::ParameterFactory::declare("margin", 0, 1000, 0, 1), boost::bind(&Undistort::update, this));
+
+    std::vector< std::pair<std::string, int> > modes;
+    modes.push_back(std::make_pair("nearest", (int) CV_INTER_NN));
+    modes.push_back(std::make_pair("linear", (int) CV_INTER_LINEAR));
+    modes.push_back(std::make_pair("area", (int) CV_INTER_AREA));
+    modes.push_back(std::make_pair("cubic", (int) CV_INTER_CUBIC));
+    modes.push_back(std::make_pair("lanczos4", (int) CV_INTER_LANCZOS4));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes), boost::bind(&Undistort::update, this));
+
 }
 
 void Undistort::allConnectorsArrived()
@@ -44,7 +53,7 @@ void Undistort::setup()
     input_ = addInput<CvMatMessage>("Distorted");
     output_ = addOutput<CvMatMessage>("Undistorted");
 
-    updateUndistorter();
+    update();
 }
 
 bool Undistort::read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs)
@@ -67,14 +76,16 @@ bool Undistort::read_matrices(const std::string &path, cv::Mat &intrinsics, cv::
     }
 }
 
-void Undistort::updateUndistorter()
+void Undistort::update()
 {
 
     std::string path = param<std::string>("file");
     cv::Mat intr;
     cv::Mat coef;
+    int mode = param<int>("mode");
 
     if(read_matrices(path, intr, coef)) {
-        undist_.reset(new utils_cv::Undistortion(intr, coef));
+        undist_.reset(new utils_cv::Undistortion(intr, coef, mode));
     }
+
 }

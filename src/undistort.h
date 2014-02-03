@@ -18,7 +18,7 @@ private:
     utils_cv::Undistortion::Ptr undist_;
 
     bool read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs);
-    void updateUndistorter();
+    void update();
 
     ConnectorOut* output_;
     ConnectorIn* input_;

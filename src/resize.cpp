@@ -42,6 +42,7 @@ void Resize::allConnectorsArrived()
         throw std::runtime_error("Cannot scale empty images!");
     }
 
+    out->encoding = in->encoding;
     output_->publish(out);
 }
 

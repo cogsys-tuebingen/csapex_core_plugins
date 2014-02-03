@@ -41,9 +41,18 @@ void csapex::CameraCalibration::allConnectorsArrived()
 
     /// BUFFER THE CURRENT FRAME
     buffer_frame_ = in->value.clone();
-    out->value = in->value.clone();
 
     calibration_->analyze(buffer_frame_);
+
+    /// OUTPUT
+    if(in->encoding.size() == 1) {
+        cv::cvtColor(in->value, out->value, CV_GRAY2BGR);
+        out->encoding = enc::bgr;
+    } else {
+        out->value = in->value.clone();
+        out->encoding = in->encoding;
+    }
+
     calibration_->drawFoundCorners(out->value);
     output_->publish(out);
 
