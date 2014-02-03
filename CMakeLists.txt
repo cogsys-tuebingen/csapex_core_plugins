@@ -68,6 +68,7 @@ add_library(vision_plugins
     ###  NEW API ###
     src/undistort.cpp
     src/scale.cpp
+    src/resize.cpp
     src/camera_calibration.cpp
 
 )
