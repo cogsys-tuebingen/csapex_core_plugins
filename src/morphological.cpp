@@ -20,8 +20,8 @@ Morpholocial::Morpholocial()
 {
     addTag(Tag::get("Vision"));
 
-    addParameter(param::ParameterFactory::declare<int>("size", 1, 20, 2, 1));
-    addParameter(param::ParameterFactory::declare<int>("iterations", 0, 10, 1, 1));
+    addParameter(param::ParameterFactory::declareRange<int>("size", 1, 20, 2, 1));
+    addParameter(param::ParameterFactory::declareRange<int>("iterations", 0, 10, 1, 1));
 
     std::vector< std::pair<std::string, int> > types;
     types.push_back(std::make_pair("MORPH_OPEN", (int) cv::MORPH_OPEN));
