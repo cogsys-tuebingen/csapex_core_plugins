@@ -16,9 +16,9 @@ using namespace csapex;
 Scale::Scale()
 {
     addTag(Tag::get("Vision"));
-    addParameter(param::ParameterFactory::declareRange("percent x", 1.0, 200.0, 100.0, 1.0),
+    addParameter(param::ParameterFactory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
                  boost::bind(&Scale::update, this));
-    addParameter(param::ParameterFactory::declareRange("percent y", 1.0, 200.0, 100.0, 1.0),
+    addParameter(param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
                  boost::bind(&Scale::update, this));
     std::vector< std::pair<std::string, int> > modes;
     modes.push_back(std::make_pair("nearest", (int) CV_INTER_NN));

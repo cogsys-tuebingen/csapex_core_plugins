@@ -70,7 +70,8 @@ add_library(vision_plugins
     src/scale.cpp
     src/resize.cpp
     src/camera_calibration.cpp
-
+    src/corners/detection.cpp
+    src/corners/harris.cpp
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}
