@@ -47,7 +47,6 @@ add_library(vision_plugins
     src/combiner_set_operation.cpp
     src/filter_merger.cpp
     src/filter_splitter.cpp
-    src/filter_equalize.cpp
     src/filter_perspective.cpp
     src/filter_histogram.cpp
     src/filter_coloradjustment.cpp
@@ -67,11 +66,17 @@ add_library(vision_plugins
 
     ###  NEW API ###
     src/undistort.cpp
+    src/equalize.cpp
     src/scale.cpp
     src/resize.cpp
     src/camera_calibration.cpp
     src/corners/detection.cpp
     src/corners/harris.cpp
+    src/corners/canny.cpp
+    src/corners/eigenvals_and_vecs.cpp
+    src/corners/hough_linesp.cpp
+    src/monofilter.cpp
+
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}

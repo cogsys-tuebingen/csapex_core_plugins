@@ -1,16 +1,17 @@
-#ifndef CORNER_DETECTION_H
-#define CORNER_DETECTION_H
+#ifndef EQUALIZE_H
+#define EQUALIZE_H
 
 /// COMPONENT
 #include <csapex/model/node.h>
 
 namespace csapex {
 
-class CornerDetection : public csapex::Node
+class Equalize : public csapex::Node
 {
 public:
-    CornerDetection();
+    Equalize();
 
+    virtual void allConnectorsArrived();
     virtual void setup();
 
 protected:
@@ -19,4 +20,5 @@ protected:
 };
 
 }
-#endif // CORNER_DETECTION_H
+
+#endif // EQUALIZE_H

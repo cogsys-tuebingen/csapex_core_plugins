@@ -26,9 +26,6 @@
   <class type="csapex::Splitter" base_class_type="csapex::Node">
     <description>none yet</description>
   </class>
-  <class type="vision_plugins::Equalize" base_class_type="csapex::Node">
-    <description>none yet</description>
-  </class>
   <class type="csapex::Histogram" base_class_type="csapex::Node">
     <description>none yet</description>
   </class>
@@ -75,6 +72,7 @@
     <description>none yet</description>
   </class>
 
+  <!-- NEW API -->
   <class type="csapex::Undistort" base_class_type="csapex::Node">
     <description>
         Undistort and rectify images using given camera parameters.
@@ -90,7 +88,7 @@
   </class>
   <class type="csapex::Scale" base_class_type="csapex::Node">
     <description>
-        Scale images from 1 to 200 percent of the original size.
+        Scale images from 1 to 400 percent of the original size.
     </description>
   </class>
   <class type="csapex::Resize" base_class_type="csapex::Node">
@@ -98,9 +96,37 @@
         Resize images from 10 to 10000 pixels.
     </description>
   </class>
-  <class type="csapex::CornerDetection" base_class_type="csapex::Node">
+  <class type="csapex::CornerHarris" base_class_type="csapex::Node">
     <description>
-        Find corners in an image using different methods.
+        Make it possible to find corners in an image by appling the harrisCorner function.
+        It turns out an grayscale image giving selected border types at extreme gradients.
+    </description>
+  </class>
+  <class type="csapex::Equalize" base_class_type="csapex::Node">
+    <description>
+        Do a histogram equalization on each channel of a image.
+    </description>
+  </class>
+  <class type="csapex::MonoFilter" base_class_type="csapex::Node">
+    <description>
+        Filter a value range an set other values to defined fix values.
+    </description>
+  </class>
+  <class type="csapex::Canny" base_class_type="csapex::Node">
+    <description>
+        Apply the canny edge filter to an image.
+    </description>
+  </class>
+  <class type="csapex::EigenValsAndVecs" base_class_type="csapex::Node">
+    <description>
+        Apply the computation of a covariation matrix of derivatives over a neighborhood
+        of pixels. Calculate edges with this method.
+    </description>
+  </class>
+  <class type="csapex::HoughLinesP" base_class_type="csapex::Node">
+    <description>
+        Search lines in an image by using the probabilistic hough lines function
+        of opencv.
     </description>
   </class>
 </library>

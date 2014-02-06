@@ -19,7 +19,7 @@ Undistort::Undistort()
     addTag(Tag::get("Vision"));
 
     addParameter(param::ParameterFactory::declarePath("file", ""), boost::bind(&Undistort::update, this));
-    addParameter(param::ParameterFactory::declare("margin", 0, 1000, 0, 1), boost::bind(&Undistort::update, this));
+    addParameter(param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), boost::bind(&Undistort::update, this));
 
     std::vector< std::pair<std::string, int> > modes;
     modes.push_back(std::make_pair("nearest", (int) CV_INTER_NN));

@@ -20,6 +20,7 @@ csapex::CameraCalibration::CameraCalibration()
     addParameter(param::ParameterFactory::declareTrigger("add"), boost::bind(&CameraCalibration::add, this));
     addParameter(param::ParameterFactory::declareTrigger("reset"), boost::bind(&CameraCalibration::updateCalibration, this));
     addParameter(param::ParameterFactory::declareTrigger("calibrate"), boost::bind(&CameraCalibration::calibrate, this));
+    addParameter(param::ParameterFactory::declareRange("kernel", 1, 31, 11, 2), boost::bind(&CameraCalibration::updateCalibration, this));
     addParameter(param::ParameterFactory::declareRange("squares x", 1, 12, 5, 1), boost::bind(&CameraCalibration::updateCalibration, this));
     addParameter(param::ParameterFactory::declareRange("squares y", 1, 12, 8, 1), boost::bind(&CameraCalibration::updateCalibration, this));
     addParameter(param::ParameterFactory::declareRange("squares scale", 0.05, 0.5, 0.1, 0.05), boost::bind(&CameraCalibration::updateCalibration, this));
@@ -97,5 +98,6 @@ void csapex::CameraCalibration::updateCalibration()
     board_size.width  = param<int>("squares x");
     board_size.height = param<int>("squares y");
     double square_size = param<double>("squares scale");
-    calibration_.reset(new utils_cv::CameraCalibration(mode, board_size, square_size));
+    int    kernel_size = param<int>("kernel");
+    calibration_.reset(new utils_cv::CameraCalibration(mode, board_size, square_size, kernel_size));
 }
