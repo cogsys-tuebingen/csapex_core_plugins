@@ -31,21 +31,21 @@ Canny::Canny() :
 void Canny::allConnectorsArrived()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage);
 
-    cv::Mat tmp;
-    cv::Mat edges;
-    if(in->encoding.size() != 1 ) {
-        cv::cvtColor(in->value, tmp, CV_BGR2GRAY);
-    } else {
-        tmp = in->value;
+    if(in->getEncoding() != enc::mono) {
+        throw std::runtime_error("image must be grayscale.");
     }
 
-    cv::Canny(tmp, edges, threshold_1_, threshold_2_, aperture_size_, L2_gradient_);
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
+
+    cv::Mat edges;
+
+    cv::Canny(in->value, edges, threshold_1_, threshold_2_, aperture_size_, L2_gradient_);
+
     out->value.create(in->value.size(), in->value.type());
     out->value.setTo(cv::Scalar::all(0));
     in->value.copyTo(out->value,edges);
-    out->encoding = in->encoding;
+
     output_->publish(out);
 }
 

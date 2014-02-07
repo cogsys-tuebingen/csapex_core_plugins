@@ -41,19 +41,15 @@ CornerHarris::CornerHarris() :
 void CornerHarris::allConnectorsArrived()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage);
 
-    cv::Mat tmp;
-    if(in->encoding.size() != 1 ) {
-        cv::cvtColor(in->value, tmp, CV_BGR2GRAY);
-    } else {
-        tmp = in->value;
+    if(in->getEncoding() != enc::mono) {
+        throw std::runtime_error("image must be grayscale.");
     }
 
-    cv::cornerHarris(tmp, tmp, block_size_, k_size_, k_, border_type_);
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
 
-    out->encoding = enc::mono;
-    out->value = tmp.clone();
+    cv::cornerHarris(in->value, out->value, block_size_, k_size_, k_, border_type_);
+
     output_->publish(out);
 }
 

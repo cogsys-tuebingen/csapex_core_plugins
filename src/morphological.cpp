@@ -42,7 +42,7 @@ void Morpholocial::allConnectorsArrived()
 {
     connection_types::CvMatMessage::Ptr a = input_->getMessage<connection_types::CvMatMessage>();
 
-    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage);
+    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(a->getEncoding()));
     int op = param<int>("type");
     int morph_elem = param<int>("elem");
     int morph_size = param<int>("size");
@@ -55,8 +55,6 @@ void Morpholocial::allConnectorsArrived()
     if(!a->value.empty()) {
         cv::morphologyEx(a->value, msg->value, op, kernel, anchor, iterations, border_type, border_value);
     }
-
-    msg->encoding = a->encoding;
 
     output_->publish(msg);
 }

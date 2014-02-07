@@ -38,29 +38,22 @@ HoughLinesP::HoughLinesP() :
 void HoughLinesP::allConnectorsArrived()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage);
 
-    cv::Mat tmp;
-    if(in->encoding.size() != 1 ) {
-        cv::cvtColor(in->value, tmp, CV_BGR2GRAY);
-        out->value = in->value.clone();
-    } else {
-        tmp = in->value;
-        cv::cvtColor(in->value, out->value, CV_GRAY2BGR);
+    if(in->getEncoding() != enc::mono) {
+        throw std::runtime_error("image must be grayscale.");
     }
+
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr));
+    cv::cvtColor(in->value, out->value, CV_GRAY2BGR);
 
     std::vector<cv::Vec4i> lines;
-    cv::HoughLinesP( tmp, lines, rho_, theta_/180, threshold_, min_line_length_, max_line_gap_ );
+    cv::HoughLinesP(in->value, lines, rho_, theta_/180, threshold_, min_line_length_, max_line_gap_);
 
-
-
-    for( size_t i = 0; i < lines.size(); i++ )
-    {
+    for( size_t i = 0; i < lines.size(); i++ ) {
         cv::line(out->value, cv::Point(lines[i][0], lines[i][1]),
-            cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0,0,255), 3, 8 );
+                cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0,0,255), 3, 8 );
     }
 
-    out->encoding = enc::bgr;
     output_->publish(out);
 }
 

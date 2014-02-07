@@ -42,7 +42,7 @@ void AdaptiveThreshold::allConnectorsArrived()
 {
     CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
 
-    if(img->encoding.size() != 1) {
+    if(img->getEncoding() != enc::mono) {
         throw std::runtime_error("image must be grayscale.");
     }
 
@@ -56,8 +56,7 @@ void AdaptiveThreshold::allConnectorsArrived()
         --blockSize;
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage);
-    out->encoding = enc::mono;
+    CvMatMessage::Ptr out(new CvMatMessage(enc::mono));
 
     cv::adaptiveThreshold(img->value, out->value, maxValue, adaptiveMethod, thresholdType, blockSize, C);
 

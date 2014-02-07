@@ -31,12 +31,12 @@ void SetOperation::allConnectorsArrived()
 {
     CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
 
-    if(img1->encoding.size() != 1) {
+    if(img1->getEncoding() != enc::mono) {
         throw std::runtime_error("No Single Channel!");
     }
 
 
-    CvMatMessage::Ptr out(new CvMatMessage);
+    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));
 
     int op = param<int>("operation");
     if(op == COMPLEMENT) {

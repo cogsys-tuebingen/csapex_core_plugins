@@ -22,14 +22,14 @@ Splitter::Splitter() :
     state_.channel_count_ = 0;
 }
 
-void Splitter::fill(QBoxLayout *)
+void Splitter::setup()
 {
-    if(input_ == NULL) {
-        setSynchronizedInputs(true);
+    setSynchronizedInputs(true);
 
-        /// add input
-        input_ = addInput<CvMatMessage>("Image");
-    }
+    /// add input
+    input_ = addInput<CvMatMessage>("Image");
+
+    updateOutputs();
 }
 
 void Splitter::allConnectorsArrived()
@@ -39,36 +39,39 @@ void Splitter::allConnectorsArrived()
     cv::split(m->value, channels);
 
     bool recompute = state_.channel_count_ != (int) channels.size();
-    if(static_cast<unsigned>(m->encoding.size()) != channels.size()) {
+    if(static_cast<unsigned>(m->getEncoding().size()) != channels.size()) {
         recompute = true;
-    } else if(m->encoding.size() != state_.encoding_.size()) {
+    } else if(m->getEncoding().size() != state_.encoding_.size()) {
         recompute = true;
     } else {
-        for(int i = 0, n = m->encoding.size(); i < n; ++i) {
-            if(m->encoding[i].name != state_.encoding_[i].name) {
+        for(int i = 0, n = m->getEncoding().size(); i < n; ++i) {
+            if(m->getEncoding()[i].name != state_.encoding_[i].name) {
                 recompute = true;
                 break;
             }
         }
     }
     if(recompute) {
-        state_.encoding_ = m->encoding;
+        state_.encoding_ = m->getEncoding();
         state_.channel_count_ = channels.size();
+
+        updateOutputs();
         Q_EMIT modelChanged();
         return;
     }
 
 
     for(unsigned i = 0 ; i < channels.size() ; i++) {
-        CvMatMessage::Ptr channel_out(new CvMatMessage);
+        Encoding e;
+        e.push_back(state_.encoding_[i]);
+
+        CvMatMessage::Ptr channel_out(new CvMatMessage(e));
         channel_out->value = channels[i];
-        channel_out->encoding.clear();
-        channel_out->encoding.push_back(state_.encoding_[i]);
         getOutput(i)->publish(channel_out);
     }
 }
 
-void Splitter::updateDynamicGui(QBoxLayout *layout)
+void Splitter::updateOutputs()
 {
     unsigned n = countOutputs();
 

@@ -78,7 +78,7 @@ void Histogram::fill(QBoxLayout *layout)
 void Histogram::messageArrived(ConnectorIn *source)
 {
     CvMatMessage::Ptr m = source->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr histogram(new CvMatMessage);
+    CvMatMessage::Ptr histogram(new CvMatMessage(enc::bgr));
 
     if(m->value.channels() != channel_count_) {
         channel_count_ = m->value.channels();

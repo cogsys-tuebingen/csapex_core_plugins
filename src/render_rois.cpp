@@ -35,13 +35,14 @@ void RenderROIs::allConnectorsArrived()
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
     VectorMessage::Ptr rois = input_rois_->getMessage<VectorMessage>();
 
-    CvMatMessage::Ptr out(new CvMatMessage);
+    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding()));
 
     int thickness = param<int>("thickness");
     bool force_color = param<bool>("force color");
 
-    if(img->encoding.size() == 1) {
+    if(img->getEncoding().size() == 1) {
         cv::cvtColor(img->value, out->value, CV_GRAY2BGR);
+        out->setEncoding(enc::bgr);
     } else {
         img->value.copyTo(out->value);
     }

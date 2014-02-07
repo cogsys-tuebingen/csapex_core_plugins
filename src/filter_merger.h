@@ -2,7 +2,11 @@
 #define FILTER_MERGER_H
 
 /// COMPONENT
-#include <csapex_vision/filter.h>
+#include <csapex/model/boxed_object.h>
+#include <csapex_vision/encoding.h>
+
+/// SYSTEM
+#include <opencv2/opencv.hpp>
 
 class QSpinBox;
 
@@ -41,7 +45,7 @@ private:
     std::map<ConnectorIn*,bool> input_arrivals_;
     QSpinBox                    *input_count_;
 
-    void collectMessage(std::vector<cv::Mat> &messages);
+    void collectMessage(std::vector<cv::Mat> &messages, Encoding &encoding);
     void updateArrivals(ConnectorIn *input);
     bool gotAllArrivals();
     void resetInputArrivals();
