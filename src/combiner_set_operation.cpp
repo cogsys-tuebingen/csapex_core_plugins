@@ -10,20 +10,25 @@
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 #include <QComboBox>
+#include <boost/assign/std.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::SetOperation, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
 
+using namespace boost::assign;
+
+
 SetOperation::SetOperation()
 {
     addTag(Tag::get("Vision"));
 
-    std::vector< std::pair<std::string, int> > methods;
-    methods.push_back(std::make_pair("Complement", (int) COMPLEMENT));
-    methods.push_back(std::make_pair("Intersection", (int) INTERSECTION));
-    methods.push_back(std::make_pair("Union", (int) UNION));
+    std::map<std::string, int> methods = map_list_of
+            ("Complement", (int) COMPLEMENT)
+            ("Intersection", (int) INTERSECTION)
+            ("Union", (int) UNION);
+
     addParameter(param::ParameterFactory::declareParameterSet("operation", methods));
 }
 
