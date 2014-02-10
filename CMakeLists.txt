@@ -69,13 +69,13 @@ add_library(vision_plugins
     src/equalize.cpp
     src/scale.cpp
     src/resize.cpp
-    src/camera_calibration.cpp
-    src/corners/detection.cpp
-    src/corners/harris.cpp
-    src/corners/canny.cpp
-    src/corners/eigenvals_and_vecs.cpp
-    src/corners/hough_linesp.cpp
     src/monofilter.cpp
+    src/camera_calibration.cpp
+    src/corners_lines/detection.cpp
+    src/corners_lines/harris.cpp
+    src/corners_lines/canny.cpp
+    src/corners_lines/eigenvals_and_vecs.cpp
+    src/corners_lines/hough_linesp.cpp
 
 )
 
