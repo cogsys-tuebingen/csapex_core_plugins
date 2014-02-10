@@ -5,7 +5,10 @@
 #include <csapex/model/node.h>
 
 /// SYSTEM
+#if ((BOOST_VERSION >> 20) & 0xF) >= 1 && ((BOOST_VERSION >> 8) & 0xFFF) >= 49
 #include <boost/spirit/include/support_utree.hpp>
+#endif
+
 #include <boost/smart_ptr/make_shared.hpp>
 #include <opencv2/opencv.hpp>
 
