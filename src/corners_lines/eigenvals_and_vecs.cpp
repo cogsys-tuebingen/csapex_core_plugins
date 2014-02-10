@@ -47,10 +47,10 @@ EigenValsAndVecs::EigenValsAndVecs() :
 void EigenValsAndVecs::allConnectorsArrived()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage);
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
     cv::Mat tmp;
-    if(in->encoding.size() != 1 ) {
+    if(in->getEncoding() != enc::mono ) {
         cv::cvtColor(in->value, tmp, CV_BGR2GRAY);
     } else {
         tmp = in->value;

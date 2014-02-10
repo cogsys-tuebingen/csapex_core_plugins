@@ -33,12 +33,14 @@ MonoFilter::MonoFilter()
 void MonoFilter::allConnectorsArrived()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage);
 
-    assert(in->encoding.size() == 1);
+    if(in->getEncoding() != enc::mono) {
+        throw std::runtime_error("image must be grayscale.");
+    }
+
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
 
     out->value    = in->value.clone();
-    out->encoding = in->encoding;
 
     for(int i = 0 ; i < out->value.rows ; ++i) {
         for(int j = 0 ; j < out->value.cols ; ++j) {

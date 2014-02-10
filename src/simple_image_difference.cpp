@@ -24,7 +24,7 @@ void SimpleImageDifference::allConnectorsArrived()
     CvMatMessage::Ptr img1 = in_a_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr img2 = in_b_->getMessage<CvMatMessage>();
 
-    CvMatMessage::Ptr out(new CvMatMessage);
+    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));
     cv::absdiff(img1->value, img2->value, out->value);
 
     out_->publish(out);

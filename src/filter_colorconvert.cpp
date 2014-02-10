@@ -18,6 +18,7 @@ using namespace csapex;
 using namespace csapex::connection_types;
 
 ColorConvert::ColorConvert()
+    : combo_in_(NULL)
 {
     cs_pair_to_operation_.insert(csiPair(csPair(RGB, BGR), (int) CV_RGB2BGR));
     cs_pair_to_operation_.insert(csiPair(csPair(BGR, RGB), (int) CV_BGR2RGB));
@@ -75,7 +76,6 @@ void ColorConvert::fill(QBoxLayout *parent)
 void ColorConvert::allConnectorsArrived()
 {
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr out(new CvMatMessage);
 
     /// MEMENTO
     state_.input_index = combo_in_->currentIndex();
@@ -85,11 +85,11 @@ void ColorConvert::allConnectorsArrived()
     cspair.first  = index_to_cs_in_[state_.input_index];
     cspair.second = index_to_cs_out_[state_.output_index];
 
-    out->encoding = cs_to_encoding_[cspair.second];
+    CvMatMessage::Ptr out(new CvMatMessage(cs_to_encoding_[cspair.second]));
 
-    if(img->encoding.size() != cs_to_encoding_[cspair.first].size()) {
+    if(img->getEncoding().size() != cs_to_encoding_[cspair.first].size()) {
         std::stringstream error;
-        error << "Conversion not applicable! Input encoding #" << img->encoding.size() << ", target #"  <<  cs_to_encoding_[cspair.first].size();
+        error << "Conversion not applicable! Input encoding #" << img->getEncoding().size() << ", target #"  <<  cs_to_encoding_[cspair.first].size();
         throw std::runtime_error(error.str());
     }
 
@@ -98,7 +98,7 @@ void ColorConvert::allConnectorsArrived()
             int mode = cs_pair_to_operation_[cspair];
             cv::cvtColor(img->value, out->value, mode);
 
-            if((int) out->encoding.size() != out->value.channels()) {
+            if((int) out->getEncoding().size() != out->value.channels()) {
                 throw std::runtime_error("Conversion didn't work!");
             }
         } else {
@@ -123,8 +123,11 @@ void ColorConvert::setState(Memento::Ptr memento)
     assert(m.get());
 
     state_ = *m;
-    combo_in_->setCurrentIndex(state_.input_index);
-    combo_out_->setCurrentIndex(state_.output_index);
+
+    if(combo_in_) {
+        combo_in_->setCurrentIndex(state_.input_index);
+        combo_out_->setCurrentIndex(state_.output_index);
+    }
 }
 
 bool ColorConvert::usesMask()

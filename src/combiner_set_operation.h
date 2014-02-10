@@ -4,7 +4,9 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
+
 /**
  * @brief The SetOperation class can be used to compare two images using a grid
  *        overlay. The Feature observed in this case is the mean value of values given
@@ -13,9 +15,9 @@ namespace csapex {
 class SetOperation : public Node
 {
     enum {
-        COMPLEMENT =0,
-        INTERSECTION =1,
-        UNION =2
+        COMPLEMENT   = 0,
+        INTERSECTION = 1,
+        UNION        = 2
     };
 
 public:

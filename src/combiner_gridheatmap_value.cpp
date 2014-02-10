@@ -63,7 +63,7 @@ cv::Mat GridHeatMapValue::combine(const cv::Mat img1, const cv::Mat mask1, const
                 if(run_state_ == RESET)
                     return cv::Mat();
 
-                CvMatMessage::Ptr img_msg_result(new CvMatMessage);
+                CvMatMessage::Ptr img_msg_result(new CvMatMessage(enc::bgr));
                 img_msg_result->value = out;
                 output_img_->publish(img_msg_result);
             }

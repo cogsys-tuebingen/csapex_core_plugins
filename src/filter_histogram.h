@@ -11,8 +11,8 @@ class QSlider;
 
 namespace csapex {
 /// constants
-static int HISTOGRAM_BINS_MAX = 512;
-static int HISTOGRAM_BINS_STD = 256;
+static const int HISTOGRAM_BINS_MAX = 512;
+static const int HISTOGRAM_BINS_STD = 256;
 
 class Histogram : public csapex::BoxedObject
 {

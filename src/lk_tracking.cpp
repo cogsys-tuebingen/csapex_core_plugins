@@ -29,7 +29,6 @@ LKTracking::LKTracking()
     addParameter(param::ParameterFactory::declare<int>("winSize", 10, 80, 31, 1));
     addParameter(param::ParameterFactory::declare<int>("subPixWinSize", 1, 40, 10, 1), cb);
 
-    addParameter(param::ParameterFactory::declare("subPixWinSize", 1, 40, 10, 1), cb);
     addParameter(param::ParameterFactory::declareTrigger("reset"), cb);
 
     addParameter(param::ParameterFactory::declare<int>("debug/circlesize", 1, 15, 2, 1));
@@ -38,7 +37,7 @@ LKTracking::LKTracking()
 void LKTracking::allConnectorsArrived()
 {
     CvMatMessage::Ptr img = in_image_->getMessage<CvMatMessage>();
-    if(img->encoding.size() != 1) {
+    if(img->getEncoding() != enc::mono) {
         throw std::runtime_error("input image must be 1-channel");
     }
 
@@ -76,7 +75,7 @@ void LKTracking::allConnectorsArrived()
 
         size_t k = 0;
 
-        CvMatMessage::Ptr out_dbg(new CvMatMessage);
+        CvMatMessage::Ptr out_dbg(new CvMatMessage(enc::bgr));
 
         bool debug = out_debug_->isConnected();
         if(debug) {

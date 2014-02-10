@@ -55,8 +55,5 @@ void SimpleSink::messageArrived(ConnectorIn *source)
     }
     cv::merge(channels, m->value);
 
-    /// create msg
-    CvMatMessage::Ptr m1(new CvMatMessage);
-
     output_->publish(m);
 }

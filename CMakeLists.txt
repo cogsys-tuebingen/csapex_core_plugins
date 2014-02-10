@@ -39,6 +39,7 @@ add_subdirectory(src/cvBlob)
 add_library(vision_plugins
     src/adaptive_threshold.cpp
     src/blob_detector.cpp
+    src/generic_image_combiner.cpp
     src/combiner_gridcompare.cpp
     src/combiner_gridcompare_hist.cpp
     src/combiner_gridheatmap_hist.cpp

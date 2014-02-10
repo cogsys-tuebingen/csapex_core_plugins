@@ -33,7 +33,7 @@ void ExtractROI::allConnectorsArrived()
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
     RoiMessage::Ptr roi = input_roi_->getMessage<RoiMessage>();
 
-    CvMatMessage::Ptr out(new CvMatMessage);
+    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding()));
 
     cv::Mat(img->value, roi->value.rect()).copyTo(out->value);
 

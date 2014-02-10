@@ -34,7 +34,7 @@ Undistort::Undistort()
 void Undistort::allConnectorsArrived()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage);
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
     out->value = in->value.clone();
     if(undist_.get() != NULL) {

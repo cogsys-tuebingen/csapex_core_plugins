@@ -24,9 +24,8 @@ NumberGenerator::NumberGenerator()
 
 void NumberGenerator::allConnectorsArrived()
 {
-    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage);
+    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr));
 
-    msg->encoding = enc::bgr;
     msg->value = cv::Mat(400, 400, CV_8UC3);
 
     std::stringstream txt;

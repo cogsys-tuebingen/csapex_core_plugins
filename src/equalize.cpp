@@ -24,9 +24,8 @@ Equalize::Equalize()
 void Equalize::allConnectorsArrived()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage);
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
     out->value    = in->value.clone();
-    out->encoding = in->encoding;
     utils_cv::full_channel_equalize(out->value, out->value);
     output_->publish(out);
 }

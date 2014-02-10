@@ -77,7 +77,7 @@ void VJDetector::allConnectorsArrived()
 
     CvMatMessage::Ptr a = input_->getMessage<CvMatMessage>();
 
-    if(a->encoding.size() != 1) {
+    if(a->getEncoding() != enc::mono) {
         throw std::runtime_error("image must be grayscale.");
     }
 

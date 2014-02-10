@@ -2,19 +2,18 @@
 #define FILTER_SPLITTER_H
 
 /// COMPONENT
-#include <csapex_vision/filter.h>
+#include <csapex/model/node.h>
 #include <csapex_vision/cv_mat_message.h>
 
 namespace csapex {
-class Splitter : public csapex::BoxedObject
+class Splitter : public csapex::Node
 {
     Q_OBJECT
 
 public:
     Splitter();
 
-    virtual void fill(QBoxLayout* layout);
-
+    void setup();
 
     void setState(Memento::Ptr memento);
     Memento::Ptr getState() const;
@@ -25,7 +24,7 @@ private Q_SLOTS:
 private:
     ConnectorIn *input_;
 
-    virtual void updateDynamicGui(QBoxLayout *layout);
+    void updateOutputs();
 
     class State : public Memento {
     public:

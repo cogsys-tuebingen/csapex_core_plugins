@@ -17,7 +17,7 @@ using namespace csapex;
 using namespace connection_types;
 
 Merger::Merger() :
-    output_(NULL)
+    output_(NULL), input_count_(NULL)
 {
 }
 
@@ -30,7 +30,7 @@ void Merger::fill(QBoxLayout *layout)
         /// inputs
         input_count_ = QtHelper::makeSpinBox(layout, "Inputs: ", 2, 2, MERGER_INPUT_MAX);
         QSpinBox::connect(input_count_, SIGNAL(valueChanged(int)), this, SLOT(updateInputs(int)));
-        updateInputs(2);
+        updateInputs(state_.input_count);
     }
 }
 
@@ -45,7 +45,12 @@ void Merger::setState(Memento::Ptr memento)
     assert(m.get());
 
     state_ = *m;
-    input_count_->setValue(state_.input_count);
+
+    if(input_count_) {
+        input_count_->setValue(state_.input_count);
+    }
+
+    updateInputs(state_.input_count);
 }
 
 void Merger::messageArrived(ConnectorIn *source)
@@ -57,11 +62,12 @@ void Merger::messageArrived(ConnectorIn *source)
 
 
     std::vector<cv::Mat> msgs;
-    collectMessage(msgs);
+    Encoding encoding;
+    collectMessage(msgs, encoding);
     cv::Mat out_img;
     try {
         cv::merge(msgs, out_img);
-        CvMatMessage::Ptr out_msg(new CvMatMessage);
+        CvMatMessage::Ptr out_msg(new CvMatMessage(encoding));
         out_msg->value = out_img;
         output_->publish(out_msg);
     } catch (cv::Exception e) {
@@ -94,13 +100,15 @@ void Merger::updateInputs(int value)
 
 }
 
-void Merger::collectMessage(std::vector<cv::Mat> &messages)
+void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
 {
     for(int i = 0 ; i < countInputs() ; i++) {
         ConnectorIn *in = getInput(i);
         if(in->isConnected()) {
             CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
+            in->setLabel(msg->getEncoding().toString());
             messages.push_back(msg->value);
+            encoding.insert(encoding.end(), msg->getEncoding().begin(), msg->getEncoding().end());
         }
     }
 }

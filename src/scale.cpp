@@ -33,7 +33,7 @@ Scale::Scale()
 void Scale::allConnectorsArrived()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage);
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
     if(!in->value.empty()) {
         cv::resize(in->value, out->value, cv::Size(), scales_[0] / 100.0, scales_[1] / 100.0, mode_);
@@ -41,7 +41,6 @@ void Scale::allConnectorsArrived()
         throw std::runtime_error("Cannot scale empty images!");
     }
 
-    out->encoding = in->encoding;
     output_->publish(out);
 }
 

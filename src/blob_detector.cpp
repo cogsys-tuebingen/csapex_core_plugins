@@ -73,13 +73,13 @@ void BlobDetector::allConnectorsArrived()
 {
     CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
 
-    if(img->encoding.size() != 1) {
+    if(img->getEncoding() != enc::mono) {
         throw std::runtime_error("image must be grayscale.");
     }
 
     cv::Mat& gray = img->value;
 
-    CvMatMessage::Ptr debug(new CvMatMessage);
+    CvMatMessage::Ptr debug(new CvMatMessage(enc::bgr));
     cv::cvtColor(gray, debug->value, CV_GRAY2BGR);
 
     CvBlobs blobs;
