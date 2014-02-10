@@ -11,6 +11,7 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#include <boost/assign/std.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::Morpholocial, csapex::Node)
 
@@ -23,18 +24,19 @@ Morpholocial::Morpholocial()
     addParameter(param::ParameterFactory::declareRange<int>("size", 1, 20, 2, 1));
     addParameter(param::ParameterFactory::declareRange<int>("iterations", 0, 10, 1, 1));
 
-    std::vector< std::pair<std::string, int> > types;
-    types.push_back(std::make_pair("MORPH_OPEN", (int) cv::MORPH_OPEN));
-    types.push_back(std::make_pair("MORPH_CLOSE", (int) cv::MORPH_CLOSE));
-    types.push_back(std::make_pair("MORPH_GRADIENT", (int) cv::MORPH_GRADIENT));
-    types.push_back(std::make_pair("MORPH_TOPHAT", (int) cv::MORPH_TOPHAT));
-    types.push_back(std::make_pair("MORPH_BLACKHAT", (int) cv::MORPH_BLACKHAT));
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("MORPH_OPEN", (int) cv::MORPH_OPEN)
+            ("MORPH_CLOSE", (int) cv::MORPH_CLOSE)
+            ("MORPH_GRADIENT", (int) cv::MORPH_GRADIENT)
+            ("MORPH_TOPHAT", (int) cv::MORPH_TOPHAT)
+            ("MORPH_BLACKHAT", (int) cv::MORPH_BLACKHAT);
+
     addParameter(param::ParameterFactory::declareParameterSet<int>("type", types));
 
-    std::vector< std::pair<std::string, int> > elem;
-    elem.push_back(std::make_pair("MORPH_RECT", (int) cv::MORPH_RECT));
-    elem.push_back(std::make_pair("MORPH_CROSS", (int) cv::MORPH_CROSS));
-    elem.push_back(std::make_pair("MORPH_ELLIPSE", (int) cv::MORPH_ELLIPSE));
+    std::map<std::string, int> elem = boost::assign::map_list_of
+            ("MORPH_RECT", (int) cv::MORPH_RECT)
+            ("MORPH_CROSS", (int) cv::MORPH_CROSS)
+            ("MORPH_ELLIPSE", (int) cv::MORPH_ELLIPSE);
     addParameter(param::ParameterFactory::declareParameterSet<int>("elem", elem));
 }
 

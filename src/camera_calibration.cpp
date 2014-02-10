@@ -7,6 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <boost/assign/std.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::CameraCalibration, csapex::Node)
 
@@ -25,13 +26,24 @@ csapex::CameraCalibration::CameraCalibration()
     addParameter(param::ParameterFactory::declareRange("squares y", 1, 12, 8, 1), boost::bind(&CameraCalibration::updateCalibration, this));
     addParameter(param::ParameterFactory::declareRange("squares scale", 0.05, 0.5, 0.1, 0.05), boost::bind(&CameraCalibration::updateCalibration, this));
 
-
-    std::vector< std::pair<std::string, int> > types;
-    types.push_back(std::make_pair("chessboard", (int) utils_cv::CameraCalibration::CHESSBOARD));
-    types.push_back(std::make_pair("circles grid", (int) utils_cv::CameraCalibration::CIRCLES_GRID));
-    types.push_back(std::make_pair("asym. circles grid", (int) utils_cv::CameraCalibration::ASYMMETRIC_CIRCLES_GRID));
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("chessboard", (int) utils_cv::CameraCalibration::CHESSBOARD)
+            ("circles grid", (int) utils_cv::CameraCalibration::CIRCLES_GRID)
+            ("asym. circles grid", (int) utils_cv::CameraCalibration::ASYMMETRIC_CIRCLES_GRID);
 
     addParameter(param::ParameterFactory::declareParameterSet<int>("type", types), boost::bind(&CameraCalibration::updateCalibration, this));
+
+    std::map<std::string, int> corner_flags = boost::assign::map_list_of
+            ("CV_CALIB_CB_ADAPTIVE_THRESH", CV_CALIB_CB_ADAPTIVE_THRESH)
+            ("CV_CALIB_CB_FAST_CHECK",      CV_CALIB_CB_FAST_CHECK)
+            ("CV_CALIB_CB_NORMALIZE_IMAGE", CV_CALIB_CB_NORMALIZE_IMAGE)
+            ("CV_CALIB_CB_FILTER_QUADS",    CV_CALIB_CB_FILTER_QUADS);
+
+    std::map<std::string, int> calib_flags = boost::assign::map_list_of
+            ("CV_CALIB_FIX_K4", CV_CALIB_FIX_K4)
+            ("CV_CALIB_FIX_K5", CV_CALIB_FIX_K5)
+            ("CV_CALIB_FIX_K6", CV_CALIB_FIX_K6);
+
 
 }
 

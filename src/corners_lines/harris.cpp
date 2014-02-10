@@ -7,6 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <boost/assign/std.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -26,13 +27,13 @@ CornerHarris::CornerHarris() :
     addParameter(param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
                  boost::bind(&CornerHarris::update, this));
 
-    std::vector< std::pair<std::string, int> > types;
-    types.push_back(std::make_pair("BORDER_DEFAULT", (int) cv::BORDER_DEFAULT));
-    types.push_back(std::make_pair("BORDER_CONSTANT", (int) cv::BORDER_CONSTANT));
-    types.push_back(std::make_pair("BORDER_REFLECT", (int) cv::BORDER_REFLECT));
-    types.push_back(std::make_pair("BORDER_REFLECT101", (int) cv::BORDER_REFLECT101));
-    types.push_back(std::make_pair("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101));
-    types.push_back(std::make_pair("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE));
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("BORDER_DEFAULT", (int) cv::BORDER_DEFAULT)
+            ("BORDER_CONSTANT", (int) cv::BORDER_CONSTANT)
+            ("BORDER_REFLECT", (int) cv::BORDER_REFLECT)
+            ("BORDER_REFLECT101", (int) cv::BORDER_REFLECT101)
+            ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
+            ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
     addParameter(param::ParameterFactory::declareParameterSet<int>("border type", types),
                  boost::bind(&CornerHarris::update, this));
 
