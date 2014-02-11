@@ -7,6 +7,8 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+
+/// SYSTEM
 #include <boost/assign/std.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::CameraCalibration, csapex::Node)
