@@ -5,10 +5,10 @@
 #include <csapex/model/node.h>
 
 namespace csapex {
-class ExtremumRenderer : public csapex::Node
+class MatrixToHeatMap : public csapex::Node
 {
 public:
-    ExtremumRenderer();
+    MatrixToHeatMap();
 
     virtual void allConnectorsArrived();
     virtual void setup();

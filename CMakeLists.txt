@@ -77,7 +77,7 @@ add_library(vision_plugins
     src/corners_lines/canny.cpp
     src/corners_lines/eigenvals_and_vecs.cpp
     src/corners_lines/hough_linesp.cpp
-    src/extremum_renderer.cpp
+    src/matrix_to_heatmap.cpp
 
 )
 
