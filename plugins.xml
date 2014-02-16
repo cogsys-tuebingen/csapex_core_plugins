@@ -132,4 +132,9 @@
         of opencv.
     </description>
   </class>
+  <class type="csapex::ExtremumRenderer" base_class_type="csapex::Node">
+    <description>
+        Find maxima and minima in matrices and then visualize them.
+    </description>
+  </class>
 </library>
