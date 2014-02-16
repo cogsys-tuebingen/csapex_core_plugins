@@ -8,7 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 
-CSAPEX_REGISTER_CLASS(csapex::MatrixToHeatMap, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::MatrixToHeatmap, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -47,14 +47,14 @@ inline void renderHeatmap(cv::Mat &src, cv::Mat &dst)
 }
 }
 
-MatrixToHeatMap::MatrixToHeatMap()
+MatrixToHeatmap::MatrixToHeatmap()
 {
     Tag::createIfNotExists("Visualization");
     addTag(Tag::get("Visualization"));
     addTag(Tag::get("Vision"));
 }
 
-void MatrixToHeatMap::allConnectorsArrived()
+void MatrixToHeatmap::allConnectorsArrived()
 {
     throw std::runtime_error("Not tested yet!");
 
@@ -79,7 +79,7 @@ void MatrixToHeatMap::allConnectorsArrived()
     output_->publish(out);
 }
 
-void MatrixToHeatMap::setup()
+void MatrixToHeatmap::setup()
 {
     setSynchronizedInputs(true);
 
@@ -89,7 +89,7 @@ void MatrixToHeatMap::setup()
     update();
 }
 
-void MatrixToHeatMap::update()
+void MatrixToHeatmap::update()
 {
 
 }
