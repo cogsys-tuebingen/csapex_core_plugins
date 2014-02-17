@@ -32,13 +32,15 @@ inline void renderHeatmap(cv::Mat &src, cv::Mat &dst)
         throw std::runtime_error("Single channel matrix required for rendering!");
     }
 
-    double min;
-    double max;
     if(src.type() != CV_32FC1)
         src.convertTo(src, CV_32FC1);
-    cv::minMaxLoc(src, &min, &max);
-    cv::normalize(src, src, max);
 
+    double min;
+    double max;
+    cv::minMaxLoc(src, &min, &max);
+    src = src - (float) min;
+    max -= min;
+    cv::normalize(src, src, max);
     dst = cv::Mat(src.rows, src.cols, CV_32FC3, cv::Scalar::all(0));
     for(int i = 0 ; i < dst.rows ; ++i) {
         for(int j = 0 ; j < dst.cols ; ++j) {
