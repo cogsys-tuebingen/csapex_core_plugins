@@ -34,9 +34,10 @@ inline void renderHeatmap(cv::Mat &src, cv::Mat &dst)
 
     double min;
     double max;
+    if(src.type() != CV_32FC1)
+        src.convertTo(src, CV_32FC1);
     cv::minMaxLoc(src, &min, &max);
     cv::normalize(src, src, max);
-    src.convertTo(src, CV_32FC1);
 
     dst = cv::Mat(src.rows, src.cols, CV_32FC3, cv::Scalar::all(0));
     for(int i = 0 ; i < dst.rows ; ++i) {
@@ -56,25 +57,26 @@ MatrixToHeatmap::MatrixToHeatmap()
 
 void MatrixToHeatmap::allConnectorsArrived()
 {
-    throw std::runtime_error("Not tested yet!");
-
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
     cv::Mat working = in->value.clone();
-    cv::Mat heatmap = cv::Mat(working.rows, working.cols, CV_32FC3, cv::Scalar::all(0));
+    cv::Mat heatmap (working.rows, working.cols, CV_32FC3, cv::Scalar::all(0));
+    cv::Mat mean    (working.rows, working.cols, CV_32FC1, cv::Scalar::all(0));
     std::vector<cv::Mat> channels;
     cv::split(working, channels);
 
     for(std::vector<cv::Mat>::iterator it = channels.begin() ; it != channels.end() ; ++it) {
-        cv::Mat channel_heatmap;
-        renderHeatmap(*it, channel_heatmap);
-        heatmap += channel_heatmap;
+        it->convertTo(*it, CV_32FC1);
+        mean += *it;
     }
 
-///    cv::Mat scale = cv::Mat(heatmap.rows, heatmap.cols, CV_32FC3, cv::Scalar::all(channels.size()));
-///    cv::divide(heatmap, scale, heatmap);
-    cv::divide(channels.size(), heatmap, heatmap);
+    float divider = 1 / (float) channels.size();
+    mean = mean * divider;
+
+    renderHeatmap(mean, heatmap);
+
+    heatmap.convertTo(heatmap, CV_8UC3);
     out->value = heatmap;
     output_->publish(out);
 }
