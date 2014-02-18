@@ -10,7 +10,7 @@ class MatrixToHeatmap : public csapex::Node
 public:
     MatrixToHeatmap();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

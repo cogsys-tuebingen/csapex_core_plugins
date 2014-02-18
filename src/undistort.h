@@ -11,7 +11,7 @@ class Undistort : public csapex::Node
 public:
     Undistort();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

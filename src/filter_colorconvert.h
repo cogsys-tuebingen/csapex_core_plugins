@@ -36,7 +36,7 @@ public:
     /**
      * @brief See base class definition.
      */
-    virtual void allConnectorsArrived();
+    virtual void process();
 
     /// MEMENTO
     void                 setState(csapex::Memento::Ptr memento);

@@ -9,7 +9,7 @@ class Canny : public CornerDetection
 {
 public:
     Canny();
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 protected:

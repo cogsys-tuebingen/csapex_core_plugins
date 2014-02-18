@@ -19,7 +19,7 @@ public:
     Memento::Ptr getState() const;
 
 private Q_SLOTS:
-    void allConnectorsArrived();
+    void process();
 
 private:
     ConnectorIn *input_;

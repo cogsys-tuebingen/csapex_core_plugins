@@ -47,7 +47,7 @@ EigenValsAndVecs::EigenValsAndVecs() :
 
 }
 
-void EigenValsAndVecs::allConnectorsArrived()
+void EigenValsAndVecs::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));

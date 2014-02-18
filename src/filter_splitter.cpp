@@ -32,7 +32,7 @@ void Splitter::setup()
     updateOutputs();
 }
 
-void Splitter::allConnectorsArrived()
+void Splitter::process()
 {
     CvMatMessage::Ptr m = input_->getMessage<CvMatMessage>();
     std::vector<cv::Mat> channels;

@@ -40,7 +40,7 @@ Morpholocial::Morpholocial()
     addParameter(param::ParameterFactory::declareParameterSet<int>("elem", elem));
 }
 
-void Morpholocial::allConnectorsArrived()
+void Morpholocial::process()
 {
     connection_types::CvMatMessage::Ptr a = input_->getMessage<connection_types::CvMatMessage>();
 

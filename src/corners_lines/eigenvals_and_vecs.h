@@ -12,7 +12,7 @@ public:
 
     EigenValsAndVecs();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 protected:

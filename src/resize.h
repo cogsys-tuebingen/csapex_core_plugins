@@ -13,7 +13,7 @@ class Resize : public csapex::Node
 public:
     Resize();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

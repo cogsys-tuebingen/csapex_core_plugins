@@ -73,7 +73,7 @@ void ColorConvert::fill(QBoxLayout *parent)
     parent->addWidget(combo_out_);
 }
 
-void ColorConvert::allConnectorsArrived()
+void ColorConvert::process()
 {
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
 

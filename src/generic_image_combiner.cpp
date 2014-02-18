@@ -121,7 +121,7 @@ void GenericImageCombiner::updateFormula()
     }
 }
 
-void GenericImageCombiner::allConnectorsArrived()
+void GenericImageCombiner::process()
 {
     if(!e.valid()) {
         return;

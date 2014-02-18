@@ -34,7 +34,7 @@ LKTracking::LKTracking()
     addParameter(param::ParameterFactory::declare<int>("debug/circlesize", 1, 15, 2, 1));
 }
 
-void LKTracking::allConnectorsArrived()
+void LKTracking::process()
 {
     CvMatMessage::Ptr img = in_image_->getMessage<CvMatMessage>();
     if(img->getEncoding() != enc::mono) {

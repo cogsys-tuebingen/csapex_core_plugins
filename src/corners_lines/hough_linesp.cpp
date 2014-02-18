@@ -35,7 +35,7 @@ HoughLinesP::HoughLinesP() :
 
 }
 
-void HoughLinesP::allConnectorsArrived()
+void HoughLinesP::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
 

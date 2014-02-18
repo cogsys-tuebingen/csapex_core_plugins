@@ -19,7 +19,7 @@ SimpleImageDifference::SimpleImageDifference()
 {
 }
 
-void SimpleImageDifference::allConnectorsArrived()
+void SimpleImageDifference::process()
 {
     CvMatMessage::Ptr img1 = in_a_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr img2 = in_b_->getMessage<CvMatMessage>();

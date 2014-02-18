@@ -11,7 +11,7 @@ class CameraCalibration : public csapex::Node
 public:
     CameraCalibration();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

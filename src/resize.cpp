@@ -31,7 +31,7 @@ Resize::Resize()
 
 }
 
-void Resize::allConnectorsArrived()
+void Resize::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));

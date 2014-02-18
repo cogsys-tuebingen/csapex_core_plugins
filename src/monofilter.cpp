@@ -30,7 +30,7 @@ MonoFilter::MonoFilter()
                  boost::bind(&MonoFilter::update, this));
 }
 
-void MonoFilter::allConnectorsArrived()
+void MonoFilter::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
 

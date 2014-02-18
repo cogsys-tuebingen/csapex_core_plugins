@@ -186,7 +186,7 @@ public:
     GenericImageCombiner();
 
     void setup();
-    void allConnectorsArrived();
+    void process();
 
 private:
     void updateFormula();

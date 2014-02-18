@@ -11,7 +11,7 @@ class MonoFilter : public csapex::Node
 public:
     MonoFilter();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 protected:

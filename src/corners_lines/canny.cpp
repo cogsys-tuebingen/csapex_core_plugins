@@ -28,7 +28,7 @@ Canny::Canny() :
                  boost::bind(&Canny::update, this));
 }
 
-void Canny::allConnectorsArrived()
+void Canny::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
 

@@ -11,7 +11,7 @@ class Equalize : public csapex::Node
 public:
     Equalize();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 protected:

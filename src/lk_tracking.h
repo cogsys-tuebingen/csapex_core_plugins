@@ -16,7 +16,7 @@ public:
     LKTracking();
 
 public:
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
     void reset();
