@@ -15,15 +15,20 @@ using namespace csapex::connection_types;
 
 namespace {
 const cv::Point3f red(0,0,255);                     /// P0
-const cv::Point3f green(0,255,255);                 /// P1
+const cv::Point3f green(0,255,0);                   /// P1
 const cv::Point3f blue(255,0,0);                    /// p3
 const cv::Point3f fac1 = (blue - 2 * green + red);
 const cv::Point3f fac2 = (-2*blue + 2 * green);
 
-inline cv::Vec3f maximumColor(const float value)
+inline cv::Vec3f bezierColor(const float value)
 {
     cv::Point3f  col = fac1 * value * value + fac2 * value + blue;
     return cv::Vec3f(std::floor(col.x + .5), std::floor(col.y + .5), std::floor(col.z + .5));
+}
+
+inline cv::Vec3f squareColor(const float value)
+{
+    return value * value * red + (value - 1) * (value - 1) * blue;
 }
 
 inline void renderHeatmap(cv::Mat &src, cv::Mat &dst)
@@ -44,7 +49,7 @@ inline void renderHeatmap(cv::Mat &src, cv::Mat &dst)
     dst = cv::Mat(src.rows, src.cols, CV_32FC3, cv::Scalar::all(0));
     for(int i = 0 ; i < dst.rows ; ++i) {
         for(int j = 0 ; j < dst.cols ; ++j) {
-            dst.at<cv::Vec3f>(i,j) = maximumColor(src.at<float>(i,j));
+            dst.at<cv::Vec3f>(i,j) = squareColor(src.at<float>(i,j));
         }
     }
 }
@@ -67,6 +72,8 @@ void MatrixToHeatmap::allConnectorsArrived()
     cv::Mat mean    (working.rows, working.cols, CV_32FC1, cv::Scalar::all(0));
     std::vector<cv::Mat> channels;
     cv::split(working, channels);
+
+    std::cout << in->value << std::endl;
 
     for(std::vector<cv::Mat>::iterator it = channels.begin() ; it != channels.end() ; ++it) {
         it->convertTo(*it, CV_32FC1);
