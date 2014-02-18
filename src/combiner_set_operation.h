@@ -24,7 +24,7 @@ public:
     SetOperation();
 
     void setup();
-    void allConnectorsArrived();
+    void process();
 
 private:
     ConnectorIn* i1_;

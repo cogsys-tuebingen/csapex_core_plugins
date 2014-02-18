@@ -12,7 +12,7 @@ class AdaptiveThreshold : public Node
 public:
     AdaptiveThreshold();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

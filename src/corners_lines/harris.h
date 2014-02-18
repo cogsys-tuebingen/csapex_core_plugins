@@ -10,7 +10,7 @@ class CornerHarris : public CornerDetection
 public:
     CornerHarris();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 protected:

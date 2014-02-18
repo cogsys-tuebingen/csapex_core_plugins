@@ -30,7 +30,7 @@ RenderROIs::RenderROIs()
     addParameter(param::ParameterFactory::declareBool("force color", false));
 }
 
-void RenderROIs::allConnectorsArrived()
+void RenderROIs::process()
 {
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
     VectorMessage::Ptr rois = input_rois_->getMessage<VectorMessage>();

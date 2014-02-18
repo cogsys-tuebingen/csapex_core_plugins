@@ -22,7 +22,7 @@ NumberGenerator::NumberGenerator()
     addTag(Tag::get("Debug"));
 }
 
-void NumberGenerator::allConnectorsArrived()
+void NumberGenerator::process()
 {
     connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr));
 

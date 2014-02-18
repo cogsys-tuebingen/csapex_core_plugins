@@ -11,7 +11,7 @@ class ExtractROI : public csapex::Node
 public:
     ExtractROI();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

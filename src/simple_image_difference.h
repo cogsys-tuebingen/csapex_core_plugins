@@ -13,7 +13,7 @@ public:
     SimpleImageDifference();
 
 public:
-    void allConnectorsArrived();
+    void process();
     void setup();
 
 private:

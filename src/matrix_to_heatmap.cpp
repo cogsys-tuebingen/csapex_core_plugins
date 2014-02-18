@@ -62,7 +62,7 @@ MatrixToHeatmap::MatrixToHeatmap()
     addTag(Tag::get("Vision"));
 }
 
-void MatrixToHeatmap::allConnectorsArrived()
+void MatrixToHeatmap::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));

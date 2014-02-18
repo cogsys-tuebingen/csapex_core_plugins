@@ -11,7 +11,7 @@ class RenderROIs : public csapex::Node
 public:
     RenderROIs();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

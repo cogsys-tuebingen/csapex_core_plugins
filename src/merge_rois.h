@@ -12,7 +12,7 @@ class MergeROIs : public csapex::Node
 public:
     MergeROIs();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

@@ -27,7 +27,7 @@ MergeROIs::MergeROIs()
     addTag(Tag::get("ROI"));
 }
 
-void MergeROIs::allConnectorsArrived()
+void MergeROIs::process()
 {
     VectorMessage::Ptr rois = input_->getMessage<VectorMessage>();
 

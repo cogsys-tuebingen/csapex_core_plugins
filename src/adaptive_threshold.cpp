@@ -38,7 +38,7 @@ AdaptiveThreshold::AdaptiveThreshold()
 }
 
 
-void AdaptiveThreshold::allConnectorsArrived()
+void AdaptiveThreshold::process()
 {
     CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
 

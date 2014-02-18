@@ -32,7 +32,7 @@ SetOperation::SetOperation()
     addParameter(param::ParameterFactory::declareParameterSet("operation", methods));
 }
 
-void SetOperation::allConnectorsArrived()
+void SetOperation::process()
 {
     CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
 

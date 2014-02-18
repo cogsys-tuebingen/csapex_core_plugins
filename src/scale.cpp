@@ -30,7 +30,7 @@ Scale::Scale()
 
 }
 
-void Scale::allConnectorsArrived()
+void Scale::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));

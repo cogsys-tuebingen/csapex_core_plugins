@@ -39,7 +39,7 @@ CornerHarris::CornerHarris() :
 
 }
 
-void CornerHarris::allConnectorsArrived()
+void CornerHarris::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
 

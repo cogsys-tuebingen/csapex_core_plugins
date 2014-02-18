@@ -40,7 +40,7 @@ VJDetector::~VJDetector()
     }
 }
 
-void VJDetector::allConnectorsArrived()
+void VJDetector::process()
 {
     std::string filename = param<std::string>("file");
 

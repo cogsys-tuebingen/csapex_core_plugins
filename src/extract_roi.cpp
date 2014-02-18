@@ -28,7 +28,7 @@ ExtractROI::ExtractROI()
     addParameter(param::ParameterFactory::declare<int>("thickness", 1, 20, 1, 1));
 }
 
-void ExtractROI::allConnectorsArrived()
+void ExtractROI::process()
 {
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
     RoiMessage::Ptr roi = input_roi_->getMessage<RoiMessage>();

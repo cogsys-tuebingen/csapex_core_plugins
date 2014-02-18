@@ -11,7 +11,7 @@ public:
     BlobDetector();
     ~BlobDetector();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

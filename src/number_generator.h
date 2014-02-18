@@ -10,7 +10,7 @@ class NumberGenerator : public csapex::Node
 public:
     NumberGenerator();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 private:

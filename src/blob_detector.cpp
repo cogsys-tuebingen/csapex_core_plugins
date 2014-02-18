@@ -69,7 +69,7 @@ BlobDetector::~BlobDetector()
   } \
 }
 
-void BlobDetector::allConnectorsArrived()
+void BlobDetector::process()
 {
     CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
 

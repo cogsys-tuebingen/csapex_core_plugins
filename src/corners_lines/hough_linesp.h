@@ -10,7 +10,7 @@ class HoughLinesP : public CornerDetection
 public:
     HoughLinesP();
 
-    virtual void allConnectorsArrived();
+    virtual void process();
     virtual void setup();
 
 protected:
