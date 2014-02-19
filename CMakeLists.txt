@@ -78,6 +78,7 @@ add_library(vision_plugins
     src/corners_lines/eigenvals_and_vecs.cpp
     src/corners_lines/hough_linesp.cpp
     src/matrix_to_heatmap.cpp
+    src/median_filter.cpp
 
 )
 

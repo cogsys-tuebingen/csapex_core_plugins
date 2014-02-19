@@ -8,6 +8,10 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 
+/// SYSTEM
+#include <boost/assign/list_of.hpp>
+#include <boost/function.hpp>
+
 CSAPEX_REGISTER_CLASS(csapex::MatrixToHeatmap, csapex::Node)
 
 using namespace csapex;
@@ -26,12 +30,14 @@ inline cv::Vec3f bezierColor(const float value)
     return cv::Vec3f(std::floor(col.x + .5), std::floor(col.y + .5), std::floor(col.z + .5));
 }
 
-inline cv::Vec3f squareColor(const float value)
+inline cv::Vec3f parabolaColor(const float value)
 {
     return value * value * red + (value - 1) * (value - 1) * blue;
 }
 
-inline void renderHeatmap(cv::Mat &src, cv::Mat &dst)
+typedef boost::function<cv::Vec3f (float)> colorFunction;
+
+inline void renderHeatmap(cv::Mat &src, cv::Mat &dst, colorFunction &color)
 {
     if(src.channels() > 1) {
         throw std::runtime_error("Single channel matrix required for rendering!");
@@ -45,21 +51,30 @@ inline void renderHeatmap(cv::Mat &src, cv::Mat &dst)
     cv::minMaxLoc(src, &min, &max);
     src = src - (float) min;
     max -= min;
-    cv::normalize(src, src, max);
+    src = src / (float) max;
     dst = cv::Mat(src.rows, src.cols, CV_32FC3, cv::Scalar::all(0));
     for(int i = 0 ; i < dst.rows ; ++i) {
         for(int j = 0 ; j < dst.cols ; ++j) {
-            dst.at<cv::Vec3f>(i,j) = squareColor(src.at<float>(i,j));
+            dst.at<cv::Vec3f>(i,j) = color(src.at<float>(i,j));
         }
     }
 }
 }
 
-MatrixToHeatmap::MatrixToHeatmap()
+MatrixToHeatmap::MatrixToHeatmap() :
+    color_type_(BEZIER)
 {
     Tag::createIfNotExists("Visualization");
     addTag(Tag::get("Visualization"));
     addTag(Tag::get("Vision"));
+
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("BEZIER", (int) BEZIER)
+            ("PARABOLA", (int) PARABOLA);
+
+    addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types),
+                 boost::bind(&MatrixToHeatmap::update, this));
+
 }
 
 void MatrixToHeatmap::process()
@@ -70,10 +85,9 @@ void MatrixToHeatmap::process()
     cv::Mat working = in->value.clone();
     cv::Mat heatmap (working.rows, working.cols, CV_32FC3, cv::Scalar::all(0));
     cv::Mat mean    (working.rows, working.cols, CV_32FC1, cv::Scalar::all(0));
+
     std::vector<cv::Mat> channels;
     cv::split(working, channels);
-
-    std::cout << in->value << std::endl;
 
     for(std::vector<cv::Mat>::iterator it = channels.begin() ; it != channels.end() ; ++it) {
         it->convertTo(*it, CV_32FC1);
@@ -83,7 +97,19 @@ void MatrixToHeatmap::process()
     float divider = 1 / (float) channels.size();
     mean = mean * divider;
 
-    renderHeatmap(mean, heatmap);
+    colorFunction fc;
+    switch(color_type_) {
+    case BEZIER:
+        fc = &bezierColor;
+        break;
+    case PARABOLA:
+        fc = &parabolaColor;
+        break;
+    default:
+        throw std::runtime_error("Unknown color function type!");
+    }
+
+    renderHeatmap(mean, heatmap, fc);
 
     heatmap.convertTo(heatmap, CV_8UC3);
     out->value = heatmap;
@@ -102,5 +128,5 @@ void MatrixToHeatmap::setup()
 
 void MatrixToHeatmap::update()
 {
-
+    color_type_ = (ColorType) param<int>("coloring");
 }

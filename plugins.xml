@@ -137,4 +137,9 @@
         Find maxima and minima in matrices and then visualize them.
     </description>
   </class>
+  <class type="csapex::MedianFilter" base_class_type="csapex::Node">
+    <description>
+        Apply a median filter to a multichannel (1 - 4) image using a specified kernel size.
+    </description>
+  </class>
 </library>

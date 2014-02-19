@@ -8,6 +8,9 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 
+/// SYSTEM
+#include <boost/assign/list_of.hpp>
+
 CSAPEX_REGISTER_CLASS(csapex::Resize, csapex::Node)
 
 using namespace csapex::connection_types;
@@ -21,12 +24,12 @@ Resize::Resize()
     addParameter(param::ParameterFactory::declareRange("size height", 10, 10000, 480, 10),
                  boost::bind(&Resize::update, this));
 
-    std::vector< std::pair<std::string, int> > modes;
-    modes.push_back(std::make_pair("nearest", (int) CV_INTER_NN));
-    modes.push_back(std::make_pair("linear", (int) CV_INTER_LINEAR));
-    modes.push_back(std::make_pair("area", (int) CV_INTER_AREA));
-    modes.push_back(std::make_pair("cubic", (int) CV_INTER_CUBIC));
-    modes.push_back(std::make_pair("lanczos4", (int) CV_INTER_LANCZOS4));
+    std::map<std::string, int> modes = boost::assign::map_list_of
+            ("nearest", (int) CV_INTER_NN)
+            ("linear", (int) CV_INTER_LINEAR)
+            ("area", (int) CV_INTER_AREA)
+            ("cubic", (int) CV_INTER_CUBIC)
+            ("lanczos4", (int) CV_INTER_LANCZOS4);
     addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes), boost::bind(&Resize::update, this));
 
 }

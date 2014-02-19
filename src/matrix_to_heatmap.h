@@ -14,8 +14,11 @@ public:
     virtual void setup();
 
 private:
+    enum ColorType {BEZIER, PARABOLA};
+
     void update();
 
+    ColorType    color_type_;
     ConnectorOut* output_;
     ConnectorIn* input_;
 };
