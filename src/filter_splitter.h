@@ -12,6 +12,7 @@ class Splitter : public csapex::Node
 
 public:
     Splitter();
+    ~Splitter();
 
     void setup();
 

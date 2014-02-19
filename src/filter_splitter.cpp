@@ -19,7 +19,11 @@ using namespace connection_types;
 Splitter::Splitter() :
     input_(NULL)
 {
-    state_.channel_count_ = 0;
+    state_.channel_count_ = 0;    
+}
+
+Splitter::~Splitter()
+{
 }
 
 void Splitter::setup()
@@ -35,16 +39,22 @@ void Splitter::setup()
 void Splitter::process()
 {
     CvMatMessage::Ptr m = input_->getMessage<CvMatMessage>();
+
+    int esize = m->getEncoding().size();
+    if(esize != m->value.channels()) {
+        std::stringstream error;
+        error << "encoding size (" << m->getEncoding().size() << ") != " << " image channels (" << m->value.channels() << ")";
+        setError(true, error.str(), EL_WARNING);
+    }
+
     std::vector<cv::Mat> channels;
     cv::split(m->value, channels);
 
     bool recompute = state_.channel_count_ != (int) channels.size();
-    if(static_cast<unsigned>(m->getEncoding().size()) != channels.size()) {
-        recompute = true;
-    } else if(m->getEncoding().size() != state_.encoding_.size()) {
+    if(m->getEncoding().size() != state_.encoding_.size()) {
         recompute = true;
     } else {
-        for(int i = 0, n = m->getEncoding().size(); i < n; ++i) {
+        for(int i = 0, n = esize; i < n; ++i) {
             if(m->getEncoding()[i].name != state_.encoding_[i].name) {
                 recompute = true;
                 break;
@@ -55,6 +65,7 @@ void Splitter::process()
         state_.encoding_ = m->getEncoding();
         state_.channel_count_ = channels.size();
 
+        /// we can't update connectors here, must be done in main thread?
         updateOutputs();
         Q_EMIT modelChanged();
         return;
@@ -63,7 +74,11 @@ void Splitter::process()
 
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
-        e.push_back(state_.encoding_[i]);
+        if(i < state_.encoding_.size()) {
+            e.push_back(state_.encoding_[i]);
+        } else {
+            e.push_back(Channel("unknown", 0, 1));
+        }
 
         CvMatMessage::Ptr channel_out(new CvMatMessage(e));
         channel_out->value = channels[i];
@@ -73,15 +88,19 @@ void Splitter::process()
 
 void Splitter::updateOutputs()
 {
-    unsigned n = countOutputs();
+    int n = countOutputs();
 
-    if(state_.encoding_.size() > n) {
-        for(unsigned i = n ; i < state_.encoding_.size() ; ++i) {
-            addOutput<CvMatMessage>(state_.encoding_[i].name);
+    if(state_.channel_count_ > n) {
+        for(int i = n ; i < state_.channel_count_ ; ++i) {
+            if(i < (int) state_.encoding_.size()) {
+                addOutput<CvMatMessage>(state_.encoding_[i].name);
+            } else {
+                addOutput<CvMatMessage>("unknown");
+            }
         }
     } else {
         bool del = true;
-        for(int i = n-1 ; i >= (int) state_.encoding_.size(); --i) {
+        for(int i = n-1 ; i >= (int) state_.channel_count_; --i) {
             if(getOutput(i)->isConnected()) {
                 del = false;
             }
@@ -94,8 +113,12 @@ void Splitter::updateOutputs()
         }
     }
 
-    for(int i = 0, n = state_.encoding_.size(); i < n; ++i) {
-        getOutput(i)->setLabel(state_.encoding_[i].name);
+    for(int i = 0, n = state_.channel_count_; i < n; ++i) {
+        if(i < (int) state_.encoding_.size()) {
+            getOutput(i)->setLabel(state_.encoding_[i].name);
+        } else {
+            getOutput(i)->setLabel("unknown");
+        }
         getOutput(i)->enable();
     }
 
