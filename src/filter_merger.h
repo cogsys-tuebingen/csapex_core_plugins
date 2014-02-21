@@ -2,13 +2,11 @@
 #define FILTER_MERGER_H
 
 /// COMPONENT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 #include <csapex_vision/encoding.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
-
-class QSpinBox;
 
 namespace csapex {
 
@@ -17,10 +15,8 @@ const static int MERGER_INPUT_MAX = 10;
  * @brief The Merger class can be used to merge a certain amount of
  *        images.
  */
-class Merger : public BoxedObject
+class Merger : public Node
 {
-    Q_OBJECT
-
 public:
     /**
      * @brief Merger Constructor.
@@ -30,39 +26,16 @@ public:
     /**
      * @brief See base class documentation.
      */
-    virtual void fill(QBoxLayout *layout);
-
-    /// MEMENTO
-    void         setState(Memento::Ptr memento);
-    Memento::Ptr getState() const;
+    virtual void setup();
 
 private Q_SLOTS:
-    void messageArrived(ConnectorIn *source);
-    void updateInputs(int value);
+    void process();
+    void updateInputs();
 
 private:
     ConnectorOut *output_;
-    std::map<ConnectorIn*,bool> input_arrivals_;
-    QSpinBox                    *input_count_;
 
     void collectMessage(std::vector<cv::Mat> &messages, Encoding &encoding);
-    void updateArrivals(ConnectorIn *input);
-    bool gotAllArrivals();
-    void resetInputArrivals();
-
-    /// MEMENTO
-    class State : public Memento {
-    public:
-        void readYaml(const YAML::Node &node);
-        void writeYaml(YAML::Emitter &out) const;
-
-    public:
-        int     input_count;
-
-    };
-
-    State state_;
-
 };
 }
 #endif // FILTER_MERGER_H

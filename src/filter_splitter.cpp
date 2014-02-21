@@ -65,7 +65,7 @@ void Splitter::process()
         state_.encoding_ = m->getEncoding();
         state_.channel_count_ = channels.size();
 
-        /// we can't update connectors here, must be done in main thread?
+        input_->setLabel(m->getEncoding().toString());
         updateOutputs();
         Q_EMIT modelChanged();
         return;

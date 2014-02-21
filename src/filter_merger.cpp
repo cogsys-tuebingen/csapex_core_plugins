@@ -1,14 +1,12 @@
 #include "filter_merger.h"
 
 /// PROJECT
-#include <csapex/view/box.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-#include <csapex/utility/qt_helper.hpp>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
-#include <QLabel>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Merger, csapex::Node)
@@ -16,85 +14,54 @@ CSAPEX_REGISTER_CLASS(csapex::Merger, csapex::Node)
 using namespace csapex;
 using namespace connection_types;
 
-Merger::Merger() :
-    output_(NULL), input_count_(NULL)
+Merger::Merger()
 {
+    addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), boost::bind(&Merger::updateInputs, this));
 }
 
-void Merger::fill(QBoxLayout *layout)
+void Merger::setup()
 {
-    if(output_ == NULL) {
-        /// add output
-        output_ = addOutput<CvMatMessage>("Merged Image");
+    setSynchronizedInputs(true);
 
-        /// inputs
-        input_count_ = QtHelper::makeSpinBox(layout, "Inputs: ", 2, 2, MERGER_INPUT_MAX);
-        QSpinBox::connect(input_count_, SIGNAL(valueChanged(int)), this, SLOT(updateInputs(int)));
-        updateInputs(state_.input_count);
-    }
+    output_ = addOutput<CvMatMessage>("Merged Image");
+
+    updateInputs();
 }
 
-Memento::Ptr Merger::getState() const
+void Merger::process()
 {
-    return boost::shared_ptr<State>(new State(state_));
-}
-
-void Merger::setState(Memento::Ptr memento)
-{
-    boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
-    assert(m.get());
-
-    state_ = *m;
-
-    if(input_count_) {
-        input_count_->setValue(state_.input_count);
-    }
-
-    updateInputs(state_.input_count);
-}
-
-void Merger::messageArrived(ConnectorIn *source)
-{
-    input_arrivals_[source] = true;
-
-    if(!gotAllArrivals())
-        return;
-
-
     std::vector<cv::Mat> msgs;
     Encoding encoding;
     collectMessage(msgs, encoding);
     cv::Mat out_img;
-    try {
-        cv::merge(msgs, out_img);
-        CvMatMessage::Ptr out_msg(new CvMatMessage(encoding));
-        out_msg->value = out_img;
-        output_->publish(out_msg);
-    } catch (cv::Exception e) {
-        std::cerr << " ERROR " << e.what() << std::endl;
-    }
 
-    resetInputArrivals();
-
+    cv::merge(msgs, out_img);
+    CvMatMessage::Ptr out_msg(new CvMatMessage(encoding));
+    out_msg->value = out_img;
+    output_->publish(out_msg);
 }
 
-void Merger::updateInputs(int value)
+void Merger::updateInputs()
 {
-    state_.input_count = value;
+    int input_count = param<int>("input count");
     int current_amount = countInputs();
-    if(current_amount > value) {
-        for(int i = current_amount; i > value ; i--) {
-            ConnectorIn *ptr = getInput(i - 1);
-            if(ptr->isConnected())
-                ptr->removeAllConnectionsUndoable();
-            removeInput(ptr);
-            input_arrivals_.erase(ptr);
+
+    if(current_amount > input_count) {
+        for(int i = current_amount; i > input_count ; i--) {
+            ConnectorIn* in = getInput(i - 1);
+            if(in->isConnected()) {
+                in->disable();
+            } else {
+                removeInput(in);
+            }
         }
     } else {
-        int to_add = value - current_amount;
+        int to_add = input_count - current_amount;
+        for(int i = 0 ; i < current_amount; i++) {
+            getInput(i)->enable();
+        }
         for(int i = 0 ; i < to_add ; i++) {
-            ConnectorIn* input = addInput<CvMatMessage>("Channel");
-            input_arrivals_.insert(std::pair<ConnectorIn*, bool>(input, false));
+            addInput<CvMatMessage>("Channel", true);
         }
     }
 
@@ -112,31 +79,3 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
         }
     }
 }
-
-bool Merger::gotAllArrivals()
-{
-    bool ready = true;
-    for(std::map<ConnectorIn*, bool>::iterator it = input_arrivals_.begin() ; it != input_arrivals_.end() ; it++) {
-        ready &= !it->first->isConnected() || it->second;
-    }
-    return ready;
-}
-
-void Merger::resetInputArrivals()
-{
-    for(std::map<ConnectorIn*,bool>::iterator it = input_arrivals_.begin() ; it != input_arrivals_.end() ; it++) {
-        it->second = false;
-    }
-}
-
-/// MEMENTO
-void Merger::State::readYaml(const YAML::Node &node)
-{
-    node["input_count"] >> input_count;
-}
-
-void Merger::State::writeYaml(YAML::Emitter &out) const
-{
-    out << YAML::Key << "input_count" << YAML::Value << input_count;
-}
-
