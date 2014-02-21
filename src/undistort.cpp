@@ -2,11 +2,13 @@
 #include "undistort.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+
+/// SYSTEM
+#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Undistort, csapex::Node)
 
