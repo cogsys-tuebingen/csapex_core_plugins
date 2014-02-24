@@ -2,7 +2,6 @@
 #include "camera_calibration.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
@@ -10,6 +9,7 @@
 
 /// SYSTEM
 #include <boost/assign/std.hpp>
+#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::CameraCalibration, csapex::Node)
 
@@ -33,19 +33,23 @@ csapex::CameraCalibration::CameraCalibration()
             ("circles grid", (int) utils_cv::CameraCalibration::CIRCLES_GRID)
             ("asym. circles grid", (int) utils_cv::CameraCalibration::ASYMMETRIC_CIRCLES_GRID);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types), boost::bind(&CameraCalibration::updateCalibration, this));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types),
+                 boost::bind(&CameraCalibration::updateCalibration, this));
 
-    std::map<std::string, int> corner_flags = boost::assign::map_list_of
-            ("CV_CALIB_CB_ADAPTIVE_THRESH", CV_CALIB_CB_ADAPTIVE_THRESH)
-            ("CV_CALIB_CB_FAST_CHECK",      CV_CALIB_CB_FAST_CHECK)
-            ("CV_CALIB_CB_NORMALIZE_IMAGE", CV_CALIB_CB_NORMALIZE_IMAGE)
-            ("CV_CALIB_CB_FILTER_QUADS",    CV_CALIB_CB_FILTER_QUADS);
+    std::map<std::string, std::pair<int, bool> > corner_flags = boost::assign::map_list_of
+            ("CV_CALIB_CB_ADAPTIVE_THRESH", std::make_pair(CV_CALIB_CB_ADAPTIVE_THRESH, true))
+            ("CV_CALIB_CB_FAST_CHECK",      std::make_pair(CV_CALIB_CB_FAST_CHECK, false))
+            ("CV_CALIB_CB_NORMALIZE_IMAGE", std::make_pair(CV_CALIB_CB_NORMALIZE_IMAGE, false))
+            ("CV_CALIB_CB_FILTER_QUADS",    std::make_pair(CV_CALIB_CB_FILTER_QUADS, true));
+    addParameter(param::ParameterFactory::declareParameterBitSet("corner flags", corner_flags),
+                 boost::bind(&CameraCalibration::updateCalibration, this));
 
-    std::map<std::string, int> calib_flags = boost::assign::map_list_of
-            ("CV_CALIB_FIX_K4", CV_CALIB_FIX_K4)
-            ("CV_CALIB_FIX_K5", CV_CALIB_FIX_K5)
-            ("CV_CALIB_FIX_K6", CV_CALIB_FIX_K6);
-
+    std::map<std::string, std::pair<int, bool> > calib_flags = boost::assign::map_list_of
+            ("CV_CALIB_FIX_K4", std::make_pair(CV_CALIB_FIX_K4, true))
+            ("CV_CALIB_FIX_K5", std::make_pair(CV_CALIB_FIX_K5, true))
+            ("CV_CALIB_FIX_K6", std::make_pair(CV_CALIB_FIX_K6, false));
+    addParameter(param::ParameterFactory::declareParameterBitSet("calib flags", calib_flags),
+                 boost::bind(&CameraCalibration::updateCalibration, this));
 
 }
 
@@ -108,9 +112,11 @@ void csapex::CameraCalibration::updateCalibration()
 {
     cv::Size board_size;
     utils_cv::CameraCalibration::Mode mode = (utils_cv::CameraCalibration::Mode) param<int>("type");
-    board_size.width  = param<int>("squares x");
-    board_size.height = param<int>("squares y");
+    board_size.width   = param<int>("squares x");
+    board_size.height  = param<int>("squares y");
     double square_size = param<double>("squares scale");
     int    kernel_size = param<int>("kernel");
-    calibration_.reset(new utils_cv::CameraCalibration(mode, board_size, square_size, kernel_size));
+    int    flag_corner = param<int>("corner flags");
+    int    flag_calib  = param<int>("calib flags");
+    calibration_.reset(new utils_cv::CameraCalibration(mode, board_size, square_size, kernel_size, flag_corner, flag_calib));
 }

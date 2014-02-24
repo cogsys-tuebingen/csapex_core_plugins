@@ -79,7 +79,8 @@ add_library(vision_plugins
     src/corners_lines/hough_linesp.cpp
     src/matrix_to_heatmap.cpp
     src/median_filter.cpp
-
+    src/convert_type.cpp
+    src/flip.cpp
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}

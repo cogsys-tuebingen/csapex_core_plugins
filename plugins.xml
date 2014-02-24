@@ -142,4 +142,14 @@
         Apply a median filter to a multichannel (1 - 4) image using a specified kernel size.
     </description>
   </class>
+  <class type="csapex::ConvertType" base_class_type="csapex::Node">
+    <description>
+        Convert a matrix to a certain data type to make it usable for further algorithms.
+    </description>
+  </class>
+  <class type="csapex::Flip" base_class_type="csapex::Node">
+    <description>
+        Flip matrices or images horizontal, vertical or both.
+    </description>
+  </class>
 </library>
