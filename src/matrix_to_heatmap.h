@@ -18,9 +18,10 @@ private:
 
     void update();
 
-    ColorType    color_type_;
+    ColorType     color_type_;
     ConnectorOut* output_;
-    ConnectorIn* input_;
+    ConnectorIn*  input_;
+    ConnectorIn*  mask_;
 };
 }
 #endif // EXTREMUM_RENDERER_H

@@ -37,7 +37,7 @@ inline cv::Vec3f parabolaColor(const float value)
 
 typedef boost::function<cv::Vec3f (float)> colorFunction;
 
-inline void renderHeatmap(cv::Mat &src, cv::Mat &dst, colorFunction &color)
+inline void renderHeatmap(cv::Mat &src, cv::Mat &dst, colorFunction &color, const cv::Mat &mask)
 {
     if(src.channels() > 1) {
         throw std::runtime_error("Single channel matrix required for rendering!");
@@ -48,14 +48,15 @@ inline void renderHeatmap(cv::Mat &src, cv::Mat &dst, colorFunction &color)
 
     double min;
     double max;
-    cv::minMaxLoc(src, &min, &max);
+    cv::minMaxLoc(src, &min, &max, NULL, NULL, mask);
     src = src - (float) min;
     max -= min;
     src = src / (float) max;
     dst = cv::Mat(src.rows, src.cols, CV_32FC3, cv::Scalar::all(0));
     for(int i = 0 ; i < dst.rows ; ++i) {
         for(int j = 0 ; j < dst.cols ; ++j) {
-            dst.at<cv::Vec3f>(i,j) = color(src.at<float>(i,j));
+            if(mask.at<uchar>(i,j) != 0)
+                dst.at<cv::Vec3f>(i,j) = color(src.at<float>(i,j));
         }
     }
 }
@@ -82,9 +83,17 @@ void MatrixToHeatmap::process()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
+
     cv::Mat working = in->value.clone();
     cv::Mat heatmap (working.rows, working.cols, CV_32FC3, cv::Scalar::all(0));
     cv::Mat mean    (working.rows, working.cols, CV_32FC1, cv::Scalar::all(0));
+    cv::Mat mask;
+    if(mask_->isConnected()) {
+        CvMatMessage::Ptr mask_msg = mask_->getMessage<connection_types::CvMatMessage>();
+        mask = mask_msg->value;
+    } else {
+        mask = cv::Mat(working.rows, working.cols, CV_8UC1, 255);
+    }
 
     std::vector<cv::Mat> channels;
     cv::split(working, channels);
@@ -109,7 +118,7 @@ void MatrixToHeatmap::process()
         throw std::runtime_error("Unknown color function type!");
     }
 
-    renderHeatmap(mean, heatmap, fc);
+    renderHeatmap(mean, heatmap, fc, mask);
 
     heatmap.convertTo(heatmap, CV_8UC3);
     out->value = heatmap;
@@ -122,6 +131,7 @@ void MatrixToHeatmap::setup()
 
     input_ = addInput<CvMatMessage>("Matrix");
     output_ = addOutput<CvMatMessage>("Extrema");
+    mask_   = addInput<CvMatMessage>("Mask",true);
 
     update();
 }
