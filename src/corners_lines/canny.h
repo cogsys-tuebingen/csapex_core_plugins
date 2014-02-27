@@ -5,7 +5,7 @@
 #include "detection.h"
 
 namespace csapex {
-class Canny : public CornerDetection
+class Canny : public CornerLineDetection
 {
 public:
     Canny();

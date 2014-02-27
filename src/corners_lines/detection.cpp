@@ -14,18 +14,19 @@
 using namespace csapex;
 using namespace csapex::connection_types;
 
-CornerDetection::CornerDetection()
+CornerLineDetection::CornerLineDetection()
 {
     Tag::createIfNotExists("Corners");
+    Tag::createIfNotExists("Lines");
     addTag(Tag::get("Corners"));
     addTag(Tag::get("Vision"));
 }
 
-void CornerDetection::setup()
+void CornerLineDetection::setup()
 {
     setSynchronizedInputs(true);
 
     input_ = addInput<CvMatMessage>("Original");
-    output_ = addOutput<CvMatMessage>("Corners");
+    output_ = addOutput<CvMatMessage>("Corners / Lines");
 }
 

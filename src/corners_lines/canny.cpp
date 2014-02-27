@@ -51,7 +51,7 @@ void Canny::process()
 
 void Canny::setup()
 {
-    CornerDetection::setup();
+    CornerLineDetection::setup();
     update();
 }
 

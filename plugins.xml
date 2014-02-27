@@ -152,4 +152,24 @@
         Flip matrices or images horizontal, vertical or both.
     </description>
   </class>
+  <class type="csapex::Laplacian" base_class_type="csapex::Node">
+    <description>
+        Apply the laplacian operator to an image.
+    </description>
+  </class>
+  <class type="csapex::Sobel" base_class_type="csapex::Node">
+    <description>
+        Apply the Sobel operator to an image.
+    </description>
+  </class>
+  <class type="csapex::Scharr" base_class_type="csapex::Node">
+    <description>
+        Apply the Scharr operator to an image.
+    </description>
+  </class>
+  <class type="csapex::FloatToUchar" base_class_type="csapex::Node">
+    <description>
+        Convert floating point matrices to uchar matrices.
+    </description>
+  </class>
 </library>

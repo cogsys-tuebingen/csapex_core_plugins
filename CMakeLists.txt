@@ -77,10 +77,16 @@ add_library(vision_plugins
     src/corners_lines/canny.cpp
     src/corners_lines/eigenvals_and_vecs.cpp
     src/corners_lines/hough_linesp.cpp
+    src/corners_lines/hough_linesp.cpp
+    src/corners_lines/operator.cpp
+    src/corners_lines/laplacian.cpp
+    src/corners_lines/sobel.cpp
+    src/corners_lines/scharr.cpp
     src/matrix_to_heatmap.cpp
     src/median_filter.cpp
     src/convert_type.cpp
     src/flip.cpp
+    src/float_to_uchar.cpp
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}

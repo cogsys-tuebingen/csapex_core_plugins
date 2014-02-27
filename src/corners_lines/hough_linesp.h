@@ -5,7 +5,7 @@
 #include "detection.h"
 
 namespace csapex {
-class HoughLinesP : public CornerDetection
+class HoughLinesP : public CornerLineDetection
 {
 public:
     HoughLinesP();

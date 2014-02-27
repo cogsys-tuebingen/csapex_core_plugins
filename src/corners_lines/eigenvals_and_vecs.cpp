@@ -69,7 +69,7 @@ void EigenValsAndVecs::process()
 
 void EigenValsAndVecs::setup()
 {
-    CornerDetection::setup();
+    CornerLineDetection::setup();
     update();
 }
 

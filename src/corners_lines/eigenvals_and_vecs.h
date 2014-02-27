@@ -5,7 +5,7 @@
 #include "detection.h"
 
 namespace csapex {
-class EigenValsAndVecs : public CornerDetection
+class EigenValsAndVecs : public CornerLineDetection
 {
 public:
     enum EigenType{MIN_EIGEN_VAL, EIGEN_VALS_AND_VECS};

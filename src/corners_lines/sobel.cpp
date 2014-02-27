@@ -1,0 +1,40 @@
+#include "sobel.h"
+
+/// PROJECT
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/connector_in.h>
+#include <csapex/model/connector_out.h>
+#include <utils_param/parameter_factory.h>
+#include <csapex_vision/cv_mat_message.h>
+#include <utils_cv/normalization.hpp>
+
+using namespace csapex;
+using namespace csapex::connection_types;
+
+CSAPEX_REGISTER_CLASS(csapex::Sobel, csapex::Node)
+
+Sobel::Sobel() :
+    dx_(1),
+    dy_(1)
+{
+    addParameter(param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
+                 boost::bind(&Sobel::update, this));
+    addParameter(param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
+                 boost::bind(&Sobel::update, this));
+}
+
+
+void Sobel::process()
+{
+    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
+    cv::Sobel(in->value, out->value, ddepth_,dx_, dy_, ksize_, scale_,delta_);
+    output_->publish(out);
+}
+
+void  Sobel::update()
+{
+    Operator::update();
+    dx_     = param<int>("dx");
+    dy_     = param<int>("dy");
+}

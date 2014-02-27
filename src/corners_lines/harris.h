@@ -5,7 +5,7 @@
 #include "detection.h"
 
 namespace csapex {
-class CornerHarris : public CornerDetection
+class CornerHarris : public CornerLineDetection
 {
 public:
     CornerHarris();

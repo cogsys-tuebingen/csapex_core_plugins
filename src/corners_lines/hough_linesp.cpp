@@ -59,7 +59,7 @@ void HoughLinesP::process()
 
 void HoughLinesP::setup()
 {
-    CornerDetection::setup();
+    CornerLineDetection::setup();
     update();
 }
 

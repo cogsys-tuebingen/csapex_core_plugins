@@ -56,7 +56,7 @@ void CornerHarris::process()
 
 void CornerHarris::setup()
 {
-    CornerDetection::setup();
+    CornerLineDetection::setup();
     update();
 }
 

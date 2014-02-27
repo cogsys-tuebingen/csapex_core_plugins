@@ -6,10 +6,10 @@
 
 namespace csapex {
 
-class CornerDetection : public csapex::Node
+class CornerLineDetection : public csapex::Node
 {
 public:
-    CornerDetection();
+    CornerLineDetection();
 
     virtual void setup();
 
