@@ -60,7 +60,6 @@ add_library(vision_plugins
     src/render_rois.cpp
     src/merge_rois.cpp
     src/extract_roi.cpp
-    src/simple_image_difference.cpp
     src/simple_sink.cpp
     src/number_generator.cpp
    ${MOC}
@@ -87,6 +86,7 @@ add_library(vision_plugins
     src/convert_type.cpp
     src/flip.cpp
     src/float_to_uchar.cpp
+    src/sequence_mean.cpp
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}

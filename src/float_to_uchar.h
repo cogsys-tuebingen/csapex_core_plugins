@@ -18,8 +18,8 @@ protected:
 
     Type           type_;
 
-    ConnectorOut*  output_;
     ConnectorIn*   input_;
+    ConnectorOut*  output_;
 
     void update();
 };

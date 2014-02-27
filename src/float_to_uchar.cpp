@@ -1,7 +1,5 @@
-#include "float_to_uchar.h"
-
 /// HEADER
-#include "flip.h"
+#include "float_to_uchar.h"
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
@@ -36,7 +34,7 @@ FloatToUchar::FloatToUchar() :
 void FloatToUchar::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
     out->value = in->value.clone();
 
     switch(type_) {
@@ -55,7 +53,6 @@ void FloatToUchar::process()
     default:
         throw std::runtime_error("Cannot perfom this operation!");
     }
-
 
     out->value.convertTo(out->value, CV_8UC(in->value.channels()));
     output_->publish(out);

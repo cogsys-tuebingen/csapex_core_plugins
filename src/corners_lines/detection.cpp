@@ -16,9 +16,8 @@ using namespace csapex::connection_types;
 
 CornerLineDetection::CornerLineDetection()
 {
-    Tag::createIfNotExists("Corners");
-    Tag::createIfNotExists("Lines");
-    addTag(Tag::get("Corners"));
+    Tag::createIfNotExists("Corners & Lines");
+    addTag(Tag::get("Corners & Lines"));
     addTag(Tag::get("Vision"));
 }
 
