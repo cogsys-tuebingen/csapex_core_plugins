@@ -174,4 +174,9 @@
         Accumulate image or matrix information over a sequence an build the mean out of it.
     </description>
   </class>
+  <class type="csapex::Pyramid" base_class_type="csapex::Node">
+    <description>
+        Build an 8 level image or matrix pyramid.
+    </description>
+  </class>
 </library>

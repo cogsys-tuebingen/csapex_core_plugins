@@ -87,6 +87,7 @@ add_library(vision_plugins
     src/flip.cpp
     src/float_to_uchar.cpp
     src/sequence_mean.cpp
+    src/pyramid.cpp
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}
