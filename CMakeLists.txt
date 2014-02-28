@@ -57,7 +57,7 @@ add_library(vision_plugins
     src/morphological.cpp
     src/vj_detector.cpp
     src/lk_tracking.cpp
-    src/render_rois.cpp
+    src/visualize/render_rois.cpp
     src/merge_rois.cpp
     src/extract_roi.cpp
     src/simple_sink.cpp
@@ -65,12 +65,12 @@ add_library(vision_plugins
    ${MOC}
 
     ###  NEW API ###
-    src/undistort.cpp
-    src/equalize.cpp
-    src/scale.cpp
-    src/resize.cpp
-    src/monofilter.cpp
-    src/camera_calibration.cpp
+
+    src/modify/undistort.cpp
+    src/modify/flip.cpp
+    src/modify/scale.cpp
+    src/modify/resize.cpp
+
     src/corners_lines/detection.cpp
     src/corners_lines/harris.cpp
     src/corners_lines/canny.cpp
@@ -81,13 +81,20 @@ add_library(vision_plugins
     src/corners_lines/laplacian.cpp
     src/corners_lines/sobel.cpp
     src/corners_lines/scharr.cpp
-    src/matrix_to_heatmap.cpp
-    src/median_filter.cpp
+
+    src/visualize/matrix_to_heatmap.cpp
+
+    src/filter/median_filter.cpp
+    src/filter/monofilter.cpp
+    src/filter/sequence_mean.cpp
+    src/filter/equalize.cpp
+
+    src/analysis/pyramid.cpp
+    src/analysis/camera_calibration.cpp
+
     src/convert_type.cpp
-    src/flip.cpp
     src/float_to_uchar.cpp
-    src/sequence_mean.cpp
-    src/pyramid.cpp
+
 )
 
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}

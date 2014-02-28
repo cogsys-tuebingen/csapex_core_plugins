@@ -98,7 +98,7 @@ void Histogram::messageArrived(ConnectorIn *source)
     prepare(bins, ranges);
 
     std::vector<cv::MatND>  histograms;
-    utils_cv::full_channel_histogram(m->value, histograms, cv::Mat(), bins, ranges);
+    utils_cv::histogram(m->value, histograms, cv::Mat(), bins, ranges);
 
     cv::Mat histogram_img(600,800,CV_8UC3, cv::Scalar(0,0,0));
     utils_cv::render_histogram<float>(histograms, bins, colors_, histogram_img, slide_zoom_->doubleValue());

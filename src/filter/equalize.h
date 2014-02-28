@@ -15,8 +15,8 @@ public:
     virtual void setup();
 
 protected:
-    ConnectorOut*                    output_;
-    ConnectorIn*                     input_;
+    ConnectorOut*   output_;
+    ConnectorIn*    input_;
 };
 
 }
