@@ -3,7 +3,7 @@
 
 #include "detection.h"
 
-namespace csapex {
+namespace vision_plugins {
 class Operator : public CornerLineDetection
 {
 public:

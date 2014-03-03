@@ -14,10 +14,11 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/fusion/adapted.hpp>
 
-CSAPEX_REGISTER_CLASS(csapex::GenericImageCombiner, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::GenericImageCombiner, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
+using namespace vision_plugins;
 
 BOOST_FUSION_ADAPT_STRUCT(VariableExpression, (std::string, name_))
 

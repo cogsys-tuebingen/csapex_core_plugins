@@ -8,28 +8,10 @@
   <class type="csapex::BlobDetector" base_class_type="csapex::Node">
     <description>none yet</description>
   </class>
-  <class type="csapex::GenericImageCombiner" base_class_type="csapex::Node">
-    <description>none yet</description>
-  </class>
-  <class type="csapex::GridCompareValue" base_class_type="csapex::Node">
-    <description>none yet</description>
-  </class>
-  <class type="csapex::GridHeatMapValue" base_class_type="csapex::Node">
-    <description>none yet</description>
-  </class>
-  <class type="csapex::GridCompareHist" base_class_type="csapex::Node">
-    <description>none yet</description>
-  </class>
-  <class type="csapex::GridHeatMapHist" base_class_type="csapex::Node">
-    <description>none yet</description>
-  </class>
   <class type="csapex::Merger" base_class_type="csapex::Node">
     <description>none yet</description>
   </class>
   <class type="csapex::Splitter" base_class_type="csapex::Node">
-    <description>none yet</description>
-  </class>
-  <class type="csapex::Histogram" base_class_type="csapex::Node">
     <description>none yet</description>
   </class>
   <class type="csapex::ColorAdjustment" base_class_type="csapex::Node">
@@ -62,9 +44,6 @@
   <class type="csapex::ExtractROI" base_class_type="csapex::Node">
     <description>none yet</description>
   </class>
-  <class type="csapex::SetOperation" base_class_type="csapex::Node">
-    <description>none yet</description>
-  </class>
   <class type="csapex::NumberGenerator" base_class_type="csapex::Node">
     <description>none yet</description>
   </class>
@@ -73,110 +52,134 @@
   </class>
 
   <!-- NEW API -->
-  <class type="csapex::Undistort" base_class_type="csapex::Node">
+  <class type="vision_plugins::GenericImageCombiner" base_class_type="csapex::Node">
+    <description>
+        Combine images or matrices by giving an expression that will induce the
+        combinatoric operation.
+    </description>
+  </class>
+  <class type="vision_plugins::SetOperation" base_class_type="csapex::Node">
+    <description>
+        Compare two images using a grid
+        overlay. The Feature observed in this case is the mean value of values given
+        in a grid cell.
+    </description>
+  </class>
+  <class type="vision_plugins::Undistort" base_class_type="csapex::Node">
     <description>
         Undistort and rectify images using given camera parameters.
         A margin parameter enables to gain more image data from the
         undistortion.
     </description>
   </class>
-  <class type="csapex::CameraCalibration" base_class_type="csapex::Node">
+  <class type="vision_plugins::CameraCalibration" base_class_type="csapex::Node">
     <description>
         Calibrate a camera by calculating the intrinsic parameters.
         The gained parameters can be used with the 'Undistort'-Plugin.
     </description>
   </class>
-  <class type="csapex::Scale" base_class_type="csapex::Node">
+  <class type="vision_plugins::Scale" base_class_type="csapex::Node">
     <description>
         Scale images from 1 to 400 percent of the original size.
     </description>
   </class>
-  <class type="csapex::Resize" base_class_type="csapex::Node">
+  <class type="vision_plugins::Resize" base_class_type="csapex::Node">
     <description>
         Resize images from 10 to 10000 pixels.
     </description>
   </class>
-  <class type="csapex::CornerHarris" base_class_type="csapex::Node">
+  <class type="vision_plugins::CornerHarris" base_class_type="csapex::Node">
     <description>
         Make it possible to find corners in an image by appling the harrisCorner function.
         It turns out an grayscale image giving selected border types at extreme gradients.
     </description>
   </class>
-  <class type="csapex::Equalize" base_class_type="csapex::Node">
+  <class type="vision_plugins::Equalize" base_class_type="csapex::Node">
     <description>
         Do a histogram equalization on each channel of a image.
     </description>
   </class>
-  <class type="csapex::MonoFilter" base_class_type="csapex::Node">
+  <class type="vision_plugins::MonoFilter" base_class_type="csapex::Node">
     <description>
         Filter a value range an set other values to defined fix values.
     </description>
   </class>
-  <class type="csapex::Canny" base_class_type="csapex::Node">
+  <class type="vision_plugins::Canny" base_class_type="csapex::Node">
     <description>
         Apply the canny edge filter to an image.
     </description>
   </class>
-  <class type="csapex::EigenValsAndVecs" base_class_type="csapex::Node">
+  <class type="vision_plugins::EigenValsAndVecs" base_class_type="csapex::Node">
     <description>
         Apply the computation of a covariation matrix of derivatives over a neighborhood
         of pixels. Calculate edges with this method.
     </description>
   </class>
-  <class type="csapex::HoughLinesP" base_class_type="csapex::Node">
+  <class type="vision_plugins::HoughLinesP" base_class_type="csapex::Node">
     <description>
         Search lines in an image by using the probabilistic hough lines function
         of opencv.
     </description>
   </class>
-  <class type="csapex::MatrixToHeatmap" base_class_type="csapex::Node">
+  <class type="vision_plugins::MatrixToHeatmap" base_class_type="csapex::Node">
     <description>
         Find maxima and minima in matrices and then visualize them.
     </description>
   </class>
-  <class type="csapex::MedianFilter" base_class_type="csapex::Node">
+  <class type="vision_plugins::MedianFilter" base_class_type="csapex::Node">
     <description>
         Apply a median filter to a multichannel (1 - 4) image using a specified kernel size.
     </description>
   </class>
-  <class type="csapex::ConvertType" base_class_type="csapex::Node">
+  <class type="vision_plugins::ConvertType" base_class_type="csapex::Node">
     <description>
         Convert a matrix to a certain data type to make it usable for further algorithms.
     </description>
   </class>
-  <class type="csapex::Flip" base_class_type="csapex::Node">
+  <class type="vision_plugins::Flip" base_class_type="csapex::Node">
     <description>
         Flip matrices or images horizontal, vertical or both.
     </description>
   </class>
-  <class type="csapex::Laplacian" base_class_type="csapex::Node">
+  <class type="vision_plugins::Laplacian" base_class_type="csapex::Node">
     <description>
         Apply the laplacian operator to an image.
     </description>
   </class>
-  <class type="csapex::Sobel" base_class_type="csapex::Node">
+  <class type="vision_plugins::Sobel" base_class_type="csapex::Node">
     <description>
         Apply the Sobel operator to an image.
     </description>
   </class>
-  <class type="csapex::Scharr" base_class_type="csapex::Node">
+  <class type="vision_plugins::Scharr" base_class_type="csapex::Node">
     <description>
         Apply the Scharr operator to an image.
     </description>
   </class>
-  <class type="csapex::FloatToUchar" base_class_type="csapex::Node">
+  <class type="vision_plugins::FloatToUchar" base_class_type="csapex::Node">
     <description>
         Convert floating point matrices to uchar matrices.
     </description>
   </class>
-  <class type="csapex::SequenceMean" base_class_type="csapex::Node">
+  <class type="vision_plugins::SequenceMean" base_class_type="csapex::Node">
     <description>
         Accumulate image or matrix information over a sequence an build the mean out of it.
     </description>
   </class>
-  <class type="csapex::Pyramid" base_class_type="csapex::Node">
+  <class type="vision_plugins::Pyramid" base_class_type="csapex::Node">
     <description>
         Build an 8 level image or matrix pyramid.
+    </description>
+  </class>
+  <class type="vision_plugins::Histogram" base_class_type="csapex::Node">
+    <description>
+        Calculate an 1D histogram for an image. Multiple Channels are supported, but only
+        one value for the bin amount can be set.
+    </description>
+  </class>
+  <class type="vision_plugins::RenderHistogram" base_class_type="csapex::Node">
+    <description>
+        Render histogram results.
     </description>
   </class>
 </library>

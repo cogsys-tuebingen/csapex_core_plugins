@@ -5,7 +5,7 @@
 #include <utils_cv/camera_calibration.h>
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace vision_plugins {
 class CameraCalibration : public csapex::Node
 {
 public:
@@ -17,8 +17,8 @@ public:
 private:
     utils_cv::CameraCalibration::Ptr calibration_;
 
-    ConnectorOut*                    output_;
-    ConnectorIn*                     input_;
+    csapex::ConnectorOut*            output_;
+    csapex::ConnectorIn*             input_;
 
     cv::Mat                          buffer_frame_;
 

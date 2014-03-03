@@ -7,7 +7,7 @@
 /// SYSTEM
 #include <opencv2/core/core.hpp>
 
-namespace csapex {
+namespace vision_plugins {
 class Resize : public csapex::Node
 {
 public:
@@ -17,8 +17,8 @@ public:
     virtual void setup();
 
 private:
-    ConnectorOut*                    output_;
-    ConnectorIn*                     input_;
+    csapex::ConnectorOut*            output_;
+    csapex::ConnectorIn*             input_;
 
     cv::Size                         size_;
     int                              mode_;

@@ -39,17 +39,9 @@ add_subdirectory(src/cvBlob)
 add_library(vision_plugins
     src/adaptive_threshold.cpp
     src/blob_detector.cpp
-    src/generic_image_combiner.cpp
-    src/combiner_gridcompare.cpp
-    src/combiner_gridcompare_hist.cpp
-    src/combiner_gridheatmap_hist.cpp
-    src/combiner_gridcompare_value.cpp
-    src/combiner_gridheatmap_value.cpp
-    src/combiner_set_operation.cpp
     src/filter_merger.cpp
     src/filter_splitter.cpp
     src/filter_perspective.cpp
-    src/filter_histogram.cpp
     src/filter_coloradjustment.cpp
     src/filter_colorconvert.cpp
     src/filter_debayer.cpp
@@ -65,6 +57,9 @@ add_library(vision_plugins
    ${MOC}
 
     ###  NEW API ###
+
+    src/combine/generic_image_combiner.cpp
+    src/combine/set_operation.cpp
 
     src/modify/undistort.cpp
     src/modify/flip.cpp
@@ -83,14 +78,16 @@ add_library(vision_plugins
     src/corners_lines/scharr.cpp
 
     src/visualize/matrix_to_heatmap.cpp
+    src/visualize/render_histogram.cpp
 
     src/filter/median_filter.cpp
     src/filter/monofilter.cpp
     src/filter/sequence_mean.cpp
     src/filter/equalize.cpp
 
-    src/analysis/pyramid.cpp
-    src/analysis/camera_calibration.cpp
+    src/analyze/pyramid.cpp
+    src/analyze/camera_calibration.cpp
+    src/analyze/histogram.cpp
 
     src/convert_type.cpp
     src/float_to_uchar.cpp

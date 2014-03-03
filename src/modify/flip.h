@@ -3,7 +3,7 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace vision_plugins {
 class Flip : public csapex::Node
 {
 public:
@@ -13,8 +13,8 @@ public:
     virtual void setup();
 
 protected:
-    ConnectorOut*                    output_;
-    ConnectorIn*                     input_;
+    csapex::ConnectorOut* output_;
+    csapex::ConnectorIn*  input_;
 
     int mode_;
 

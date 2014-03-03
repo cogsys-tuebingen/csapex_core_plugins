@@ -13,6 +13,7 @@
 
 using namespace csapex;
 using namespace csapex::connection_types;
+using namespace vision_plugins;
 
 CornerLineDetection::CornerLineDetection()
 {

@@ -11,10 +11,11 @@
 /// SYSTEM
 #include <boost/assign/list_of.hpp>
 
-CSAPEX_REGISTER_CLASS(csapex::Resize, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::Resize, csapex::Node)
 
 using namespace csapex::connection_types;
 using namespace csapex;
+using namespace vision_plugins;
 
 Resize::Resize()
 {

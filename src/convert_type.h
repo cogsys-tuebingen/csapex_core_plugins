@@ -4,7 +4,7 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace vision_plugins {
 class ConvertType : public csapex::Node
 {
 public:
@@ -14,8 +14,8 @@ public:
     virtual void setup();
 
 private:
-    ConnectorIn  *input_;
-    ConnectorOut *output_;
+    csapex::ConnectorIn  *input_;
+    csapex::ConnectorOut *output_;
 
     void update();
 

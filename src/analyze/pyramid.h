@@ -4,7 +4,7 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace vision_plugins {
 class Pyramid : public csapex::Node
 {
 public:
@@ -14,12 +14,12 @@ public:
     virtual void setup();
 
 protected:
-    int             amount_levels_;
-    int             preview_level_;
+    int  amount_levels_;
+    int  preview_level_;
 
-    ConnectorOut*   levels_;
-    ConnectorOut*   preview_;
-    ConnectorIn*    input_;
+    csapex::ConnectorOut*   levels_;
+    csapex::ConnectorOut*   preview_;
+    csapex::ConnectorIn*    input_;
 
     void update();
 };

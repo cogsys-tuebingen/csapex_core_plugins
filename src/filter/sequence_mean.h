@@ -6,7 +6,7 @@
 #include <opencv2/core/core.hpp>
 #include <deque>
 
-namespace csapex {
+namespace vision_plugins {
 class SequenceMean : public csapex::Node
 {
 public:
@@ -16,8 +16,8 @@ public:
     virtual void setup();
 
 protected:
-    ConnectorIn  *input_;
-    ConnectorOut *output_;
+    csapex::ConnectorIn  *input_;
+    csapex::ConnectorOut *output_;
 
     int                     type_;
     int                     channels_;

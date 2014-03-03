@@ -4,7 +4,7 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace vision_plugins {
 class FloatToUchar : public csapex::Node
 {
 public:
@@ -18,8 +18,8 @@ protected:
 
     Type           type_;
 
-    ConnectorIn*   input_;
-    ConnectorOut*  output_;
+    csapex::ConnectorIn*   input_;
+    csapex::ConnectorOut*  output_;
 
     void update();
 };

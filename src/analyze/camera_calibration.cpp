@@ -11,11 +11,13 @@
 #include <boost/assign/std.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 
-CSAPEX_REGISTER_CLASS(csapex::CameraCalibration, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::CameraCalibration, csapex::Node)
 
+using namespace csapex;
 using namespace csapex::connection_types;
+using namespace vision_plugins;
 
-csapex::CameraCalibration::CameraCalibration()
+vision_plugins::CameraCalibration::CameraCalibration()
 {
     addTag(Tag::get("Vision"));
 
@@ -53,7 +55,7 @@ csapex::CameraCalibration::CameraCalibration()
 
 }
 
-void csapex::CameraCalibration::process()
+void vision_plugins::CameraCalibration::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
@@ -76,7 +78,7 @@ void csapex::CameraCalibration::process()
 
 }
 
-void csapex::CameraCalibration::setup()
+void vision_plugins::CameraCalibration::setup()
 {
     setSynchronizedInputs(true);
 
@@ -85,12 +87,12 @@ void csapex::CameraCalibration::setup()
     updateCalibration();
 }
 
-void csapex::CameraCalibration::add()
+void vision_plugins::CameraCalibration::add()
 {
     calibration_->addFrame();
 }
 
-void csapex::CameraCalibration::calibrate()
+void vision_plugins::CameraCalibration::calibrate()
 {
     std::string path = param<std::string>("results");
     if(path == "") {
@@ -108,7 +110,7 @@ void csapex::CameraCalibration::calibrate()
     fs.release();
 }
 
-void csapex::CameraCalibration::updateCalibration()
+void vision_plugins::CameraCalibration::updateCalibration()
 {
     cv::Size board_size;
     utils_cv::CameraCalibration::Mode mode = (utils_cv::CameraCalibration::Mode) param<int>("type");

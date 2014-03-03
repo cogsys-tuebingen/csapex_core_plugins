@@ -7,10 +7,11 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 
-CSAPEX_REGISTER_CLASS(csapex::MedianFilter, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::MedianFilter, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
+using namespace vision_plugins;
 
 MedianFilter::MedianFilter() :
     kernel_size_(3)

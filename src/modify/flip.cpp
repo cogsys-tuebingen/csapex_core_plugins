@@ -11,8 +11,9 @@
 
 using namespace csapex;
 using namespace csapex::connection_types;
+using namespace vision_plugins;
 
-CSAPEX_REGISTER_CLASS(csapex::Flip, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::Flip, csapex::Node)
 
 Flip::Flip()
 {

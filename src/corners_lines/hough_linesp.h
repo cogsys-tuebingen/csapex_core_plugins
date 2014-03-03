@@ -4,7 +4,7 @@
 /// COMPONENT
 #include "detection.h"
 
-namespace csapex {
+namespace vision_plugins {
 class HoughLinesP : public CornerLineDetection
 {
 public:

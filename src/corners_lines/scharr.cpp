@@ -11,8 +11,9 @@
 
 using namespace csapex;
 using namespace csapex::connection_types;
+using namespace vision_plugins;
 
-CSAPEX_REGISTER_CLASS(csapex::Scharr, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::Scharr, csapex::Node)
 
 Scharr::Scharr()  :
     type_(DX1)

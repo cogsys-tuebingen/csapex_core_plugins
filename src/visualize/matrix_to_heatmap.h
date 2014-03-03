@@ -4,7 +4,7 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace vision_plugins {
 class MatrixToHeatmap : public csapex::Node
 {
 public:
@@ -18,10 +18,10 @@ private:
 
     void update();
 
-    ColorType     color_type_;
-    ConnectorOut* output_;
-    ConnectorIn*  input_;
-    ConnectorIn*  mask_;
+    ColorType             color_type_;
+    csapex::ConnectorOut* output_;
+    csapex::ConnectorIn*  input_;
+    csapex::ConnectorIn*  mask_;
 };
 }
 #endif // EXTREMUM_RENDERER_H

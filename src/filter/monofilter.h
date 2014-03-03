@@ -4,7 +4,7 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace vision_plugins {
 
 class MonoFilter : public csapex::Node
 {
@@ -15,8 +15,8 @@ public:
     virtual void setup();
 
 protected:
-    ConnectorOut*                    output_;
-    ConnectorIn*                     input_;
+    csapex::ConnectorOut* output_;
+    csapex::ConnectorIn*  input_;
 
     void update();
     int   min_;

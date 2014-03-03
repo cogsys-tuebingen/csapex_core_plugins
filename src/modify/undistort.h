@@ -5,7 +5,7 @@
 #include <utils_cv/undistortion.h>
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace vision_plugins {
 class Undistort : public csapex::Node
 {
 public:
@@ -20,8 +20,8 @@ private:
     bool read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs);
     void update();
 
-    ConnectorOut* output_;
-    ConnectorIn* input_;
+    csapex::ConnectorOut* output_;
+    csapex::ConnectorIn* input_;
 };
 
 }

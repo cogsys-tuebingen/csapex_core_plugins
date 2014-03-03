@@ -10,10 +10,11 @@
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 
-CSAPEX_REGISTER_CLASS(csapex::Undistort, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::Undistort, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
+using namespace vision_plugins;
 
 Undistort::Undistort()
 {

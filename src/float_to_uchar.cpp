@@ -12,8 +12,9 @@
 
 using namespace csapex;
 using namespace csapex::connection_types;
+using namespace vision_plugins;
 
-CSAPEX_REGISTER_CLASS(csapex::FloatToUchar, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::FloatToUchar, csapex::Node)
 
 #warning "Temporary implementation fix with fixing the channel encoding!"
 

@@ -8,10 +8,11 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 
-CSAPEX_REGISTER_CLASS(csapex::Scale, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::Scale, csapex::Node)
 
 using namespace csapex::connection_types;
 using namespace csapex;
+using namespace vision_plugins;
 
 Scale::Scale()
 {

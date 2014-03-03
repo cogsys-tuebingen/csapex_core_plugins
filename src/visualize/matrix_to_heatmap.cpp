@@ -12,10 +12,11 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/function.hpp>
 
-CSAPEX_REGISTER_CLASS(csapex::MatrixToHeatmap, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::MatrixToHeatmap, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
+using namespace vision_plugins;
 
 namespace {
 const cv::Point3f red(0,0,255);                     /// P0

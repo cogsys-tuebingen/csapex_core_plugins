@@ -4,7 +4,7 @@
 /// COMPONENT
 #include "detection.h"
 
-namespace csapex {
+namespace vision_plugins {
 class Canny : public CornerLineDetection
 {
 public:

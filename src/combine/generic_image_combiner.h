@@ -12,7 +12,7 @@
 #include <boost/smart_ptr/make_shared.hpp>
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
+namespace vision_plugins {
 
 struct AbstractExpression;
 typedef boost::shared_ptr<AbstractExpression> Ptr;
@@ -180,7 +180,7 @@ private:
 
 };
 
-class GenericImageCombiner : public Node
+class GenericImageCombiner : public csapex::Node
 {
 public:
     GenericImageCombiner();
@@ -192,9 +192,9 @@ private:
     void updateFormula();
 
 private:
-    ConnectorIn* i1_;
-    ConnectorIn* i2_;
-    ConnectorOut* out_;
+    csapex::ConnectorIn* i1_;
+    csapex::ConnectorIn* i2_;
+    csapex::ConnectorOut* out_;
 
     Expression e;
 };

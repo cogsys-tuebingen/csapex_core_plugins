@@ -4,7 +4,7 @@
 /// COMPONENT
 #include "operator.h"
 
-namespace csapex {
+namespace vision_plugins {
 class Sobel : public Operator
 {
 public:
