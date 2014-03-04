@@ -60,8 +60,8 @@ void SequenceMean::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Input");
-    output_ = addOutput<CvMatMessage>("Accumulated");
+    input_ = addInput<CvMatMessage>("Original");
+    output_ = addOutput<CvMatMessage>("Filtered");
     update();
 }
 

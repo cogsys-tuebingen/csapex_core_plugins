@@ -60,6 +60,7 @@ add_library(vision_plugins
 
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp
+    src/combine/sum_channels.cpp
 
     src/modify/undistort.cpp
     src/modify/flip.cpp
@@ -81,6 +82,7 @@ add_library(vision_plugins
     src/visualize/render_histogram.cpp
 
     src/filter/median_filter.cpp
+    src/filter/binomial_filter.cpp
     src/filter/monofilter.cpp
     src/filter/sequence_mean.cpp
     src/filter/equalize.cpp

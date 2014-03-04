@@ -5,7 +5,6 @@
 #include <csapex/model/node.h>
 
 namespace vision_plugins {
-
 class Equalize : public csapex::Node
 {
 public:

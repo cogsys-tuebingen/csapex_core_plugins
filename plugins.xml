@@ -182,4 +182,14 @@
         Render histogram results.
     </description>
   </class>
+  <class type="vision_plugins::BinomialFilter" base_class_type="csapex::Node">
+    <description>
+        Apply the binomial filter to either a matrix or an image.
+    </description>
+  </class>
+  <class type="vision_plugins::SumChannels" base_class_type="csapex::Node">
+    <description>
+        Sum all image or matrix channels and optionally build the mean.
+    </description>
+  </class>
 </library>

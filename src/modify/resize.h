@@ -16,7 +16,7 @@ public:
     virtual void process();
     virtual void setup();
 
-private:
+protected:
     csapex::ConnectorOut*            output_;
     csapex::ConnectorIn*             input_;
 

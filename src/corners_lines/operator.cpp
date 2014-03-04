@@ -13,7 +13,10 @@ using namespace csapex;
 using namespace csapex::connection_types;
 using namespace vision_plugins;
 
-Operator::Operator()
+Operator::Operator() :
+    ksize_(1),
+    scale_(1.0),
+    delta_(0.0)
 {
     std::map<std::string, int> depths = boost::assign::map_list_of
             ("default", -1)

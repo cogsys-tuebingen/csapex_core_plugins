@@ -1,4 +1,5 @@
-#include "median_filter.h"
+/// HEADER
+#include "binomial_filter.h"
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
@@ -6,46 +7,41 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-
-CSAPEX_REGISTER_CLASS(vision_plugins::MedianFilter, csapex::Node)
+#include <utils_cv/kernel.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 using namespace vision_plugins;
 
-MedianFilter::MedianFilter() :
-    kernel_size_(3)
+CSAPEX_REGISTER_CLASS(vision_plugins::BinomialFilter, csapex::Node)
+
+BinomialFilter::BinomialFilter()
 {
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
 
-    addParameter(param::ParameterFactory::declareRange("kernel", 3, 31, kernel_size_, 2),
-                 boost::bind(&MedianFilter::update, this));
+    addParameter(param::ParameterFactory::declareRange("kernel", 3, 131, 3, 2));
 }
 
-void MedianFilter::process()
+void BinomialFilter::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
-    /// TODO
-    if(in->value.channels() > 4)
-        throw std::runtime_error("To many channels!");
+    int kernel_size = param<int>("kernel");
+    if(kernel_size != kernel_size_) {
+        utils_cv::buildBinomialKernel(kernel_, kernel_size);
+        kernel_size_ = kernel_size;
+    }
 
-    cv::medianBlur(in->value, out->value, kernel_size_);
+    cv::filter2D(in->value, out->value, -1, kernel_);
     output_->publish(out);
 }
 
-void MedianFilter::setup()
+void BinomialFilter::setup()
 {
     setSynchronizedInputs(true);
 
     input_ = addInput<CvMatMessage>("Original");
     output_ = addOutput<CvMatMessage>("Filtered");
-    update();
-}
-
-void MedianFilter::update()
-{
-    kernel_size_ = param<int>("kernel");
 }
