@@ -52,7 +52,6 @@ add_library(vision_plugins
     src/visualize/render_rois.cpp
     src/merge_rois.cpp
     src/extract_roi.cpp
-    src/simple_sink.cpp
     src/number_generator.cpp
    ${MOC}
 
