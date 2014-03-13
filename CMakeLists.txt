@@ -89,6 +89,7 @@ add_library(vision_plugins
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
     src/analyze/histogram.cpp
+    src/analyze/label_regions.cpp
 
     src/convert_type.cpp
     src/float_to_uchar.cpp
