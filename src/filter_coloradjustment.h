@@ -19,10 +19,11 @@ public:
     void         setState(Memento::Ptr memento);
     Memento::Ptr getState() const;
 
+    void setup();
     virtual void fill(QBoxLayout *parent);
+    void process();
 
 private Q_SLOTS:
-    virtual void messageArrived(ConnectorIn *source);
     virtual void updateDynamicGui(QBoxLayout *layout);
     void setPreset(int index);
 

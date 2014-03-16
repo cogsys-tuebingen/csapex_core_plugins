@@ -49,18 +49,23 @@ Memento::Ptr ColorAdjustment::getState() const
     return boost::shared_ptr<State>(new State(state_));
 }
 
+void ColorAdjustment::setup()
+{
+    setSynchronizedInputs(true);
+
+    /// add input
+    input_ = addInput<CvMatMessage>("Image");
+
+    /// add output
+    output_ = addOutput<CvMatMessage>("Image");
+}
+
 void ColorAdjustment::fill(QBoxLayout *parent)
 {
-    if(input_ == NULL || output_ == NULL) {
-        /// add input
-        input_ = addInput<CvMatMessage>("Image");
-
-        /// add output
-        output_ = addOutput<CvMatMessage>("Image");
+    if(container_ch_sliders_ == NULL) {
 
         check_normalize_ = new QCheckBox("Normalization Mode");
         parent->addWidget(check_normalize_);
-
 
         parent->addWidget(new QLabel("Channel Adjustment"));
 
@@ -84,10 +89,9 @@ void ColorAdjustment::fill(QBoxLayout *parent)
     }
 }
 
-
-void ColorAdjustment::messageArrived(ConnectorIn *source)
+void ColorAdjustment::process()
 {
-    CvMatMessage::Ptr m = source->getMessage<CvMatMessage>();
+    CvMatMessage::Ptr m = input_->getMessage<CvMatMessage>();
 
     std::vector<cv::Mat> channels;
     cv::split(m->value, channels);
@@ -138,7 +142,7 @@ void ColorAdjustment::updateDynamicGui(QBoxLayout *layout)
         }
 
         if((int) state_.mins.size() < state_.channel_count) {
-                state_.mins.push_back(0.0);
+            state_.mins.push_back(0.0);
         }
 
         if((int) state_.maxs.size() < state_.channel_count) {
