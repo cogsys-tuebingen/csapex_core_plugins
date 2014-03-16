@@ -30,12 +30,13 @@ void Scharr::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
+    int depth = in->value.type() & 7;
     switch(type_) {
     case DX1:
-        cv::Scharr(in->value, out->value, ddepth_,1, 0, ksize_, scale_,delta_);
+        cv::Scharr(in->value, out->value, depth,1, 0, ksize_, scale_,delta_);
         break;
     case DY1:
-        cv::Scharr(in->value, out->value, ddepth_,0, 1, ksize_, scale_,delta_);
+        cv::Scharr(in->value, out->value, depth,0, 1, ksize_, scale_,delta_);
         break;
     default:
         throw std::runtime_error("Unknown derivation type!");

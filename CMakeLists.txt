@@ -67,6 +67,7 @@ add_library(vision_plugins
     src/modify/resize.cpp
 
     src/features/corner_line_detection.cpp
+    src/features/difference_maximum.cpp
     src/features/harris.cpp
     src/features/canny.cpp
     src/features/eigenvals_and_vecs.cpp

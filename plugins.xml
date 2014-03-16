@@ -202,4 +202,9 @@
         Render labels that where found by the floodfill algorithm.
     </description>
   </class>
+  <class type="vision_plugins::DifferenceMaximum" base_class_type="csapex::Node">
+    <description>
+        Build the maxmimum difference of neighbouring pixels.
+    </description>
+  </class>
 </library>
