@@ -197,4 +197,9 @@
         Label regions devided by edges.
     </description>
   </class>
+  <class type="vision_plugins::RenderLabels" base_class_type="csapex::Node">
+    <description>
+        Render labels that where found by the floodfill algorithm.
+    </description>
+  </class>
 </library>

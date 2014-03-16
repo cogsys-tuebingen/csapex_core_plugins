@@ -3,7 +3,6 @@
 
 /// COMPONENT
 #include <csapex/model/node.h>
-#include <opencv2/core/core.hpp>
 
 namespace vision_plugins {
 class RenderHistogram : public csapex::Node
@@ -20,7 +19,8 @@ protected:
 
     void update();
 
-    cv::Size size_;
+    int height_;
+    int width_;
 
 };
 }

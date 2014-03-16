@@ -1,7 +1,7 @@
 #ifndef OPERATOR_H
 #define OPERATOR_H
 
-#include "detection.h"
+#include "corner_line_detection.h"
 
 namespace vision_plugins {
 class Operator : public CornerLineDetection

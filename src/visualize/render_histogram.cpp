@@ -17,20 +17,17 @@ using namespace vision_plugins;
 
 CSAPEX_REGISTER_CLASS(vision_plugins::RenderHistogram, csapex::Node)
 
-namespace color {
-
-}
-
 RenderHistogram::RenderHistogram() :
-    size_(640, 480)
+    height_(480),
+    width_(640)
 {
     Tag::createIfNotExists("Histogram");
     addTag(Tag::get("Histogram"));
     addTag(Tag::get("Vision"));
 
-    addParameter(param::ParameterFactory::declareRange("width", 200, 1000, size_.width, 10),
+    addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
                  boost::bind(&RenderHistogram::update, this));
-    addParameter(param::ParameterFactory::declareRange("height", 200, 1000, size_.width, 10),
+    addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
                  boost::bind(&RenderHistogram::update, this));
 }
 
@@ -39,7 +36,7 @@ void RenderHistogram::process()
 #warning "Fix encoding"
     boost::shared_ptr<std::vector<CvMatMessage::Ptr> const> in = input_->getMessage<GenericVectorMessage, CvMatMessage::Ptr>();
     CvMatMessage::Ptr out(new CvMatMessage(enc::bgr));
-    out->value = cv::Mat(size_.height, size_.width,CV_8UC3, cv::Scalar(0,0,0));
+    out->value = cv::Mat(height_, width_, CV_8UC3, cv::Scalar(0,0,0));
 
     int color_count = 0;
     for(std::vector<CvMatMessage::Ptr>::const_iterator it = in->begin() ; it != in->end() ; ++it, ++color_count) {
@@ -74,6 +71,6 @@ void RenderHistogram::setup()
 
 void RenderHistogram::update()
 {
-    size_.width  = param<int>("width");
-    size_.height = param<int>("height");
+    width_  = param<int>("width");
+    height_ = param<int>("height");
 }

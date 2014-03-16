@@ -2,7 +2,7 @@
 #define HOUGH_LINESP_H
 
 /// COMPONENT
-#include "detection.h"
+#include "corner_line_detection.h"
 
 namespace vision_plugins {
 class HoughLinesP : public CornerLineDetection

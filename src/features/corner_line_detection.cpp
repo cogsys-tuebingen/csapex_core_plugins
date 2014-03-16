@@ -1,5 +1,5 @@
 /// HEADER
-#include "detection.h"
+#include "corner_line_detection.h"
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
@@ -17,8 +17,8 @@ using namespace vision_plugins;
 
 CornerLineDetection::CornerLineDetection()
 {
-    Tag::createIfNotExists("Corners & Lines");
-    addTag(Tag::get("Corners & Lines"));
+    Tag::createIfNotExists("Features");
+    addTag(Tag::get("Features"));
     addTag(Tag::get("Vision"));
 }
 

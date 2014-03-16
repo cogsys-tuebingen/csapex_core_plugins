@@ -2,7 +2,7 @@
 #define CANNY_H
 
 /// COMPONENT
-#include "detection.h"
+#include "corner_line_detection.h"
 
 namespace vision_plugins {
 class Canny : public CornerLineDetection

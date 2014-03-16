@@ -2,7 +2,7 @@
 #define EIGENVALS_AND_VECS_H
 
 /// COMPONENT
-#include "detection.h"
+#include "corner_line_detection.h"
 
 namespace vision_plugins {
 class EigenValsAndVecs : public CornerLineDetection

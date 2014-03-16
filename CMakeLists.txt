@@ -66,19 +66,20 @@ add_library(vision_plugins
     src/modify/scale.cpp
     src/modify/resize.cpp
 
-    src/corners_lines/detection.cpp
-    src/corners_lines/harris.cpp
-    src/corners_lines/canny.cpp
-    src/corners_lines/eigenvals_and_vecs.cpp
-    src/corners_lines/hough_linesp.cpp
-    src/corners_lines/hough_linesp.cpp
-    src/corners_lines/operator.cpp
-    src/corners_lines/laplacian.cpp
-    src/corners_lines/sobel.cpp
-    src/corners_lines/scharr.cpp
+    src/features/corner_line_detection.cpp
+    src/features/harris.cpp
+    src/features/canny.cpp
+    src/features/eigenvals_and_vecs.cpp
+    src/features/hough_linesp.cpp
+    src/features/hough_linesp.cpp
+    src/features/operator.cpp
+    src/features/laplacian.cpp
+    src/features/sobel.cpp
+    src/features/scharr.cpp
 
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_histogram.cpp
+    src/visualize/render_labels.cpp
 
     src/filter/median_filter.cpp
     src/filter/binomial_filter.cpp

@@ -18,7 +18,7 @@ CSAPEX_REGISTER_CLASS(vision_plugins::LabelRegions, csapex::Node)
 LabelRegions::LabelRegions()
 {
     addParameter(param::ParameterFactory::declareRange("edge value", 0, 255, 255, 1));
-    addParameter(param::ParameterFactory::declareRange("edge sigma", 0, 127, 0, 1));
+   // addParameter(param::ParameterFactory::declareRange("edge sigma", 0, 127, 0, 1));
 }
 
 void LabelRegions::process()
@@ -27,13 +27,8 @@ void LabelRegions::process()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new CvMatMessage(enc::unknown));
 
-    /// FIND FIRST ANCHOR WHICH IS NOT AN EDGE
-
-    /// LABEL IT
-
-    /// FIND NEXT
-
-    /// NOTHING LEFT -> PUBLISH
+    uchar   edge   = param<int>("edge value");
+    utils_cv::label(in->value, out->value, edge);
 
     output_->publish(out);
 }
