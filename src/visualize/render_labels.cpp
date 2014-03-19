@@ -55,6 +55,8 @@ namespace {
 RenderLabels::RenderLabels()
 {
     addTag(Tag::get("Vision"));
+    addParameter(param::ParameterFactory::declareRange("color occupancy", 0.1, 1.0, 0.25, 0.05));
+
 }
 
 void RenderLabels::process()
@@ -68,11 +70,10 @@ void RenderLabels::process()
         if(image->getEncoding() != enc::bgr)
             throw std::runtime_error("Image encoding must be 'bgr'!");
         output->value = image->value.clone();
-    } else {
-        output->value = cv::Mat(labels->value.rows, labels->value.cols, CV_8UC3, cv::Scalar::all(0));
     }
 
     std::map<unsigned short, cv::Vec3b> colors;
+    cv::Mat label_colors(labels->value.rows, labels->value.cols, CV_8UC3, cv::Scalar(0));
     for(int y = 0 ; y < labels->value.rows ; ++y) {
         for(int x = 0 ; x < labels->value.cols ; ++x) {
             unsigned short label = labels->value.at<unsigned short>(y,x);
@@ -82,9 +83,16 @@ void RenderLabels::process()
                     _HSV2RGB_((double) ((colors.size() * 77) % 360), 1.0, 1.0, r, g, b);
                     colors.insert(std::make_pair(label, cv::Vec3b(b,g,r)));
                 }
-                output->value.at<cv::Vec3b>(y,x) = colors.at(label);
+                label_colors.at<cv::Vec3b>(y,x) = colors.at(label);
             }
         }
+    }
+
+    if(output->value.empty()) {
+        output->value = label_colors;
+    } else {
+        double occ = param<double>("color occupancy");
+        cv::addWeighted(output->value, 1.0 - occ, label_colors, occ, 0.0, output->value);
     }
     output_->publish(output);
 }

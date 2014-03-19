@@ -27,6 +27,10 @@ void LabelRegions::process()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new CvMatMessage(enc::unknown));
 
+    if(in->value.type() != CV_8UC1) {
+        throw std::runtime_error("Edges should be mask with type of CV_8UC1!");
+    }
+
     uchar   edge   = param<int>("edge value");
     utils_cv::label(in->value, out->value, edge);
 
@@ -37,8 +41,8 @@ void LabelRegions::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Original");
-    output_ = addOutput<CvMatMessage>("Preview");
+    input_ = addInput<CvMatMessage>("Edges");
+    output_ = addOutput<CvMatMessage>("Labels");
 }
 
 

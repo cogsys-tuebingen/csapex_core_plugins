@@ -19,7 +19,7 @@ namespace {
     template<typename Tp>
     void neigh_diff(const cv::Mat &src, cv::Mat &dst, const bool abs = false)
     {
-        dst = cv::Mat(src.rows, src.cols, src.type(), (Tp) 0.0);
+        dst = cv::Mat(src.rows, src.cols, src.type(), cv::Scalar::all(0.0));
         const static int N_X[] = {-1,-1,-1, 0, 0, 1, 1, 1};
         const static int N_Y[] = {-1, 0, 1,-1, 1,-1, 0, 1};
 
