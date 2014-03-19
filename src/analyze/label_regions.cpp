@@ -18,6 +18,9 @@ CSAPEX_REGISTER_CLASS(vision_plugins::LabelRegions, csapex::Node)
 LabelRegions::LabelRegions()
 {
     addParameter(param::ParameterFactory::declareRange("edge value", 0, 255, 255, 1));
+    addParameter(param::ParameterFactory::declareRange("area thresh", 0, 1000, 0, 10));
+
+
    // addParameter(param::ParameterFactory::declareRange("edge sigma", 0, 127, 0, 1));
 }
 
@@ -31,8 +34,13 @@ void LabelRegions::process()
         throw std::runtime_error("Edges should be mask with type of CV_8UC1!");
     }
 
+    unsigned int threshold = param<int>("area thresh");
+
     uchar   edge   = param<int>("edge value");
-    utils_cv::label(in->value, out->value, edge);
+    if(threshold > 0)
+        utils_cv::label(in->value, out->value, edge, threshold);
+    else
+        utils_cv::label(in->value, out->value, edge);
 
     output_->publish(out);
 }
