@@ -207,4 +207,9 @@
         Build the maxmimum difference of neighbouring pixels.
     </description>
   </class>
+  <class type="vision_plugins::NoiseFilter" base_class_type="csapex::Node">
+    <description>
+        Satistical methods to do noise filtering.
+    </description>
+  </class>
 </library>

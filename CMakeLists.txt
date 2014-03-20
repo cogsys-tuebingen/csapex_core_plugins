@@ -93,6 +93,8 @@ add_library(vision_plugins
     src/analyze/histogram.cpp
     src/analyze/label_regions.cpp
 
+    src/experimental/noise_filter.cpp
+
     src/convert_type.cpp
     src/float_to_uchar.cpp
 
