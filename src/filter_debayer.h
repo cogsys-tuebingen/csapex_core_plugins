@@ -31,6 +31,8 @@ public:
     void setState(csapex::Memento::Ptr memento);
     csapex::Memento::Ptr getState() const;
 
+    virtual QIcon getIcon() const;
+
 private:
     typedef std::pair<int, int> modePair;
 

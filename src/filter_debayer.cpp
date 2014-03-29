@@ -14,7 +14,11 @@ using namespace csapex;
 Debayer::Debayer()
     : csapex::Filter()
 {
-    setIcon(QIcon(":/bayer.png"));
+}
+
+QIcon Debayer::getIcon() const
+{
+    return QIcon(":/bayer.png");
 }
 
 void Debayer::insert(QBoxLayout *parent)
