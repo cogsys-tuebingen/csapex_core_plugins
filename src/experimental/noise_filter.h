@@ -15,7 +15,7 @@ public:
     virtual void setup();
 
 protected:
-    enum Type {RANDOM};
+    enum Type {RANDOM, TEMPORAL};
     csapex::ConnectorOut*       probs_out_;
     csapex::ConnectorOut*       output_;
     csapex::ConnectorIn*        input_;

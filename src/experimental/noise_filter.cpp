@@ -24,7 +24,8 @@ NoiseFilter::NoiseFilter()
     addTag(Tag::get("Vision"));
 
     std::map<std::string, int> types = boost::assign::map_list_of
-            ("randomized", RANDOM);
+            ("randomized", RANDOM)
+            ("temporal", TEMPORAL);
 
     addParameter(param::ParameterFactory::declareParameterSet("type", types),
                  boost::bind(&NoiseFilter::update, this));
@@ -45,12 +46,12 @@ void NoiseFilter::process()
     noise_filter_->filter(in->value, out->value);
     output_->publish(out);
 
-    if(probs_out_->isConnected()) {
-#warning "FIX ENCODING"
-        CvMatMessage::Ptr probs(new CvMatMessage(enc::unknown));
-        noise_filter_->getProbabilities(probs->value);
-        probs_out_->publish(probs);
-    }
+//    if(probs_out_->isConnected()) {
+//#warning "FIX ENCODING"
+//        CvMatMessage::Ptr probs(new CvMatMessage(enc::unknown));
+//        noise_filter_->getProbabilities(probs->value);
+//        probs_out_->publish(probs);
+//    }
 
 }
 
@@ -73,6 +74,9 @@ void NoiseFilter::update()
     switch(type) {
     case RANDOM:
         noise_filter_.reset(new utils_cv::RandomizedNoiseFilter(min_mutation_prob));
+        break;
+    case TEMPORAL:
+        noise_filter_.reset(new utils_cv::TheThingFilter);
         break;
     default:
         throw std::runtime_error("Unknown filter type!");
