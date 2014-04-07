@@ -9,7 +9,6 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
-#include <QComboBox>
 #include <boost/assign/std.hpp>
 
 using namespace vision_plugins;
