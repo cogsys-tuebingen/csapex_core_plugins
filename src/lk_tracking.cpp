@@ -50,6 +50,13 @@ void LKTracking::process()
         points[0].clear();
         points[1].clear();
 
+        if(keypoints->value.empty()) {
+            setError(true, "No input points, cannot initialize LK Tracker", EL_WARNING);
+            return;
+        }
+
+        setError(false);
+
         int spws = param<int>("subPixWinSize");
         cv::Size subPixWinSize (spws, spws);
 
@@ -59,7 +66,6 @@ void LKTracking::process()
             const cv::KeyPoint& kp = *it;
             points[1].push_back(kp.pt);
         }
-
         cv::cornerSubPix(img->value, points[1], subPixWinSize, cv::Size(-1,-1), termcrit);
         init_ = false;
 
