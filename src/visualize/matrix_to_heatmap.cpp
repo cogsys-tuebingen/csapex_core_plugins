@@ -63,19 +63,19 @@ void MatrixToHeatmap::process()
     float divider = 1 / (float) channels.size();
     mean = mean * divider;
 
-    utils_cv::colorFunction fc;
+    utils_cv::Heatmap::colorFunction fc;
     switch(color_type_) {
     case BEZIER:
-        fc = &utils_cv::bezierColor;
+        fc = &utils_cv::Heatmap::bezierColor;
         break;
     case PARABOLA:
-        fc = &utils_cv::parabolaColor;
+        fc = &utils_cv::Heatmap::parabolaColor;
         break;
     default:
         throw std::runtime_error("Unknown color function type!");
     }
 
-    utils_cv::renderHeatmap(mean, heatmap, fc, mask);
+    utils_cv::Heatmap::renderHeatmap(mean, heatmap, fc, mask);
 
     out->value = heatmap;
     output_->publish(out);
