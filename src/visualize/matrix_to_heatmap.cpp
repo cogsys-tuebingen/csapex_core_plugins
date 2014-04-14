@@ -6,6 +6,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
+#include <utils_cv/heatmap.hpp>
 #include <csapex_vision/cv_mat_message.h>
 
 /// SYSTEM
@@ -17,51 +18,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::MatrixToHeatmap, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 using namespace vision_plugins;
-
-namespace {
-const cv::Point3f red(0,0,255);                     /// P0
-const cv::Point3f green(0,255,0);                   /// P1
-const cv::Point3f blue(255,0,0);                    /// p3
-const cv::Point3f fac1 = (blue - 2 * green + red);
-const cv::Point3f fac2 = (-2*blue + 2 * green);
-
-inline cv::Vec3f bezierColor(const float value)
-{
-    cv::Point3f  col = fac1 * value * value + fac2 * value + blue;
-    return cv::Vec3f(std::floor(col.x + .5), std::floor(col.y + .5), std::floor(col.z + .5));
-}
-
-inline cv::Vec3f parabolaColor(const float value)
-{
-    return value * value * red + (value - 1) * (value - 1) * blue;
-}
-
-typedef boost::function<cv::Vec3f (float)> colorFunction;
-
-inline void renderHeatmap(cv::Mat &src, cv::Mat &dst, colorFunction &color, const cv::Mat &mask)
-{
-    if(src.channels() > 1) {
-        throw std::runtime_error("Single channel matrix required for rendering!");
-    }
-
-    if(src.type() != CV_32FC1)
-        src.convertTo(src, CV_32FC1);
-
-    double min;
-    double max;
-    cv::minMaxLoc(src, &min, &max, NULL, NULL, mask);
-    src = src - (float) min;
-    max -= min;
-    src = src / (float) max;
-    dst = cv::Mat(src.rows, src.cols, CV_32FC3, cv::Scalar::all(0));
-    for(int i = 0 ; i < dst.rows ; ++i) {
-        for(int j = 0 ; j < dst.cols ; ++j) {
-            if(mask.at<uchar>(i,j) != 0)
-                dst.at<cv::Vec3f>(i,j) = color(src.at<float>(i,j));
-        }
-    }
-}
-}
 
 MatrixToHeatmap::MatrixToHeatmap() :
     color_type_(BEZIER)
@@ -107,21 +63,20 @@ void MatrixToHeatmap::process()
     float divider = 1 / (float) channels.size();
     mean = mean * divider;
 
-    colorFunction fc;
+    utils_cv::colorFunction fc;
     switch(color_type_) {
     case BEZIER:
-        fc = &bezierColor;
+        fc = &utils_cv::bezierColor;
         break;
     case PARABOLA:
-        fc = &parabolaColor;
+        fc = &utils_cv::parabolaColor;
         break;
     default:
         throw std::runtime_error("Unknown color function type!");
     }
 
-    renderHeatmap(mean, heatmap, fc, mask);
+    utils_cv::renderHeatmap(mean, heatmap, fc, mask);
 
-    heatmap.convertTo(heatmap, CV_8UC3);
     out->value = heatmap;
     output_->publish(out);
 }
