@@ -1,3 +1,5 @@
+#ifndef IMAGE_COMBINER_ROBUST_MATCH_H
+#define IMAGE_COMBINER_ROBUST_MATCH_H
 /*
  * image_combiner_robust_match.h
  *
@@ -5,25 +7,20 @@
  *      Author: buck <sebastian.buck@uni-tuebingen.de>
  */
 
-/// COMPONENT
-#include <csapex/model/boxed_object.h>
 
-#ifndef IMAGE_COMBINER_ROBUST_MATCH_H
-#define IMAGE_COMBINER_ROBUST_MATCH_H
+/// COMPONENT
+#include <csapex/model/node.h>
+
 
 namespace csapex
 {
 
-class RobustMatch : public csapex::BoxedObject
+class RobustMatch : public csapex::Node
 {
-    Q_OBJECT
-
 public:
     RobustMatch();
 
-    virtual void fill(QBoxLayout* layout);
-
-public Q_SLOTS:
+    virtual void setup();
     virtual void process();
 
 private:
