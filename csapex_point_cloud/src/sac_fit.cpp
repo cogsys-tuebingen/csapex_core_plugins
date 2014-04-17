@@ -97,7 +97,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     // If inlices are connected search for models in the clusters
     if (in_indices_->isConnected()) {
         // search for clusters
-        int j = 0;
+        //int j = 0;
         for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices_->begin(); it != cluster_indices_->end (); ++it)
         {
             // for every cluster

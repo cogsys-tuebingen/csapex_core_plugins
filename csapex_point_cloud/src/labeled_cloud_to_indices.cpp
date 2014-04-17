@@ -56,7 +56,7 @@ struct Impl {
         //for(typename pcl::PointCloud<PointT>::const_iterator it = src->begin() ; it != src->end() ; ++it) {
         std::map<unsigned int, std::vector<int> > clusters;
         clusters.insert(std::make_pair(FLOOD_DEFAULT_LABEL, std::vector<int>()));
-        for (int j = 0; j < src->points.size(); j++) {
+        for (unsigned j = 0; j < src->points.size(); j++) {
         //for(typename pcl::PointCloud<PointT>::const_iterator it = src->begin() ; it != src->end() ; ++it) {
             // if the label ist not found in the clusters map
             if (clusters.find(src->at(j).label) == clusters.end()) {
