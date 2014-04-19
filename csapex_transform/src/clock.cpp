@@ -11,7 +11,6 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
-#include <boost/date_time.hpp>
 #include <boost/assign/list_of.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::Clock, csapex::Node)

@@ -2,32 +2,24 @@
 #define INDICATOR_H
 
 /// HEADER
-#include <csapex/model/boxed_object.h>
-
-/// SYSTEM
-#include <QCheckBox>
+#include <csapex/model/node.h>
 
 namespace csapex {
 
 namespace boolean {
 
-class Indicator : public BoxedObject
+class Indicator : public Node
 {
-    Q_OBJECT
-
 public:
     Indicator();
 
 public:
-    virtual void fill(QBoxLayout* layout);
+    virtual void setup();
 
-public Q_SLOTS:
     virtual void process();
 
 private:
     ConnectorIn* in;
-
-    QCheckBox* indicator_;
 };
 
 }
