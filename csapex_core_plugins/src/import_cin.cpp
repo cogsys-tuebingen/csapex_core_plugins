@@ -2,7 +2,6 @@
 #include "import_cin.h"
 
 /// PROJECT
-
 #include <csapex/model/connector_out.h>
 #include <csapex/manager/connection_type_manager.h>
 #include <csapex/utility/stream_interceptor.h>
@@ -10,7 +9,6 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
-#include <yaml-cpp/eventhandler.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportCin, csapex::Node)
 
@@ -34,11 +32,9 @@ QIcon ImportCin::getIcon() const
     return QIcon(":/terminal.png");
 }
 
-void ImportCin::fill(QBoxLayout *)
+void ImportCin::setup()
 {
-    if(connector_ == NULL) {
-        connector_ = addOutput<connection_types::AnyMessage>("Anything");
-    }
+    connector_ = addOutput<connection_types::AnyMessage>("Anything");
 }
 
 void ImportCin::tick()

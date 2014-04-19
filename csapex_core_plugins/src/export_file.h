@@ -2,53 +2,34 @@
 #define EXPORT_FILE_H_
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 #include <csapex/model/connection_type.h>
 
 /// SYSTEM
 #include <QMutex>
-#include <QPushButton>
 
 namespace csapex {
 
-class ExportFile : public BoxedObject
+class ExportFile : public Node
 {
-    Q_OBJECT
-
 public:
     ExportFile();
 
-    virtual void fill(QBoxLayout* layout);
+    virtual void setup();
     virtual void process();
 
     virtual QIcon getIcon() const;
 
-    virtual Memento::Ptr getState() const;
-    virtual void setState(Memento::Ptr memento);
-
-    void setExportPath(const QString& path);
-
-public Q_SLOTS:
-    void exportDialog();
+protected:
+    void setExportPath();
 
 private:
     ConnectorIn* connector_;
 
+    std::string path_;
     QMutex mutex_;
 
-    struct State : public Memento {
-        std::string path_;
-
-        virtual void writeYaml(YAML::Emitter& out) const;
-        virtual void readYaml(const YAML::Node& node);
-    };
-
     int suffix_;
-
-    State state;
-
-    QHBoxLayout* additional_layout_;
-    QPushButton* file_dialog_;
 };
 
 }

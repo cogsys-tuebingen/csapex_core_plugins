@@ -53,7 +53,6 @@ add_library(csapex_core_plugins
     src/file_importer.cpp
     src/import_cin.cpp
     src/import_ros.cpp
-    src/global_option_panel.cpp
     src/double_input.cpp
     src/text_input.cpp
     src/text_display.cpp

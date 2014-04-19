@@ -2,18 +2,17 @@
 #define IMPORT_CIN_H
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 
 namespace csapex {
 
-class ImportCin : public BoxedObject
+class ImportCin : public Node
 {
-    Q_OBJECT
 public:
     ImportCin();
 
     void process();
-    virtual void fill(QBoxLayout* layout);
+    virtual void setup();
     virtual void tick();
 
     virtual QIcon getIcon() const;
