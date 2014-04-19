@@ -52,7 +52,7 @@ void TransformFromModels::process()
     std::vector<Eigen::Vector3d> points_ref = getInterestingPointsFromModels(models_ref);
     std::vector<Eigen::Vector3d> points_new = getInterestingPointsFromModels(models_new);
 
-    aout << "points_ref.size() = " << points_ref.size() << " points_new.size() = " << points_new.size() << std::endl;
+    ainfo << "points_ref.size() = " << points_ref.size() << " points_new.size() = " << points_new.size() << std::endl;
 
     int offset = matchSidesOfTriangles(points_ref, points_new);
 

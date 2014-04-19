@@ -210,7 +210,7 @@ int SacFit::findModels(typename pcl::PointCloud<PointT>::Ptr  cloud_in, typename
 
     cloud_extracted->header = cloud_in->header;
     while (cloud->size() > 10) { // TODO: add parameter for min inliers
-        aout << "!! SIZE CLOUD: " << cloud->size() << std::endl;
+        ainfo << "!! SIZE CLOUD: " << cloud->size() << std::endl;
 
         // Segment and extract the found points
         segmenter.setInputCloud(cloud);
@@ -219,7 +219,7 @@ int SacFit::findModels(typename pcl::PointCloud<PointT>::Ptr  cloud_in, typename
         segmenter.segment(*inliers, *coefficients_shape);
         ransac_probability_ = segmenter.getProbability();
 
-        aout << "!! SIZE INLIER: " << inliers->indices.size() << std::endl;
+        ainfo << "!! SIZE INLIER: " << inliers->indices.size() << std::endl;
         if (inliers->indices.size() > min_inliers_) {
             // extract the points that belong to a model
             extract_points.setInputCloud(cloud);

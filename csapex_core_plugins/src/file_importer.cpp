@@ -43,7 +43,7 @@ void FileImporter::State::writeYaml(YAML::Emitter& out) const {
 void FileImporter::State::readYaml(const YAML::Node& node) {
     std::string path;
     node["path"] >> path;
-    parent->aout << "read path: " << path << std::endl;
+    parent->ainfo << "read path: " << path << std::endl;
 
     last_path_ = QString::fromUtf8(path.c_str());
     assert(parent);
@@ -159,7 +159,7 @@ void FileImporter::process()
     DirectMessage<std::string>::Ptr msg = optional_input_filename_->getMessage<DirectMessage<std::string> >();
 
     if(msg) {
-        aout << "got message: " << msg->value << std::endl;
+        ainfo << "got message: " << msg->value << std::endl;
         import(msg->value.c_str());
     }
 }
