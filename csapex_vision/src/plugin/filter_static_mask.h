@@ -17,24 +17,18 @@ class ModalPainter;
 
 class FilterStaticMask : public Filter
 {
-    Q_OBJECT
-
 public:
     FilterStaticMask();
     virtual ~FilterStaticMask();
 
 public:
-    virtual void insert(QBoxLayout*);
-
     virtual Memento::Ptr getState() const;
     virtual void setState(Memento::Ptr memento);
 
-public Q_SLOTS:
     virtual void filter(cv::Mat& img, cv::Mat& mask);
     void new_mask(cv::Mat m);
     void showPainter();
 
-Q_SIGNALS:
     void input(cv::Mat);
 
 private:

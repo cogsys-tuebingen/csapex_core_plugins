@@ -17,7 +17,7 @@ using namespace connection_types;
 
 
 Filter::Filter(const UUID& uuid)
-    : BoxedObject(uuid), input_img_(NULL), input_mask_(NULL), output_img_(NULL), output_mask_(NULL)
+    : Node(uuid), input_img_(NULL), input_mask_(NULL), output_img_(NULL), output_mask_(NULL)
 {
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
@@ -32,21 +32,17 @@ QIcon Filter::getIcon() const
     return QIcon(":/filter.png");
 }
 
-void Filter::fill(QBoxLayout* parent)
+void Filter::setup()
 {
-    if(input_img_ == NULL) {
-        setSynchronizedInputs(true);
+    setSynchronizedInputs(true);
 
-        input_img_ = addInput<CvMatMessage>("Image");
-        if(usesMask()) {
-            input_mask_ = addInput<CvMatMessage>("Mask", true);
-        }
-        output_img_ = addOutput<CvMatMessage>("Image");
-        if(usesMask()) {
-            output_mask_ = addOutput<CvMatMessage>("Mask");
-        }
-
-        insert(parent);
+    input_img_ = addInput<CvMatMessage>("Image");
+    if(usesMask()) {
+        input_mask_ = addInput<CvMatMessage>("Mask", true);
+    }
+    output_img_ = addOutput<CvMatMessage>("Image");
+    if(usesMask()) {
+        output_mask_ = addOutput<CvMatMessage>("Mask");
     }
 }
 

@@ -2,7 +2,7 @@
 #define FILTER_TOOL_DETECTION_H
 
 /// COMPONENT
-#include <csapex_vision/filter.h>
+#include <csapex/model/boxed_object.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/qt_helper.hpp>
 

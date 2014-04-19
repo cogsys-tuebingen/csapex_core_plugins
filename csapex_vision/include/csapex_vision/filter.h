@@ -2,13 +2,11 @@
 #define FILTER_H
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 
 /// SYSTEM
 #include <boost/shared_ptr.hpp>
 #include <opencv2/opencv.hpp>
-#include <QObject>
-#include <QBoxLayout>
 
 namespace csapex
 {
@@ -16,27 +14,20 @@ namespace csapex
 class ConnectorIn;
 class ConnectorOut;
 
-class Filter : public BoxedObject
+class Filter : public Node
 {
-    Q_OBJECT
-
 public:
     typedef boost::shared_ptr<Filter> Ptr;
 
 public:
     virtual ~Filter();
 
+    void setup();
     virtual QIcon getIcon() const;
 
-Q_SIGNALS:
-    void filter_changed();
-
-public Q_SLOTS:
+public:
     virtual void filter(cv::Mat& img, cv::Mat& mask) = 0;
-    virtual void fill(QBoxLayout* layout);
-    virtual void insert(QBoxLayout* parent) = 0;
 
-private Q_SLOTS:
     void process();
 
 protected:

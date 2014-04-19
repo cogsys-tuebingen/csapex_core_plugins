@@ -2,7 +2,7 @@
 #include "filter_static_mask.h"
 
 /// PROJECT
-
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <QPixmap>
@@ -11,6 +11,7 @@
 #include <QKeyEvent>
 #include <QPushButton>
 #include <csapex/utility/register_apex_plugin.h>
+#include <QBoxLayout>
 
 CSAPEX_REGISTER_CLASS(csapex::FilterStaticMask, csapex::Node)
 
@@ -164,6 +165,7 @@ void ModalPainter::input(cv::Mat img)
 FilterStaticMask::FilterStaticMask()
     : painter(NULL), state(this)
 {
+    addParameter(param::ParameterFactory::declareTrigger("create mask"), boost::bind(&FilterStaticMask::showPainter, this));
 }
 
 FilterStaticMask::~FilterStaticMask()
@@ -236,15 +238,6 @@ void FilterStaticMask::filter(cv::Mat& img, cv::Mat& mask)
     }
 }
 
-void FilterStaticMask::insert(QBoxLayout* layout)
-{
-    btn = new QPushButton("create mask");
-
-    layout->addWidget(btn);
-
-    QObject::connect(btn, SIGNAL(clicked()), this, SLOT(showPainter()), Qt::DirectConnection);
-}
-
 Memento::Ptr FilterStaticMask::getState() const
 {
     return boost::shared_ptr<State>(new State(state));
@@ -261,5 +254,5 @@ void FilterStaticMask::setState(Memento::Ptr memento)
         painter->setMask(state.mask_);
     }
 
-    Q_EMIT filter_changed();
+    triggerModelChanged();
 }

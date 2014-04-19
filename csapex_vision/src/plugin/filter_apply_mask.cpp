@@ -21,7 +21,3 @@ void FilterApplyMask::filter(cv::Mat& img, cv::Mat& mask)
         img = tmp;
     }
 }
-
-void FilterApplyMask::insert(QBoxLayout* layout)
-{
-}
