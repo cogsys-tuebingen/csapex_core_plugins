@@ -54,7 +54,7 @@ void RenderHistogram::process()
                                           out->value);
             break;
         default:
-            std::cerr << "Only 32bit float or 32bit integer histograms supported!" << std::endl;
+            aerr << "Only 32bit float or 32bit integer histograms supported!" << std::endl;
         }
     }
 

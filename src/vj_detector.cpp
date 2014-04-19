@@ -60,7 +60,7 @@ void VJDetector::process()
                 throw std::runtime_error(std::string("Error Viola Jones Classifier from file: ") + file_);
 
             } else {
-                std::cout << "loading classifier from " << file_ << std::endl;
+                aout << "loading classifier from " << file_ << std::endl;
 
                 vj_detector = CascadeDetector::load(&in, false, false);
                 image_scanner = new ImageScanner(vj_detector,

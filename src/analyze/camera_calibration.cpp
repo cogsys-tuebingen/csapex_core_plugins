@@ -96,7 +96,7 @@ void vision_plugins::CameraCalibration::calibrate()
 {
     std::string path = param<std::string>("results");
     if(path == "") {
-        std::cerr << "Cannot save to empty path!" << std::endl;
+        aerr << "Cannot save to empty path!" << std::endl;
         return;
     }
 

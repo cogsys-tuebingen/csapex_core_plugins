@@ -49,7 +49,7 @@ void SequenceMean::process()
     cv::Mat buff(size_.height, size_.width, CV_32FC(channels_), cv::Scalar::all(0));
     for(std::deque<cv::Mat>::iterator it = acc_.begin() ; it != acc_.end() ; ++it) {
         if(buff.type() != it->type())
-            std::cerr << "autsch" << std::endl;
+            aerr << "autsch" << std::endl;
         cv::add(buff, *it, buff);
     }
     buff.convertTo(out->value,  type_, 1.0 / (double) acc_.size());
