@@ -33,7 +33,7 @@ void TimeOffset::process()
     double offset = param<double>("offset");
 
     if(in->value.toNSec() != 0) {
-        std::cerr << in->value.toNSec() << " + " << offset << " * " << 1e6 << " = " << (in->value.toNSec() + offset * 1e6) << std::endl,
+        aerr << in->value.toNSec() << " + " << offset << " * " << 1e6 << " = " << (in->value.toNSec() + offset * 1e6) << std::endl,
                 time->value = time->value.fromNSec((in->value.toNSec() + offset * 1000000));
         setError(false);
     } else {

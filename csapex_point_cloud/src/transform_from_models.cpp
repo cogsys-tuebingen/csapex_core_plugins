@@ -52,7 +52,7 @@ void TransformFromModels::process()
     std::vector<Eigen::Vector3d> points_ref = getInterestingPointsFromModels(models_ref);
     std::vector<Eigen::Vector3d> points_new = getInterestingPointsFromModels(models_new);
 
-    std::cout << "points_ref.size() = " << points_ref.size() << " points_new.size() = " << points_new.size() << std::endl;
+    aout << "points_ref.size() = " << points_ref.size() << " points_new.size() = " << points_new.size() << std::endl;
 
     int offset = matchSidesOfTriangles(points_ref, points_new);
 
@@ -143,14 +143,14 @@ std::vector<Eigen::Vector3d> TransformFromModels::getInterestingPointsFromModels
                 if (tan_result != 0) {
                     z = radius / tan_result;
                 } else {
-                    std::cerr << "Invalid cone angle" << std::endl;
+                    aerr << "Invalid cone angle" << std::endl;
                     z = 0;
                 }
                 interresting_point(2) = z;
             } break;
 
             default:
-                std::cerr << "Invalid Model Type: " <<  it->model_type << std::endl;
+                aerr << "Invalid Model Type: " <<  it->model_type << std::endl;
         } // end switch
         points.push_back(interresting_point);
     } // end for
@@ -193,7 +193,7 @@ int TransformFromModels::matchSidesOfTriangles(const std::vector<Eigen::Vector3d
             }
         }
     } else  {
-        std::cerr << "There is an triangle with less than 3 points (error)" << std::endl;
+        aerr << "There is an triangle with less than 3 points (error)" << std::endl;
     }
     return min_offset;
 }

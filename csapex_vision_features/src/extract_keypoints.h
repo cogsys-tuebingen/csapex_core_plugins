@@ -5,7 +5,6 @@
 #include <csapex/model/node.h>
 
 /// PROJECT
-#include <config/reconfigurable.h>
 #include <utils/extractor.h>
 
 /// SYSTEM

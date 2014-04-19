@@ -72,7 +72,7 @@ void ImportCin::tick()
         pos = unused.find_first_of("---");
 
         if(iter++ >= 10) {
-            std::cout << "break out!" << std::endl;
+            aout << "break out!" << std::endl;
             break;
         }
     }
@@ -90,10 +90,10 @@ void ImportCin::tick()
 
             ConnectionType::Ptr msg = ConnectionTypeManager::createMessage(type);
             if(!msg) {
-                std::cout << "could not deserialize message: \n";
+                aout << "could not deserialize message: \n";
                 YAML::Emitter e;
                 e << doc;
-                std::cout << e.c_str() << std::endl;
+                aout << e.c_str() << std::endl;
                 continue;
             }
 
@@ -103,7 +103,7 @@ void ImportCin::tick()
             connector_->publish(msg);
         }
     } catch(YAML::ParserException& e) {
-        std::cout << "YAML::ParserException: " << e.what() << "\n";
+        aout << "YAML::ParserException: " << e.what() << "\n";
     }
 
 }

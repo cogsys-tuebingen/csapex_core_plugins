@@ -37,9 +37,9 @@ void ExportCout::process()
 {
     ConnectionType::Ptr msg = connector_->getMessage<ConnectionType>();
 
-    std::cout << "writing to cout: ";
-    msg->write(std::cout);
-    std::cout << std::endl;
+    aout << "writing to cout: ";
+    msg->write(aout);
+    aout << std::endl;
 
     StreamInterceptor::instance().cout << *msg << "\n---" << std::endl;
 }

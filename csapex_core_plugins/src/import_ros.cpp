@@ -118,13 +118,13 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
         return;
     }
 
-    std::cout << "warning: set topic " << topic.name << std::endl;
+    aout << "warning: set topic " << topic.name << std::endl;
     current_subscriber.shutdown();
 
     if(RosMessageConversion::instance().canHandle(topic)) {
         setError(false);
 
-        std::cout << "warning: topic is " << topic.name << std::endl;
+        aout << "warning: topic is " << topic.name << std::endl;
         current_topic_ = topic.name;
         current_subscriber = RosMessageConversion::instance().subscribe(topic, 1, connector_);
 

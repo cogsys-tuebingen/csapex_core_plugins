@@ -213,26 +213,26 @@ public:
         //cv::BruteForceMatcher<cv::L2<float>> matcher;
         // from image 1 to image 2
         // based on k nearest neighbours (with k=2)
-        //        std::cerr << "d1: \n";
+        //        aerr << "d1: \n";
         //        for(size_t r = 0; r < descriptors1.rows; ++r) {
         //            for(size_t c = 0; c < descriptors1.cols; ++c) {
-        //                std::cerr << descriptors1.at<float>(r,c) <<"\t";
+        //                aerr << descriptors1.at<float>(r,c) <<"\t";
         //            }
-        //            std::cerr << "\n";
+        //            aerr << "\n";
         //        }
 
-        //        std::cerr << std::endl;
+        //        aerr << std::endl;
 
 
-        //        std::cerr << "d2: \n";
+        //        aerr << "d2: \n";
         //        for(size_t r = 0; r < descriptors2.rows; ++r) {
         //            for(size_t c = 0; c < descriptors2.cols; ++c) {
-        //                std::cerr << descriptors2.at<float>(r,c) <<"\t";
+        //                aerr << descriptors2.at<float>(r,c) <<"\t";
         //            }
-        //            std::cerr << "\n";
+        //            aerr << "\n";
         //        }
 
-        //        std::cerr << std::endl;
+        //        aerr << std::endl;
 
         std::vector<std::vector<cv::DMatch> > matches1;
 

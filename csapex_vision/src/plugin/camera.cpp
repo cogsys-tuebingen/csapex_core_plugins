@@ -79,9 +79,9 @@ void Camera::update()
         throw std::runtime_error("cannot open camera with the given id");
     }
 
-    std::cout << "camera settings" << std::endl;
-    std::cout << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+    aout << "camera settings" << std::endl;
+    aout << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
     cap_.set(CV_CAP_PROP_FRAME_WIDTH, w);
     cap_.set(CV_CAP_PROP_FRAME_HEIGHT, h);
-    std::cout << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+    aout << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
 }
