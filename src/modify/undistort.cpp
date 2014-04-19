@@ -21,7 +21,7 @@ Undistort::Undistort()
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
 
-    addParameter(param::ParameterFactory::declarePath("file", ""), boost::bind(&Undistort::update, this));
+    addParameter(param::ParameterFactory::declareFileInputPath("file", ""), boost::bind(&Undistort::update, this));
     addParameter(param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), boost::bind(&Undistort::update, this));
 
     std::vector< std::pair<std::string, int> > modes;

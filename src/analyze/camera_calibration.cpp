@@ -21,7 +21,7 @@ vision_plugins::CameraCalibration::CameraCalibration()
 {
     addTag(Tag::get("Vision"));
 
-    addParameter(param::ParameterFactory::declarePath("results", ""));
+    addParameter(param::ParameterFactory::declareDirectoryOutputPath("results", ""));
     addParameter(param::ParameterFactory::declareTrigger("add"), boost::bind(&CameraCalibration::add, this));
     addParameter(param::ParameterFactory::declareTrigger("reset"), boost::bind(&CameraCalibration::updateCalibration, this));
     addParameter(param::ParameterFactory::declareTrigger("calibrate"), boost::bind(&CameraCalibration::calibrate, this));

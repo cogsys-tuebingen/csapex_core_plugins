@@ -27,7 +27,7 @@ VJDetector::VJDetector()
     addTag(Tag::get("Vision"));
     addTag(Tag::get("ROI"));
 
-    addParameter(param::ParameterFactory::declarePath("file", ""));
+    addParameter(param::ParameterFactory::declareFileInputPath("file", ""));
 }
 
 VJDetector::~VJDetector()
