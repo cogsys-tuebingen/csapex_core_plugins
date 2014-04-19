@@ -14,10 +14,12 @@
   <build_depend>csapex</build_depend>
   <build_depend>csapex_vision</build_depend>
   <build_depend>utils_vision</build_depend>
+  <build_depend>utils_clustering</build_depend>
 
   <run_depend>csapex</run_depend>
   <run_depend>csapex_vision</run_depend>
   <run_depend>utils_vision</run_depend>
+  <run_depend>utils_clustering</run_depend>
 
   <export>
     <csapex plugin="${prefix}/plugins.xml" />

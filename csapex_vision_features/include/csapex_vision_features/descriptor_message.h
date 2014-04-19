@@ -14,6 +14,8 @@ namespace connection_types {
 struct DescriptorMessage : public MessageTemplate<cv::Mat, DescriptorMessage>
 {
     DescriptorMessage();
+
+    bool isBinary() const;
 };
 
 }

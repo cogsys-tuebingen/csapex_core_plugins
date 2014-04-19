@@ -70,8 +70,6 @@ void ExtractKeypoints::setup()
 
 void ExtractKeypoints::process()
 {
-    aerr << "fail" << 1 << "!" << std::endl;
-
     if(!extractor) {
         setError(true, "no extractor set");
         return;

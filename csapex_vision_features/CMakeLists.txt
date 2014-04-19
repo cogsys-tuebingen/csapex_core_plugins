@@ -13,7 +13,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS csapex csapex_vision utils_vision)
+find_package(catkin REQUIRED COMPONENTS csapex csapex_vision utils_vision utils_clustering)
 
 find_package(OpenCV REQUIRED)
 
@@ -67,7 +67,10 @@ add_library(csapex_vision_features_plugin
     src/extract_keypoints.cpp
     src/extract_descriptors.cpp
     src/display_keypoints.cpp
+
+    src/simple_match.cpp
     src/robust_match.cpp
+    src/peak_match.cpp
     ${QT_PLUGIN}
 )
 target_link_libraries(csapex_vision_features_plugin csapex_vision_features
