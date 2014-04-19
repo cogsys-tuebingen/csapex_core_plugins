@@ -6,6 +6,7 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/qt_helper.hpp>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -19,12 +20,15 @@ using namespace csapex;
 using namespace csapex::connection_types;
 
 CropBox::CropBox()
-    : x_(NULL), y_(NULL), z_(NULL)
 {
     addTag(Tag::get("PointCloud"));
+
+    addParameter(param::ParameterFactory::declareInterval("dx", -10.0, 10.0, -10.0, 10.0, 0.01));
+    addParameter(param::ParameterFactory::declareInterval("dy", -10.0, 10.0, -10.0, 10.0, 0.01));
+    addParameter(param::ParameterFactory::declareInterval("dz", -10.0, 10.0, -10.0, 10.0, 0.01));
 }
 
-void CropBox::fill(QBoxLayout *layout)
+void CropBox::setup()
 {
     setSynchronizedInputs(true);
 
@@ -32,35 +36,6 @@ void CropBox::fill(QBoxLayout *layout)
 
     output_pos_ = addOutput<PointCloudMessage>("cropped PointCloud (+)");
     output_neg_ = addOutput<PointCloudMessage>("cropped PointCloud (-)");
-
-    x_ = QtHelper::makeDoubleSlider(layout, "origin/x", 0.0, -5.0, 5.0, 0.01);
-    y_ = QtHelper::makeDoubleSlider(layout, "origin/y", 0.0, -5.0, 5.0, 0.01);
-    z_ = QtHelper::makeDoubleSlider(layout, "origin/z", 0.0, -5.0, 5.0, 0.01);
-
-    dy_ = QtHelper::makeDoubleSlider(layout, "dimension/y", 1.0, 0.0, 20.0, 0.01);
-    dx_ = QtHelper::makeDoubleSlider(layout, "dimension/x", 1.0, 0.0, 20.0, 0.01);
-    dz_ = QtHelper::makeDoubleSlider(layout, "dimension/z", 1.0, 0.0, 20.0, 0.01);
-
-    QObject::connect(x_, SIGNAL(valueChanged(double)), this, SLOT(update()));
-    QObject::connect(y_, SIGNAL(valueChanged(double)), this, SLOT(update()));
-    QObject::connect(z_, SIGNAL(valueChanged(double)), this, SLOT(update()));
-    QObject::connect(dx_, SIGNAL(valueChanged(double)), this, SLOT(update()));
-    QObject::connect(dy_, SIGNAL(valueChanged(double)), this, SLOT(update()));
-    QObject::connect(dz_, SIGNAL(valueChanged(double)), this, SLOT(update()));
-
-    update();
-}
-
-void CropBox::update()
-{
-    if(!signalsBlocked()) {
-        state.x_ = x_->doubleValue();
-        state.y_ = y_->doubleValue();
-        state.z_ = z_->doubleValue();
-        state.dx_ = dx_->doubleValue();
-        state.dy_ = dy_->doubleValue();
-        state.dz_ = dz_->doubleValue();
-    }
 }
 
 void CropBox::process()
@@ -73,12 +48,12 @@ void CropBox::process()
 template <class PointT>
 void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    Eigen::Vector4f o(state.x_, state.y_, state.z_, 0);
-    Eigen::Vector4f dim(state.dx_, state.dy_, state.dz_, 0);
+    std::pair<double,double> dx = param<std::pair<double, double> >("dx");
+    std::pair<double,double> dy = param<std::pair<double, double> >("dy");
+    std::pair<double,double> dz = param<std::pair<double, double> >("dz");
 
-    Eigen::Vector4f min_pt_ = o - dim/2;
-    Eigen::Vector4f max_pt_ = min_pt_ + dim;
-
+    Eigen::Vector4f min_pt_(dx.first, dy.first, dz.first, 0);
+    Eigen::Vector4f max_pt_(dy.second, dy.second, dy.second, 0);
 
     pcl::CropBox<PointT> crop;
     crop.setMin(min_pt_);
@@ -106,46 +81,4 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
         output_neg_->publish(msg);
     }
 
-}
-
-Memento::Ptr CropBox::getState() const
-{
-    return boost::shared_ptr<State>(new State(state));
-}
-
-void CropBox::setState(Memento::Ptr memento)
-{
-    boost::shared_ptr<CropBox::State> m = boost::dynamic_pointer_cast<CropBox::State> (memento);
-    assert(m.get());
-
-    state = *m;
-
-    if(x_) {
-        blockSignals(true);
-
-        x_->setDoubleValue(state.x_);
-        y_->setDoubleValue(state.y_);
-        z_->setDoubleValue(state.z_);
-        dx_->setDoubleValue(state.dx_);
-        dy_->setDoubleValue(state.dy_);
-        dz_->setDoubleValue(state.dz_);
-
-        blockSignals(false);
-    }
-}
-
-void CropBox::State::writeYaml(YAML::Emitter& out) const {
-    out << YAML::Key << "dim" << YAML::Value << YAML::Flow << YAML::BeginSeq << x_ << y_ << z_ << dx_ << dy_ << dz_ << YAML::EndSeq;
-}
-void CropBox::State::readYaml(const YAML::Node& node) {
-    if(exists(node, "dim")) {
-        const YAML::Node& seq = node["dim"];
-        assert(seq.Type() == YAML::NodeType::Sequence);
-        seq[0] >> x_;
-        seq[1] >> y_;
-        seq[2] >> z_;
-        seq[3] >> dx_;
-        seq[4] >> dy_;
-        seq[5] >> dz_;
-    }
 }
