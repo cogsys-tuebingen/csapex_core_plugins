@@ -18,7 +18,7 @@ class OutputDisplayAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    OutputDisplayAdapter(OutputDisplay *node);
+    OutputDisplayAdapter(OutputDisplay *node, WidgetController *widget_ctrl);
 
     virtual Memento::Ptr getState() const;
     virtual void setState(Memento::Ptr memento);
