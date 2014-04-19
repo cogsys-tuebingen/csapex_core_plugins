@@ -2,47 +2,29 @@
 #define CLOCK_H
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 #include <csapex_core_plugins/ros_handler.h>
-
-/// SYSTEM
-#include <QPushButton>
-#include <QLabel>
 
 namespace csapex {
 
-class Clock : public csapex::BoxedObject
+class Clock : public Node
 {
-    Q_OBJECT
+private:
+    enum Type {
+        ZERO = 0,
+        CURRENT = 1
+    };
 
-public:
+public:    
     Clock();
 
     void process();
     void setup();
-    virtual void fill(QBoxLayout* layout);
 
-    virtual Memento::Ptr getState() const;
-    virtual void setState(Memento::Ptr memento);
-
-public Q_SLOTS:
     virtual void tick();
-    void update();
 
 private:
     ConnectorOut* output_;
-
-    QPushButton* time_type_;
-    QLabel* time_label_;
-
-    struct State : public Memento {
-        bool use_ros_time;
-
-        virtual void writeYaml(YAML::Emitter& out) const;
-        virtual void readYaml(const YAML::Node& node);
-    };
-
-    State state;
 };
 
 }

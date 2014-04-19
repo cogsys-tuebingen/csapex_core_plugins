@@ -5,22 +5,27 @@
 #include <csapex_transform/time_stamp_message.h>
 
 /// PROJECT
-
 #include <csapex/model/connector_out.h>
 #include <csapex_core_plugins/ros_handler.h>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 #include <boost/date_time.hpp>
+#include <boost/assign/list_of.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::Clock, csapex::Node)
 
 using namespace csapex;
 
 Clock::Clock()
-    : time_type_(NULL), time_label_(NULL)
 {
     addTag(Tag::get("Time"));
+
+    std::map<std::string, int> methods = boost::assign::map_list_of
+            ("ros::Time::now()", (int) CURRENT)
+            ("ros::Time(0)", (int) ZERO);
+    addParameter(param::ParameterFactory::declareParameterSet("method", methods));
 }
 
 
@@ -29,14 +34,10 @@ void Clock::tick()
     ROSHandler::instance().waitForConnection();
 
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
-    if(state.use_ros_time) {
+    if(param<int>("method") == CURRENT) {
         time->value = ros::Time::now();
     } else {
         time->value = ros::Time(0);
-    }
-
-    if(time_label_) {
-        time_label_->setText(boost::posix_time::to_simple_string(time->value.toBoost()).c_str());
     }
     output_->publish(time);
 }
@@ -53,52 +54,3 @@ void Clock::setup()
     output_ = addOutput<connection_types::TimeStampMessage>("Time");
 }
 
-void Clock::fill(QBoxLayout* layout)
-{
-    time_type_ = new QPushButton;
-    time_type_->setCheckable(true);
-    QObject::connect(time_type_, SIGNAL(clicked()), this, SLOT(update()));
-    layout->addWidget(time_type_);
-
-    time_label_ = new QLabel;
-    layout->addWidget(time_label_);
-
-    update();
-}
-
-void Clock::update()
-{
-    if(time_type_) {
-        state.use_ros_time = time_type_->isChecked();
-
-        if(state.use_ros_time) {
-            time_type_->setText("ros::Time::now()");
-        } else {
-            time_type_->setText("ros::Time(0)");
-        }
-    }
-}
-
-Memento::Ptr Clock::getState() const
-{
-    return boost::shared_ptr<State>(new State(state));
-}
-
-void Clock::setState(Memento::Ptr memento)
-{
-    boost::shared_ptr<Clock::State> m = boost::dynamic_pointer_cast<Clock::State> (memento);
-    assert(m.get());
-
-    state = *m;
-
-    update();
-}
-
-void Clock::State::writeYaml(YAML::Emitter& out) const {
-    out << YAML::Key << "use_ros_time" << YAML::Value << use_ros_time;
-}
-void Clock::State::readYaml(const YAML::Node& node) {
-    if(exists(node, "use_ros_time")) {
-        node["use_ros_time"] >> use_ros_time;
-    }
-}
