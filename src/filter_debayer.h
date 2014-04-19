@@ -13,47 +13,19 @@ namespace vision_plugins {
  */
 class Debayer : public csapex::Filter
 {
-    Q_OBJECT
-
 public:
     Debayer();
 
     /**
      * @brief See base class definition.
      */
-    virtual void insert(QBoxLayout *parent);
-    /**
-     * @brief See base class definition.
-     */
     virtual void filter(cv::Mat &img, cv::Mat &mask);
-
-    /// MEMENTO
-    void setState(csapex::Memento::Ptr memento);
-    csapex::Memento::Ptr getState() const;
 
     virtual QIcon getIcon() const;
 
 private:
-    typedef std::pair<int, int> modePair;
-
-    std::map<int, int> modeFromCombo;
-
-    QComboBox *combo_mode_;
-
     virtual bool usesMask();
-    void fillCombo(QComboBox *combo, std::map<int, int> &map);
     void debayerAndResize(cv::Mat& source, cv::Mat& dest);
-
-    /// MEMENTO
-    class State : public csapex::Memento {
-        void readYaml(const YAML::Node &node);
-        void writeYaml(YAML::Emitter &out) const;
-
-    public:
-        int index;
-    };
-
-    State state_;
 };
 
 }

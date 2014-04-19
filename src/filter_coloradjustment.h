@@ -1,6 +1,11 @@
 #ifndef FILTER_COLORCHANNEL_H
 #define FILTER_COLORCHANNEL_H
-#include <csapex_vision/filter.h>
+
+/// PROJECT
+#include <csapex/model/boxed_object.h>
+
+/// SYSTEM
+#include <opencv2/opencv.hpp>
 
 class QSlider;
 class QDoubleSlider;

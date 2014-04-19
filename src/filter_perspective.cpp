@@ -2,7 +2,7 @@
 #include "filter_perspective.h"
 
 /// PROJECT
-#include <csapex/utility/qt_helper.hpp>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -14,6 +14,11 @@ using namespace csapex;
 
 PerspectiveTransform::PerspectiveTransform()
 {
+    addParameter(param::ParameterFactory::declareRange("Rotation x", -90.0, 90.0, 0.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
+    addParameter(param::ParameterFactory::declareRange("Rotation y",  -90.0, 90.0, 0.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
+    addParameter(param::ParameterFactory::declareRange("Rotation z",  -90.0, 90.0, 0.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
+    addParameter(param::ParameterFactory::declareRange("Virt. Distance", 0.0, 2000.0, 500.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
+    addParameter(param::ParameterFactory::declareRange("Virt. Focal Length", 0.0, 2000.0, 500.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
 }
 
 void PerspectiveTransform::filter(cv::Mat &img, cv::Mat &mask)
@@ -22,71 +27,19 @@ void PerspectiveTransform::filter(cv::Mat &img, cv::Mat &mask)
     transformer_.transform(img, img);
 }
 
-void PerspectiveTransform::insert(QBoxLayout *parent)
-{
-    slider_rot_x_ = QtHelper::makeDoubleSlider(parent, "Rotation x", 0, -90, 90, 0.1);
-    slider_rot_y_ = QtHelper::makeDoubleSlider(parent, "Rotation y", 0, -90, 90, 0.1);
-    slider_rot_z_ = QtHelper::makeDoubleSlider(parent, "Rotation z", 0, -90, 90, 0.1);
-    slider_distance_     = QtHelper::makeDoubleSlider(parent, "Virt. Distance", 500, 0, 2000, 0.1);
-    slider_focal_length_ = QtHelper::makeDoubleSlider(parent, "Virt. Focal Length", 500, 0, 2000, 0.1);
-
-    connect(slider_rot_x_, SIGNAL(valueChanged(int)), this, SLOT(update()));
-    connect(slider_rot_y_, SIGNAL(valueChanged(int)), this, SLOT(update()));
-    connect(slider_rot_z_, SIGNAL(valueChanged(int)), this, SLOT(update()));
-    connect(slider_distance_, SIGNAL(valueChanged(int)), this, SLOT(update()));
-    connect(slider_focal_length_, SIGNAL(valueChanged(int)), this, SLOT(update()));
-
-}
-
 void PerspectiveTransform::update()
 {
-    state_.rot_x = slider_rot_x_->doubleValue();
-    state_.rot_y = slider_rot_y_->doubleValue();
-    state_.rot_z = slider_rot_z_->doubleValue();
-    state_.foca  = slider_focal_length_->doubleValue();
-    state_.dist  = slider_distance_->doubleValue();
-    transformer_.set_rot_x(state_.rot_x);
-    transformer_.set_rot_y(state_.rot_y);
-    transformer_.set_rot_z(state_.rot_z);
-    transformer_.set_distance(state_.dist);
-    transformer_.set_focal(state_.foca);
+    double rot_x = param<double>("Rotation x");
+    double rot_y = param<double>("Rotation y");
+    double rot_z = param<double>("Rotation z");
+    double foca  = param<double>("Virt. Distance");
+    double dist  = param<double>("Virt. Focal Length");
+    transformer_.set_rot_x(rot_x);
+    transformer_.set_rot_y(rot_y);
+    transformer_.set_rot_z(rot_z);
+    transformer_.set_distance(dist);
+    transformer_.set_focal(foca);
 }
 
-Memento::Ptr PerspectiveTransform::getState() const
-{
-    return boost::shared_ptr<State>(new State(state_));
-}
 
-void PerspectiveTransform::setState(Memento::Ptr memento)
-{
-    boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
-    assert(m.get());
-
-    state_ = *m;
-
-    slider_rot_x_->setDoubleValue(state_.rot_x);
-    slider_rot_y_->setDoubleValue(state_.rot_y);
-    slider_rot_z_->setDoubleValue(state_.rot_z);
-    slider_distance_->setDoubleValue(state_.dist);
-    slider_focal_length_->setDoubleValue(state_.foca);
-}
-
-/// MEMENTO
-void PerspectiveTransform::State::readYaml(const YAML::Node &node)
-{
-    node["rot_x"] >> rot_x;
-    node["rot_y"] >> rot_y;
-    node["rot_z"] >> rot_z;
-    node["foca"] >> foca;
-    node["dist"] >> dist;
-}
-
-void PerspectiveTransform::State::writeYaml(YAML::Emitter &out) const
-{
-    out << YAML::Key << "rot_x" << YAML::Value << rot_x;
-    out << YAML::Key << "rot_y" << YAML::Value << rot_y;
-    out << YAML::Key << "rot_z" << YAML::Value << rot_z;
-    out << YAML::Key << "foca" << YAML::Value << foca;
-    out << YAML::Key << "dist" << YAML::Value << dist;
-}
 

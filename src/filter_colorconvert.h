@@ -5,7 +5,7 @@
 #include <csapex/csapex_fwd.h>
 
 /// COMPONENT
-#include <csapex_vision/filter.h>
+#include <csapex/model/boxed_object.h>
 #include <csapex_vision/cv_mat_message.h>
 
 
