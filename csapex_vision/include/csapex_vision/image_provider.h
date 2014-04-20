@@ -56,11 +56,12 @@ public:
 
     virtual void enableBorder(bool border);
 
-    virtual Memento::Ptr getState() const;
-    virtual void setState(Memento::Ptr memento);
+    Memento::Ptr getState() const;
+    void setState(Memento::Ptr memento);
 
 private:
     static std::map<std::string, ProviderConstructor> plugins;
+
 };
 
 } /// NAMESPACE

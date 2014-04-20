@@ -9,8 +9,6 @@ namespace csapex
 
 class ImageProviderMov : public ImageProviderSet
 {
-    Q_OBJECT
-
 public:
     ImageProviderMov();
     void load(const std::string& movie_file);
@@ -18,8 +16,6 @@ public:
     ~ImageProviderMov();
 
 public:
-//    static ImageProvider* createInstance(const std::string& path);
-
     virtual bool hasNext();
     virtual void reallyNext(cv::Mat& img, cv::Mat& mask);
 

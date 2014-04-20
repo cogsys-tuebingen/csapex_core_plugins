@@ -13,8 +13,6 @@ namespace csapex
 
 class ImageProviderDir : public ImageProvider
 {
-    Q_OBJECT
-
 public:
     ImageProviderDir();
     void load(const std::string& dir);

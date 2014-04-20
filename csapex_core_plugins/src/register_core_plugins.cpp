@@ -15,6 +15,7 @@
 #include <csapex/manager/box_manager.h>
 #include <csapex/model/graph.h>
 #include <csapex/model/node_state.h>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <boost/regex.hpp>
@@ -147,11 +148,11 @@ class FileHandler
 
                 UUID uuid = UUID::make(dispatcher->getGraph()->makeUUIDPrefix("csapex::FileImporter"));
 
-                FileImporter::State::Ptr sub_state(new FileImporter::State);
-                sub_state->last_path_ = files.first().toString();
 
                 NodeState::Ptr state(new NodeState(NULL));
-                state->child_state = sub_state;
+                GenericState::Ptr child_state(new GenericState);
+                child_state->addParameter(param::ParameterFactory::declareFileInputPath("path", files.first().toString().toStdString()));
+                state->child_state = child_state;
 
                 std::string type("csapex::FileImporter");
                 dispatcher->execute(Command::Ptr(new command::AddNode(type, pos, UUID::NONE, uuid, state)));

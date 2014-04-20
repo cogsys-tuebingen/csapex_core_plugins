@@ -107,10 +107,14 @@ void ImageProvider::enableBorder(bool border)
 
 Memento::Ptr ImageProvider::getState() const
 {
-    return Memento::Ptr((Memento*) NULL);
+    GenericState::Ptr r(new GenericState(state));
+    return r;
 }
 
 void ImageProvider::setState(Memento::Ptr memento)
 {
-
+    boost::shared_ptr<GenericState> m = boost::dynamic_pointer_cast<GenericState> (memento);
+    if(m) {
+        state.setFrom(*m);
+    }
 }

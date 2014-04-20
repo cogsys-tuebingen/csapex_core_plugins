@@ -2,7 +2,7 @@
 #define OUTPUT_DISPLAY_H
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 
 namespace csapex
 {

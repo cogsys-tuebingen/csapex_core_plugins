@@ -12,8 +12,6 @@ namespace csapex
 
 class ImageProviderImg : public ImageProvider
 {
-    Q_OBJECT
-
 public:
     ImageProviderImg();
     void load(const std::string& file);

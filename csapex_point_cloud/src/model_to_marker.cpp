@@ -8,13 +8,9 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
 
-
-
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 #include <geometry_msgs/Point.h>
-
-
 
 CSAPEX_REGISTER_CLASS(csapex::ModelToMarker, csapex::Node)
 
