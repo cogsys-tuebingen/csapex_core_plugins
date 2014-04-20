@@ -14,6 +14,7 @@ ImageProviderSet::ImageProviderSet()
 {
     state.addParameter(param::ParameterFactory::declareBool("playing", true));
     state.addParameter(param::ParameterFactory::declareRange("current_frame", 0, 1000, 0, 1));
+    // TODO: interval param for playback borders
 }
 
 ImageProviderSet::~ImageProviderSet()

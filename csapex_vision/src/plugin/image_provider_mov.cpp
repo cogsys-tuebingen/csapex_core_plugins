@@ -42,7 +42,11 @@ std::vector<std::string> ImageProviderMov::getExtensions() const
 
 bool ImageProviderMov::hasNext()
 {
-    return capture_.isOpened();
+    if(!capture_.isOpened()) {
+        return false;
+    } else {
+        return next_frame < frames_;
+    }
 }
 
 void ImageProviderMov::reallyNext(cv::Mat& img, cv::Mat& mask)

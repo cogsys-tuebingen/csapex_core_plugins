@@ -32,12 +32,6 @@ FileImporter::FileImporter()
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
     addParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), boost::bind(&FileImporter::import, this));
-
-
-    /// VIDEO FILES!!!!!!!!
-    /// range param as position
-    /// interval param as borders
-
 }
 
 FileImporter::~FileImporter()
@@ -48,7 +42,6 @@ FileImporter::~FileImporter()
 void FileImporter::tick()
 {
     if(provider_.get()) {
-
         Message::Ptr msg = provider_->next();
         if(msg.get()) {
             output_->setType(provider_->getType());
