@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <csapex_vision/cv_mat_message.h>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>
@@ -16,6 +17,8 @@ std::map<std::string, ImageProvider::ProviderConstructor> ImageProvider::plugins
 ImageProvider::ImageProvider()
 {
     setType(connection_types::CvMatMessage::make());
+
+    state.addParameter(param::ParameterFactory::declareBool("playback/resend", true));
 }
 
 ImageProvider::~ImageProvider()

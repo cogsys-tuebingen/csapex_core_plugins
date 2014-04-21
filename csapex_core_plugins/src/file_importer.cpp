@@ -58,7 +58,7 @@ void FileImporter::changeMode()
 
 void FileImporter::tick()
 {
-    if(provider_.get()) {
+    if(provider_.get() && provider_->hasNext()) {
         Message::Ptr msg = provider_->next();
         if(msg.get()) {
             output_->setType(provider_->getType());

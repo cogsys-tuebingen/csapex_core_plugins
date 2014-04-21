@@ -63,5 +63,5 @@ void ImageProviderImg::enableBorder(bool border)
 
 bool ImageProviderImg::hasNext()
 {
-    return true;//!displayed;
+    return state.param<bool>("playback/resend");
 }

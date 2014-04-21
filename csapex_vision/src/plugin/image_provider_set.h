@@ -22,6 +22,9 @@ protected: // abstract
     virtual void reallyNext(cv::Mat& img, cv::Mat& mask) = 0;
 
 protected:
+    virtual bool hasNext();
+
+protected:
     cv::Mat last_frame_;
 
     double fps_;
