@@ -2,17 +2,14 @@
 #include "filter_coloradjustment.h"
 
 /// COMPONENT
-#include <csapex/utility/qt_helper.hpp>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-#include <csapex/view/box.h>
 #include <utils_cv/histogram.hpp>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
-#include <QComboBox>
-#include <QCheckBox>
 
 CSAPEX_REGISTER_CLASS(csapex::ColorAdjustment, csapex::Node)
 
@@ -20,98 +17,76 @@ using namespace csapex;
 using namespace connection_types;
 
 ColorAdjustment::ColorAdjustment() :
-    input_(NULL),
-    output_(NULL),
-    active_preset_(NONE),
-    combo_preset_(NULL),
-    container_ch_sliders_(NULL)
+    active_preset_(NONE)
 {
     addTag(Tag::get("Filter"));
-}
 
-ColorAdjustment::~ColorAdjustment()
-{
-}
+    std::map<std::string, int> presets = boost::assign::map_list_of
+            ("HSV", (int) HSV)
+            ("HSL", (int) HSL)
+            ("STD", (int) STD);
 
-void ColorAdjustment::setState(Memento::Ptr memento)
-{
-    boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
-    assert(m.get());
+    addParameter(param::ParameterFactory::declareBool("normalize", false));
+    addParameter(param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
 
-    state_ = *m;
-
-    if(combo_preset_) {
-        combo_preset_->setCurrentIndex(state_.combo_index);
-        setPreset(state_.combo_index);
-    }
-
-    Q_EMIT modelChanged();
-}
-
-Memento::Ptr ColorAdjustment::getState() const
-{
-    return boost::shared_ptr<State>(new State(state_));
+    addParameter(param::ParameterFactory::declareParameterSet("preset", presets), boost::bind(&ColorAdjustment::setPreset, this));
 }
 
 void ColorAdjustment::setup()
 {
     setSynchronizedInputs(true);
 
-    /// add input
     input_ = addInput<CvMatMessage>("Image");
-
-    /// add output
     output_ = addOutput<CvMatMessage>("Image");
 }
 
-void ColorAdjustment::fill(QBoxLayout *parent)
+namespace {
+std::string channelName(int idx, const Channel& c)
 {
-    if(container_ch_sliders_ == NULL) {
-
-        check_normalize_ = new QCheckBox("Normalization Mode");
-        parent->addWidget(check_normalize_);
-
-        parent->addWidget(new QLabel("Channel Adjustment"));
-
-        combo_preset_ = new QComboBox();
-        combo_preset_->addItem("STD");
-        combo_preset_->addItem("HSV");
-        combo_preset_->addItem("HSL");
-
-        int index = combo_preset_->findText("STD");
-        index_to_preset_.insert(intPresetPair(index, STD));
-        index = combo_preset_->findText("HSV");
-        index_to_preset_.insert(intPresetPair(index, HSV));
-        index = combo_preset_->findText("HSL");
-        index_to_preset_.insert(intPresetPair(index, HSL));
-        parent->addWidget(combo_preset_);
-
-        slide_lightness_ = QtHelper::makeSlider(parent, "Lightness -/+", 0, -255, 255);
-
-        QObject::connect(combo_preset_, SIGNAL(currentIndexChanged(int)), this, SLOT(setPreset(int)));
-
-        setPreset(combo_preset_->currentIndex());
-    }
+    std::stringstream name;
+    name << "c" << idx << " [" << c.name << "]";
+    return name.str();
 }
+}
+
+void ColorAdjustment::setState(Memento::Ptr memento)
+{
+    Node::setState(memento);
+    loaded_state_ = boost::dynamic_pointer_cast<GenericState>(memento);
+}
+
 
 void ColorAdjustment::process()
 {
-    CvMatMessage::Ptr m = input_->getMessage<CvMatMessage>();
+    CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
 
-    std::vector<cv::Mat> channels;
-    cv::split(m->value, channels);
+    bool encoding_changed = img->getEncoding() != current_encoding;
+    current_encoding = img->getEncoding();
 
-    if(state_.channel_count != m->value.channels()) {
-        state_.channel_count = m->value.channels();
+    if(encoding_changed) {
+        recompute();
+
+        if(loaded_state_) {
+            Node::setState(loaded_state_);
+            loaded_state_.reset((GenericState*)NULL);
+            triggerParameterSetChanged();
+            update();
+        }
+
         Q_EMIT modelChanged();
+        return;
     }
 
-    updateState();
 
-    for(unsigned i = 0 ; i < slider_pairs_.size() && i < channels.size() ; i++) {
-        double min = slider_pairs_[i].first->doubleValue();
-        double max = slider_pairs_[i].second->doubleValue();
-        if(check_normalize_->isChecked()) {
+    std::vector<cv::Mat> channels;
+    cv::split(img->value, channels);
+
+    bool normalize = param<bool>("normalize");
+
+    for(unsigned i = 0 ; i < channels.size() ; i++) {
+        double min = mins[i];
+        double max = maxs[i];
+        if(normalize) {
             cv::normalize(channels[i], channels[i], max, min, cv::NORM_MINMAX);
         } else {
             cv::threshold(channels[i], channels[i], min, max, cv::THRESH_TOZERO);
@@ -120,147 +95,64 @@ void ColorAdjustment::process()
 
     }
 
-    cv::merge(channels, m->value);
-    addLightness(m->value);
+    cv::merge(channels, img->value);
+    addLightness(img->value);
 
-    output_->publish(m);
+    output_->publish(img);
 }
 
-void ColorAdjustment::updateDynamicGui(QBoxLayout *layout)
+void ColorAdjustment::recompute()
 {
-    slider_pairs_.clear();
-    QVBoxLayout *internal_layout;
+    setParameterSetSilence(true);
+    removeTemporaryParameters();
+    for(std::size_t i = 0; i < current_encoding.size(); ++i) {
+        Channel c = current_encoding[i];
 
-    if(container_ch_sliders_ != NULL) {
-        container_ch_sliders_->deleteLater();
+        std::string name = channelName(i, c);
+        param::Parameter::Ptr p = param::ParameterFactory::declareInterval(name, c.min, c.max, c.min, c.max, 1);
+        addTemporaryParameter(p, boost::bind(&ColorAdjustment::update, this));
     }
 
-    internal_layout = new QVBoxLayout;
+    setParameterSetSilence(false);
+    triggerParameterSetChanged();
 
-    for(int i = 0 ; i < state_.channel_count ; i++) {
-        std::stringstream ch;
-        ch << i + 1;
-
-        double ch_limit = 255.0;
-        if(i == 0 && (active_preset_ == HSL || active_preset_ == HSV)) {
-            ch_limit = 180.0;
-        }
-
-        if((int) state_.mins.size() < state_.channel_count) {
-            state_.mins.push_back(0.0);
-        }
-
-        if((int) state_.maxs.size() < state_.channel_count) {
-            state_.maxs.push_back(ch_limit);
-        }
-
-        QDoubleSlider *tmp_min = QtHelper::makeDoubleSlider(internal_layout, "Ch." + ch.str() + " min.", state_.mins[i], 0.0, ch_limit, 0.01);
-        QDoubleSlider *tmp_max = QtHelper::makeDoubleSlider(internal_layout, "Ch." + ch.str() + " max.", state_.maxs[i], 0.0, ch_limit, 0.01);
-        prepareSliderPair(tmp_min, tmp_max);
-
-    }
-
-    slide_lightness_->setValue(state_.lightness);
-    check_normalize_->setChecked(state_.normalize);
-
-    container_ch_sliders_ = QtHelper::wrapLayout(internal_layout);
-    layout->addWidget(container_ch_sliders_);
-
+    update();
 }
 
-void ColorAdjustment::setPreset(int index)
+void ColorAdjustment::update()
 {
-    active_preset_  = index_to_preset_[index];
+    mins.clear();
+    maxs.clear();
+
+    for(std::size_t i = 0; i < current_encoding.size(); ++i) {
+        std::pair<int,int> val = param<std::pair<int, int> >(channelName(i, current_encoding[i]));
+
+        mins.push_back(val.first);
+        maxs.push_back(val.second);
+    }
+}
+
+void ColorAdjustment::setPreset()
+{
+    active_preset_  = static_cast<Preset> (param<int>("preset"));
     Q_EMIT modelChanged();
 }
 
 void ColorAdjustment::addLightness(cv::Mat &img)
 {
-    double      slide_value = slide_lightness_->value();
-    slide_value = std::abs(slide_value);
+    double param_lightness = param<int>("lightness");
+    double abs_lightness = std::abs(param_lightness);
 
     cv::Scalar  cv_value;
-    cv_value[0] = slide_value;
-    cv_value[1] = active_preset_ == HSL || active_preset_ == HSV ? 0 : slide_value;
-    cv_value[2] = active_preset_ == HSL || active_preset_ == HSV ? 0 : slide_value;
-    cv_value[3] = slide_value;
+    cv_value[0] = abs_lightness;
+    cv_value[1] = active_preset_ == HSL || active_preset_ == HSV ? 0 : abs_lightness;
+    cv_value[2] = active_preset_ == HSL || active_preset_ == HSV ? 0 : abs_lightness;
+    cv_value[3] = abs_lightness;
 
     cv::Mat     lightness(img.rows, img.cols, img.type(), cv_value);
-    if(slide_lightness_->value() < 0) {
+    if(param_lightness < 0) {
         cv::subtract(img, lightness, img);
-    } else if(slide_lightness_->value() > 0) {
+    } else if(param_lightness > 0) {
         cv::add(img, lightness, img);
     }
-}
-
-void ColorAdjustment::prepareSliderPair(QDoubleSlider *min, QDoubleSlider *max)
-{
-    std::pair<QDoubleSlider*, QDoubleSlider*> minMax;
-    minMax.first  = min;
-    minMax.second = max;
-    QDoubleSlider::connect(minMax.first, SIGNAL(valueChanged(double)), minMax.second, SLOT(limitMin(double)));
-    QDoubleSlider::connect(minMax.second, SIGNAL(valueChanged(double)), minMax.first, SLOT(limitMax(double)));
-    slider_pairs_.push_back(minMax);
-}
-
-void ColorAdjustment::updateState()
-{
-    state_.mins.clear();
-    state_.maxs.clear();
-    state_.lightness = slide_lightness_->value();
-    state_.combo_index = combo_preset_->currentIndex();
-    state_.normalize = check_normalize_->isChecked();
-
-    for(ChannelLimits::iterator it = slider_pairs_.begin() ; it != slider_pairs_.end() ; it++) {
-        state_.mins.push_back(it->first->doubleValue());
-        state_.maxs.push_back(it->second->doubleValue());
-    }
-}
-
-/// MEMENTO ------------------------------------------------------------------------------------
-ColorAdjustment::State::State() :
-    channel_count(0),
-    lightness(0)
-{
-}
-
-void ColorAdjustment::State::readYaml(const YAML::Node &node)
-{
-    const YAML::Node &min_values = node["mins"];
-    for(YAML::Iterator it = min_values.begin() ; it != min_values.end() ; it++) {
-        double min;
-        *it >> min;
-        mins.push_back(min);
-    }
-
-    const YAML::Node &max_values = node["maxs"];
-    for(YAML::Iterator it = max_values.begin() ; it != max_values.end() ; it++) {
-        double max;
-        *it >> max;
-        maxs.push_back(max);
-    }
-
-    node["channel_count"] >> channel_count;
-    node["normalize"] >> normalize;
-    node["lightness"] >> lightness;
-    node["preset"] >> combo_index;
-}
-
-
-void ColorAdjustment::State::writeYaml(YAML::Emitter &out) const
-{
-    out << YAML::Key << "mins" << YAML::Value << YAML::BeginSeq;
-    for(std::vector<double>::const_iterator it = mins.begin() ; it != mins.end() ; it++) {
-        out << *it;
-    }
-    out << YAML::EndSeq;
-    out << YAML::Key << "maxs" << YAML::Value << YAML::BeginSeq;
-    for(std::vector<double>::const_iterator it = maxs.begin() ; it != maxs.end() ; it++) {
-        out << *it;
-    }
-    out << YAML::EndSeq;
-    out << YAML::Key << "channel_count" << YAML::Value << channel_count;
-    out << YAML::Key << "normalize" << YAML::Value << normalize;
-    out << YAML::Key << "preset" << YAML::Value << combo_index;
-    out << YAML::Key << "lightness" << YAML::Value << lightness;
 }

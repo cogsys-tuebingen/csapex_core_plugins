@@ -2,84 +2,43 @@
 #define FILTER_COLORCHANNEL_H
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
-
-/// SYSTEM
-#include <opencv2/opencv.hpp>
-
-class QSlider;
-class QDoubleSlider;
-class QCheckBox;
-class QComboBox;
+#include <csapex/model/node.h>
+#include <csapex_vision/cv_mat_message.h>
 
 namespace csapex {
-class ColorAdjustment : public csapex::BoxedObject
+class ColorAdjustment : public csapex::Node
 {
-    Q_OBJECT
-
 public:
     ColorAdjustment();
-    virtual ~ColorAdjustment();
-
-    void         setState(Memento::Ptr memento);
-    Memento::Ptr getState() const;
 
     void setup();
-    virtual void fill(QBoxLayout *parent);
     void process();
 
-private Q_SLOTS:
-    virtual void updateDynamicGui(QBoxLayout *layout);
-    void setPreset(int index);
+    void setState(Memento::Ptr memento);
+    void setPreset();
+
+private:
+    void recompute();
+    void update();
 
 private:
     /// presets
     enum Preset{NONE, HSV, HSL, STD};
 
-    /// internal typedefs
-    typedef std::vector<std::pair<QDoubleSlider*, QDoubleSlider*> > ChannelLimits;
-    typedef std::pair<int, Preset> intPresetPair;
-    typedef std::pair<Preset, int> presetIntPair;
-
     /// connectors
     ConnectorIn   *input_;
     ConnectorOut  *output_;
 
+    GenericStatePtr loaded_state_;
+
     Preset  active_preset_;
 
-    /// layout and computation
-    QCheckBox                  *check_normalize_;
-    QSlider                    *slide_lightness_;
-    QComboBox                  *combo_preset_;
-    QWidget                    *container_ch_sliders_;
-    ChannelLimits               slider_pairs_;
-    std::map<int, Preset>       index_to_preset_;
+    Encoding current_encoding;
+    std::vector<double> mins;
+    std::vector<double> maxs;
 
     /// helpers
     void addLightness(cv::Mat &img);
-    void prepareSliderPair(QDoubleSlider *min, QDoubleSlider *max);
-
-    /// MEMENTO
-    void updateState();
-    class State : public Memento {
-    public:
-        State();
-        void readYaml(const YAML::Node &node);
-        void writeYaml(YAML::Emitter &out) const;
-
-    public:
-        std::vector<double> mins;
-        std::vector<double> maxs;
-        int     channel_count;
-        bool    normalize;
-        int     lightness;
-        int     combo_index;
-
-    };
-
-    State state_;
-
-
 };
 }
 
