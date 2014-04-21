@@ -7,7 +7,6 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
-#include <csapex/view/port.h>
 #include <csapex/utility/timer.h>
 
 /// SYSTEM
@@ -110,14 +109,4 @@ void Foreach::stop()
     disconnectConnector(out_sub);
 
     Node::stop();
-}
-
-void Foreach::fill(QBoxLayout *layout)
-{
-    QHBoxLayout* sub = new QHBoxLayout;
-
-    sub->addWidget(new Port(getCommandDispatcher(), out_sub));
-    sub->addWidget(new Port(getCommandDispatcher(), in_sub));
-
-    layout->addLayout(sub);
 }

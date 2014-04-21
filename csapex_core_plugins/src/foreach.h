@@ -2,14 +2,16 @@
 #define FOREACH_H
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 #include <csapex_core_plugins/vector_message.h>
 
 namespace csapex {
 
-class Foreach : public csapex::BoxedObject
+class Foreach : public csapex::Node
 {
     Q_OBJECT
+
+    friend class ForeachAdapter;
 
 public:
     Foreach();
@@ -17,7 +19,6 @@ public:
 
     virtual void process();
     virtual void setup();
-    virtual void fill(QBoxLayout* layout);
 
     virtual void stop();
 

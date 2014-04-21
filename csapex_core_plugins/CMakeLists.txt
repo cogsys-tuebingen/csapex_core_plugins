@@ -61,6 +61,7 @@ add_library(csapex_core_plugins
 
     src/say_text.cpp
     src/foreach.cpp
+    src/foreach_adapter.cpp
     src/register_core_plugins.cpp
     ${QT_RESOURCES}
     ${MOC_PLUG}
