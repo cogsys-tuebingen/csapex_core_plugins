@@ -82,10 +82,11 @@ void ColorAdjustment::fill(QBoxLayout *parent)
         index_to_preset_.insert(intPresetPair(index, HSL));
         parent->addWidget(combo_preset_);
 
-        setPreset(combo_preset_->currentIndex());
         slide_lightness_ = QtHelper::makeSlider(parent, "Lightness -/+", 0, -255, 255);
 
         QObject::connect(combo_preset_, SIGNAL(currentIndexChanged(int)), this, SLOT(setPreset(int)));
+
+        setPreset(combo_preset_->currentIndex());
     }
 }
 
