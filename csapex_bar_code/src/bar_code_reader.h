@@ -2,7 +2,7 @@
 #define BAR_CODE_READER_
 
 /// COMPONENT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 
 namespace csapex
 {
