@@ -23,16 +23,11 @@ QIcon TextDisplay::getIcon() const
     return QIcon(":/pencil.png");
 }
 
-void TextDisplay::fill(QBoxLayout *layout)
+void TextDisplay::setup()
 {
-    if(connector_ == NULL) {
-        setSynchronizedInputs(true);
+    setSynchronizedInputs(true);
 
-        //connector_ = addInput<connection_types::DirectMessage<std::string> >("Text");
-        connector_ = addInput<connection_types::AnyMessage>("Anything", false, true);
-        txt_ = new QLabel("<i>no input yet</i>");
-        layout->addWidget(txt_);
-    }
+    connector_ = addInput<connection_types::AnyMessage>("Anything", false, true);
 }
 
 void TextDisplay::process()
@@ -42,5 +37,5 @@ void TextDisplay::process()
     std::stringstream ss;
     msg->write(ss);
 
-    txt_->setText(ss.str().c_str());
+    display_request(ss.str());
 }

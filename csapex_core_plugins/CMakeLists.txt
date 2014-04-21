@@ -55,7 +55,10 @@ add_library(csapex_core_plugins
     src/import_ros.cpp
     src/double_input.cpp
     src/text_input.cpp
+
     src/text_display.cpp
+    src/text_display_adapter.cpp
+
     src/say_text.cpp
     src/foreach.cpp
     src/register_core_plugins.cpp

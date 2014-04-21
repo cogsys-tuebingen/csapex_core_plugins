@@ -2,29 +2,25 @@
 #define TEXT_DISPLAY_H_
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
-
-/// SYSTEM
-#include <QLabel>
+#include <csapex/model/node.h>
 
 namespace csapex {
 
-class TextDisplay : public BoxedObject
+class TextDisplay : public Node
 {
-    Q_OBJECT
-
 public:
     TextDisplay();
 
     virtual void process();
-    virtual void fill(QBoxLayout* layout);
+    virtual void setup();
 
     virtual QIcon getIcon() const;
 
+public:
+    boost::signals2::signal<void(const std::string&)> display_request;
+
 private:
     ConnectorIn* connector_;
-
-    QLabel* txt_;
 };
 
 }
