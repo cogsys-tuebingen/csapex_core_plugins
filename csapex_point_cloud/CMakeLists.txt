@@ -50,6 +50,7 @@ target_link_libraries(csapex_point_cloud
 add_library(csapex_point_cloud_plugin
     src/register_plugin.cpp
     src/point_count.cpp
+    src/point_count_adapter.cpp
     src/transform_cloud.cpp
     src/voxel_grid.cpp
     src/extract_timestamp.cpp

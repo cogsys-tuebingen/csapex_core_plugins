@@ -2,22 +2,17 @@
 #define POINT_COUNT_H
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
-
-/// SYSTEM
-#include <QLCDNumber>
 
 namespace csapex {
 
-class PointCount : public BoxedObject
+class PointCount : public Node
 {
-    Q_OBJECT
-
 public:
     PointCount();
 
-    virtual void fill(QBoxLayout* layout);
+    virtual void setup();
     virtual void process();
 
     template <class PointT>
@@ -26,7 +21,8 @@ public:
 private:
     ConnectorIn* input_;
 
-    QLCDNumber* number_;
+public:
+    boost::signals2::signal<void(int)> display_request;
 };
 
 }

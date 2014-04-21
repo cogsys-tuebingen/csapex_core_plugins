@@ -2,7 +2,6 @@
 #include "point_count.h"
 
 /// PROJECT
-
 #include <csapex/model/connector_in.h>
 
 /// SYSTEM
@@ -19,15 +18,11 @@ PointCount::PointCount()
     addTag(Tag::get("PointCloud"));
 }
 
-void PointCount::fill(QBoxLayout *layout)
+void PointCount::setup()
 {
     setSynchronizedInputs(true);
 
     input_ = addInput<PointCloudMessage>("PointCloud");
-
-    number_ = new QLCDNumber;
-    number_->setDigitCount(8);
-    layout->addWidget(number_);
 
 }
 
@@ -42,5 +37,5 @@ template <class PointT>
 void PointCount::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
     int c = cloud->points.size();
-    number_->display(c);
+    display_request(c);
 }
