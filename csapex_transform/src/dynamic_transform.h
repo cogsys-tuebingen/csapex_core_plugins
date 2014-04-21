@@ -2,34 +2,26 @@
 #define DYNAMIC_TRANSFORM_H
 
 /// PROJECT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
+#include <utils_param/set_parameter.h>
 
 /// SYSTEM
 #include <ros/time.h>
-#include <QComboBox>
-#include <QPushButton>
 
 namespace csapex {
 
-class DynamicTransform : public csapex::BoxedObject
+class DynamicTransform : public csapex::Node
 {
-    Q_OBJECT
-
 public:
     DynamicTransform();
 
     virtual void setup();
-    virtual void fill(QBoxLayout* layout);
 
-    virtual Memento::Ptr getState() const;
-    virtual void setState(Memento::Ptr memento);
-
-
-public Q_SLOTS:
     virtual void process();
     virtual void tick();
     void update();
-    void updateFrames();
+
+    void refresh();
     void resetTf();
 
 private:
@@ -43,21 +35,8 @@ private:
     ConnectorIn* frame_in_to_;
     ConnectorIn* time_in_;
 
-    QComboBox* from_box_;
-    QComboBox* to_box_;
-
-    QPushButton* refresh_;
-    QPushButton* reset_tf_;
-
-    struct State : public Memento {
-        std::string from_;
-        std::string to_;
-
-        virtual void writeYaml(YAML::Emitter& out) const;
-        virtual void readYaml(const YAML::Node& node);
-    };
-
-    State state;
+    param::SetParameter::Ptr from_p;
+    param::SetParameter::Ptr to_p;
 };
 
 }

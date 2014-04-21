@@ -9,10 +9,9 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
-#include <csapex/utility/qt_helper.hpp>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
-#include <boost/foreach.hpp>
 #include <tf/transform_datatypes.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -21,49 +20,51 @@ CSAPEX_REGISTER_CLASS(csapex::DynamicTransform, csapex::Node)
 using namespace csapex;
 
 DynamicTransform::DynamicTransform()
-    : from_box_(NULL), to_box_(NULL)
 {
     addTag(Tag::get("Transform"));
+
+    std::vector<std::string> topics;
+    topics.push_back("/");
+    addParameter(param::ParameterFactory::declareParameterStringSet("from", topics), boost::bind(&DynamicTransform::update, this));
+    addParameter(param::ParameterFactory::declareParameterStringSet("to", topics), boost::bind(&DynamicTransform::update, this));
+
+    addParameter(param::ParameterFactory::declareTrigger("refresh"), boost::bind(&DynamicTransform::refresh, this));
+    addParameter(param::ParameterFactory::declareTrigger("reset tf"), boost::bind(&DynamicTransform::resetTf, this));
+
+    from_p = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("from"));
+    to_p = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("to"));
 }
 
 void DynamicTransform::process()
 {
     setError(false);
     bool update = false;
-    if(frame_in_from_->isConnected() && frame_in_from_->hasMessage()) {
+
+    bool use_in_frame = frame_in_from_->isConnected() && frame_in_from_->hasMessage();
+    from_p->setEnabled(!use_in_frame);
+    if(use_in_frame) {
         std::string from = frame_in_from_->getMessage<connection_types::DirectMessage<std::string> >()->value;
 
-        if(state.from_ != from) {
-            state.from_ = from;
+        if(param<std::string>("from") != from) {
+            state["from"] = from;
             update = true;
-        }
-        if(from_box_) {
-            from_box_->setEnabled(false);
-        }
-    } else {
-        if(from_box_) {
-            from_box_->setEnabled(true);
         }
     }
 
-    if(frame_in_to_->isConnected() && frame_in_to_->hasMessage()) {
+
+    bool use_to_frame = frame_in_to_->isConnected() && frame_in_to_->hasMessage();
+    to_p->setEnabled(!use_to_frame);
+    if(use_to_frame) {
         std::string to = frame_in_to_->getMessage<connection_types::DirectMessage<std::string> >()->value;
 
-        if(state.to_ != to) {
-            state.to_ = to;
+        if(param<std::string>("to") != to) {
+            state["to"] = to;
             update = true;
-        }
-        if(to_box_){
-            to_box_->setEnabled(false);
-        }
-    } else {
-        if(to_box_){
-            to_box_->setEnabled(true);
         }
     }
 
     if(update) {
-        updateFrames();
+        refresh();
     }
 
 
@@ -88,7 +89,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
         LockedListener l = Listener::getLocked();
 
         if(l.l) {
-            l.l->tfl->lookupTransform(state.to_, state.from_, time, t);
+            l.l->tfl->lookupTransform(param<std::string>("to"), param<std::string>("from"), time, t);
             setError(false);
         } else {
             return;
@@ -104,7 +105,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
     output_->publish(msg);
 
     connection_types::DirectMessage<std::string>::Ptr frame(new connection_types::DirectMessage<std::string>);
-    frame->value = state.to_;
+    frame->value = param<std::string>("to");
     output_frame_->publish(frame);
 }
 
@@ -118,37 +119,10 @@ void DynamicTransform::setup()
 
     output_ = addOutput<connection_types::TransformMessage>("Transform");
     output_frame_ = addOutput<connection_types::DirectMessage<std::string> >("Target Frame");
+
+    refresh();
 }
 
-void DynamicTransform::fill(QBoxLayout* layout)
-{
-    from_box_ = new QComboBox;
-    from_box_->setEditable(true);
-    layout->addWidget(from_box_);
-
-    to_box_ = new QComboBox;
-    to_box_->setEditable(true);
-    layout->addWidget(to_box_);
-
-    refresh_ = new QPushButton("refresh");
-    QObject::connect(refresh_, SIGNAL(clicked()), this, SLOT(updateFrames()));
-    layout->addWidget(refresh_);
-
-    reset_tf_ = new QPushButton("reset tf");
-    QObject::connect(reset_tf_, SIGNAL(clicked()), this, SLOT(resetTf()));
-    layout->addWidget(reset_tf_);
-
-    QObject::connect(from_box_, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
-    QObject::connect(from_box_, SIGNAL(editTextChanged(QString)), this, SLOT(update()));
-    QObject::connect(to_box_, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
-    QObject::connect(to_box_, SIGNAL(editTextChanged(QString)), this, SLOT(update()));
-
-    QObject::connect(this, SIGNAL(started()), this, SLOT(updateFrames()));
-
-    ROSHandler::instance().registerConnectionCallback(boost::bind(&DynamicTransform::updateFrames, this));
-
-    updateFrames();
-}
 
 void DynamicTransform::resetTf()
 {
@@ -158,98 +132,28 @@ void DynamicTransform::resetTf()
     }
 }
 
-void DynamicTransform::updateFrames()
+void DynamicTransform::refresh()
 {
     std::vector<std::string> frames;
 
     LockedListener l = Listener::getLocked();
     if(l.l) {
-        l.l->tfl->getFrameStrings(frames);
+        std::vector<std::string> f;
+        l.l->tfl->getFrameStrings(f);
+
+        for(std::size_t i = 0; i < f.size(); ++i) {
+            frames.push_back(std::string("/") + f[i]);
+        }
+
     } else {
         return;
     }
 
-    if(from_box_) {
-        blockSignals(true);
-
-        from_box_->clear();
-        to_box_->clear();
-        int i = 0;
-        bool has_from = false;
-        bool has_to = false;
-
-        BOOST_FOREACH(const std::string& frame, frames) {
-            from_box_->addItem(frame.c_str());
-            to_box_->addItem(frame.c_str());
-
-            if(frame == state.from_) {
-                from_box_->setCurrentIndex(i);
-                has_from = true;
-            }
-            if(frame == state.to_) {
-                to_box_->setCurrentIndex(i);
-                has_to = true;
-            }
-
-            ++i;
-        }
-
-        if(!has_from) {
-            from_box_->addItem(state.from_.c_str());
-            from_box_->setCurrentIndex(i);
-        }
-
-        if(!has_to) {
-            to_box_->addItem(state.to_.c_str());
-            to_box_->setCurrentIndex(i);
-        }
-
-        blockSignals(false);
-    }
+    from_p->setSet(frames);
+    to_p->setSet(frames);
 }
 
 void DynamicTransform::update()
 {
-    if(signalsBlocked()) {
-        return;
-    }
-
-    if(from_box_->currentText().length() == 0 || to_box_->currentText().length() == 0) {
-        return;
-    }
-
-    if(from_box_->model()->rowCount() == 0 || to_box_->model()->rowCount() == 0) {
-        return;
-    }
-
-    state.from_ = from_box_->currentText().toStdString();
-    state.to_ = to_box_->currentText().toStdString();
 }
 
-Memento::Ptr DynamicTransform::getState() const
-{
-    return boost::shared_ptr<State>(new State(state));
-}
-
-void DynamicTransform::setState(Memento::Ptr memento)
-{
-    boost::shared_ptr<DynamicTransform::State> m = boost::dynamic_pointer_cast<DynamicTransform::State> (memento);
-    assert(m.get());
-
-    state = *m;
-
-    updateFrames();
-}
-
-void DynamicTransform::State::writeYaml(YAML::Emitter& out) const {
-    out << YAML::Key << "from" << YAML::Value << from_;
-    out << YAML::Key << "to" << YAML::Value << to_;
-}
-void DynamicTransform::State::readYaml(const YAML::Node& node) {
-    if(exists(node, "from")) {
-        node["from"] >> from_;
-    }
-    if(exists(node, "to")) {
-        node["to"] >> to_;
-    }
-}
