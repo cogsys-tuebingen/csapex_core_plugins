@@ -56,11 +56,6 @@ void ImageProviderImg::next(cv::Mat& img, cv::Mat& mask)
     }
 }
 
-void ImageProviderImg::enableBorder(bool border)
-{
-    border_ = border;
-}
-
 bool ImageProviderImg::hasNext()
 {
     return state.param<bool>("playback/resend");

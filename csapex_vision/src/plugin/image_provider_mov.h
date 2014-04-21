@@ -22,9 +22,6 @@ public:
     std::vector<std::string> getExtensions() const;
 
 private:
-    void display();
-
-private:
     cv::VideoCapture capture_;
 };
 

@@ -23,8 +23,6 @@ namespace csapex
 
 class ImageProvider : public MessageProvider
 {
-    Q_OBJECT
-
 public:
     typedef boost::shared_ptr<ImageProvider> Ptr;
 
@@ -36,25 +34,16 @@ public:
     virtual ~ImageProvider();
 
 public:
-    virtual void update_gui(QFrame* additional_holder) {}
     virtual connection_types::Message::Ptr next();
 
     std::vector<std::string> getExtensions() const;
 
 public:
-    static ImageProvider* create(const std::string& path);
-    static bool canHandle(const std::string& path);
-    static bool canHandle(const std::string& path,
-                          boost::function<bool(ImageProvider*)> reference);
-
-
     void init();
     virtual void doInit() {}
     virtual bool hasNext() = 0;
     virtual void next(cv::Mat&, cv::Mat&) = 0;
     virtual int sleepTime();
-
-    virtual void enableBorder(bool border);
 
     Memento::Ptr getState() const;
     void setState(Memento::Ptr memento);

@@ -23,14 +23,10 @@ private:
     static bool checkIdentity(ImageProvider*);
 
 public:
-//    static ImageProvider* createInstance(const std::string& path);
-
     bool hasNext();
     void next(cv::Mat& img, cv::Mat& mask);
 
     std::vector<std::string> getExtensions() const;
-
-    void enableBorder(bool border);
 
 private:
     cv::Mat img_;
