@@ -23,6 +23,7 @@ ColorAdjustment::ColorAdjustment() :
     input_(NULL),
     output_(NULL),
     active_preset_(NONE),
+    combo_preset_(NULL),
     container_ch_sliders_(NULL)
 {
     addTag(Tag::get("Filter"));
@@ -38,8 +39,11 @@ void ColorAdjustment::setState(Memento::Ptr memento)
     assert(m.get());
 
     state_ = *m;
-    combo_preset_->setCurrentIndex(state_.combo_index);
-    setPreset(state_.combo_index);
+
+    if(combo_preset_) {
+        combo_preset_->setCurrentIndex(state_.combo_index);
+        setPreset(state_.combo_index);
+    }
 
     Q_EMIT modelChanged();
 }
