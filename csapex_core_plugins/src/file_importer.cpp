@@ -7,6 +7,7 @@
 #include <csapex/utility/qt_helper.hpp>
 #include <csapex/manager/message_provider_manager.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_worker.h>
 
 /// SYSTEM
 #include <boost/foreach.hpp>
@@ -18,6 +19,7 @@
 #include <QDirIterator>
 #include <csapex/utility/register_apex_plugin.h>
 #include <QUrl>
+#include <boost/lambda/lambda.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::FileImporter, csapex::Node)
 
@@ -32,12 +34,27 @@ FileImporter::FileImporter()
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
     addParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), boost::bind(&FileImporter::import, this));
+
+    param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
+    addParameter(immediate, boost::bind(&FileImporter::changeMode, this));
+
+    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeWorker::setTickFrequency, getNodeWorker(), boost::bind(&param::Parameter::as<double>, _1));
+    boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
+    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
 }
 
 FileImporter::~FileImporter()
 {
 }
 
+void FileImporter::changeMode()
+{
+    if(param<bool>("playback/immediate")) {
+        getNodeWorker()->setTickFrequency(1000.0);
+    } else {
+        getNodeWorker()->setTickFrequency(param<double>("playback/frequency"));
+    }
+}
 
 void FileImporter::tick()
 {

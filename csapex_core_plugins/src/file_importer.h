@@ -29,6 +29,9 @@ public:
     bool doImport(const QString& path);
 
 private:
+    void changeMode();
+
+private:
     MessageProvider::Ptr provider_;
 
     ConnectorOut* output_;
