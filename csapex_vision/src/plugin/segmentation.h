@@ -2,51 +2,38 @@
 #define FILTER_TOOL_DETECTION_H
 
 /// COMPONENT
-#include <csapex/model/boxed_object.h>
+#include <csapex/model/node.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/utility/qt_helper.hpp>
 
 namespace csapex
 {
 
-class Segmentation : public csapex::BoxedObject
+class Segmentation : public csapex::Node
 {
-    Q_OBJECT
-
 public:
     Segmentation();
 
 public:
     virtual void process();
-    virtual void fill(QBoxLayout *layout);
-    virtual void updateDynamicGui(QBoxLayout *layout);
+    virtual void setup();
 
-    virtual csapex::Memento::Ptr getState() const;
-    virtual void setState(csapex::Memento::Ptr memento);
+protected:
+    virtual void setState(Memento::Ptr memento);
 
-public Q_SLOTS:
+private:
+    void recompute();
     void update();
 
 private:
-    std::vector<QxtSpanSlider*> sliders;
-
     ConnectorIn* input_img_;
     ConnectorIn* input_mask_;
 
     ConnectorOut* output_mask_;
 
-    struct State : public csapex::Memento {
-        int channels;
-        Encoding encoding;
+    GenericStatePtr loaded_state_;
 
-        cv::Scalar min;
-        cv::Scalar max;
-
-        virtual void writeYaml(YAML::Emitter& out) const;
-        virtual void readYaml(const YAML::Node& node);
-    };
-
-    State state;
+    cv::Scalar min, max;
+    Encoding current_encoding;
 };
 
 }

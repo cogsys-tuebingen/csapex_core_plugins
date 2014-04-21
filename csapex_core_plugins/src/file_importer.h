@@ -34,6 +34,7 @@ private:
 private:
     MessageProvider::Ptr provider_;
 
+    QString file_;
     ConnectorOut* output_;
 };
 

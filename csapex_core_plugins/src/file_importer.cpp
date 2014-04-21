@@ -70,6 +70,10 @@ void FileImporter::tick()
 
 bool FileImporter::doImport(const QString& _path)
 {
+    if(_path == file_) {
+        return false;
+    }
+
     QString path;
     QFile file(path);
     if(file.exists()) {
@@ -85,18 +89,21 @@ bool FileImporter::doImport(const QString& _path)
         }
     }
 
+    file_ = _path;
     setError(false);
 
     provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
     provider_->load(path.toStdString());
 
 
+    setParameterSetSilence(true);
     removeTemporaryParameters();
-
     std::vector<param::Parameter::Ptr> params = provider_->getParameters();
     Q_FOREACH(param::Parameter::Ptr param, params) {
         addTemporaryParameter(param);
     }
+    setParameterSetSilence(false);
+    triggerParameterSetChanged();
 
     return provider_.get();
 }
