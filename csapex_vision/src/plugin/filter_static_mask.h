@@ -4,16 +4,8 @@
 /// PROJECT
 #include <csapex_vision/filter.h>
 
-/// SYSTEM
-#include <QDialog>
-#include <QGraphicsView>
-#include <QPushButton>
-#include <fstream>
-
 namespace csapex
 {
-
-class ModalPainter;
 
 class FilterStaticMask : public Filter
 {
@@ -26,16 +18,18 @@ public:
     virtual void setState(Memento::Ptr memento);
 
     virtual void filter(cv::Mat& img, cv::Mat& mask);
-    void new_mask(cv::Mat m);
-    void showPainter();
 
-    void input(cv::Mat);
+    void setMask(const cv::Mat& m);
+    cv::Mat getMask() const;
 
 private:
-    ModalPainter* painter;
+    void showPainter();
 
-    QPushButton* btn;
+public:
+    boost::signals2::signal<void(cv::Mat&)> input;
+    boost::signals2::signal<void()> show_painter;
 
+private:
     struct State : public Memento {
         cv::Mat mask_;
 
@@ -51,47 +45,6 @@ private:
 
     State state;
 };
-
-
-
-
-
-
-class ModalPainter : public QObject
-{
-    Q_OBJECT
-
-public:
-    ModalPainter();
-    virtual ~ModalPainter();
-    void run();
-
-    bool eventFilter(QObject* obj, QEvent* event);
-
-public Q_SLOTS:
-    void input(cv::Mat img);
-    void publish_mask();
-    void reset_mask();
-    void setMask(cv::Mat mask);
-
-Q_SIGNALS:
-    void new_mask(cv::Mat);
-
-private:
-    QDialog* modal;
-    QPushButton* reset;
-    QPushButton* keep;
-    QGraphicsView* view;
-    QGraphicsScene* scene;
-
-    cv::Mat mask;
-    cv::Mat mask_backup;
-
-    QPointF start_drag;
-    Qt::MouseButton start_btn;
-    bool dragging;
-};
-
 
 } /// NAMESPACE
 

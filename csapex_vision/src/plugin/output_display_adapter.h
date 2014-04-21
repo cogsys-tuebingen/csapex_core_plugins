@@ -3,7 +3,6 @@
 
 /// PROJECT
 #include <csapex/view/node_adapter.h>
-#include <csapex/view/node_adapter_builder.h>
 
 /// COMPONENT
 #include "output_display.h"

@@ -14,7 +14,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(csapex::OutputDisplayAdapter, csapex::OutputDisplay)
+CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
 OutputDisplayAdapter::OutputDisplayAdapter(OutputDisplay *node, WidgetController* widget_ctrl)
