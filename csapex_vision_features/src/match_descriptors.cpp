@@ -1,32 +1,49 @@
-/*
- * image_combiner_robust_match.cpp
- *
- *  Created on: Feb 7, 2013
- *      Author: buck <sebastian.buck@uni-tuebingen.de>
- */
-
 /// HEADER
-#include "robust_match.h"
-
-/// COMPONENT
-#include <csapex_vision_features/keypoint_message.h>
-#include <csapex_vision_features/descriptor_message.h>
+#include "match_descriptors.h"
 
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <utils/matcher.h>
+#include <data/matchable.h>
+#include <utils/hough_peak.h>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 #include <opencv2/opencv.hpp>
+#include <boost/assign/std.hpp>
+#include <boost/lambda/lambda.hpp>
 
-CSAPEX_REGISTER_CLASS(csapex::RobustMatch, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::MatchDescriptors, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
 
-//RobustMatcher class taken from OpenCV2 Computer Vision Application Programming Cookbook Ch 9
+class MatchableImpl : public Matchable
+{
+public:
+    /**
+     * @brief Matchable
+     * @param keypoints
+     * @param descriptors
+     */
+    MatchableImpl(const std::vector<cv::KeyPoint> &keypoints, const cv::Mat& descriptors)
+        : Matchable(keypoints, descriptors)
+    {
+
+    }
+    /**
+     * @brief get_dimensions
+     * @return the width and height of this matchable
+     */
+    virtual cv::Rect getDimensions() const
+    {
+        return cv::Rect(0,0,0,0);
+    }
+};
+
+//MatchDescriptorser class taken from OpenCV2 Computer Vision Application Programming Cookbook Ch 9
 class RobustMatcher
 {
 private:
@@ -264,50 +281,172 @@ public:
     }
 };
 
-RobustMatch::RobustMatch()
-    : in_img_1(NULL)
+MatchDescriptors::MatchDescriptors()
+    : in_img_1(NULL), current_method_(SIMPLE)
 {
     addTag(Tag::get("Features"));
+
+    boost::function<void(param::Parameter*)> update = boost::bind(&MatchDescriptors::update, this);
+
+    std::map<std::string, int> methods = boost::assign::map_list_of
+            ("Simple", (int) SIMPLE)
+            ("Peak", (int) PEAK)
+            ("Robust", (int) ROBUST);
+
+    param::Parameter::Ptr method = param::ParameterFactory::declareParameterSet("method", methods);
+    addParameter(method, update);
+
+    addParameter(param::ParameterFactory::declareColorParameter("color/match", 255,128,128));
+    addParameter(param::ParameterFactory::declareColorParameter("color/single", 128,128,255));
+
+    // peak
+    boost::function<bool()> cond_peak = (boost::bind(&param::Parameter::as<int>, method.get()) == PEAK);
+
+    addConditionalParameter(param::ParameterFactory::declareRange("peak/cluster_count", 1, 32, 1, 1), cond_peak);
+    addConditionalParameter(param::ParameterFactory::declareRange("peak/scaling", 1, 8, 1, 1), cond_peak);
+    addConditionalParameter(param::ParameterFactory::declareRange("peak/octaves", 1, 12, 1, 1), cond_peak);
+    addConditionalParameter(param::ParameterFactory::declareRange("peak/min_cluster_size", 1, 256, 1, 1), cond_peak);
 }
 
-
-void RobustMatch::process()
+void MatchDescriptors::update()
 {
-    CvMatMessage::Ptr img1 = in_img_1->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr img2 = in_img_2->getMessage<CvMatMessage>();
+    current_method_ = static_cast<Method> (param<int>("method"));
+}
 
-    KeypointMessage::Ptr key1 = in_key_1->getMessage<KeypointMessage>();
-    KeypointMessage::Ptr key2 = in_key_2->getMessage<KeypointMessage>();
+void MatchDescriptors::process()
+{
+    CvMatMessage::Ptr image1 = in_img_1->getMessage<CvMatMessage>();
+    CvMatMessage::Ptr image2 = in_img_2->getMessage<CvMatMessage>();
 
-    DescriptorMessage::Ptr des1 = in_des_1->getMessage<DescriptorMessage>();
-    DescriptorMessage::Ptr des2 = in_des_2->getMessage<DescriptorMessage>();
+    KeypointMessage::Ptr keypoints1 = in_key_1->getMessage<KeypointMessage>();
+    KeypointMessage::Ptr keypoints2 = in_key_2->getMessage<KeypointMessage>();
+
+    DescriptorMessage::Ptr descriptors1 = in_des_1->getMessage<DescriptorMessage>();
+    DescriptorMessage::Ptr descriptors2 = in_des_2->getMessage<DescriptorMessage>();
 
 
-    if(des1->value.type() != des2->value.type()) {
+    if(descriptors1->value.type() != descriptors2->value.type()) {
         setError(true, "#types don't match");
         return;
     }
 
-    std::vector<cv::DMatch> matches;
+    std::vector<std::vector<cv::DMatch> > matches;
 
-    if(des1->value.cols > 0 && des2->value.cols > 0) {
-        cv::Ptr<cv::DescriptorMatcher > matcher;
-        if(des1->value.type() == CV_8U) {
-            matcher = new cv::BFMatcher(cv::NORM_HAMMING);
-        } else {
-            matcher = new cv::BFMatcher(cv::NORM_L2);
-        }
-        RobustMatcher m(matcher);
-        m.match(img1->value, img2->value, matches, key1->value, key2->value, des1->value, des2->value);
+    if(descriptors1->value.cols > 0 && descriptors2->value.cols > 0) {
+        match(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
     }
-    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));
-    cv::drawMatches(img1->value, key1->value, img2->value, key2->value, matches, out->value, cv::Scalar(0,0,255), cv::Scalar::all(0), cv::vector<char>(), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+    CvMatMessage::Ptr out(new CvMatMessage(image1->getEncoding()));
+
+    std::vector<int> c;
+    c = param<std::vector<int> >("color/match");
+    cv::Scalar matchColor  = cv::Scalar(c[2], c[1], c[0]);
+    c = param<std::vector<int> >("color/single");
+    cv::Scalar singlePointColor  = cv::Scalar(c[2], c[1], c[0]);
+
+    std::vector<std::vector<char> > mask;
+    int flag = cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS;
+
+    cv::drawMatches(image1->value, keypoints1->value, image2->value, keypoints2->value, matches, out->value, matchColor, singlePointColor, mask, flag);
 
     out_img->publish(out);
 }
 
+void MatchDescriptors::match(CvMatMessage::Ptr image1,
+                             CvMatMessage::Ptr image2,
+                             KeypointMessage::Ptr keypoints1,
+                             KeypointMessage::Ptr keypoints2,
+                             DescriptorMessage::Ptr descriptors1,
+                             DescriptorMessage::Ptr descriptors2,
+                             std::vector<std::vector<cv::DMatch> > &matches)
+{
+    switch(current_method_) {
+    case SIMPLE:
+        matchSimple(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
+        break;
+    case PEAK:
+        matchPeak(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
+        break;
+    case ROBUST:
+        matchRobust(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
+        break;
+    }
+}
 
-void RobustMatch::setup()
+void MatchDescriptors::matchRobust(CvMatMessage::Ptr image1,
+                                   CvMatMessage::Ptr image2,
+                                   KeypointMessage::Ptr keypoints1,
+                                   KeypointMessage::Ptr keypoints2,
+                                   DescriptorMessage::Ptr descriptors1,
+                                   DescriptorMessage::Ptr descriptors2,
+                                   std::vector<std::vector<cv::DMatch> > &matches)
+{
+    cv::Ptr<cv::DescriptorMatcher > matcher;
+    if(descriptors1->value.type() == CV_8U) {
+        matcher = new cv::BFMatcher(cv::NORM_HAMMING);
+    } else {
+        matcher = new cv::BFMatcher(cv::NORM_L2);
+    }
+    RobustMatcher m(matcher);
+
+    std::vector<cv::DMatch> tmp_matches;
+
+    m.match(image1->value, image2->value, tmp_matches, keypoints1->value, keypoints2->value, descriptors1->value, descriptors2->value);
+
+    for(std::size_t i = 0, n = tmp_matches.size(); i < n; ++i) {
+        std::vector<cv::DMatch> v;
+        v.push_back(tmp_matches[i]);
+        matches.push_back(v);
+    }
+}
+
+
+void MatchDescriptors::matchSimple(CvMatMessage::Ptr image1,
+                                   CvMatMessage::Ptr image2,
+                                   KeypointMessage::Ptr keypoints1,
+                                   KeypointMessage::Ptr keypoints2,
+                                   DescriptorMessage::Ptr descriptors1,
+                                   DescriptorMessage::Ptr descriptors2,
+                                   std::vector<std::vector<cv::DMatch> > &matches)
+{
+    MatchableImpl m1(keypoints1->value, descriptors1->value);
+    MatchableImpl m2(keypoints2->value, descriptors2->value);
+
+    Matcher m(descriptors1->isBinary());
+    m.match(&m1, &m2, matches);
+}
+
+
+
+
+void MatchDescriptors::matchPeak(CvMatMessage::Ptr,
+                                 CvMatMessage::Ptr,
+                                 KeypointMessage::Ptr keypoints1,
+                                 KeypointMessage::Ptr keypoints2,
+                                 DescriptorMessage::Ptr descriptors1,
+                                 DescriptorMessage::Ptr descriptors2,
+                                 std::vector<std::vector<cv::DMatch> > &matches)
+{
+    MatchableImpl m1(keypoints1->value, descriptors1->value);
+    MatchableImpl m2(keypoints2->value, descriptors2->value);
+
+    HoughAlgorithm* h;
+
+    if(false) {
+        h = new HoughPeak<true, true> (param<int>("peak/cluster_count"), param<int>("peak/scaling"), param<int>("peak/octaves"), m1, m2);
+    } else {
+        h = new HoughPeak<true, false>(param<int>("peak/cluster_count"), param<int>("peak/scaling"), param<int>("peak/octaves"), m1, m2);
+    }
+
+
+    h->min_count = param<int>("peak/min_cluster_size");
+
+    std::vector<HoughData::Cluster> clusters;
+    h->filter(matches, clusters);
+}
+
+
+void MatchDescriptors::setup()
 {
     setSynchronizedInputs(true);
 

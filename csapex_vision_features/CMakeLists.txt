@@ -67,10 +67,7 @@ add_library(csapex_vision_features_plugin
     src/extract_keypoints.cpp
     src/extract_descriptors.cpp
     src/display_keypoints.cpp
-
-    src/simple_match.cpp
-    src/robust_match.cpp
-    src/peak_match.cpp
+    src/match_descriptors.cpp
     ${QT_PLUGIN}
 )
 target_link_libraries(csapex_vision_features_plugin csapex_vision_features
