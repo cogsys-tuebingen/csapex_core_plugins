@@ -42,8 +42,7 @@ add_library(vision_plugins
     src/filter_merger.cpp
     src/filter_splitter.cpp
     src/filter_perspective.cpp
-    src/filter_coloradjustment.cpp
-    src/filter_colorconvert.cpp
+
     src/filter_debayer.cpp
     src/filter_local_patterns.cpp
     src/morphological.cpp
@@ -65,6 +64,9 @@ add_library(vision_plugins
     src/modify/flip.cpp
     src/modify/scale.cpp
     src/modify/resize.cpp
+
+    src/color/color_convert.cpp
+    src/color/color_adjustment.cpp
 
     src/features/corner_line_detection.cpp
     src/features/difference_maximum.cpp
