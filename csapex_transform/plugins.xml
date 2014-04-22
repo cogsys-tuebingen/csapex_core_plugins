@@ -1,27 +1,27 @@
 <library path="libcsapex_transform_plugin">
 <class type="csapex::RegisterTransformPlugin" base_class_type="csapex::CorePlugin">
-  <description>none yet</description>
+  <description></description>
 </class>
 
 <class type="csapex::StaticTransform" base_class_type="csapex::Node">
-  <description>none yet</description>
+  <description>Computes a static 6D transformation</description>
 </class>
 <class type="csapex::DynamicTransform" base_class_type="csapex::Node">
-  <description>none yet</description>
+  <description>Reads a transformation from ROS / TF</description>
 </class>
 <class type="csapex::Clock" base_class_type="csapex::Node">
-  <description>none yet</description>
+  <description>Generates a time message</description>
 </class>
 <class type="csapex::TransformCombiner" base_class_type="csapex::Node">
-  <description>none yet</description>
+  <description>Combines two transformation into one</description>
 </class>
 <class type="csapex::TransformInverter" base_class_type="csapex::Node">
-  <description>none yet</description>
+  <description>Inverts a transformation</description>
 </class>
 <class type="csapex::TransformPublisher" base_class_type="csapex::Node">
-  <description>none yet</description>
+  <description>Publishes a transformation to ROS / TF</description>
 </class>
 <class type="csapex::TimeOffset" base_class_type="csapex::Node">
-  <description>none yet</description>
+  <description>Adds an offset to a time message</description>
 </class>
 </library>
