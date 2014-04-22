@@ -16,6 +16,45 @@ CSAPEX_REGISTER_CLASS(csapex::BilateralFilter, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
+namespace {
+void bilateralFilter(const cv::Mat &src, cv::Mat &dst,
+                     const int d, const double sigmaColor,
+                     const double sigmaSpace, int borderType = cv::BORDER_DEFAULT)
+{
+    cv::Mat tmp = src.clone();
+    int type  = src.type();
+    int ctype = type & 7;
+    if(type == CV_8UC1  || type == CV_8UC3 ||
+       type == CV_32FC1 || type == CV_32FC3) {
+       cv::bilateralFilter(tmp, dst, d, sigmaColor, sigmaSpace, borderType);
+    } else if(src.channels() == 1) {
+        tmp.convertTo(tmp, CV_32FC1);
+        cv::bilateralFilter(tmp, dst, d, sigmaColor, sigmaSpace, borderType);
+        dst.convertTo(dst, type);
+    } else if(ctype == CV_8U || ctype == CV_32F) {
+        std::vector<cv::Mat> channels;
+        cv::split(tmp, channels);
+        for(std::vector<cv::Mat>::iterator it = channels.begin() ; it != channels.end() ; ++it) {
+            cv::Mat buff;
+            cv::bilateralFilter(*it, buff, d, sigmaColor, sigmaSpace, borderType);
+            buff.copyTo(*it);
+        }
+        cv::merge(channels,dst);
+    } else {
+        std::vector<cv::Mat> channels;
+        cv::split(tmp, channels);
+        for(std::vector<cv::Mat>::iterator it = channels.begin() ; it != channels.end() ; ++it) {
+            it->convertTo(*it, CV_32FC1);
+            cv::Mat buff;
+            cv::bilateralFilter(*it, buff, d, sigmaColor, sigmaSpace, borderType);
+            buff.convertTo(*it, ctype);
+        }
+        cv::merge(channels,dst);
+    }
+
+}
+}
+
 BilateralFilter::BilateralFilter() :
     d_(1),
     sigma_color_(0.0),
@@ -23,38 +62,22 @@ BilateralFilter::BilateralFilter() :
 {
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
-    addParameter(param::ParameterFactory::declareRange("d", 1, 255, d_, 1),
-                 boost::bind(&BilateralFilter::update, this));
-    addParameter(param::ParameterFactory::declareRange("sigma color", -255.0, 255.0, sigma_color_, 0.1),
-                 boost::bind(&BilateralFilter::update, this));
-    addParameter(param::ParameterFactory::declareRange("sigma space", -255.0, 255.0, sigma_space_, 0.1),
-                 boost::bind(&BilateralFilter::update, this));
+    addParameter(param::ParameterFactory::declareRange("d", 1, 255, d_, 1));
+    addParameter(param::ParameterFactory::declareRange("sigma color", -255.0, 255.0, sigma_color_, 0.1));
+    addParameter(param::ParameterFactory::declareRange("sigma space", -255.0, 255.0, sigma_space_, 0.1));
 }
 
 void BilateralFilter::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
+    d_           = param<int>("d");
+    sigma_color_ = param<double>("sigma color");
+    sigma_space_ = param<double>("sigma space");
 
-    cv::Mat tmp = in->value.clone();
-    std::vector<cv::Mat> channels;
-    switch(tmp.type()) {
-    case CV_8UC1:
-    case CV_8UC3:
-        break;
-    case CV_8UC4:
-        cv::split(tmp, channels);
-        channels.pop_back();
-        cv::merge(channels,tmp);
-        tmp.convertTo(tmp, CV_8UC3);
-        break;
-    default:
-        throw std::runtime_error("CV_8UC1 or CV_8UC3 required!");
-    }
+    bilateralFilter(in->value, out->value, d_, sigma_color_, sigma_space_);
 
-    out->value  = cv::Mat(tmp.rows, tmp.cols, tmp.type(), cv::Scalar::all(0));
-    cv::bilateralFilter(tmp, out->value, d_, sigma_color_, sigma_space_);
     output_->publish(out);
 }
 
@@ -64,13 +87,4 @@ void BilateralFilter::setup()
 
     input_ = addInput<CvMatMessage>("Unblurred");
     output_ = addOutput<CvMatMessage>("Blurred");
-
-    update();
-}
-
-void BilateralFilter::update()
-{
-    d_           = param<int>("d");
-    sigma_color_ = param<double>("sigma color");
-    sigma_space_ = param<double>("sigma space");
 }

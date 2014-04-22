@@ -15,9 +15,7 @@ public:
     virtual void process();
     virtual void setup();
 
-private:
-    void update();
-
+protected:
     ConnectorIn  *input_;
     ConnectorOut *output_;
 
