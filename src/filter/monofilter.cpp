@@ -20,6 +20,7 @@ MonoFilter::MonoFilter()
     Tag::createIfNotExists("Filter");
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     addParameter(param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
                  boost::bind(&MonoFilter::update, this));

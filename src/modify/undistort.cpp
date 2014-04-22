@@ -18,8 +18,8 @@ using namespace vision_plugins;
 
 Undistort::Undistort()
 {
-    addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     addParameter(param::ParameterFactory::declareFileInputPath("file", ""), boost::bind(&Undistort::update, this));
     addParameter(param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), boost::bind(&Undistort::update, this));

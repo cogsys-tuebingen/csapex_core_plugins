@@ -21,6 +21,7 @@ Pyramid::Pyramid() :
     preview_level_(0)
 {
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     addParameter(param::ParameterFactory::declareRange("levels", 1, 10, amount_levels_, 1),
                  boost::bind(&Pyramid::update, this));

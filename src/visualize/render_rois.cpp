@@ -23,6 +23,7 @@ using namespace connection_types;
 RenderROIs::RenderROIs()
 {
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
     addTag(Tag::get("ROI"));
 
     addParameter(param::ParameterFactory::declare<int>("thickness", 1, 20, 1, 1));

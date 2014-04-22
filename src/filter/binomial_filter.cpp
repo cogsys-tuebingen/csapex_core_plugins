@@ -19,6 +19,7 @@ BinomialFilter::BinomialFilter()
 {
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     addParameter(param::ParameterFactory::declareRange("kernel", 3, 131, 3, 2));
 }

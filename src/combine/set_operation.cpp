@@ -24,7 +24,7 @@ using namespace boost::assign;
 SetOperation::SetOperation()
 {
     addTag(Tag::get("Vision"));
-
+    addTag(Tag::get("vision_plugins"));
     std::map<std::string, int> methods = map_list_of
             ("Complement", (int) COMPLEMENT)
             ("Intersection", (int) INTERSECTION)

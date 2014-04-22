@@ -25,6 +25,8 @@ Histogram::Histogram() :
     Tag::createIfNotExists("Histogram");
     addTag(Tag::get("Histogram"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
+
     addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
                  boost::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("uniform", true),
