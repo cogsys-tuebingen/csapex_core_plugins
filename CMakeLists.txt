@@ -90,7 +90,6 @@ add_library(vision_plugins
     src/filter/monofilter.cpp
     src/filter/sequence_mean.cpp
     src/filter/equalize.cpp
-    src/filter/universal_bilateral_filter.cpp
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
