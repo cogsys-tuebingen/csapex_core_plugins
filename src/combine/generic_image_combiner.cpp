@@ -7,7 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_vision/cv_mat_message.h>
+
 
 /// SYSTEM
 #include <boost/spirit/include/qi.hpp>
