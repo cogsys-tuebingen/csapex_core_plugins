@@ -213,4 +213,9 @@
         GenericImageCombiner does support the function.
     </description>
   </class>
+  <class type="vision_plugins::ThresholdNoiseFilter" base_class_type="csapex::Node">
+    <description>
+        Filter noise by applying a threshold matrix.
+    </description>
+  </class>
 </library>
