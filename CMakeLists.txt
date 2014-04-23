@@ -90,6 +90,7 @@ add_library(vision_plugins
     src/filter/monofilter.cpp
     src/filter/sequence_mean.cpp
     src/filter/equalize.cpp
+    src/filter/normalize.cpp
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
@@ -97,6 +98,7 @@ add_library(vision_plugins
     src/analyze/label_regions.cpp
 
     src/experimental/noise_filter.cpp
+    src/experimental/threshold_noise_filter.cpp
 
     src/convert_type.cpp
     src/float_to_uchar.cpp
