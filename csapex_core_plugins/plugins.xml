@@ -51,7 +51,7 @@
   <description>Relays a message directly</description>
 </class>
 <class type="csapex::Delay" base_class_type="csapex::Node">
-  <description>[<i>DEBUG</i>] Delays a message</description>
+  <description>[DEBUG] Delays a message</description>
 </class>
 <class type="csapex::Foreach" base_class_type="csapex::Node">
   <description>Iterates a VectorMessage and calls other nodes for each contained message</description>
