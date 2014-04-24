@@ -51,7 +51,7 @@ ExtractDescriptors::ExtractDescriptors()
 
         Q_FOREACH(param::Parameter::Ptr param, manager.featureDescriptorParameters(key)) {
             param::Parameter::Ptr param_clone = param::ParameterFactory::clone(param);
-            addConditionalParameter(param_clone, condition);
+            addConditionalParameter(param_clone, condition, boost::bind(&ExtractDescriptors::update, this));
         }
     }
 }

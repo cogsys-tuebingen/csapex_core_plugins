@@ -51,7 +51,7 @@ ExtractKeypoints::ExtractKeypoints()
 
         Q_FOREACH(param::Parameter::Ptr param, manager.featureDetectorParameters(key)) {
             param::Parameter::Ptr param_clone = param::ParameterFactory::clone(param);
-            addConditionalParameter(param_clone, condition);
+            addConditionalParameter(param_clone, condition, boost::bind(&ExtractKeypoints::update, this));
         }
     }
 }
