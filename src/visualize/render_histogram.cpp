@@ -24,6 +24,7 @@ RenderHistogram::RenderHistogram() :
     Tag::createIfNotExists("Histogram");
     addTag(Tag::get("Histogram"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
                  boost::bind(&RenderHistogram::update, this));

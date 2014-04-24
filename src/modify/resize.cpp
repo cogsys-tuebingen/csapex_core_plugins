@@ -20,6 +20,8 @@ using namespace vision_plugins;
 Resize::Resize()
 {
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
+
     addParameter(param::ParameterFactory::declareRange("size width", 10, 10000, 640, 10),
                  boost::bind(&Resize::update, this));
     addParameter(param::ParameterFactory::declareRange("size height", 10, 10000, 480, 10),

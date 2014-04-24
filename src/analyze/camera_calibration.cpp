@@ -20,6 +20,8 @@ using namespace vision_plugins;
 vision_plugins::CameraCalibration::CameraCalibration()
 {
     addTag(Tag::get("Vision"));
+    Tag::createIfNotExists("vision_plugins");
+    addTag(Tag::get("vision_plugins"));
 
     addParameter(param::ParameterFactory::declareDirectoryOutputPath("results", ""));
     addParameter(param::ParameterFactory::declareTrigger("add"), boost::bind(&CameraCalibration::add, this));

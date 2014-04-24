@@ -18,6 +18,9 @@ using namespace csapex::connection_types;
 
 ColorConvert::ColorConvert()
 {
+    addTag(Tag::get("vision_plugins"));
+    addTag(Tag::get("Vision"));
+
     std::map<std::string, int> encodings = boost::assign::map_list_of
             ("YUV", (int) YUV)
             ("RGB", (int) RGB)

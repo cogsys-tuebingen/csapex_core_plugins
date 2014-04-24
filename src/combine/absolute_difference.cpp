@@ -17,6 +17,7 @@ CSAPEX_REGISTER_CLASS(vision_plugins::AbsoluteDifference, csapex::Node)
 AbsoluteDifference::AbsoluteDifference()
 {
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 }
 
 void AbsoluteDifference::process()
@@ -25,7 +26,7 @@ void AbsoluteDifference::process()
     CvMatMessage::Ptr mat_2  = mat_2_in_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr result(new CvMatMessage(mat_1->getEncoding()));
 
-    #warning FIX ENCODING CHECK
+#warning FIX ENCODING CHECK
     if(mat_1->value.type() != mat_2->value.type())
         throw std::runtime_error(
                 "Cannot build abs. difference of different mat types!");

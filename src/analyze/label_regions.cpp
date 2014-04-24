@@ -17,11 +17,12 @@ CSAPEX_REGISTER_CLASS(vision_plugins::LabelRegions, csapex::Node)
 
 LabelRegions::LabelRegions()
 {
+    addTag(Tag::get("vision_plugins"));
     addParameter(param::ParameterFactory::declareRange("edge value", 0, 255, 255, 1));
     addParameter(param::ParameterFactory::declareRange("area thresh", 0, 1000, 0, 10));
 
 
-   // addParameter(param::ParameterFactory::declareRange("edge sigma", 0, 127, 0, 1));
+    // addParameter(param::ParameterFactory::declareRange("edge sigma", 0, 127, 0, 1));
 }
 
 void LabelRegions::process()

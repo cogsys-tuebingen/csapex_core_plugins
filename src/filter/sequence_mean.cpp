@@ -19,7 +19,10 @@ CSAPEX_REGISTER_CLASS(vision_plugins::SequenceMean, csapex::Node)
 SequenceMean::SequenceMean() :
     sequence_size_(1)
 {
+    addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
+
     addParameter(param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
                  boost::bind(&SequenceMean::update, this));
 }

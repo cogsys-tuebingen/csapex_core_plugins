@@ -20,6 +20,7 @@ ColorAdjustment::ColorAdjustment() :
     active_preset_(NONE)
 {
     addTag(Tag::get("Filter"));
+    addTag(Tag::get("vision_plugins"));
 
     std::map<std::string, int> presets = boost::assign::map_list_of
             ("HSV", (int) HSV)

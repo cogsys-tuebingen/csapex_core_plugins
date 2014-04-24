@@ -18,6 +18,7 @@ MedianFilter::MedianFilter() :
 {
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     addParameter(param::ParameterFactory::declareRange("kernel", 3, 31, kernel_size_, 2),
                  boost::bind(&MedianFilter::update, this));

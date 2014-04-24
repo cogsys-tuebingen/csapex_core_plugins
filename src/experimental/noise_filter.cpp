@@ -22,6 +22,7 @@ NoiseFilter::NoiseFilter()
     Tag::createIfNotExists("Experimental");
     addTag(Tag::get("Experimental"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     std::map<std::string, int> types = boost::assign::map_list_of
             ("randomized", RANDOM)

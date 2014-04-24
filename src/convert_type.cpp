@@ -37,6 +37,7 @@ ConvertType::ConvertType() :
     Tag::createIfNotExists("Conversion");
     addTag(Tag::get("Conversion"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     std::map<std::string, int> types = boost::assign::map_list_of
             (" 8 Bit unsigned", CV_8U)

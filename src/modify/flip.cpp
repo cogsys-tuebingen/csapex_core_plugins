@@ -18,6 +18,7 @@ CSAPEX_REGISTER_CLASS(vision_plugins::Flip, csapex::Node)
 Flip::Flip()
 {
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     std::map<std::string, int> types = boost::assign::map_list_of
             ("v", 0)

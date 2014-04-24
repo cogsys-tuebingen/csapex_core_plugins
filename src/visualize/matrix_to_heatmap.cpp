@@ -25,6 +25,7 @@ MatrixToHeatmap::MatrixToHeatmap() :
     Tag::createIfNotExists("Visualization");
     addTag(Tag::get("Visualization"));
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
 
     std::map<std::string, int> types = boost::assign::map_list_of
             ("BEZIER", (int) BEZIER)

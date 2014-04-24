@@ -17,6 +17,8 @@ using namespace vision_plugins;
 Scale::Scale()
 {
     addTag(Tag::get("Vision"));
+    addTag(Tag::get("vision_plugins"));
+
     addParameter(param::ParameterFactory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
                  boost::bind(&Scale::update, this));
     addParameter(param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
