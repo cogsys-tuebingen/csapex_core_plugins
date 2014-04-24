@@ -66,8 +66,8 @@ void RenderHistogram::setup()
 {
     setSynchronizedInputs(true);
 
-    input_  = addInput<GenericVectorMessage, CvMatMessage::Ptr>("Histograms");
-    output_ = addOutput<CvMatMessage>("Image");
+    input_  = addInput<GenericVectorMessage, CvMatMessage::Ptr>("histograms");
+    output_ = addOutput<CvMatMessage>("image");
 }
 
 void RenderHistogram::update()

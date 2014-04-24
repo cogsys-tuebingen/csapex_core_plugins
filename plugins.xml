@@ -218,4 +218,9 @@
         Filter noise by applying a threshold matrix.
     </description>
   </class>
+  <class type="vision_plugins::Normalize" base_class_type="csapex::Node">
+    <description>
+        Normalize an arbitrary matrix type by applying different norm types. 
+   </description>
+  </class>
 </library>

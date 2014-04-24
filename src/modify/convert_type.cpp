@@ -110,8 +110,8 @@ void ConvertType::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Input");
-    output_ = addOutput<CvMatMessage>("Converted");
+    input_ =  addInput<CvMatMessage>("original");
+    output_ = addOutput<CvMatMessage>("converted");
     update();
 }
 

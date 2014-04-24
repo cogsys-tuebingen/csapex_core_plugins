@@ -66,7 +66,7 @@ void Morpholocial::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<connection_types::CvMatMessage>("A");
+    input_ = addInput<connection_types::CvMatMessage>("original");
 
-    output_ = addOutput<connection_types::CvMatMessage>("morph(A)");
+    output_ = addOutput<connection_types::CvMatMessage>("morph(original)");
 }

@@ -95,9 +95,9 @@ void Histogram::setup()
 {
     setSynchronizedInputs(true);
 
-    input_  = addInput<CvMatMessage>("Input");
-    mask_   = addInput<CvMatMessage>("Mask", true);
-    output_ = addOutput<GenericVectorMessage, CvMatMessage::Ptr>("Histograms");
+    input_  = addInput<CvMatMessage>("input");
+    mask_   = addInput<CvMatMessage>("mask", true);
+    output_ = addOutput<GenericVectorMessage, CvMatMessage::Ptr>("histograms");
     update();
 }
 

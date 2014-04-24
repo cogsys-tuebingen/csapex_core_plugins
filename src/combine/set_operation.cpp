@@ -76,7 +76,7 @@ void SetOperation::setup()
 {
     setSynchronizedInputs(true);
 
-    i1_ = addInput<CvMatMessage>("Mask 1");
-    i2_ = addInput<CvMatMessage>("Mask 2", true);
-    out_ = addOutput<CvMatMessage>("Combined");
+    i1_ = addInput<CvMatMessage>("mask 1");
+    i2_ = addInput<CvMatMessage>("mask 2", true);
+    out_ = addOutput<CvMatMessage>("combined");
 }

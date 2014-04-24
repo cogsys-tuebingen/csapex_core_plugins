@@ -145,7 +145,7 @@ void GenericImageCombiner::setup()
 {
     setSynchronizedInputs(true);
 
-    i1_ = addInput<CvMatMessage>("Image 1");
-    i2_ = addInput<CvMatMessage>("Image 2");
-    out_ = addOutput<CvMatMessage>("Combined");
+    i1_ = addInput<CvMatMessage>("image 1");
+    i2_ = addInput<CvMatMessage>("image 2");
+    out_ = addOutput<CvMatMessage>("combined");
 }

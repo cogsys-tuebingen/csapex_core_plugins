@@ -61,8 +61,8 @@ void MonoFilter::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Original");
-    output_ = addOutput<CvMatMessage>("Filtered");
+    input_ = addInput<CvMatMessage>("original");
+    output_ = addOutput<CvMatMessage>("filtered");
     update();
 }
 

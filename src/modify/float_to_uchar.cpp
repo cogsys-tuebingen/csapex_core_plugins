@@ -63,8 +63,8 @@ void FloatToUchar::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Float");
-    output_ = addOutput<CvMatMessage>("Uchar");
+    input_ = addInput<CvMatMessage>("float");
+    output_ = addOutput<CvMatMessage>("uchar");
 
     update();
 }

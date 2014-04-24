@@ -55,8 +55,8 @@ void Resize::setup()
 {
     setSynchronizedInputs(true);
 
-    input_  = addInput<CvMatMessage>("Original");
-    output_ = addOutput<CvMatMessage>("Resize");
+    input_  = addInput<CvMatMessage>("original");
+    output_ = addOutput<CvMatMessage>("resize");
     update();
 }
 

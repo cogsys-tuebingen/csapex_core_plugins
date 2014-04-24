@@ -55,8 +55,8 @@ void Pyramid::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Original");
-    preview_ = addOutput<CvMatMessage>("Preview");
+    input_ = addInput<CvMatMessage>("original");
+    preview_ = addOutput<CvMatMessage>("preview");
     levels_  = addOutput<GenericVectorMessage, CvMatMessage::Ptr>("levels");
 }
 

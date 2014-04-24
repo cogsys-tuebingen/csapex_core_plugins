@@ -36,6 +36,6 @@ void Equalize::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Original");
-    output_ = addOutput<CvMatMessage>("Equalized");
+    input_ = addInput<CvMatMessage>("original");
+    output_ = addOutput<CvMatMessage>("equalized");
 }

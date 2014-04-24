@@ -27,7 +27,7 @@ void CornerLineDetection::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Original");
-    output_ = addOutput<CvMatMessage>("Corners / Lines / Edges");
+    input_ = addInput<CvMatMessage>("original");
+    output_ = addOutput<CvMatMessage>("corners / lines / edges");
 }
 

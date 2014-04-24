@@ -53,8 +53,8 @@ void Undistort::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Distorted");
-    output_ = addOutput<CvMatMessage>("Undistorted");
+    input_ = addInput<CvMatMessage>("original");
+    output_ = addOutput<CvMatMessage>("undistorted");
 
     update();
 }

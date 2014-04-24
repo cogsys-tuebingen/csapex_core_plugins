@@ -37,7 +37,6 @@ include_directories(include
 add_subdirectory(src/cvBlob)
 
 add_library(vision_plugins
-    src/adaptive_threshold.cpp
     src/blob_detector.cpp
     src/filter_merger.cpp
     src/filter_splitter.cpp
@@ -65,6 +64,8 @@ add_library(vision_plugins
     src/modify/flip.cpp
     src/modify/scale.cpp
     src/modify/resize.cpp
+    src/modify/float_to_uchar.cpp
+    src/modify/convert_type.cpp
 
     src/color/color_convert.cpp
     src/color/color_adjustment.cpp
@@ -91,6 +92,7 @@ add_library(vision_plugins
     src/filter/sequence_mean.cpp
     src/filter/equalize.cpp
     src/filter/normalize.cpp
+    src/filter/adaptive_threshold.cpp
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
@@ -100,8 +102,6 @@ add_library(vision_plugins
     src/experimental/noise_filter.cpp
     src/experimental/threshold_noise_filter.cpp
 
-    src/convert_type.cpp
-    src/float_to_uchar.cpp
 
 )
 

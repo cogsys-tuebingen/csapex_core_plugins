@@ -40,8 +40,8 @@ void Flip::setup()
 {
     setSynchronizedInputs(true);
 
-    input_ = addInput<CvMatMessage>("Original");
-    output_ = addOutput<CvMatMessage>("Flipped");
+    input_ = addInput<CvMatMessage>("original");
+    output_ = addOutput<CvMatMessage>("flipped");
 }
 
 void Flip::update()
