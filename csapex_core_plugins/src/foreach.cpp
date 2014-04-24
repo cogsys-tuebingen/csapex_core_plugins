@@ -61,8 +61,6 @@ void Foreach::process()
 {
     VectorMessage::Ptr vec = input_->getMessage<VectorMessage>();
 
-    in_sub->waitForProcessing();
-
     out_sub->setType(vec->getSubType());
 
     messages_ = vec->value.size();
@@ -77,7 +75,6 @@ void Foreach::process()
 
 void Foreach::appendMessageFrom(Connectable *)
 {
-
     ConnectorOut* out = dynamic_cast<ConnectorOut*>(in_sub->getSource());
     if(!out) {
         return;
@@ -95,8 +92,6 @@ void Foreach::appendMessageFrom(Connectable *)
 
         current_result_.reset(new VectorMessage);
     }
-
-    in_sub->setProcessing(false);
 }
 
 void Foreach::stop()

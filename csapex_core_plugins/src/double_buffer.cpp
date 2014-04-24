@@ -39,12 +39,6 @@ void DoubleBuffer::setup()
     output_->setAsync(true);
 }
 
-void DoubleBuffer::checkIfDone()
-{
-    Node::checkIfDone();
-    //input_->setProcessing(false);
-}
-
 void DoubleBuffer::process()
 {
     ConnectionType::Ptr msg = input_->getMessage<ConnectionType>();

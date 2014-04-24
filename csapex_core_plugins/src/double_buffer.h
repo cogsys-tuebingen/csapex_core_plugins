@@ -21,9 +21,6 @@ public:
 
     virtual QIcon getIcon() const;
 
-protected:
-    void checkIfDone();
-
 private:
     void swapBuffers();
 

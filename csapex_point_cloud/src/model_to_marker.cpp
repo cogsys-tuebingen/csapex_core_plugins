@@ -165,7 +165,7 @@ void ModelToMarker::publishText(const ModelMessage model_message)
     std::stringstream stringstream;
     stringstream << "Model Type: " << model_message.model_type;
     stringstream << " Frame: " << model_message.frame_id;
-    for (int i1=0; i1 < model_message.coefficients->values.size(); i1++) {
+    for (std::size_t i1=0; i1 < model_message.coefficients->values.size(); i1++) {
         stringstream << " [" << i1 << "]=" << model_message.coefficients->values.at(i1);
     }
     stringstream << " Prob: " << model_message.probability;
