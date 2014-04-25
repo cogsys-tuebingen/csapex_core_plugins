@@ -26,7 +26,7 @@ QT4_ADD_RESOURCES(QT_RESOURCES res/csapex_boolean_resources.qrc)
 catkin_package(
 )
 
-include_directories(include
+include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -41,3 +41,16 @@ add_library(csapex_boolean_plugin
 )
 target_link_libraries(csapex_boolean_plugin
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES})
+
+#
+# INSTALL
+#
+
+install(FILES plugins.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(TARGETS csapex_boolean_plugin
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+

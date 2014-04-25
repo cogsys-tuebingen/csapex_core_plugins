@@ -5,9 +5,9 @@
 #include <csapex_vision_features/keypoint_message.h>
 
 /// PROJECT
-#include <utils/extractor.h>
-#include <utils/extractor_factory.h>
-#include <utils/extractor_manager.h>
+#include <utils_vision/utils/extractor.h>
+#include <utils_vision/utils/extractor_factory.h>
+#include <utils_vision/utils/extractor_manager.h>
 #include <utils_param/range_parameter.h>
 #include <utils_param/value_parameter.h>
 #include <utils_param/io.h>
@@ -20,7 +20,6 @@
 #include <utils_param/set_parameter.h>
 
 /// SYSTEM
-#include <QFrame>
 #include <csapex/utility/register_apex_plugin.h>
 #include <boost/lambda/lambda.hpp>
 

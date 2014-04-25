@@ -9,8 +9,6 @@ namespace csapex {
 
 class ExtractTimeStamp : public Node
 {
-    Q_OBJECT
-
 public:
     ExtractTimeStamp();
 

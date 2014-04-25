@@ -5,15 +5,10 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 
-/// SYSTEM
-#include <QLCDNumber>
-
 namespace csapex {
 
 class SetTimeStamp : public Node
 {
-    Q_OBJECT
-
 public:
     SetTimeStamp();
 

@@ -9,8 +9,6 @@ namespace csapex {
 
 class TransformCloud : public Node
 {
-    Q_OBJECT
-
 public:
     TransformCloud();
 

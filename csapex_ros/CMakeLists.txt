@@ -4,7 +4,7 @@ project(csapex_ros)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp csapex csapex_core_plugins)
+find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins REQUIRED)
 
 catkin_package()
 
@@ -26,3 +26,14 @@ target_link_libraries(csapex_ros
   ${catkin_LIBRARIES}
 )
 
+
+#
+# INSTALL
+#
+
+install(FILES plugins.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(TARGETS csapex_ros
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

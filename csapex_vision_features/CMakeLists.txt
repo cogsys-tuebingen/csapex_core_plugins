@@ -17,7 +17,6 @@ find_package(catkin REQUIRED COMPONENTS csapex csapex_vision utils_vision utils_
 
 find_package(OpenCV REQUIRED)
 
-find_package(Boost REQUIRED)
 find_package(Boost COMPONENTS program_options REQUIRED)
 
 csapex_moc_all(QT_MOC_CORE include/csapex_vision_features/*.h)
@@ -72,4 +71,25 @@ add_library(csapex_vision_features_plugin
 )
 target_link_libraries(csapex_vision_features_plugin csapex_vision_features
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+
+
+#
+# INSTALL
+#
+
+install(FILES plugins.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(TARGETS csapex_vision_features
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS csapex_vision_features_plugin
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 

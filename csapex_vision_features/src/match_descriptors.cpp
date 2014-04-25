@@ -4,9 +4,9 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
-#include <utils/matcher.h>
-#include <data/matchable.h>
-#include <utils/hough_peak.h>
+#include <utils_vision/utils/matcher.h>
+#include <utils_vision/data/matchable.h>
+#include <utils_vision/utils/hough_peak.h>
 #include <utils_param/parameter_factory.h>
 
 /// SYSTEM
@@ -43,7 +43,7 @@ public:
     }
 };
 
-//MatchDescriptorser class taken from OpenCV2 Computer Vision Application Programming Cookbook Ch 9
+//RobustMatcher class taken from OpenCV2 Computer Vision Application Programming Cookbook Ch 9
 class RobustMatcher
 {
 private:

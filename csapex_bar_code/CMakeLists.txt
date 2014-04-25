@@ -62,4 +62,17 @@ if(${ZBAR_FOUND})
     target_link_libraries(csapex_bar_code_plugin
         yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES} ${ZBAR_LIBRARIES})
 
+    #
+    # INSTALL
+    #
+
+    install(FILES plugins.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+    install(TARGETS csapex_bar_code_plugin
+            ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+            LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+            RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+
 endif(${ZBAR_FOUND})

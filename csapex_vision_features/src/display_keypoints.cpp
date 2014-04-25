@@ -2,7 +2,7 @@
 #include "display_keypoints.h"
 
 /// PROJECT
-#include <utils/extractor.h>
+#include <utils_vision/utils/extractor.h>
 
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>

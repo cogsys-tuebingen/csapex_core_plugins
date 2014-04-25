@@ -13,7 +13,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS pluginlib roscpp rospy std_msgs rosbag cv_bridge utils_qt utils_vision csapex csapex_core_plugins)
+find_package(catkin REQUIRED COMPONENTS pluginlib roscpp rospy std_msgs cv_bridge utils_qt utils_vision csapex csapex_core_plugins)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
@@ -40,7 +40,7 @@ catkin_package(
    INCLUDE_DIRS include src
    LIBRARIES csapex_vision
    CATKIN_DEPENDS pluginlib roscpp std_msgs csapex utils_vision csapex_core_plugins
-   DEPENDS Qt4 OpenCV
+   DEPENDS OpenCV
 )
 
 ###########
@@ -98,4 +98,25 @@ target_link_libraries(csapex_vision_plugin csapex_vision
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 
-add_executable(vision_evaluator src/deprecated.cpp)
+#add_executable(vision_evaluator src/deprecated.cpp)
+
+#
+# INSTALL
+#
+
+install(FILES plugins.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(TARGETS csapex_vision
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS csapex_vision_plugin
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+

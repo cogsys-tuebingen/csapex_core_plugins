@@ -28,7 +28,7 @@ add_definitions(${PCL_DEFINITIONS})
 
 catkin_package(
   INCLUDE_DIRS include
-# LIBRARIES csapex_point_cloud
+  LIBRARIES csapex_point_cloud
   CATKIN_DEPENDS csapex
 #  DEPENDS system_lib
 )
@@ -79,4 +79,25 @@ add_library(csapex_point_cloud_plugin
 target_link_libraries(csapex_point_cloud_plugin csapex_core_plugins
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES}
     csapex_point_cloud)
+
+
+#
+# INSTALL
+#
+
+install(FILES plugins.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(TARGETS csapex_point_cloud
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS csapex_point_cloud_plugin
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 

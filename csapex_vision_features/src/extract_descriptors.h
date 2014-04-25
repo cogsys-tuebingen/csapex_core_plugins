@@ -5,7 +5,7 @@
 #include <csapex/model/node.h>
 
 /// PROJECT
-#include <utils/extractor.h>
+#include <utils_vision/utils/extractor.h>
 
 /// SYSTEM
 #include <QCheckBox>
