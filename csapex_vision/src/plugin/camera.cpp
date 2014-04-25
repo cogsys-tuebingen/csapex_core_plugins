@@ -47,7 +47,6 @@ void Camera::tick()
 
 void Camera::setup()
 {
-    Node::setup();
     output_ = addOutput<connection_types::CvMatMessage>("Image");
 
     update();
