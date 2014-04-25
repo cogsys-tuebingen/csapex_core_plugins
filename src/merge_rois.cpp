@@ -10,7 +10,7 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
-#include <utils/rectangle_cluster.h>
+#include <utils_vision/utils/rectangle_cluster.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

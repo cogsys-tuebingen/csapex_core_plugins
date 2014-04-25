@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(vision_plugins)
 
-find_package(catkin REQUIRED roscpp csapex_vision csapex_vision_features utils_cv utils_viola_jones utils_vision)
+find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_features utils_cv utils_viola_jones utils_vision REQUIRED)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -108,3 +108,21 @@ add_library(vision_plugins
 target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}
   ${catkin_LIBRARIES} cvblob
 )
+
+
+
+#
+# INSTALL
+#
+
+install(FILES plugins.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(TARGETS vision_plugins
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
