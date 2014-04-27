@@ -64,19 +64,13 @@ namespace cvb
       unsigned int imgIn_width = img->width;
       unsigned int imgIn_height = img->height;
       unsigned int imgIn_offset = 0;
-      unsigned int imgOut_width = imgOut->width;
-      unsigned int imgOut_height = imgOut->height;
       unsigned int imgOut_offset = 0;
       if(img->roi)
       {
-	imgIn_width = img->roi->width;
-	imgIn_height = img->roi->height;
 	imgIn_offset = img->roi->xOffset + (img->roi->yOffset * stepIn);
       }
       if(imgOut->roi)
       {
-	imgOut_width = imgOut->roi->width;
-	imgOut_height = imgOut->roi->height;
 	imgOut_offset = imgOut->roi->xOffset + (imgOut->roi->yOffset * stepOut);
       }
 
@@ -145,7 +139,7 @@ namespace cvb
 		  {
 		    int nx = xx+movesE[direction][i][0];
 		    int ny = yy+movesE[direction][i][1];
-		    if ((nx<imgIn_width)&&(nx>=0)&&(ny<imgIn_height)&&(ny>=0))
+            if ((nx<(int)imgIn_width)&&(nx>=0)&&(ny<(int)imgIn_height)&&(ny>=0))
 		    {
 		      if (imageIn(nx, ny))
 		      {
@@ -189,7 +183,7 @@ namespace cvb
 		    break;
 		  }
 		  
-		  if (contourEnd = ((xx==x) && (yy==y) && (direction==1)))
+          if ((contourEnd = ((xx==x) && (yy==y) && (direction==1))))
 		    break;
 		}
 	      }
@@ -373,8 +367,6 @@ namespace cvb
       int imgIn_width = imgIn->width;
       int imgIn_height = imgIn->height;
       int imgIn_offset = 0;
-      int imgOut_width = imgOut->width;
-      int imgOut_height = imgOut->height;
       int imgOut_offset = 0;
       if(imgIn->roi)
       {
@@ -384,8 +376,6 @@ namespace cvb
       }
       if(imgOut->roi)
       {
-	imgOut_width = imgOut->roi->width;
-	imgOut_height = imgOut->roi->height;
 	imgOut_offset = imgOut->roi->xOffset + (imgOut->roi->yOffset * stepOut);
       }
 
@@ -411,7 +401,7 @@ namespace cvb
   }
 
 
-  CvLabel cvGetLabel(IplImage const *img, unsigned int x, unsigned int y)
+  CvLabel cvGetLabel(IplImage const *img, int x, int y)
   {
     CV_FUNCNAME("cvGetLabel");
     __CV_BEGIN__;
