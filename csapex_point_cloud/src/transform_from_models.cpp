@@ -12,6 +12,7 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/tf.h>
 
 

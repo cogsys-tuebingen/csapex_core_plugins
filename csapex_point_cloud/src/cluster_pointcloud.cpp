@@ -6,6 +6,7 @@
 #include <csapex_core_plugins/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/tf.h>
 
 /// SYSTEM
