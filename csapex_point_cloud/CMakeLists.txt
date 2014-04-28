@@ -57,22 +57,26 @@ add_library(csapex_point_cloud_plugin
     src/set_timestamp.cpp
     src/crop_box.cpp
     src/passthrough.cpp
-    src/pointcloud_to_depthimage.cpp
-    src/pointcloud_to_intensityimage.cpp
-    src/pointcloud_to_pointmatrix.cpp
-    src/pointmatrix_to_pointcloud.cpp
+
+    src/conversion/pointcloud_to_depthimage.cpp
+    src/conversion/pointcloud_to_intensityimage.cpp
+    src/conversion/pointcloud_to_pointmatrix.cpp
+    src/conversion/pointmatrix_to_pointcloud.cpp
+    src/conversion/image_to_point_cloud.cpp
+
+    src/filter/conditional_outlier_removal.cpp
+    src/filter/statistical_outlier_removal.cpp
+    src/filter/radius_outlier_removal.cpp
+
+    src/segmentation/labeled_cloud_to_indices.cpp
+    src/segmentation/label_pointcloud.cpp
+    src/segmentation/cluster_pointcloud.cpp
+    src/segmentation/color_pointcloud.cpp
+    src/segmentation/split_clustered_cloud.cpp
+
     src/pointcloud_generator.cpp
-    src/image_to_point_cloud.cpp
-    src/statistical_outlier_removal.cpp
-    src/radius_outlier_removal.cpp
-    src/conditional_outlier_removal.cpp
     src/sac_fit.cpp
     src/model_to_marker.cpp
-    src/color_pointcloud.cpp
-    src/label_pointcloud.cpp
-    src/cluster_pointcloud.cpp
-    src/labeled_cloud_to_indices.cpp
-    src/split_clustered_cloud.cpp
     src/transform_from_models.cpp
     ${QT}
 )
