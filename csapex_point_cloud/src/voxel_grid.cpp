@@ -10,6 +10,7 @@
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 #include <boost/mpl/for_each.hpp>
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <pcl_ros/transforms.h>
 #include <pcl/filters/voxel_grid.h>
 
