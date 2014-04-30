@@ -95,5 +95,8 @@
 <class type="csapex::TransformFromModels" base_class_type="csapex::Node">
   <description>Gets model messages with 3 points and trys to find the transformations between the points</description>
 </class>
+<class type="csapex::ThresholdOutlierRemoval" base_class_type="csapex::Node">
+  <description>Noise filtering done by thresholding.</description>
+</class>
 
 </library>
