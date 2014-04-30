@@ -61,18 +61,20 @@ struct BinaryExpression : AbstractExpression
         if(a_is_num || b_is_num) {
             if(a_is_num) {
                 double v = a.at<double>(0,0);
+                cv::Scalar s = cv::Scalar::all(v);
                 switch(op_) {
-                case '+': return v+b;
-                case '-': return v-b;
+                case '+': return s+b;
+                case '-': return s-b;
                 case '*': return v*b;
                 }
 
             } else {
                 double v = b.at<double>(0,0);
+                cv::Scalar s = cv::Scalar::all(v);
                 switch(op_) {
-                case '+': return a+v;
-                case '-': return a-v;
-                case '*': return v*a;
+                case '+': return a+s;
+                case '-': return a-s;
+                case '*': return a*v;
                 case '/': return 1.0/v * a;
                 }
             }

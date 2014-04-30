@@ -8,7 +8,6 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-
 /// SYSTEM
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix.hpp>
@@ -55,22 +54,23 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
         using qi::_2;
 
         expression =
-                bi_expr                        [ _val = _1]
+                bi_expr                                   [ _val = _1]
                 ;
 
         bi_expr =
-                primary_expr                         [ _val = _1 ]
-                >> *(char_("-+|&*/^") >> primary_expr)  [ _val = makebinary(_1, _val, _2)]
+                primary_expr                              [ _val = _1 ]
+                >> *(char_("-+|&*/^") >> primary_expr)    [ _val = makebinary(_1, _val, _2)]
                 ;
 
         un_expr =
-                *(char_("~") >> primary_expr)  [ _val = makeunary(_1, _2)]
+                *(char_("~") >> primary_expr)             [ _val = makeunary(_1, _2)]
                 ;
 
         primary_expr =
-                ( '(' > expression > ')' )         [ _val = _1 ]
-                | constant                           [ _val = _1 ]
-                | variable                           [ _val = _1 ]
+                  ( '(' > expression > ')' )              [ _val = _1 ]
+                | ( '|' > expression > '|' )              [ _val = _1 ]
+                | constant                                [ _val = _1 ]
+                | variable                                [ _val = _1 ]
                 ;
 
         constant = double_ | int_;
