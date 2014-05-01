@@ -31,6 +31,38 @@ protected: AbstractExpression() {}
 template <typename Expr> // general purpose, static Expression cloner
 static Ptr make_from(Expr const& t) { return boost::make_shared<Expr>(t); }
 
+struct FunctionExpression : AbstractExpression
+{
+    FunctionExpression() {}
+
+    template<typename S, typename A>
+    FunctionExpression(S op, A const& arg)
+        : op_(op), arg_(make_from(arg))
+    {}
+
+    template<typename A>
+    FunctionExpression(const std::vector<char>& op, A const& arg)
+        : arg_(make_from(arg))
+    {
+        op_.insert(op_.begin(), op.begin(), op.end());
+    }
+
+    cv::Mat evaluate() const {
+        if(op_ == "abs"){
+            return cv::abs(arg_->evaluate());
+        }
+
+        throw std::runtime_error(std::string("unknown function: '") + op_ + "'");
+    }
+
+private:
+    std::string op_;
+    Ptr arg_;
+
+    std::ostream& print(std::ostream& os) const
+    { return os << "FunctionExpression(" << " " << op_ << "(" << *arg_ << ") )"; }
+};
+
 struct BinaryExpression : AbstractExpression
 {
     BinaryExpression() {}

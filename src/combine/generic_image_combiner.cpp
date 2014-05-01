@@ -29,6 +29,13 @@ namespace phx   = boost::phoenix;
 template <typename Iterator>
 struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
 {
+    struct MakeFunctionExpression {
+        template<typename,typename> struct result { typedef FunctionExpression type; };
+
+        template<typename C, typename A>
+        FunctionExpression operator()(C op, A const& arg) const
+        { return FunctionExpression(op, arg); }
+    };
     struct MakeBinaryExpression {
         template<typename,typename,typename> struct result { typedef BinaryExpression type; };
 
@@ -46,6 +53,7 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
 
     phx::function<MakeBinaryExpression> makebinary;
     phx::function<MakeUnaryExpression> makeunary;
+    phx::function<MakeFunctionExpression> makefun;
 
     ExpressionParser() : ExpressionParser::base_type(expression)
     {
@@ -59,7 +67,7 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
 
         bi_expr =
                 primary_expr                              [ _val = _1 ]
-                >> *(char_("-+|&*/^") >> primary_expr)    [ _val = makebinary(_1, _val, _2)]
+                >> *(char_("+|&*/^-") >> primary_expr)    [ _val = makebinary(_1, _val, _2)]
                 ;
 
         un_expr =
@@ -67,14 +75,18 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
                 ;
 
         primary_expr =
-                  ( '(' > expression > ')' )              [ _val = _1 ]
-                | ( '|' > expression > '|' )              [ _val = _1 ]
+                  function_call                           [ _val = _1 ]
+                | ( '(' > expression > ')' )              [ _val = _1 ]
+                | ( '|' > expression > '|' )              [ _val = makefun("abs", _1) ]
                 | constant                                [ _val = _1 ]
                 | variable                                [ _val = _1 ]
                 ;
 
+        function_call =
+                ( +char_("a-zA-Z0-9") > '(' > expression > ')' )
+                                                          [ _val = makefun(_1, _2) ];
         constant = double_ | int_;
-        variable = '$' >> lexeme [ *~char_(" -+|&*/^~()") ];
+        variable = '$' >> lexeme [ +char_("a-zA-Z0-9") ];
 
         BOOST_SPIRIT_DEBUG_NODE(expression);
         BOOST_SPIRIT_DEBUG_NODE(bi_expr);
@@ -91,6 +103,7 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
     qi::rule<Iterator, Expression(), ascii::space_type> primary_expr;
     qi::rule<Iterator, ConstantExpression(), ascii::space_type> constant;
     qi::rule<Iterator, VariableExpression(), ascii::space_type> variable;
+    qi::rule<Iterator, FunctionExpression(), ascii::space_type> function_call;
     qi::rule<Iterator, std::string() , ascii::space_type> string;
 };
 
@@ -105,8 +118,6 @@ GenericImageCombiner::GenericImageCombiner()
 void GenericImageCombiner::updateFormula()
 {
     std::string script = param<std::string>("script");
-
-    typedef std::string::const_iterator iterator_type;
 
     std::string::const_iterator iter = script.begin();
     std::string::const_iterator end = script.end();
@@ -131,13 +142,34 @@ void GenericImageCombiner::process()
     }
     CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr img2 = i2_->getMessage<CvMatMessage>();
-    VariableExpression::get("1") = img1->value;
-    VariableExpression::get("2") = img2->value;
+
+    if(img1->value.channels() != img2->value.channels()) {
+        throw std::runtime_error("images have different number of channels.");
+    }
+
+    cv::Mat f1, f2;
+    if(img1->value.channels() == 1) {
+        img1->value.convertTo(f1, CV_32FC1);
+        img2->value.convertTo(f2, CV_32FC1);
+    } else if(img1->value.channels() == 3) {
+        img1->value.convertTo(f1, CV_32FC3);
+        img2->value.convertTo(f2, CV_32FC3);
+    } else {
+        std::stringstream msg;
+        msg << "images with " << img1->value.channels() << " channels not yet supported";
+        throw std::runtime_error(msg.str());
+    }
+
+    VariableExpression::get("1") = f1;
+    VariableExpression::get("2") = f2;
 
     CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));
 
-    out->value = e.evaluate();
-
+    if(img1->value.channels() == 1) {
+        e.evaluate().convertTo(out->value, CV_8UC1);
+    } else if(img1->value.channels() == 3) {
+        e.evaluate().convertTo(out->value, CV_8UC3);
+    }
     out_->publish(out);
 }
 
