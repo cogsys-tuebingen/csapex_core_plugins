@@ -28,6 +28,27 @@ struct AbstractExpression {
 protected: AbstractExpression() {}
 };
 
+
+
+struct Expression : AbstractExpression
+{
+    Expression() { }
+
+    template <typename E>
+    Expression(E const& e) : e_(make_from(e)) { } // cloning the expression
+
+    bool valid() const { return e_; }
+    cv::Mat evaluate() const { assert(e_); return e_->evaluate(); }
+
+    // special purpose overload to avoid unnecessary wrapping
+    friend Ptr make_from(Expression const& t) { return t.e_; }
+private:
+    Ptr e_;
+    virtual std::ostream& print(std::ostream& os) const
+    { return os << "Expression(" << *e_ << ")"; }
+
+};
+
 template <typename Expr> // general purpose, static Expression cloner
 static Ptr make_from(Expr const& t) { return boost::make_shared<Expr>(t); }
 
@@ -37,19 +58,45 @@ struct FunctionExpression : AbstractExpression
 
     template<typename S, typename A>
     FunctionExpression(S op, A const& arg)
-        : op_(op), arg_(make_from(arg))
-    {}
+        : op_(op)
+    {
+        args_.push_back(arg);
+    }
 
     template<typename A>
     FunctionExpression(const std::vector<char>& op, A const& arg)
-        : arg_(make_from(arg))
+        : args_(arg)
     {
         op_.insert(op_.begin(), op.begin(), op.end());
     }
 
     cv::Mat evaluate() const {
         if(op_ == "abs"){
-            return cv::abs(arg_->evaluate());
+            return cv::abs(args_[0].evaluate());
+
+        } else if(op_ == "min") {
+            if(args_.size() == 1) {
+                return args_[0].evaluate();
+            }
+            cv::Mat res = cv::min(args_[0].evaluate(), args_[1].evaluate());
+
+            for(std::size_t i = 2; i < args_.size(); ++i) {
+                cv::min(res, args_[i].evaluate(), res);
+            }
+
+            return res;
+
+        } else if(op_ == "max") {
+            if(args_.size() == 1) {
+                return args_[0].evaluate();
+            }
+            cv::Mat res = cv::max(args_[0].evaluate(), args_[1].evaluate());
+
+            for(std::size_t i = 2; i < args_.size(); ++i) {
+                cv::max(res, args_[i].evaluate(), res);
+            }
+
+            return res;
         }
 
         throw std::runtime_error(std::string("unknown function: '") + op_ + "'");
@@ -57,10 +104,10 @@ struct FunctionExpression : AbstractExpression
 
 private:
     std::string op_;
-    Ptr arg_;
+    std::vector<Expression> args_;
 
     std::ostream& print(std::ostream& os) const
-    { return os << "FunctionExpression(" << " " << op_ << "(" << *arg_ << ") )"; }
+    { return os << "FunctionExpression(" << " " << op_ << "(...) )"; }
 };
 
 struct BinaryExpression : AbstractExpression
@@ -193,25 +240,6 @@ struct VariableExpression : AbstractExpression {
 
     virtual std::ostream& print(std::ostream& os) const
     { return os << "VariableExpression('" << name_ << "')"; }
-};
-
-struct Expression : AbstractExpression
-{
-    Expression() { }
-
-    template <typename E>
-    Expression(E const& e) : e_(make_from(e)) { } // cloning the expression
-
-    bool valid() const { return e_; }
-    cv::Mat evaluate() const { assert(e_); return e_->evaluate(); }
-
-    // special purpose overload to avoid unnecessary wrapping
-    friend Ptr make_from(Expression const& t) { return t.e_; }
-private:
-    Ptr e_;
-    virtual std::ostream& print(std::ostream& os) const
-    { return os << "Expression(" << *e_ << ")"; }
-
 };
 
 class GenericImageCombiner : public csapex::Node

@@ -65,6 +65,10 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
                 bi_expr                                   [ _val = _1]
                 ;
 
+        expression_list =
+                expression % ','
+                ;
+
         bi_expr =
                 primary_expr                              [ _val = _1 ]
                 >> *(char_("+|&*/^-") >> primary_expr)    [ _val = makebinary(_1, _val, _2)]
@@ -83,7 +87,7 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
                 ;
 
         function_call =
-                ( +char_("a-zA-Z0-9") > '(' > expression > ')' )
+                ( +char_("a-zA-Z0-9") >> '(' >> expression_list >> ')' )
                                                           [ _val = makefun(_1, _2) ];
         constant = double_ | int_;
         variable = '$' >> lexeme [ +char_("a-zA-Z0-9") ];
@@ -99,6 +103,7 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
     qi::rule<Iterator, Expression(), ascii::space_type> expression;
     qi::rule<Iterator, Expression(), ascii::space_type> bi_expr;
     qi::rule<Iterator, Expression(), ascii::space_type> un_expr;
+    qi::rule<Iterator, std::vector<Expression>(), ascii::space_type> expression_list;
 
     qi::rule<Iterator, Expression(), ascii::space_type> primary_expr;
     qi::rule<Iterator, ConstantExpression(), ascii::space_type> constant;
