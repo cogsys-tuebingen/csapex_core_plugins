@@ -54,7 +54,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     std::pair<double,double> dz = param<std::pair<double, double> >("dz");
 
     Eigen::Vector4f min_pt_(dx.first, dy.first, dz.first, 0);
-    Eigen::Vector4f max_pt_(dy.second, dy.second, dy.second, 0);
+    Eigen::Vector4f max_pt_(dx.second, dy.second, dz.second, 0);
 
     pcl::CropBox<PointT> crop;
     crop.setMin(min_pt_);

@@ -71,8 +71,11 @@ void TransformFromModels::process()
                     0.5,     0.8536, -0.1464,
                     -0.707,   0.5,     0.5;
 
+    Eigen::Matrix3d r_test2;
+    r_test2 = r_test.transpose();
+
     double roll, pitch, yaw;
-    eulerAnglesFromRotationMatrix(r_test, roll, pitch, yaw);
+    eulerAnglesFromRotationMatrix(r_test2, roll, pitch, yaw);
     //eulerAnglesFromRotationMatrix(r_T_n.block<3,3>(0,0), roll, pitch, yaw);
 
     // Publish Output
@@ -92,21 +95,24 @@ void TransformFromModels::eulerAnglesFromRotationMatrix( Eigen::Matrix3d R, doub
      * [-0.707   0.5     0.5   ]]
      * It shuould return psi = 0.78539816, theta = 0.78524716, phi = 0.78539816
      **/
-    if ((R(2,0) != 1) && (R(2,0) != -1))
+
+    /// TODO: Fix a bug that this fuction gets the right test values
+    ///
+     if ((R(2,0) != 1) && (R(2,0) != -1))
     {
-        theta = asin(R(2,0));
+        theta = -std::asin(R(2,0));
         double c = cos(theta);
-        psi = atan2(R(2,1)/c, R(2,2)/c);
-        phi = atan2(R(1,0)/c, R(0,0)/c);
+        psi = std::atan2(R(2,1)/c, R(2,2)/c);
+        phi = std::atan2(R(1,0)/c, R(0,0)/c);
     } else
         phi = 0; // infinit solution for phi, just pick zero
     {
         if (R(0,2) == -1){
             theta = M_PI / 2.0;
-            psi = phi + atan2(R(0,1), R(0,2));
+            psi = phi + std::atan2(R(0,1), R(0,2));
         } else {
             theta = - M_PI / 2.0;
-            psi = - phi + atan2(R(0,1), R(0,2));
+            psi = - phi + std::atan2(R(0,1), R(0,2));
         }
     }
 
@@ -218,15 +224,15 @@ Eigen::Matrix4d TransformFromModels::threePointsToTransformation(const std::vect
     transformation.setZero(); // initalize with zeros
 
     // assert (points.size() == 3);
-    if (points.size() >= 2) {
+    if (points.size() > 2) {
         Eigen::Vector3d v1(points.at(0) - points.at(1));
         Eigen::Vector3d v2(points.at(2) - points.at(0));
 
         // example for block http://eigen.tuxfamily.org/dox/group__TutorialBlockOperations.html
-        transformation.block<3,1>(0,0) = v1;          // x vector of the coordinate system
-        transformation.block<3,1>(0,1) = v2;          // y vector of the coordinate system
-        transformation.block<3,1>(0,2) = v1.cross(v2);          // z vector of the coordinate system
-        transformation.block<3,1>(0,3) = points.at(0); // origin of the coordinate system
+        transformation.block<1,3>(0,0) = v1;          // x vector of the coordinate system
+        transformation.block<1,3>(1,0) = v2;          // y vector of the coordinate system
+        transformation.block<1,3>(2,0) = v1.cross(v2);          // z vector of the coordinate system
+        transformation.block<1,3>(3,0) = points.at(0); // origin of the coordinate system
         transformation(3,3) = 1;
     } else
     {
