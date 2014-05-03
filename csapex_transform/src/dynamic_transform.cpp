@@ -46,7 +46,7 @@ void DynamicTransform::process()
         std::string from = frame_in_from_->getMessage<connection_types::DirectMessage<std::string> >()->value;
 
         if(param<std::string>("from") != from) {
-            state["from"] = from;
+            parameter_state_["from"] = from;
             update = true;
         }
     }
@@ -58,7 +58,7 @@ void DynamicTransform::process()
         std::string to = frame_in_to_->getMessage<connection_types::DirectMessage<std::string> >()->value;
 
         if(param<std::string>("to") != to) {
-            state["to"] = to;
+            parameter_state_["to"] = to;
             update = true;
         }
     }
