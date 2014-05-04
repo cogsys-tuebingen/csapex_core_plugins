@@ -14,12 +14,17 @@ namespace csapex {
 
 class PointCountAdapter : public QObject, public NodeAdapter
 {
+    Q_OBJECT
+
 public:
     PointCountAdapter(PointCount *node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 
     void display(int img);
+
+Q_SIGNALS:
+    void displayRequest(int no);
 
 protected:
     PointCount* wrapped_;
