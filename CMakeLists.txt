@@ -49,6 +49,7 @@ add_library(vision_plugins
     src/lk_tracking.cpp
     src/visualize/render_rois.cpp
     src/merge_rois.cpp
+    src/grow_roi.cpp
     src/extract_roi.cpp
     src/number_generator.cpp
    ${MOC}
