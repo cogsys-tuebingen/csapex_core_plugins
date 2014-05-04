@@ -47,12 +47,19 @@ void Foreach::setup()
     out_sub->setType(AnyMessage::make());
     in_sub->setType(AnyMessage::make());
 
+    out_sub->enable();
+    in_sub->enable();
+
     manageInput(in_sub);
     manageOutput(out_sub);
 
-    out_sub->enable();
-    in_sub->enable();
+    QObject::connect(in_sub, SIGNAL(connectionRemoved()), output_, SLOT(disable()));
+    QObject::connect(in_sub, SIGNAL(connectionDone()), output_, SLOT(enable()));
+    QObject::connect(in_sub, SIGNAL(connectionEnabled(bool)), output_, SLOT(setEnabled(bool)));
+
     QObject::connect(in_sub, SIGNAL(messageArrived(Connectable*)), this, SLOT(appendMessageFrom(Connectable*)), Qt::DirectConnection);
+
+    checkIO();
 }
 
 void Foreach::process()
@@ -63,12 +70,33 @@ void Foreach::process()
 
     messages_ = vec->value.size();
 
+
     for(int i = 0; i < messages_; ++i) {
         std::stringstream step; step << "step " << i;
         Timer::Interlude::Ptr interlude = publish_timer_->step(step.str());
+        out_sub->setSequenceNumber(vec->sequenceNumber()+1);
         out_sub->publish(vec->value[i]);
     }
 }
+
+void Foreach::checkIO()
+{
+    if(isEnabled()) {
+        enableInput(canReceive());
+
+        bool eo = canReceive() && in_sub->isConnected();
+        if(eo) {
+            aerr << "enable output" << std::endl;
+        } else {
+            aerr << "disable output" << std::endl;
+        }
+        enableOutput(eo);
+    } else {
+        enableInput(false);
+        enableOutput(false);
+    }
+}
+
 
 
 void Foreach::appendMessageFrom(Connectable *)
@@ -78,6 +106,8 @@ void Foreach::appendMessageFrom(Connectable *)
         return;
     }
     ConnectionType::Ptr msg = out->getMessage();
+
+    in_sub->free();
 
     current_result_->value.push_back(msg);
 
