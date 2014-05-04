@@ -38,8 +38,6 @@ void Flip::process()
 
 void Flip::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("original");
     output_ = addOutput<CvMatMessage>("flipped");
 }

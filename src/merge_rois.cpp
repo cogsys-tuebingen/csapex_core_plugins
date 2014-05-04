@@ -50,8 +50,6 @@ void MergeROIs::process()
 
 void MergeROIs::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<VectorMessage, RoiMessage>("ROIs");
     output_ = addOutput<VectorMessage, RoiMessage>("merged ROIs");
 }

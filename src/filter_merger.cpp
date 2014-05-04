@@ -21,8 +21,6 @@ Merger::Merger()
 
 void Merger::setup()
 {
-    setSynchronizedInputs(true);
-
     output_ = addOutput<CvMatMessage>("Merged Image");
 
     updateInputs();

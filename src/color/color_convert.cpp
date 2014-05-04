@@ -69,8 +69,6 @@ ColorConvert::~ColorConvert()
 
 void ColorConvert::setup()
 {
-    setSynchronizedInputs(true);
-
     input_img_ = addInput<CvMatMessage>("original");
     output_img_ = addOutput<CvMatMessage>("converted");
 }

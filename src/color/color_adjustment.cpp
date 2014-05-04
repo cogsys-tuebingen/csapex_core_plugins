@@ -35,8 +35,6 @@ ColorAdjustment::ColorAdjustment() :
 
 void ColorAdjustment::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("original");
     output_ = addOutput<CvMatMessage>("adjusted");
 }

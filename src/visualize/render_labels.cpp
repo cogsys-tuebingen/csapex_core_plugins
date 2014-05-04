@@ -99,7 +99,6 @@ void RenderLabels::process()
 
 void RenderLabels::setup()
 {
-    setSynchronizedInputs(true);
     labels_ = addInput<CvMatMessage>("labels");
     image_  = addInput<CvMatMessage>("image", true);
     output_ = addOutput<CvMatMessage>("rendered");

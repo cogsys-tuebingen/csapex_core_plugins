@@ -125,8 +125,6 @@ void LKTracking::update(const param::Parameter*)
 
 void LKTracking::setup()
 {
-    setSynchronizedInputs(true);
-
     in_image_ = addInput<CvMatMessage>("Image");
     in_keypoints_ = addInput<KeypointMessage>("Keypoints");
 

@@ -42,8 +42,6 @@ void ExtractROI::process()
 
 void ExtractROI::setup()
 {
-    setSynchronizedInputs(true);
-
     input_img_ = addInput<CvMatMessage>("Image");
     input_roi_ = addInput<RoiMessage >("ROI");
 

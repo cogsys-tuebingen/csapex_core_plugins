@@ -82,8 +82,6 @@ void vision_plugins::CameraCalibration::process()
 
 void vision_plugins::CameraCalibration::setup()
 {
-    setSynchronizedInputs(true);
-
     input_  = addInput<CvMatMessage>("image");
     output_ = addOutput<CvMatMessage>("rendered corners");
     updateCalibration();

@@ -99,8 +99,6 @@ void VJDetector::process()
 
 void VJDetector::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("Image");
 
     output_ = addOutput<VectorMessage, RoiMessage>("ROIs");

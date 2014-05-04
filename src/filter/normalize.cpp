@@ -55,8 +55,6 @@ void Normalize::process()
 
 void Normalize::setup()
 {
-    setSynchronizedInputs(true);
-
     input_  = addInput<CvMatMessage>("original");
     mask_   = addInput<CvMatMessage>("mask", true);
     output_ = addOutput<CvMatMessage>("normalized");

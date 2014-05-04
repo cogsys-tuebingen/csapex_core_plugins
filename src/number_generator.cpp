@@ -41,8 +41,6 @@ void NumberGenerator::process()
 
 void NumberGenerator::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<connection_types::AnyMessage>("Trigger");
     output_ = addOutput<connection_types::CvMatMessage>("Image");
 }

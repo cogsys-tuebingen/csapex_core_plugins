@@ -48,8 +48,6 @@ void LabelRegions::process()
 
 void LabelRegions::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("edges");
     output_ = addOutput<CvMatMessage>("labels");
 }

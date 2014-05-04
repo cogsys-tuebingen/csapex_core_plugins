@@ -68,8 +68,6 @@ void ThresholdNoiseFilter::process()
 
 void ThresholdNoiseFilter::setup()
 {
-    setSynchronizedInputs(true);
-
     input_      = addInput<CvMatMessage>("unfiltered");
     threshold_  = addInput<CvMatMessage>("weights");
     output_     = addOutput<CvMatMessage>("filtered");

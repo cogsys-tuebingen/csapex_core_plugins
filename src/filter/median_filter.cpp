@@ -39,8 +39,6 @@ void MedianFilter::process()
 
 void MedianFilter::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("original");
     output_ = addOutput<CvMatMessage>("filtered");
     update();

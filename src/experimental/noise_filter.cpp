@@ -58,8 +58,6 @@ void NoiseFilter::process()
 
 void NoiseFilter::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("unfiltered");
     output_ = addOutput<CvMatMessage>("filtered");
     probs_out_ = addOutput<CvMatMessage>("probabilities");

@@ -40,7 +40,6 @@ void AbsoluteDifference::process()
 
 void AbsoluteDifference::setup()
 {
-    setSynchronizedInputs(true);
     mat_1_in_ =  addInput<CvMatMessage>("matrix 1");
     mat_2_in_ =  addInput<CvMatMessage>("matrix 2");
     result_   = addOutput<CvMatMessage>("abs. difference");

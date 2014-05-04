@@ -28,8 +28,6 @@ Splitter::~Splitter()
 
 void Splitter::setup()
 {
-    setSynchronizedInputs(true);
-
     /// add input
     input_ = addInput<CvMatMessage>("Image");
 

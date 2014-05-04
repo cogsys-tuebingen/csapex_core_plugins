@@ -66,8 +66,6 @@ void AdaptiveThreshold::process()
 
 void AdaptiveThreshold::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("original");
 
     output_ = addOutput<CvMatMessage>("thresholded");

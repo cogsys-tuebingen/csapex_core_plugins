@@ -45,8 +45,6 @@ void SumChannels::process()
 
 void SumChannels::setup()
 {
-    setSynchronizedInputs(true);
-
     input_  = addInput<CvMatMessage>("original");
     output_ = addOutput<CvMatMessage>("sum");
 }

@@ -49,8 +49,6 @@ void Scale::process()
 
 void Scale::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("original");
     output_ = addOutput<CvMatMessage>("scale");
     update();

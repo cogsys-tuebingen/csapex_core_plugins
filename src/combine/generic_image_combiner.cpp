@@ -180,8 +180,6 @@ void GenericImageCombiner::process()
 
 void GenericImageCombiner::setup()
 {
-    setSynchronizedInputs(true);
-
     i1_ = addInput<CvMatMessage>("image 1");
     i2_ = addInput<CvMatMessage>("image 2");
     out_ = addOutput<CvMatMessage>("combined");

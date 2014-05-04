@@ -152,8 +152,6 @@ void BlobDetector::process()
 
 void BlobDetector::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("Image");
 
     output_debug_ = addOutput<CvMatMessage>("OutputImage");

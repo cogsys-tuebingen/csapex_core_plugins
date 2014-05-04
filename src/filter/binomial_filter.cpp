@@ -41,8 +41,6 @@ void BinomialFilter::process()
 
 void BinomialFilter::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("original");
     output_ = addOutput<CvMatMessage>("filtered");
 }

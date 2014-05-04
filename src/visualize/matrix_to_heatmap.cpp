@@ -84,8 +84,6 @@ void MatrixToHeatmap::process()
 
 void MatrixToHeatmap::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("matrix");
     output_ = addOutput<CvMatMessage>("heatmap");
     mask_   = addInput<CvMatMessage>("mask",true);
