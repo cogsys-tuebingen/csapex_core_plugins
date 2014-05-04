@@ -85,11 +85,6 @@ void Foreach::checkIO()
         enableInput(canReceive());
 
         bool eo = canReceive() && in_sub->isConnected();
-        if(eo) {
-            aerr << "enable output" << std::endl;
-        } else {
-            aerr << "disable output" << std::endl;
-        }
         enableOutput(eo);
     } else {
         enableInput(false);
