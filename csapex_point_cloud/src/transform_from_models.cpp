@@ -29,7 +29,6 @@ TransformFromModels::TransformFromModels()
 
 void TransformFromModels::setup()
 {
-    setSynchronizedInputs(true);
     input_models_ref_ = addInput<GenericVectorMessage, ModelMessage >("Reference Models");
     input_models_new_ = addInput<GenericVectorMessage, ModelMessage >("New Models");
     output_ = addOutput<connection_types::TransformMessage>("Transformation");

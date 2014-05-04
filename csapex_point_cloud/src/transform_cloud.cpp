@@ -25,8 +25,6 @@ TransformCloud::TransformCloud()
 
 void TransformCloud::setup()
 {
-    setSynchronizedInputs(true);
-
     input_cloud_ = addInput<PointCloudMessage>("PointCloud");
     input_transform_ = addInput<TransformMessage>("Transformation");
 

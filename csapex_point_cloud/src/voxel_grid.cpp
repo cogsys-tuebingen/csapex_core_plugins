@@ -28,8 +28,6 @@ VoxelGrid::VoxelGrid()
 
 void VoxelGrid::setup()
 {
-    setSynchronizedInputs(true);
-
     input_cloud_ = addInput<PointCloudMessage>("PointCloud");
 
     output_ = addOutput<PointCloudMessage>("PointCloud");

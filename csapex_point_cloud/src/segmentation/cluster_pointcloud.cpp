@@ -56,7 +56,6 @@ void ClusterPointcloud::process()
 
 void ClusterPointcloud::setup()
 {
-    setSynchronizedInputs(true);
     in_cloud_ = addInput<PointCloudMessage>("PointCloud");
     out_ = addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
     out_debug_ = addOutput<std::string>("Debug Info");

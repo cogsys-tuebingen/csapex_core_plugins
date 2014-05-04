@@ -128,8 +128,6 @@ void BarCodeReader::process()
 
 void BarCodeReader::setup()
 {
-    setSynchronizedInputs(true);
-
     in_img = addInput<CvMatMessage>("Image", false, true);
 
     out_str = addOutput<DirectMessage<std::string> >("String");

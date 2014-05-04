@@ -50,7 +50,6 @@ QIcon ImportRos::getIcon() const
 
 void ImportRos::setup()
 {
-    setSynchronizedInputs(true);
     connector_ = addOutput<connection_types::AnyMessage>("Something");
 
     refresh();

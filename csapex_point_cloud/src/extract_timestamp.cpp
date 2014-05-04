@@ -22,8 +22,6 @@ ExtractTimeStamp::ExtractTimeStamp()
 
 void ExtractTimeStamp::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<PointCloudMessage>("PointCloud");
 
     output_ = addOutput<TimeStampMessage>("Time");

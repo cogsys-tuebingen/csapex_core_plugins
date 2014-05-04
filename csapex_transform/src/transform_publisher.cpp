@@ -59,8 +59,6 @@ void TransformPublisher::process()
 
 void TransformPublisher::setup()
 {
-    setSynchronizedInputs(true);
-
     input_transform = addInput<connection_types::TransformMessage>("T");
     input_time = addInput<connection_types::TimeStampMessage>("time", true);
 }

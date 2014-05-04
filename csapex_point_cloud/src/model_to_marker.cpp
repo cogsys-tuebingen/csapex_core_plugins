@@ -46,7 +46,6 @@ void ModelToMarker::process()
 
 void ModelToMarker::setup()
 {
-    setSynchronizedInputs(true);
     input_ = addInput<GenericVectorMessage, ModelMessage >("ModelMessages");
     output_ = addOutput<visualization_msgs::MarkerArray>("Marker");
     output_text_ = addOutput<std::string>("String");

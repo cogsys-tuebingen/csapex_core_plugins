@@ -57,8 +57,6 @@ ExtractDescriptors::ExtractDescriptors()
 
 void ExtractDescriptors::setup()
 {
-    setSynchronizedInputs(true);
-
     in_img = addInput<CvMatMessage>("Image");
     in_key = addInput<KeypointMessage>("Keypoints");
 

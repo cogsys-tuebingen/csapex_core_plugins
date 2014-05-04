@@ -138,8 +138,6 @@ ThresholdOutlierRemoval::ThresholdOutlierRemoval()
 
 void ThresholdOutlierRemoval::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<PointCloudMessage>("PointCloud");
     thresholds_ = addInput<CvMatMessage>("Thresholds");
     output_ = addOutput<PointCloudMessage>("Filtered Pointcloud");

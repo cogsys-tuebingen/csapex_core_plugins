@@ -25,8 +25,6 @@ QIcon TextDisplay::getIcon() const
 
 void TextDisplay::setup()
 {
-    setSynchronizedInputs(true);
-
     connector_ = addInput<connection_types::AnyMessage>("Anything", false, true);
 }
 

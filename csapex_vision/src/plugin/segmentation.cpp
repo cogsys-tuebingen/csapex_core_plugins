@@ -108,8 +108,6 @@ void Segmentation::recompute()
 
 void Segmentation::setup()
 {
-    setSynchronizedInputs(true);
-
     input_img_ = addInput<CvMatMessage>("Image");
     input_mask_ = addInput<CvMatMessage>("Mask", true);
     output_mask_ = addOutput<CvMatMessage>("Mask");

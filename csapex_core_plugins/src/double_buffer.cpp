@@ -32,8 +32,6 @@ QIcon DoubleBuffer::getIcon() const
 
 void DoubleBuffer::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<connection_types::AnyMessage>("Anything");
     output_ = addOutput<connection_types::AnyMessage>("Same as input");
     output_->setAsync(true);

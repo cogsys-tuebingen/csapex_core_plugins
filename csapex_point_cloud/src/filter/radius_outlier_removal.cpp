@@ -38,8 +38,6 @@ RadiusOutlierRemoval::RadiusOutlierRemoval() :
 
 void RadiusOutlierRemoval::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<PointCloudMessage>("PointCloud");
     output_ = addOutput<PointCloudMessage>("Pointcloud");
 }

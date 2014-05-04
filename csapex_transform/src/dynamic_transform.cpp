@@ -111,8 +111,6 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
 void DynamicTransform::setup()
 {
-    setSynchronizedInputs(true);
-
     time_in_ = addInput<connection_types::TimeStampMessage>("Time", true);
     frame_in_from_ = addInput<connection_types::DirectMessage<std::string> >("Origin Frame", true, true);
     frame_in_to_ = addInput<connection_types::DirectMessage<std::string> >("Target Frame", true, true);

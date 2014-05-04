@@ -50,7 +50,6 @@ SacFit::SacFit()
 void SacFit::process()
 {
 //    if (in_indices_->isConnected()) {
-//        setSynchronizedInputs(true);
 //    } else {
 //        setSynchronizedInputs(false);
 //    }
@@ -66,7 +65,6 @@ void SacFit::process()
 
 void SacFit::setup()
 {
-    setSynchronizedInputs(true);
     input_ = addInput<PointCloudMessage>("PointCloud");
     out_text_= addOutput<DirectMessage<std::string> >("String");
     in_indices_ = addInput <GenericVectorMessage, pcl::PointIndices>("Clusters", true); // optional input

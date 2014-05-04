@@ -20,8 +20,6 @@ PointCount::PointCount()
 
 void PointCount::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<PointCloudMessage>("PointCloud");
 
 }

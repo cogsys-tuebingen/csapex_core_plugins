@@ -37,8 +37,6 @@ Foreach::~Foreach()
 
 void Foreach::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<VectorMessage>("Vector");
     output_ = addOutput<VectorMessage>("Content");
 

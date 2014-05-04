@@ -35,8 +35,6 @@ ImageToPointCloud::ImageToPointCloud()
 
 void ImageToPointCloud::setup()
 {
-    setSynchronizedInputs(true);
-
     input_depth_ = addInput<CvMatMessage>("Depth");
     input_intensity_ = addInput<CvMatMessage>("Intensity", true);
 

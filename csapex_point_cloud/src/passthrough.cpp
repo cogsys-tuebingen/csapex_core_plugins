@@ -34,8 +34,6 @@ PassThrough::PassThrough()
 
 void PassThrough::setup()
 {
-    setSynchronizedInputs(true);
-
     input_cloud_ = addInput<PointCloudMessage>("PointCloud");
 
     output_pos_ = addOutput<PointCloudMessage>("cropped PointCloud (+)");

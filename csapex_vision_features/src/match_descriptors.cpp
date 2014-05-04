@@ -448,8 +448,6 @@ void MatchDescriptors::matchPeak(CvMatMessage::Ptr,
 
 void MatchDescriptors::setup()
 {
-    setSynchronizedInputs(true);
-
     in_img_1 = addInput<CvMatMessage>("Image 1");
     in_key_1 = addInput<KeypointMessage>("Keypoints 1");
     in_des_1 = addInput<DescriptorMessage>("Descriptor 1");
