@@ -262,7 +262,8 @@ Eigen::Matrix4d TransformFromModels::calculateTransformation(const std::vector<E
     Eigen::Matrix4d n_T_0;
     n_T_0 = threePointsToTransformation(points_new);
 
-    return r_T_0 * n_T_0.inverse();
+    //return r_T_0 * n_T_0.inverse(); //orginal
+    return n_T_0 * r_T_0 .inverse(); //that the found transformation is the same as the testone
 }
 
 using namespace std;
