@@ -24,4 +24,7 @@
 <class type="csapex::TimeOffset" base_class_type="csapex::Node">
   <description>Adds an offset to a time message</description>
 </class>
+<class type="csapex::TransformFilter" base_class_type="csapex::Node">
+  <description>Filters several transformation over a time</description>
+</class>
 </library>
