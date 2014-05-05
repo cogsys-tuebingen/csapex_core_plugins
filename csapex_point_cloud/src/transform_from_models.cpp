@@ -14,7 +14,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <tf/tf.h>
 
-
+#define RAD_TO_DEG(x) ((x) * 57.29578)
 
 CSAPEX_REGISTER_CLASS(csapex::TransformFromModels, csapex::Node)
 
@@ -32,7 +32,8 @@ void TransformFromModels::setup()
     input_models_ref_ = addInput<GenericVectorMessage, ModelMessage >("Reference Models");
     input_models_new_ = addInput<GenericVectorMessage, ModelMessage >("New Models");
     output_ = addOutput<connection_types::TransformMessage>("Transformation");
-    //output_text_ = addOutput<StringMessage>("String");
+    output_text_ = addOutput<DirectMessage<std::string> >("String"); // create a debug output
+
 
     addParameter(param::ParameterFactory::declare("Apex height", 0.0, 2.0, 0.5, 0.01));
     addParameter(param::ParameterFactory::declare("Cone angle", 0.0001, 3.2, 0.5, 0.001));
@@ -76,11 +77,21 @@ void TransformFromModels::process()
 //  eulerAnglesFromRotationMatrix(r_test, roll, pitch, yaw);
     eulerAnglesFromRotationMatrix(rotation, roll, pitch, yaw);
 
+    double test = x + y + z + roll + pitch + yaw; // to test if one is nan
 
-    // Publish Output
-    connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
-    msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
-    output_->publish(msg);
+    if (! isnan(test)) {
+        // Publish Output
+        connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
+        msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
+        output_->publish(msg);
+    }
+    std::stringstream stringstream;
+    stringstream << "x = " << x << ",y = " << y << ",z = " << z
+                 << ",r = " << RAD_TO_DEG(roll) << ",p = " << RAD_TO_DEG(pitch)<< ",y = " << RAD_TO_DEG(yaw);
+    DirectMessage<std::string>::Ptr text_msg(new DirectMessage<std::string>);
+    text_msg->value = stringstream.str();
+    output_text_->publish(text_msg);
+
 }
 
 void TransformFromModels::eulerAnglesFromRotationMatrix( Eigen::Matrix3d R, double &psi, double &theta, double &phi)

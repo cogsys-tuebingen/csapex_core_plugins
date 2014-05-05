@@ -19,6 +19,7 @@ private:
     ConnectorIn* input_models_ref_;
     ConnectorIn* input_models_new_;
     ConnectorOut* output_;
+    ConnectorOut* output_text_; // debug output for text
 
     double param_apex_height_;
     double param_cone_angle_;
