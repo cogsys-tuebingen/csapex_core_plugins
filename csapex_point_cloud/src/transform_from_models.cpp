@@ -61,15 +61,15 @@ void TransformFromModels::process()
     // Check that there are 3 points for each model, so that we can match the trinangles
     if ((points_ref.size() == 3) && (points_new.size() == 3)) {
 
-        int offset = matchSidesOfTriangles(points_ref, points_new);
+         int offset = matchSidesOfTriangles(points_ref, points_new);
 
         Eigen::Matrix4d r_T_n(4,4);
         r_T_n = calculateTransformation(points_ref, points_new, offset);
 
         // Extract the Translation
-        x = r_T_n(3,0);
-        y = r_T_n(3,1);
-        z = r_T_n(3,2);
+        x = r_T_n(0,3);
+        y = r_T_n(1,3);
+        z = r_T_n(2,3);
 
 
 
@@ -212,25 +212,36 @@ int TransformFromModels::matchSidesOfTriangles(const std::vector<Eigen::Vector3d
 {
     // Calculated distances of the points -> that are the sides of the triangles
     std::vector<double> distances1;
-    for (unsigned int i=1; i < points1.size(); i++) {
-        double distance = euklidianDistance(points1.at(i-1), points1.at(i));
+    unsigned int point_size = points1.size();
+    for (unsigned int i=0; i < point_size; i++) {
+        double distance = euklidianDistance(points1.at(i%point_size), points1.at((i+1)%point_size));
         distances1.push_back(distance);
     }
 
     std::vector<double> distances2;
-    for (unsigned  int i=1; i < points2.size(); i++) {
-        double distance = euklidianDistance(points2.at(i-1), points2.at(i));
+    point_size = points2.size();
+    for (unsigned  int i=0; i < point_size; i++) {
+        double distance = euklidianDistance(points2.at(i%point_size), points2.at((i+1)%point_size));
         distances2.push_back(distance);
     }
 
+//    // Test values for debug
+//    distances1.push_back(0.71);
+//    distances1.push_back(1.54);
+//    distances1.push_back(1.17);
+
+//    distances2.push_back(1.17);
+//    distances2.push_back(0.71);
+//    distances2.push_back(1.64);
+
     int min_offset = 0;
-    if ((distances1.size() > 3) && (distances2.size() > 3)) {
+    if ((distances1.size() == 3) && (distances2.size() == 3)) {
         // find the offset that minimizes the differences of the sides
         double min_sum = 20000.0;
         for (int offset = 0; offset<3; offset++){
             double sum = 0;
             for (int i = 0; i<3; i++) {
-                sum += std::pow((distances1.at(i) - distances2.at(i+offset % 3)),2);
+                sum += std::pow((distances1.at(i) - distances2.at((i+offset) % 3)),2);
             }
             if (sum < min_sum) {
                 min_sum = sum;
@@ -266,11 +277,20 @@ Eigen::Matrix4d TransformFromModels::threePointsToTransformation(const std::vect
         Eigen::Vector3d v1(points.at(0) - points.at(1));
         Eigen::Vector3d v2(points.at(2) - points.at(0));
 
+//      /// THIS IS THE WRONG ASSIGNMENT: first index: row, second: collumn
+//        // example for block http://eigen.tuxfamily.org/dox/group__TutorialBlockOperations.html
+//        transformation.block<1,3>(0,0) = v1;          // x vector of the coordinate system
+//        transformation.block<1,3>(1,0) = v2;          // y vector of the coordinate system
+//        transformation.block<1,3>(2,0) = v1.cross(v2);          // z vector of the coordinate system
+//        transformation.block<1,3>(3,0) = points.at(0); // origin of the coordinate system
+//        transformation(3,3) = 1;
+
+
         // example for block http://eigen.tuxfamily.org/dox/group__TutorialBlockOperations.html
-        transformation.block<1,3>(0,0) = v1;          // x vector of the coordinate system
-        transformation.block<1,3>(1,0) = v2;          // y vector of the coordinate system
-        transformation.block<1,3>(2,0) = v1.cross(v2);          // z vector of the coordinate system
-        transformation.block<1,3>(3,0) = points.at(0); // origin of the coordinate system
+        transformation.block<3,1>(0,0) = v1;          // x vector of the coordinate system
+        transformation.block<3,1>(0,1) = v2;          // y vector of the coordinate system
+        transformation.block<3,1>(0,2) = v1.cross(v2);          // z vector of the coordinate system
+        transformation.block<3,1>(0,3) = points.at(0); // origin of the coordinate system
         transformation(3,3) = 1;
     } else
     {
