@@ -65,17 +65,17 @@ void TransformFromModels::process()
 
 
     // Convert Homogenious Coordinates to a Quaternion
-    Eigen::Matrix3d r_test;
-    r_test <<       0.5,    -0.1464,  0.8536,
-                    0.5,     0.8536, -0.1464,
-                    -0.707,   0.5,     0.5;
+//    Eigen::Matrix3d r_test; // test matrix to test the algorimthm
+//    r_test <<       0.5,    -0.1464,  0.8536,
+//                    0.5,     0.8536, -0.1464,
+//                    -0.707,   0.5,     0.5;
 
-    Eigen::Matrix3d r_test2;
-    r_test2 = r_test.transpose();
-
+    Eigen::Matrix3d rotation;
+    rotation = r_T_n.block<3,3>(0,0); // cut the rotation matrix from the transformation matrix
     double roll, pitch, yaw;
-    eulerAnglesFromRotationMatrix(r_test2, roll, pitch, yaw);
-    //eulerAnglesFromRotationMatrix(r_T_n.block<3,3>(0,0), roll, pitch, yaw);
+//  eulerAnglesFromRotationMatrix(r_test, roll, pitch, yaw);
+    eulerAnglesFromRotationMatrix(rotation, roll, pitch, yaw);
+
 
     // Publish Output
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
@@ -95,17 +95,15 @@ void TransformFromModels::eulerAnglesFromRotationMatrix( Eigen::Matrix3d R, doub
      * It shuould return psi = 0.78539816, theta = 0.78524716, phi = 0.78539816
      **/
 
-    /// TODO: Fix a bug that this fuction gets the right test values
-    ///
-     if ((R(2,0) != 1) && (R(2,0) != -1))
+
+    if ((R(2,0) != 1) && (R(2,0) != -1))
     {
         theta = -std::asin(R(2,0));
         double c = cos(theta);
         psi = std::atan2(R(2,1)/c, R(2,2)/c);
         phi = std::atan2(R(1,0)/c, R(0,0)/c);
-    } else
+    } else  {
         phi = 0; // infinit solution for phi, just pick zero
-    {
         if (R(0,2) == -1){
             theta = M_PI / 2.0;
             psi = phi + std::atan2(R(0,1), R(0,2));
