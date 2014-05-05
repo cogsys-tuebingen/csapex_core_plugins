@@ -21,7 +21,7 @@ private:
     ConnectorIn* input_;
     ConnectorOut* output_;
     ConnectorOut* output_text_;
-    void generateMarker(const ModelMessage model_message, const visualization_msgs::Marker::Ptr marker);
+    void generateMarker(const ModelMessage model_message, const visualization_msgs::Marker::Ptr marker, std::vector<int> color);
     void publishText(const ModelMessage model_message);
 };
 
