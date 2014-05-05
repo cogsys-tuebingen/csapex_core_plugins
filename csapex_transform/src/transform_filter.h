@@ -15,6 +15,8 @@ public:
     virtual void setup();
     virtual void process();
 
+    std::vector<std::vector<double> > median_matrix_;
+
 private:
     ConnectorIn* input_transform_;
     ConnectorOut* output_transform_;
@@ -22,6 +24,8 @@ private:
 
     void tfToXYZrpy(tf::Transform in, double& x, double& y, double& z, double& roll, double& pitch, double& yaw);
     void runFilter(tf::Transform in_new, tf::Transform out);
+
+    double mean(std::vector<double> in);
 
 };
 
