@@ -53,46 +53,64 @@ void TransformFromModels::process()
     std::vector<Eigen::Vector3d> points_ref = getInterestingPointsFromModels(models_ref);
     std::vector<Eigen::Vector3d> points_new = getInterestingPointsFromModels(models_new);
 
-    ainfo << "points_ref.size() = " << points_ref.size() << " points_new.size() = " << points_new.size() << std::endl;
-
-    int offset = matchSidesOfTriangles(points_ref, points_new);
-
-    Eigen::Matrix4d r_T_n(4,4);
-    r_T_n = calculateTransformation(points_ref, points_new, offset);
-
-    double x = r_T_n(3,0);
-    double y = r_T_n(3,1);
-    double z = r_T_n(3,2);
-
-
-    // Convert Homogenious Coordinates to a Quaternion
-//    Eigen::Matrix3d r_test; // test matrix to test the algorimthm
-//    r_test <<       0.5,    -0.1464,  0.8536,
-//                    0.5,     0.8536, -0.1464,
-//                    -0.707,   0.5,     0.5;
-
-    Eigen::Matrix3d rotation;
-    rotation = r_T_n.block<3,3>(0,0); // cut the rotation matrix from the transformation matrix
+    // Output Varibales
+    double x,y,z;
     double roll, pitch, yaw;
-//  eulerAnglesFromRotationMatrix(r_test, roll, pitch, yaw);
-    eulerAnglesFromRotationMatrix(rotation, roll, pitch, yaw);
-
-
-    // Publish Output
     std::stringstream stringstream;
+
+    // Check that there are 3 points for each model, so that we can match the trinangles
+    if ((points_ref.size() == 3) && (points_new.size() == 3)) {
+
+        int offset = matchSidesOfTriangles(points_ref, points_new);
+
+        Eigen::Matrix4d r_T_n(4,4);
+        r_T_n = calculateTransformation(points_ref, points_new, offset);
+
+        // Extract the Translation
+        x = r_T_n(3,0);
+        y = r_T_n(3,1);
+        z = r_T_n(3,2);
+
+
+
+        //   // Test the functtion     eulerAnglesFromRotationMatrix()
+        //    Eigen::Matrix3d r_test; // test matrix to test the algorimthm
+        //    r_test <<       0.5,    -0.1464,  0.8536,
+        //                    0.5,     0.8536, -0.1464,
+        //                    -0.707,   0.5,     0.5;
+        //  eulerAnglesFromRotationMatrix(r_test, roll, pitch, yaw);
+
+        // Extract the rotation
+        Eigen::Matrix3d rotation;
+        rotation = r_T_n.block<3,3>(0,0); // cut the rotation matrix from the transformation matrix
+        eulerAnglesFromRotationMatrix(rotation, roll, pitch, yaw); // Convert Homogenious Coordinates to a Quaternion
+
+        // check for nan and set values to zero
+        double test = x + y + z + roll + pitch + yaw; // to test if one is nan
+        if (isnan(test)) {
+            x = y = z = 0.0;
+            roll = pitch = yaw = 0.0;
+        }
+
+    } else {
+        ainfo << "points_ref.size() = " << points_ref.size() << " points_new.size() = " << points_new.size() << std::endl;
+        stringstream << "points_ref.size() = " << points_ref.size() << " points_new.size() = " << points_new.size() << std::endl;
+
+        // Set output values to zero, if the there are not 3 points for each model
+        x = y = z = 0.0;
+        roll = pitch = yaw = 0.0;
+    }
+
+
+
+    // Publish Output - Debug
     stringstream << "x = " << x << ",y = " << y << ",z = " << z
                  << ",r = " << RAD_TO_DEG(roll) << ",p = " << RAD_TO_DEG(pitch)<< ",y = " << RAD_TO_DEG(yaw);
     DirectMessage<std::string>::Ptr text_msg(new DirectMessage<std::string>);
     text_msg->value = stringstream.str();
     output_text_->publish(text_msg);
 
-    // checkk for nan and set values to zero
-    double test = x + y + z + roll + pitch + yaw; // to test if one is nan
-    if (isnan(test)) {
-        x = y = z = 0.0;
-        roll = pitch = yaw = 0.0;
-    }
-
+    // Publish Output - Transformation
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
     msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
     output_->publish(msg);
@@ -140,17 +158,20 @@ std::vector<Eigen::Vector3d> TransformFromModels::getInterestingPointsFromModels
     // TODO: there should only be 3 models
     for (std::vector<ModelMessage>::const_iterator it = models->begin(); it != models->end(); it++){
         Eigen::Vector3d interresting_point(0,0,0);
+        bool point_ok = false;
         switch(it->model_type) {
             case pcl::SACMODEL_SPHERE:
-            interresting_point(0) = it->coefficients->values.at(0);
-            interresting_point(1) = it->coefficients->values.at(1);
-            interresting_point(2) = it->coefficients->values.at(2);
+                interresting_point(0) = it->coefficients->values.at(0);
+                interresting_point(1) = it->coefficients->values.at(1);
+                interresting_point(2) = it->coefficients->values.at(2);
+                point_ok = true;
                 break;
 
             case pcl::SACMODEL_CONE:
                 interresting_point(0) = it->coefficients->values.at(0);
                 interresting_point(1) = it->coefficients->values.at(1);
                 interresting_point(2) = it->coefficients->values.at(2);
+                point_ok = true;
                 break;
 
             case pcl::SACMODEL_CIRCLE2D: {
@@ -168,12 +189,15 @@ std::vector<Eigen::Vector3d> TransformFromModels::getInterestingPointsFromModels
                     z = 0;
                 }
                 interresting_point(2) = z;
+                point_ok = true;
             } break;
 
             default:
                 aerr << "Invalid Model Type: " <<  it->model_type << std::endl;
         } // end switch
-        points.push_back(interresting_point);
+        if (point_ok) {
+            points.push_back(interresting_point);
+        }
     } // end for
 
     return points;
