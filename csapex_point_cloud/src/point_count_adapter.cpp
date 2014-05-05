@@ -21,9 +21,11 @@ void PointCountAdapter::setupUi(QBoxLayout* layout)
     number_->setDigitCount(8);
 
     layout->addWidget(number_);
+
+    QObject::connect(this, SIGNAL(displayRequest(int)), number_, SLOT(display(int)));
 }
 
 void PointCountAdapter::display(int img)
 {
-    number_->display(img);
+    Q_EMIT displayRequest(img);
 }

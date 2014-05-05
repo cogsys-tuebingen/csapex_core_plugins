@@ -24,8 +24,6 @@ PointCloudToIntensityImage::PointCloudToIntensityImage()
 
 void PointCloudToIntensityImage::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<PointCloudMessage>("PointCloud");
 
     output_ = addOutput<CvMatMessage>("Intensity Image");

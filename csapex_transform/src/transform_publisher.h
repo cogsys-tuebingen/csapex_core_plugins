@@ -5,6 +5,7 @@
 #include <csapex/model/node.h>
 
 /// SYSTEM
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/transform_broadcaster.h>
 
 namespace csapex {

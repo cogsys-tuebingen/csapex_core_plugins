@@ -40,7 +40,6 @@ void LabelPointCloud::process()
 
 void LabelPointCloud::setup()
 {
-    setSynchronizedInputs(true);
     input_  = addInput<PointCloudMessage>("PointCloud");
     labels_ = addInput<CvMatMessage>("Labels");
     output_ = addOutput<PointCloudMessage>("Labeled PointCloud");

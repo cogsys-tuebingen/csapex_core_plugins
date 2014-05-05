@@ -35,7 +35,6 @@ void ColorPointCloud::process()
 
 void ColorPointCloud::setup()
 {
-    setSynchronizedInputs(true);
     input_  = addInput<PointCloudMessage>("Labeled PointCloud");
     output_ = addOutput<PointCloudMessage>("Colored PointCloud");
 }

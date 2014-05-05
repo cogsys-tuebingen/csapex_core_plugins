@@ -6,6 +6,7 @@
 #include <csapex_core_plugins/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/tf.h>
 
 /// SYSTEM
@@ -49,7 +50,6 @@ SacFit::SacFit()
 void SacFit::process()
 {
 //    if (in_indices_->isConnected()) {
-//        setSynchronizedInputs(true);
 //    } else {
 //        setSynchronizedInputs(false);
 //    }
@@ -65,7 +65,6 @@ void SacFit::process()
 
 void SacFit::setup()
 {
-    setSynchronizedInputs(true);
     input_ = addInput<PointCloudMessage>("PointCloud");
     out_text_= addOutput<DirectMessage<std::string> >("String");
     in_indices_ = addInput <GenericVectorMessage, pcl::PointIndices>("Clusters", true); // optional input

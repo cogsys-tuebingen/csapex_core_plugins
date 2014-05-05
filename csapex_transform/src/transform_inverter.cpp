@@ -31,8 +31,6 @@ void TransformInverter::process()
 
 void TransformInverter::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<connection_types::TransformMessage>("T");
 
     output_ = addOutput<connection_types::TransformMessage>("T^-1");

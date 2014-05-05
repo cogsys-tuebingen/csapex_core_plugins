@@ -12,6 +12,7 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/tf.h>
 
 #define RAD_TO_DEG(x) ((x) * 57.29578)
@@ -28,7 +29,6 @@ TransformFromModels::TransformFromModels()
 
 void TransformFromModels::setup()
 {
-    setSynchronizedInputs(true);
     input_models_ref_ = addInput<GenericVectorMessage, ModelMessage >("Reference Models");
     input_models_new_ = addInput<GenericVectorMessage, ModelMessage >("New Models");
     output_ = addOutput<connection_types::TransformMessage>("Transformation");

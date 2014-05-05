@@ -25,8 +25,6 @@ QIcon SayText::getIcon() const
 
 void SayText::setup()
 {
-    setSynchronizedInputs(true);
-
     connector_ = addInput<connection_types::DirectMessage<std::string> >("Text", false, true);
 }
 

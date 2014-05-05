@@ -11,6 +11,7 @@
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 #include <boost/mpl/for_each.hpp>
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <pcl_ros/transforms.h>
 #include <pcl/filters/passthrough.h>
 #include <boost/assign/std.hpp>
@@ -33,8 +34,6 @@ PassThrough::PassThrough()
 
 void PassThrough::setup()
 {
-    setSynchronizedInputs(true);
-
     input_cloud_ = addInput<PointCloudMessage>("PointCloud");
 
     output_pos_ = addOutput<PointCloudMessage>("cropped PointCloud (+)");

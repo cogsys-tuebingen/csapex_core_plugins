@@ -22,8 +22,6 @@ SetTimeStamp::SetTimeStamp()
 
 void SetTimeStamp::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<connection_types::PointCloudMessage>("PointCloud");
     input_frame_ = addInput<connection_types::DirectMessage<std::string> >("Frame", true, true);
     input_time_ = addInput<connection_types::TimeStampMessage>("Time");

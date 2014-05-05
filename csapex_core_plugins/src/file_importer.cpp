@@ -115,8 +115,6 @@ QIcon FileImporter::getIcon() const
 
 void FileImporter::setup()
 {
-    setSynchronizedInputs(true);
-
     output_ = addOutput<connection_types::AnyMessage>("Unknown");
 }
 

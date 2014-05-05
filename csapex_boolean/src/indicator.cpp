@@ -24,8 +24,6 @@ Indicator::Indicator()
 
 void Indicator::setup()
 {
-    setSynchronizedInputs(true);
-
     in = addInput<DirectMessage<bool> >("Signal");
 }
 

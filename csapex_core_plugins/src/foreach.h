@@ -17,6 +17,8 @@ public:
     Foreach();
     ~Foreach();
 
+    void checkIO();
+
     virtual void process();
     virtual void setup();
 

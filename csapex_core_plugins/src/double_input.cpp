@@ -39,8 +39,6 @@ QIcon NumberInput<T>::getIcon() const
 template <typename T>
 void NumberInput<T>::setup()
 {
-    setSynchronizedInputs(true);
-
     out_ = addOutput<T>(type2name(typeid(T)));
 }
 
