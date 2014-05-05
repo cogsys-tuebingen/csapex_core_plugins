@@ -77,20 +77,26 @@ void TransformFromModels::process()
 //  eulerAnglesFromRotationMatrix(r_test, roll, pitch, yaw);
     eulerAnglesFromRotationMatrix(rotation, roll, pitch, yaw);
 
-    double test = x + y + z + roll + pitch + yaw; // to test if one is nan
 
-    if (! isnan(test)) {
-        // Publish Output
-        connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
-        msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
-        output_->publish(msg);
-    }
+    // Publish Output
     std::stringstream stringstream;
     stringstream << "x = " << x << ",y = " << y << ",z = " << z
                  << ",r = " << RAD_TO_DEG(roll) << ",p = " << RAD_TO_DEG(pitch)<< ",y = " << RAD_TO_DEG(yaw);
     DirectMessage<std::string>::Ptr text_msg(new DirectMessage<std::string>);
     text_msg->value = stringstream.str();
     output_text_->publish(text_msg);
+
+    // checkk for nan and set values to zero
+    double test = x + y + z + roll + pitch + yaw; // to test if one is nan
+    if (isnan(test)) {
+        x = y = z = 0.0;
+        roll = pitch = yaw = 0.0;
+    }
+
+    connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
+    msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
+    output_->publish(msg);
+
 
 }
 
