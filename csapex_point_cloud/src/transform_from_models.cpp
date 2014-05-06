@@ -15,7 +15,8 @@
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/tf.h>
 
-#define RAD_TO_DEG(x) ((x) * 57.29578)
+//#define RAD_TO_DEG(x) ((x) * 57.29578)
+#define RAD_TO_DEG(x) ((x))
 
 CSAPEX_REGISTER_CLASS(csapex::TransformFromModels, csapex::Node)
 
@@ -92,6 +93,19 @@ void TransformFromModels::process()
             roll = pitch = yaw = 0.0;
         }
 
+        // Publish Output - Debug
+        stringstream << "x = " << x << ",y = " << y << ",z = " << z
+                     << ",r = " << RAD_TO_DEG(roll) << ",p = " << RAD_TO_DEG(pitch)<< ",y = " << RAD_TO_DEG(yaw);
+        DirectMessage<std::string>::Ptr text_msg(new DirectMessage<std::string>);
+        text_msg->value = stringstream.str();
+        output_text_->publish(text_msg);
+
+        // Publish Output - Transformation
+        connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
+        msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
+        output_->publish(msg);
+
+
     } else {
         ainfo << "points_ref.size() = " << points_ref.size() << " points_new.size() = " << points_new.size() << std::endl;
         stringstream << "points_ref.size() = " << points_ref.size() << " points_new.size() = " << points_new.size() << std::endl;
@@ -102,18 +116,6 @@ void TransformFromModels::process()
     }
 
 
-
-    // Publish Output - Debug
-    stringstream << "x = " << x << ",y = " << y << ",z = " << z
-                 << ",r = " << RAD_TO_DEG(roll) << ",p = " << RAD_TO_DEG(pitch)<< ",y = " << RAD_TO_DEG(yaw);
-    DirectMessage<std::string>::Ptr text_msg(new DirectMessage<std::string>);
-    text_msg->value = stringstream.str();
-    output_text_->publish(text_msg);
-
-    // Publish Output - Transformation
-    connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
-    msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
-    output_->publish(msg);
 
 
 }

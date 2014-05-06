@@ -14,7 +14,8 @@
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 
 
-#define RAD_TO_DEG(x) ((x) * 57.29578)
+#define RAD_TO_DEG(x) ((x) )
+// #define RAD_TO_DEG(x) ((x) * 57.29578)
 
 
 CSAPEX_REGISTER_CLASS(csapex::TransformFilter, csapex::Node)
