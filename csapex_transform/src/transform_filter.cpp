@@ -7,6 +7,7 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
+#include <utils_param/parameter_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -26,6 +27,11 @@ TransformFilter::TransformFilter()
     addTag(Tag::get("Filter"));
 
     median_matrix_.resize(6);
+
+    // Initialize the out_vector_latch with zeros
+    for (int i = 0; i < 6; i++) {
+        out_vector_latch_.push_back(0);
+    }
 }
 
 void TransformFilter::setup()
@@ -34,10 +40,14 @@ void TransformFilter::setup()
 
     output_transform_ = addOutput<connection_types::TransformMessage>("Filtered Transformation");
     output_text_ = addOutput<DirectMessage<std::string> >("String"); // create a debug output
+
+    addParameter(param::ParameterFactory::declare("filter size", 1, 10000, 200, 100));
 }
 
 void TransformFilter::process()
 {
+    filter_size_ =  (unsigned int)param<int>("filter size");
+
     // Output Varibales
     double x,y,z;
     double roll, pitch, yaw;
@@ -89,43 +99,64 @@ void TransformFilter::runFilter(tf::Transform& in_new, tf::Transform& out)
 
     tfToXYZrpy(in_new, x, y, z, roll, pitch, yaw);
 
-    // Check if not all values are zero
     std::vector<double> out_vector;
-    double test = x+y+z + roll + pitch + yaw;
-    if (test != 0) {
 
-        //Eigen::Matrix<float, 1, 6> in_vector(x, y, z, roll, pitch, yaw); // row vector
-        std::vector<double> in_vector;
-        in_vector.push_back(x);
-        in_vector.push_back(y);
-        in_vector.push_back(z);
+    // Check if not all values are zero
+//    bool out_vector_latch_is_zero = true;
+//    for(std::vector<double>::iterator j=out_vector_latch_.begin();j!=out_vector_latch_.end();++j) {
+//        out_vector_latch_is_zero = ((*j ==0) && out_vector_latch_is_zero);
+//    }
+//    if (! out_vector_latch_is_zero) {
 
-        in_vector.push_back(roll);
-        in_vector.push_back(pitch);
-        in_vector.push_back(yaw);
+        // filter zeros from invalid transformation
+        double test = x+y+z + roll + pitch + yaw;
+        if (test != 0) {
 
-        // Save new values in median_matrix_
-        for (unsigned int i = 0; i< in_vector.size(); i++) {
-            median_matrix_[i].push_back(in_vector[i]);
+            //Eigen::Matrix<float, 1, 6> in_vector(x, y, z, roll, pitch, yaw); // row vector
+            std::vector<double> in_vector;
+            in_vector.push_back(x);
+            in_vector.push_back(y);
+            in_vector.push_back(z);
+
+            in_vector.push_back(roll);
+            in_vector.push_back(pitch);
+            in_vector.push_back(yaw);
+
+            // Save new values in median_matrix_
+            for (unsigned int i = 0; i< in_vector.size(); i++) {
+                // Some thing like a moving average filter
+                if (median_matrix_[i].size() < filter_size_) {
+                    median_matrix_[i].push_back(in_vector[i]); // append values, if filter is not full
+                } else {
+                    median_matrix_[i][filter_index_] = in_vector[i]; // insert values if filter is full
+                }
+
+                // Remove the elements of the back, if the filter size was reduced
+                while(filter_size_ < median_matrix_[i].size()) {
+                    median_matrix_[i].pop_back();
+                }
+            }
+            filter_index_ = (filter_index_ + 1) % filter_size_; // rotate the index
+
+            // Calculate the mean over the vector
+            for (unsigned int i = 0; i< in_vector.size(); i++) {
+                out_vector.push_back(mean(median_matrix_[i]));
+            }
+            out_vector_latch_ = out_vector;
         }
-
-        // Calculate the mean over the vector
-        for (unsigned int i = 0; i< in_vector.size(); i++) {
-            out_vector.push_back(mean(median_matrix_[i]));
-        }
-
-    } else {
-        // Return 0 for all values if the vector was 0 before
-        for (unsigned int i = 0; i< 6; i++) {
-            out_vector.push_back(0.0);
-        }
-    }
+//    } else {
+//        // Return 0 for all values if the vector was 0 before
+//        for (unsigned int i = 0; i< 6; i++) {
+//            out_vector.push_back(0.0);
+//        }
+//        out_vector_latch_ = out_vector;
+//    }
 
     // Convert x y z , r p y back to Origin an Quaternion
-    tf::Vector3 origin(out_vector.at(0), out_vector.at(1), out_vector.at(2));
+    tf::Vector3 origin(out_vector_latch_.at(0), out_vector_latch_.at(1), out_vector_latch_.at(2));
     out.setOrigin(origin);
 
-    tf::Quaternion rotation = tf::createQuaternionFromRPY(out_vector.at(3), out_vector.at(4), out_vector.at(5));
+    tf::Quaternion rotation = tf::createQuaternionFromRPY(out_vector_latch_.at(3), out_vector_latch_.at(4), out_vector_latch_.at(5));
     out.setRotation(rotation);
 }
 
