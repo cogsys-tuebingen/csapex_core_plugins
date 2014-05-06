@@ -3,7 +3,9 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex_core_plugins/vector_message.h>
+
+/// SYSTEM
+#include <QWaitCondition>
 
 namespace csapex {
 
@@ -25,7 +27,7 @@ public:
     virtual void stop();
 
 private Q_SLOTS:
-    void appendMessageFrom(Connectable*);
+    void messageProcessed();
 
 private:
     ConnectorIn* input_;
@@ -34,10 +36,9 @@ private:
     ConnectorIn* in_sub;
     ConnectorOut* out_sub;
 
-    connection_types::VectorMessage::Ptr current_result_;
-
-    int messages_;
-    int message_;
+    bool msg_received_;
+    QMutex msg_mutex_;
+    QWaitCondition msg_received_cond_;
 };
 
 }
