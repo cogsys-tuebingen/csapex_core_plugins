@@ -101,13 +101,6 @@ void TransformFilter::runFilter(tf::Transform& in_new, tf::Transform& out)
 
     std::vector<double> out_vector;
 
-    // Check if not all values are zero
-//    bool out_vector_latch_is_zero = true;
-//    for(std::vector<double>::iterator j=out_vector_latch_.begin();j!=out_vector_latch_.end();++j) {
-//        out_vector_latch_is_zero = ((*j ==0) && out_vector_latch_is_zero);
-//    }
-//    if (! out_vector_latch_is_zero) {
-
         // filter zeros from invalid transformation
         double test = x+y+z + roll + pitch + yaw;
         if (test != 0) {
@@ -144,13 +137,7 @@ void TransformFilter::runFilter(tf::Transform& in_new, tf::Transform& out)
             }
             out_vector_latch_ = out_vector;
         }
-//    } else {
-//        // Return 0 for all values if the vector was 0 before
-//        for (unsigned int i = 0; i< 6; i++) {
-//            out_vector.push_back(0.0);
-//        }
-//        out_vector_latch_ = out_vector;
-//    }
+
 
     // Convert x y z , r p y back to Origin an Quaternion
     tf::Vector3 origin(out_vector_latch_.at(0), out_vector_latch_.at(1), out_vector_latch_.at(2));
