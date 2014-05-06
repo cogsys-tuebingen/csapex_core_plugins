@@ -48,13 +48,13 @@ void TransformFilter::process()
     tf::Transform tf_raw = trafo_msg->value;
     tf::Transform tf_filtered;
 
-    /// TODO: Debug and find stuid errors
-//    runFilter(tf_raw, tf_filtered);
 
+    // Run the filter Algorithmn
+    runFilter(tf_raw, tf_filtered);
+
+
+    // Convert the Result to x,y,z r,p,y for debug display
     tfToXYZrpy(tf_filtered, x, y, z, roll, pitch, yaw);
-
-
-
 
     // Publish Output - Debug
     stringstream << "x = " << x << ",y = " << y << ",z = " << z
@@ -65,7 +65,7 @@ void TransformFilter::process()
 
     // Publish Output - Transformation
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
-    msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
+    msg->value = tf_filtered;
     output_transform_->publish(msg);
 }
 
@@ -82,7 +82,7 @@ void TransformFilter::tfToXYZrpy(tf::Transform& in, double& x, double& y, double
     rotation.getEulerYPR(roll, pitch, yaw);
 }
 
-void TransformFilter::runFilter(tf::Transform in_new, tf::Transform out)
+void TransformFilter::runFilter(tf::Transform& in_new, tf::Transform& out)
 {
     double x,y,z;
     double roll, pitch, yaw;
@@ -121,6 +121,7 @@ void TransformFilter::runFilter(tf::Transform in_new, tf::Transform out)
         }
     }
 
+    // Convert x y z , r p y back to Origin an Quaternion
     tf::Vector3 origin(out_vector.at(0), out_vector.at(1), out_vector.at(2));
     out.setOrigin(origin);
 
