@@ -25,13 +25,16 @@ ModelToMarker::ModelToMarker()
 void ModelToMarker::process()
 {
     boost::shared_ptr<std::vector<ModelMessage> const> models = input_->getMessage<GenericVectorMessage, ModelMessage>();
+
+    const std::vector<int>& color = param<std::vector<int> >("color/marker");
+
     if(param<bool>("publish marker")) {
         visualization_msgs::MarkerArray::Ptr marker_array(new visualization_msgs::MarkerArray);
         int marker_id = 0;
         for (std::vector<ModelMessage>::const_iterator it = models->begin(); it != models->end(); it++) {
 
             visualization_msgs::Marker::Ptr marker(new visualization_msgs::Marker);
-            generateMarker(*(it), marker);
+            generateMarker(*(it), marker, color);
             marker->id = marker_id;
             marker_id ++;
             marker_array->markers.push_back(*marker);
@@ -51,10 +54,11 @@ void ModelToMarker::setup()
     output_text_ = addOutput<std::string>("String");
 
     addParameter(param::ParameterFactory::declareBool("publish marker", true));
+    addParameter(param::ParameterFactory::declareColorParameter("color/marker", 0xFF, 0xCC, 0x00));
 }
 
 
-void ModelToMarker::generateMarker(const ModelMessage model_message, const visualization_msgs::Marker::Ptr marker)
+void ModelToMarker::generateMarker(const ModelMessage model_message, const visualization_msgs::Marker::Ptr marker, std::vector<int> color)
 {
     //visualization_msgs::MarkerArray::Ptr marker_array(new visualization_msgs::MarkerArray);
     //visualization_msgs::Marker           marker;
@@ -65,6 +69,11 @@ void ModelToMarker::generateMarker(const ModelMessage model_message, const visua
     marker->ns                  = "model";
     marker->id                  = 1;
     marker->action              = visualization_msgs::Marker::ADD;
+
+    marker->color.a = 0.8;
+    marker->color.r = color.at(0) / 255.0;;
+    marker->color.g = color.at(1) / 255.0;;
+    marker->color.b = color.at(2) / 255.0;;
 
     if (model_message.model_type == pcl::SACMODEL_SPHERE ) {
         marker->type                = visualization_msgs::Marker::SPHERE;
@@ -84,10 +93,7 @@ void ModelToMarker::generateMarker(const ModelMessage model_message, const visua
         marker->scale.y = scale;
         marker->scale.z = scale;
 
-        marker->color.a = 0.8;
-        marker->color.r = 0.0;
-        marker->color.g = 1.0;
-        marker->color.b = 0.0;
+
 
     } else if (model_message.model_type == pcl::SACMODEL_CONE ) {
         marker->type                = visualization_msgs::Marker::ARROW;
@@ -122,10 +128,6 @@ void ModelToMarker::generateMarker(const ModelMessage model_message, const visua
         marker->scale.y = len * tan(opening_angle);
         marker->scale.z = 100;
 
-        marker->color.a = 0.8;
-        marker->color.r = 1.0;
-        marker->color.g = 1.0;
-        marker->color.b = 0.0;
 
     // 2D Circle
     } else if (model_message.model_type == pcl::SACMODEL_CIRCLE2D ) {
@@ -144,10 +146,6 @@ void ModelToMarker::generateMarker(const ModelMessage model_message, const visua
         marker->scale.y = model_message.coefficients->values.at(2);
         marker->scale.z = model_message.probability;
 
-        marker->color.a = 0.8;
-        marker->color.r = 0.0;
-        marker->color.g = 1.0;
-        marker->color.b = 0.0;
     } else {
         printf("unknown Model!!");
     }
