@@ -16,6 +16,7 @@
 
 #define RAD_TO_DEG(x) ((x) * 57.29578)
 
+
 CSAPEX_REGISTER_CLASS(csapex::TransformFilter, csapex::Node)
 
 using namespace csapex;
@@ -89,7 +90,8 @@ void TransformFilter::tfToXYZrpy(tf::Transform& in, double& x, double& y, double
 
     // Extract the rotation
     tf::Matrix3x3 rotation(in.getRotation());
-    rotation.getEulerYPR(roll, pitch, yaw);
+    rotation.getRPY(roll, pitch, yaw);
+
 }
 
 void TransformFilter::runFilter(tf::Transform& in_new, tf::Transform& out)
@@ -153,7 +155,7 @@ double TransformFilter::mean(std::vector<double> in)
     for(std::vector<double>::iterator j=in.begin();j!=in.end();++j) {
         sum_of_elems += *j;
     }
-    std::cout << "SIZE " << in.size() << std::endl;
+   // ainfo << "SIZE " << in.size() << std::endl;
     if (in.size() != 0) {
         return sum_of_elems / in.size();
     } else {
