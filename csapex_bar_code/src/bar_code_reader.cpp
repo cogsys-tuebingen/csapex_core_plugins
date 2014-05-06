@@ -116,9 +116,7 @@ void BarCodeReader::process()
         data_ = data;
     }
 
-    if(!out->value.empty()) {
-        out_roi->publish(out);
-    }
+    out_roi->publish(out);
 
     // clean up
     image.set_data(NULL, 0);
@@ -128,7 +126,7 @@ void BarCodeReader::process()
 
 void BarCodeReader::setup()
 {
-    in_img = addInput<CvMatMessage>("Image", false, true);
+    in_img = addInput<CvMatMessage>("Image");
 
     out_str = addOutput<DirectMessage<std::string> >("String");
     out_roi = addOutput<VectorMessage, RoiMessage>("ROIs");
