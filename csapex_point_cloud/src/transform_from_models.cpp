@@ -62,7 +62,7 @@ void TransformFromModels::process()
     // Check that there are 3 points for each model, so that we can match the trinangles
     if ((points_ref.size() == 3) && (points_new.size() == 3)) {
 
-         int offset = matchSidesOfTriangles(points_ref, points_new);
+        int offset = matchSidesOfTriangles(points_ref, points_new);
 
         Eigen::Matrix4d r_T_n(4,4);
         r_T_n = calculateTransformation(points_ref, points_new, offset);
@@ -120,6 +120,7 @@ void TransformFromModels::process()
 
 }
 
+// TODO: This can also be done by tf library
 void TransformFromModels::eulerAnglesFromRotationMatrix( Eigen::Matrix3d R, double &psi, double &theta, double &phi)
 {
     /* Note: this function is based on the paper http://www.soi.city.ac.uk/~sbbh653/publications/euler.pdf
@@ -191,6 +192,8 @@ std::vector<Eigen::Vector3d> TransformFromModels::getInterestingPointsFromModels
                     z = 0;
                 }
                 interresting_point(2) = z;
+                // Only for Testing
+                //interresting_point(2) = 0.5; // set the apex height 50cm above ground
                 point_ok = true;
             } break;
 
@@ -258,11 +261,17 @@ int TransformFromModels::matchSidesOfTriangles(const std::vector<Eigen::Vector3d
 
 Eigen::Matrix4d TransformFromModels::calculateTransformation(const std::vector<Eigen::Vector3d> &points_ref, const std::vector<Eigen::Vector3d> &points_new, int offset)
 {
+    // Shift the reference points according to the offset
+    std::vector<Eigen::Vector3d> points_new_shifted;
+    for (int i=0; i < points_new.size(); i++) {
+        points_new_shifted.push_back(points_new.at((i+offset)% points_new.size()));
+    }
+
     Eigen::Matrix4d r_T_0;
     r_T_0 = threePointsToTransformation(points_ref);
 
     Eigen::Matrix4d n_T_0;
-    n_T_0 = threePointsToTransformation(points_new);
+    n_T_0 = threePointsToTransformation(points_new_shifted);
 
     //return r_T_0 * n_T_0.inverse(); //orginal
     return n_T_0 * r_T_0 .inverse(); //that the found transformation is the same as the testone
