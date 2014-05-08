@@ -263,7 +263,7 @@ Eigen::Matrix4d TransformFromModels::calculateTransformation(const std::vector<E
 {
     // Shift the reference points according to the offset
     std::vector<Eigen::Vector3d> points_new_shifted;
-    for (int i=0; i < points_new.size(); i++) {
+    for (unsigned int i=0; i < points_new.size(); i++) {
         points_new_shifted.push_back(points_new.at((i+offset)% points_new.size()));
     }
 
@@ -273,8 +273,8 @@ Eigen::Matrix4d TransformFromModels::calculateTransformation(const std::vector<E
     Eigen::Matrix4d n_T_0;
     n_T_0 = threePointsToTransformation(points_new_shifted);
 
-    //return r_T_0 * n_T_0.inverse(); //orginal
-    return n_T_0 * r_T_0 .inverse(); //that the found transformation is the same as the testone
+    return r_T_0 * n_T_0.inverse(); //orginal
+    //return n_T_0 * r_T_0 .inverse(); //that the found transformation is the same as the testone
 }
 
 using namespace std;
