@@ -19,8 +19,13 @@ CSAPEX_REGISTER_CLASS(vision_plugins::Histogram, csapex::Node)
 
 Histogram::Histogram() :
     bins_(256),
+    last_type_(CV_8U),
     uniform_(true),
-    accumulate_(false)
+    accumulate_(false),
+    min_max_(false),
+    min_max_global_(false),
+    min_max_value_(std::make_pair<float, float>(std::numeric_limits<float>::max(),
+                                                std::numeric_limits<float>::min()))
 {
     Tag::createIfNotExists("Histogram");
     addTag(Tag::get("Histogram"));
@@ -29,11 +34,14 @@ Histogram::Histogram() :
 
     addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
                  boost::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("uniform", true),
+    addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
                  boost::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("accumulate", false),
+    addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
                  boost::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("min max range", false));
+    addParameter(param::ParameterFactory::declareBool("min max range", false),
+                 boost::bind(&Histogram::update, this));
+    addParameter(param::ParameterFactory::declareBool("global min max", false),
+                 boost::bind(&Histogram::update, this));
 }
 
 void Histogram::process()
@@ -51,59 +59,71 @@ void Histogram::process()
     std::vector<utils_cv::Range> ranges;
     std::vector<int>             bins;
 
-    bool minmax = param<bool>("min max range");
+    if(min_max_ && type != last_type_)
+        resetMinMax();
 
+    utils_cv::Range range;
     switch(type) {
     case CV_8U:
-        if(minmax)
-            ranges.push_back(utils_cv::
-                             make_min_max_range<unsigned char>(in->value));
+        if(min_max_)
+            range = utils_cv::
+                    make_min_max_range<unsigned char>(in->value, mask);
         else
-            ranges.push_back(utils_cv::make_range<unsigned char>());
+            range = utils_cv::make_range<unsigned char>();
         break;
     case CV_8S:
-        if(minmax)
-            ranges.push_back(utils_cv::
-                             make_min_max_range<signed char>(in->value));
+        if(min_max_)
+            range = utils_cv::
+                    make_min_max_range<signed char>(in->value, mask);
         else
-            ranges.push_back(utils_cv::make_range<signed char>());
+            range = utils_cv::make_range<signed char>();
         break;
     case CV_16U:
-        if(minmax)
-            ranges.push_back(utils_cv::
-                             make_min_max_range<unsigned short>(in->value));
+        if(min_max_)
+            range = utils_cv::
+                    make_min_max_range<unsigned short>(in->value, mask);
         else
-            ranges.push_back(utils_cv::make_range<unsigned short>());
+            range = utils_cv::make_range<unsigned short>();
         break;
     case CV_16S:
-        if(minmax)
-            ranges.push_back(utils_cv::
-                             make_min_max_range<signed short>(in->value));
+        if(min_max_)
+            range = utils_cv::
+                    make_min_max_range<signed short>(in->value, mask);
         else
-            ranges.push_back(utils_cv::make_range<signed short>());
+            range = utils_cv::make_range<signed short>();
         break;
     case CV_32S:
-        if(minmax)
-            ranges.push_back(utils_cv::
-                             make_min_max_range<int>(in->value));
+        if(min_max_)
+            range = utils_cv::
+                    make_min_max_range<int>(in->value, mask);
         else
-            ranges.push_back(utils_cv::make_range<int>());
+            range = utils_cv::make_range<int>();
         break;
     case CV_32F:
-        if(minmax)
-            ranges.push_back(utils_cv::
-                             make_min_max_range<float>(in->value));
+        if(min_max_)
+            range = utils_cv::
+                    make_min_max_range<float>(in->value, mask);
         else
-            ranges.push_back(utils_cv::make_range<float>());
+            range = utils_cv::make_range<float>();
         break;
     default:
         throw std::runtime_error("Unsupported cv type!");
     }
 
-    bins.push_back(bins_);
-    for(int i = 1 ; i < in->value.channels() ; ++i) {
-        ranges.push_back(ranges.back());
-        bins.push_back(bins.back());
+    last_type_ = type;
+
+    if(min_max_global_) {
+        if(range.first < min_max_value_.first)
+            min_max_value_.first  = range.first;
+        if(range.second > min_max_value_.second)
+            min_max_value_.second = range.second;
+
+        range = min_max_value_;
+    }
+
+    for(int i = 0 ; i < in->value.channels() ; ++i) {
+        ranges.push_back(range);
+        bins.push_back(bins_);
     }
 
     std::vector<cv::Mat> histograms;
@@ -127,8 +147,21 @@ void Histogram::setup()
 
 void Histogram::update()
 {
-    bins_       = param<int> ("bins");
-    uniform_    = param<bool>("uniform");
-    accumulate_ = param<bool>("accumulate");
+
+    bins_           = param<int> ("bins");
+    uniform_        = param<bool>("uniform");
+    accumulate_     = param<bool>("accumulate");
+    min_max_        = param<bool>("min max range");
+    min_max_global_ = param<bool>("global min max") && min_max_;
+    setParameterEnabled("global min max", min_max_);
+    if(min_max_global_) {
+        resetMinMax();
+    }
+}
+
+void Histogram::resetMinMax()
+{
+    min_max_value_ = std::make_pair<float, float>(std::numeric_limits<float>::max(),
+                                                  std::numeric_limits<float>::min());
 }
 
