@@ -35,7 +35,9 @@ RenderHistogram::RenderHistogram() :
 
 void RenderHistogram::process()
 {
+
 #warning "FIX ENCODING"
+
     boost::shared_ptr<std::vector<CvMatMessage::Ptr> const> in = input_->getMessage<GenericVectorMessage, CvMatMessage::Ptr>();
     CvMatMessage::Ptr out(new CvMatMessage(enc::bgr));
     out->value = cv::Mat(height_, width_, CV_8UC3, cv::Scalar(0,0,0));
