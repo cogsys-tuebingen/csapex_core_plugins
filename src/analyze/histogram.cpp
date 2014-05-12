@@ -33,7 +33,7 @@ Histogram::Histogram() :
                  boost::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("accumulate", false),
                  boost::bind(&Histogram::update, this));
-
+    addParameter(param::ParameterFactory::declareBool("min max range", false));
 }
 
 void Histogram::process()
@@ -51,24 +51,50 @@ void Histogram::process()
     std::vector<utils_cv::Range> ranges;
     std::vector<int>             bins;
 
+    bool minmax = param<bool>("min max range");
+
     switch(type) {
     case CV_8U:
-        ranges.push_back(utils_cv::make_range<unsigned char>());
+        if(minmax)
+            ranges.push_back(utils_cv::
+                             make_min_max_range<unsigned char>(in->value));
+        else
+            ranges.push_back(utils_cv::make_range<unsigned char>());
         break;
     case CV_8S:
-        ranges.push_back(utils_cv::make_range<signed char>());
+        if(minmax)
+            ranges.push_back(utils_cv::
+                             make_min_max_range<signed char>(in->value));
+        else
+            ranges.push_back(utils_cv::make_range<signed char>());
         break;
     case CV_16U:
-        ranges.push_back(utils_cv::make_range<unsigned short>());
+        if(minmax)
+            ranges.push_back(utils_cv::
+                             make_min_max_range<unsigned short>(in->value));
+        else
+            ranges.push_back(utils_cv::make_range<unsigned short>());
         break;
     case CV_16S:
-        ranges.push_back(utils_cv::make_range<signed short>());
+        if(minmax)
+            ranges.push_back(utils_cv::
+                             make_min_max_range<signed short>(in->value));
+        else
+            ranges.push_back(utils_cv::make_range<signed short>());
         break;
     case CV_32S:
-        ranges.push_back(utils_cv::make_range<int>());
+        if(minmax)
+            ranges.push_back(utils_cv::
+                             make_min_max_range<int>(in->value));
+        else
+            ranges.push_back(utils_cv::make_range<int>());
         break;
     case CV_32F:
-        ranges.push_back(utils_cv::make_range<float>());
+        if(minmax)
+            ranges.push_back(utils_cv::
+                             make_min_max_range<float>(in->value));
+        else
+            ranges.push_back(utils_cv::make_range<float>());
         break;
     default:
         throw std::runtime_error("Unsupported cv type!");

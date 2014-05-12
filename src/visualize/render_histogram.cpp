@@ -30,6 +30,7 @@ RenderHistogram::RenderHistogram() :
                  boost::bind(&RenderHistogram::update, this));
     addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
                  boost::bind(&RenderHistogram::update, this));
+    addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
 }
 
 void RenderHistogram::process()
@@ -39,6 +40,7 @@ void RenderHistogram::process()
     CvMatMessage::Ptr out(new CvMatMessage(enc::bgr));
     out->value = cv::Mat(height_, width_, CV_8UC3, cv::Scalar(0,0,0));
 
+    int line_width = param<int>("line width");
     int color_count = 0;
     for(std::vector<CvMatMessage::Ptr>::const_iterator it = in->begin() ; it != in->end() ; ++it, ++color_count) {
         cv::Mat histogram = (*it)->value;
@@ -47,11 +49,13 @@ void RenderHistogram::process()
         case CV_32F:
             utils_cv::render_curve<float>(histogram,
                                           utils_cv::COLOR_PALETTE.at(color_count % utils_cv::COLOR_PALETTE.size()),
+                                          line_width,
                                           out->value);
             break;
         case CV_32S:
             utils_cv::render_curve<int>(histogram,
                                           utils_cv::COLOR_PALETTE.at(color_count % utils_cv::COLOR_PALETTE.size()),
+                                          line_width,
                                           out->value);
             break;
         default:
