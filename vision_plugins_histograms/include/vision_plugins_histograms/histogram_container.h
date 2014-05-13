@@ -5,9 +5,10 @@
 #include <opencv2/opencv.hpp>
 #include <utils_cv/histogram.hpp>
 
-struct Histograms
+struct HistogramContainer
 {
     utils_cv::Range      range;
+    float                bin_range;
     std::vector<cv::Mat> histograms;
 };
 

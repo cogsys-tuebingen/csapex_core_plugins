@@ -3,16 +3,16 @@
 
 /// PROJECT
 #include <csapex/model/message.h>
-#include "histogram.h"
+#include "histogram_container.h"
 
 namespace csapex {
 namespace connection_types {
-
-class HistogramMessage : public MessageTemplate<Histograms, HistogramMessage>
+class HistogramMessage :
+        public MessageTemplate<HistogramContainer,
+                               HistogramMessage>
 {
 public:
     HistogramMessage();
-
 };
 }
 }

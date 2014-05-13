@@ -5,11 +5,10 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex_core_plugins/vector_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_core_plugins/ros_message_conversion.h>
-#include <utils_cv/histogram.hpp>
 #include <utils_param/parameter_factory.h>
+#include <utils_cv/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 
 using namespace vision_plugins;
@@ -47,12 +46,12 @@ Histogram::Histogram() :
 
 void Histogram::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
     HistogramMessage::Ptr out(new HistogramMessage);
 
     cv::Mat mask;
     if(mask_->isConnected()) {
-        CvMatMessage::Ptr mask_ptr = mask_->getMessage<connection_types::CvMatMessage>();
+        CvMatMessage::Ptr mask_ptr = mask_->getMessage<CvMatMessage>();
         mask = mask_ptr->value;
     }
 
@@ -129,13 +128,11 @@ void Histogram::process()
 
     std::vector<cv::Mat> histograms;
     utils_cv::histogram(in->value, histograms, mask, bins, ranges, uniform_, accumulate_);
-
-
-
     for(std::vector<cv::Mat>::iterator it = histograms.begin() ; it != histograms.end() ; ++it) {
         out->value.histograms.push_back(*it);
     }
-    out->value.range = range;
+    out->value.range     = range;
+    out->value.bin_range = (range.second - range.first) / (float) bins_;
     output_->publish(out);
 }
 

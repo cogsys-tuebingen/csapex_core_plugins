@@ -5,7 +5,8 @@ using namespace csapex;
 using namespace connection_types;
 
 HistogramMessage::HistogramMessage() :
-    MessageTemplate<Histograms, HistogramMessage>("Histogram")
+    MessageTemplate<HistogramContainer,
+                    HistogramMessage>("Histogram")
 {
 }
 

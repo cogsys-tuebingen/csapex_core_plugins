@@ -36,7 +36,9 @@ include_directories(include
 
 add_library(vision_plugins_histograms_msgs
     src/msg/histogram_msg.cpp
-    src/msg/histogram.cpp
+    src/msg/histogram_container.cpp
+    src/msg/histogram_maxima_msg.cpp
+    src/msg/histogram_maxima_container.cpp
 )
 
 target_link_libraries(vision_plugins_histograms_msgs
@@ -48,6 +50,7 @@ target_link_libraries(vision_plugins_histograms_msgs
 add_library(vision_plugins_histograms
     src/visualize/render_histogram.cpp
     src/analyze/histogram.cpp
+    src/analyze/histogram_maxima.cpp
 )
 
 target_link_libraries(vision_plugins_histograms 
