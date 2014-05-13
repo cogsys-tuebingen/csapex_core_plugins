@@ -10,6 +10,7 @@
 #include <csapex_core_plugins/ros_message_conversion.h>
 #include <utils_cv/histogram.hpp>
 #include <utils_param/parameter_factory.h>
+#include <vision_plugins_histograms/histogram_msg.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -38,24 +39,25 @@ void RenderHistogram::process()
 
 #warning "FIX ENCODING"
 
-    boost::shared_ptr<std::vector<CvMatMessage::Ptr> const> in = input_->getMessage<GenericVectorMessage, CvMatMessage::Ptr>();
+    HistogramMessage::Ptr in = input_->getMessage<HistogramMessage>();
     CvMatMessage::Ptr out(new CvMatMessage(enc::bgr));
     out->value = cv::Mat(height_, width_, CV_8UC3, cv::Scalar(0,0,0));
 
     int line_width = param<int>("line width");
     int color_count = 0;
-    for(std::vector<CvMatMessage::Ptr>::const_iterator it = in->begin() ; it != in->end() ; ++it, ++color_count) {
-        cv::Mat histogram = (*it)->value;
-        int type = histogram.type() & 7;
+    for(std::vector<cv::Mat>::const_iterator it = in->value.histograms.begin() ;
+                                             it != in->value.histograms.end() ;
+                                             ++it, ++color_count) {
+        int type = it->type() & 7;
         switch(type) {
         case CV_32F:
-            utils_cv::render_curve<float>(histogram,
+            utils_cv::render_curve<float>(*it,
                                           utils_cv::COLOR_PALETTE.at(color_count % utils_cv::COLOR_PALETTE.size()),
                                           line_width,
                                           out->value);
             break;
         case CV_32S:
-            utils_cv::render_curve<int>(histogram,
+            utils_cv::render_curve<int>(  *it,
                                           utils_cv::COLOR_PALETTE.at(color_count % utils_cv::COLOR_PALETTE.size()),
                                           line_width,
                                           out->value);
@@ -70,7 +72,7 @@ void RenderHistogram::process()
 
 void RenderHistogram::setup()
 {
-    input_  = addInput<GenericVectorMessage, CvMatMessage::Ptr>("histograms");
+    input_  = addInput<HistogramMessage>("histograms");
     output_ = addOutput<CvMatMessage>("image");
 }
 

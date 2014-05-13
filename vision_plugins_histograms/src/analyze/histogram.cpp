@@ -10,6 +10,7 @@
 #include <csapex_core_plugins/ros_message_conversion.h>
 #include <utils_cv/histogram.hpp>
 #include <utils_param/parameter_factory.h>
+#include <vision_plugins_histograms/histogram_msg.h>
 
 using namespace vision_plugins;
 using namespace csapex;
@@ -47,7 +48,7 @@ Histogram::Histogram() :
 void Histogram::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    boost::shared_ptr<std::vector<CvMatMessage::Ptr> > out(new std::vector<CvMatMessage::Ptr>);
+    HistogramMessage::Ptr out(new HistogramMessage);
 
     cv::Mat mask;
     if(mask_->isConnected()) {
@@ -129,19 +130,20 @@ void Histogram::process()
     std::vector<cv::Mat> histograms;
     utils_cv::histogram(in->value, histograms, mask, bins, ranges, uniform_, accumulate_);
 
-    for(std::vector<cv::Mat>::iterator it = histograms.begin() ; it != histograms.end() ; ++it) {
-        out->push_back(CvMatMessage::Ptr(new CvMatMessage(enc::unknown)));
-        out->back()->value = *it;
-    }
 
-    output_->publish<GenericVectorMessage, CvMatMessage::Ptr>(out);
+
+    for(std::vector<cv::Mat>::iterator it = histograms.begin() ; it != histograms.end() ; ++it) {
+        out->value.histograms.push_back(*it);
+    }
+    out->value.range = range;
+    output_->publish(out);
 }
 
 void Histogram::setup()
 {
     input_  = addInput<CvMatMessage>("input");
     mask_   = addInput<CvMatMessage>("mask", true);
-    output_ = addOutput<GenericVectorMessage, CvMatMessage::Ptr>("histograms");
+    output_ = addOutput<HistogramMessage>("histograms");
     update();
 }
 

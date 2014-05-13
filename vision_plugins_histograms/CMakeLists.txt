@@ -20,8 +20,8 @@ csapex_moc_all(MOC src/*.h)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES cvblob
+  INCLUDE_DIRS  include
+  LIBRARIES     vision_plugins_histograms_msgs
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
@@ -34,6 +34,16 @@ include_directories(include
     ${catkin_INCLUDE_DIRS}
 )
 
+add_library(vision_plugins_histograms_msgs
+    src/msg/histogram_msg.cpp
+    src/msg/histogram.cpp
+)
+
+target_link_libraries(vision_plugins_histograms_msgs
+    ${OpenCV_LIBS}
+    ${Boost_LIBRARIES}
+    ${catkin_LIBRARIES}
+)
 
 add_library(vision_plugins_histograms
     src/visualize/render_histogram.cpp
@@ -42,6 +52,7 @@ add_library(vision_plugins_histograms
 
 target_link_libraries(vision_plugins_histograms 
   yaml-cpp 
+  vision_plugins_histograms_msgs
   ${OpenCV_LIBS} ${Boost_LIBRARIES}
   ${catkin_LIBRARIES} 
 )
