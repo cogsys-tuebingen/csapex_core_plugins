@@ -2,7 +2,7 @@
 <package>
   <name>vision_plugins</name>
   <version>0.0.0</version>
-  <description>The image_transformation package contains image transformation plugins for the vision evaluator.</description>
+  <description>The image_transformation package contains image transformation plugins for the csapex.</description>
   <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
  <license>BSD</license>
 

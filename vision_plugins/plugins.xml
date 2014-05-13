@@ -169,17 +169,6 @@
         Build an 8 level image or matrix pyramid.
     </description>
   </class>
-  <class type="vision_plugins::Histogram" base_class_type="csapex::Node">
-    <description>
-        Calculate an 1D histogram for an image. Multiple Channels are supported, but only
-        one value for the bin amount can be set.
-    </description>
-  </class>
-  <class type="vision_plugins::RenderHistogram" base_class_type="csapex::Node">
-    <description>
-        Render histogram results.
-    </description>
-  </class>
   <class type="vision_plugins::BinomialFilter" base_class_type="csapex::Node">
     <description>
         Apply the binomial filter to either a matrix or an image.

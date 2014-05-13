@@ -84,7 +84,6 @@ add_library(vision_plugins
     src/features/scharr.cpp
 
     src/visualize/matrix_to_heatmap.cpp
-    src/visualize/render_histogram.cpp
     src/visualize/render_labels.cpp
 
     src/filter/median_filter.cpp
@@ -98,7 +97,6 @@ add_library(vision_plugins
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
-    src/analyze/histogram.cpp
     src/analyze/label_regions.cpp
 
     src/experimental/noise_filter.cpp
@@ -106,8 +104,12 @@ add_library(vision_plugins
 
 )
 
-target_link_libraries(vision_plugins yaml-cpp ${OpenCV_LIBS} ${Boost_LIBRARIES}
-  ${catkin_LIBRARIES} cvblob
+target_link_libraries(vision_plugins
+  yaml-cpp 
+  ${OpenCV_LIBS} 
+  ${Boost_LIBRARIES}
+  ${catkin_LIBRARIES} 
+  cvblob
 )
 
 
