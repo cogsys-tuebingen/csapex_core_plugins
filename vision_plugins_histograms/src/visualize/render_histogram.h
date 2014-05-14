@@ -16,6 +16,7 @@ public:
 protected:
     csapex::ConnectorOut*   output_;
     csapex::ConnectorIn*    input_;
+    csapex::ConnectorIn*    maxima_;
 
     void update();
 

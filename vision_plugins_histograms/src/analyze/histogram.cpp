@@ -56,55 +56,61 @@ void Histogram::process()
     }
 
     int type = in->value.type() & 7;
-    std::vector<utils_cv::Range> ranges;
+    std::vector<utils_cv::histogram::Range> ranges;
     std::vector<int>             bins;
 
     if(min_max_ && type != last_type_)
         resetMinMax();
 
-    utils_cv::Range range;
+    utils_cv::histogram::Range range;
     switch(type) {
     case CV_8U:
         if(min_max_)
-            range = utils_cv::
+            range = utils_cv::histogram::
                     make_min_max_range<unsigned char>(in->value, mask);
         else
-            range = utils_cv::make_range<unsigned char>();
+            range = utils_cv::histogram::
+                    make_range<unsigned char>();
         break;
     case CV_8S:
         if(min_max_)
-            range = utils_cv::
+            range = utils_cv::histogram::
                     make_min_max_range<signed char>(in->value, mask);
         else
-            range = utils_cv::make_range<signed char>();
+            range = utils_cv::histogram::
+                    make_range<signed char>();
         break;
     case CV_16U:
         if(min_max_)
-            range = utils_cv::
+            range = utils_cv::histogram::
                     make_min_max_range<unsigned short>(in->value, mask);
         else
-            range = utils_cv::make_range<unsigned short>();
+            range = utils_cv::histogram::
+                    make_range<unsigned short>();
         break;
     case CV_16S:
         if(min_max_)
-            range = utils_cv::
+            range = utils_cv::histogram::
                     make_min_max_range<signed short>(in->value, mask);
         else
-            range = utils_cv::make_range<signed short>();
+            range = utils_cv::histogram::
+                    make_range<signed short>();
         break;
     case CV_32S:
         if(min_max_)
-            range = utils_cv::
+            range = utils_cv::histogram::
                     make_min_max_range<int>(in->value, mask);
         else
-            range = utils_cv::make_range<int>();
+            range = utils_cv::histogram::
+                    make_range<int>();
         break;
     case CV_32F:
         if(min_max_)
-            range = utils_cv::
+            range = utils_cv::histogram::
                     make_min_max_range<float>(in->value, mask);
         else
-            range = utils_cv::make_range<float>();
+            range = utils_cv::histogram::
+                    make_range<float>();
         break;
     default:
         throw std::runtime_error("Unsupported cv type!");
@@ -127,7 +133,8 @@ void Histogram::process()
     }
 
     std::vector<cv::Mat> histograms;
-    utils_cv::histogram(in->value, histograms, mask, bins, ranges, uniform_, accumulate_);
+    utils_cv::histogram::histogram
+            (in->value, histograms, mask, bins, ranges, uniform_, accumulate_);
     for(std::vector<cv::Mat>::iterator it = histograms.begin() ; it != histograms.end() ; ++it) {
         out->value.histograms.push_back(*it);
     }

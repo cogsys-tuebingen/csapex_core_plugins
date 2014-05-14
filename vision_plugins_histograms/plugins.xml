@@ -10,4 +10,9 @@
         Render histogram results.
     </description>
   </class>
+  <class type="vision_plugins::HistogramMaxima" base_class_type="csapex::Node">
+    <description>
+        Simple method to find maxima in histograms.
+    </description>
+  </class>
 </library>

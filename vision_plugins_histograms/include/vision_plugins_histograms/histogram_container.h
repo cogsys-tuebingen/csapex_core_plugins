@@ -7,9 +7,9 @@
 
 struct HistogramContainer
 {
-    utils_cv::Range      range;
-    float                bin_range;
-    std::vector<cv::Mat> histograms;
+    utils_cv::histogram::Range      range;
+    float                           bin_range;
+    std::vector<cv::Mat>            histograms;
 };
 
 #endif // HISTOGRAM_H

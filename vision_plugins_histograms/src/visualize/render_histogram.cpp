@@ -8,9 +8,11 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_core_plugins/ros_message_conversion.h>
-#include <utils_cv/histogram.hpp>
 #include <utils_param/parameter_factory.h>
+
+#include <utils_cv/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
+#include <vision_plugins_histograms/histogram_maxima_msg.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -39,31 +41,70 @@ void RenderHistogram::process()
 
 #warning "FIX ENCODING"
 
-    HistogramMessage::Ptr in = input_->getMessage<HistogramMessage>();
+    HistogramMessage::Ptr in    = input_->getMessage<HistogramMessage>();
+    HistogramMaximaMessage::Ptr maxima;
+    if(maxima_->isConnected()) {
+        maxima = maxima_->getMessage<HistogramMaximaMessage>();
+        if(maxima->value.maxima.size() != in->value.histograms.size()) {
+            throw std::runtime_error("Histograms and maxima entries must have the same size!");
+        }
+    }
+
     CvMatMessage::Ptr out(new CvMatMessage(enc::bgr));
     out->value = cv::Mat(height_, width_, CV_8UC3, cv::Scalar(0,0,0));
 
     int line_width = param<int>("line width");
-    int color_count = 0;
-    for(std::vector<cv::Mat>::const_iterator it = in->value.histograms.begin() ;
-                                             it != in->value.histograms.end() ;
-                                             ++it, ++color_count) {
-        int type = it->type() & 7;
-        switch(type) {
-        case CV_32F:
-            utils_cv::render_curve<float>(*it,
-                                          utils_cv::COLOR_PALETTE.at(color_count % utils_cv::COLOR_PALETTE.size()),
-                                          line_width,
-                                          out->value);
-            break;
-        case CV_32S:
-            utils_cv::render_curve<int>(  *it,
-                                          utils_cv::COLOR_PALETTE.at(color_count % utils_cv::COLOR_PALETTE.size()),
-                                          line_width,
-                                          out->value);
-            break;
-        default:
-            aerr << "Only 32bit float or 32bit integer histograms supported!" << std::endl;
+
+    if(maxima.get() == NULL) {
+        int color_count = 0;
+        for(std::vector<cv::Mat>::const_iterator it = in->value.histograms.begin() ;
+            it != in->value.histograms.end() ;
+            ++it, ++color_count) {
+            int type = it->type() & 7;
+            switch(type) {
+            case CV_32F:
+                utils_cv::histogram::render_curve<float>(*it,
+                                                         utils_cv::histogram::COLOR_PALETTE.at
+                                                         (color_count % utils_cv::histogram::COLOR_PALETTE.size()),
+                                                         line_width,
+                                                         out->value);
+                break;
+            case CV_32S:
+                utils_cv::histogram::render_curve<int>(  *it,
+                                                         utils_cv::histogram::COLOR_PALETTE.at
+                                                         (color_count % utils_cv::histogram::COLOR_PALETTE.size()),
+                                                         line_width,
+                                                         out->value);
+            default:
+                throw std::runtime_error("Only 32bit float or 32bit integer histograms supported!");
+            }
+        }
+    } else {
+        std::vector<cv::Mat> &histograms = in->value.histograms;
+        for(unsigned int i = 0 ; i < histograms.size() ; ++i) {
+            int type = histograms.at(i).type() & 7;
+            switch(type) {
+            case CV_32F:
+                utils_cv::histogram::render_curve<float>(histograms.at(i),
+                                                         maxima->value.maxima.at(i),
+                                                         utils_cv::histogram::COLOR_PALETTE.at
+                                                         (i % utils_cv::histogram::COLOR_PALETTE.size()),
+                                                         line_width,
+                                                         5,
+                                                         out->value);
+                break;
+            case CV_32S:
+                utils_cv::histogram::render_curve<int>(histograms.at(i),
+                                                       maxima->value.maxima.at(i),
+                                                       utils_cv::histogram::COLOR_PALETTE.at
+                                                       (i % utils_cv::histogram::COLOR_PALETTE.size()),
+                                                       line_width,
+                                                       5,
+                                                       out->value);
+            default:
+                throw std::runtime_error("Only 32bit float or 32bit integer histograms supported!");
+
+            }
         }
     }
 
@@ -74,6 +115,7 @@ void RenderHistogram::setup()
 {
     input_  = addInput<HistogramMessage>("histograms");
     output_ = addOutput<CvMatMessage>("image");
+    maxima_ = addInput<HistogramMaximaMessage>("maxima", true);
 }
 
 void RenderHistogram::update()

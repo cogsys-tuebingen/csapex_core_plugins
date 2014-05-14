@@ -28,10 +28,10 @@ LocalPatterns::LocalPatterns()
     boost::function<bool()> k_cond = (boost::bind(&param::Parameter::as<int>, method.get()) == LTP);
     addConditionalParameter(param::ParameterFactory::declareRange("k", 0.0, 1000.0, 5.0, 1.0), k_cond);
 
-    colors_.push_back(utils_cv::COLOR_WHITE);
-    colors_.push_back(utils_cv::COLOR_GREEN);
-    colors_.push_back(utils_cv::COLOR_CYAN);
-    colors_.push_back(utils_cv::COLOR_RED);
+    colors_.push_back(utils_cv::histogram::COLOR_WHITE);
+    colors_.push_back(utils_cv::histogram::COLOR_GREEN);
+    colors_.push_back(utils_cv::histogram::COLOR_CYAN);
+    colors_.push_back(utils_cv::histogram::COLOR_RED);
 
     Tag::createIfNotExists("Analysis");
     addTag(Tag::get("Analysis"));
@@ -64,7 +64,7 @@ void LocalPatterns::filter(Mat &img, Mat &mask)
             bins.push_back(256);
         }
         out = cv::Mat(600, 800, CV_8UC3, cv::Scalar::all(0));
-        utils_cv::render_histogram<int>(channel_hists, bins, colors_, out);
+        utils_cv::histogram::render_histogram<int>(channel_hists, bins, colors_, out);
     }
         break;
 
@@ -87,8 +87,10 @@ void LocalPatterns::filter(Mat &img, Mat &mask)
         out = cv::Mat(600, 1600, CV_8UC3, cv::Scalar::all(0));
         cv::Mat roi_pos(out, cv::Rect(0,0, 800, 600));
         cv::Mat roi_neg(out, cv::Rect(800,0, 800,600));
-        utils_cv::render_histogram<int>(channel_hists_pos, bins, colors_, roi_pos);
-        utils_cv::render_histogram<int>(channel_hists_neg, bins, colors_, roi_neg);
+        utils_cv::histogram::render_histogram<int>
+                (channel_hists_pos, bins, colors_, roi_pos);
+        utils_cv::histogram::render_histogram<int>
+                (channel_hists_neg, bins, colors_, roi_neg);
     }
 
         break;

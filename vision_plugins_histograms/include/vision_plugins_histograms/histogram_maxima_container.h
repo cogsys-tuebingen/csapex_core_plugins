@@ -4,10 +4,7 @@
 #include <vector>
 struct HistogramMaximaContainer {
     typedef std::pair<unsigned int, float> Maximum;
-
-    /// first  == bin the maximum is related to
-    /// second == the value the maximum has
-
+    /// position in the histogram
     std::vector<std::vector<Maximum> > maxima;
 };
 

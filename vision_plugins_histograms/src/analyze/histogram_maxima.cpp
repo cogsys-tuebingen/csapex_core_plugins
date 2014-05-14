@@ -24,21 +24,38 @@ HistogramMaxima::HistogramMaxima()
     addTag(Tag::get("Histogram"));
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
+
+    addParameter(param::ParameterFactory::declareRange("k", 1, 128, 2, 1));
 }
 
 void HistogramMaxima::process()
 {
-     HistogramMessage::Ptr       input  = histograms_->getMessage<HistogramMessage>();
-     HistogramMaximaMessage::Ptr output(new HistogramMaximaMessage);
+    HistogramMessage::Ptr       input  = histograms_->getMessage<HistogramMessage>();
+    HistogramMaximaMessage::Ptr output(new HistogramMaximaMessage);
 
-     unsigned int count = input->value.histograms.size();
-     output->value.maxima.resize(count);
+    unsigned int count = input->value.histograms.size();
+    output->value.maxima.resize(count);
 
-     for(unsigned int i = 0 ; i < count ; ++i) {
-         cv::Mat &histogram = input->value.histograms.at(i);
-        /// apply find maximum
-     }
-
+    unsigned int k = param<int>("k");
+    for(unsigned int i = 0 ; i < count ; ++i) {
+        cv::Mat &src = input->value.histograms.at(i);
+        int type = src.type() & 7;
+        switch(type) {
+        case CV_32F:
+            utils_cv::histogram::find_maxima1D<float>(src,
+                                                      k,
+                                                      output->value.maxima.at(i));
+            break;
+        case CV_32S:
+            utils_cv::histogram::find_maxima1D<int>(src,
+                                                    k,
+                                                    output->value.maxima.at(i));
+            break;
+        default:
+            throw std::runtime_error("Only 32bit float or 32bit integer histograms supported!");
+        }
+    }
+    maxima_->publish(output);
 }
 
 void HistogramMaxima::setup()
