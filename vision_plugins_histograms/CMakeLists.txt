@@ -51,6 +51,7 @@ add_library(vision_plugins_histograms
     src/visualize/render_histogram.cpp
     src/analyze/histogram.cpp
     src/analyze/histogram_maxima.cpp
+    src/filter/slicing.cpp
 )
 
 target_link_libraries(vision_plugins_histograms 

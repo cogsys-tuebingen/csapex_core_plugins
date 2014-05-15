@@ -36,6 +36,7 @@ void HistogramMaxima::process()
 
     unsigned int count = input->value.histograms.size();
     output->value.maxima.resize(count);
+    output->value.bin_range = input->value.bin_range;
 
     unsigned int k = param<int>("k");
     float thresh   = param<int>("thresh");

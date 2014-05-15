@@ -6,6 +6,7 @@ struct HistogramMaximaContainer {
     typedef std::pair<unsigned int, float> Maximum;
     /// position in the histogram
     std::vector<std::vector<Maximum> > maxima;
+    float                              bin_range;
 };
 
 

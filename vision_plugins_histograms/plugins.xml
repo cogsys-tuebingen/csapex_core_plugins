@@ -15,4 +15,9 @@
         Simple method to find maxima in histograms.
     </description>
   </class>
+  <class type="vision_plugins::Slicing" base_class_type="csapex::Node">
+    <description>
+        Slice image and its channels given the histogram peaks.
+    </description>
+  </class>
 </library>
