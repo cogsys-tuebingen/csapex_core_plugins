@@ -10,6 +10,9 @@ namespace csapex
 struct LabeledScan : public Scan
 {
 public:
+    typedef boost::shared_ptr<LabeledScan> Ptr;
+
+public:
     std::vector<int> labels;
 };
 
