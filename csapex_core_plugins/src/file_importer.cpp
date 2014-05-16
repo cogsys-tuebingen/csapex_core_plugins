@@ -37,10 +37,6 @@ FileImporter::FileImporter()
 
     param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
     addParameter(immediate, boost::bind(&FileImporter::changeMode, this));
-
-    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeWorker::setTickFrequency, getNodeWorker(), boost::bind(&param::Parameter::as<double>, _1));
-    boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
-    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
 }
 
 FileImporter::~FileImporter()
@@ -95,7 +91,6 @@ bool FileImporter::doImport(const QString& _path)
     provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
     provider_->load(path.toStdString());
 
-
     setParameterSetSilence(true);
     removeTemporaryParameters();
     std::vector<param::Parameter::Ptr> params = provider_->getParameters();
@@ -116,6 +111,12 @@ QIcon FileImporter::getIcon() const
 void FileImporter::setup()
 {
     output_ = addOutput<connection_types::AnyMessage>("Unknown");
+
+    param::Parameter::Ptr immediate = getParameter("playback/immediate");
+
+    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeWorker::setTickFrequency, getNodeWorker(), boost::bind(&param::Parameter::as<double>, _1));
+    boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
+    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
 }
 
 void FileImporter::process()
