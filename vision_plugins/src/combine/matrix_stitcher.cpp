@@ -17,7 +17,8 @@ CSAPEX_REGISTER_CLASS(vision_plugins::MatrixStitcher, csapex::Node)
 
 namespace {
     void stitch(const cv::Mat &src1, const cv::Mat &src2,
-                const bool vertical, const unsigned int offset,
+                const bool vertical,
+                const unsigned int offset,
                 cv::Mat &dst)
     {
         assert(src1.type() == src2.type());
@@ -27,12 +28,16 @@ namespace {
                       cols * (vertical ? 1 : 2),
                       src1.type(), cv::Scalar::all(0));
 
-        cv::Rect roi_rect(0,0,src1.cols,src1.rows);
+        int x_off = (cols - src1.cols) / 2;
+        int y_off = (rows - src1.rows) / 2;
+        cv::Rect roi_rect(x_off, y_off, src1.cols,src1.rows);
         cv::Mat  roi(dst, roi_rect);
         src1.copyTo(roi);
 
-        roi_rect = vertical ? cv::Rect(0,rows + offset, src2.cols, src2.rows)
-                            : cv::Rect(cols + offset,0, src2.cols, src2.rows);
+        x_off = (cols - src2.cols) / 2;
+        y_off = (rows - src2.rows) / 2;
+        roi_rect = vertical ? cv::Rect(x_off, rows + offset + y_off, src2.cols, src2.rows)
+                            : cv::Rect(cols + offset + x_off, y_off, src2.cols, src2.rows);
         roi = cv::Mat(dst, roi_rect);
         src2.copyTo(roi);
 
