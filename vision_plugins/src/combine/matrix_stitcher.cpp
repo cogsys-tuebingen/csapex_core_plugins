@@ -22,22 +22,36 @@ namespace {
                 cv::Mat &dst)
     {
         assert(src1.type() == src2.type());
-        int rows = std::max(src1.rows, src2.rows) + (vertical ? offset : 0);
-        int cols = std::max(src1.cols, src2.cols) + (vertical ? 0 : offset);
-        dst = cv::Mat(rows * (vertical ? 2 : 1),
-                      cols * (vertical ? 1 : 2),
-                      src1.type(), cv::Scalar::all(0));
+        int rows = std::max(src1.rows, src2.rows);
+        int cols = std::max(src1.cols, src2.cols);
+        int pad_rows = 0;
+        int pad_cols = 0;
+        if(vertical) {
+            pad_rows = offset;
+            dst = cv::Mat(rows * 2 + offset,
+                          cols,
+                          src1.type(),
+                          cv::Scalar::all(0));
+        } else {
+            pad_cols = offset;
+            dst = cv::Mat(rows,
+                          cols * 2 + offset,
+                          src1.type(),
+                          cv::Scalar::all(0));
+        }
 
+        /// CENTERING
         int x_off = (cols - src1.cols) / 2;
         int y_off = (rows - src1.rows) / 2;
-        cv::Rect roi_rect(x_off, y_off, src1.cols,src1.rows);
+        cv::Rect roi_rect(x_off, y_off, src1.cols, src1.rows);
         cv::Mat  roi(dst, roi_rect);
         src1.copyTo(roi);
 
-        x_off = (cols - src2.cols) / 2;
-        y_off = (rows - src2.rows) / 2;
-        roi_rect = vertical ? cv::Rect(x_off, rows + offset + y_off, src2.cols, src2.rows)
-                            : cv::Rect(cols + offset + x_off, y_off, src2.cols, src2.rows);
+        x_off = (cols - src2.cols) / 2 + pad_cols;
+        y_off = (rows - src2.rows) / 2 + pad_rows;
+        roi_rect = cv::Rect((vertical ? 0 : cols) + x_off,
+                            (vertical ? rows : 0) + y_off,
+                            src2.cols, src2.rows);
         roi = cv::Mat(dst, roi_rect);
         src2.copyTo(roi);
 
