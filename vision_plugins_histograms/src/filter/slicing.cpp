@@ -61,7 +61,8 @@ void Slicing::process()
         }
     }
 
-    cv::merge(output_channels, slices->value);
+    if(output_channels.size() > 0)
+        cv::merge(output_channels, slices->value);
     slices_->publish(slices);
 }
 
