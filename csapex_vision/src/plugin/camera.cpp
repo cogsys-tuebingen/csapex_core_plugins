@@ -61,6 +61,10 @@ void Camera::update()
     int w = param<int>("w");
     int h = param<int>("h");
 
+    if(dev == 0) {
+        return;
+    }
+
     if(dev == current_dev_ && w == w_ && h == h_) {
         // no change, no update
         return;
@@ -78,9 +82,9 @@ void Camera::update()
         throw std::runtime_error("cannot open camera with the given id");
     }
 
-    ainfo << "camera settings" << std::endl;
-    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
-    cap_.set(CV_CAP_PROP_FRAME_WIDTH, w);
-    cap_.set(CV_CAP_PROP_FRAME_HEIGHT, h);
-    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+//    ainfo << "camera settings" << std::endl;
+//    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+//    cap_.set(CV_CAP_PROP_FRAME_WIDTH, w);
+//    cap_.set(CV_CAP_PROP_FRAME_HEIGHT, h);
+//    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
 }

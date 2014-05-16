@@ -39,6 +39,7 @@ void BarCodeReader::process()
     }
 
     bool republish = param<bool>("republish");
+    bool published = false;
 
     zbar::ImageScanner scanner;
     // configure the reader
@@ -51,22 +52,22 @@ void BarCodeReader::process()
 
     // scan the image for barcodes
     int n = scanner.scan(image);
-    if(n == 0) {
-        if(!data_.empty() && !lost) {
-            lost = true;
-            forget = 30;
-        }
-    }
+//    if(n == 0) {
+//        if(!data_.empty() && !lost) {
+//            lost = true;
+//            forget = 30;
+//        }
+//    }
 
-    if(lost) {
-        if(forget > 0) {
-            --forget;
-        }
-        if(forget == 0) {
-            data_ = "";
-            lost = false;
-        }
-    }
+//    if(lost) {
+//        if(forget > 0) {
+//            --forget;
+//        }
+//        if(forget == 0) {
+//            data_ = "";
+//            lost = false;
+//        }
+//    }
 
     VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
@@ -101,24 +102,27 @@ void BarCodeReader::process()
             }
         }
 
-        if(data == data_) {
-            if(lost) {
-                lost = false;
-            }
+//        if(data == data_) {
+//            if(lost) {
+//                lost = false;
+//            }
 
-            if(!republish) {
-                continue;
-            }
-        }
+//            if(!republish) {
+//                continue;
+//            }
+//        }
 
         out_str->publishIntegral(data);
+        published = true;
 
         data_ = data;
     }
 
-    if(!out->value.empty()) {
-        out_roi->publish(out);
+    if(!published && republish) {
+        out_str->publishIntegral(data_);
     }
+
+    out_roi->publish(out);
 
     // clean up
     image.set_data(NULL, 0);
@@ -128,9 +132,7 @@ void BarCodeReader::process()
 
 void BarCodeReader::setup()
 {
-    setSynchronizedInputs(true);
-
-    in_img = addInput<CvMatMessage>("Image", false, true);
+    in_img = addInput<CvMatMessage>("Image");
 
     out_str = addOutput<DirectMessage<std::string> >("String");
     out_roi = addOutput<VectorMessage, RoiMessage>("ROIs");

@@ -11,6 +11,7 @@
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 #include <boost/mpl/for_each.hpp>
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <pcl_ros/transforms.h>
 #include <pcl/filters/crop_box.h>
 
@@ -30,8 +31,6 @@ CropBox::CropBox()
 
 void CropBox::setup()
 {
-    setSynchronizedInputs(true);
-
     input_cloud_ = addInput<PointCloudMessage>("PointCloud");
 
     output_pos_ = addOutput<PointCloudMessage>("cropped PointCloud (+)");
@@ -53,7 +52,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     std::pair<double,double> dz = param<std::pair<double, double> >("dz");
 
     Eigen::Vector4f min_pt_(dx.first, dy.first, dz.first, 0);
-    Eigen::Vector4f max_pt_(dy.second, dy.second, dy.second, 0);
+    Eigen::Vector4f max_pt_(dx.second, dy.second, dz.second, 0);
 
     pcl::CropBox<PointT> crop;
     crop.setMin(min_pt_);

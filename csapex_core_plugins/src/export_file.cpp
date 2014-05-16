@@ -36,7 +36,6 @@ void ExportFile::setup()
 {
     connector_ = addInput<connection_types::AnyMessage>("Anything");
 
-    setSynchronizedInputs(true);
 }
 
 void ExportFile::setExportPath()

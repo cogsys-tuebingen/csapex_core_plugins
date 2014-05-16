@@ -36,7 +36,6 @@ void SplitClusteredCloud::process()
 
 void SplitClusteredCloud::setup()
 {
-    setSynchronizedInputs(true);
     input_  = addInput<PointCloudMessage>("PointCloud");
     in_indices_ = addInput <GenericVectorMessage, pcl::PointIndices>("Clusters");
 

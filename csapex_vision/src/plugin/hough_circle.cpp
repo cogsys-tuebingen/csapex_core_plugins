@@ -39,8 +39,6 @@ HoughCircle::HoughCircle()
 
 void HoughCircle::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("Image");
     output_ = addOutput<CvMatMessage>("Debug Image");
 }

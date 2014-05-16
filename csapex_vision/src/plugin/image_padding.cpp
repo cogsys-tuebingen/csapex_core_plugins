@@ -33,8 +33,6 @@ QIcon ImagePadding::getIcon() const
 
 void ImagePadding::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("Image");
 
     output_ = addOutput<CvMatMessage>("Expanded Image");

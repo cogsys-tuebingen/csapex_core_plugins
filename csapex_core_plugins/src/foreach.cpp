@@ -18,11 +18,9 @@ using namespace csapex;
 using namespace connection_types;
 
 Foreach::Foreach()
-    : in_sub(NULL), out_sub(NULL), messages_(0), message_(0)
+    : in_sub(NULL), out_sub(NULL), msg_received_(false)
 {
     addTag(Tag::get("General"));
-
-    current_result_.reset(new VectorMessage);
 }
 
 Foreach::~Foreach()
@@ -37,8 +35,6 @@ Foreach::~Foreach()
 
 void Foreach::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<VectorMessage>("Vector");
     output_ = addOutput<VectorMessage>("Content");
 
@@ -49,12 +45,19 @@ void Foreach::setup()
     out_sub->setType(AnyMessage::make());
     in_sub->setType(AnyMessage::make());
 
+    out_sub->enable();
+    in_sub->enable();
+
     manageInput(in_sub);
     manageOutput(out_sub);
 
-    out_sub->enable();
-    in_sub->enable();
-    QObject::connect(in_sub, SIGNAL(messageArrived(Connectable*)), this, SLOT(appendMessageFrom(Connectable*)), Qt::DirectConnection);
+    QObject::connect(in_sub, SIGNAL(connectionRemoved()), output_, SLOT(disable()));
+    QObject::connect(in_sub, SIGNAL(connectionDone()), output_, SLOT(enable()));
+    QObject::connect(in_sub, SIGNAL(connectionEnabled(bool)), output_, SLOT(setEnabled(bool)));
+
+    QObject::connect(in_sub, SIGNAL(messageArrived(Connectable*)), this, SLOT(messageProcessed()), Qt::DirectConnection);
+
+    checkIO();
 }
 
 void Foreach::process()
@@ -63,35 +66,64 @@ void Foreach::process()
 
     out_sub->setType(vec->getSubType());
 
-    messages_ = vec->value.size();
+    std::size_t messages = vec->value.size();
 
-    for(int i = 0; i < messages_; ++i) {
+
+    VectorMessage::Ptr result(new VectorMessage);
+
+    // iterate all entries of the vector
+    for(std::size_t i = 0; i < messages; ++i) {
         std::stringstream step; step << "step " << i;
         Timer::Interlude::Ptr interlude = publish_timer_->step(step.str());
+        out_sub->setSequenceNumber(vec->sequenceNumber()+1);
+
+        // send out ith component
         out_sub->publish(vec->value[i]);
+        out_sub->sendMessages();
+
+        // wait for the message to be processed
+        msg_mutex_.lock();
+        while(!msg_received_) {
+            msg_received_cond_.wait(&msg_mutex_);
+        }
+        msg_received_ = false;
+        msg_mutex_.unlock();
+
+        // read the result
+        ConnectorOut* out = dynamic_cast<ConnectorOut*>(in_sub->getSource());
+        ConnectionType::Ptr msg = out->getMessage();
+        result->value.push_back(msg);
+
+        // allow sending the next message
+        in_sub->free();
+    }
+
+    // publish the result
+    output_->setType(result);
+    output_->publish(result);
+}
+
+void Foreach::checkIO()
+{
+    if(isEnabled()) {
+        enableInput(canReceive());
+
+        bool eo = canReceive() && in_sub->isConnected();
+        enableOutput(eo);
+    } else {
+        enableInput(false);
+        enableOutput(false);
     }
 }
 
 
-void Foreach::appendMessageFrom(Connectable *)
+
+void Foreach::messageProcessed()
 {
-    ConnectorOut* out = dynamic_cast<ConnectorOut*>(in_sub->getSource());
-    if(!out) {
-        return;
-    }
-    ConnectionType::Ptr msg = out->getMessage();
-
-    current_result_->value.push_back(msg);
-
-    ++message_;
-    if(message_ >= messages_) {
-        message_ = 0;
-
-        output_->setType(current_result_);
-        output_->publish(current_result_);
-
-        current_result_.reset(new VectorMessage);
-    }
+    QMutexLocker lock(&msg_mutex_);
+    assert(!msg_received_);
+    msg_received_ = true;
+    msg_received_cond_.wakeAll();
 }
 
 void Foreach::stop()

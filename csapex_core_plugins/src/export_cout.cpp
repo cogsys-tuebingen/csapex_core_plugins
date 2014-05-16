@@ -28,8 +28,6 @@ QIcon ExportCout::getIcon() const
 
 void ExportCout::setup()
 {
-    setSynchronizedInputs(true);
-
     connector_ = addInput<connection_types::AnyMessage>("Anything");
 }
 

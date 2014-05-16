@@ -34,8 +34,6 @@ QIcon Filter::getIcon() const
 
 void Filter::setup()
 {
-    setSynchronizedInputs(true);
-
     input_img_ = addInput<CvMatMessage>("Image");
     if(usesMask()) {
         input_mask_ = addInput<CvMatMessage>("Mask", true);

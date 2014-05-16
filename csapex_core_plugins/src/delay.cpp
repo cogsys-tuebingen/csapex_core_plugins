@@ -29,8 +29,6 @@ QIcon Delay::getIcon() const
 
 void Delay::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<connection_types::AnyMessage>("Input");
     output_ = addOutput<connection_types::AnyMessage>("Delayed Input");
 }

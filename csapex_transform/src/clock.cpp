@@ -48,8 +48,6 @@ void Clock::process()
 
 void Clock::setup()
 {
-    setSynchronizedInputs(true);
-
     output_ = addOutput<connection_types::TimeStampMessage>("Time");
 }
 

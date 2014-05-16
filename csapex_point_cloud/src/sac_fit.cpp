@@ -6,6 +6,7 @@
 #include <csapex_core_plugins/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/tf.h>
 
 /// SYSTEM
@@ -49,12 +50,11 @@ SacFit::SacFit()
 void SacFit::process()
 {
 //    if (in_indices_->isConnected()) {
-//        setSynchronizedInputs(true);
 //    } else {
 //        setSynchronizedInputs(false);
 //    }
     // Get indices from in_indices_
-    cluster_indices_ = in_indices_->getMessage<GenericVectorMessage, pcl::PointIndices>();
+
 
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
     boost::apply_visitor (PointCloudMessage::Dispatch<SacFit>(this), msg->value);
@@ -65,10 +65,9 @@ void SacFit::process()
 
 void SacFit::setup()
 {
-    setSynchronizedInputs(true);
     input_ = addInput<PointCloudMessage>("PointCloud");
     out_text_= addOutput<DirectMessage<std::string> >("String");
-    in_indices_ = addInput <GenericVectorMessage, pcl::PointIndices>("Clusters");
+    in_indices_ = addInput <GenericVectorMessage, pcl::PointIndices>("Clusters", true); // optional input
 
     out_model_ = addOutput<GenericVectorMessage, ModelMessage >("Models");
     out_cloud_ = addOutput<PointCloudMessage>("Points of Model");
@@ -96,6 +95,8 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 
     // If inlices are connected search for models in the clusters
     if (in_indices_->isConnected()) {
+
+        cluster_indices_ = in_indices_->getMessage<GenericVectorMessage, pcl::PointIndices>();
         // search for clusters
         //int j = 0;
         for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices_->begin(); it != cluster_indices_->end (); ++it)

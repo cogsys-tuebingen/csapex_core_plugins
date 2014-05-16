@@ -33,7 +33,6 @@ QIcon OutputDisplay::getIcon() const
 
 void OutputDisplay::setup()
 {
-    setSynchronizedInputs(true);
     input_ = addInput<CvMatMessage>("Image", false, true);
 }
 

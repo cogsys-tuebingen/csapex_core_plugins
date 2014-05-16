@@ -46,8 +46,6 @@ void TimeOffset::process()
 
 void TimeOffset::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<connection_types::TimeStampMessage>("Time");
     output_ = addOutput<connection_types::TimeStampMessage>("Time");
 }

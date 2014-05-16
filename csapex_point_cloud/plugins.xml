@@ -98,5 +98,7 @@
 <class type="csapex::ThresholdOutlierRemoval" base_class_type="csapex::Node">
   <description>Noise filtering done by thresholding.</description>
 </class>
-
+<class type="csapex::VadilityMask" base_class_type="csapex::Node">
+  <description>Get a mask for valid points in the point cloud.</description>
+</class>
 </library>

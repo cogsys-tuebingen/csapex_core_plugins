@@ -54,7 +54,5 @@ void StaticTransform::tick()
 
 void StaticTransform::setup()
 {
-    setSynchronizedInputs(true);
-
     output_ = addOutput<connection_types::TransformMessage>("Transformation");
 }

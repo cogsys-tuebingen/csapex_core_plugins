@@ -37,8 +37,6 @@ void BoxBlur::process()
 
 void BoxBlur::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("Unblurred");
     output_ = addOutput<CvMatMessage>("Blurred");
 

@@ -5,6 +5,7 @@
 #include <csapex_core_plugins/ros_handler.h>
 
 /// SYSTEM
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/transform_listener.h>
 
 namespace csapex

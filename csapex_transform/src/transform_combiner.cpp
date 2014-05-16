@@ -32,8 +32,6 @@ void TransformCombiner::process()
 
 void TransformCombiner::setup()
 {
-    setSynchronizedInputs(true);
-
     input_a_ = addInput<connection_types::TransformMessage>("A");
     input_b_ = addInput<connection_types::TransformMessage>("B");
 

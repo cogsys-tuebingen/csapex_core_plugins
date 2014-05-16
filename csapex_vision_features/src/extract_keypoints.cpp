@@ -57,8 +57,6 @@ ExtractKeypoints::ExtractKeypoints()
 
 void ExtractKeypoints::setup()
 {
-    setSynchronizedInputs(true);
-
     in_img = addInput<CvMatMessage>("Image");
     in_mask = addInput<CvMatMessage>("Mask", true);
 

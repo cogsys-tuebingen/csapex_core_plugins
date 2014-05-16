@@ -61,7 +61,6 @@ void PointmatrixToPointcloud::process()
 
 void PointmatrixToPointcloud::setup()
 {
-    setSynchronizedInputs(true);
     input_  = addInput<CvMatMessage>("Point Matrix");
     output_ = addOutput<PointCloudMessage>("PointCloud");
 }

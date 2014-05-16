@@ -56,6 +56,7 @@ add_library(csapex_transform_plugin
     src/transform_inverter.cpp
     src/transform_publisher.cpp
     src/listener.cpp
+    src/transform_filter.cpp
     ${QT_PLUG}
 )
 target_link_libraries(csapex_transform_plugin csapex_transform

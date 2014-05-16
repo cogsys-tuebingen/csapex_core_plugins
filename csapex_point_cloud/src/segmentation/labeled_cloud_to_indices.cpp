@@ -40,7 +40,6 @@ void LabeledCloudToIndices::process()
 
 void LabeledCloudToIndices::setup()
 {
-    setSynchronizedInputs(true);
     input_  = addInput<PointCloudMessage>("Labeled PointCloud");
     output_ = addOutput<GenericVectorMessage, pcl::PointIndices > ("Clusters");
 }

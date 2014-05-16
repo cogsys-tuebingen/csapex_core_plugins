@@ -44,8 +44,6 @@ void GaussianBlur::process()
 
 void GaussianBlur::setup()
 {
-    setSynchronizedInputs(true);
-
     input_ = addInput<CvMatMessage>("Unblurred");
     output_ = addOutput<CvMatMessage>("Blurred");
 

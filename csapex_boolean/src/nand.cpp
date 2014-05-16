@@ -21,8 +21,6 @@ NAND::NAND()
 
 void NAND::setup()
 {
-    setSynchronizedInputs(true);
-
     in_a = addInput<DirectMessage<bool> >("A");
     in_b = addInput<DirectMessage<bool> >("B");
 

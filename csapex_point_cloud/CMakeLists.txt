@@ -42,7 +42,6 @@ include_directories(
 add_library(csapex_point_cloud
     src/point_cloud_message.cpp
     src/model_message.cpp
-    ${QT}
 )
 target_link_libraries(csapex_point_cloud
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
@@ -68,6 +67,7 @@ add_library(csapex_point_cloud_plugin
     src/filter/statistical_outlier_removal.cpp
     src/filter/radius_outlier_removal.cpp
     src/filter/threshold_outlier_revoval.cpp
+    src/filter/vadility_mask.cpp
 
     src/segmentation/labeled_cloud_to_indices.cpp
     src/segmentation/label_pointcloud.cpp
