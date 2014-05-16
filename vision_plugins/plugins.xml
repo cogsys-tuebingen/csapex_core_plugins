@@ -215,4 +215,10 @@
         Normalize an arbitrary matrix type by applying different norm types. 
    </description>
   </class>
+  <class type="vision_plugins::MatrixStitcher" base_class_type="csapex::Node">
+    <description>
+        Stitch matrices together using the maximum cols and rows to calculate the
+        final matrix size.
+   </description>
+  </class>
 </library>
