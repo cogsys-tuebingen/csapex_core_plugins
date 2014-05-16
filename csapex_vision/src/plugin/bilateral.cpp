@@ -76,8 +76,8 @@ void BilateralFilter::process()
     sigma_color_ = param<double>("sigma color");
     sigma_space_ = param<double>("sigma space");
 
+    /// WORKAROUND
     bilateralFilter(in->value, out->value, d_, sigma_color_, sigma_space_);
-
     output_->publish(out);
 }
 

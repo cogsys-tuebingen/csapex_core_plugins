@@ -58,6 +58,10 @@ void PointCloudToDepthImage::inputCloud(typename pcl::PointCloud<PointT>::Ptr cl
     for(unsigned idx = 0; idx < n; ++idx) {
         const PointT& p = *pt;
         double dist = std::sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
+
+        if(dist != dist)
+            dist = 0;
+
         *data = dist;
 
         if(dist < min_dist) {
@@ -70,6 +74,8 @@ void PointCloudToDepthImage::inputCloud(typename pcl::PointCloud<PointT>::Ptr cl
         ++data;
         ++pt;
     }
+
+    std::cout << "min max " << min_dist << " " << max_dist << std::endl;
 
     bool fit = param<bool>("fit");
 
