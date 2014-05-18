@@ -26,6 +26,7 @@ PassThrough::PassThrough()
     addTag(Tag::get("PointCloud"));
 
     addParameter(param::ParameterFactory::declareInterval("interval", -100.0, 100.0, 0.0, 100.0, 0.01));
+    addParameter(param::ParameterFactory::declareBool("keep organized", true));
 
     std::vector<std::string> field;
     field.push_back("x");
@@ -97,6 +98,7 @@ void PassThrough::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     param::IntervalParameter::Ptr interv = getParameter<param::IntervalParameter>("interval");
     pass.setFilterLimits (interv->lower<double>(), interv->upper<double>());
     pass.setInputCloud(cloud);
+    pass.setKeepOrganized(param<bool>("keep organized"));
 
     if(output_pos_->isConnected()) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);

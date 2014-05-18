@@ -17,6 +17,10 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS csapex csapex_core_plugins csapex_transform csapex_vision pcl_ros)
 
+
+find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui QtOpenGl)
+include(${QT_USE_FILE})
+
 csapex_moc_all(QT_MOC src/*.h include/csapex_point_cloud/*.h)
 
 set(QT ${QT_SOURCES} ${QT_MOC})
@@ -50,6 +54,8 @@ add_library(csapex_point_cloud_plugin
     src/register_plugin.cpp
     src/point_count.cpp
     src/point_count_adapter.cpp
+    src/cloud_renderer.cpp
+    src/cloud_renderer_adapter.cpp
     src/transform_cloud.cpp
     src/voxel_grid.cpp
     src/extract_timestamp.cpp
@@ -74,6 +80,7 @@ add_library(csapex_point_cloud_plugin
     src/segmentation/cluster_pointcloud.cpp
     src/segmentation/color_pointcloud.cpp
     src/segmentation/split_clustered_cloud.cpp
+    src/segmentation/label_clustered_pointcloud.cpp
 
     src/pointcloud_generator.cpp
     src/sac_fit.cpp
