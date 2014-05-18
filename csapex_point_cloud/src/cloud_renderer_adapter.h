@@ -53,7 +53,7 @@ public Q_SLOTS:
     void setPhi(double angle);
 
     void displayCloud();
-    void paintGL();
+    void paintGL(bool request = true);
     void resize();
 
 Q_SIGNALS:

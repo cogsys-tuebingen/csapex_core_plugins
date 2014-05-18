@@ -23,15 +23,15 @@ CloudRenderer::CloudRenderer()
 
     double d = 10.0;
 
-    addParameter(param::ParameterFactory::declareRange("view/r", 0.01, 20.0, 10.0, 0.01), refresh);
-    addParameter(param::ParameterFactory::declareRange("view/theta", 0., M_PI, M_PI / 2, 0.001), refresh);
-    addParameter(param::ParameterFactory::declareRange("view/phi", -M_PI, M_PI, 0., 0.001), refresh);
-    addParameter(param::ParameterFactory::declareRange("view/dx", -d, d, 0., 0.01), refresh);
-    addParameter(param::ParameterFactory::declareRange("view/dy", -d, d, 0., 0.01), refresh);
-    addParameter(param::ParameterFactory::declareRange("view/dz", -d, d, 0., 0.01), refresh);
+    addParameter(param::ParameterFactory::declareRange("~view/r", 0.01, 20.0, 10.0, 0.01), refresh);
+    addParameter(param::ParameterFactory::declareRange("~view/theta", 0., M_PI, M_PI / 2, 0.001), refresh);
+    addParameter(param::ParameterFactory::declareRange("~view/phi", -M_PI, M_PI, 0., 0.001), refresh);
+    addParameter(param::ParameterFactory::declareRange("~view/dx", -d, d, 0., 0.01), refresh);
+    addParameter(param::ParameterFactory::declareRange("~view/dy", -d, d, 0., 0.01), refresh);
+    addParameter(param::ParameterFactory::declareRange("~view/dz", -d, d, 0., 0.01), refresh);
 
-    addParameter(param::ParameterFactory::declareRange("size/width", 10, 1024, 400, 1), refresh);
-    addParameter(param::ParameterFactory::declareRange("size/height", 10, 1024, 400, 1), refresh);
+    addParameter(param::ParameterFactory::declareRange("~size/width", 10, 1024, 400, 1), refresh);
+    addParameter(param::ParameterFactory::declareRange("~size/height", 10, 1024, 400, 1), refresh);
 
     addParameter(param::ParameterFactory::declareColorParameter("color/background", 0, 0, 0), refresh);
     addParameter(param::ParameterFactory::declareColorParameter("color/gradient/start", 0, 255, 0), refresh);

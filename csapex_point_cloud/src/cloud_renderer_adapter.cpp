@@ -53,6 +53,9 @@ void CloudRendererAdapter::setupUi(QBoxLayout* layout)
         view_->setScene(scene);
         view_->setMouseTracking(true);
     }
+
+    view_->setContextMenuPolicy(Qt::PreventContextMenu);
+
     scene->installEventFilter(this);
 
     layout->addWidget(view_);
@@ -60,8 +63,6 @@ void CloudRendererAdapter::setupUi(QBoxLayout* layout)
     QObject::connect(this, SIGNAL(displayRequest()), this, SLOT(displayCloud()));
 
     DefaultNodeAdapter::setupUi(layout);
-
-    //paintGL();
 }
 
 
@@ -101,7 +102,7 @@ void CloudRendererAdapter::resize()
     resizeGL(w_, h_);
 }
 
-void CloudRendererAdapter::paintGL()
+void CloudRendererAdapter::paintGL(bool request)
 {
     makeCurrent();
     initializeGL();
@@ -152,11 +153,13 @@ void CloudRendererAdapter::paintGL()
         pixmap_->setPixmap(QPixmap::fromImage(img));
     }
 
+    view_->blockSignals(true);
     view_->scene()->setSceneRect(img.rect());
     view_->fitInView(view_->scene()->sceneRect(), Qt::KeepAspectRatio);
-    view_->scene()->update();
+    view_->blockSignals(false);
+//    view_->scene()->update();
 
-    if(wrapped_->output_->isConnected()){
+    if(wrapped_->output_->isConnected() && request){
         cv::Mat mat = QtCvImageConverter::Converter<QImage, QSharedPointer>::QImage2Mat(img);
         wrapped_->publishImage(mat);
     }
@@ -164,6 +167,10 @@ void CloudRendererAdapter::paintGL()
 
 bool CloudRendererAdapter::eventFilter(QObject * o, QEvent * e)
 {
+    if(view_->signalsBlocked()) {
+        return false;
+    }
+
     QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
 
     switch(e->type()) {
@@ -196,6 +203,9 @@ void CloudRendererAdapter::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void CloudRendererAdapter::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     drag_ = false;
+
+    wrapped_->getParameter("~size/width")->set<int>(w_);
+    wrapped_->getParameter("~size/height")->set<int>(h_);
 }
 
 void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -213,27 +223,35 @@ void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (event->buttons() & Qt::LeftButton) {
         setTheta(theta_ + f * dy);
         setPhi(phi_ + f * -dx);
-    } else if (event->buttons() & Qt::RightButton || event->buttons() & Qt::MidButton) {
+
+    } else if (event->buttons() & Qt::MidButton) {
+        w_ = std::max(40, std::min(2000, w_ + (int) dx));
+        h_ = std::max(40, std::min(2000, h_ + (int) dy));
+
+        view_->setFixedSize(w_,h_);
+        resizeGL(w_, h_);
+
+    } else if (event->buttons() & Qt::RightButton) {
         QMatrix4x4 rot;
         rot.setToIdentity();
         rot.rotate(phi_ * 180.0 / M_PI, QVector3D(0,0,1));
         offset_ += rot * QVector3D(f*dy, f*dx, 0);
 
 
-        wrapped_->getParameter("view/dx")->set<double>(offset_.x());
-        wrapped_->getParameter("view/dy")->set<double>(offset_.y());
-        wrapped_->getParameter("view/dz")->set<double>(offset_.z());
+        wrapped_->getParameter("~view/dx")->set<double>(offset_.x());
+        wrapped_->getParameter("~view/dy")->set<double>(offset_.y());
+        wrapped_->getParameter("~view/dz")->set<double>(offset_.z());
 
-        repaint();
     }
     last_pos_ = pos;
+    paintGL(false);
 }
 
 void CloudRendererAdapter::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    r_ += event->delta() * -0.005;
-    wrapped_->getParameter("view/r")->set<double>(r_);
-    repaint();
+    r_ += event->delta() * -0.0025;
+    wrapped_->getParameter("~view/r")->set<double>(r_);
+    paintGL(false);
 }
 
 
@@ -257,19 +275,19 @@ void CloudRendererAdapter::refresh()
             const std::vector<int>& c = wrapped_->param<std::vector<int> >("color/gradient/end");
             color_grad_end_ = QVector3D(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
         }
-        r_ = wrapped_->param<double>("view/r");
-        theta_ = wrapped_->param<double>("view/theta");
-        phi_ = wrapped_->param<double>("view/phi");
+        r_ = wrapped_->param<double>("~view/r");
+        theta_ = wrapped_->param<double>("~view/theta");
+        phi_ = wrapped_->param<double>("~view/phi");
 
-        double dx = wrapped_->param<double>("view/dx");
-        double dy = wrapped_->param<double>("view/dy");
-        double dz = wrapped_->param<double>("view/dz");
+        double dx = wrapped_->param<double>("~view/dx");
+        double dy = wrapped_->param<double>("~view/dy");
+        double dz = wrapped_->param<double>("~view/dz");
 
         offset_ = QVector3D(dx,dy,dz);
         point_size_ = wrapped_->param<double>("point/size");
 
-        w_ = wrapped_->param<int>("size/width");
-        h_ = wrapped_->param<int>("size/height");
+        w_ = wrapped_->param<int>("~size/width");
+        h_ = wrapped_->param<int>("~size/height");
 
 
         if(w_ != width() || h_ != height()) {
@@ -470,7 +488,7 @@ void CloudRendererAdapter::setTheta(double angle)
     if (angle != theta_) {
         theta_ = angle;
         Q_EMIT thetaChanged(angle);
-        wrapped_->getParameter("view/theta")->set<double>(theta_);
+        wrapped_->getParameter("~view/theta")->set<double>(theta_);
     }
 }
 
@@ -480,6 +498,6 @@ void CloudRendererAdapter::setPhi(double angle)
     if (angle != phi_) {
         phi_ = angle;
         Q_EMIT phiChanged(angle);
-        wrapped_->getParameter("view/phi")->set<double>(phi_);
+        wrapped_->getParameter("~view/phi")->set<double>(phi_);
     }
 }
