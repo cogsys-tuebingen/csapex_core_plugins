@@ -10,6 +10,14 @@
   <description></description>
 </class>
 
+
+<class type="csapex::CloudRenderer" base_class_type="csapex::Node">
+  <description>Displays a point cloud</description>
+</class>
+<class type="csapex::CloudRendererAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+
 <class type="csapex::TransformCloud" base_class_type="csapex::Node">
   <description>Transforms a point cloud by a given transformation</description>
 </class>
@@ -66,8 +74,13 @@
 </class>
 <class type="csapex::LabelPointCloud" base_class_type="csapex::Node">
   <description>
-    Produce a labeled pointcloud given an corresponding matrix holding the label values.
+    Produce a labeled pointcloud given a corresponding matrix holding the label values.
     Label matrix and pointcloud have to be of the same size and organization.
+  </description>
+</class>
+<class type="csapex::LabelClusteredPointCloud" base_class_type="csapex::Node">
+  <description>
+    Produce a labeled pointcloud given a vector of cluster indices.
   </description>
 </class>
 <class type="csapex::ColorPointCloud" base_class_type="csapex::Node">
