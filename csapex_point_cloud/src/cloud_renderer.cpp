@@ -57,10 +57,16 @@ void CloudRenderer::stop()
 {
     stopped_ = true;
     wait_for_view_.wakeAll();
+
+    Node::stop();
 }
 
 void CloudRenderer::process()
 {
+    if(!result_) {
+        refresh_request();
+    }
+
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
     message_ = msg;
@@ -69,14 +75,17 @@ void CloudRenderer::process()
     display_request();
 
     // todo wait only in !headless
-    result_mutex_.lock();
-    while(!result_ && !stopped_) {
-        wait_for_view_.wait(&result_mutex_);
-    }
-    result_mutex_.unlock();
 
-    if(result_) {
-        output_->publish(result_);
+    if(output_->isConnected()) {
+        result_mutex_.lock();
+        while(!result_ && !stopped_) {
+            wait_for_view_.wait(&result_mutex_);
+        }
+        result_mutex_.unlock();
+
+        if(result_) {
+            output_->publish(result_);
+        }
     }
 }
 

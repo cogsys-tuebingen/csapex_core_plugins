@@ -10,6 +10,9 @@
 /// SYSTEM
 #include <QGLWidget>
 #include <QVector3D>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGLFramebufferObject>
 
 namespace csapex {
 
@@ -19,6 +22,9 @@ class CloudRendererAdapter : public QGLWidget, public DefaultNodeAdapter
 
 public:
     CloudRendererAdapter(CloudRenderer *node, WidgetController *widget_ctrl);
+    ~CloudRendererAdapter();
+
+    void stop();
 
     virtual void setupUi(QBoxLayout* layout);
 
@@ -30,12 +36,13 @@ public:
 
 protected:
     void initializeGL();
-    void paintGL();
     void resizeGL(int width, int height);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent* event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void wheelEvent(QGraphicsSceneWheelEvent *event);
+
+    bool eventFilter(QObject *, QEvent *);
 
 public:
     template <class PointT>
@@ -46,6 +53,8 @@ public Q_SLOTS:
     void setPhi(double angle);
 
     void displayCloud();
+    void paintGL();
+    void resize();
 
 Q_SIGNALS:
     void thetaChanged(double angle);
@@ -53,12 +62,17 @@ Q_SIGNALS:
 
     void displayRequest();
     void repaintRequest();
+    void resizeRequest();
 
 protected:
     CloudRenderer* wrapped_;
 
+    QGraphicsView* view_;
+    QGraphicsPixmapItem* pixmap_;
+    QGLFramebufferObject* fbo_;
+
     bool drag_;
-    QPoint last_pos_;
+    QPointF last_pos_;
 
     QColor color_bg_;
     QVector3D color_grad_start_;
