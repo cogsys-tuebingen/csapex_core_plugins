@@ -20,16 +20,17 @@ CSAPEX_REGISTER_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
 
 CloudRendererAdapter::CloudRendererAdapter(CloudRenderer *node, WidgetController* widget_ctrl)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(node, widget_ctrl),
-      wrapped_(node), view_(NULL), pixmap_(NULL), fbo_(NULL), drag_(false),
+      wrapped_(node), view_(NULL), pixmap_(NULL), fbo_(NULL), drag_(false), repaint_(true),
       w_(10), h_(10), point_size_(1),
       phi_(0), theta_(M_PI/2), r_(-10.0),
-      list_(0)
+      axes_(false), grid_size_(10), grid_resolution_(1.0), grid_xy_(true), grid_yz_(false), grid_xz_(false),
+      list_cloud_(0), list_augmentation_(0)
 {
     node->display_request.connect(boost::bind(&CloudRendererAdapter::display, this));
     node->refresh_request.connect(boost::bind(&CloudRendererAdapter::refresh, this));
 
-    QObject::connect(this, SIGNAL(repaintRequest()), this, SLOT(paintGL()));
-    QObject::connect(this, SIGNAL(resizeRequest()), this, SLOT(resize()));
+    QObject::connect(this, SIGNAL(repaintRequest()), this, SLOT(paintGL()), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(resizeRequest()), this, SLOT(resize()), Qt::QueuedConnection);
 }
 
 CloudRendererAdapter::~CloudRendererAdapter()
@@ -102,8 +103,101 @@ void CloudRendererAdapter::resize()
     resizeGL(w_, h_);
 }
 
+void CloudRendererAdapter::paintAugmentation()
+{
+    makeCurrent();
+
+    if(list_augmentation_ == 0) {
+        list_augmentation_ = glGenLists(1);
+    }
+
+    // push settings
+    glPushAttrib(GL_CULL_FACE);
+    glPushAttrib(GL_LINE_SMOOTH);
+    glPushAttrib(GL_BLEND);
+
+    glNewList(list_augmentation_,GL_COMPILE);
+
+    // change settings
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+    glDisable( GL_CULL_FACE );
+    glEnable(GL_LINE_SMOOTH);
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+
+    // grid
+    qglColor(color_grid_);
+
+    glLineWidth(1.5f);
+    glBegin(GL_QUADS);
+    double dim = grid_resolution_ * grid_size_ / 2.0;
+    double r = grid_resolution_;
+    if(grid_xy_) {
+        for(double x = -dim; x < dim; x += grid_resolution_) {
+            for(double y = -dim; y < dim; y += grid_resolution_) {
+                glVertex3d(x,y,0);
+                glVertex3d(x+r,y,0);
+                glVertex3d(x+r,y+r,0);
+                glVertex3d(x,y+r,0);
+            }
+        }
+    }
+    if(grid_yz_) {
+        for(double y = -dim; y < dim; y += grid_resolution_) {
+            for(double z = -dim; z < dim; z += grid_resolution_) {
+                glVertex3d(0,y,z);
+                glVertex3d(0,y+r,z);
+                glVertex3d(0,y+r,z+r);
+                glVertex3d(0,y,z+r);
+            }
+        }
+    }
+    if(grid_xz_) {
+        for(double x = -dim; x < dim; x += grid_resolution_) {
+            for(double z = -dim; z < dim; z += grid_resolution_) {
+                glVertex3d(x,0,z);
+                glVertex3d(x+r,0,z);
+                glVertex3d(x+r,0,z+r);
+                glVertex3d(x,0,z+r);
+            }
+        }
+    }
+    glEnd();
+
+    if(axes_) {
+        // axes
+        double d = 0.5;
+        glLineWidth(20.f);
+        glBegin(GL_LINES);
+        // x
+        glColor3d(1,0,0);
+        glVertex3d(0,0,0);
+        glVertex3d(d,0,0);
+        // y
+        glColor3d(0,1,0);
+        glVertex3d(0,0,0);
+        glVertex3d(0,d,0);
+        // z
+        glColor3d(0,0,1);
+        glVertex3d(0,0,0);
+        glVertex3d(0,0,d);
+        glEnd();
+    }
+
+
+    glEndList();
+
+    // pop settings
+    glPopAttrib();
+    glPopAttrib();
+    glPopAttrib();
+}
+
 void CloudRendererAdapter::paintGL(bool request)
 {
+    // initialization
     makeCurrent();
     initializeGL();
 
@@ -111,7 +205,11 @@ void CloudRendererAdapter::paintGL(bool request)
         delete fbo_;
     }
 
-    fbo_ = new QGLFramebufferObject(QSize(w_, h_), QGLFramebufferObject::CombinedDepthStencil);
+    QGLFramebufferObjectFormat format;
+    format.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
+    format.setMipmap(false);
+    format.setInternalTextureFormat(GL_RGB8);
+    fbo_ = new QGLFramebufferObject(QSize(w_, h_), format);
     fbo_->bind();
 
     qglClearColor(color_bg_);
@@ -119,6 +217,7 @@ void CloudRendererAdapter::paintGL(bool request)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
+    // model view matrix
     QMatrix4x4 lookat;
     lookat.setToIdentity();
     QVector3D eye(-r_ * std::sin(theta_) * std::cos(phi_),
@@ -129,8 +228,17 @@ void CloudRendererAdapter::paintGL(bool request)
     lookat.lookAt(eye + offset_, center + offset_, up);
     glLoadMatrixd(lookat.data());
 
-    glCallList(list_);
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    glCallList(list_cloud_);
 
+    // grid
+    if(repaint_ || !list_augmentation_) {
+        paintAugmentation();
+    }
+    glCallList(list_augmentation_);
+
+
+    // center point
     if(drag_) {
         QVector3D o = center + offset_;
 
@@ -139,11 +247,10 @@ void CloudRendererAdapter::paintGL(bool request)
         glColor3f(1,1,1);
         glVertex3d(o.x(), o.y(), o.z());
         glEnd();
-
     }
 
+    // extract image
     QImage img = fbo_->toImage();
-    //QImage img = grabFrameBuffer(true);
 
     fbo_->release();
 
@@ -157,7 +264,7 @@ void CloudRendererAdapter::paintGL(bool request)
     view_->scene()->setSceneRect(img.rect());
     view_->fitInView(view_->scene()->sceneRect(), Qt::KeepAspectRatio);
     view_->blockSignals(false);
-//    view_->scene()->update();
+    //    view_->scene()->update();
 
     if(wrapped_->output_->isConnected() && request){
         cv::Mat mat = QtCvImageConverter::Converter<QImage, QSharedPointer>::QImage2Mat(img);
@@ -268,6 +375,10 @@ void CloudRendererAdapter::refresh()
             color_bg_ = QColor::fromRgb(c[0], c[1], c[2]);
         }
         {
+            const std::vector<int>& c = wrapped_->param<std::vector<int> >("color/grid");
+            color_grid_ = QColor::fromRgb(c[0], c[1], c[2]);
+        }
+        {
             const std::vector<int>& c = wrapped_->param<std::vector<int> >("color/gradient/start");
             color_grad_start_ = QVector3D(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
         }
@@ -289,6 +400,15 @@ void CloudRendererAdapter::refresh()
         w_ = wrapped_->param<int>("~size/width");
         h_ = wrapped_->param<int>("~size/height");
 
+        axes_ = wrapped_->param<bool>("show axes");
+
+        grid_size_ = wrapped_->param<int>("~grid/size");
+        grid_resolution_ = wrapped_->param<double>("~grid/resolution");
+        grid_xy_ = wrapped_->param<bool>("~grid/xy");
+        grid_yz_ = wrapped_->param<bool>("~grid/yz");
+        grid_xz_ = wrapped_->param<bool>("~grid/xz");
+
+        repaint_ = true;
 
         if(w_ != width() || h_ != height()) {
             view_->setFixedSize(w_, h_);
@@ -414,11 +534,11 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::Ptr clou
 {
     makeCurrent();
 
-    if(list_ == 0) {
-        list_ = glGenLists(1);
+    if(list_cloud_ == 0) {
+        list_cloud_ = glGenLists(1);
     }
 
-    glNewList(list_,GL_COMPILE);
+    glNewList(list_cloud_,GL_COMPILE);
 
     glPointSize(point_size_);
 

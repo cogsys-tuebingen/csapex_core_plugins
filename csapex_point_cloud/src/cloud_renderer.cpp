@@ -33,7 +33,8 @@ CloudRenderer::CloudRenderer()
     addParameter(param::ParameterFactory::declareRange("~size/width", 10, 1024, 400, 1), refresh);
     addParameter(param::ParameterFactory::declareRange("~size/height", 10, 1024, 400, 1), refresh);
 
-    addParameter(param::ParameterFactory::declareColorParameter("color/background", 0, 0, 0), refresh);
+    addParameter(param::ParameterFactory::declareColorParameter("color/background", 255, 255, 255), refresh);
+    addParameter(param::ParameterFactory::declareColorParameter("color/grid", 0, 0, 0), refresh);
     addParameter(param::ParameterFactory::declareColorParameter("color/gradient/start", 0, 255, 0), refresh);
     addParameter(param::ParameterFactory::declareColorParameter("color/gradient/end", 0, 0, 255), refresh);
     addParameter(param::ParameterFactory::declareBool("color/force gradient", false), refresh);
@@ -43,6 +44,14 @@ CloudRenderer::CloudRenderer()
     field.push_back("y");
     field.push_back("z");
     addParameter(param::ParameterFactory::declareParameterStringSet("color/field", field), refresh);
+
+    addParameter(param::ParameterFactory::declareBool("show axes", false), refresh);
+
+    addParameter(param::ParameterFactory::declareRange("~grid/size", 1, 30, 10, 1), refresh);
+    addParameter(param::ParameterFactory::declareRange("~grid/resolution", 0.1, 10.0, 1.0, 0.1), refresh);
+    addParameter(param::ParameterFactory::declareBool("~grid/xy", true), refresh);
+    addParameter(param::ParameterFactory::declareBool("~grid/yz", false), refresh);
+    addParameter(param::ParameterFactory::declareBool("~grid/xz", false), refresh);
 
     addParameter(param::ParameterFactory::declareRange("point/size", 1., 30., 5., 0.1), refresh);
 }

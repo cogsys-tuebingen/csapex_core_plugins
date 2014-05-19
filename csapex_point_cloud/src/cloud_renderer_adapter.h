@@ -54,6 +54,7 @@ public Q_SLOTS:
 
     void displayCloud();
     void paintGL(bool request = true);
+    void paintAugmentation();
     void resize();
 
 Q_SIGNALS:
@@ -73,7 +74,9 @@ protected:
 
     bool drag_;
     QPointF last_pos_;
+    bool repaint_;
 
+    QColor color_grid_;
     QColor color_bg_;
     QVector3D color_grad_start_;
     QVector3D color_grad_end_;
@@ -86,9 +89,18 @@ protected:
     double theta_;
     double r_;
 
+    bool axes_;
+
+    int grid_size_;
+    double grid_resolution_;
+    bool grid_xy_;
+    bool grid_yz_;
+    bool grid_xz_;
+
     QVector3D offset_;
 
-    GLuint list_;
+    GLuint list_cloud_;
+    GLuint list_augmentation_;
 };
 
 }
