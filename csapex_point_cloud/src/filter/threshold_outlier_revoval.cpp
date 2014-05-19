@@ -157,7 +157,6 @@ struct ThresholdNoiseFilter {
 
         dst.reset(new pcl::PointCloud<PointT>(*src));
 
-        const PointT *src_ptr = src->points.data();
         PointT       *dst_ptr = dst->points.data();
         const uchar  *th_ptr  = thresholds.ptr<uchar>();
 

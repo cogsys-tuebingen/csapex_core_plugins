@@ -1,15 +1,15 @@
-#ifndef STATISTICAL_OUTLIER_REMOVAL_H
-#define STATISTICAL_OUTLIER_REMOVAL_H
+#ifndef INDEX_FILTER_H
+#define INDEX_FILTER_H
 
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 
 namespace csapex {
-class StatisticalOutlierRemoval : public Node
+class IndexFilter : public Node
 {
 public:
-    StatisticalOutlierRemoval();
+    IndexFilter();
 
     virtual void setup();
     virtual void process();
@@ -19,10 +19,9 @@ public:
 
 protected:
     ConnectorIn*  input_cloud_;
-    ConnectorIn*  input_indeces_;
+    ConnectorIn*  indeces_input_;
     ConnectorOut* output_cloud_;
-    ConnectorOut* output_indeces_;
 
 };
 }
-#endif // STATISTICAL_OUTLIER_REMOVAL_H
+#endif // INDEX_FILTER_H

@@ -1,0 +1,51 @@
+#include "index_filter.h"
+
+/// PROJECT
+#include <csapex/model/connector_in.h>
+#include <csapex/model/connector_out.h>
+#include <csapex_point_cloud/indeces_message.h>
+#include <utils_param/parameter_factory.h>
+
+/// SYSTEM
+#include <csapex/utility/register_apex_plugin.h>
+#include <pcl/point_types.h>
+
+CSAPEX_REGISTER_CLASS(csapex::IndexFilter, csapex::Node)
+
+using namespace csapex;
+using namespace csapex::connection_types;
+
+IndexFilter::IndexFilter()
+{
+    addTag(Tag::get("PointCloud"));
+}
+
+void IndexFilter::setup()
+{
+    input_cloud_ = addInput<PointCloudMessage>("PointCloud");
+    indeces_input_ = addInput<PointIndecesMessage>("Indeces");
+    output_cloud_ = addOutput<PointCloudMessage>("Pointcloud");
+}
+
+void IndexFilter::process()
+{
+    PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
+    boost::apply_visitor (PointCloudMessage::Dispatch<IndexFilter>(this), msg->value);
+}
+
+template <class PointT>
+void IndexFilter::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+{
+    PointIndecesMessage::Ptr indeces(indeces_input_->getMessage<PointIndecesMessage>());
+    typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>(*cloud, indeces->value->indices));
+
+//    for(std::vector<int>::const_iterator it = indeces->value->indices.begin() ;
+//        it != indeces->value->indices.end() ;
+//        ++it) {
+//        cloud_filtered->at(*it) = PointT();
+//    }
+
+    PointCloudMessage::Ptr out(new PointCloudMessage);
+    out->value = cloud_filtered;
+    output_cloud_->publish(out);
+}
