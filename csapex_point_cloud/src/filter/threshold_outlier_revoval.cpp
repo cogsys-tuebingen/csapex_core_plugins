@@ -105,10 +105,10 @@ inline static T distance(const PointT &p1, const PointT &p2,
 
 template<typename PointT>
 struct ThresholdNoiseFilter {
-    inline static void apply(const typename pcl::PointCloud<PointT>::Ptr &src,
-                             const cv::Mat &thresholds, const uchar threshold,
-                             const double max_distance,
-                             typename pcl::PointCloud<PointT>::Ptr &dst)
+    inline static void interpolate(const typename pcl::PointCloud<PointT>::Ptr &src,
+                                   const cv::Mat &thresholds, const uchar threshold,
+                                   const double max_distance,
+                                   typename pcl::PointCloud<PointT>::Ptr &dst)
     {
 
         static int xs[] = {-1,-1,-1, 0, 1, 1, 1, 0};
@@ -149,6 +149,31 @@ struct ThresholdNoiseFilter {
             }
         }
     }
+
+    inline static void filter(const typename pcl::PointCloud<PointT>::Ptr &src,
+                              const cv::Mat &thresholds, const uchar threshold,
+                              typename pcl::PointCloud<PointT>::Ptr &dst)
+    {
+
+        dst.reset(new pcl::PointCloud<PointT>(*src));
+
+        const PointT *src_ptr = src->points.data();
+        PointT       *dst_ptr = dst->points.data();
+        const uchar  *th_ptr  = thresholds.ptr<uchar>();
+
+        int cols = src->width;
+        int rows = src->height;
+
+        for(int y = 0 ; y < rows ; ++y) {
+            for(int x = 0 ; x < cols ; ++x) {
+                int pos = y * cols + x;
+                if(th_ptr[pos] > threshold) {
+                     dst_ptr[pos] = PointT();
+                }
+            }
+        }
+    }
+
 };
 }
 
@@ -158,6 +183,7 @@ ThresholdOutlierRemoval::ThresholdOutlierRemoval()
     addTag(Tag::get("PointCloud"));
     addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
     addParameter(param::ParameterFactory::declareRange("max. distance", 0.0, 10.0, 0.25, 0.01));
+    addParameter(param::ParameterFactory::declareBool("interpolate", false));
 }
 
 void ThresholdOutlierRemoval::setup()
@@ -176,9 +202,10 @@ void ThresholdOutlierRemoval::process()
 template <class PointT>
 void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    CvMatMessage::Ptr thresholds = thresholds_->getMessage<CvMatMessage>();
-    uchar             threshold  = param<int>("threshold");
-    double            max_dist   = param<double>("max. distance");
+    CvMatMessage::Ptr thresholds  = thresholds_->getMessage<CvMatMessage>();
+    uchar             threshold   = param<int>("threshold");
+    double            max_dist    = param<double>("max. distance");
+    bool              interpolate = param<bool>("interpolate");
 
     if(thresholds->value.rows != cloud->height)
         throw std::runtime_error("Height of pointcloud and threshold matrix not matching!");
@@ -188,7 +215,14 @@ void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr c
         throw std::runtime_error("Threshold matrix type must be 'mono'!");
 
     typename pcl::PointCloud<PointT>::Ptr cloud_filtered;
-    ThresholdNoiseFilter<PointT>::apply(cloud, thresholds->value, threshold, max_dist, cloud_filtered);
+
+    if(interpolate)
+        ThresholdNoiseFilter<PointT>::interpolate
+                (cloud, thresholds->value, threshold, max_dist, cloud_filtered);
+    else
+        ThresholdNoiseFilter<PointT>::filter
+                (cloud, thresholds->value, threshold, cloud_filtered);
+
     PointCloudMessage::Ptr out(new PointCloudMessage);
     out->value = cloud_filtered;
     output_->publish(out);

@@ -75,8 +75,6 @@ void PointCloudToDepthImage::inputCloud(typename pcl::PointCloud<PointT>::Ptr cl
         ++pt;
     }
 
-    std::cout << "min max " << min_dist << " " << max_dist << std::endl;
-
     bool fit = param<bool>("fit");
 
     double s = param<double>("scale");
