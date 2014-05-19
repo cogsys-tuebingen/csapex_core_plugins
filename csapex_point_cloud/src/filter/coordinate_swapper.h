@@ -1,26 +1,27 @@
-#ifndef UNDEFINED_VALUE_MASK_H
-#define UNDEFINED_VALUE_MASK_H
+#ifndef COORDINATE_SWAPPER_H
+#define COORDINATE_SWAPPER_H
 
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 
 namespace csapex {
-class VadilityMask : public csapex::Node
+class CoordinateSwapper : public Node
 {
 public:
-    VadilityMask();
+    CoordinateSwapper();
 
-    virtual void process();
     virtual void setup();
+    virtual void process();
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
-protected:
+private:
     ConnectorIn*  input_;
     ConnectorOut* output_;
+
+
 };
 }
-
-#endif // UNDEFINED_VALUE_MASK_H
+#endif // COORDINATE_SWAPPER_H

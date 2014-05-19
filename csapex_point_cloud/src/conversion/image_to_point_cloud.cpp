@@ -20,7 +20,6 @@ using namespace csapex::connection_types;
 ImageToPointCloud::ImageToPointCloud()
 {
     addTag(Tag::get("PointCloud"));
-    addTag(Tag::get("Vision"));
 
     addParameter(param::ParameterFactory::declareRange("fov/h", 30.0, 180.0, 90.0, 0.1));
     addParameter(param::ParameterFactory::declareRange("fov/v", 30.0, 180.0, 90.0, 0.1));

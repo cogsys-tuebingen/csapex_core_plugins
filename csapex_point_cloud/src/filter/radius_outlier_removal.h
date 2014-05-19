@@ -17,17 +17,12 @@ public:
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
-private:
-    ConnectorIn*  input_;
-    ConnectorOut* output_;
+protected:
+    ConnectorIn*  input_cloud_;
+    ConnectorIn*  indeces_input_;
+    ConnectorOut* output_cloud_;
+    ConnectorOut* output_indeces_;
 
-    void update();
-
-    int     min_neighbours_;
-    bool    keep_organized_;
-    bool    negative_;
-    double  search_radius_;
-///    float  user_filter_value_; /// ONLY IF NEEDED
 };
 }
 #endif // STATISTICAL_OUTLIER_REMOVAL_H

@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-#include <csapex_transform/time_stamp_message.h>
+#include <csapex_point_cloud/indeces_message.h>
 #include <utils_param/parameter_factory.h>
 
 /// SYSTEM
@@ -18,59 +18,65 @@ CSAPEX_REGISTER_CLASS(csapex::StatisticalOutlierRemoval, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-StatisticalOutlierRemoval::StatisticalOutlierRemoval() :
-    mean_k_(2),
-    keep_organized_(false),
-    negative_(false),
-    std_dev_mul_thresh_(0.0)
-  ///    ,user_filter_value_(std::numeric_limits<float>::quiet_NaN) /// ONLY IF NEEDED
+StatisticalOutlierRemoval::StatisticalOutlierRemoval()
 {
     addTag(Tag::get("PointCloud"));
 
-    addParameter(param::ParameterFactory::declareRange("mean k", 1, 100, mean_k_, 1),
-                 boost::bind(&StatisticalOutlierRemoval::update, this));
-    addParameter(param::ParameterFactory::declareBool ("keep organized", keep_organized_),
-                 boost::bind(&StatisticalOutlierRemoval::update, this));
-    addParameter(param::ParameterFactory::declareBool ("negate", negative_),
-                 boost::bind(&StatisticalOutlierRemoval::update, this));
-    addParameter(param::ParameterFactory::declareRange("std dev threshold", 0.0, 10.0, std_dev_mul_thresh_, 0.1),
-                 boost::bind(&StatisticalOutlierRemoval::update, this));
+    addParameter(param::ParameterFactory::declareRange("mean k", 1, 100, 2, 1));
+    addParameter(param::ParameterFactory::declareBool ("keep organized", false));
+    addParameter(param::ParameterFactory::declareBool ("negate", false));
+    addParameter(param::ParameterFactory::declareRange("std dev threshold", 0.0, 10.0, 0.1, 0.1));
 }
 
 void StatisticalOutlierRemoval::setup()
 {
-    input_ = addInput<PointCloudMessage>("PointCloud");
-    output_ = addOutput<PointCloudMessage>("Pointcloud");
+    input_cloud_    = addInput<PointCloudMessage>   ("PointCloud");
+    input_indeces_  = addInput<PointIndecesMessage> ("Indeces", true);
+    output_cloud_   = addOutput<PointCloudMessage>  ("Pointcloud");
+    output_indeces_ = addOutput<PointIndecesMessage>("Indeces");
 }
 
 void StatisticalOutlierRemoval::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
     boost::apply_visitor (PointCloudMessage::Dispatch<StatisticalOutlierRemoval>(this), msg->value);
 }
 
 template <class PointT>
 void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>);
+    bool indeces_out = output_indeces_->isConnected();
+    bool cloud_out   = output_cloud_->isConnected();
+
+    if(!indeces_out && !cloud_out)
+        return;
+
+    int    mean_k             = param<int>("mean k");
+    bool   keep_organized     = param<bool>("keep organized");
+    bool   negative           = param<bool>("negate");
+    double std_dev_mul_thresh = param<double>("std dev threshold");
+
     pcl::StatisticalOutlierRemoval<PointT> sor;
     sor.setInputCloud(cloud);
-    sor.setKeepOrganized(keep_organized_);
-    sor.setMeanK(mean_k_);
-    sor.setNegative(negative_);
-    sor.setStddevMulThresh(std_dev_mul_thresh_);
-    ///    sor.setUserFilterValue(user_filter_value_); /// ONLY IF NEEDED
-    sor.filter(*cloud_filtered);
-
-    PointCloudMessage::Ptr out(new PointCloudMessage);
-    out->value = cloud_filtered;
-    output_->publish(out);
-}
-
-void StatisticalOutlierRemoval::update()
-{
-    mean_k_             = param<int>("mean k");
-    keep_organized_     = param<bool>("keep organized");
-    negative_           = param<bool>("negate");
-    std_dev_mul_thresh_ = param<double>("std dev threshold");
+    sor.setKeepOrganized(keep_organized);
+    sor.setMeanK(mean_k);
+    sor.setNegative(negative);
+    sor.setStddevMulThresh(std_dev_mul_thresh);
+    if(input_indeces_->isConnected() && input_indeces_->hasMessage()) {
+        PointIndecesMessage::Ptr indeces(input_indeces_->getMessage<PointIndecesMessage>());
+        sor.setIndices(indeces->value);
+    }
+    if(cloud_out) {
+        typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>);
+        sor.filter(*cloud_filtered);
+        PointCloudMessage::Ptr out(new PointCloudMessage);
+        out->value = cloud_filtered;
+        output_cloud_->publish(out);
+    }
+    if(indeces_out) {
+        PointIndecesMessage::Ptr indeces_filtered(new PointIndecesMessage);
+        indeces_filtered->value->header = cloud->header;
+        sor.filter(indeces_filtered->value->indices);
+        output_indeces_->publish(indeces_filtered);
+    }
 }
