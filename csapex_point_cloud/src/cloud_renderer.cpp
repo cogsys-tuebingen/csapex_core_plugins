@@ -33,6 +33,12 @@ CloudRenderer::CloudRenderer()
     addParameter(param::ParameterFactory::declareRange("~size/width", 10, 1024, 400, 1), refresh);
     addParameter(param::ParameterFactory::declareRange("~size/height", 10, 1024, 400, 1), refresh);
 
+    param::Parameter::Ptr sync = param::ParameterFactory::declareBool("~size/out/sync", true);
+    addParameter(sync, refresh);
+    boost::function<bool()> notsync = (!boost::bind(&param::Parameter::as<bool>, sync.get()));
+    addConditionalParameter(param::ParameterFactory::declareRange("~size/out/width", 10, 1024, 400, 1), notsync, refresh);
+    addConditionalParameter(param::ParameterFactory::declareRange("~size/out/height", 10, 1024, 400, 1), notsync, refresh);
+
     addParameter(param::ParameterFactory::declareColorParameter("color/background", 255, 255, 255), refresh);
     addParameter(param::ParameterFactory::declareColorParameter("color/grid", 0, 0, 0), refresh);
     addParameter(param::ParameterFactory::declareColorParameter("color/gradient/start", 0, 255, 0), refresh);

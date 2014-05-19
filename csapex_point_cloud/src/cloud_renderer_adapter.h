@@ -81,8 +81,11 @@ protected:
     QVector3D color_grad_start_;
     QVector3D color_grad_end_;
 
-    int w_;
-    int h_;
+    bool size_sync_;
+    int w_view_;
+    int h_view_;
+    int w_out_;
+    int h_out_;
 
     double point_size_;
     double phi_;

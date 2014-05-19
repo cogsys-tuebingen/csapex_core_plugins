@@ -21,7 +21,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
 CloudRendererAdapter::CloudRendererAdapter(CloudRenderer *node, WidgetController* widget_ctrl)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(node, widget_ctrl),
       wrapped_(node), view_(NULL), pixmap_(NULL), fbo_(NULL), drag_(false), repaint_(true),
-      w_(10), h_(10), point_size_(1),
+      w_view_(10), h_view_(10), point_size_(1),
       phi_(0), theta_(M_PI/2), r_(-10.0),
       axes_(false), grid_size_(10), grid_resolution_(1.0), grid_xy_(true), grid_yz_(false), grid_xz_(false),
       list_cloud_(0), list_augmentation_(0)
@@ -100,7 +100,10 @@ void CloudRendererAdapter::resizeGL(int width, int height)
 
 void CloudRendererAdapter::resize()
 {
-    resizeGL(w_, h_);
+    if(w_view_ != view_->width() || h_view_ != view_->height()) {
+        view_->setFixedSize(w_view_, h_view_);
+    }
+    resizeGL(w_out_, h_out_);
 }
 
 void CloudRendererAdapter::paintAugmentation()
@@ -209,7 +212,7 @@ void CloudRendererAdapter::paintGL(bool request)
     format.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
     format.setMipmap(false);
     format.setInternalTextureFormat(GL_RGB8);
-    fbo_ = new QGLFramebufferObject(QSize(w_, h_), format);
+    fbo_ = new QGLFramebufferObject(QSize(w_out_, h_out_), format);
     fbo_->bind();
 
     qglClearColor(color_bg_);
@@ -303,7 +306,7 @@ bool CloudRendererAdapter::eventFilter(QObject * o, QEvent * e)
 
 void CloudRendererAdapter::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    last_pos_ = event->scenePos();
+    last_pos_ = event->screenPos();
     drag_ = true;
 }
 
@@ -311,8 +314,15 @@ void CloudRendererAdapter::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     drag_ = false;
 
-    wrapped_->getParameter("~size/width")->set<int>(w_);
-    wrapped_->getParameter("~size/height")->set<int>(h_);
+    wrapped_->getParameter("~size/width")->set<int>(w_view_);
+    wrapped_->getParameter("~size/height")->set<int>(h_view_);
+
+    if(size_sync_) {
+        w_out_ = w_view_;
+        h_out_ = h_view_;
+        wrapped_->getParameter("~size/width/out")->set<int>(w_out_);
+        wrapped_->getParameter("~size/height/out")->set<int>(h_out_);
+    }
 }
 
 void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -321,7 +331,7 @@ void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    QPointF pos = event->scenePos();
+    QPointF pos = event->screenPos();
     double dx = pos.x() - last_pos_.x();
     double dy = pos.y() - last_pos_.y();
 
@@ -332,11 +342,16 @@ void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         setPhi(phi_ + f * -dx);
 
     } else if (event->buttons() & Qt::MidButton) {
-        w_ = std::max(40, std::min(2000, w_ + (int) dx));
-        h_ = std::max(40, std::min(2000, h_ + (int) dy));
+        w_view_ = std::max(40, std::min(2000, w_view_ + (int) dx));
+        h_view_ = std::max(40, std::min(2000, h_view_ + (int) dy));
 
-        view_->setFixedSize(w_,h_);
-        resizeGL(w_, h_);
+        view_->setFixedSize(w_view_,h_view_);
+        if(size_sync_) {
+            w_out_ = w_view_;
+            h_out_ = h_view_;
+
+            resizeGL(w_out_, h_out_);
+        }
 
     } else if (event->buttons() & Qt::RightButton) {
         QMatrix4x4 rot;
@@ -397,8 +412,17 @@ void CloudRendererAdapter::refresh()
         offset_ = QVector3D(dx,dy,dz);
         point_size_ = wrapped_->param<double>("point/size");
 
-        w_ = wrapped_->param<int>("~size/width");
-        h_ = wrapped_->param<int>("~size/height");
+        size_sync_ = wrapped_->param<bool>("~size/out/sync");
+        w_view_ = wrapped_->param<int>("~size/width");
+        h_view_ = wrapped_->param<int>("~size/height");
+
+        if(size_sync_) {
+            w_out_ = w_view_;
+            h_out_ = h_view_;
+        } else {
+            w_out_ = wrapped_->param<int>("~size/out/width");
+            h_out_ = wrapped_->param<int>("~size/out/height");
+        }
 
         axes_ = wrapped_->param<bool>("show axes");
 
@@ -410,10 +434,7 @@ void CloudRendererAdapter::refresh()
 
         repaint_ = true;
 
-        if(w_ != width() || h_ != height()) {
-            view_->setFixedSize(w_, h_);
-            Q_EMIT resizeRequest();
-        }
+        Q_EMIT resizeRequest();
 
         Q_EMIT repaintRequest();
     }
@@ -580,7 +601,7 @@ QSize CloudRendererAdapter::minimumSizeHint() const
 
 QSize CloudRendererAdapter::sizeHint() const
 {
-    return QSize(w_, h_);
+    return QSize(w_view_, h_view_);
 }
 
 namespace {
