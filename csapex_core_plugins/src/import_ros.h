@@ -37,7 +37,7 @@ private:
     std::string current_topic_;
 
     int retries_;
-    ros::Time next_retry_;
+    ros::WallTime next_retry_;
 };
 
 }

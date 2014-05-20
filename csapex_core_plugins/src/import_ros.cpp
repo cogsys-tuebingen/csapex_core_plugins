@@ -137,11 +137,11 @@ void ImportRos::process()
 void ImportRos::tick()
 {
     if(retries_ > 0) {
-        if(ros::Time::now() > next_retry_) {
+        if(ros::WallTime::now() > next_retry_) {
             doSetTopic();
             --retries_;
 
-            next_retry_ = ros::Time::now() + ros::Duration(0.5);
+            next_retry_ = ros::WallTime::now() + ros::WallDuration(0.5);
         }
     }
 }
