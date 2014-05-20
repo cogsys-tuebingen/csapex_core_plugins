@@ -94,11 +94,7 @@ struct PointCloudMessage : public Message
 
     virtual std::string name() const
     {
-        if(type.empty()) {
-            return Message::name();
-        } else {
-            return Message::name() +  "<" + type + ">";
-        }
+    	return Message::name();
     }
 
     bool acceptsConnectionFrom(const ConnectionType* other_side) const {
@@ -116,7 +112,6 @@ struct PointCloudMessage : public Message
     }
 
     variant value;
-    std::string type;
 };
 
 }

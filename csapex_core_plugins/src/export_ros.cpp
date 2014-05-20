@@ -67,6 +67,5 @@ void ExportRos::process()
 void ExportRos::updateTopic()
 {
     topic_ = param<std::string>("topic");
-    ainfo << "trying to publish @" << topic_ << std::endl;
     create_pub = true;
 }

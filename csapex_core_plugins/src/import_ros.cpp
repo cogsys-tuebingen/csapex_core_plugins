@@ -27,15 +27,17 @@ CSAPEX_REGISTER_CLASS(csapex::ImportRos, csapex::Node)
 
 using namespace csapex;
 
+const std::string ImportRos::no_topic_("! Select a topic !");
+
 ImportRos::ImportRos()
-    : connector_(NULL)
+    : connector_(NULL), retries_(0)
 {
     addTag(Tag::get("RosIO"));
     addTag(Tag::get("General"));
     addTag(Tag::get("Input"));
 
     std::vector<std::string> set;
-    set.push_back("no topic");
+    set.push_back(no_topic_);
     addParameter(param::ParameterFactory::declareParameterStringSet("topic", set),
                  boost::bind(&ImportRos::update, this));
 
@@ -66,13 +68,21 @@ void ImportRos::refresh()
         param::SetParameter::Ptr setp = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
         if(setp) {
             setError(false);
+            bool found = false;
             std::vector<std::string> topics_str;
+            topics_str.push_back(no_topic_);
             for(ros::master::V_TopicInfo::const_iterator it = topics.begin(); it != topics.end(); ++it) {
                 topics_str.push_back(it->name);
+                if(it->name == old_topic) {
+                    found = true;
+                }
+            }
+            if(!found) {
+                topics_str.push_back(old_topic);
             }
             setp->setSet(topics_str);
 
-            if(old_topic != "no topic") {
+            if(old_topic != no_topic_) {
                 setp->set(old_topic);
             }
             return;
@@ -83,6 +93,12 @@ void ImportRos::refresh()
 }
 
 void ImportRos::update()
+{
+    retries_ = 5;
+    doSetTopic();
+}
+
+void ImportRos::doSetTopic()
 {
     ROSHandler::instance().refresh();
 
@@ -98,16 +114,36 @@ void ImportRos::update()
     for(ros::master::V_TopicInfo::iterator it = topics.begin(); it != topics.end(); ++it) {
         if(it->name == topic) {
             setTopic(*it);
+            retries_ = 0;
             return;
         }
     }
 
-    setError(true, std::string("cannot set topic, ") + topic + " doesn't exist.");
+    std::stringstream ss;
+    ss << "cannot set topic, " << topic << " doesn't exist";
+    if(retries_ > 0) {
+        ss << ", " << retries_ << " retries left";
+    }
+    ss << ".";
+
+    setError(true, ss.str());
 }
 
 void ImportRos::process()
 {
     // NO INPUT
+}
+
+void ImportRos::tick()
+{
+    if(retries_ > 0) {
+        if(ros::Time::now() > next_retry_) {
+            doSetTopic();
+            --retries_;
+
+            next_retry_ = ros::Time::now() + ros::Duration(0.5);
+        }
+    }
 }
 
 
@@ -117,13 +153,11 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
         return;
     }
 
-    awarn << "set topic " << topic.name << std::endl;
     current_subscriber.shutdown();
 
     if(RosMessageConversion::instance().canHandle(topic)) {
         setError(false);
 
-        awarn << "topic is " << topic.name << std::endl;
         current_topic_ = topic.name;
         current_subscriber = RosMessageConversion::instance().subscribe(topic, 1, connector_);
 
@@ -132,4 +166,10 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
         return;
     }
 
+}
+
+
+void ImportRos::setState(Memento::Ptr memento)
+{
+    Node::setState(memento);
 }
