@@ -12,6 +12,8 @@ struct LabeledScan : public Scan
 public:
     typedef boost::shared_ptr<LabeledScan> Ptr;
 
+    void init(Scan& other);
+
 public:
     std::vector<int> labels;
 };
