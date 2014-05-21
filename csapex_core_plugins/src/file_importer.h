@@ -16,6 +16,7 @@ public:
     FileImporter();
     ~FileImporter();
 
+    void setupParameters();
     void setup();
 
     virtual QIcon getIcon() const;

@@ -66,11 +66,7 @@ void ImageProviderMov::reallyNext(cv::Mat& img, cv::Mat& mask)
         return;
     }
 
-    int current_frame = (int) capture_.get(CV_CAP_PROP_POS_FRAMES);
-
     if(skip) {
-        state["set/current_frame"] = current_frame;
-        capture_ >> last_frame_;
         capture_.set(CV_CAP_PROP_POS_FRAMES, requested_frame);
     }
 
@@ -81,7 +77,12 @@ void ImageProviderMov::reallyNext(cv::Mat& img, cv::Mat& mask)
     next_frame = (int) capture_.get(CV_CAP_PROP_POS_FRAMES);
     state["set/current_frame"] = next_frame;
 
-    if(state.param<int>("set/current_frame") == frames_) {
-        setPlaying(false);
+    if(next_frame == frames_) {
+        bool loop = state.param<bool>("set/loop");
+        if(loop) {
+            state["set/current_frame"] = 0;
+        } else {
+            setPlaying(false);
+        }
     }
 }

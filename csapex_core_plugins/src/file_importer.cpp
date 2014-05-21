@@ -31,7 +31,10 @@ FileImporter::FileImporter()
 {
     addTag(Tag::get("General"));
     addTag(Tag::get("Input"));
+}
 
+void FileImporter::setupParameters()
+{
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
     addParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), boost::bind(&FileImporter::import, this));
 

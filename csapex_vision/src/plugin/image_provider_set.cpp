@@ -13,6 +13,7 @@ ImageProviderSet::ImageProviderSet()
     : next_frame(-1)
 {
     state.addParameter(param::ParameterFactory::declareBool("set/playing", true));
+    state.addParameter(param::ParameterFactory::declareBool("set/loop", true));
     state.addParameter(param::ParameterFactory::declareRange("set/current_frame", 0, 1000, 0, 1));
     // TODO: interval param for playback borders
 }
@@ -30,6 +31,10 @@ bool ImageProviderSet::hasNext()
     if(!state.param<bool>("set/playing")) {
         // not resend and not playing
         return false;
+    }
+
+    if(state.param<bool>("set/loop")) {
+        return true;
     }
 
     int requested_frame = state.param<int>("set/current_frame");
