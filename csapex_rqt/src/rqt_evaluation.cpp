@@ -11,7 +11,6 @@
 #include <csapex/core/settings.h>
 #include <csapex/manager/box_manager.h>
 #include <csapex/view/widget_controller.h>
-#include <csapex/view/overlay.h>
 
 /// SYSTEM
 #include <pluginlib/class_list_macros.h>
