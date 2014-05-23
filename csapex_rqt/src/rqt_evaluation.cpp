@@ -6,7 +6,7 @@
 #include <csapex/view/designer.h>
 #include <csapex/model/graph.h>
 #include <csapex/core/graphio.h>
-#include <csapex/view/design_board.h>
+#include <csapex/view/designer_view.h>
 #include <csapex/view/designer.h>
 #include <csapex/core/settings.h>
 #include <csapex/manager/box_manager.h>
@@ -30,9 +30,8 @@ CsApex::CsApex()
       dispatcher_(new CommandDispatcher(graph_, widget_controller_)),
       core_(settings_, graph_, dispatcher_.get()),
       drag_io_(graph_.get(), dispatcher_.get(), widget_controller_),
-      overlay_(new Overlay(graph_, dispatcher_.get(), widget_controller_)),
-      board_ (new DesignBoard(graph_, dispatcher_.get(), widget_controller_, drag_io_, overlay_)),
-      designer_(new Designer(settings_, graph_, dispatcher_.get(), widget_controller_, board_))
+      view_ (new DesignerView(graph_, dispatcher_.get(), widget_controller_, drag_io_)),
+      designer_(new Designer(settings_, graph_, dispatcher_.get(), widget_controller_, view_))
 {
     BoxManager::instance().settings_ = &settings_;
 
@@ -50,7 +49,7 @@ void CsApex::initPlugin(qt_gui_cpp::PluginContext& context)
     context_ = &context;
 
     eva_ = new CsApexWindow(core_, dispatcher_.get(), widget_controller_, graph_, designer_);
-    eva_->showMenu();
+//    eva_->showMenu();
 
     context_->addWidget(eva_);
 }

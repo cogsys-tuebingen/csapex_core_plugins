@@ -32,8 +32,7 @@ private:
     csapex::CsApexWindow* eva_;
 
     csapex::DragIO drag_io_;
-    csapex::Overlay* overlay_;
-    csapex::DesignBoard* board_;
+    csapex::DesignerView* view_;
     csapex::Designer* designer_;
 };
 

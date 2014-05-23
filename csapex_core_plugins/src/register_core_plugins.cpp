@@ -46,7 +46,7 @@ class RosHandler
         return v[Qt::UserRole].toString().toStdString();
     }
 
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, Overlay* overlay, QDragEnterEvent* e) {
+    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragEnterEvent* e) {
         if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
             std::string cmd = getCmd(e);
 
@@ -61,10 +61,10 @@ class RosHandler
         }
         return false;
     }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, Overlay* overlay, QDragMoveEvent* e){
+    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragMoveEvent* e){
         return false;
     }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, Overlay* overlay, QDropEvent* e) {
+    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e) {
         if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
             std::string cmd = getCmd(e);
 
@@ -115,7 +115,7 @@ class FileHandler
         return e->mimeData()->urls();
     }
 
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, Overlay* overlay, QDragEnterEvent* e) {
+    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragEnterEvent* e) {
         if(e->mimeData()->hasFormat(format.c_str())) {
             QList<QUrl> files = getFiles(e);
 
@@ -126,10 +126,10 @@ class FileHandler
         }
         return false;
     }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, Overlay* overlay, QDragMoveEvent* e){
+    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragMoveEvent* e){
         return false;
     }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, Overlay* overlay, QDropEvent* e) {
+    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e) {
         if(e->mimeData()->hasFormat(format.c_str())) {
             QList<QUrl> files = getFiles(e);
 

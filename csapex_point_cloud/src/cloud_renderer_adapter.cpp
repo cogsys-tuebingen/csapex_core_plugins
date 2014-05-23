@@ -308,6 +308,7 @@ void CloudRendererAdapter::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     last_pos_ = event->screenPos();
     drag_ = true;
+    event->accept();
 }
 
 void CloudRendererAdapter::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -323,6 +324,7 @@ void CloudRendererAdapter::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         wrapped_->getParameter("~size/width/out")->set<int>(w_out_);
         wrapped_->getParameter("~size/height/out")->set<int>(h_out_);
     }
+    event->accept();
 }
 
 void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -330,6 +332,8 @@ void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if(!drag_) {
         return;
     }
+
+    event->accept();
 
     QPointF pos = event->screenPos();
     double dx = pos.x() - last_pos_.x();
