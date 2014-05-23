@@ -321,8 +321,8 @@ void CloudRendererAdapter::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if(size_sync_) {
         w_out_ = w_view_;
         h_out_ = h_view_;
-        wrapped_->getParameter("~size/width/out")->set<int>(w_out_);
-        wrapped_->getParameter("~size/height/out")->set<int>(h_out_);
+        wrapped_->getParameter("~size/out/width")->set<int>(w_out_);
+        wrapped_->getParameter("~size/out/height")->set<int>(h_out_);
     }
     event->accept();
 }
@@ -375,9 +375,12 @@ void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void CloudRendererAdapter::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
+    event->accept();
+
     r_ += event->delta() * -0.0025;
     wrapped_->getParameter("~view/r")->set<double>(r_);
     paintGL(false);
+
 }
 
 
