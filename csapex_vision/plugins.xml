@@ -38,7 +38,7 @@
     Apply a bilateral filter to an image.
   </description>
 </class>
-<class type="csapex::Segmentation" base_class_type="csapex::Node">
+<class type="csapex::ColorSegmentation" base_class_type="csapex::Node">
   <description>Allows the user to segment an image based on its channels</description>
 </class>
 <class type="csapex::FilterApplyMask" base_class_type="csapex::Node">
