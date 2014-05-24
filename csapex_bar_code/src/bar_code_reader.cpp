@@ -51,7 +51,7 @@ void BarCodeReader::process()
     zbar::Image image(w, h, "Y800", msg->value.data, w * h);
 
     // scan the image for barcodes
-    int n = scanner.scan(image);
+    /*int n = */scanner.scan(image);
 //    if(n == 0) {
 //        if(!data_.empty() && !lost) {
 //            lost = true;

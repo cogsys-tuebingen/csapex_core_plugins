@@ -72,7 +72,7 @@ add_library(csapex_vision_plugin
     src/plugin/register_plugin.cpp
     src/plugin/camera.cpp
     src/plugin/image_padding.cpp
-    src/plugin/segmentation.cpp
+    src/plugin/color_segmentation.cpp
     src/plugin/filter_apply_mask.cpp
     src/plugin/filter_static_mask.cpp
     src/plugin/filter_static_mask_painter.cpp

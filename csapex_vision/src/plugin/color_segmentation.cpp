@@ -1,5 +1,5 @@
 /// HEADER
-#include "segmentation.h"
+#include "color_segmentation.h"
 
 /// PROJECT
 #include <csapex/model/connector_in.h>
@@ -10,25 +10,25 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <boost/foreach.hpp>
 
-CSAPEX_REGISTER_CLASS(csapex::Segmentation, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ColorSegmentation, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-Segmentation::Segmentation()
+ColorSegmentation::ColorSegmentation()
 {
     addTag(Tag::get("Vision"));
     Tag::createIfNotExists("Segmentation");
     addTag(Tag::get("Segmentation"));
 }
 
-void Segmentation::setState(Memento::Ptr memento)
+void ColorSegmentation::setState(Memento::Ptr memento)
 {
     Node::setState(memento);
     loaded_state_ = boost::dynamic_pointer_cast<GenericState>(memento);
 }
 
-void Segmentation::process()
+void ColorSegmentation::process()
 {
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
 
@@ -75,7 +75,7 @@ std::string channelName(int idx, const Channel& c)
 }
 }
 
-void Segmentation::update()
+void ColorSegmentation::update()
 {
     min = cv::Scalar::all(0);
     max = cv::Scalar::all(0);
@@ -88,7 +88,7 @@ void Segmentation::update()
     }
 }
 
-void Segmentation::recompute()
+void ColorSegmentation::recompute()
 {
     setParameterSetSilence(true);
     removeTemporaryParameters();
@@ -97,7 +97,7 @@ void Segmentation::recompute()
 
         std::string name = channelName(i, c);
         param::Parameter::Ptr p = param::ParameterFactory::declareInterval(name, c.min, c.max, c.min, c.max, 1);
-        addTemporaryParameter(p, boost::bind(&Segmentation::update, this));
+        addTemporaryParameter(p, boost::bind(&ColorSegmentation::update, this));
     }
 
     setParameterSetSilence(false);
@@ -106,7 +106,7 @@ void Segmentation::recompute()
     update();
 }
 
-void Segmentation::setup()
+void ColorSegmentation::setup()
 {
     input_img_ = addInput<CvMatMessage>("Image");
     input_mask_ = addInput<CvMatMessage>("Mask", true);

@@ -13,7 +13,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS csapex csapex_core_plugins)
+find_package(catkin REQUIRED COMPONENTS csapex csapex_core_plugins utils_laser_processing)
 
 find_package(Boost REQUIRED)
 
@@ -29,7 +29,7 @@ find_package(Boost REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_scan_2d csapex_scan_2d_plugin
-#  CATKIN_DEPENDS csapex csapex_vision utils_vision
+  CATKIN_DEPENDS utils_laser_processing
 #  DEPENDS system_lib
 )
 

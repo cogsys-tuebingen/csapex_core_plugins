@@ -1,5 +1,5 @@
-#ifndef FILTER_TOOL_DETECTION_H
-#define FILTER_TOOL_DETECTION_H
+#ifndef COLOR_SEGMENTATION_H
+#define COLOR_SEGMENTATION_H
 
 /// COMPONENT
 #include <csapex/model/node.h>
@@ -8,10 +8,10 @@
 namespace csapex
 {
 
-class Segmentation : public csapex::Node
+class ColorSegmentation : public csapex::Node
 {
 public:
-    Segmentation();
+    ColorSegmentation();
 
 public:
     virtual void process();
@@ -38,4 +38,4 @@ private:
 
 }
 
-#endif // FILTER_TOOL_DETECTION_H
+#endif // COLOR_SEGMENTATION_H
