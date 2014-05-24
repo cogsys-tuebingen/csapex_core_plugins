@@ -11,7 +11,7 @@ namespace csapex {
 namespace connection_types {
 
 
-struct ScanMessage : public MessageTemplate<Scan, ScanMessage>
+struct ScanMessage : public MessageTemplate<lib_laser_processing::Scan, ScanMessage>
 {
     ScanMessage();
 

@@ -11,7 +11,7 @@ namespace csapex {
 namespace connection_types {
 
 
-struct LabeledScanMessage : public MessageTemplate<LabeledScan, LabeledScanMessage>
+struct LabeledScanMessage : public MessageTemplate<lib_laser_processing::LabeledScan, LabeledScanMessage>
 {
     LabeledScanMessage();
 

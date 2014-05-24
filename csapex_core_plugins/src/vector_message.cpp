@@ -10,7 +10,7 @@ GenericVectorMessage::GenericVectorMessage()
     type_ = &typeid(void);
 }
 GenericVectorMessage::GenericVectorMessage(const std::type_info &type)
-    : Message (std::string("std::vector<") + type2name(type)  + ">")
+    : Message (std::string("std::vector<") + type2nameWithoutNamespace(type)  + ">")
 {
     type_ = &type;
 }

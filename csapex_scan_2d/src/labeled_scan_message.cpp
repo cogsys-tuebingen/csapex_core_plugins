@@ -3,6 +3,7 @@
 
 using namespace csapex;
 using namespace connection_types;
+using namespace lib_laser_processing;
 
 
 LabeledScanMessage::LabeledScanMessage()
@@ -13,10 +14,10 @@ void LabeledScanMessage::writeYaml(YAML::Emitter &yaml)
 {
     yaml << YAML::Flow << YAML::Key << "ranges" << YAML::Value;
     yaml << YAML::BeginSeq;
-    std::vector<float>::const_iterator r = value.ranges.begin();
+    std::vector<LaserBeam>::const_iterator r = value.rays.begin();
     std::vector<int>::const_iterator l = value.labels.begin();
-    for(; r != value.ranges.end(); ++r, ++l) {
-        yaml << *r << *l;
+    for(; r != value.rays.end(); ++r, ++l) {
+        yaml << r->range << *l;
     }
     yaml << YAML::EndSeq;
 }
