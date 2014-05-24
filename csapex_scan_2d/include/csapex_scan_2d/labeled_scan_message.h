@@ -2,7 +2,7 @@
 #define DESCRIPTOR_MESSAGE_H
 
 /// COMPONENT
-#include <csapex_scan_2d/labeled_scan.h>
+#include <utils_laser_processing/data/labeled_scan.h>
 
 /// PROJECT
 #include <csapex/model/message.h>

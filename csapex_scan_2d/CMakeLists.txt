@@ -45,9 +45,7 @@ include_directories(include
 )
 
 add_library(csapex_scan_2d
-    src/scan.cpp
     src/scan_message.cpp
-    src/labeled_scan.cpp
     src/labeled_scan_message.cpp
 )
 target_link_libraries(csapex_scan_2d
