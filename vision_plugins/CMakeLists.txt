@@ -86,6 +86,7 @@ add_library(vision_plugins
 
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
+    src/visualize/image_text_label.cpp
 
     src/filter/median_filter.cpp
     src/filter/binomial_filter.cpp
