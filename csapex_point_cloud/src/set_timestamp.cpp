@@ -23,7 +23,7 @@ SetTimeStamp::SetTimeStamp()
 void SetTimeStamp::setup()
 {
     input_ = addInput<connection_types::PointCloudMessage>("PointCloud");
-    input_frame_ = addInput<connection_types::DirectMessage<std::string> >("Frame", true, true);
+    input_frame_ = addInput<connection_types::DirectMessage<std::string> >("Frame", true);
     input_time_ = addInput<connection_types::TimeStampMessage>("Time");
 
     output_ = addOutput<connection_types::PointCloudMessage>("PointCloud");

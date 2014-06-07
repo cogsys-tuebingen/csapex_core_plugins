@@ -94,14 +94,7 @@ bool FileImporter::doImport(const QString& _path)
     provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
     provider_->load(path.toStdString());
 
-    setParameterSetSilence(true);
-    removeTemporaryParameters();
-    std::vector<param::Parameter::Ptr> params = provider_->getParameters();
-    Q_FOREACH(param::Parameter::Ptr param, params) {
-        addTemporaryParameter(param);
-    }
-    setParameterSetSilence(false);
-    triggerParameterSetChanged();
+    setTemporaryParameters(provider_->getParameters());
 
     return provider_.get();
 }

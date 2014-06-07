@@ -98,11 +98,7 @@ struct PointCloudMessage : public Message
     }
 
     bool acceptsConnectionFrom(const ConnectionType* other_side) const {
-        return rawName() == other_side->rawName();
-//        if(type.empty()) {
-//        } else {
-//            return name() == other_side->name();
-//        }
+        return dynamic_cast<const PointCloudMessage*> (other_side);
     }
 
     void writeYaml(YAML::Emitter& yaml) {

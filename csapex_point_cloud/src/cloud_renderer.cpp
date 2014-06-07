@@ -15,7 +15,6 @@ using namespace csapex;
 using namespace csapex::connection_types;
 
 CloudRenderer::CloudRenderer()
-    : stopped_(false)
 {
     addTag(Tag::get("PointCloud"));
 
@@ -68,16 +67,10 @@ void CloudRenderer::setup()
     output_ = addOutput<CvMatMessage>("Rendered Image");
 }
 
-void CloudRenderer::stop()
-{
-    stopped_ = true;
-    wait_for_view_.wakeAll();
-
-    Node::stop();
-}
-
 void CloudRenderer::process()
 {
+    InteractiveNode::process();
+
     if(!result_) {
         refresh_request();
     }
@@ -92,14 +85,10 @@ void CloudRenderer::process()
     // todo wait only in !headless
 
     if(output_->isConnected()) {
-        result_mutex_.lock();
-        while(!result_ && !stopped_) {
-            wait_for_view_.wait(&result_mutex_);
-        }
-        result_mutex_.unlock();
-
-        if(result_) {
-            output_->publish(result_);
+        if(waitForView()) {
+            if(result_) {
+                output_->publish(result_);
+            }
         }
     }
 }
@@ -112,14 +101,10 @@ void CloudRenderer::refresh()
 
 void CloudRenderer::publishImage(const cv::Mat &img)
 {
-    {
-        QMutexLocker lock(&result_mutex_);
+    CvMatMessage::Ptr msg(new CvMatMessage(enc::bgr));
+    img.copyTo(msg->value);
 
-        CvMatMessage::Ptr msg(new CvMatMessage(enc::bgr));
-        img.copyTo(msg->value);
+    result_ = msg;
 
-        result_ = msg;
-        wait_for_view_.wakeAll();
-    }
-
+    done();
 }

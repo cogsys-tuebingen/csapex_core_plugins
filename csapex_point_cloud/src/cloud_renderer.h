@@ -2,7 +2,7 @@
 #define CLOUD_RENDERER_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex_core_plugins/interactive_node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex_vision/cv_mat_message.h>
 
@@ -12,7 +12,7 @@
 
 namespace csapex {
 
-class CloudRenderer : public Node
+class CloudRenderer : public InteractiveNode
 {
     friend class CloudRendererAdapter;
 
@@ -21,8 +21,6 @@ public:
 
     virtual void setup();
     virtual void process();
-
-    virtual void stop();
 
     void publishImage(const cv::Mat &img);
 
@@ -41,11 +39,6 @@ private:
     connection_types::PointCloudMessage::Ptr message_;
 
     connection_types::CvMatMessage::Ptr result_;
-
-    QMutex result_mutex_;
-    QWaitCondition wait_for_view_;
-
-    bool stopped_;
 };
 
 }

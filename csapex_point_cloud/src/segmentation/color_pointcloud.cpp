@@ -6,6 +6,7 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/color.hpp>
 
 /// SYSTEM
 #include <csapex_point_cloud/point_cloud_message.h>
@@ -39,42 +40,6 @@ void ColorPointCloud::setup()
     output_ = addOutput<PointCloudMessage>("Colored PointCloud");
 }
 
-namespace {
-#define _HSV2RGB_(H, S, V, R, G, B) \
-{ \
-    double _h = H/60.; \
-    int _hf = (int)floor(_h); \
-    int _hi = ((int)_h)%6; \
-    double _f = _h - _hf; \
-    \
-    double _p = V * (1. - S); \
-    double _q = V * (1. - _f * S); \
-    double _t = V * (1. - (1. - _f) * S); \
-    \
-    switch (_hi) \
-{ \
-    case 0: \
-    R = 255.*V; G = 255.*_t; B = 255.*_p; \
-    break; \
-    case 1: \
-    R = 255.*_q; G = 255.*V; B = 255.*_p; \
-    break; \
-    case 2: \
-    R = 255.*_p; G = 255.*V; B = 255.*_t; \
-    break; \
-    case 3: \
-    R = 255.*_p; G = 255.*_q; B = 255.*V; \
-    break; \
-    case 4: \
-    R = 255.*_t; G = 255.*_p; B = 255.*V; \
-    break; \
-    case 5: \
-    R = 255.*V; G = 255.*_p; B = 255.*_q; \
-    break; \
-} \
-}
-}
-
 namespace implementation {
 
 struct Color {
@@ -102,7 +67,7 @@ struct Impl {
         for(typename pcl::PointCloud<PointT>::const_iterator it = src->begin() ; it != src->end() ; ++it) {
             if(colors.find(it->label) == colors.end()) {
                 double r,g,b;
-                _HSV2RGB_((double) ((colors.size() * 77) % 360), 1.0, 1.0, r, g, b);
+                color::fromCount(colors.size(), r,g,b);
                 colors.insert(std::make_pair(it->label,Color(r,g,b)));
             }
             Color c = colors.at(it->label);

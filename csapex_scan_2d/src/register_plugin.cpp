@@ -18,6 +18,8 @@ CSAPEX_REGISTER_CLASS(csapex::RegisterScan2DPlugin, csapex::CorePlugin)
 
 using namespace csapex;
 
+Q_DECLARE_METATYPE(lib_laser_processing::Scan)
+Q_DECLARE_METATYPE(lib_laser_processing::LabeledScan)
 
 struct ConvertScan
 {
@@ -50,6 +52,9 @@ RegisterScan2DPlugin::RegisterScan2DPlugin()
 
 void RegisterScan2DPlugin::init(CsApexCore& core)
 {
+    qRegisterMetaType < lib_laser_processing::Scan::Ptr > ("lib_laser_processing::Scan::Ptr");
+    qRegisterMetaType < lib_laser_processing::LabeledScan::Ptr > ("lib_laser_processing::LabeledScan::Ptr");
+
     Tag::createIfNotExists("Features");
 
     ConnectionTypeManager::registerMessage<connection_types::ScanMessage>();

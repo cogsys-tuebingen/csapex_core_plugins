@@ -11,6 +11,7 @@
 #include <csapex/core/settings.h>
 #include <csapex/manager/box_manager.h>
 #include <csapex/view/widget_controller.h>
+#include <csapex/view/designer_scene.h>
 
 /// SYSTEM
 #include <pluginlib/class_list_macros.h>
@@ -29,8 +30,9 @@ CsApex::CsApex()
       dispatcher_(new CommandDispatcher(graph_, widget_controller_)),
       core_(settings_, graph_, dispatcher_.get()),
       drag_io_(graph_.get(), dispatcher_.get(), widget_controller_),
-      view_ (new DesignerView(graph_, dispatcher_.get(), widget_controller_, drag_io_)),
-      designer_(new Designer(settings_, graph_, dispatcher_.get(), widget_controller_, view_))
+      scene_(new DesignerScene(graph_, dispatcher_.get(), widget_controller_)),
+      view_ (new DesignerView(scene_, graph_, dispatcher_.get(), widget_controller_, drag_io_)),
+      designer_(new Designer(settings_, graph_, dispatcher_.get(), widget_controller_, view_, scene_))
 {
     BoxManager::instance().settings_ = &settings_;
 
