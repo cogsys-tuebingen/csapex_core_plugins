@@ -39,12 +39,6 @@ void IndexFilter::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     PointIndecesMessage::Ptr indeces(indeces_input_->getMessage<PointIndecesMessage>());
     typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>(*cloud, indeces->value->indices));
 
-//    for(std::vector<int>::const_iterator it = indeces->value->indices.begin() ;
-//        it != indeces->value->indices.end() ;
-//        ++it) {
-//        cloud_filtered->at(*it) = PointT();
-//    }
-
     PointCloudMessage::Ptr out(new PointCloudMessage);
     out->value = cloud_filtered;
     output_cloud_->publish(out);
