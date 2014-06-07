@@ -7,4 +7,16 @@
 <class type="csapex::LabeledScanToScan" base_class_type="csapex::Node">
   <description>Strip away labels from a labeled scan</description>
 </class>
+<class type="csapex::ScanRenderer" base_class_type="csapex::Node">
+  <description>Rener a scan into an image</description>
+</class>
+<class type="csapex::ScanSegmentation2DRenderer" base_class_type="csapex::Node">
+  <description>Renders a segmented laser scan into an image</description>
+</class>
+<class type="csapex::ScanLabeler" base_class_type="csapex::Node">
+  <description>Allows the user to label scans into different classes</description>
+</class>
+<class type="csapex::ScanLabelerAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
 </library>
