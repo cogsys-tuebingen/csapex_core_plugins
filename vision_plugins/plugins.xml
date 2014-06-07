@@ -221,4 +221,9 @@
         final matrix size.
    </description>
   </class>
+  <class type="vision_plugins::ImageTextLabel" base_class_type="csapex::Node">
+    <description>
+        Render some text into an image.
+   </description>
+  </class>
 </library>
