@@ -74,7 +74,7 @@ void Foreach::process()
     // iterate all entries of the vector
     for(std::size_t i = 0; i < messages; ++i) {
         std::stringstream step; step << "step " << i;
-        Timer::Interlude::Ptr interlude = publish_timer_->step(step.str());
+        Timer::Interlude::Ptr interlude = profiling_timer_->step(step.str());
         out_sub->setSequenceNumber(vec->sequenceNumber()+1);
 
         // send out ith component
