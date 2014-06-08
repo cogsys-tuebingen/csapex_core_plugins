@@ -14,9 +14,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <sstream>
 
 CSAPEX_REGISTER_CLASS(csapex::BlobDetector, csapex::Node)
@@ -152,8 +153,8 @@ void BlobDetector::process()
 
 void BlobDetector::setup()
 {
-    input_ = addInput<CvMatMessage>("Image");
+    input_ = modifier_->addInput<CvMatMessage>("Image");
 
-    output_debug_ = addOutput<CvMatMessage>("OutputImage");
-    output_ = addOutput<VectorMessage, RoiMessage>("ROIs");
+    output_debug_ = modifier_->addOutput<CvMatMessage>("OutputImage");
+    output_ = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
 }

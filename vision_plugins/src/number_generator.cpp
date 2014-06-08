@@ -8,9 +8,8 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::NumberGenerator, csapex::Node)
 
@@ -38,9 +37,8 @@ void NumberGenerator::process()
     ++n;
 }
 
-
 void NumberGenerator::setup()
 {
-    input_ = addInput<connection_types::AnyMessage>("Trigger");
-    output_ = addOutput<connection_types::CvMatMessage>("Image");
+    input_ = modifier_->addInput<connection_types::AnyMessage>("Trigger");
+    output_ = modifier_->addOutput<connection_types::CvMatMessage>("Image");
 }

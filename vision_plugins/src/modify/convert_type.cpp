@@ -5,10 +5,11 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
 #include <boost/assign/std.hpp>
-#include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -108,8 +109,8 @@ void ConvertType::process()
 
 void ConvertType::setup()
 {
-    input_ =  addInput<CvMatMessage>("original");
-    output_ = addOutput<CvMatMessage>("converted");
+    input_ =  modifier_->addInput<CvMatMessage>("original");
+    output_ = modifier_->addOutput<CvMatMessage>("converted");
     update();
 }
 

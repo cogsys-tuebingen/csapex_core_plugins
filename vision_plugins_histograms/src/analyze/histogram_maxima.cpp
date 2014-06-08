@@ -5,9 +5,8 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
 #include <utils_param/parameter_factory.h>
-
+#include <csapex/model/node_modifier.h>
 #include <utils_cv/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <vision_plugins_histograms/histogram_maxima_msg.h>
@@ -65,6 +64,6 @@ void HistogramMaxima::process()
 
 void HistogramMaxima::setup()
 {
-    histograms_ = addInput<HistogramMessage>("histograms");
-    maxima_     = addOutput<HistogramMaximaMessage>("maxima");
+    histograms_ = modifier_->addInput<HistogramMessage>("histograms");
+    maxima_     = modifier_->addOutput<HistogramMaximaMessage>("maxima");
 }

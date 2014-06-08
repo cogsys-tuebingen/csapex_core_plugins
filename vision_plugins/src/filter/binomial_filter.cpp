@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/kernel.hpp>
+#include <csapex/model/node_modifier.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -41,6 +42,6 @@ void BinomialFilter::process()
 
 void BinomialFilter::setup()
 {
-    input_ = addInput<CvMatMessage>("original");
-    output_ = addOutput<CvMatMessage>("filtered");
+    input_ = modifier_->addInput<CvMatMessage>("original");
+    output_ = modifier_->addOutput<CvMatMessage>("filtered");
 }

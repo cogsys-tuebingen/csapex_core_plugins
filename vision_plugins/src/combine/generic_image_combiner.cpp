@@ -7,6 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <boost/spirit/include/qi.hpp>
@@ -180,7 +181,7 @@ void GenericImageCombiner::process()
 
 void GenericImageCombiner::setup()
 {
-    i1_ = addInput<CvMatMessage>("image 1");
-    i2_ = addInput<CvMatMessage>("image 2");
-    out_ = addOutput<CvMatMessage>("combined");
+    i1_ = modifier_->addInput<CvMatMessage>("image 1");
+    i2_ = modifier_->addInput<CvMatMessage>("image 2");
+    out_ = modifier_->addOutput<CvMatMessage>("combined");
 }

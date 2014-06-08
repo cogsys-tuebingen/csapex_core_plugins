@@ -5,14 +5,13 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-
-/// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/foreach.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::RenderROIs, csapex::Node)
@@ -72,8 +71,8 @@ void RenderROIs::process()
 
 void RenderROIs::setup()
 {
-    input_img_ = addInput<CvMatMessage>("image");
-    input_rois_ = addInput<VectorMessage, RoiMessage>("ROIs");
+    input_img_ = modifier_->addInput<CvMatMessage>("image");
+    input_rois_ = modifier_->addInput<VectorMessage, RoiMessage>("ROIs");
 
-    output_ = addOutput<CvMatMessage>("Rendered Image");
+    output_ = modifier_->addOutput<CvMatMessage>("Rendered Image");
 }

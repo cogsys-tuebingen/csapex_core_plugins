@@ -8,6 +8,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/color.hpp>
+#include <csapex/model/node_modifier.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -63,8 +64,8 @@ void RenderLabels::process()
 
 void RenderLabels::setup()
 {
-    labels_ = addInput<CvMatMessage>("labels");
-    image_  = addInput<CvMatMessage>("image", true);
-    output_ = addOutput<CvMatMessage>("rendered");
+    labels_ = modifier_->addInput<CvMatMessage>("labels");
+    image_  = modifier_->addInput<CvMatMessage>("image", true);
+    output_ = modifier_->addOutput<CvMatMessage>("rendered");
 }
 

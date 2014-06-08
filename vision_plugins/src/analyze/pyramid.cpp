@@ -8,7 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_core_plugins/vector_message.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
+#include <csapex/model/node_modifier.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -53,9 +53,9 @@ void Pyramid::process()
 }
 void Pyramid::setup()
 {
-    input_ = addInput<CvMatMessage>("original");
-    preview_ = addOutput<CvMatMessage>("preview");
-    levels_  = addOutput<GenericVectorMessage, CvMatMessage::Ptr>("levels");
+    input_ = modifier_->addInput<CvMatMessage>("original");
+    preview_ = modifier_->addOutput<CvMatMessage>("preview");
+    levels_  = modifier_->addOutput<GenericVectorMessage, CvMatMessage::Ptr>("levels");
 }
 
 void Pyramid::update()

@@ -5,8 +5,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Merger, csapex::Node)
@@ -21,7 +20,7 @@ Merger::Merger()
 
 void Merger::setup()
 {
-    output_ = addOutput<CvMatMessage>("Merged Image");
+    output_ = modifier_->addOutput<CvMatMessage>("Merged Image");
 
     updateInputs();
 }
@@ -59,7 +58,7 @@ void Merger::updateInputs()
             getInput(i)->enable();
         }
         for(int i = 0 ; i < to_add ; i++) {
-            addInput<CvMatMessage>("Channel", true);
+            modifier_->addInput<CvMatMessage>("Channel", true);
         }
     }
 

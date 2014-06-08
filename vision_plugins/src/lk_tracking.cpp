@@ -8,9 +8,10 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision_features/keypoint_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/foreach.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::LKTracking, csapex::Node)
@@ -125,8 +126,8 @@ void LKTracking::update(const param::Parameter*)
 
 void LKTracking::setup()
 {
-    in_image_ = addInput<CvMatMessage>("Image");
-    in_keypoints_ = addInput<KeypointMessage>("Keypoints");
+    in_image_ = modifier_->addInput<CvMatMessage>("Image");
+    in_keypoints_ = modifier_->addInput<KeypointMessage>("Keypoints");
 
-    out_debug_ = addOutput<CvMatMessage>("Debug");
+    out_debug_ = modifier_->addOutput<CvMatMessage>("Debug");
 }

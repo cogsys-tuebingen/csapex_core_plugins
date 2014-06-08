@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/flood.h>
+#include <csapex/model/node_modifier.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -48,8 +49,8 @@ void LabelRegions::process()
 
 void LabelRegions::setup()
 {
-    input_ = addInput<CvMatMessage>("edges");
-    output_ = addOutput<CvMatMessage>("labels");
+    input_ = modifier_->addInput<CvMatMessage>("edges");
+    output_ = modifier_->addOutput<CvMatMessage>("labels");
 }
 
 

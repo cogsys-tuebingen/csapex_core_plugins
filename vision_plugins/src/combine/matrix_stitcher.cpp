@@ -7,6 +7,9 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
+
+/// SYSTEM
 #include <boost/assign.hpp>
 
 using namespace csapex;
@@ -99,7 +102,7 @@ void MatrixStitcher::process()
 
 void MatrixStitcher::setup()
 {
-    matrix_1_ =  addInput<CvMatMessage>("matrix 1");
-    matrix_2_ =  addInput<CvMatMessage>("matrix 2");
-    stitched_ = addOutput<CvMatMessage>("stitched");
+    matrix_1_ =  modifier_->addInput<CvMatMessage>("matrix 1");
+    matrix_2_ =  modifier_->addInput<CvMatMessage>("matrix 2");
+    stitched_ = modifier_->addOutput<CvMatMessage>("stitched");
 }

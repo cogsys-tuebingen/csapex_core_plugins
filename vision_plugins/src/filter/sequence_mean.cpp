@@ -8,6 +8,9 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/normalization.hpp>
+#include <csapex/model/node_modifier.h>
+
+/// SYSTEM
 #include <boost/assign.hpp>
 
 using namespace csapex;
@@ -61,8 +64,8 @@ void SequenceMean::process()
 
 void SequenceMean::setup()
 {
-    input_ = addInput<CvMatMessage>("original");
-    output_ = addOutput<CvMatMessage>("filtered");
+    input_ = modifier_->addInput<CvMatMessage>("original");
+    output_ = modifier_->addOutput<CvMatMessage>("filtered");
     update();
 }
 

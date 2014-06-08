@@ -5,10 +5,9 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-
+#include <csapex/model/node_modifier.h>
 #include <utils_cv/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <vision_plugins_histograms/histogram_maxima_msg.h>
@@ -68,7 +67,7 @@ void Slicing::process()
 
 void Slicing::setup()
 {
-    histogram_maxima_ = addInput<HistogramMaximaMessage>("maxima");
-    matrix_           = addInput<CvMatMessage>("image");
-    slices_           = addOutput<CvMatMessage>("slices");
+    histogram_maxima_ = modifier_->addInput<HistogramMaximaMessage>("maxima");
+    matrix_           = modifier_->addInput<CvMatMessage>("image");
+    slices_           = modifier_->addOutput<CvMatMessage>("slices");
 }

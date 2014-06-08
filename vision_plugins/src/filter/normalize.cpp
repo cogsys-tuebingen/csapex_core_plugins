@@ -7,6 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <opencv2/imgproc/imgproc.hpp>
@@ -55,7 +56,7 @@ void Normalize::process()
 
 void Normalize::setup()
 {
-    input_  = addInput<CvMatMessage>("original");
-    mask_   = addInput<CvMatMessage>("mask", true);
-    output_ = addOutput<CvMatMessage>("normalized");
+    input_  = modifier_->addInput<CvMatMessage>("original");
+    mask_   = modifier_->addInput<CvMatMessage>("mask", true);
+    output_ = modifier_->addOutput<CvMatMessage>("normalized");
 }

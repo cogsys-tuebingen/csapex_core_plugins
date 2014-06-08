@@ -1,13 +1,15 @@
 /// HEADER
 #include "image_text_label.h"
 
-
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
+
+/// SYSTEM
 #include <boost/assign.hpp>
 
 using namespace csapex;
@@ -39,8 +41,8 @@ ImageTextLabel::ImageTextLabel()
 
 void ImageTextLabel::setup()
 {
-    input_  = addInput<CvMatMessage>("Image");
-    output_ = addOutput<CvMatMessage>("Labeled");
+    input_  = modifier_->addInput<CvMatMessage>("Image");
+    output_ = modifier_->addOutput<CvMatMessage>("Labeled");
 }
 
 void ImageTextLabel::process()

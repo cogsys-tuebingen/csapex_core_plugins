@@ -6,10 +6,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_cv/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
+#include <csapex/model/node_modifier.h>
 
 using namespace vision_plugins;
 using namespace csapex;
@@ -145,9 +145,9 @@ void Histogram::process()
 
 void Histogram::setup()
 {
-    input_  = addInput<CvMatMessage>("input");
-    mask_   = addInput<CvMatMessage>("mask", true);
-    output_ = addOutput<HistogramMessage>("histograms");
+    input_  = modifier_->addInput<CvMatMessage>("input");
+    mask_   = modifier_->addInput<CvMatMessage>("mask", true);
+    output_ = modifier_->addOutput<HistogramMessage>("histograms");
     update();
 }
 

@@ -5,15 +5,14 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-
-/// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_vision/utils/rectangle_cluster.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/foreach.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::MergeROIs, csapex::Node)
@@ -50,6 +49,6 @@ void MergeROIs::process()
 
 void MergeROIs::setup()
 {
-    input_ = addInput<VectorMessage, RoiMessage>("ROIs");
-    output_ = addOutput<VectorMessage, RoiMessage>("merged ROIs");
+    input_ = modifier_->addInput<VectorMessage, RoiMessage>("ROIs");
+    output_ = modifier_->addOutput<VectorMessage, RoiMessage>("merged ROIs");
 }

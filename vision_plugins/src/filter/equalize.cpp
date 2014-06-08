@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/histogram.hpp>
+#include <csapex/model/node_modifier.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -34,6 +35,6 @@ void Equalize::process()
 
 void Equalize::setup()
 {
-    input_ = addInput<CvMatMessage>("original");
-    output_ = addOutput<CvMatMessage>("equalized");
+    input_ = modifier_->addInput<CvMatMessage>("original");
+    output_ = modifier_->addOutput<CvMatMessage>("equalized");
 }

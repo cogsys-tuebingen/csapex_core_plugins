@@ -8,9 +8,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/assign/std.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::Morpholocial, csapex::Node)
@@ -64,7 +65,7 @@ void Morpholocial::process()
 
 void Morpholocial::setup()
 {
-    input_ = addInput<connection_types::CvMatMessage>("original");
+    input_ = modifier_->addInput<connection_types::CvMatMessage>("original");
 
-    output_ = addOutput<connection_types::CvMatMessage>("morph(original)");
+    output_ = modifier_->addOutput<connection_types::CvMatMessage>("morph(original)");
 }

@@ -6,10 +6,11 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
 #include <boost/assign/std.hpp>
-#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::CameraCalibration, csapex::Node)
 
@@ -82,8 +83,8 @@ void vision_plugins::CameraCalibration::process()
 
 void vision_plugins::CameraCalibration::setup()
 {
-    input_  = addInput<CvMatMessage>("image");
-    output_ = addOutput<CvMatMessage>("rendered corners");
+    input_  = modifier_->addInput<CvMatMessage>("image");
+    output_ = modifier_->addOutput<CvMatMessage>("rendered corners");
     updateCalibration();
 }
 

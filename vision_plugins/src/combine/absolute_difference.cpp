@@ -7,6 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 using namespace csapex;
 using namespace connection_types;
@@ -40,9 +41,9 @@ void AbsoluteDifference::process()
 
 void AbsoluteDifference::setup()
 {
-    mat_1_in_ =  addInput<CvMatMessage>("matrix 1");
-    mat_2_in_ =  addInput<CvMatMessage>("matrix 2");
-    result_   = addOutput<CvMatMessage>("abs. difference");
+    mat_1_in_ =  modifier_->addInput<CvMatMessage>("matrix 1");
+    mat_2_in_ =  modifier_->addInput<CvMatMessage>("matrix 2");
+    result_   = modifier_->addOutput<CvMatMessage>("abs. difference");
 }
 
 

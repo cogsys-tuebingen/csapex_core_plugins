@@ -6,8 +6,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::Undistort, csapex::Node)
@@ -51,8 +50,8 @@ void Undistort::process()
 
 void Undistort::setup()
 {
-    input_ = addInput<CvMatMessage>("original");
-    output_ = addOutput<CvMatMessage>("undistorted");
+    input_ = modifier_->addInput<CvMatMessage>("original");
+    output_ = modifier_->addOutput<CvMatMessage>("undistorted");
 
     update();
 }

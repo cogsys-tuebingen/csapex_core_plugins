@@ -7,7 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-
+#include <csapex/model/node_modifier.h>
 #include <utils_cv/noise_filter.hpp>
 
 using namespace csapex;
@@ -104,8 +104,8 @@ void ThresholdNoiseFilter::process()
 
 void ThresholdNoiseFilter::setup()
 {
-    input_      = addInput<CvMatMessage>("unfiltered");
-    threshold_  = addInput<CvMatMessage>("weights");
-    output_     = addOutput<CvMatMessage>("filtered");
+    input_      = modifier_->addInput<CvMatMessage>("unfiltered");
+    threshold_  = modifier_->addInput<CvMatMessage>("weights");
+    output_     = modifier_->addOutput<CvMatMessage>("filtered");
 
 }

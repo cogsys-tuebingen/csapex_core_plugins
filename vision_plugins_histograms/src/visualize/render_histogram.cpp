@@ -7,9 +7,8 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
 #include <utils_param/parameter_factory.h>
-
+#include <csapex/model/node_modifier.h>
 #include <utils_cv/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <vision_plugins_histograms/histogram_maxima_msg.h>
@@ -113,9 +112,9 @@ void RenderHistogram::process()
 
 void RenderHistogram::setup()
 {
-    input_  = addInput<HistogramMessage>("histograms");
-    output_ = addOutput<CvMatMessage>("image");
-    maxima_ = addInput<HistogramMaximaMessage>("maxima", true);
+    input_  = modifier_->addInput<HistogramMessage>("histograms");
+    output_ = modifier_->addOutput<CvMatMessage>("image");
+    maxima_ = modifier_->addInput<HistogramMaximaMessage>("maxima", true);
 }
 
 void RenderHistogram::update()

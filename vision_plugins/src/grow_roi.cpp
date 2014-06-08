@@ -11,9 +11,10 @@
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_vision/utils/rectangle_cluster.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/foreach.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::GrowROI, csapex::Node)
@@ -42,6 +43,6 @@ void GrowROI::process()
 
 void GrowROI::setup()
 {
-    input_ = addInput<RoiMessage>("ROI");
-    output_ = addOutput<RoiMessage>("grown ROI");
+    input_ = modifier_->addInput<RoiMessage>("ROI");
+    output_ = modifier_->addOutput<RoiMessage>("grown ROI");
 }

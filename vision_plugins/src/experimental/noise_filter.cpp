@@ -7,6 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
@@ -58,9 +59,9 @@ void NoiseFilter::process()
 
 void NoiseFilter::setup()
 {
-    input_ = addInput<CvMatMessage>("unfiltered");
-    output_ = addOutput<CvMatMessage>("filtered");
-    probs_out_ = addOutput<CvMatMessage>("probabilities");
+    input_ = modifier_->addInput<CvMatMessage>("unfiltered");
+    output_ = modifier_->addOutput<CvMatMessage>("filtered");
+    probs_out_ = modifier_->addOutput<CvMatMessage>("probabilities");
 
     update();
 }

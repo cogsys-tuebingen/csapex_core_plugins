@@ -6,6 +6,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::MedianFilter, csapex::Node)
 
@@ -39,8 +40,8 @@ void MedianFilter::process()
 
 void MedianFilter::setup()
 {
-    input_ = addInput<CvMatMessage>("original");
-    output_ = addOutput<CvMatMessage>("filtered");
+    input_ = modifier_->addInput<CvMatMessage>("original");
+    output_ = modifier_->addOutput<CvMatMessage>("filtered");
     update();
 }
 

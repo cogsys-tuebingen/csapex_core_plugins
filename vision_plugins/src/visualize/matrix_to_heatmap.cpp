@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <utils_cv/heatmap.hpp>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <boost/assign/list_of.hpp>
@@ -84,9 +85,9 @@ void MatrixToHeatmap::process()
 
 void MatrixToHeatmap::setup()
 {
-    input_ = addInput<CvMatMessage>("matrix");
-    output_ = addOutput<CvMatMessage>("heatmap");
-    mask_   = addInput<CvMatMessage>("mask",true);
+    input_ = modifier_->addInput<CvMatMessage>("matrix");
+    output_ = modifier_->addOutput<CvMatMessage>("heatmap");
+    mask_   = modifier_->addInput<CvMatMessage>("mask",true);
 
     update();
 }

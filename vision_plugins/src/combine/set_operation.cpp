@@ -6,9 +6,10 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/assign/std.hpp>
 
 using namespace vision_plugins;
@@ -74,7 +75,7 @@ void SetOperation::process()
 
 void SetOperation::setup()
 {
-    i1_ = addInput<CvMatMessage>("mask 1");
-    i2_ = addInput<CvMatMessage>("mask 2", true);
-    out_ = addOutput<CvMatMessage>("combined");
+    i1_ = modifier_->addInput<CvMatMessage>("mask 1");
+    i2_ = modifier_->addInput<CvMatMessage>("mask 2", true);
+    out_ = modifier_->addOutput<CvMatMessage>("combined");
 }

@@ -5,9 +5,10 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/assign/std.hpp>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::ColorConvert, csapex::Node)
@@ -69,8 +70,8 @@ ColorConvert::~ColorConvert()
 
 void ColorConvert::setup()
 {
-    input_img_ = addInput<CvMatMessage>("original");
-    output_img_ = addOutput<CvMatMessage>("converted");
+    input_img_ = modifier_->addInput<CvMatMessage>("original");
+    output_img_ = modifier_->addOutput<CvMatMessage>("converted");
 }
 
 void ColorConvert::process()

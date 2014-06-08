@@ -6,9 +6,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Splitter, csapex::Node)
@@ -29,7 +27,7 @@ Splitter::~Splitter()
 void Splitter::setup()
 {
     /// add input
-    input_ = addInput<CvMatMessage>("Image");
+    input_ = modifier_->addInput<CvMatMessage>("Image");
 
     updateOutputs();
 }
@@ -91,9 +89,9 @@ void Splitter::updateOutputs()
     if(state_.channel_count_ > n) {
         for(int i = n ; i < state_.channel_count_ ; ++i) {
             if(i < (int) state_.encoding_.size()) {
-                addOutput<CvMatMessage>(state_.encoding_[i].name);
+                modifier_->addOutput<CvMatMessage>(state_.encoding_[i].name);
             } else {
-                addOutput<CvMatMessage>("unknown");
+                modifier_->addOutput<CvMatMessage>("unknown");
             }
         }
     } else {

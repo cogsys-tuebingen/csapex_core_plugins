@@ -5,14 +5,13 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-
-/// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <fstream>
 #include <CascadeDetector.h>
 
@@ -99,7 +98,7 @@ void VJDetector::process()
 
 void VJDetector::setup()
 {
-    input_ = addInput<CvMatMessage>("Image");
+    input_ = modifier_->addInput<CvMatMessage>("Image");
 
-    output_ = addOutput<VectorMessage, RoiMessage>("ROIs");
+    output_ = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
 }
