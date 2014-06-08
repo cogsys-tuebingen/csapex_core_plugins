@@ -11,12 +11,13 @@
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
 #include <zbar.h>
 
-PLUGINLIB_EXPORT_CLASS(csapex::BarCodeReader, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::BarCodeReader, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
@@ -132,8 +133,8 @@ void BarCodeReader::process()
 
 void BarCodeReader::setup()
 {
-    in_img = addInput<CvMatMessage>("Image");
+    in_img = modifier_->addInput<CvMatMessage>("Image");
 
-    out_str = addOutput<DirectMessage<std::string> >("String");
-    out_roi = addOutput<VectorMessage, RoiMessage>("ROIs");
+    out_str = modifier_->addOutput<DirectMessage<std::string> >("String");
+    out_roi = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
 }

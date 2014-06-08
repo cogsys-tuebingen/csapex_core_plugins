@@ -4,9 +4,7 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex;
@@ -39,7 +37,7 @@ QIcon NumberInput<T>::getIcon() const
 template <typename T>
 void NumberInput<T>::setup()
 {
-    out_ = addOutput<T>(type2name(typeid(T)));
+    out_ = modifier_->addOutput<T>(type2name(typeid(T)));
 }
 
 template <typename T>

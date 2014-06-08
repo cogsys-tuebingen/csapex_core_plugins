@@ -16,6 +16,7 @@ public:
     DynamicTransform();
 
     virtual void setup();
+    virtual void setupParameters();
 
     virtual void process();
     virtual void tick();

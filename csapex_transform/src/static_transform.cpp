@@ -8,10 +8,11 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <tf/transform_datatypes.h>
-#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::StaticTransform, csapex::Node)
 
@@ -54,5 +55,5 @@ void StaticTransform::tick()
 
 void StaticTransform::setup()
 {
-    output_ = addOutput<connection_types::TransformMessage>("Transformation");
+    output_ = modifier_->addOutput<connection_types::TransformMessage>("Transformation");
 }

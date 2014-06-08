@@ -8,8 +8,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::HoughCircle, csapex::Node)
@@ -39,8 +38,8 @@ HoughCircle::HoughCircle()
 
 void HoughCircle::setup()
 {
-    input_ = addInput<CvMatMessage>("Image");
-    output_ = addOutput<CvMatMessage>("Debug Image");
+    input_ = modifier_->addInput<CvMatMessage>("Image");
+    output_ = modifier_->addOutput<CvMatMessage>("Debug Image");
 }
 
 void HoughCircle::process()

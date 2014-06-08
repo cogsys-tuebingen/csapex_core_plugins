@@ -2,7 +2,6 @@
 #include "renderer.h"
 
 /// PROJECT
-#include <csapex_core_plugins/ros_message_conversion.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>

@@ -7,8 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_transform/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::PointCloudToDepthImage, csapex::Node)
@@ -27,9 +26,9 @@ PointCloudToDepthImage::PointCloudToDepthImage()
 
 void PointCloudToDepthImage::setup()
 {
-    input_ = addInput<PointCloudMessage>("PointCloud");
+    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
 
-    output_ = addOutput<CvMatMessage>("DepthImage");
+    output_ = modifier_->addOutput<CvMatMessage>("DepthImage");
 }
 
 void PointCloudToDepthImage::process()

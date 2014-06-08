@@ -5,11 +5,9 @@
 #include <csapex_transform/transform_message.h>
 
 /// PROJECT
-
+#include <csapex/model/node_modifier.h>
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
-
-/// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TransformInverter, csapex::Node)
@@ -31,7 +29,7 @@ void TransformInverter::process()
 
 void TransformInverter::setup()
 {
-    input_ = addInput<connection_types::TransformMessage>("T");
+    input_ = modifier_->addInput<connection_types::TransformMessage>("T");
 
-    output_ = addOutput<connection_types::TransformMessage>("T^-1");
+    output_ = modifier_->addOutput<connection_types::TransformMessage>("T^-1");
 }

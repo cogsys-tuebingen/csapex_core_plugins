@@ -8,10 +8,8 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 
 
 #define RAD_TO_DEG(x) ((x) )
@@ -38,10 +36,10 @@ TransformFilter::TransformFilter()
 
 void TransformFilter::setup()
 {
-    input_transform_ = addInput<connection_types::TransformMessage>("Raw Transformation");
+    input_transform_ = modifier_->addInput<connection_types::TransformMessage>("Raw Transformation");
 
-    output_transform_ = addOutput<connection_types::TransformMessage>("Filtered Transformation");
-    output_text_ = addOutput<DirectMessage<std::string> >("String"); // create a debug output
+    output_transform_ = modifier_->addOutput<connection_types::TransformMessage>("Filtered Transformation");
+    output_text_ = modifier_->addOutput<DirectMessage<std::string> >("String"); // create a debug output
 
     addParameter(param::ParameterFactory::declare("filter size", 1, 10000, 200, 100));
 }

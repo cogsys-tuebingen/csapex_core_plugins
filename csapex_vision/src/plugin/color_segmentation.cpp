@@ -5,9 +5,10 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/foreach.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ColorSegmentation, csapex::Node)
@@ -108,7 +109,7 @@ void ColorSegmentation::recompute()
 
 void ColorSegmentation::setup()
 {
-    input_img_ = addInput<CvMatMessage>("Image");
-    input_mask_ = addInput<CvMatMessage>("Mask", true);
-    output_mask_ = addOutput<CvMatMessage>("Mask");
+    input_img_ = modifier_->addInput<CvMatMessage>("Image");
+    input_mask_ = modifier_->addInput<CvMatMessage>("Mask", true);
+    output_mask_ = modifier_->addOutput<CvMatMessage>("Mask");
 }

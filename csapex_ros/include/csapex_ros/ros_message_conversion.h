@@ -2,7 +2,7 @@
 #define ROS_MESSAGE_CONVERSION_H
 
 /// COMPONENT
-#include <csapex_core_plugins/ros_handler.h>
+#include <csapex_ros/ros_handler.h>
 #include <csapex/model/message.h>
 
 /// PROJECT

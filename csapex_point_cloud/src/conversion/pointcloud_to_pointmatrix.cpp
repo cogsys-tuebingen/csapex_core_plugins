@@ -6,9 +6,10 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <pcl/point_types.h>
 #include <pcl/conversions.h>
 
@@ -30,9 +31,9 @@ void PointCloudToPointMatrix::process()
 
 void PointCloudToPointMatrix::setup()
 {
-    input_  = addInput<PointCloudMessage>("PointCloud");
-    output_ = addOutput<CvMatMessage>("Point Matrix");
-    mask_   = addOutput<CvMatMessage>("Vadility");
+    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
+    output_ = modifier_->addOutput<CvMatMessage>("Point Matrix");
+    mask_   = modifier_->addOutput<CvMatMessage>("Vadility");
 }
 
 namespace implementation {

@@ -2,13 +2,13 @@
 #include "transform_cloud.h"
 
 /// PROJECT
-
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <csapex_transform/transform_message.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/mpl/for_each.hpp>
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <pcl_ros/transforms.h>
@@ -25,10 +25,10 @@ TransformCloud::TransformCloud()
 
 void TransformCloud::setup()
 {
-    input_cloud_ = addInput<PointCloudMessage>("PointCloud");
-    input_transform_ = addInput<TransformMessage>("Transformation");
+    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    input_transform_ = modifier_->addInput<TransformMessage>("Transformation");
 
-    output_ = addOutput<PointCloudMessage>("PointCloud");
+    output_ = modifier_->addOutput<PointCloudMessage>("PointCloud");
 }
 
 void TransformCloud::process()

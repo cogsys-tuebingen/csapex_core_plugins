@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -21,10 +22,10 @@ NAND::NAND()
 
 void NAND::setup()
 {
-    in_a = addInput<DirectMessage<bool> >("A");
-    in_b = addInput<DirectMessage<bool> >("B");
+    in_a = modifier_->addInput<DirectMessage<bool> >("A");
+    in_b = modifier_->addInput<DirectMessage<bool> >("B");
 
-    out = addOutput<DirectMessage<bool> >("A nand B");
+    out = modifier_->addOutput<DirectMessage<bool> >("A nand B");
 }
 
 void NAND::process()

@@ -3,16 +3,16 @@
 /// PROJECT
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#include <tf/tf.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/mpl/for_each.hpp>
 #include <boost/assign.hpp>
+#include <tf/tf.h>
 
 /// PCL
 #include <pcl/ModelCoefficients.h>
@@ -56,9 +56,9 @@ void ClusterPointcloud::process()
 
 void ClusterPointcloud::setup()
 {
-    in_cloud_ = addInput<PointCloudMessage>("PointCloud");
-    out_ = addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
-    out_debug_ = addOutput<std::string>("Debug Info");
+    in_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    out_ = modifier_->addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
+    out_debug_ = modifier_->addOutput<std::string>("Debug Info");
 }
 
 template <class PointT>

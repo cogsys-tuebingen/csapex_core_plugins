@@ -8,6 +8,8 @@
 #include <csapex/manager/message_provider_manager.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_worker.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
 #include <boost/foreach.hpp>
@@ -17,7 +19,6 @@
 #include <QtConcurrentRun>
 #include <QCheckBox>
 #include <QDirIterator>
-#include <csapex/utility/register_apex_plugin.h>
 #include <QUrl>
 #include <boost/lambda/lambda.hpp>
 
@@ -106,7 +107,7 @@ QIcon FileImporter::getIcon() const
 
 void FileImporter::setup()
 {
-    output_ = addOutput<connection_types::AnyMessage>("Unknown");
+    output_ = modifier_->addOutput<connection_types::AnyMessage>("Unknown");
 
     param::Parameter::Ptr immediate = getParameter("playback/immediate");
 

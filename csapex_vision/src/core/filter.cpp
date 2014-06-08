@@ -7,7 +7,7 @@
 /// PROJECT
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <QLabel>
@@ -34,13 +34,13 @@ QIcon Filter::getIcon() const
 
 void Filter::setup()
 {
-    input_img_ = addInput<CvMatMessage>("Image");
+    input_img_ = modifier_->addInput<CvMatMessage>("Image");
     if(usesMask()) {
-        input_mask_ = addInput<CvMatMessage>("Mask", true);
+        input_mask_ = modifier_->addInput<CvMatMessage>("Mask", true);
     }
-    output_img_ = addOutput<CvMatMessage>("Image");
+    output_img_ = modifier_->addOutput<CvMatMessage>("Image");
     if(usesMask()) {
-        output_mask_ = addOutput<CvMatMessage>("Mask");
+        output_mask_ = modifier_->addOutput<CvMatMessage>("Mask");
     }
 }
 

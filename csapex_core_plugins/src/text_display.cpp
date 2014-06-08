@@ -3,9 +3,8 @@
 
 /// PROJECT
 #include <csapex/model/connector_in.h>
-
-/// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)
 
@@ -25,7 +24,7 @@ QIcon TextDisplay::getIcon() const
 
 void TextDisplay::setup()
 {
-    connector_ = addInput<connection_types::AnyMessage>("Anything", false, true);
+    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything", false, true);
 }
 
 void TextDisplay::process()

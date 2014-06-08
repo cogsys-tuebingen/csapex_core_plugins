@@ -6,9 +6,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_transform/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <pcl/point_types.h>
 #include <pcl/filters/conditional_removal.h>
 #include <boost/assign/list_of.hpp>
@@ -58,8 +59,8 @@ ConditionalOutlierRemoval::ConditionalOutlierRemoval() :
 
 void ConditionalOutlierRemoval::setup()
 {
-    input_ = addInput<PointCloudMessage>("PointCloud");
-    output_ = addOutput<PointCloudMessage>("Filtered Pointcloud");
+    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    output_ = modifier_->addOutput<PointCloudMessage>("Filtered Pointcloud");
     update();
 }
 

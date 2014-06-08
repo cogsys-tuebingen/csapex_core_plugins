@@ -7,9 +7,10 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_transform/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <pcl/point_types.h>
 #include <boost/assign/list_of.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -86,8 +87,8 @@ CoordinateSwapper::CoordinateSwapper()
 
 void CoordinateSwapper::setup()
 {
-    input_ = addInput<PointCloudMessage>("PointCloud");
-    output_ = addOutput<PointCloudMessage>("Swapped Pointcloud");
+    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    output_ = modifier_->addOutput<PointCloudMessage>("Swapped Pointcloud");
 }
 
 void CoordinateSwapper::process()

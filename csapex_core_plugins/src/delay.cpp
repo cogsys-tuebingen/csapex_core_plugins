@@ -9,6 +9,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/qt_helper.hpp>
+#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Delay, csapex::Node)
 
@@ -29,8 +30,8 @@ QIcon Delay::getIcon() const
 
 void Delay::setup()
 {
-    input_ = addInput<connection_types::AnyMessage>("Input");
-    output_ = addOutput<connection_types::AnyMessage>("Delayed Input");
+    input_ = modifier_->addInput<connection_types::AnyMessage>("Input");
+    output_ = modifier_->addOutput<connection_types::AnyMessage>("Delayed Input");
 }
 
 void Delay::process()

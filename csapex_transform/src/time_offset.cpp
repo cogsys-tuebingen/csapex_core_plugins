@@ -9,9 +9,8 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TimeOffset, csapex::Node)
 
@@ -46,6 +45,6 @@ void TimeOffset::process()
 
 void TimeOffset::setup()
 {
-    input_ = addInput<connection_types::TimeStampMessage>("Time");
-    output_ = addOutput<connection_types::TimeStampMessage>("Time");
+    input_ = modifier_->addInput<connection_types::TimeStampMessage>("Time");
+    output_ = modifier_->addOutput<connection_types::TimeStampMessage>("Time");
 }

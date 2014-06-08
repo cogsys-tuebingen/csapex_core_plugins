@@ -3,14 +3,14 @@
 /// PROJECT
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
-#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#include <tf/tf.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
+#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
+#include <tf/tf.h>
 #include <boost/mpl/for_each.hpp>
 #include <boost/assign.hpp>
 
@@ -65,13 +65,13 @@ void SacFit::process()
 
 void SacFit::setup()
 {
-    input_ = addInput<PointCloudMessage>("PointCloud");
-    out_text_= addOutput<DirectMessage<std::string> >("String");
-    in_indices_ = addInput <GenericVectorMessage, pcl::PointIndices>("Clusters", true); // optional input
+    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    out_text_= modifier_->addOutput<DirectMessage<std::string> >("String");
+    in_indices_ = modifier_->addInput<GenericVectorMessage, pcl::PointIndices>("Clusters", true); // optional input
 
-    out_model_ = addOutput<GenericVectorMessage, ModelMessage >("Models");
-    out_cloud_ = addOutput<PointCloudMessage>("Points of Model");
-    out_cloud_residue_ = addOutput<PointCloudMessage>("Residue");
+    out_model_ = modifier_->addOutput<GenericVectorMessage, ModelMessage >("Models");
+    out_cloud_ = modifier_->addOutput<PointCloudMessage>("Points of Model");
+    out_cloud_residue_ = modifier_->addOutput<PointCloudMessage>("Residue");
 }
 
 

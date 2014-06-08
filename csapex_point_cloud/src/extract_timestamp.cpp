@@ -5,8 +5,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <csapex_transform/time_stamp_message.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractTimeStamp, csapex::Node)
@@ -22,10 +21,10 @@ ExtractTimeStamp::ExtractTimeStamp()
 
 void ExtractTimeStamp::setup()
 {
-    input_ = addInput<PointCloudMessage>("PointCloud");
+    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
 
-    output_ = addOutput<TimeStampMessage>("Time");
-    output_frame_ = addOutput<DirectMessage<std::string> >("Target Frame");
+    output_ = modifier_->addOutput<TimeStampMessage>("Time");
+    output_frame_ = modifier_->addOutput<DirectMessage<std::string> >("Target Frame");
 }
 
 void ExtractTimeStamp::process()

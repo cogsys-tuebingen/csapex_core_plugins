@@ -6,8 +6,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_point_cloud/point_cloud_message.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::IndexedPointCloud, csapex::Node)
@@ -22,8 +21,8 @@ IndexedPointCloud::IndexedPointCloud()
 
 void IndexedPointCloud::setup()
 {
-    input_  = addInput<CvMatMessage>("Depth Image");
-    output_ = addOutput<PointCloudMessage>("Indexed Pointcloud");
+    input_  = modifier_->addInput<CvMatMessage>("Depth Image");
+    output_ = modifier_->addOutput<PointCloudMessage>("Indexed Pointcloud");
 }
 
 void IndexedPointCloud::process()

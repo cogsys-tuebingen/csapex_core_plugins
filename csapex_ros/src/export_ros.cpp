@@ -2,18 +2,19 @@
 #include "export_ros.h"
 
 /// COMPONENT
-#include <csapex_core_plugins/ros_message_conversion.h>
-#include <csapex_core_plugins/ros_handler.h>
+#include <csapex_ros/ros_message_conversion.h>
+#include <csapex_ros/ros_handler.h>
 
 /// PROJECT
 #include <csapex/model/connector_in.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/model/message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <QPushButton>
-#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ExportRos, csapex::Node)
 
@@ -37,7 +38,8 @@ QIcon ExportRos::getIcon() const
 
 void ExportRos::setup()
 {
-    connector_ = addInput<connection_types::AnyMessage>("Anything");
+
+    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
 }
 
 void ExportRos::process()

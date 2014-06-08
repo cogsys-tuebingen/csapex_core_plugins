@@ -6,8 +6,7 @@
 #include <csapex/manager/connection_type_manager.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/model/message.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportCin, csapex::Node)
@@ -34,7 +33,7 @@ QIcon ImportCin::getIcon() const
 
 void ImportCin::setup()
 {
-    connector_ = addOutput<connection_types::AnyMessage>("Anything");
+    connector_ = modifier_->addOutput<connection_types::AnyMessage>("Anything");
 }
 
 void ImportCin::tick()

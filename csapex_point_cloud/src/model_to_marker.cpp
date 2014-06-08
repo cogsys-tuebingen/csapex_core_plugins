@@ -4,12 +4,12 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <geometry_msgs/Point.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ModelToMarker, csapex::Node)
@@ -49,9 +49,9 @@ void ModelToMarker::process()
 
 void ModelToMarker::setup()
 {
-    input_ = addInput<GenericVectorMessage, ModelMessage >("ModelMessages");
-    output_ = addOutput<visualization_msgs::MarkerArray>("Marker");
-    output_text_ = addOutput<std::string>("String");
+    input_ = modifier_->addInput<GenericVectorMessage, ModelMessage >("ModelMessages");
+    output_ = modifier_->addOutput<visualization_msgs::MarkerArray>("Marker");
+    output_text_ = modifier_->addOutput<std::string>("String");
 
     addParameter(param::ParameterFactory::declareBool("publish marker", true));
     addParameter(param::ParameterFactory::declareColorParameter("color/marker", 0xFF, 0xCC, 0x00));

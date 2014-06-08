@@ -6,8 +6,7 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImagePadding, csapex::Node)
@@ -33,10 +32,10 @@ QIcon ImagePadding::getIcon() const
 
 void ImagePadding::setup()
 {
-    input_ = addInput<CvMatMessage>("Image");
+    input_ = modifier_->addInput<CvMatMessage>("Image");
 
-    output_ = addOutput<CvMatMessage>("Expanded Image");
-    output_mask_ = addOutput<CvMatMessage>("Expanded Mask");
+    output_ = modifier_->addOutput<CvMatMessage>("Expanded Image");
+    output_mask_ = modifier_->addOutput<CvMatMessage>("Expanded Mask");
 }
 
 void ImagePadding::process()

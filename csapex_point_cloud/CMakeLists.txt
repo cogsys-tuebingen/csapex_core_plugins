@@ -15,7 +15,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS csapex csapex_core_plugins csapex_transform csapex_vision pcl_ros)
+find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_vision pcl_ros)
 
 
 find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui QtOpenGl)

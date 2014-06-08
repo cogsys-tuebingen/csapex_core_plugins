@@ -5,8 +5,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::CloudRenderer, csapex::Node)
@@ -63,8 +62,8 @@ CloudRenderer::CloudRenderer()
 
 void CloudRenderer::setup()
 {
-    input_ = addInput<PointCloudMessage>("PointCloud");
-    output_ = addOutput<CvMatMessage>("Rendered Image");
+    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    output_ = modifier_->addOutput<CvMatMessage>("Rendered Image");
 }
 
 void CloudRenderer::process()

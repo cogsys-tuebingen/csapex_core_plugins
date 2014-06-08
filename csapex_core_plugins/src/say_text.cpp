@@ -3,9 +3,8 @@
 
 /// PROJECT
 #include <csapex/model/connector_in.h>
-
-/// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::SayText, csapex::Node)
 
@@ -25,7 +24,7 @@ QIcon SayText::getIcon() const
 
 void SayText::setup()
 {
-    connector_ = addInput<connection_types::DirectMessage<std::string> >("Text");
+    connector_ = modifier_->addInput<connection_types::DirectMessage<std::string> >("Text");
 }
 
 void SayText::process()

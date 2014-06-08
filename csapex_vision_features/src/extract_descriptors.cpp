@@ -18,9 +18,10 @@
 #include <csapex/utility/q_signal_relay.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/set_parameter.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/lambda/lambda.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractDescriptors, csapex::Node)
@@ -57,10 +58,10 @@ ExtractDescriptors::ExtractDescriptors()
 
 void ExtractDescriptors::setup()
 {
-    in_img = addInput<CvMatMessage>("Image");
-    in_key = addInput<KeypointMessage>("Keypoints");
+    in_img = modifier_->addInput<CvMatMessage>("Image");
+    in_key = modifier_->addInput<KeypointMessage>("Keypoints");
 
-    out_des = addOutput<DescriptorMessage>("Descriptors");
+    out_des = modifier_->addOutput<DescriptorMessage>("Descriptors");
 
     update();
 }

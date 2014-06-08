@@ -3,15 +3,13 @@
 
 /// PROJECT
 #include <utils_vision/utils/extractor.h>
-
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision_features/keypoint_message.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/bitset_parameter.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::DisplayKeypoints, csapex::Node)
@@ -58,8 +56,8 @@ void DisplayKeypoints::process()
 
 void DisplayKeypoints::setup()
 {
-    in_img = addInput<CvMatMessage>("Image");
-    in_key = addInput<KeypointMessage> ("Keypoints");
+    in_img = modifier_->addInput<CvMatMessage>("Image");
+    in_key = modifier_->addInput<KeypointMessage> ("Keypoints");
 
-    out_img = addOutput<CvMatMessage>("Image");
+    out_img = modifier_->addOutput<CvMatMessage>("Image");
 }

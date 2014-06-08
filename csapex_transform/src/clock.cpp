@@ -6,11 +6,12 @@
 
 /// PROJECT
 #include <csapex/model/connector_out.h>
-#include <csapex_core_plugins/ros_handler.h>
+#include <csapex_ros/ros_handler.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/assign/list_of.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::Clock, csapex::Node)
@@ -48,6 +49,6 @@ void Clock::process()
 
 void Clock::setup()
 {
-    output_ = addOutput<connection_types::TimeStampMessage>("Time");
+    output_ = modifier_->addOutput<connection_types::TimeStampMessage>("Time");
 }
 

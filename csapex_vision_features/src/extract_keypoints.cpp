@@ -18,9 +18,10 @@
 #include <csapex/utility/q_signal_relay.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/set_parameter.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/lambda/lambda.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractKeypoints, csapex::Node)
@@ -57,10 +58,10 @@ ExtractKeypoints::ExtractKeypoints()
 
 void ExtractKeypoints::setup()
 {
-    in_img = addInput<CvMatMessage>("Image");
-    in_mask = addInput<CvMatMessage>("Mask", true);
+    in_img = modifier_->addInput<CvMatMessage>("Image");
+    in_mask = modifier_->addInput<CvMatMessage>("Mask", true);
 
-    out_key = addOutput<csapex::connection_types::KeypointMessage>("Keypoints");
+    out_key = modifier_->addOutput<csapex::connection_types::KeypointMessage>("Keypoints");
 
     update();
 }

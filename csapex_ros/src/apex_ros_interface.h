@@ -21,6 +21,8 @@ public:
     APEXRosInterface();
     ~APEXRosInterface();
     void init(CsApexCore& core);
+    void initUI(DragIO& dragio);
+    void shutdown();
 
 private:
     void command(const std_msgs::StringConstPtr &cmd);

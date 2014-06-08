@@ -5,6 +5,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/model/message.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -28,7 +29,7 @@ QIcon ExportCout::getIcon() const
 
 void ExportCout::setup()
 {
-    connector_ = addInput<connection_types::AnyMessage>("Anything");
+    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
 }
 
 void ExportCout::process()

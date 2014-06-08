@@ -6,7 +6,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_core_plugins/vector_message.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <csapex_point_cloud/point_cloud_message.h>
@@ -37,9 +37,9 @@ void LabelClusteredPointCloud::process()
 
 void LabelClusteredPointCloud::setup()
 {
-    input_  = addInput<PointCloudMessage>("PointCloud");
-    in_indices_ = addInput<GenericVectorMessage, pcl::PointIndices>("Indices");
-    output_ = addOutput<PointCloudMessage>("Labeled PointCloud");
+    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
+    in_indices_ = modifier_->addInput<GenericVectorMessage, pcl::PointIndices>("Indices");
+    output_ = modifier_->addOutput<PointCloudMessage>("Labeled PointCloud");
 }
 
 namespace implementation {

@@ -1,5 +1,5 @@
 /// HEADER
-#include <csapex_core_plugins/ros_message_conversion.h>
+#include <csapex_ros/ros_message_conversion.h>
 
 /// PROJECT
 #include <csapex/model/connector_out.h>

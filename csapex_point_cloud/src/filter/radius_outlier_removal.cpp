@@ -6,9 +6,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <pcl/point_types.h>
 #include <pcl/filters/radius_outlier_removal.h>
 
@@ -29,10 +30,10 @@ RadiusOutlierRemoval::RadiusOutlierRemoval()
 
 void RadiusOutlierRemoval::setup()
 {
-    input_cloud_ = addInput<PointCloudMessage>("PointCloud");
-    indeces_input_ = addInput<PointIndecesMessage>("Indeces", true);
-    output_cloud_ = addOutput<PointCloudMessage>("Pointcloud");
-    output_indeces_ = addOutput<PointIndecesMessage>("Indeces");
+    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    indeces_input_ = modifier_->addInput<PointIndecesMessage>("Indeces", true);
+    output_cloud_ = modifier_->addOutput<PointCloudMessage>("Pointcloud");
+    output_indeces_ = modifier_->addOutput<PointIndecesMessage>("Indeces");
 }
 
 void RadiusOutlierRemoval::process()

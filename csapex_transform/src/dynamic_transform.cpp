@@ -10,10 +10,11 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
 #include <tf/transform_datatypes.h>
-#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::DynamicTransform, csapex::Node)
 
@@ -22,7 +23,10 @@ using namespace csapex;
 DynamicTransform::DynamicTransform()
 {
     addTag(Tag::get("Transform"));
+}
 
+void DynamicTransform::setupParameters()
+{
     std::vector<std::string> topics;
     topics.push_back("/");
     addParameter(param::ParameterFactory::declareParameterStringSet("from", topics), boost::bind(&DynamicTransform::update, this));
@@ -111,12 +115,12 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
 void DynamicTransform::setup()
 {
-    time_in_ = addInput<connection_types::TimeStampMessage>("Time", true);
-    frame_in_from_ = addInput<connection_types::DirectMessage<std::string> >("Origin Frame", true);
-    frame_in_to_ = addInput<connection_types::DirectMessage<std::string> >("Target Frame", true);
+    time_in_ = modifier_->addInput<connection_types::TimeStampMessage>("Time", true);
+    frame_in_from_ = modifier_->addInput<connection_types::DirectMessage<std::string> >("Origin Frame", true);
+    frame_in_to_ = modifier_->addInput<connection_types::DirectMessage<std::string> >("Target Frame", true);
 
-    output_ = addOutput<connection_types::TransformMessage>("Transform");
-    output_frame_ = addOutput<connection_types::DirectMessage<std::string> >("Target Frame");
+    output_ = modifier_->addOutput<connection_types::TransformMessage>("Transform");
+    output_frame_ = modifier_->addOutput<connection_types::DirectMessage<std::string> >("Target Frame");
 
     refresh();
 }

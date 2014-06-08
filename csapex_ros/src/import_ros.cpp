@@ -2,8 +2,8 @@
 #include "import_ros.h"
 
 /// COMPONENT
-#include <csapex_core_plugins/ros_handler.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
+#include <csapex_ros/ros_handler.h>
+#include <csapex_ros/ros_message_conversion.h>
 
 /// PROJECT
 #include <csapex/model/connector_out.h>
@@ -13,9 +13,10 @@
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/set_parameter.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <yaml-cpp/eventhandler.h>
 #include <sensor_msgs/Image.h>
 #include <QAction>
@@ -52,7 +53,8 @@ QIcon ImportRos::getIcon() const
 
 void ImportRos::setup()
 {
-    connector_ = addOutput<connection_types::AnyMessage>("Something");
+
+    connector_ = modifier_->addOutput<connection_types::AnyMessage>("Something");
 
     refresh();
 }

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_core_plugins)
 
-find_package(catkin REQUIRED COMPONENTS roscpp csapex)
+find_package(catkin REQUIRED COMPONENTS csapex)
 
 QT4_ADD_RESOURCES(QT_RESOURCES res/csapex_core_resources.qrc)
 
@@ -32,8 +32,6 @@ include_directories(include
 )
 
 add_library(csapex_core_lib
-    src/ros_handler.cpp
-    src/ros_message_conversion.cpp
     src/vector_message.cpp
     src/interactive_node.cpp
     ${QT_RESOURCES}
@@ -49,11 +47,9 @@ add_library(csapex_core_plugins
     src/relay.cpp
     src/delay.cpp
     src/export_cout.cpp
-    src/export_ros.cpp
     src/export_file.cpp
     src/file_importer.cpp
     src/import_cin.cpp
-    src/import_ros.cpp
     src/double_input.cpp
     src/text_input.cpp
 

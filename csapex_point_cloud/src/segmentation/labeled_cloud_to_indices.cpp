@@ -5,17 +5,14 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/register_apex_plugin.h>
+
+/// SYSTEM
 #include <pcl/point_types.h>
 #include <pcl/conversions.h>
-
-
-/// PCL
 #include <pcl/filters/extract_indices.h>
 
 CSAPEX_REGISTER_CLASS(csapex::LabeledCloudToIndices, csapex::Node)
@@ -40,8 +37,8 @@ void LabeledCloudToIndices::process()
 
 void LabeledCloudToIndices::setup()
 {
-    input_  = addInput<PointCloudMessage>("Labeled PointCloud");
-    output_ = addOutput<GenericVectorMessage, pcl::PointIndices > ("Clusters");
+    input_  = modifier_->addInput<PointCloudMessage>("Labeled PointCloud");
+    output_ = modifier_->addOutput<GenericVectorMessage, pcl::PointIndices > ("Clusters");
 }
 
 

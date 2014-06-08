@@ -6,9 +6,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <pcl/point_types.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/approximate_voxel_grid.h>
@@ -30,10 +31,10 @@ StatisticalOutlierRemoval::StatisticalOutlierRemoval()
 
 void StatisticalOutlierRemoval::setup()
 {
-    input_cloud_    = addInput<PointCloudMessage>   ("PointCloud");
-    input_indeces_  = addInput<PointIndecesMessage> ("Indeces", true);
-    output_cloud_   = addOutput<PointCloudMessage>  ("Pointcloud");
-    output_indeces_ = addOutput<PointIndecesMessage>("Indeces");
+    input_cloud_    = modifier_->addInput<PointCloudMessage>   ("PointCloud");
+    input_indeces_  = modifier_->addInput<PointIndecesMessage> ("Indeces", true);
+    output_cloud_   = modifier_->addOutput<PointCloudMessage>  ("Pointcloud");
+    output_indeces_ = modifier_->addOutput<PointIndecesMessage>("Indeces");
 }
 
 void StatisticalOutlierRemoval::process()

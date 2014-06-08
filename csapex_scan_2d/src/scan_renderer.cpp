@@ -2,7 +2,7 @@
 #include "scan_renderer.h"
 
 /// PROJECT
-#include <csapex_core_plugins/ros_message_conversion.h>
+#include <csapex_ros/ros_message_conversion.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
@@ -12,6 +12,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/timer.h>
+#include <csapex/model/node_modifier.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;

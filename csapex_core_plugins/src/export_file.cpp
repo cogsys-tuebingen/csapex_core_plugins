@@ -8,9 +8,10 @@
 #include <csapex/model/message.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/path_parameter.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <QFileDialog>
 
 CSAPEX_REGISTER_CLASS(csapex::ExportFile, csapex::Node)
@@ -34,8 +35,7 @@ QIcon ExportFile::getIcon() const
 
 void ExportFile::setup()
 {
-    connector_ = addInput<connection_types::AnyMessage>("Anything");
-
+    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
 }
 
 void ExportFile::setExportPath()

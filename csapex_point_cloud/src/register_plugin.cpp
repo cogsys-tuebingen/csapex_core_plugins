@@ -7,10 +7,10 @@
 /// PROJECT
 #include <csapex/manager/connection_type_manager.h>
 #include <csapex/model/tag.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
+#include <csapex_ros/ros_message_conversion.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
 //#include <pcl_ros/point_cloud.h>

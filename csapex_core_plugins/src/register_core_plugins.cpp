@@ -2,8 +2,6 @@
 #include "register_core_plugins.h"
 
 /// COMPONENT
-#include <csapex_core_plugins/ros_handler.h>
-#include "import_ros.h"
 #include "file_importer.h"
 
 /// PROJECT
@@ -18,7 +16,6 @@
 #include <utils_param/parameter_factory.h>
 
 /// SYSTEM
-#include <boost/regex.hpp>
 #include <boost/bind.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 #include <QStringList>
@@ -29,72 +26,6 @@ CSAPEX_REGISTER_CLASS(csapex::RegisterCorePlugins, csapex::CorePlugin)
 using namespace csapex;
 
 namespace {
-class RosHandler
-        : public DragIO::HandlerEnter, public DragIO::HandlerMove, public DragIO::HandlerDrop
-{
-    static const boost::regex fmt;
-
-    std::string getCmd(QDropEvent* e)
-    {
-        QByteArray itemData = e->mimeData()->data("application/x-qabstractitemmodeldatalist");
-        QDataStream stream(&itemData, QIODevice::ReadOnly);
-
-        int r, c;
-        QMap<int, QVariant> v;
-        stream >> r >> c >> v;
-
-        return v[Qt::UserRole].toString().toStdString();
-    }
-
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragEnterEvent* e) {
-        if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
-            std::string cmd = getCmd(e);
-
-            bool cmd_could_be_topic = boost::regex_match(cmd, fmt);
-
-            if(cmd_could_be_topic) {
-                if(ROSHandler::instance().isConnected() && ROSHandler::instance().topicExists(cmd)) {
-                    e->accept();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragMoveEvent* e){
-        return false;
-    }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e) {
-        if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
-            std::string cmd = getCmd(e);
-
-            bool cmd_could_be_topic = boost::regex_match(cmd, fmt);
-
-            if(cmd_could_be_topic) {
-                if(ROSHandler::instance().topicExists(cmd)) {
-                    QPoint pos = e->pos();
-
-                    UUID uuid = UUID::make(dispatcher->getGraph()->makeUUIDPrefix("csapex::ImportRos"));
-
-                    NodeState::Ptr state(new NodeState(NULL));
-                    ImportRos dummy;
-                    dummy.getParameter("topic")->set(cmd);
-                    state->child_state = dummy.getState();
-
-                    std::string type("csapex::ImportRos");
-                    dispatcher->execute(Command::Ptr(new command::AddNode(type, pos, UUID::NONE, uuid, state)));
-
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-};
-
-const boost::regex RosHandler::fmt("[a-zA-Z0-9_\\-/]+");
-
-
 
 class FileHandler
         : public DragIO::HandlerEnter, public DragIO::HandlerMove, public DragIO::HandlerDrop
@@ -183,7 +114,6 @@ void RegisterCorePlugins::initUI(DragIO &dragio)
     Tag::createIfNotExists("ConsoleIO");
     Tag::createIfNotExists("Debug");
 
-    dragio.registerHandler<RosHandler>();
     dragio.registerHandler<FileHandler>();
 }
 
@@ -193,5 +123,4 @@ void RegisterCorePlugins::init(CsApexCore& core)
 
 void RegisterCorePlugins::shutdown()
 {
-    ROSHandler::instance().stop();
 }

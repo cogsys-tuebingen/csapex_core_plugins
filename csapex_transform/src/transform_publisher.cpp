@@ -9,7 +9,8 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
-#include <csapex_core_plugins/ros_handler.h>
+#include <csapex_ros/ros_handler.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -59,6 +60,6 @@ void TransformPublisher::process()
 
 void TransformPublisher::setup()
 {
-    input_transform = addInput<connection_types::TransformMessage>("T");
-    input_time = addInput<connection_types::TimeStampMessage>("time", true);
+    input_transform = modifier_->addInput<connection_types::TransformMessage>("T");
+    input_time = modifier_->addInput<connection_types::TimeStampMessage>("time", true);
 }

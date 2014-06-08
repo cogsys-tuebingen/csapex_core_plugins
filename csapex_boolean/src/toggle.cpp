@@ -5,8 +5,7 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::boolean::Toggle, csapex::Node)
@@ -28,7 +27,7 @@ void Toggle::process()
 
 void Toggle::setup()
 {
-    out = addOutput<connection_types::DirectMessage<bool> >("Signal");
+    out = modifier_->addOutput<connection_types::DirectMessage<bool> >("Signal");
 }
 
 void Toggle::tick()

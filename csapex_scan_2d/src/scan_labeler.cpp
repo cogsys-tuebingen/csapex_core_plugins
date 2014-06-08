@@ -41,10 +41,9 @@ void ScanLabeler::setupParameters()
 }
 
 void ScanLabeler::setup()
-{
-    NodeModifier mod(this);
-    input_ = mod.addMultiInput<ScanMessage, LabeledScanMessage>("Scan");
-    output_ = mod.addOutput<LabeledScanMessage>("Labeled Scan");
+{    
+    input_ = modifier_->addMultiInput<ScanMessage, LabeledScanMessage>("Scan");
+    output_ = modifier_->addOutput<LabeledScanMessage>("Labeled Scan");
 }
 
 void ScanLabeler::submit()

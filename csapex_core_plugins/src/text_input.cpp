@@ -4,9 +4,10 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QBoxLayout>
@@ -35,7 +36,7 @@ QIcon TextInput::getIcon() const
 
 void TextInput::setup()
 {
-    connector_ = addOutput<connection_types::DirectMessage<std::string> >("Text");
+    connector_ = modifier_->addOutput<connection_types::DirectMessage<std::string> >("Text");
 }
 
 void TextInput::publish()

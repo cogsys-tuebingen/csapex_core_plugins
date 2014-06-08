@@ -8,6 +8,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <pcl/point_types.h>
@@ -31,9 +32,9 @@ void PointCloudValidity::process()
 
 void PointCloudValidity::setup()
 {
-    input_  = addInput<PointCloudMessage>("PointCloud");
-    mask_   = addOutput<CvMatMessage>("Mask");
-    index_  = addOutput<PointIndecesMessage>("Indeces");
+    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
+    mask_   = modifier_->addOutput<CvMatMessage>("Mask");
+    index_  = modifier_->addOutput<PointIndecesMessage>("Indeces");
 }
 
 namespace {

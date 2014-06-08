@@ -8,9 +8,10 @@
 #include <utils_vision/data/matchable.h>
 #include <utils_vision/utils/hough_peak.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <opencv2/opencv.hpp>
 #include <boost/assign/std.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -448,13 +449,13 @@ void MatchDescriptors::matchPeak(CvMatMessage::Ptr,
 
 void MatchDescriptors::setup()
 {
-    in_img_1 = addInput<CvMatMessage>("Image 1");
-    in_key_1 = addInput<KeypointMessage>("Keypoints 1");
-    in_des_1 = addInput<DescriptorMessage>("Descriptor 1");
+    in_img_1 = modifier_->addInput<CvMatMessage>("Image 1");
+    in_key_1 = modifier_->addInput<KeypointMessage>("Keypoints 1");
+    in_des_1 = modifier_->addInput<DescriptorMessage>("Descriptor 1");
 
-    in_img_2 = addInput<CvMatMessage>("Image 2");
-    in_key_2 = addInput<KeypointMessage>("Keypoints 2");
-    in_des_2 = addInput<DescriptorMessage>("Descriptor 2");
+    in_img_2 = modifier_->addInput<CvMatMessage>("Image 2");
+    in_key_2 = modifier_->addInput<KeypointMessage>("Keypoints 2");
+    in_des_2 = modifier_->addInput<DescriptorMessage>("Descriptor 2");
 
-    out_img = addOutput<CvMatMessage>("Debug View");
+    out_img = modifier_->addOutput<CvMatMessage>("Debug View");
 }

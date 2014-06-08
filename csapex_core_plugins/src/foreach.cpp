@@ -8,8 +8,7 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <csapex/utility/timer.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Foreach, csapex::Node)
@@ -35,8 +34,8 @@ Foreach::~Foreach()
 
 void Foreach::setup()
 {
-    input_ = addInput<VectorMessage>("Vector");
-    output_ = addOutput<VectorMessage>("Content");
+    input_ = modifier_->addInput<VectorMessage>("Vector");
+    output_ = modifier_->addOutput<VectorMessage>("Content");
 
 
     out_sub = new ConnectorOut(getSettings(), UUID::make_sub(getUUID(), "out_sub"));

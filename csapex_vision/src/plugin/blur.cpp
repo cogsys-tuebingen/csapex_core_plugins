@@ -6,8 +6,7 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 
@@ -37,8 +36,8 @@ void BoxBlur::process()
 
 void BoxBlur::setup()
 {
-    input_ = addInput<CvMatMessage>("Unblurred");
-    output_ = addOutput<CvMatMessage>("Blurred");
+    input_ = modifier_->addInput<CvMatMessage>("Unblurred");
+    output_ = modifier_->addOutput<CvMatMessage>("Blurred");
 
     update();
 }

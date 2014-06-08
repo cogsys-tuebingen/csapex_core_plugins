@@ -7,6 +7,7 @@
 #include <csapex/model/connection_type.h>
 #include <csapex/model/message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -32,8 +33,8 @@ QIcon DoubleBuffer::getIcon() const
 
 void DoubleBuffer::setup()
 {
-    input_ = addInput<connection_types::AnyMessage>("Anything");
-    output_ = addOutput<connection_types::AnyMessage>("Same as input");
+    input_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
+    output_ = modifier_->addOutput<connection_types::AnyMessage>("Same as input");
     output_->setAsync(true);
 }
 

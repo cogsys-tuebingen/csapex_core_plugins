@@ -8,6 +8,7 @@
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::LabeledScanToScan, csapex::Node)
 
@@ -20,8 +21,8 @@ LabeledScanToScan::LabeledScanToScan()
 
 void LabeledScanToScan::setup()
 {
-    in_ = addInput<LabeledScanMessage>("Labeled Scan");
-    out_ = addOutput<ScanMessage>("Scan");
+    in_ = modifier_->addInput<LabeledScanMessage>("Labeled Scan");
+    out_ = modifier_->addOutput<ScanMessage>("Scan");
 }
 
 void LabeledScanToScan::process()

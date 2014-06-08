@@ -5,7 +5,7 @@
 #include <utils_laser_processing/segmentation/p2pline.h>
 
 /// PROJECT
-#include <csapex_core_plugins/ros_message_conversion.h>
+#include <csapex_ros/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/connector_out.h>
@@ -15,6 +15,7 @@
 #include <utils_param/parameter_factory.h>
 #include <utils_laser_processing/data/segment.h>
 #include <csapex/utility/color.hpp>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>
@@ -61,9 +62,9 @@ void ScanSegmentation2DRenderer::process()
 
 void ScanSegmentation2DRenderer::setup()
 {
-    input_  = addInput<GenericVectorMessage, Segment>("Segments");
-    output_ = addOutput<CvMatMessage>("Rendered");
-    output_marker_ = addOutput<visualization_msgs::MarkerArray>("Marker");
+    input_  = modifier_->addInput<GenericVectorMessage, Segment>("Segments");
+    output_ = modifier_->addOutput<CvMatMessage>("Rendered");
+    output_marker_ = modifier_->addOutput<visualization_msgs::MarkerArray>("Marker");
 }
 
 void ScanSegmentation2DRenderer::render(const std::vector<Segment> &segments)

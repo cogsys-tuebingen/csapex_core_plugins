@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex_core_plugins/ros_handler.h>
+#include <csapex_ros/ros_handler.h>
 
 namespace csapex {
 

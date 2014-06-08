@@ -5,12 +5,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
-
-/// SYSTEM
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// PCL
 #include <pcl/point_types.h>
@@ -36,13 +34,13 @@ void SplitClusteredCloud::process()
 
 void SplitClusteredCloud::setup()
 {
-    input_  = addInput<PointCloudMessage>("PointCloud");
-    in_indices_ = addInput <GenericVectorMessage, pcl::PointIndices>("Clusters");
+    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
+    in_indices_ = modifier_->addInput<GenericVectorMessage, pcl::PointIndices>("Clusters");
 
-    output1_ = addOutput<PointCloudMessage>("PointCloud1");
-    output2_ = addOutput<PointCloudMessage>("PointCloud2");
-    output3_ = addOutput<PointCloudMessage>("PointCloud3");
-    output4_ = addOutput<PointCloudMessage>("PointCloud4");
+    output1_ = modifier_->addOutput<PointCloudMessage>("PointCloud1");
+    output2_ = modifier_->addOutput<PointCloudMessage>("PointCloud2");
+    output3_ = modifier_->addOutput<PointCloudMessage>("PointCloud3");
+    output4_ = modifier_->addOutput<PointCloudMessage>("PointCloud4");
 }
 
 template <class PointT>

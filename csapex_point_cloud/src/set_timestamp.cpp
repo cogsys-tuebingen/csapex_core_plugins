@@ -5,8 +5,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <csapex_transform/time_stamp_message.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::SetTimeStamp, csapex::Node)
@@ -22,11 +21,11 @@ SetTimeStamp::SetTimeStamp()
 
 void SetTimeStamp::setup()
 {
-    input_ = addInput<connection_types::PointCloudMessage>("PointCloud");
-    input_frame_ = addInput<connection_types::DirectMessage<std::string> >("Frame", true);
-    input_time_ = addInput<connection_types::TimeStampMessage>("Time");
+    input_ = modifier_->addInput<connection_types::PointCloudMessage>("PointCloud");
+    input_frame_ = modifier_->addInput<connection_types::DirectMessage<std::string> >("Frame", true);
+    input_time_ = modifier_->addInput<connection_types::TimeStampMessage>("Time");
 
-    output_ = addOutput<connection_types::PointCloudMessage>("PointCloud");
+    output_ = modifier_->addOutput<connection_types::PointCloudMessage>("PointCloud");
 }
 
 void SetTimeStamp::process()

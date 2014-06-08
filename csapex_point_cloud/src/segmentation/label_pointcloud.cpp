@@ -5,10 +5,11 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/register_apex_plugin.h>
+
+/// SYSTEM
 #include <pcl/point_types.h>
 #include <pcl/conversions.h>
 #include <opencv2/opencv.hpp>
@@ -40,9 +41,9 @@ void LabelPointCloud::process()
 
 void LabelPointCloud::setup()
 {
-    input_  = addInput<PointCloudMessage>("PointCloud");
-    labels_ = addInput<CvMatMessage>("Labels");
-    output_ = addOutput<PointCloudMessage>("Labeled PointCloud");
+    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
+    labels_ = modifier_->addInput<CvMatMessage>("Labels");
+    output_ = modifier_->addOutput<PointCloudMessage>("Labeled PointCloud");
 }
 
 namespace implementation {

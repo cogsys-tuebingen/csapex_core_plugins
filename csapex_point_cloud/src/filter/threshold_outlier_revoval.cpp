@@ -7,9 +7,10 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_transform/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <pcl/point_types.h>
 #include <boost/assign/list_of.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -187,9 +188,9 @@ ThresholdOutlierRemoval::ThresholdOutlierRemoval()
 
 void ThresholdOutlierRemoval::setup()
 {
-    input_ = addInput<PointCloudMessage>("PointCloud");
-    thresholds_ = addInput<CvMatMessage>("Thresholds");
-    output_ = addOutput<PointCloudMessage>("Filtered Pointcloud");
+    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    thresholds_ = modifier_->addInput<CvMatMessage>("Thresholds");
+    output_ = modifier_->addOutput<PointCloudMessage>("Filtered Pointcloud");
 }
 
 void ThresholdOutlierRemoval::process()

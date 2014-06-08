@@ -7,8 +7,7 @@
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TransformCombiner, csapex::Node)
@@ -32,8 +31,8 @@ void TransformCombiner::process()
 
 void TransformCombiner::setup()
 {
-    input_a_ = addInput<connection_types::TransformMessage>("A");
-    input_b_ = addInput<connection_types::TransformMessage>("B");
+    input_a_ = modifier_->addInput<connection_types::TransformMessage>("A");
+    input_b_ = modifier_->addInput<connection_types::TransformMessage>("B");
 
-    output_ = addOutput<connection_types::TransformMessage>("A*B");
+    output_ = modifier_->addOutput<connection_types::TransformMessage>("A*B");
 }

@@ -2,7 +2,7 @@
 #define LISTENER_H
 
 /// PROJECT
-#include <csapex_core_plugins/ros_handler.h>
+#include <csapex_ros/ros_handler.h>
 
 /// SYSTEM
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING

@@ -6,9 +6,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/mpl/for_each.hpp>
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <pcl_ros/transforms.h>
@@ -28,9 +29,9 @@ VoxelGrid::VoxelGrid()
 
 void VoxelGrid::setup()
 {
-    input_cloud_ = addInput<PointCloudMessage>("PointCloud");
+    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
 
-    output_ = addOutput<PointCloudMessage>("PointCloud");
+    output_ = modifier_->addOutput<PointCloudMessage>("PointCloud");
 }
 
 void VoxelGrid::process()

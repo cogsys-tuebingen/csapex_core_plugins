@@ -4,13 +4,12 @@
 /// COMPONENT
 #include <csapex_vision/cv_mat_message.h>
 
-#include <utils_param/parameter_factory.h>
 /// PROJECT
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
-
-/// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Camera, csapex::Node)
 
@@ -47,7 +46,7 @@ void Camera::tick()
 
 void Camera::setup()
 {
-    output_ = addOutput<connection_types::CvMatMessage>("Image");
+    output_ = modifier_->addOutput<connection_types::CvMatMessage>("Image");
 
     update();
 }

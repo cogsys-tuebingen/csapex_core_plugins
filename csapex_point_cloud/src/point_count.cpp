@@ -3,9 +3,10 @@
 
 /// PROJECT
 #include <csapex/model/connector_in.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/mpl/for_each.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::PointCount, csapex::Node)
@@ -20,8 +21,7 @@ PointCount::PointCount()
 
 void PointCount::setup()
 {
-    input_ = addInput<PointCloudMessage>("PointCloud");
-
+    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
 }
 
 void PointCount::process()

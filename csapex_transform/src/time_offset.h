@@ -3,8 +3,6 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex_core_plugins/ros_handler.h>
-#include <csapex/utility/qdouble_slider.h>
 
 namespace csapex {
 

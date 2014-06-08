@@ -7,9 +7,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_transform/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/type_traits.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ImageToPointCloud, csapex::Node)
@@ -34,10 +35,10 @@ ImageToPointCloud::ImageToPointCloud()
 
 void ImageToPointCloud::setup()
 {
-    input_depth_ = addInput<CvMatMessage>("Depth");
-    input_intensity_ = addInput<CvMatMessage>("Intensity", true);
+    input_depth_ = modifier_->addInput<CvMatMessage>("Depth");
+    input_intensity_ = modifier_->addInput<CvMatMessage>("Intensity", true);
 
-    output_ = addOutput<PointCloudMessage>("PointCloud");
+    output_ = modifier_->addOutput<PointCloudMessage>("PointCloud");
 }
 
 namespace

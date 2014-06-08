@@ -5,9 +5,10 @@
 #include <csapex/model/connector_out.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <pcl/point_types.h>
 
 CSAPEX_REGISTER_CLASS(csapex::IndexFilter, csapex::Node)
@@ -22,9 +23,9 @@ IndexFilter::IndexFilter()
 
 void IndexFilter::setup()
 {
-    input_cloud_ = addInput<PointCloudMessage>("PointCloud");
-    indeces_input_ = addInput<PointIndecesMessage>("Indeces");
-    output_cloud_ = addOutput<PointCloudMessage>("Pointcloud");
+    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    indeces_input_ = modifier_->addInput<PointIndecesMessage>("Indeces");
+    output_cloud_ = modifier_->addOutput<PointCloudMessage>("Pointcloud");
 }
 
 void IndexFilter::process()

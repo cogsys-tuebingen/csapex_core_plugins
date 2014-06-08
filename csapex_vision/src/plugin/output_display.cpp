@@ -5,8 +5,7 @@
 #include <csapex/model/connector_in.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex_vision/cv_mat_message.h>
-
-/// SYSTEM
+#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::OutputDisplay, csapex::Node)
@@ -33,7 +32,7 @@ QIcon OutputDisplay::getIcon() const
 
 void OutputDisplay::setup()
 {
-    input_ = addInput<CvMatMessage>("Image", false, true);
+    input_ = modifier_->addInput<CvMatMessage>("Image", false, true);
 }
 
 void OutputDisplay::process()

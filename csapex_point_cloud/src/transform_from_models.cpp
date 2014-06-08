@@ -2,16 +2,16 @@
 
 /// COMPONENT
 #include <csapex_transform/transform_message.h>
-#include <csapex_core_plugins/ros_message_conversion.h>
 
 /// PROJECT
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/tf.h>
 
@@ -30,10 +30,10 @@ TransformFromModels::TransformFromModels()
 
 void TransformFromModels::setup()
 {
-    input_models_ref_ = addInput<GenericVectorMessage, ModelMessage >("Reference Models");
-    input_models_new_ = addInput<GenericVectorMessage, ModelMessage >("New Models");
-    output_ = addOutput<connection_types::TransformMessage>("Transformation");
-    output_text_ = addOutput<DirectMessage<std::string> >("String"); // create a debug output
+    input_models_ref_ = modifier_->addInput<GenericVectorMessage, ModelMessage >("Reference Models");
+    input_models_new_ = modifier_->addInput<GenericVectorMessage, ModelMessage >("New Models");
+    output_ = modifier_->addOutput<connection_types::TransformMessage>("Transformation");
+    output_text_ = modifier_->addOutput<DirectMessage<std::string> >("String"); // create a debug output
 
 
     addParameter(param::ParameterFactory::declare("Apex height", 0.0, 2.0, 0.5, 0.01));

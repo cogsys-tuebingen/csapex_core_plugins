@@ -5,9 +5,8 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connector_in.h>
 #include <utils_param/parameter_factory.h>
-
-/// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::boolean::Indicator, csapex::Node)
 
@@ -24,7 +23,7 @@ Indicator::Indicator()
 
 void Indicator::setup()
 {
-    in = addInput<DirectMessage<bool> >("Signal");
+    in = modifier_->addInput<DirectMessage<bool> >("Signal");
 }
 
 void Indicator::process()

@@ -7,9 +7,10 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <boost/mpl/for_each.hpp>
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <pcl_ros/transforms.h>
@@ -31,10 +32,10 @@ CropBox::CropBox()
 
 void CropBox::setup()
 {
-    input_cloud_ = addInput<PointCloudMessage>("PointCloud");
+    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
 
-    output_pos_ = addOutput<PointCloudMessage>("cropped PointCloud (+)");
-    output_neg_ = addOutput<PointCloudMessage>("cropped PointCloud (-)");
+    output_pos_ = modifier_->addOutput<PointCloudMessage>("cropped PointCloud (+)");
+    output_neg_ = modifier_->addOutput<PointCloudMessage>("cropped PointCloud (-)");
 }
 
 void CropBox::process()
