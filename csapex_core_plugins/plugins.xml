@@ -28,17 +28,11 @@
 <class type="csapex::ExportCout" base_class_type="csapex::Node">
   <description>Exports messages via std::cout</description>
 </class>
-<class type="csapex::ExportRos" base_class_type="csapex::Node">
-  <description>Exports messages via ROS</description>
-</class>
 <class type="csapex::ExportFile" base_class_type="csapex::Node">
   <description>Exports messages into a directory</description>
 </class>
 <class type="csapex::ImportCin" base_class_type="csapex::Node">
   <description>Imports messages from std::cin</description>
-</class>
-<class type="csapex::ImportRos" base_class_type="csapex::Node">
-  <description>Import messages from ROS</description>
 </class>
 <class type="csapex::FileImporter" base_class_type="csapex::Node">
   <description>Import messages from a directory ("ImportFile")</description>
