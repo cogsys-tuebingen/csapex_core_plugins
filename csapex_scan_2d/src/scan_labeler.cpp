@@ -48,7 +48,6 @@ void ScanLabeler::setup()
 
 void ScanLabeler::submit()
 {
-    std::cerr << "submit request" << std::endl;
     submit_request();
 }
 
@@ -70,11 +69,7 @@ void ScanLabeler::process()
         throw std::runtime_error("invalid input type");
     }
 
-    std::cerr << "wait" << std::endl;
-
     waitForView();
-
-    std::cerr << "done" << std::endl;
 
     output_->publish(result_);
 }
@@ -82,7 +77,6 @@ void ScanLabeler::process()
 
 void ScanLabeler::setResult(connection_types::LabeledScanMessage::Ptr result)
 {
-    std::cerr << "set" << std::endl;
     result_ = result;
     done();
 }

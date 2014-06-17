@@ -28,6 +28,7 @@ public:
 public Q_SLOTS:
     void display(lib_laser_processing::Scan* img);
     void submit();
+    void labelSelected();
 
 Q_SIGNALS:
     void displayRequest(lib_laser_processing::Scan* img);
@@ -35,6 +36,7 @@ Q_SIGNALS:
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);
+    void labelSelected(int label);
 
     ScanLabeler* wrapped_;
 
@@ -70,6 +72,7 @@ private:
     QImage empty;
     QPainter painter;
 
+    int label_;
     bool down_;
     QPoint last_pos_;
 };

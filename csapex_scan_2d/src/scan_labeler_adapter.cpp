@@ -13,6 +13,7 @@
 #include <QGraphicsPixmapItem>
 #include <QCheckBox>
 #include <QPushButton>
+#include <QKeyEvent>
 
 using namespace csapex;
 
@@ -20,43 +21,66 @@ CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
 ScanLabelerAdapter::ScanLabelerAdapter(ScanLabeler *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(node, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), down_(false)
+    : DefaultNodeAdapter(node, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), label_(0), down_(false)
 {
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
-    view_->setScene(new QGraphicsScene);
 
     // translate to UI thread via Qt signal
     node->display_request.connect(boost::bind(&ScanLabelerAdapter::displayRequest, this, _1));
     node->submit_request.connect(boost::bind(&ScanLabelerAdapter::submitRequest, this));
 }
 
+void ScanLabelerAdapter::labelSelected()
+{
+    labelSelected(label_);
+    view_->scene()->clearSelection();
+}
+
+void ScanLabelerAdapter::labelSelected(int label)
+{
+    QBrush brush(color::fromCount(label), Qt::SolidPattern);
+    QPen pen(color::fromCount(label));
+
+    Q_FOREACH(QGraphicsItem* item, view_->scene()->selectedItems()) {
+        result_->value.labels[item->data(0).toUInt()] = label;
+
+        QGraphicsEllipseItem* ellipse = dynamic_cast<QGraphicsEllipseItem*> (item);
+        if(ellipse) {
+            ellipse->setPen(pen);
+            ellipse->setBrush(brush);
+        }
+    }
+    view_->update();
+}
 
 bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
 {
     QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
 
     switch(e->type()) {
+    case QEvent::KeyPress: {
+        QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e);
+        label_ = ke->key() - Qt::Key_0;
+
+        break;
+    }
     case QEvent::GraphicsSceneMousePress:
-        down_ = true;
-        last_pos_ = me->screenPos();
-        e->accept();
+        if(me->button() == Qt::MiddleButton) {
+            down_ = true;
+            last_pos_ = me->screenPos();
+            e->accept();
+        }
         return true;
     case QEvent::GraphicsSceneMouseRelease: {
-        down_ = false;
-
-        QGraphicsScene* scene = view_->scene();
-        Q_FOREACH(QGraphicsItem* item, scene->selectedItems()) {
-            QGraphicsEllipseItem* ellipse = dynamic_cast<QGraphicsEllipseItem*> (item);
-            if(ellipse) {
-                QBrush brush(color::fromCount(1), Qt::SolidPattern);
-                ellipse->setBrush(brush);
-            }
+        if(me->button() == Qt::MiddleButton) {
+            down_ = false;
+            e->accept();
         }
 
-        e->accept();
+        labelSelected();
         return true;
     }
     case QEvent::GraphicsSceneMouseMove:
@@ -72,25 +96,39 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
         }
         e->accept();
         return true;
+    case QEvent::GraphicsSceneWheel: {
+        e->accept();
 
+        QGraphicsSceneWheelEvent* we = dynamic_cast<QGraphicsSceneWheelEvent*> (e);
+        double scaleFactor = 1.1;
+        if(we->delta() > 0) {
+            // Zoom in
+            view_->scale(scaleFactor, scaleFactor);
+        } else {
+            // Zooming out
+            view_->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+        }
+        return true;
+    }
     default:
         break;
     }
-
     return false;
 }
 
 void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
 {
-    view_->setFixedSize(QSize(state.width, state.height));
-    view_->setMouseTracking(true);
-    view_->setAcceptDrops(false);
     QGraphicsScene* scene = view_->scene();
     if(scene == NULL) {
         scene = new QGraphicsScene();
         view_->setScene(scene);
         scene->installEventFilter(this);
     }
+
+    view_->setFixedSize(QSize(state.width, state.height));
+    view_->setMouseTracking(true);
+    view_->setAcceptDrops(false);
+    view_->setDragMode(QGraphicsView::RubberBandDrag);
 
     layout->addWidget(view_);
 
@@ -128,11 +166,18 @@ void ScanLabelerAdapter::display(lib_laser_processing::Scan* scan)
 
     float dim = 0.05f;
 
+    result_->value.rays = scan->rays;
+    result_->value.labels.resize(scan->rays.size(), 0);
+
     QBrush brush(color::fromCount(0), Qt::SolidPattern);
-    Q_FOREACH(const lib_laser_processing::LaserBeam& beam, scan->rays) {
-        QGraphicsEllipseItem* item = scene->addEllipse(beam.pos(0), beam.pos(1), dim, dim, QPen(), brush);
+    for(std::size_t i = 0, n = scan->rays.size(); i < n; ++i) {
+        const lib_laser_processing::LaserBeam& beam = scan->rays[i];
+        QGraphicsEllipseItem* item = scene->addEllipse(beam.pos(0), beam.pos(1), dim, dim, QPen(brush.color()), brush);
+
+        item->setData(0, QVariant::fromValue(i));
 
         item->setFlag(QGraphicsItem::ItemIsSelectable);
+        item->setFlag(QGraphicsItem::ItemIsFocusable);
     }
 
 
@@ -143,6 +188,5 @@ void ScanLabelerAdapter::display(lib_laser_processing::Scan* scan)
 
 void ScanLabelerAdapter::submit()
 {
-    std::cerr << "submit" << std::endl;
     wrapped_->setResult(result_);
 }
