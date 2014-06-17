@@ -25,6 +25,7 @@ public:
 
     virtual void setupUi(QBoxLayout* layout);
 
+    void setLabel(int label);
 public Q_SLOTS:
     void display(lib_laser_processing::Scan* img);
     void submit();

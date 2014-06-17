@@ -56,6 +56,12 @@ void ScanLabelerAdapter::labelSelected(int label)
     view_->update();
 }
 
+void ScanLabelerAdapter::setLabel(int label)
+{
+    label_ = label;
+    node_->getParameter("label")->set(label_);
+}
+
 bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
 {
     QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
@@ -63,7 +69,14 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
     switch(e->type()) {
     case QEvent::KeyPress: {
         QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e);
-        label_ = ke->key() - Qt::Key_0;
+
+        int key = ke->key();
+
+        if(Qt::Key_0 <= key && key <= Qt::Key_9) {
+            setLabel(ke->key() - Qt::Key_0);
+        } else if(key == Qt::Key_Escape) {
+            setLabel(0);
+        }
 
         break;
     }
