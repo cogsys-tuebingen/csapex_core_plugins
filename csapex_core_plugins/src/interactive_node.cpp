@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_core_plugins/interactive_node.h>
 
+/// PROJECT
+#include <csapex/model/node_worker.h>
+
 using namespace csapex;
 
 InteractiveNode::InteractiveNode()
@@ -28,7 +31,10 @@ bool InteractiveNode::waitForView()
 {
     result_mutex_.lock();
     while(!view_done_ && !stopped_) {
-        wait_for_view_.wait(&result_mutex_);
+        wait_for_view_.wait(&result_mutex_, 100);
+        if(!view_done_) {
+            getNodeWorker()->checkParameters();
+        }
     }
     result_mutex_.unlock();
 
