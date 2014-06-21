@@ -10,4 +10,9 @@
 <class type="csapex::ExportRos" base_class_type="csapex::Node">
   <description>Exports messages via ROS</description>
 </class>
+
+
+<class type="csapex::BagProvider" base_class_type="csapex::MessageProvider">
+  <description></description>
+</class>
 </library>
