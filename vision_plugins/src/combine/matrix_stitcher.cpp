@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
 #include <boost/assign.hpp>
@@ -24,7 +25,7 @@ namespace {
                 const unsigned int offset,
                 cv::Mat &dst)
     {
-        assert(src1.type() == src2.type());
+        apex_assert_hard(src1.type() == src2.type());
         int rows = std::max(src1.rows, src2.rows);
         int cols = std::max(src1.cols, src2.cols);
         int pad_rows = 0;

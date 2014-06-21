@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
 #include <boost/spirit/include/qi.hpp>

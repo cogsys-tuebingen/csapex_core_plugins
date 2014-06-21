@@ -17,7 +17,7 @@ public:
     void setup();
 
     void setState(Memento::Ptr memento);
-    Memento::Ptr getState() const;
+    Memento::Ptr getChildState() const;
 
 private Q_SLOTS:
     void process();

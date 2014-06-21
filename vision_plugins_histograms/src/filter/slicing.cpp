@@ -11,6 +11,7 @@
 #include <utils_cv/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <vision_plugins_histograms/histogram_maxima_msg.h>
+#include <csapex/utility/assert.h>
 
 using namespace vision_plugins;
 using namespace csapex;
@@ -39,7 +40,7 @@ void Slicing::process()
             histogram_maxima_->getMessage<HistogramMaximaMessage>();
     CvMatMessage::Ptr           slices(new CvMatMessage(enc::unknown));
 
-    assert(matrix->value.channels() == maxima->value.maxima.size());
+    apex_assert_hard(matrix->value.channels() == maxima->value.maxima.size());
     unsigned int size      = maxima->value.maxima.size();
     unsigned int padding   = param<int>("padding");
     float        bin_range = maxima->value.bin_range;

@@ -24,10 +24,14 @@ RenderROIs::RenderROIs()
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
     addTag(Tag::get("ROI"));
+}
 
+void RenderROIs::setupParameters()
+{
     addParameter(param::ParameterFactory::declare<int>("thickness", 1, 20, 1, 1));
     addParameter(param::ParameterFactory::declareColorParameter("color", 0,0,0));
     addParameter(param::ParameterFactory::declareBool("force color", false));
+    addParameter(param::ParameterFactory::declareBool("ignore unclassified", false));
 }
 
 void RenderROIs::process()
@@ -53,8 +57,15 @@ void RenderROIs::process()
         color = cv::Scalar(c[2], c[1], c[0]);
     }
 
+    bool ignore_uc = param<bool>("ignore unclassified");
+
     BOOST_FOREACH(const ConnectionType::Ptr& e, rois->value) {
         RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(e);
+
+        if(ignore_uc && roi->value.classification() == -1) {
+            continue;
+        }
+
         cv::rectangle(out->value, roi->value.rect(), force_color ? color : roi->value.color(), thickness);
 
         std::string text = roi->value.label();

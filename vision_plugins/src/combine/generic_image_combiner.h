@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
 #if ((BOOST_VERSION >> 20) & 0xF) >= 1 && ((BOOST_VERSION >> 8) & 0xFFF) >= 49
@@ -38,7 +39,7 @@ struct Expression : AbstractExpression
     Expression(E const& e) : e_(make_from(e)) { } // cloning the expression
 
     bool valid() const { return e_; }
-    cv::Mat evaluate() const { assert(e_); return e_->evaluate(); }
+    cv::Mat evaluate() const { apex_assert_hard(e_); return e_->evaluate(); }
 
     // special purpose overload to avoid unnecessary wrapping
     friend Ptr make_from(Expression const& t) { return t.e_; }

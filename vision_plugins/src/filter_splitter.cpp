@@ -8,6 +8,7 @@
 #include <csapex/model/connector_out.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/utility/assert.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Splitter, csapex::Node)
 
@@ -121,7 +122,7 @@ void Splitter::updateOutputs()
 }
 
 /// MEMENTO ------------------------------------------------------------------------------------
-Memento::Ptr Splitter::getState() const
+Memento::Ptr Splitter::getChildState() const
 {
     return boost::shared_ptr<State>(new State(state_));
 }
@@ -129,7 +130,7 @@ Memento::Ptr Splitter::getState() const
 void Splitter::setState(Memento::Ptr memento)
 {
     boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
-    assert(m.get());
+    apex_assert_hard(m.get());
 
     state_ = *m;
 
