@@ -22,8 +22,8 @@ void ForeachAdapter::setupUi(QBoxLayout* layout)
 {
     QHBoxLayout* sub = new QHBoxLayout;
 
-    widget_ctrl_->insertPort(sub, new Port(wrapped_->getCommandDispatcher(), wrapped_->out_sub));
-    widget_ctrl_->insertPort(sub, new Port(wrapped_->getCommandDispatcher(), wrapped_->in_sub));
+    widget_ctrl_->insertPort(sub, new Port(wrapped_->getCommandDispatcher(), wrapped_->out_sub, false));
+    widget_ctrl_->insertPort(sub, new Port(wrapped_->getCommandDispatcher(), wrapped_->in_sub, false));
 
     layout->addLayout(sub);
 }

@@ -5,7 +5,7 @@
 #include "file_importer.h"
 
 /// PROJECT
-#include <csapex/manager/connection_type_manager.h>
+#include <csapex/model/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex/core/drag_io.h>
 #include <csapex/command/add_node.h>
@@ -83,7 +83,7 @@ class FileHandler
                 NodeState::Ptr state(new NodeState(NULL));
                 GenericState::Ptr child_state(new GenericState);
                 child_state->addParameter(param::ParameterFactory::declareFileInputPath("path", files.first().toString().toStdString()));
-                state->child_state = child_state;
+                state->setChildState(child_state);
 
                 std::string type("csapex::FileImporter");
                 dispatcher->execute(Command::Ptr(new command::AddNode(type, pos, UUID::NONE, uuid, state)));

@@ -16,6 +16,7 @@ public:
     ExportFile();
 
     virtual void setup();
+    virtual void setupParameters();
     virtual void process();
 
     virtual QIcon getIcon() const;
@@ -27,6 +28,7 @@ private:
     ConnectorIn* connector_;
 
     std::string path_;
+    std::string base_;
     QMutex mutex_;
 
     int suffix_;

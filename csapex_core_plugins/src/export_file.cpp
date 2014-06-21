@@ -10,9 +10,12 @@
 #include <utils_param/path_parameter.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/core/settings.h>
+#include <csapex/model/message_factory.h>
 
 /// SYSTEM
 #include <QFileDialog>
+#include <fstream>
 
 CSAPEX_REGISTER_CLASS(csapex::ExportFile, csapex::Node)
 
@@ -23,9 +26,20 @@ ExportFile::ExportFile()
     addTag(Tag::get("Output"));
     addTag(Tag::get("General"));
 
-    addParameter(param::ParameterFactory::declareDirectoryOutputPath("path", "", ""), boost::bind(&ExportFile::setExportPath, this));
-
     suffix_ = 0;
+}
+
+void ExportFile::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareBool("yaml",
+                                                      param::ParameterDescription("Export message in cs::APEX-YAML format?"),
+                                                      false));
+    addParameter(param::ParameterFactory::declareText("filename",
+                                                      param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
+                                                      "msg"), boost::bind(&ExportFile::setExportPath, this));
+    addParameter(param::ParameterFactory::declareDirectoryOutputPath("path",
+                                                                     param::ParameterDescription("Directory to write messages to"),
+                                                                     "", ""), boost::bind(&ExportFile::setExportPath, this));
 }
 
 QIcon ExportFile::getIcon() const
@@ -41,6 +55,7 @@ void ExportFile::setup()
 void ExportFile::setExportPath()
 {
     path_ = param<std::string>("path");
+    base_ = param<std::string>("filename");
 }
 
 void ExportFile::process()
@@ -58,7 +73,13 @@ void ExportFile::process()
 
     std::stringstream ss;
     ss << "_" << suffix_;
-    msg->writeRaw(path_, ss.str());
+
+    if(param<bool>("yaml")) {
+        std::string file = path_ + "/" + base_ + ss.str().c_str() + Settings::message_extension;
+        MessageFactory::writeMessage(file, msg);
+    } else {
+        msg->writeRaw(path_, ss.str());
+    }
 
     ++suffix_;
 }

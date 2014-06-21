@@ -1,4 +1,7 @@
 <library path="libcsapex_core_plugins">
+<class type="csapex::ImportFile" base_class_type="csapex::Node">
+  <description>Imports messages from a directory (in APEX-YAML format)</description>
+</class>
 
 <class type="csapex::RegisterCorePlugins" base_class_type="csapex::CorePlugin">
   <description></description>

@@ -56,18 +56,17 @@ void Camera::update()
 {
     setError(false);
 
+
     int dev = param<int>("device");
     int w = param<int>("w");
     int h = param<int>("h");
 
-    if(dev == 0) {
-        return;
-    }
 
     if(dev == current_dev_ && w == w_ && h == h_) {
         // no change, no update
         return;
     }
+    std::cerr << "update " << dev << " " << w << " " << h << std::endl;
 
     current_dev_= dev;
     w_ = w;
@@ -78,6 +77,7 @@ void Camera::update()
     }
 
     if(!cap_.open(dev)) {
+        cap_.release();
         throw std::runtime_error("cannot open camera with the given id");
     }
 

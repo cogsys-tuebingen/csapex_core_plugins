@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <csapex_core_plugins/vector_message.h>
+#include <csapex/utility/assert.h>
 
 /// PROJECT
 #include <csapex/model/connector_out.h>
@@ -120,7 +121,7 @@ void Foreach::checkIO()
 void Foreach::messageProcessed()
 {
     QMutexLocker lock(&msg_mutex_);
-    assert(!msg_received_);
+    apex_assert_hard(!msg_received_);
     msg_received_ = true;
     msg_received_cond_.wakeAll();
 }

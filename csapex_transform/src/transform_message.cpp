@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_transform/transform_message.h>
 
+/// PROJECT
+#include <csapex/utility/assert.h>
+
 /// SYSTEM
 #include <tf/transform_datatypes.h>
 
@@ -23,7 +26,7 @@ void TransformMessage::readYaml(const YAML::Node& node) {
     double qx,qy,qz,qw,x,y,z;
     if(exists(node, "orientation")) {
         const YAML::Node& doc = node["orientation"];
-        assert(doc.Type() == YAML::NodeType::Sequence);
+        apex_assert_hard(doc.Type() == YAML::NodeType::Sequence);
         doc[0] >> qx;
         doc[1] >> qy;
         doc[2] >> qz;
@@ -31,7 +34,7 @@ void TransformMessage::readYaml(const YAML::Node& node) {
     }
     if(exists(node, "translation")) {
         const YAML::Node& doc = node["translation"];
-        assert(doc.Type() == YAML::NodeType::Sequence);
+        apex_assert_hard(doc.Type() == YAML::NodeType::Sequence);
         doc[0] >> x;
         doc[1] >> y;
         doc[2] >> z;

@@ -9,6 +9,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
 #include <boost/type_traits.hpp>
@@ -78,9 +79,9 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
     double correction_f = param<double>("correct/f");
 
     if(boost::is_same<PointT, pcl::PointXYZI>()) {
-        assert(intensity.type() == CV_8UC1);
+        apex_assert_hard(intensity.type() == CV_8UC1);
     }
-    assert(depth.type() == CV_32FC1);
+    apex_assert_hard(depth.type() == CV_32FC1);
 
     std::pair<int,int> range = param<std::pair<int,int> >("intensity");
 

@@ -6,6 +6,7 @@
 #include <csapex/utility/register_node_adapter.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex/utility/color.hpp>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
 #include <QPainter>
@@ -159,7 +160,7 @@ Memento::Ptr ScanLabelerAdapter::getState() const
 void ScanLabelerAdapter::setState(Memento::Ptr memento)
 {
     boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
-    assert(m.get());
+    apex_assert_hard(m.get());
 
     state = *m;
 

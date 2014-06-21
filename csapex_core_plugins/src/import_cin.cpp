@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/connector_out.h>
-#include <csapex/manager/connection_type_manager.h>
+#include <csapex/model/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/model/message.h>
 #include <csapex/model/node_modifier.h>
@@ -80,11 +80,11 @@ void ImportCin::tick()
 
         YAML::Parser parser(docstream);
         while(getNextDocument(parser, doc)) {
-            std::string type;
-            doc["type"] >> type;
+            ConnectionType::Ptr msg;
+            try {
+                msg = MessageFactory::readYaml(doc);
 
-            ConnectionType::Ptr msg = ConnectionTypeManager::createMessage(type);
-            if(!msg) {
+            } catch(const MessageFactory::DeserializationError& e) {
                 ainfo << "could not deserialize message: \n";
                 YAML::Emitter e;
                 e << doc;
@@ -92,9 +92,7 @@ void ImportCin::tick()
                 continue;
             }
 
-            msg->readYaml(doc);
-
-            connector_->setType(msg->clone());
+            connector_->setType(msg->toType());
             connector_->publish(msg);
         }
     } catch(YAML::ParserException& e) {

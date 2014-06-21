@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex_ros/ros_handler.h>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
@@ -32,7 +33,7 @@ public:
 private:
     static Listener* raw_instance() {
         static Listener l;
-        assert(&l);
+        apex_assert_hard(&l);
         return &l;
     }
 

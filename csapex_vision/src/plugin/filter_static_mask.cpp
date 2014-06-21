@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <utils_param/parameter_factory.h>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -25,7 +26,7 @@ void FilterStaticMask::State::writeYaml(YAML::Emitter& out) const {
     out << YAML::Key << "rows" << YAML::Value << mask_.rows;
     out << YAML::Key << "cols" << YAML::Value << mask_.cols;
 
-    assert(mask_.type() == CV_8UC1);
+    apex_assert_hard(mask_.type() == CV_8UC1);
 
     QByteArray raw = qCompress(mask_.data, mask_.rows * mask_.cols);
     out << YAML::Key << "rawdata" << YAML::Value << raw.toBase64().data();
@@ -89,7 +90,7 @@ void FilterStaticMask::filter(cv::Mat& img, cv::Mat& mask)
     }
 }
 
-Memento::Ptr FilterStaticMask::getState() const
+Memento::Ptr FilterStaticMask::getChildState() const
 {
     return boost::shared_ptr<State>(new State(state));
 }
@@ -97,7 +98,7 @@ Memento::Ptr FilterStaticMask::getState() const
 void FilterStaticMask::setState(Memento::Ptr memento)
 {
     boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
-    assert(m.get());
+    apex_assert_hard(m.get());
 
     state = *m;
 

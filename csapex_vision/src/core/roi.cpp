@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_vision/roi.h>
 
+/// PROJECT
+#include <csapex/utility/assert.h>
+
 using namespace csapex;
 
 Roi::Roi()
@@ -8,14 +11,14 @@ Roi::Roi()
 
 }
 
-Roi::Roi(cv::Rect rectangle, cv::Scalar color)
-    : rect_(rectangle), color_(color)
+Roi::Roi(cv::Rect rectangle, cv::Scalar color, int classification)
+    : rect_(rectangle), color_(color), classification_(classification)
 {
     check();
 }
 
-Roi::Roi(int x, int y, int width, int height, cv::Scalar color)
-    : rect_(x, y, width, height), color_(color)
+Roi::Roi(int x, int y, int width, int height, cv::Scalar color, int classification)
+    : rect_(x, y, width, height), color_(color), classification_(classification)
 {
     check();
 }
@@ -32,8 +35,8 @@ std::string Roi::label() const
 
 void Roi::check()
 {
-    assert(rect_.x >= 0);
-    assert(rect_.y >= 0);
+    apex_assert_hard(rect_.x >= 0);
+    apex_assert_hard(rect_.y >= 0);
 }
 
 bool Roi::covers(const Roi& rhs) const
@@ -73,6 +76,11 @@ int Roi::w() const
 int Roi::h() const
 {
     return rect_.height;
+}
+
+int Roi::classification() const
+{
+    return classification_;
 }
 
 cv::Rect Roi::rect() const

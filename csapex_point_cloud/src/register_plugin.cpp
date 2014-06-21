@@ -5,7 +5,7 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 
 /// PROJECT
-#include <csapex/manager/connection_type_manager.h>
+#include <csapex/model/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -113,7 +113,7 @@ void RegisterPointCloudPlugin::init(CsApexCore& core)
 {
     Tag::createIfNotExists("PointCloud");
 
-    ConnectionTypeManager::registerMessage<connection_types::PointCloudMessage>();
+    MessageFactory::registerMessage<connection_types::PointCloudMessage>();
 
     RosMessageConversion::registerConversion<sensor_msgs::PointCloud2, connection_types::PointCloudMessage, Sensor2Cloud >();
 }

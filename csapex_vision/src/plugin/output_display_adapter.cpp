@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/model/connector_in.h>
 #include <csapex/utility/register_node_adapter.h>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
 #include <QPainter>
@@ -122,7 +123,7 @@ Memento::Ptr OutputDisplayAdapter::getState() const
 void OutputDisplayAdapter::setState(Memento::Ptr memento)
 {
     boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
-    assert(m.get());
+    apex_assert_hard(m.get());
 
     state = *m;
 

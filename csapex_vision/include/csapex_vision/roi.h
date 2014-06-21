@@ -11,8 +11,8 @@ class Roi
 {
 public:
     Roi();
-    Roi(cv::Rect rectangle, cv::Scalar color = cv::Scalar(255, 255, 0));
-    Roi(int x, int y, int width, int height, cv::Scalar color = cv::Scalar(255, 255, 0));
+    Roi(cv::Rect rectangle, cv::Scalar color = cv::Scalar(255, 255, 0), int classification = -1);
+    Roi(int x, int y, int width, int height, cv::Scalar color = cv::Scalar(255, 255, 0), int classification = -1);
 
     bool covers(const Roi& rhs) const;
 
@@ -26,6 +26,7 @@ public:
     void setLabel(const std::string& label);
     std::string label() const;
 
+    int classification() const;
     cv::Rect rect() const;
     cv::Scalar color() const;
 
@@ -35,6 +36,7 @@ private:
 private:
     cv::Rect rect_;
     cv::Scalar color_;
+    int classification_;
     std::string label_;
 };
 

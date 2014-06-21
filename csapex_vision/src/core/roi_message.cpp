@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_vision/roi_message.h>
 
+/// PROJECT
+#include <csapex/utility/assert.h>
+
 using namespace csapex;
 using namespace connection_types;
 
@@ -21,7 +24,7 @@ void RoiMessage::readYaml(const YAML::Node &node)
 {
     if(exists(node, "value")) {
         const YAML::Node& n = node["value"];
-        assert(n.Type() == YAML::NodeType::Sequence);
+        apex_assert_hard(n.Type() == YAML::NodeType::Sequence);
 
         int x,y,w,h;
         n[0] >> x;

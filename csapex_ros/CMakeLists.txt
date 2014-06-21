@@ -34,6 +34,8 @@ add_library(csapex_ros
     src/apex_ros_interface.cpp
     src/export_ros.cpp
     src/import_ros.cpp
+
+    src/bag_provider.cpp
     ${QT_MOC}
 )
 

@@ -6,7 +6,7 @@
 #include <csapex_scan_2d/labeled_scan_message.h>
 
 /// PROJECT
-#include <csapex/manager/connection_type_manager.h>
+#include <csapex/model/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
 
@@ -57,8 +57,8 @@ void RegisterScan2DPlugin::init(CsApexCore& core)
 
     Tag::createIfNotExists("Features");
 
-    ConnectionTypeManager::registerMessage<connection_types::ScanMessage>();
-    ConnectionTypeManager::registerMessage<connection_types::LabeledScanMessage>();
+    MessageFactory::registerMessage<connection_types::ScanMessage>();
+    MessageFactory::registerMessage<connection_types::LabeledScanMessage>();
 
     RosMessageConversion::registerConversion<sensor_msgs::LaserScan, connection_types::ScanMessage, ConvertScan>();
 }

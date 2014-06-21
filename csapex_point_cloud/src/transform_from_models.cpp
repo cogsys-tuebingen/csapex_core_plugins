@@ -183,7 +183,7 @@ std::vector<Eigen::Vector3d> TransformFromModels::getInterestingPointsFromModels
                 // Calculate the z coordiantes of the apex, given the radius and the opening angle
                 double radius = it->coefficients->values.at(2);
                 double tan_result = std::tan(param_cone_angle_/2.0);
-                //assert(tan_result != 0);
+                //apex_assert_hard(tan_result != 0);
                 double z;
                 if (tan_result != 0) {
                     z = radius / tan_result;

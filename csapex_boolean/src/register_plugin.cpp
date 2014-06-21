@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/tag.h>
-#include <csapex/manager/connection_type_manager.h>
+#include <csapex/model/message_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

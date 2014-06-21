@@ -5,7 +5,7 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/manager/connection_type_manager.h>
+#include <csapex/model/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_ros/ros_handler.h>
@@ -67,7 +67,7 @@ void RegisterPlugin::init(CsApexCore& core)
 
     qRegisterMetaType<cv::Mat>("cv::Mat");
 
-    ConnectionTypeManager::registerMessage<connection_types::CvMatMessage>();
+    MessageFactory::registerMessage<connection_types::CvMatMessage>();
 
     RosMessageConversion::registerConversion<sensor_msgs::Image, connection_types::CvMatMessage, Image2CvMat>();
 

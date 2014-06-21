@@ -7,7 +7,7 @@
 
 /// PROJECT
 #include <csapex/model/connector_out.h>
-#include <csapex/manager/connection_type_manager.h>
+#include <csapex/model/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/model/message.h>
 #include <csapex/utility/qt_helper.hpp>

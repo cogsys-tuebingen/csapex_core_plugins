@@ -6,7 +6,7 @@
 #include <csapex_vision_features/descriptor_message.h>
 
 /// PROJECT
-#include <csapex/manager/connection_type_manager.h>
+#include <csapex/model/message_factory.h>
 #include <csapex/model/tag.h>
 
 /// SYSTEM
@@ -24,6 +24,6 @@ void RegisterVisionFeaturePlugin::init(CsApexCore& core)
 {
     Tag::createIfNotExists("Features");
 
-    ConnectionTypeManager::registerMessage<connection_types::KeypointMessage>();
-    ConnectionTypeManager::registerMessage<connection_types::DescriptorMessage>();
+    MessageFactory::registerMessage<connection_types::KeypointMessage>();
+    MessageFactory::registerMessage<connection_types::DescriptorMessage>();
 }

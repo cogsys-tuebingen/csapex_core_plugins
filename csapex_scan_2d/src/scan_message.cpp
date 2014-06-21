@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_scan_2d/scan_message.h>
 
+/// PROJECT
+#include <csapex/utility/assert.h>
+
 using namespace csapex;
 using namespace connection_types;
 using namespace lib_laser_processing;
@@ -22,4 +25,5 @@ void ScanMessage::writeYaml(YAML::Emitter &yaml)
 
 void ScanMessage::readYaml(const YAML::Node &node)
 {
+    apex_assert_hard(node.Type() == YAML::NodeType::Sequence);
 }
