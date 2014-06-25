@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+  <name>csapex_ml</name>
+
+  <version>0.0.1</version>
+  <description>The csapex_scan_2d package</description>
+
+  <maintainer email="sebastian.buck@uni-tuebingen.de">buck</maintainer>
+
+  <license>BSD</license>
+  <author email="sebastian.buck@uni-tuebingen.de">buck</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>csapex</build_depend>
+  <run_depend>csapex</run_depend>
+  <export>
+    <csapex plugin="${prefix}/plugins.xml" />
+  </export>
+</package>
