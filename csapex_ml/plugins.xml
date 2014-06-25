@@ -1,0 +1,5 @@
+<library path="libcsapex_ml_plugin">
+<class type="csapex::DecisionTreeTrainer" base_class_type="csapex::Node">
+  <description>Train a decision tree</description>
+</class>
+</library>
