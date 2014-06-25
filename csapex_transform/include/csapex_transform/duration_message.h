@@ -15,7 +15,7 @@ struct DurationMessage : public MessageTemplate<ros::Duration, DurationMessage>
 {
     DurationMessage();
 
-    void writeYaml(YAML::Emitter& yaml);
+    void writeYaml(YAML::Emitter& yaml) const;
     void readYaml(const YAML::Node& node);
 };
 

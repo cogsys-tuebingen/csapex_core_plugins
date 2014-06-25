@@ -8,7 +8,7 @@ PointIndecesMessage::PointIndecesMessage() :
     value.reset(new pcl::PointIndices);
 }
 
-void PointIndecesMessage::writeYaml(YAML::Emitter &yaml)
+void PointIndecesMessage::writeYaml(YAML::Emitter &yaml) const
 {
     yaml << YAML::Flow << YAML::Key << "indeces" << YAML::Value;
     yaml << YAML::BeginSeq;

@@ -10,7 +10,7 @@ LabeledScanMessage::LabeledScanMessage()
     : MessageTemplate<LabeledScan, LabeledScanMessage> ("LabeledScan")
 {}
 
-void LabeledScanMessage::writeYaml(YAML::Emitter &yaml)
+void LabeledScanMessage::writeYaml(YAML::Emitter &yaml) const
 {
     yaml << YAML::Flow << YAML::Key << "ranges" << YAML::Value;
     yaml << YAML::BeginSeq;

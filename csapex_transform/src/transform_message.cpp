@@ -14,7 +14,7 @@ TransformMessage::TransformMessage()
     : MessageTemplate<tf::Transform, TransformMessage> ("Transform")
 {}
 
-void TransformMessage::writeYaml(YAML::Emitter& yaml) {
+void TransformMessage::writeYaml(YAML::Emitter& yaml) const {
     const tf::Quaternion& q = value.getRotation();
     const tf::Vector3& t = value.getOrigin();
 

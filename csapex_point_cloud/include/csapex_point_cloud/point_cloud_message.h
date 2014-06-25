@@ -101,7 +101,7 @@ struct PointCloudMessage : public Message
         return dynamic_cast<const PointCloudMessage*> (other_side);
     }
 
-    void writeYaml(YAML::Emitter& yaml) {
+    void writeYaml(YAML::Emitter& yaml) const {
         yaml << YAML::Key << "value" << YAML::Value << "not implemented";
     }
     void readYaml(const YAML::Node&) {

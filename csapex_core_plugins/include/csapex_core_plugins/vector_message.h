@@ -38,7 +38,7 @@ struct VectorMessage : public Message
     virtual bool canConnectTo(const ConnectionType* other_side) const;
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
 
-    void writeYaml(YAML::Emitter& yaml);
+    void writeYaml(YAML::Emitter& yaml) const;
     void readYaml(const YAML::Node& node);
 
 private:
@@ -55,6 +55,105 @@ private:
 
 struct GenericVectorMessage : public Message
 {
+private:
+    template <typename T>
+    struct Implementation : public Message
+    {
+    private:
+        typedef Implementation<T> Self;
+
+    public:
+        typedef boost::shared_ptr< Self > Ptr;
+
+
+    public:
+        static Self::Ptr make() {
+            return Self::Ptr (new Self);
+        }
+
+        Implementation()
+            : Message(std::string("std::vector<") + type2nameWithoutNamespace(typeid(T)) + ">")
+        {
+        }
+
+        virtual ConnectionType::Ptr clone()
+        {
+            Self::Ptr r(new Self);
+            r->value = value;
+            return r;
+        }
+
+        virtual ConnectionType::Ptr toType()
+        {
+            Self::Ptr r(new Self);
+            return r;
+        }
+
+        virtual bool canConnectTo(const ConnectionType* other_side) const
+        {
+            const Self* vec = dynamic_cast<const Self*> (other_side);
+            if(vec != 0) {
+                return true;
+            } else {
+                return other_side->canConnectTo(this);
+            }
+        }
+        virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const
+        {
+
+            const Self* vec = dynamic_cast<const Self*> (other_side);
+            return vec != 0;
+        }
+
+        void writeYaml(YAML::Emitter& yaml) const
+        {
+            yaml << YAML::Key << "generic vector" << YAML::Value << "not writable";
+        }
+
+        void readYaml(const YAML::Node& node)
+        {
+            throw std::runtime_error("deserialization of generic vectors not implemented");
+        }
+
+    public:
+        boost::shared_ptr< std::vector<T> > value;
+    };
+
+    template <typename T>
+    struct MessageImplementation : public Implementation<T>
+    {
+        typedef Implementation<T> Parent;
+        typedef MessageImplementation<T> Self;
+
+        using Parent::value;
+
+    public:
+        typedef boost::shared_ptr< Self > Ptr;
+
+        static Self::Ptr make() {
+            return Self::Ptr (new Self);
+        }
+
+        void writeYaml(YAML::Emitter& yaml) const
+        {
+            yaml << YAML::Key << "generic vector" << YAML::Value << YAML::Flow;
+            yaml << YAML::BeginSeq;
+            for(unsigned i = 0; i < value->size(); ++i) {
+                const T& entry = (*value)[i];
+                yaml << YAML::BeginMap;
+                entry.writeYaml(yaml);
+                yaml << YAML::EndMap;
+            }
+            yaml << YAML::EndSeq;
+        }
+
+        void readYaml(const YAML::Node& node)
+        {
+
+        }
+    };
+
+public:
     typedef boost::shared_ptr<GenericVectorMessage> Ptr;
 
     template <typename T>
@@ -64,27 +163,30 @@ struct GenericVectorMessage : public Message
         typedef boost::shared_ptr<type const> ConstPtr;
     };
 
-    GenericVectorMessage();
-
     template <typename T>
-    static GenericVectorMessage::Ptr make()
+    static GenericVectorMessage::Ptr make(typename boost::enable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
     {
-        return GenericVectorMessage::Ptr(new GenericVectorMessage(typeid(T)));
+        return GenericVectorMessage::Ptr(new GenericVectorMessage(MessageImplementation<T>::make()));
     }
 
     template <typename T>
-    typename TypeMap<T>::ConstPtr  makeShared()
+    static GenericVectorMessage::Ptr make(typename boost::disable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
     {
-        return boost::any_cast<typename TypeMap<T>::Ptr>(value);
+        return GenericVectorMessage::Ptr(new GenericVectorMessage(Implementation<T>::make()));
+    }
+
+    template <typename T>
+    boost::shared_ptr<std::vector<T> const>  makeShared()
+    {
+        return boost::dynamic_pointer_cast< Implementation<T> > (impl)->value;
     }
 
 
     template <typename T>
-    void set(const typename TypeMap<T>::Ptr& v) {
-        value = v;
+    void set(const boost::shared_ptr< std::vector<T> > & v) {
+        boost::dynamic_pointer_cast< Implementation<T> > (impl)->value = v;
     }
 
-    static GenericVectorMessage::Ptr make();
 
     virtual ConnectionType::Ptr clone();
     virtual ConnectionType::Ptr toType();
@@ -92,17 +194,14 @@ struct GenericVectorMessage : public Message
     virtual bool canConnectTo(const ConnectionType* other_side) const;
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
 
-    void writeYaml(YAML::Emitter& yaml);
+    void writeYaml(YAML::Emitter& yaml) const;
     void readYaml(const YAML::Node& node);
 
 private:
-    GenericVectorMessage(const std::type_info& type);
+    GenericVectorMessage(ConnectionType::Ptr impl);
 
 private:
-    boost::any value;
-
-private:
-    const std::type_info* type_;
+    ConnectionType::Ptr impl;
 
 };
 

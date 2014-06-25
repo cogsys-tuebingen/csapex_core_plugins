@@ -15,7 +15,7 @@ struct ScanMessage : public MessageTemplate<lib_laser_processing::Scan, ScanMess
 {
     ScanMessage();
 
-    void writeYaml(YAML::Emitter& yaml);
+    void writeYaml(YAML::Emitter& yaml) const;
     void readYaml(const YAML::Node& node);
 };
 

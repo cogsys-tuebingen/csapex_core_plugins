@@ -15,7 +15,7 @@ struct TransformMessage : public MessageTemplate<tf::Transform, TransformMessage
 {
     TransformMessage();
 
-    void writeYaml(YAML::Emitter& yaml);
+    void writeYaml(YAML::Emitter& yaml) const;
     void readYaml(const YAML::Node& node);
 };
 

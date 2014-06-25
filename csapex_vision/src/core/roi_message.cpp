@@ -12,7 +12,7 @@ RoiMessage::RoiMessage()
     : MessageTemplate<Roi, RoiMessage> ("Roi")
 {}
 
-void RoiMessage::writeYaml(YAML::Emitter &yaml)
+void RoiMessage::writeYaml(YAML::Emitter &yaml) const
 {
     yaml << YAML::Flow << YAML::Key << "value" << YAML::Value;
     yaml << YAML::BeginSeq;

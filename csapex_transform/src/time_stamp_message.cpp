@@ -11,7 +11,7 @@ TimeStampMessage::TimeStampMessage()
     : MessageTemplate<ros::Time, TimeStampMessage> ("TimeStamp")
 {}
 
-void TimeStampMessage::writeYaml(YAML::Emitter& yaml) {
+void TimeStampMessage::writeYaml(YAML::Emitter& yaml) const {
     yaml << YAML::Key << "time" << YAML::Value << boost::posix_time::to_simple_string(value.toBoost()) << YAML::EndSeq;;
 }
 

@@ -11,7 +11,7 @@ DurationMessage::DurationMessage()
     : MessageTemplate<ros::Duration, DurationMessage> ("Duration")
 {}
 
-void DurationMessage::writeYaml(YAML::Emitter& yaml) {
+void DurationMessage::writeYaml(YAML::Emitter& yaml) const {
     yaml << YAML::Key << "duration" << YAML::Value << value.toNSec() << YAML::EndSeq;;
 }
 

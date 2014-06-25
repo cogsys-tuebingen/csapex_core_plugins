@@ -15,7 +15,7 @@ struct RoiMessage : public MessageTemplate<Roi, RoiMessage>
 {
     RoiMessage();
 
-    void writeYaml(YAML::Emitter& yaml);
+    void writeYaml(YAML::Emitter& yaml) const;
     void readYaml(const YAML::Node& node);
 };
 

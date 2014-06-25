@@ -4,49 +4,36 @@
 using namespace csapex;
 using namespace connection_types;
 
-GenericVectorMessage::GenericVectorMessage()
-    : Message ("std::vector<?>")
+GenericVectorMessage::GenericVectorMessage(ConnectionType::Ptr impl)
+    : Message (impl->name()), impl(impl)
 {
-    type_ = &typeid(void);
-}
-GenericVectorMessage::GenericVectorMessage(const std::type_info &type)
-    : Message (std::string("std::vector<") + type2nameWithoutNamespace(type)  + ">")
-{
-    type_ = &type;
-}
-
-GenericVectorMessage::Ptr GenericVectorMessage::make(){
-    Ptr new_msg(new GenericVectorMessage);
-    return new_msg;
 }
 
 ConnectionType::Ptr GenericVectorMessage::clone() {
-    Ptr new_msg(new GenericVectorMessage);
-    new_msg->value = value;
+    Ptr new_msg(new GenericVectorMessage(impl->clone()));
     return new_msg;
 }
 
 ConnectionType::Ptr GenericVectorMessage::toType() {
-    return make();
+    Ptr new_msg(new GenericVectorMessage(AnyMessage::make()));
+    return new_msg;
 }
 
 bool GenericVectorMessage::canConnectTo(const ConnectionType *other_side) const
 {
-    const GenericVectorMessage* vec = dynamic_cast<const GenericVectorMessage*> (other_side);
-    return vec != 0 && type_ == vec->type_;
+    return impl->canConnectTo(other_side);
 }
 
 bool GenericVectorMessage::acceptsConnectionFrom(const ConnectionType *other_side) const
 {
-    const GenericVectorMessage* vec = dynamic_cast<const GenericVectorMessage*> (other_side);
-    return vec != 0 && type_ == vec->type_;
+    return impl->acceptsConnectionFrom(other_side);
 }
 
-void GenericVectorMessage::writeYaml(YAML::Emitter& yaml) {
-    throw std::runtime_error("serialization of generic vectors not implemented");
+void GenericVectorMessage::writeYaml(YAML::Emitter& yaml) const {
+    impl->writeYaml(yaml);
 }
 void GenericVectorMessage::readYaml(const YAML::Node& node) {
-    throw std::runtime_error("deserialization of generic vectors not implemented");
+    impl->readYaml(node);
 }
 
 
@@ -97,8 +84,8 @@ bool VectorMessage::acceptsConnectionFrom(const ConnectionType *other_side) cons
     return vec != 0 && type_->acceptsConnectionFrom(vec->getSubType().get());
 }
 
-void VectorMessage::writeYaml(YAML::Emitter& yaml) {
-    yaml << YAML::Key << "value" << YAML::Value << YAML::Flow;
+void VectorMessage::writeYaml(YAML::Emitter& yaml) const {
+    yaml << YAML::Key << "vector" << YAML::Value << YAML::Flow;
     yaml << YAML::BeginSeq;
     for(unsigned i = 0; i < value.size(); ++i) {
         yaml << YAML::BeginMap;

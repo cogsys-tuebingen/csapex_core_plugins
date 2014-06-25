@@ -12,7 +12,7 @@ ScanMessage::ScanMessage()
     : MessageTemplate<lib_laser_processing::Scan, ScanMessage> ("Scan")
 {}
 
-void ScanMessage::writeYaml(YAML::Emitter &yaml)
+void ScanMessage::writeYaml(YAML::Emitter &yaml) const
 {
     yaml << YAML::Flow << YAML::Key << "ranges" << YAML::Value;
     yaml << YAML::BeginSeq;

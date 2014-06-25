@@ -15,7 +15,7 @@ struct TimeStampMessage : public MessageTemplate<ros::Time, TimeStampMessage>
 {
     TimeStampMessage();
 
-    void writeYaml(YAML::Emitter& yaml);
+    void writeYaml(YAML::Emitter& yaml) const;
     void readYaml(const YAML::Node& node);
 };
 

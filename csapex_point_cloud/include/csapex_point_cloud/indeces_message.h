@@ -14,7 +14,7 @@ class PointIndecesMessage : public MessageTemplate<pcl::PointIndices::Ptr, Point
 public:
     PointIndecesMessage();
 
-    virtual void writeYaml(YAML::Emitter &yaml);
+    virtual void writeYaml(YAML::Emitter &yaml) const;
     virtual void readYaml(const YAML::Node &node);
 
 };

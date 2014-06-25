@@ -15,7 +15,7 @@ struct LabeledScanMessage : public MessageTemplate<lib_laser_processing::Labeled
 {
     LabeledScanMessage();
 
-    void writeYaml(YAML::Emitter& yaml);
+    void writeYaml(YAML::Emitter& yaml) const;
     void readYaml(const YAML::Node& node);
 };
 
