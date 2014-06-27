@@ -21,7 +21,6 @@ RenderLabels::RenderLabels()
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-    addParameter(param::ParameterFactory::declareRange("color occupancy", 0.1, 1.0, 0.25, 0.05));
 }
 
 void RenderLabels::process()
@@ -67,5 +66,10 @@ void RenderLabels::setup()
     labels_ = modifier_->addInput<CvMatMessage>("labels");
     image_  = modifier_->addInput<CvMatMessage>("image", true);
     output_ = modifier_->addOutput<CvMatMessage>("rendered");
+}
+
+void RenderLabels::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("color occupancy", 0.1, 1.0, 0.25, 0.05));
 }
 

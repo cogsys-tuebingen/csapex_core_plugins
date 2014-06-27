@@ -23,6 +23,16 @@ ImageTextLabel::ImageTextLabel()
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
+}
+
+void ImageTextLabel::setup()
+{
+    input_  = modifier_->addInput<CvMatMessage>("Image");
+    output_ = modifier_->addOutput<CvMatMessage>("Labeled");
+}
+
+void ImageTextLabel::setupParameters()
+{
 
     std::map<std::string, int> positions = boost::assign::map_list_of
             ("BOTTOM_LEFT", BOTTOM_LEFT)
@@ -37,12 +47,6 @@ ImageTextLabel::ImageTextLabel()
     addParameter(param::ParameterFactory::declareRange("scale", 1.0, 10.0, 1.0, 0.1));
     addParameter(param::ParameterFactory::declareText("label", "label"));
 
-}
-
-void ImageTextLabel::setup()
-{
-    input_  = modifier_->addInput<CvMatMessage>("Image");
-    output_ = modifier_->addOutput<CvMatMessage>("Labeled");
 }
 
 void ImageTextLabel::process()

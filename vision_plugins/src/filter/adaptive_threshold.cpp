@@ -19,21 +19,7 @@ using namespace connection_types;
 AdaptiveThreshold::AdaptiveThreshold()
 {
     addTag(Tag::get("Vision"));
-    addParameter(param::ParameterFactory::declare("maxValue", 1.0, 255.0, 100.0, 0.1));
-
-    std::vector< std::pair<std::string, int> > adaptiveMethod;
-    adaptiveMethod.push_back(std::make_pair("ADAPTIVE_THRESH_MEAN_C", (int) cv::ADAPTIVE_THRESH_MEAN_C));
-    adaptiveMethod.push_back(std::make_pair("ADAPTIVE_THRESH_GAUSSIAN_C", (int) cv::ADAPTIVE_THRESH_GAUSSIAN_C));
-    addParameter(param::ParameterFactory::declareParameterSet<int>("adaptiveMethod", adaptiveMethod));
-
-    std::vector< std::pair<std::string, int> > thresholdType;
-    thresholdType.push_back(std::make_pair("THRESH_BINARY", (int) cv::THRESH_BINARY));
-    thresholdType.push_back(std::make_pair("THRESH_BINARY_INV", (int) cv::THRESH_BINARY_INV));
-    addParameter(param::ParameterFactory::declareParameterSet<int>("thresholdType", thresholdType));
-
-    addParameter(param::ParameterFactory::declare("blockSize", 3, 1001, 3, 2));
-
-    addParameter(param::ParameterFactory::declare("C", -255.0, 255.0, 0.0, 0.1));
+    addTag(Tag::get("vision_plugins"));
 }
 
 
@@ -68,4 +54,23 @@ void AdaptiveThreshold::setup()
     input_ = modifier_->addInput<CvMatMessage>("original");
 
     output_ = modifier_->addOutput<CvMatMessage>("thresholded");
+}
+
+void AdaptiveThreshold::setupParameters()
+{
+    addParameter(param::ParameterFactory::declare("maxValue", 1.0, 255.0, 100.0, 0.1));
+
+    std::vector< std::pair<std::string, int> > adaptiveMethod;
+    adaptiveMethod.push_back(std::make_pair("ADAPTIVE_THRESH_MEAN_C", (int) cv::ADAPTIVE_THRESH_MEAN_C));
+    adaptiveMethod.push_back(std::make_pair("ADAPTIVE_THRESH_GAUSSIAN_C", (int) cv::ADAPTIVE_THRESH_GAUSSIAN_C));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("adaptiveMethod", adaptiveMethod));
+
+    std::vector< std::pair<std::string, int> > thresholdType;
+    thresholdType.push_back(std::make_pair("THRESH_BINARY", (int) cv::THRESH_BINARY));
+    thresholdType.push_back(std::make_pair("THRESH_BINARY_INV", (int) cv::THRESH_BINARY_INV));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("thresholdType", thresholdType));
+
+    addParameter(param::ParameterFactory::declare("blockSize", 3, 1001, 3, 2));
+
+    addParameter(param::ParameterFactory::declare("C", -255.0, 255.0, 0.0, 0.1));
 }

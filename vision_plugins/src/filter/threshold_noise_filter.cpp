@@ -21,9 +21,6 @@ ThresholdNoiseFilter::ThresholdNoiseFilter()
     addTag(Tag::get("Experimental"));
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
-    addParameter(param::ParameterFactory::declareBool("interpolate", false));
 }
 
 
@@ -107,5 +104,10 @@ void ThresholdNoiseFilter::setup()
     input_      = modifier_->addInput<CvMatMessage>("unfiltered");
     threshold_  = modifier_->addInput<CvMatMessage>("weights");
     output_     = modifier_->addOutput<CvMatMessage>("filtered");
+}
 
+void ThresholdNoiseFilter::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
+    addParameter(param::ParameterFactory::declareBool("interpolate", false));
 }

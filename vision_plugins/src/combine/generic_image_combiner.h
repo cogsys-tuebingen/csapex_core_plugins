@@ -249,6 +249,7 @@ public:
     GenericImageCombiner();
 
     void setup();
+    void setupParameters();
     void process();
 
 private:

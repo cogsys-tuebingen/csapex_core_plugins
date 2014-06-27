@@ -118,8 +118,6 @@ GenericImageCombiner::GenericImageCombiner()
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-    addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
-                 boost::bind(&GenericImageCombiner::updateFormula, this));
 }
 
 void GenericImageCombiner::updateFormula()
@@ -185,4 +183,10 @@ void GenericImageCombiner::setup()
     i1_ = modifier_->addInput<CvMatMessage>("image 1");
     i2_ = modifier_->addInput<CvMatMessage>("image 2");
     out_ = modifier_->addOutput<CvMatMessage>("combined");
+}
+
+void GenericImageCombiner::setupParameters()
+{
+        addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
+                     boost::bind(&GenericImageCombiner::updateFormula, this));
 }

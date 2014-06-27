@@ -22,11 +22,6 @@ Pyramid::Pyramid() :
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    addParameter(param::ParameterFactory::declareRange("levels", 1, 10, amount_levels_, 1),
-                 boost::bind(&Pyramid::update, this));
-    addParameter(param::ParameterFactory::declareRange("preview",0, 9, preview_level_, 1),
-                 boost::bind(&Pyramid::update, this));
 }
 
 void Pyramid::process()
@@ -56,6 +51,15 @@ void Pyramid::setup()
     input_ = modifier_->addInput<CvMatMessage>("original");
     preview_ = modifier_->addOutput<CvMatMessage>("preview");
     levels_  = modifier_->addOutput<GenericVectorMessage, CvMatMessage::Ptr>("levels");
+}
+
+void Pyramid::setupParameters()
+{
+
+    addParameter(param::ParameterFactory::declareRange("levels", 1, 10, amount_levels_, 1),
+                 boost::bind(&Pyramid::update, this));
+    addParameter(param::ParameterFactory::declareRange("preview",0, 9, preview_level_, 1),
+                 boost::bind(&Pyramid::update, this));
 }
 
 void Pyramid::update()

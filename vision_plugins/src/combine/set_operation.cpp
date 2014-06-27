@@ -26,12 +26,6 @@ SetOperation::SetOperation()
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-    std::map<std::string, int> methods = map_list_of
-            ("Complement", (int) COMPLEMENT)
-            ("Intersection", (int) INTERSECTION)
-            ("Union", (int) UNION);
-
-    addParameter(param::ParameterFactory::declareParameterSet("operation", methods));
 }
 
 void SetOperation::process()
@@ -78,4 +72,14 @@ void SetOperation::setup()
     i1_ = modifier_->addInput<CvMatMessage>("mask 1");
     i2_ = modifier_->addInput<CvMatMessage>("mask 2", true);
     out_ = modifier_->addOutput<CvMatMessage>("combined");
+}
+
+void SetOperation::setupParameters()
+{
+    std::map<std::string, int> methods = map_list_of
+            ("Complement", (int) COMPLEMENT)
+            ("Intersection", (int) INTERSECTION)
+            ("Union", (int) UNION);
+
+    addParameter(param::ParameterFactory::declareParameterSet("operation", methods));
 }

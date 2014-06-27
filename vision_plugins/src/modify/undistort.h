@@ -13,6 +13,7 @@ public:
 
     virtual void process();
     virtual void setup();
+    virtual void setupParameters();
 
 private:
     utils_cv::Undistortion::Ptr undist_;

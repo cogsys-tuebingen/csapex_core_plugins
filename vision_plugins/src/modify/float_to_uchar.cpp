@@ -25,14 +25,6 @@ FloatToUchar::FloatToUchar() :
     type_(RELATIVE)
 {
     addTag(Tag::get("Vision"));
-
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("RELATIVE", RELATIVE)
-            ("ABSOLUTE", ABSOLUTE)
-            ("SCALE",    SCALE);
-
-    addParameter(param::ParameterFactory::declareParameterSet("type", types),
-                 boost::bind(&FloatToUchar::update, this));
 }
 
 void FloatToUchar::process()
@@ -68,6 +60,17 @@ void FloatToUchar::setup()
     output_ = modifier_->addOutput<CvMatMessage>("uchar");
 
     update();
+}
+
+void FloatToUchar::setupParameters()
+{
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("RELATIVE", RELATIVE)
+            ("ABSOLUTE", ABSOLUTE)
+            ("SCALE",    SCALE);
+
+    addParameter(param::ParameterFactory::declareParameterSet("type", types),
+                 boost::bind(&FloatToUchar::update, this));
 }
 
 void FloatToUchar::update()

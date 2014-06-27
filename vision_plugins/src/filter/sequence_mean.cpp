@@ -25,9 +25,6 @@ SequenceMean::SequenceMean() :
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    addParameter(param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
-                 boost::bind(&SequenceMean::update, this));
 }
 
 void SequenceMean::process()
@@ -67,6 +64,12 @@ void SequenceMean::setup()
     input_ = modifier_->addInput<CvMatMessage>("original");
     output_ = modifier_->addOutput<CvMatMessage>("filtered");
     update();
+}
+
+void SequenceMean::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
+                 boost::bind(&SequenceMean::update, this));
 }
 
 void SequenceMean::update()

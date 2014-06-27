@@ -10,6 +10,7 @@ public:
     Operator();
 
     virtual void setup();
+    virtual void setupParameters();
 
 protected:
     int     ddepth_;

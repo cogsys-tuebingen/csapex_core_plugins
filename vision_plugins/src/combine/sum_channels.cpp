@@ -19,8 +19,6 @@ SumChannels::SumChannels()
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-    addParameter(param::ParameterFactory::declareBool("mean", true));
-    addParameter(param::ParameterFactory::declareBool("abs",  false));
 }
 
 void SumChannels::process()
@@ -48,4 +46,10 @@ void SumChannels::setup()
 {
     input_  = modifier_->addInput<CvMatMessage>("original");
     output_ = modifier_->addOutput<CvMatMessage>("sum");
+}
+
+void SumChannels::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareBool("mean", true));
+    addParameter(param::ParameterFactory::declareBool("abs",  false));
 }

@@ -21,7 +21,20 @@ ColorConvert::ColorConvert()
 {
     addTag(Tag::get("vision_plugins"));
     addTag(Tag::get("Vision"));
+}
 
+ColorConvert::~ColorConvert()
+{
+}
+
+void ColorConvert::setup()
+{
+    input_img_ = modifier_->addInput<CvMatMessage>("original");
+    output_img_ = modifier_->addOutput<CvMatMessage>("converted");
+}
+
+void ColorConvert::setupParameters()
+{
     std::map<std::string, int> encodings = boost::assign::map_list_of
             ("YUV", (int) YUV)
             ("RGB", (int) RGB)
@@ -62,16 +75,6 @@ ColorConvert::ColorConvert()
     cs_to_encoding_[HSL] = enc::hsl;
     cs_to_encoding_[HSV] = enc::hsv;
     cs_to_encoding_[MONO] = enc::mono;
-}
-
-ColorConvert::~ColorConvert()
-{
-}
-
-void ColorConvert::setup()
-{
-    input_img_ = modifier_->addInput<CvMatMessage>("original");
-    output_img_ = modifier_->addOutput<CvMatMessage>("converted");
 }
 
 void ColorConvert::process()

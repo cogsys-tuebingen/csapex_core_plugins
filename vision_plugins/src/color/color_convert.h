@@ -29,6 +29,7 @@ public:
      * @brief See base class definition.
      */
     virtual void setup();
+    virtual void setupParameters();
     /**
      * @brief See base class definition.
      */

@@ -23,17 +23,6 @@ HoughLinesP::HoughLinesP() :
     min_line_length_(30),
     max_line_gap_(10)
 {
-    addParameter(param::ParameterFactory::declareRange("rho", 0.0, 100.0, 1.0, 1.0),
-                 boost::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("theta", 0.0, 2 * CV_PI, CV_PI, 0.1),
-                 boost::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("threshold", 0, 500, 80, 1),
-                 boost::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("min length", 0.0, 1000.0, 30.0, 1.0),
-                 boost::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("max gap", 0.0, 400.0, 10.0, 1.0),
-                 boost::bind(&HoughLinesP::update, this));
-
 }
 
 void HoughLinesP::process()
@@ -64,6 +53,20 @@ void HoughLinesP::setup()
     update();
 }
 
+void HoughLinesP::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("rho", 0.0, 100.0, 1.0, 1.0),
+                 boost::bind(&HoughLinesP::update, this));
+    addParameter(param::ParameterFactory::declareRange("theta", 0.0, 2 * CV_PI, CV_PI, 0.1),
+                 boost::bind(&HoughLinesP::update, this));
+    addParameter(param::ParameterFactory::declareRange("threshold", 0, 500, 80, 1),
+                 boost::bind(&HoughLinesP::update, this));
+    addParameter(param::ParameterFactory::declareRange("min length", 0.0, 1000.0, 30.0, 1.0),
+                 boost::bind(&HoughLinesP::update, this));
+    addParameter(param::ParameterFactory::declareRange("max gap", 0.0, 400.0, 10.0, 1.0),
+                 boost::bind(&HoughLinesP::update, this));
+
+}
 
 void HoughLinesP::update()
 {

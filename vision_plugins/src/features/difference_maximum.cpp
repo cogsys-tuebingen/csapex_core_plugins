@@ -51,7 +51,6 @@ namespace {
 
 DifferenceMaximum::DifferenceMaximum()
 {
-    addParameter(param::ParameterFactory::declareBool("abs difference", false));
 }
 
 void DifferenceMaximum::process()
@@ -87,4 +86,9 @@ void DifferenceMaximum::process()
         break;
     }
     output_->publish(out);
+}
+
+void DifferenceMaximum::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareBool("abs difference", false));
 }

@@ -27,14 +27,6 @@ MatrixToHeatmap::MatrixToHeatmap() :
     addTag(Tag::get("Visualization"));
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("BEZIER", (int) BEZIER)
-            ("PARABOLA", (int) PARABOLA);
-
-    addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types),
-                 boost::bind(&MatrixToHeatmap::update, this));
-
 }
 
 void MatrixToHeatmap::process()
@@ -90,6 +82,16 @@ void MatrixToHeatmap::setup()
     mask_   = modifier_->addInput<CvMatMessage>("mask",true);
 
     update();
+}
+
+void MatrixToHeatmap::setupParameters()
+{
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("BEZIER", (int) BEZIER)
+            ("PARABOLA", (int) PARABOLA);
+
+    addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types),
+                 boost::bind(&MatrixToHeatmap::update, this));
 }
 
 void MatrixToHeatmap::update()

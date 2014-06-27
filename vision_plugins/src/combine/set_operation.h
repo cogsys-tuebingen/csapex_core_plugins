@@ -24,6 +24,7 @@ public:
     SetOperation();
 
     void setup();
+    void setupParameters();
     void process();
 
 private:

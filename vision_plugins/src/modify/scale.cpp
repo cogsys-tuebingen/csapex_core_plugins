@@ -19,19 +19,6 @@ Scale::Scale()
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    addParameter(param::ParameterFactory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
-                 boost::bind(&Scale::update, this));
-    addParameter(param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
-                 boost::bind(&Scale::update, this));
-    std::vector< std::pair<std::string, int> > modes;
-    modes.push_back(std::make_pair("nearest", (int) CV_INTER_NN));
-    modes.push_back(std::make_pair("linear", (int) CV_INTER_LINEAR));
-    modes.push_back(std::make_pair("area", (int) CV_INTER_AREA));
-    modes.push_back(std::make_pair("cubic", (int) CV_INTER_CUBIC));
-    modes.push_back(std::make_pair("lanczos4", (int) CV_INTER_LANCZOS4));
-    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes), boost::bind(&Scale::update, this));
-
 }
 
 void Scale::process()
@@ -53,6 +40,21 @@ void Scale::setup()
     input_ = modifier_->addInput<CvMatMessage>("original");
     output_ = modifier_->addOutput<CvMatMessage>("scale");
     update();
+}
+
+void Scale::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
+                 boost::bind(&Scale::update, this));
+    addParameter(param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
+                 boost::bind(&Scale::update, this));
+    std::vector< std::pair<std::string, int> > modes;
+    modes.push_back(std::make_pair("nearest", (int) CV_INTER_NN));
+    modes.push_back(std::make_pair("linear", (int) CV_INTER_LINEAR));
+    modes.push_back(std::make_pair("area", (int) CV_INTER_AREA));
+    modes.push_back(std::make_pair("cubic", (int) CV_INTER_CUBIC));
+    modes.push_back(std::make_pair("lanczos4", (int) CV_INTER_LANCZOS4));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes), boost::bind(&Scale::update, this));
 }
 
 void Scale::update()

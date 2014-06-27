@@ -22,15 +22,6 @@ MonoFilter::MonoFilter()
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    addParameter(param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
-                 boost::bind(&MonoFilter::update, this));
-    addParameter(param::ParameterFactory::declareRange("max", 0, 255, 255, 1),
-                 boost::bind(&MonoFilter::update, this));
-    addParameter(param::ParameterFactory::declareRange("def", 0, 255, 255, 1),
-                 boost::bind(&MonoFilter::update, this));
-    addParameter(param::ParameterFactory::declareBool("invert", false),
-                 boost::bind(&MonoFilter::update, this));
 }
 
 void MonoFilter::process()
@@ -58,11 +49,24 @@ void MonoFilter::process()
     output_->publish(out);
 }
 
+
 void MonoFilter::setup()
 {
     input_ = modifier_->addInput<CvMatMessage>("original");
     output_ = modifier_->addOutput<CvMatMessage>("filtered");
     update();
+}
+
+void MonoFilter::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
+                 boost::bind(&MonoFilter::update, this));
+    addParameter(param::ParameterFactory::declareRange("max", 0, 255, 255, 1),
+                 boost::bind(&MonoFilter::update, this));
+    addParameter(param::ParameterFactory::declareRange("def", 0, 255, 255, 1),
+                 boost::bind(&MonoFilter::update, this));
+    addParameter(param::ParameterFactory::declareBool("invert", false),
+                 boost::bind(&MonoFilter::update, this));
 }
 
 void MonoFilter::update()

@@ -83,6 +83,7 @@ add_library(vision_plugins
     src/features/laplacian.cpp
     src/features/sobel.cpp
     src/features/scharr.cpp
+    src/features/hog_features.cpp
 
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
@@ -100,9 +101,6 @@ add_library(vision_plugins
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
     src/analyze/label_regions.cpp
-
-    src/experimental/noise_filter.cpp
-
 
 )
 

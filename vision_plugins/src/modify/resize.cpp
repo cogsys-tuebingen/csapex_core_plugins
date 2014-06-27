@@ -22,20 +22,6 @@ Resize::Resize()
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    addParameter(param::ParameterFactory::declareRange("size width", 10, 10000, 640, 1),
-                 boost::bind(&Resize::update, this));
-    addParameter(param::ParameterFactory::declareRange("size height", 10, 10000, 480, 1),
-                 boost::bind(&Resize::update, this));
-
-    std::map<std::string, int> modes = boost::assign::map_list_of
-            ("nearest", (int) CV_INTER_NN)
-            ("linear", (int) CV_INTER_LINEAR)
-            ("area", (int) CV_INTER_AREA)
-            ("cubic", (int) CV_INTER_CUBIC)
-            ("lanczos4", (int) CV_INTER_LANCZOS4);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes), boost::bind(&Resize::update, this));
-
 }
 
 void Resize::process()
@@ -57,6 +43,22 @@ void Resize::setup()
     input_  = modifier_->addInput<CvMatMessage>("original");
     output_ = modifier_->addOutput<CvMatMessage>("resize");
     update();
+}
+
+void Resize::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("size width", 10, 10000, 640, 1),
+                 boost::bind(&Resize::update, this));
+    addParameter(param::ParameterFactory::declareRange("size height", 10, 10000, 480, 1),
+                 boost::bind(&Resize::update, this));
+
+    std::map<std::string, int> modes = boost::assign::map_list_of
+            ("nearest", (int) CV_INTER_NN)
+            ("linear", (int) CV_INTER_LINEAR)
+            ("area", (int) CV_INTER_AREA)
+            ("cubic", (int) CV_INTER_CUBIC)
+            ("lanczos4", (int) CV_INTER_LANCZOS4);
+    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes), boost::bind(&Resize::update, this));
 }
 
 void Resize::update()

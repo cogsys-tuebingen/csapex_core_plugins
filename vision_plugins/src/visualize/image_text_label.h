@@ -11,6 +11,7 @@ public:
     ImageTextLabel();
 
     void setup();
+    void setupParameters();
     void process();
 
 protected:
