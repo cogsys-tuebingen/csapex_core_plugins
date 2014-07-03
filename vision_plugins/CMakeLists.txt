@@ -83,7 +83,8 @@ add_library(vision_plugins
     src/features/laplacian.cpp
     src/features/sobel.cpp
     src/features/scharr.cpp
-    src/features/hog_features.cpp
+
+    src/object_detection/hog_features.cpp
 
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
