@@ -75,13 +75,21 @@ ConnectionType::Ptr VectorMessage::toType() {
 bool VectorMessage::canConnectTo(const ConnectionType *other_side) const
 {
     const VectorMessage* vec = dynamic_cast<const VectorMessage*> (other_side);
-    return vec != 0 && type_->canConnectTo(vec->getSubType().get());
+    if(vec != 0 && type_->canConnectTo(vec->getSubType().get())) {
+        return true;
+    } else {
+        return other_side->canConnectTo(this);
+    }
 }
 
 bool VectorMessage::acceptsConnectionFrom(const ConnectionType *other_side) const
 {
     const VectorMessage* vec = dynamic_cast<const VectorMessage*> (other_side);
-    return vec != 0 && type_->acceptsConnectionFrom(vec->getSubType().get());
+    if(vec != 0 && type_->acceptsConnectionFrom(vec->getSubType().get())) {
+        return true;
+    } else {
+        return other_side->acceptsConnectionFrom(this);
+    }
 }
 
 void VectorMessage::writeYaml(YAML::Emitter& yaml) const {
