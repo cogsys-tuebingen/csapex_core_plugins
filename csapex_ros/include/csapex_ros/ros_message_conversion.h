@@ -71,8 +71,8 @@ public:
         return nh->advertise<T>(topic, queue, latch);
     }
     void publish(ros::Publisher& pub, ConnectionType::Ptr apex_msg_raw) {
-        typename connection_types::GenericMessage<T>::Ptr msg =
-                boost::dynamic_pointer_cast<connection_types::GenericMessage<T> > (apex_msg_raw);
+        typename connection_types::GenericPointerMessage<T>::Ptr msg =
+                boost::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> > (apex_msg_raw);
         if(!msg) {
             throw std::runtime_error("trying to publish an empty message");
         }
@@ -83,7 +83,7 @@ public:
         if(!ros_msg) {
             throw std::runtime_error("received an empty ros message");
         }
-        typename connection_types::GenericMessage<T>::Ptr apex_msg(new connection_types::GenericMessage<T>);
+        typename connection_types::GenericPointerMessage<T>::Ptr apex_msg(new connection_types::GenericPointerMessage<T>);
         apex_msg->value.reset(new T(*ros_msg));
         publish_apex(output, apex_msg);
     }
@@ -151,7 +151,8 @@ private:
 public:
     template <typename ROS, typename APEX, typename Converter>
     static void registerConversion() {
-        instance().doRegisterConversion(Convertor::Ptr(new ConverterTemplate<ROS, APEX, Converter>));
+        Convertor::Ptr converter(new ConverterTemplate<ROS, APEX, Converter>);
+        instance().doRegisterConversion(converter->apexType(), converter->rosType(), converter);
     }
 
     bool canHandle(const ros::master::TopicInfo &topic);
@@ -161,7 +162,7 @@ public:
     void publish(ros::Publisher& pub, ConnectionType::Ptr msg);
 
 private:
-    void doRegisterConversion(Convertor::Ptr c);
+    void doRegisterConversion(const std::string &apex_type, const std::string &ros_type, Convertor::Ptr c);
 
     template <typename T>
     bool doCanConvert(typename boost::enable_if<ros::message_traits::IsMessage<T> >::type* dummy = 0) {
@@ -183,17 +184,21 @@ class RosMessageConversionT
 {
 public:
     template <typename U>
-    static void registerConversionImpl(typename boost::enable_if<ros::message_traits::IsMessage<U> >::type* dummy = 0) {
+    static void registerConversionImpl(const std::string& name, typename boost::enable_if<ros::message_traits::IsMessage<U> >::type* dummy = 0) {
         if(!canConvert()) {
-            RosMessageConversion::instance().doRegisterConversion(Convertor::Ptr(new IdentityConvertor<T>));
+            Convertor::Ptr converter(new IdentityConvertor<T>);
+            RosMessageConversion::instance().doRegisterConversion(converter->apexType(), converter->rosType(), converter);
+            if(!name.empty() && (name != converter->apexType() || name != converter->rosType())) {
+                RosMessageConversion::instance().doRegisterConversion(name, name, converter);
+            }
         }
     }
     template <typename U>
-    static void registerConversionImpl(typename boost::disable_if<ros::message_traits::IsMessage<U> >::type* dummy = 0) {
+    static void registerConversionImpl(const std::string& name, typename boost::disable_if<ros::message_traits::IsMessage<U> >::type* dummy = 0) {
     }
 
     static void registerConversion() {
-        registerConversionImpl<T>();
+        registerConversionImpl<T>(type2name(typeid(T)));
     }
 
     static bool canConvert() {

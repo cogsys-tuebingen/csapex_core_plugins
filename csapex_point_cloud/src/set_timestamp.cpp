@@ -22,7 +22,7 @@ SetTimeStamp::SetTimeStamp()
 void SetTimeStamp::setup()
 {
     input_ = modifier_->addInput<connection_types::PointCloudMessage>("PointCloud");
-    input_frame_ = modifier_->addInput<connection_types::DirectMessage<std::string> >("Frame", true);
+    input_frame_ = modifier_->addInput<connection_types::GenericValueMessage<std::string> >("Frame", true);
     input_time_ = modifier_->addInput<connection_types::TimeStampMessage>("Time");
 
     output_ = modifier_->addOutput<connection_types::PointCloudMessage>("PointCloud");
@@ -44,7 +44,7 @@ void SetTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     connection_types::PointCloudMessage::Ptr msg(new connection_types::PointCloudMessage);
 
     if(input_frame_->isConnected() && input_frame_->hasMessage()) {
-        cloud->header.frame_id = input_frame_->getMessage<connection_types::DirectMessage<std::string> >()->value;
+        cloud->header.frame_id = input_frame_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;
     }
 
     msg->value = cloud;

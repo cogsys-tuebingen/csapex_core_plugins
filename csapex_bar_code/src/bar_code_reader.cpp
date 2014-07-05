@@ -135,6 +135,6 @@ void BarCodeReader::setup()
 {
     in_img = modifier_->addInput<CvMatMessage>("Image");
 
-    out_str = modifier_->addOutput<DirectMessage<std::string> >("String");
+    out_str = modifier_->addOutput<GenericValueMessage<std::string> >("String");
     out_roi = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
 }

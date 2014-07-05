@@ -24,12 +24,12 @@ QIcon SayText::getIcon() const
 
 void SayText::setup()
 {
-    connector_ = modifier_->addInput<connection_types::DirectMessage<std::string> >("Text");
+    connector_ = modifier_->addInput<connection_types::GenericValueMessage<std::string> >("Text");
 }
 
 void SayText::process()
 {
-    connection_types::DirectMessage<std::string>::Ptr msg = connector_->getMessage<connection_types::DirectMessage<std::string> >();
+    connection_types::GenericValueMessage<std::string>::Ptr msg = connector_->getMessage<connection_types::GenericValueMessage<std::string> >();
 
     if(!msg->value.empty()) {
         std::stringstream cmd;

@@ -36,12 +36,12 @@ QIcon TextInput::getIcon() const
 
 void TextInput::setup()
 {
-    connector_ = modifier_->addOutput<connection_types::DirectMessage<std::string> >("Text");
+    connector_ = modifier_->addOutput<connection_types::GenericValueMessage<std::string> >("Text");
 }
 
 void TextInput::publish()
 {
-    connection_types::DirectMessage<std::string>::Ptr msg(new connection_types::DirectMessage<std::string>);
+    connection_types::GenericValueMessage<std::string>::Ptr msg(new connection_types::GenericValueMessage<std::string>);
     msg->value = param<std::string>("text");
     connector_->publish(msg);
 }
