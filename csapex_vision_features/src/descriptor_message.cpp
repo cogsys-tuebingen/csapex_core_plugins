@@ -6,7 +6,7 @@ using namespace connection_types;
 
 
 DescriptorMessage::DescriptorMessage()
-    : MessageTemplate<cv::Mat, DescriptorMessage> ("cv::Mat (descriptors)")
+    : MessageTemplate<cv::Mat, DescriptorMessage> ("/")
 {}
 
 bool DescriptorMessage::isBinary() const

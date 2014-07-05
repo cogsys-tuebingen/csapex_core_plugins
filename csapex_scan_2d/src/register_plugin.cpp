@@ -34,15 +34,19 @@ struct ConvertScan
         b.range_max       = a.range_max;
     }
 
-    static void ros2apex(const sensor_msgs::LaserScan::ConstPtr &ros_msg, connection_types::ScanMessage::Ptr& out) {
+    static connection_types::ScanMessage::Ptr ros2apex(const sensor_msgs::LaserScan::ConstPtr &ros_msg) {
+        connection_types::ScanMessage::Ptr out(new connection_types::ScanMessage);
         copy(*ros_msg, out->value);
         out->value = lib_laser_processing::Scan(ros_msg->ranges, ros_msg->angle_min, ros_msg->angle_increment);
         out->value.header.stamp_nsec = ros_msg->header.stamp.toNSec();
+        return out;
     }
-    static void apex2ros(const connection_types::ScanMessage::Ptr& apex_msg, sensor_msgs::LaserScan::Ptr &out) {
+    static sensor_msgs::LaserScan::Ptr apex2ros(const connection_types::ScanMessage::Ptr& apex_msg) {
+        sensor_msgs::LaserScan::Ptr out(new sensor_msgs::LaserScan);
         copy(apex_msg->value, *out);
         apex_msg->value.getRanges(out->ranges);
         out->header.stamp = out->header.stamp.fromNSec(apex_msg->value.header.stamp_nsec);
+        return out;
     }
 };
 

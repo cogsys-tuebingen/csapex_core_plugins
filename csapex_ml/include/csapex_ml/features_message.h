@@ -16,6 +16,13 @@ struct FeaturesMessage : public MessageTemplate<std::vector<float>, FeaturesMess
     void readYaml(const YAML::Node& node);
 };
 
+/// TRAITS
+template <>
+struct type<FeaturesMessage> {
+    static std::string name() {
+        return "Features";
+    }
+};
 }
 }
 

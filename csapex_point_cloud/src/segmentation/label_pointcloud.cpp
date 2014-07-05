@@ -36,7 +36,7 @@ void LabelPointCloud::process()
         throw std::runtime_error("Label matrix must be of type CV_16UC1");
     }
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<LabelPointCloud>(this), cloud->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<LabelPointCloud>(this, cloud), cloud->value);
 }
 
 void LabelPointCloud::setup()
@@ -144,7 +144,7 @@ struct Label<pcl::PointXY> {
 template <class PointT>
 void LabelPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    PointCloudMessage::Ptr out(new PointCloudMessage);
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
 
     bool exclude_default_label = param<bool>("exclude default label");
     implementation::Label<PointT>::apply(cloud, out, label_msg_->value, exclude_default_label);

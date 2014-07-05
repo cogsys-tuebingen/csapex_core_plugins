@@ -31,7 +31,7 @@ void ExtractTimeStamp::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<ExtractTimeStamp>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ExtractTimeStamp>(this, msg), msg->value);
 }
 
 template <class PointT>

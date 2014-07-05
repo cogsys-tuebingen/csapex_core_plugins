@@ -8,7 +8,7 @@ using namespace csapex;
 using namespace connection_types;
 
 DurationMessage::DurationMessage()
-    : MessageTemplate<ros::Duration, DurationMessage> ("Duration")
+    : MessageTemplate<ros::Duration, DurationMessage> ("/")
 {}
 
 void DurationMessage::writeYaml(YAML::Emitter& yaml) const {

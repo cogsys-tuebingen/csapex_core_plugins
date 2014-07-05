@@ -10,9 +10,19 @@
 using namespace csapex;
 using namespace connection_types;
 
-TransformMessage::TransformMessage()
-    : MessageTemplate<tf::Transform, TransformMessage> ("Transform")
+TransformMessage::TransformMessage(const std::string& from_frame, const std::string& to_frame)
+    : MessageTemplate<tf::Transform, TransformMessage> (from_frame), child_frame(to_frame)
 {}
+
+TransformMessage::TransformMessage()
+    : MessageTemplate<tf::Transform, TransformMessage> ("/"), child_frame("/")
+{}
+
+ConnectionType::Ptr TransformMessage::clone() {
+    Ptr new_msg(new TransformMessage(frame_id, child_frame));
+    new_msg->value = value;
+    return new_msg;
+}
 
 void TransformMessage::writeYaml(YAML::Emitter& yaml) const {
     const tf::Quaternion& q = value.getRotation();

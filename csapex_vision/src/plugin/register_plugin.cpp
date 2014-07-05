@@ -29,15 +29,17 @@ RegisterPlugin::RegisterPlugin()
 
 struct Image2CvMat
 {
-    static void ros2apex(const sensor_msgs::Image::ConstPtr &ros_msg, connection_types::CvMatMessage::Ptr& out) {
+    static connection_types::CvMatMessage::Ptr ros2apex(const sensor_msgs::Image::ConstPtr &ros_msg) {
+        connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr)); // TODO: use encoding from ROS!
         try {
             cv_bridge::toCvShare(ros_msg, sensor_msgs::image_encodings::BGR8)->image.copyTo(out->value);
             out->frame_id = ros_msg->header.frame_id;
         } catch (cv_bridge::Exception& e) {
             std::cerr << "cv_bridge exception: " << e.what() << std::endl;
         }
+        return out;
     }
-    static void apex2ros(const connection_types::CvMatMessage::Ptr& apex_msg, sensor_msgs::Image::Ptr &out) {
+    static sensor_msgs::Image::Ptr apex2ros(const connection_types::CvMatMessage::Ptr& apex_msg) {
         cv_bridge::CvImage cvb;
         cvb.image = apex_msg->value;
 
@@ -53,7 +55,7 @@ struct Image2CvMat
 
         cvb.header.frame_id = apex_msg->frame_id;
         cvb.header.stamp = ros::Time::now();
-        out = cvb.toImageMsg();
+        return cvb.toImageMsg();
     }
 };
 

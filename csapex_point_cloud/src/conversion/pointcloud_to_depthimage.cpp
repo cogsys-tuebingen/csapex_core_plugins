@@ -35,7 +35,7 @@ void PointCloudToDepthImage::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToDepthImage>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToDepthImage>(this, msg), msg->value);
 }
 
 template <class PointT>

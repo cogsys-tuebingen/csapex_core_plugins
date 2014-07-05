@@ -18,6 +18,7 @@ using namespace csapex::connection_types;
 namespace bfs = boost::filesystem;
 
 ImportFile::ImportFile()
+    : prefix_("msg")
 {
 }
 
@@ -27,9 +28,17 @@ void ImportFile::setupParameters()
                                                                     param::ParameterDescription("Directory to read messages from"),
                                                                     "", ""), boost::bind(&ImportFile::setImportPath, this));
 
+    addParameter(param::ParameterFactory::declareText("filename",
+                                                      param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
+                                                      "msg"), boost::bind(&ImportFile::setImportPrefix, this));
     addParameter(param::ParameterFactory::declareBool("loop",
                                                       param::ParameterDescription("When reaching the end of the directory, do a loop?"),
                                                       true));
+}
+
+void ImportFile::setImportPrefix()
+{
+    prefix_ = param<std::string>("filename");
 }
 
 void ImportFile::setImportPath()
@@ -66,25 +75,33 @@ void ImportFile::tick()
     }
 
     bfs::directory_iterator end;
-    if(current_file_ == end && param<bool>("loop")) {
-        current_file_ = bfs::directory_iterator(path_);
-    }
 
-    if(current_file_ != end) {
-        if(bfs::is_directory(current_file_->status())) {
-            // do nothing
-        } else {
-            bfs::path path = current_file_->path();
-            if(path.extension() == Settings::message_extension) {
-                ConnectionType::Ptr msg = MessageFactory::readMessage(path.string());
-                out_->setType(msg->toType());
-                out_->publish(msg);
-            } else {
-                aerr << "cannot handle type of file " << path << std::endl;
+    bool continue_searching = true;
+    while(continue_searching) {
+        if(current_file_ == end) {
+            if(param<bool>("loop")) {
+                current_file_ = bfs::directory_iterator(path_);
             }
-        }
-        ++current_file_;
+            continue_searching = false;
 
+        } else {
+            if(bfs::is_directory(current_file_->status())) {
+                // do nothing
+            } else {
+                bfs::path path = current_file_->path();
+                if(path.filename().string().substr(0, prefix_.size()) == prefix_) {
+                    if(path.extension() == Settings::message_extension) {
+                        ConnectionType::Ptr msg = MessageFactory::readMessage(path.string());
+                        out_->setType(msg->toType());
+                        out_->publish(msg);
+                        continue_searching = false;
+                    } else {
+                        aerr << "cannot handle type of file " << path << std::endl;
+                    }
+                }
+            }
+            ++current_file_;
+        }
     }
 }
 

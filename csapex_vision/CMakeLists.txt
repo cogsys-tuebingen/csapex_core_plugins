@@ -13,7 +13,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS pluginlib roscpp rospy std_msgs cv_bridge utils_qt utils_vision csapex csapex_ros)
+find_package(catkin REQUIRED COMPONENTS pluginlib roscpp rospy std_msgs cv_bridge utils_qt utils_vision csapex csapex_ros csapex_core_plugins)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
@@ -61,6 +61,7 @@ add_library(csapex_vision
     src/core/roi.cpp
     src/core/roi_message.cpp
     src/core/image_provider.cpp
+    src/core/cv_pyramid_message.cpp
 
     ${QT_CORE}
     ${QT_RESOURCES}
@@ -86,6 +87,9 @@ add_library(csapex_vision_plugin
     src/plugin/image_provider_mov.cpp
     src/plugin/image_provider_set.cpp
     src/plugin/hough_circle.cpp
+    src/plugin/vectorize_pyramid.cpp
+    src/plugin/image_roi.cpp
+    src/plugin/image_roi_adapter.cpp
 
     ${QT_MOC_PLUG}
     ${QT_RESOURCES}

@@ -32,7 +32,7 @@ void SetTimeStamp::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<SetTimeStamp>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<SetTimeStamp>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -41,7 +41,7 @@ void SetTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     connection_types::TimeStampMessage::Ptr time = input_time_->getMessage<connection_types::TimeStampMessage>();
     cloud->header.stamp = time->value.toNSec() / 1e3; // is this 1e6?
 
-    connection_types::PointCloudMessage::Ptr msg(new connection_types::PointCloudMessage);
+    connection_types::PointCloudMessage::Ptr msg(new connection_types::PointCloudMessage(cloud->header.frame_id));
 
     if(input_frame_->isConnected() && input_frame_->hasMessage()) {
         cloud->header.frame_id = input_frame_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;

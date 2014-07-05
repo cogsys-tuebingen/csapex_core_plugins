@@ -25,7 +25,7 @@ Clock::Clock()
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("ros::Time::now()", (int) CURRENT)
             ("ros::Time(0)", (int) ZERO);
-    addParameter(param::ParameterFactory::declareParameterSet("method", methods));
+    addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CURRENT));
 }
 
 

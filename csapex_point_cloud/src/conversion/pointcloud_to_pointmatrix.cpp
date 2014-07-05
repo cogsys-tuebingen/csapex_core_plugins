@@ -26,7 +26,7 @@ void PointCloudToPointMatrix::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToPointMatrix>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToPointMatrix>(this, msg), msg->value);
 }
 
 void PointCloudToPointMatrix::setup()

@@ -9,7 +9,7 @@ using namespace connection_types;
 using namespace lib_laser_processing;
 
 ScanMessage::ScanMessage()
-    : MessageTemplate<lib_laser_processing::Scan, ScanMessage> ("Scan")
+    : MessageTemplate<lib_laser_processing::Scan, ScanMessage> ("/")
 {}
 
 void ScanMessage::writeYaml(YAML::Emitter &yaml) const

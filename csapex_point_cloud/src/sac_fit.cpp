@@ -39,7 +39,7 @@ SacFit::SacFit()
             ("fit cone", (int) pcl::SACMODEL_CONE);
 
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("models", models),
+    addParameter(param::ParameterFactory::declareParameterSet<int>("models", models, (int) pcl::SACMODEL_PLANE),
                  boost::bind(&SacFit::setParameters, this));
 
     cluster_indices_.reset(new std::vector<pcl::PointIndices>);
@@ -57,7 +57,7 @@ void SacFit::process()
 
 
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
-    boost::apply_visitor (PointCloudMessage::Dispatch<SacFit>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<SacFit>(this, msg), msg->value);
 
 
     setParameters();
@@ -158,7 +158,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     // Publish all points that belong to some models
     if (out_cloud_->isConnected()) {
         if (inliers_size > 0 ) {
-            PointCloudMessage::Ptr cloud_msg(new PointCloudMessage);
+            PointCloudMessage::Ptr cloud_msg(new PointCloudMessage(cloud->header.frame_id));
             cloud_msg->value = point_cloud_out;
             out_cloud_->publish(cloud_msg);
         }
@@ -166,7 +166,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 
     // Publish everything that doesent belong to a model
     if (out_cloud_residue_->isConnected()) {
-        PointCloudMessage::Ptr cloud_msg_residue(new PointCloudMessage);
+        PointCloudMessage::Ptr cloud_msg_residue(new PointCloudMessage(cloud->header.frame_id));
         cloud_msg_residue->value = cloud_residue;
         out_cloud_residue_->publish(cloud_msg_residue);
     }

@@ -42,7 +42,7 @@ void CropBox::process()
 {
     PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<CropBox>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<CropBox>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -65,7 +65,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
         crop.filter(*out);
         out->header = cloud->header;
 
-        PointCloudMessage::Ptr msg(new PointCloudMessage);
+        PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id));
         msg->value = out;
         output_pos_->publish(msg);
     }
@@ -76,7 +76,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
         crop.filter(*out);
         out->header = cloud->header;
 
-        PointCloudMessage::Ptr msg(new PointCloudMessage);
+        PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id));
         msg->value = out;
         output_neg_->publish(msg);
     }

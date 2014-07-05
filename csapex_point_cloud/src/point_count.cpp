@@ -28,7 +28,7 @@ void PointCount::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<PointCount>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<PointCount>(this, msg), msg->value);
 }
 
 template <class PointT>

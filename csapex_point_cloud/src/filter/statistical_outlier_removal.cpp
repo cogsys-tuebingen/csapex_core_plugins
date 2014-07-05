@@ -40,7 +40,7 @@ void StatisticalOutlierRemoval::setup()
 void StatisticalOutlierRemoval::process()
 {
     PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
-    boost::apply_visitor (PointCloudMessage::Dispatch<StatisticalOutlierRemoval>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<StatisticalOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -70,7 +70,7 @@ void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr
     if(cloud_out) {
         typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>);
         sor.filter(*cloud_filtered);
-        PointCloudMessage::Ptr out(new PointCloudMessage);
+        PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
         out->value = cloud_filtered;
         output_cloud_->publish(out);
     }

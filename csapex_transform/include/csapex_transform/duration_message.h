@@ -19,6 +19,15 @@ struct DurationMessage : public MessageTemplate<ros::Duration, DurationMessage>
     void readYaml(const YAML::Node& node);
 };
 
+
+/// TRAITS
+template <>
+struct type<DurationMessage> {
+    static std::string name() {
+        return "Duration";
+    }
+};
+
 }
 }
 

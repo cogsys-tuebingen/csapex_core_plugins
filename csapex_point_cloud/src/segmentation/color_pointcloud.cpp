@@ -25,14 +25,14 @@ using namespace csapex::connection_types;
 
 ColorPointCloud::ColorPointCloud()
 {
-  addTag(Tag::get("PointCloud"));
+    addTag(Tag::get("PointCloud"));
 }
 
 void ColorPointCloud::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<ColorPointCloud>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ColorPointCloud>(this, msg), msg->value);
 }
 
 void ColorPointCloud::setup()
@@ -95,7 +95,7 @@ struct Conversion<pcl::PointXYZL>{
     static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::Ptr src,
                       typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr dst)
     {
-      Impl<pcl::PointXYZL>::convert(src, dst);
+        Impl<pcl::PointXYZL>::convert(src, dst);
     }
 
 };
@@ -113,9 +113,10 @@ struct Conversion<pcl::PointXYZRGBL>{
 template <class PointT>
 void ColorPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    PointCloudMessage::Ptr out(new PointCloudMessage);
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr out_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
+    ainfo << cloud->header.frame_id << "!" << std::endl;
     implementation::Conversion<PointT>::apply(cloud, out_cloud);
 
     out->value = out_cloud;

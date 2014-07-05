@@ -1,5 +1,5 @@
-#ifndef CV_MAT_MESSAGE_H
-#define CV_MAT_MESSAGE_H
+#ifndef CV_PYRAMID_MESSAGE_H
+#define CV_PYRAMID_MESSAGE_H
 
 /// COMPONENT
 #include <csapex_vision/encoding.h>
@@ -16,14 +16,14 @@ template <typename,typename,typename> class ConverterTemplate;
 
 namespace connection_types {
 
-struct CvMatMessage : public MessageTemplate<cv::Mat, CvMatMessage>
+struct CvPyramidMessage : public MessageTemplate<std::vector<cv::Mat>, CvPyramidMessage>
 {
-    friend class MessageTemplate<cv::Mat, CvMatMessage>;
+    friend class MessageTemplate<std::vector<cv::Mat>, CvPyramidMessage>;
 
     template <typename,typename,typename> friend class csapex::ConverterTemplate;
 
 public:
-    CvMatMessage(const Encoding& encoding);
+    CvPyramidMessage(const Encoding& encoding);
     virtual ConnectionType::Ptr clone();
 
     virtual void writeRaw(const std::string &file, const std::string &suffix) const;
@@ -35,19 +35,20 @@ private:
     Encoding encoding;
 
 private:
-    CvMatMessage();
+    CvPyramidMessage();
 };
 
 
 /// TRAITS
 template <>
-struct type<CvMatMessage> {
+struct type<CvPyramidMessage> {
     static std::string name() {
-        return "cv::Mat";
+        return "std::vector<cv::Mat>";
     }
 };
 
 }
 }
 
-#endif // CV_MAT_MESSAGE_H
+
+#endif // CV_PYRAMID_MESSAGE_H

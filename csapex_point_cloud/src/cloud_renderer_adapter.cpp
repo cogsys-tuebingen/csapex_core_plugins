@@ -449,7 +449,7 @@ void CloudRendererAdapter::refresh()
 
 void CloudRendererAdapter::displayCloud()
 {
-    boost::apply_visitor (PointCloudMessage::Dispatch<CloudRendererAdapter>(this), wrapped_->message_->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<CloudRendererAdapter>(this, wrapped_->message_), wrapped_->message_->value);
 }
 
 namespace
@@ -457,7 +457,7 @@ namespace
 
 enum Component
 {
-    X, Y, Z
+    X, Y, Z, I
 };
 
 
@@ -493,6 +493,24 @@ struct Access<PointT, Z>
     }
 };
 
+template <class PointT>
+struct Access<PointT, I>
+{
+    static double access(typename pcl::PointCloud<PointT>::iterator it)
+    {
+        return 0;
+    }
+};
+
+template <>
+struct Access<pcl::PointXYZI, I>
+{
+    static double access(typename pcl::PointCloud<pcl::PointXYZI>::iterator it)
+    {
+        return it->intensity;
+    }
+};
+
 template <class PointT, int Component>
 struct Util
 {
@@ -510,10 +528,38 @@ struct Util
         }
     }
 };
+
+// adapted from RVIZ
+template <typename Color>
+void getRainbowColor(float value, Color& color)
+{
+  value = std::max(std::min(value, 1.0f), 0.0f);
+
+  float h = value * 5.0f + 1.0f;
+  int i = floor(h);
+  float f = h - i;
+  if ( !(i&1) ) f = 1 - f; // if i is even
+  float n = 1 - f;
+
+  if (i <= 1) color.setX(n), color.setY(0), color.setZ(1);
+  else if (i == 2) color.setX(0), color.setY(n), color.setZ(1);
+  else if (i == 3) color.setX(0), color.setY(1), color.setZ(n);
+  else if (i == 4) color.setX(n), color.setY(1), color.setZ(0);
+  else if (i >= 5) color.setX(1), color.setY(n), color.setZ(0);
+}
+
 template <class PointT, int Component>
 struct RendererGradient
 {
-    static void render(typename pcl::PointCloud<PointT>::Ptr cloud, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
+    static void render(typename pcl::PointCloud<PointT>::Ptr cloud, bool rainbow, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
+    {
+        if(rainbow) {
+            renderRainbow(cloud);
+        } else {
+            renderGradient(cloud, color_grad_start, color_grad_end);
+        }
+    }
+    static void renderGradient(typename pcl::PointCloud<PointT>::Ptr cloud, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
     {
         double min, max;
         Util<PointT, Component>::findExtrema(cloud, min, max);
@@ -522,8 +568,26 @@ struct RendererGradient
             PointT& pt = *it;
 
             double v = Access<PointT, Component>::access(it);
-            double f = std::min(1.0, std::max(0.0, (v - min) / (max -min)));
+            double f = (v - min) / (max - min);
             QVector3D c = f * color_grad_start + (1.0-f) * color_grad_end;
+
+            glColor3d(c.x(), c.y(), c.z());
+
+            glVertex3d(pt.x, pt.y, pt.z);
+        }
+    }
+    static void renderRainbow(typename pcl::PointCloud<PointT>::Ptr cloud)
+    {
+        double min, max;
+        Util<PointT, Component>::findExtrema(cloud, min, max);
+
+        for(typename std::vector<PointT, Eigen::aligned_allocator<PointT> >::iterator it = cloud->points.begin(); it != cloud->points.end(); ++it) {
+            PointT& pt = *it;
+
+            double v = Access<PointT, Component>::access(it);
+            double f = (v - min) / (max - min);
+            QVector3D c;
+            getRainbowColor(f, c);
 
             glColor3d(c.x(), c.y(), c.z());
 
@@ -535,16 +599,16 @@ struct RendererGradient
 template <class PointT, int Component>
 struct Renderer
 {
-    static void render(typename pcl::PointCloud<PointT>::Ptr cloud, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
+    static void render(typename pcl::PointCloud<PointT>::Ptr cloud, bool rainbow, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
     {
-        RendererGradient<PointT, Component>::render(cloud, color_grad_start, color_grad_end);
+        RendererGradient<PointT, Component>::render(cloud, rainbow, color_grad_start, color_grad_end);
     }
 };
 
 template <int Component>
 struct Renderer<pcl::PointXYZRGB, Component>
 {
-    static void render(typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, const QVector3D&, const QVector3D&)
+    static void render(typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, bool, const QVector3D&, const QVector3D&)
     {
         for(typename std::vector<pcl::PointXYZRGB, Eigen::aligned_allocator<pcl::PointXYZRGB> >::iterator it = cloud->points.begin(); it != cloud->points.end(); ++it) {
             pcl::PointXYZRGB& pt = *it;
@@ -574,22 +638,28 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::Ptr clou
 
     std::string component = wrapped_->param<std::string>("color/field");
 
+    bool rainbow = wrapped_->param<bool>("color/rainbow");
+
     if(wrapped_->param<bool>("color/force gradient")) {
         if(component == "x") {
-            RendererGradient<PointT, X>::render(cloud, color_grad_start_, color_grad_end_);
+            RendererGradient<PointT, X>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "y") {
-            RendererGradient<PointT, Y>::render(cloud, color_grad_start_, color_grad_end_);
+            RendererGradient<PointT, Y>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "z") {
-            RendererGradient<PointT, Z>::render(cloud, color_grad_start_, color_grad_end_);
+            RendererGradient<PointT, Z>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
+        } else if(component == "i") {
+            RendererGradient<PointT, I>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         }
 
     } else {
         if(component == "x") {
-            Renderer<PointT, X>::render(cloud, color_grad_start_, color_grad_end_);
+            Renderer<PointT, X>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "y") {
-            Renderer<PointT, Y>::render(cloud, color_grad_start_, color_grad_end_);
+            Renderer<PointT, Y>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "z") {
-            Renderer<PointT, Z>::render(cloud, color_grad_start_, color_grad_end_);
+            Renderer<PointT, Z>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
+        } else if(component == "i") {
+            Renderer<PointT, I>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         }
     }
 

@@ -23,6 +23,8 @@ ImageToPointCloud::ImageToPointCloud()
 {
     addTag(Tag::get("PointCloud"));
 
+    addParameter(param::ParameterFactory::declareText("frame", "/camera"));
+
     addParameter(param::ParameterFactory::declareRange("fov/h", 30.0, 180.0, 90.0, 0.1));
     addParameter(param::ParameterFactory::declareRange("fov/v", 30.0, 180.0, 90.0, 0.1));
 
@@ -125,7 +127,7 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
         }
     }
 
-    PointCloudMessage::Ptr result(new PointCloudMessage);
+    PointCloudMessage::Ptr result(new PointCloudMessage(param<std::string>("frame")));
     result->value = cloud;
 
     return result;
@@ -135,7 +137,7 @@ void ImageToPointCloud::process()
 {
     CvMatMessage::Ptr depth_msg(input_depth_->getMessage<CvMatMessage>());
 
-    PointCloudMessage::Ptr result(new PointCloudMessage);
+    PointCloudMessage::Ptr result(new PointCloudMessage(param<std::string>("frame")));
     if(input_intensity_->isConnected()) {
         CvMatMessage::Ptr intensity_msg(input_intensity_->getMessage<CvMatMessage>());
         result = transform<pcl::PointXYZI>(depth_msg->value, intensity_msg->value);

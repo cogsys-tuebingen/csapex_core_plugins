@@ -294,7 +294,7 @@ MatchDescriptors::MatchDescriptors()
             ("Peak", (int) PEAK)
             ("Robust", (int) ROBUST);
 
-    param::Parameter::Ptr method = param::ParameterFactory::declareParameterSet("method", methods);
+    param::Parameter::Ptr method = param::ParameterFactory::declareParameterSet("method", methods, (int) ROBUST);
     addParameter(method, update);
 
     addParameter(param::ParameterFactory::declareColorParameter("color/match", 255,128,128));

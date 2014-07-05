@@ -196,7 +196,7 @@ void ThresholdOutlierRemoval::setup()
 void ThresholdOutlierRemoval::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
-    boost::apply_visitor (PointCloudMessage::Dispatch<ThresholdOutlierRemoval>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ThresholdOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -223,7 +223,7 @@ void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr c
         ThresholdNoiseFilter<PointT>::filter
                 (cloud, thresholds->value, threshold, cloud_filtered);
 
-    PointCloudMessage::Ptr out(new PointCloudMessage);
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
     out->value = cloud_filtered;
     output_->publish(out);
 }

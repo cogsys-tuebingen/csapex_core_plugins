@@ -18,6 +18,15 @@ public:
     virtual void readYaml(const YAML::Node &node);
 
 };
+
+
+/// TRAITS
+template <>
+struct type<PointIndecesMessage> {
+    static std::string name() {
+        return "PointIndeces";
+    }
+};
 }
 }
 #endif // INDECE_MESSAGE_H

@@ -32,7 +32,7 @@ ConditionalOutlierRemoval::ConditionalOutlierRemoval() :
     std::map<std::string, int> types = boost::assign::map_list_of
             ("AND", (int) AND)
             ("OR", (int) OR);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types), boost::bind(&ConditionalOutlierRemoval::update, this));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) AND), boost::bind(&ConditionalOutlierRemoval::update, this));
 
     addParameter(param::ParameterFactory::declareBool ("keep organized", keep_organized_),
                  boost::bind(&ConditionalOutlierRemoval::update, this));
@@ -67,7 +67,7 @@ void ConditionalOutlierRemoval::setup()
 void ConditionalOutlierRemoval::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
-    boost::apply_visitor (PointCloudMessage::Dispatch<ConditionalOutlierRemoval>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ConditionalOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -115,7 +115,7 @@ void ConditionalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr
         cloud_filtered.reset(new pcl::PointCloud<PointT>(*cloud));
     }
 
-    PointCloudMessage::Ptr out(new PointCloudMessage);
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
     out->value = cloud_filtered;
     output_->publish(out);
 }

@@ -24,8 +24,10 @@ public:
 
 protected:
     void setImportPath();
+    void setImportPrefix();
 
 private:
+    std::string prefix_;
     std::string path_;
     ConnectorOut* out_;
 
