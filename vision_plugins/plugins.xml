@@ -221,9 +221,9 @@
         Render some text into an image.
    </description>
   </class>
-  <class type="vision_plugins::HOGFeatures" base_class_type="csapex::Node">
+  <class type="vision_plugins::HOGDetect" base_class_type="csapex::Node">
     <description>
-        Generate hog features.
+        Detect objects via hog.
     </description>
   </class>
 </library>

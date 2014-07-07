@@ -84,8 +84,6 @@ add_library(vision_plugins
     src/features/sobel.cpp
     src/features/scharr.cpp
 
-    src/object_detection/hog_features.cpp
-
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
     src/visualize/image_text_label.cpp
@@ -103,6 +101,7 @@ add_library(vision_plugins
     src/analyze/camera_calibration.cpp
     src/analyze/label_regions.cpp
 
+    src/object_detection/hog_detect.cpp
 )
 
 target_link_libraries(vision_plugins
