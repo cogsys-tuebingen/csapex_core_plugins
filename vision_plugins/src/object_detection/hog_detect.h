@@ -22,10 +22,15 @@ public:
     void process();
 
 private:
-    enum Type {DEFAULT, DAIMLER};
+    enum SVMType        {DEFAULT, DAIMLER, CUSTOM};
+    enum DetectionType  {SINGLE_SCALE, MULTI_SCALE};
 
     csapex::ConnectorIn*  in_;
     csapex::ConnectorOut* out_;
+
+    std::vector<float>    svm_;
+
+    void load();
 };
 
 

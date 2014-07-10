@@ -6,6 +6,7 @@ find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_feature
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Release)
 
 #set(CMAKE_CXX_FLAGS "-O3")
 
