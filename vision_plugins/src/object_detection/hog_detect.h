@@ -29,6 +29,8 @@ private:
     csapex::ConnectorOut* out_;
 
     std::vector<float>    svm_;
+    int          svm_width_;
+    int          svm_height_;
 
     void load();
 };

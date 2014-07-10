@@ -82,7 +82,7 @@ void RenderROIs::process()
 
 void RenderROIs::setup()
 {
-    input_img_ = modifier_->addInput<CvMatMessage>("image");
+    input_img_  = modifier_->addInput<CvMatMessage>("image");
     input_rois_ = modifier_->addInput<VectorMessage, RoiMessage>("ROIs");
 
     output_ = modifier_->addOutput<CvMatMessage>("Rendered Image");

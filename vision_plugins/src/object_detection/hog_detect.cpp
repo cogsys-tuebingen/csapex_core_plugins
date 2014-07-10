@@ -8,10 +8,13 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <opencv2/objdetect/objdetect.hpp>
-#include <fstream>
+#include <csapex_vision/roi_message.h>
+#include <csapex_core_plugins/vector_message.h>
+#include <utils_cv/color_functions.hpp>
+
 
 /// SYSTEM
+#include <opencv2/objdetect/objdetect.hpp>
 #include <boost/assign.hpp>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::HOGDetect, csapex::Node)
@@ -39,27 +42,35 @@ void HOGDetect::setupParameters()
 
     std::map<std::string, int> svm_types = boost::assign::map_list_of
             ("default", DEFAULT)
-            ("daimler", DAIMLER)
-            ("custom", CUSTOM);
-    addParameter(param::ParameterFactory::declareParameterSet("svm type", svm_types));
+            ("custom",  CUSTOM)
+            ("daimler", DAIMLER);
 
-    addParameter(param::ParameterFactory::declareFileInputPath("svm path",""));
+    param::Parameter::Ptr svm_param = param::ParameterFactory::declareParameterSet("svm type", svm_types);
+    addParameter(svm_param);
+
+
+    boost::function<bool()> condition = (boost::bind(&param::Parameter::as<int>, svm_param.get()) == CUSTOM);
+
+    addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm path","", "*.yml *.yaml *.tar.gz"),
+                            condition, boost::bind(&HOGDetect::load, this));
+
     setParameterEnabled("svm path", false);
 }
 
 void HOGDetect::setup()
 {
     in_  = modifier_->addInput<CvMatMessage>("image");
-    out_ = modifier_->addOutput<CvMatMessage>("detections");
+    out_ = modifier_->addOutput<VectorMessage, RoiMessage>("detections");
 }
 
 void HOGDetect::process()
 {
-    CvMatMessage::Ptr in = in_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr out(new CvMatMessage(enc::bgr));
+    CvMatMessage::Ptr  in = in_->getMessage<CvMatMessage>();
+    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
+
+
     if(in->getEncoding() != enc::mono)
         throw std::runtime_error("Need grayscale or bgr!");
-
 
     cv::HOGDescriptor h;
 
@@ -69,17 +80,20 @@ void HOGDetect::process()
 
     switch(svm_type) {
     case DEFAULT:
-        h.winSize = cv::Size(64, 128);
+        h.winSize.width = 64;
+        h.winSize.height = 128;
         h.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
         break;
     case DAIMLER:
-        h.winSize = cv::Size(48, 96);
+        h.winSize.width = 48;
+        h.winSize.height = 96;
         h.setSVMDetector(cv::HOGDescriptor::getDaimlerPeopleDetector());
         break;
     case CUSTOM:
-        setParameterEnabled("svm path", true);
         if(svm_.empty())
             return;
+        h.winSize.width  = svm_width_;
+        h.winSize.height = svm_height_;
         h.setSVMDetector(svm_);
         break;
     default:
@@ -100,21 +114,31 @@ void HOGDetect::process()
         throw std::runtime_error("Unknown detection type!");
     }
 
-    for(std::vector<cv::Rect>::iterator
-        it = loc_rects.begin() ;
-        it != loc_rects.end() ;
-        ++it ) {
-        cv::rectangle(out->value, *it, cv::Scalar(255,0,255), 1 , CV_AA);
+    for(unsigned int i = 0 ; i < loc_rects.size() ; ++i) {
+        RoiMessage::Ptr roi(new RoiMessage);
+        cv::Scalar color(utils_cv::color::bezierColor<cv::Scalar>(i / (float) loc_rects.size()));
+        roi->value = Roi(loc_rects.at(i), color, 0);
+        out->value.push_back(roi);
     }
 
-    std::cout << "count " << loc_rects.size() << std::endl;
-
-    out_->publish(out);
+    for(unsigned int i = 0 ; i < loc_points.size() ; ++i) {
+        RoiMessage::Ptr roi(new RoiMessage);
+        cv::Scalar color(utils_cv::color::bezierColor<cv::Scalar>(i / (float) loc_points.size()));
+        cv::Point &p = loc_points.at(i);
+        cv::Rect r(p.x, p.y, svm_width_, svm_height_);
+        roi->value = Roi(r, color, 0);
+        out->value.push_back(roi);
+    }
+     out_->publish(out);
 }
 
 void HOGDetect::load()
 {
     std::string     path = param<std::string>("svm path");
+
+    if(path == "")
+        return;
+
     cv::FileStorage fs(path,cv::FileStorage::READ);
 
     if(!fs.isOpened()) {
@@ -123,7 +147,9 @@ void HOGDetect::load()
 
     svm_.clear();
 
-    fs["svm"] >> svm_;
+    fs["width"]  >> svm_width_;
+    fs["height"] >> svm_height_;
+    fs["svm"]    >> svm_;
 
     if(svm_.empty())
         throw std::runtime_error("Couldn't load svm!");
