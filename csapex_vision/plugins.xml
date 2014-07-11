@@ -55,6 +55,9 @@
   <description>Finds circles in an image</description>
 </class>
 
+<class type="csapex::VectorizePyramid" base_class_type="csapex::Node">
+  <description>Convert a CvPyramidMessage to a VectorMessage of CvMatMessages.</description>
+</class>
 
 
 <class type="csapex::ImageProviderDir" base_class_type="csapex::MessageProvider">
