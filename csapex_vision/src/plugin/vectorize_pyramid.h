@@ -1,5 +1,5 @@
-#ifndef FilterBlur_H
-#define FilterBlur_H
+#ifndef VECTORIZE_PYRAMID_H
+#define VECTORIZE_PYRAMID_H
 
 /// PROJECT
 #include <csapex/model/node.h>
@@ -7,21 +7,19 @@
 namespace csapex
 {
 
-class BoxBlur : public Node
+class VectorizePyramid : public Node
 {
 public:
-    BoxBlur();
+    VectorizePyramid();
 
     virtual void process();
     virtual void setup();
-    virtual void setupParameters();
 
 private:
-
     ConnectorIn  *input_;
     ConnectorOut *output_;
+
 };
 
-} /// NAMESPACE
-
-#endif // FilterBlur_H
+}
+#endif // VECTORIZE_PYRAMID_H

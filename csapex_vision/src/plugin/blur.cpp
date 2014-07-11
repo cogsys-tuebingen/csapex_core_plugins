@@ -15,13 +15,10 @@ CSAPEX_REGISTER_CLASS(csapex::BoxBlur, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-BoxBlur::BoxBlur() :
-    kernel_(1)
+BoxBlur::BoxBlur()
 {
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
-    addParameter(param::ParameterFactory::declareRange("kernel", 1, 255, kernel_, 2),
-                 boost::bind(&BoxBlur::update, this));
 }
 
 void BoxBlur::process()
@@ -29,7 +26,9 @@ void BoxBlur::process()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
-    cv::blur(in->value,out->value, cv::Size(kernel_, kernel_));
+    int kernel = param<int>("kernel");
+
+    cv::blur(in->value,out->value, cv::Size(kernel, kernel));
 
     output_->publish(out);
 }
@@ -38,11 +37,9 @@ void BoxBlur::setup()
 {
     input_ = modifier_->addInput<CvMatMessage>("Unblurred");
     output_ = modifier_->addOutput<CvMatMessage>("Blurred");
-
-    update();
 }
 
-void BoxBlur::update()
+void BoxBlur::setupParameters()
 {
-    kernel_ = param<int>("kernel");
+    addParameter(param::ParameterFactory::declareRange("kernel", 1, 255, 2, 2));
 }
