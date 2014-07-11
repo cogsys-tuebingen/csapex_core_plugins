@@ -15,11 +15,11 @@ public:
     virtual void setupParameters();
 
 protected:
-    int  amount_levels_;
-    int  preview_level_;
+    int                     out_levels_;
+    int                     out_level_idx_;
 
-    csapex::ConnectorOut*   levels_;
-    csapex::ConnectorOut*   preview_;
+    csapex::ConnectorOut*   out_pyr_;
+    csapex::ConnectorOut*   out_level_;
     csapex::ConnectorIn*    input_;
 
     void update();

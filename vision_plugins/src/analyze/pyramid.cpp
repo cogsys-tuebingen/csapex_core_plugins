@@ -7,7 +7,7 @@
 #include <csapex/model/connector_out.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex_vision/cv_pyramid_message.h>
 #include <csapex/model/node_modifier.h>
 
 using namespace csapex;
@@ -17,8 +17,8 @@ using namespace vision_plugins;
 CSAPEX_REGISTER_CLASS(vision_plugins::Pyramid, csapex::Node)
 
 Pyramid::Pyramid() :
-    amount_levels_(8),
-    preview_level_(0)
+    out_levels_(8),
+    out_level_idx_(0)
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
@@ -26,49 +26,42 @@ Pyramid::Pyramid() :
 
 void Pyramid::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    boost::shared_ptr<std::vector<CvMatMessage::Ptr> > levels(new std::vector<CvMatMessage::Ptr>);
+    CvMatMessage::Ptr       in = input_->getMessage<connection_types::CvMatMessage>();
+    CvPyramidMessage::Ptr   out(new CvPyramidMessage(in->getEncoding()));
 
-    std::vector<cv::Mat> pyramid;
-    cv::buildPyramid(in->value, pyramid, amount_levels_);
+    cv::buildPyramid(in->value, out->value, out_levels_);
 
-
-    for(int i = 0 ; i < amount_levels_ ; ++i) {
-        levels->push_back(CvMatMessage::Ptr(new CvMatMessage(in->getEncoding())));
-        levels->at(i)->value = pyramid.at(i);
+    if(out_level_->isConnected()) {
+        CvMatMessage::Ptr out_level(new CvMatMessage(in->getEncoding()));
+        out_level->value = out->value.at(out_level_idx_).clone();
+        out_level_->publish(out_level);
     }
 
-    if(preview_->isConnected()) {
-        CvMatMessage::Ptr preview(new CvMatMessage(in->getEncoding()));
-        preview->value = pyramid.at(preview_level_);
-        preview_->publish(preview);
-    }
-
-    levels_->publish<GenericVectorMessage, CvMatMessage::Ptr>(levels);
+    out_pyr_->publish(out);
 }
 void Pyramid::setup()
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    preview_ = modifier_->addOutput<CvMatMessage>("preview");
-    levels_  = modifier_->addOutput<GenericVectorMessage, CvMatMessage::Ptr>("levels");
+    input_     = modifier_->addInput<CvMatMessage>("original");
+    out_level_ = modifier_->addOutput<CvMatMessage>("preview");
+    out_pyr_   = modifier_->addOutput<CvPyramidMessage>("pyramid");
 }
 
 void Pyramid::setupParameters()
 {
 
-    addParameter(param::ParameterFactory::declareRange("levels", 1, 10, amount_levels_, 1),
+    addParameter(param::ParameterFactory::declareRange("levels", 1, 10, out_levels_, 1),
                  boost::bind(&Pyramid::update, this));
-    addParameter(param::ParameterFactory::declareRange("preview",0, 9, preview_level_, 1),
+    addParameter(param::ParameterFactory::declareRange("preview",0, 9, out_level_idx_, 1),
                  boost::bind(&Pyramid::update, this));
 }
 
 void Pyramid::update()
 {
-    amount_levels_ = param<int>("levels");
-    preview_level_ = param<int>("preview");
+    out_levels_ = param<int>("levels");
+    out_level_idx_ = param<int>("preview");
 
-    if(preview_level_ >= amount_levels_) {
-        preview_level_ = amount_levels_ - 1;
+    if(out_level_idx_ >= out_levels_) {
+        out_level_idx_ = out_levels_ - 1;
         setError(true, "Not enough levels!", EL_WARNING);
     } else if(isError()) {
         setError(false);
