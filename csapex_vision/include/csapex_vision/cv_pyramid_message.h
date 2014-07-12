@@ -38,6 +38,15 @@ private:
     CvPyramidMessage();
 };
 
+
+/// TRAITS
+template <>
+struct type<CvPyramidMessage> {
+    static std::string name() {
+        return "std::vector<cv::Mat>";
+    }
+};
+
 }
 }
 

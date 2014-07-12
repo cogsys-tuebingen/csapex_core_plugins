@@ -5,11 +5,11 @@ using namespace connection_types;
 
 
 CvPyramidMessage::CvPyramidMessage()
-    : MessageTemplate<std::vector<cv::Mat>, CvPyramidMessage> ("std::vector<cv::Mat>"), encoding(enc::bgr)
+    : encoding(enc::bgr)
 {}
 
 CvPyramidMessage::CvPyramidMessage(const Encoding& encoding)
-    : MessageTemplate<std::vector<cv::Mat>, CvPyramidMessage> ("std::vector<cv::Mat>"), encoding(encoding)
+    : encoding(encoding)
 {}
 
 ConnectionType::Ptr CvPyramidMessage::clone() {
