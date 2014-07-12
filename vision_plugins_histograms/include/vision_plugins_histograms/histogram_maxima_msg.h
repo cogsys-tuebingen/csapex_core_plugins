@@ -14,6 +14,15 @@ class HistogramMaximaMessage :
 public:
     HistogramMaximaMessage();
 };
+
+/// TRAITS
+template <>
+struct type<HistogramMaximaMessage> {
+    static std::string name() {
+        return "Maxima";
+    }
+};
+
 }
 }
 

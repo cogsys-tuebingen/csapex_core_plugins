@@ -6,7 +6,7 @@ using namespace connection_types;
 
 HistogramMessage::HistogramMessage() :
     MessageTemplate<HistogramContainer,
-                    HistogramMessage>("Histogram")
+                    HistogramMessage>()
 {
 }
 

@@ -6,6 +6,6 @@ using namespace connection_types;
 
 HistogramMaximaMessage::HistogramMaximaMessage() :
     MessageTemplate<HistogramMaximaContainer,
-                    HistogramMaximaMessage>("Maxima")
+                    HistogramMaximaMessage>()
 {
 }

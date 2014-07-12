@@ -14,6 +14,15 @@ class HistogramMessage :
 public:
     HistogramMessage();
 };
+
+/// TRAITS
+template <>
+struct type<HistogramMessage> {
+    static std::string name() {
+        return "Histogram";
+    }
+};
+
 }
 }
 #endif // HISTOGRAM_MSG_H
