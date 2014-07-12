@@ -11,6 +11,7 @@ public:
     Sobel();
 
     virtual void process();
+    virtual void setupParameters();
 
 protected:
     int     dx_;

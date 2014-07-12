@@ -12,6 +12,7 @@ public:
     ColorAdjustment();
 
     void setup();
+    void setupParameters();
     void process();
 
     void setState(Memento::Ptr memento);

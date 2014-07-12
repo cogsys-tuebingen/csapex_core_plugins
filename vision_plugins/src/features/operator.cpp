@@ -18,20 +18,6 @@ Operator::Operator() :
     scale_(1.0),
     delta_(0.0)
 {
-//    std::map<std::string, int> depths = boost::assign::map_list_of
-//            ("default", -1)
-//            ("CV_16S", CV_16S)
-//            ("CV_32F", CV_32F)
-//            ("CV_64F", CV_64F);
-
-//    addParameter(param::ParameterFactory::declareParameterSet("ddepth", depths),
-//                 boost::bind(&Operator::update, this));
-    addParameter(param::ParameterFactory::declareRange("kernel", 1, 31, ksize_, 2),
-                 boost::bind(&Operator::update, this));
-    addParameter(param::ParameterFactory::declareRange("scale", 0.1, 10.0, scale_, 0.1),
-                 boost::bind(&Operator::update, this));
-    addParameter(param::ParameterFactory::declareRange("delta", 0.0, 10.0, delta_, 0.1),
-                 boost::bind(&Operator::update, this));
 }
 
 void Operator::setup()
@@ -40,9 +26,18 @@ void Operator::setup()
     update();
 }
 
+void Operator::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("kernel", 1, 31, ksize_, 2),
+                 boost::bind(&Operator::update, this));
+    addParameter(param::ParameterFactory::declareRange("scale", 0.1, 10.0, scale_, 0.1),
+                 boost::bind(&Operator::update, this));
+    addParameter(param::ParameterFactory::declareRange("delta", 0.0, 10.0, delta_, 0.1),
+                 boost::bind(&Operator::update, this));
+}
+
 void Operator::update()
 {
-//    ddepth_ = param<int>("ddepth");
     ksize_  = param<int>("kernel");
     scale_  = param<double>("scale");
     delta_  = param<double>("delta");

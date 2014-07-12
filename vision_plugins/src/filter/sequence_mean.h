@@ -14,6 +14,7 @@ public:
 
     virtual void process();
     virtual void setup();
+    virtual void setupParameters();
 
 protected:
     csapex::ConnectorIn  *input_;

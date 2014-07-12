@@ -18,12 +18,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::Scharr, csapex::Node)
 Scharr::Scharr()  :
     type_(DX1)
 {
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("DX1", DX1)
-            ("DY1", DY1);
-
-    addParameter(param::ParameterFactory::declareParameterSet("derive", types),
-                 boost::bind(&Scharr::update, this));
 }
 
 void Scharr::process()
@@ -42,6 +36,17 @@ void Scharr::process()
         throw std::runtime_error("Unknown derivation type!");
     }
     output_->publish(out);
+}
+
+void Scharr::setupParameters()
+{
+    Operator::setupParameters();
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("DX1", DX1)
+            ("DY1", DY1);
+
+    addParameter(param::ParameterFactory::declareParameterSet("derive", types),
+                 boost::bind(&Scharr::update, this));
 }
 
 void Scharr::update()

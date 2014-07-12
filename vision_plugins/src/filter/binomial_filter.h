@@ -13,6 +13,7 @@ public:
 
     virtual void process();
     virtual void setup();
+    virtual void setupParameters();
 
 protected:
     int                     kernel_size_;

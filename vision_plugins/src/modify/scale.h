@@ -15,6 +15,7 @@ public:
 
     virtual void process();
     virtual void setup();
+    virtual void setupParameters();
 
 private:
     csapex::ConnectorOut*   output_;

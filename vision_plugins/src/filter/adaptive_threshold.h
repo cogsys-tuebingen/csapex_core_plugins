@@ -14,6 +14,7 @@ public:
 
     virtual void process();
     virtual void setup();
+    virtual void setupParameters();
 
 private:
     ConnectorOut* output_;

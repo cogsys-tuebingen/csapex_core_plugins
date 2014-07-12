@@ -11,6 +11,7 @@ public:
     Scharr();
 
     virtual void process();
+    virtual void setupParameters();
 
 protected:
     enum Type {DX1, DY1};

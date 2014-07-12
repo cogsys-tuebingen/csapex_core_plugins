@@ -68,12 +68,6 @@ MatrixStitcher::MatrixStitcher()
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    std::map<std::string, int> modes = boost::assign::map_list_of
-            ("HORIZONTAL", HORIZONTAL)
-            ("VERTICAL", VERTICAL);
-    addParameter(param::ParameterFactory::declareParameterSet("mode", modes));
-    addParameter(param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
 }
 
 void MatrixStitcher::process()
@@ -106,4 +100,13 @@ void MatrixStitcher::setup()
     matrix_1_ =  modifier_->addInput<CvMatMessage>("matrix 1");
     matrix_2_ =  modifier_->addInput<CvMatMessage>("matrix 2");
     stitched_ = modifier_->addOutput<CvMatMessage>("stitched");
+}
+
+void MatrixStitcher::setupParameters()
+{
+    std::map<std::string, int> modes = boost::assign::map_list_of
+            ("HORIZONTAL", HORIZONTAL)
+            ("VERTICAL", VERTICAL);
+    addParameter(param::ParameterFactory::declareParameterSet("mode", modes));
+    addParameter(param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
 }

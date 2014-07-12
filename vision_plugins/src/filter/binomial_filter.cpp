@@ -21,8 +21,6 @@ BinomialFilter::BinomialFilter()
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    addParameter(param::ParameterFactory::declareRange("kernel", 3, 131, 3, 2));
 }
 
 void BinomialFilter::process()
@@ -44,4 +42,9 @@ void BinomialFilter::setup()
 {
     input_ = modifier_->addInput<CvMatMessage>("original");
     output_ = modifier_->addOutput<CvMatMessage>("filtered");
+}
+
+void BinomialFilter::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("kernel", 3, 131, 3, 2));
 }

@@ -22,13 +22,6 @@ Flip::Flip()
 {
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("v", 0)
-            ("h", 1)
-            ("v+h", -1);
-    addParameter(param::ParameterFactory::declareParameterSet("type", types),
-                 boost::bind(&Flip::update, this));
 }
 
 void Flip::process()
@@ -43,6 +36,16 @@ void Flip::setup()
 {
     input_ = modifier_->addInput<CvMatMessage>("original");
     output_ = modifier_->addOutput<CvMatMessage>("flipped");
+}
+
+void Flip::setupParameters()
+{
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("v", 0)
+            ("h", 1)
+            ("v+h", -1);
+    addParameter(param::ParameterFactory::declareParameterSet("type", types),
+                 boost::bind(&Flip::update, this));
 }
 
 void Flip::update()

@@ -20,6 +20,16 @@ ColorAdjustment::ColorAdjustment() :
 {
     addTag(Tag::get("Filter"));
     addTag(Tag::get("vision_plugins"));
+}
+
+void ColorAdjustment::setup()
+{
+    input_ = modifier_->addInput<CvMatMessage>("original");
+    output_ = modifier_->addOutput<CvMatMessage>("adjusted");
+}
+
+void ColorAdjustment::setupParameters()
+{
 
     std::map<std::string, int> presets = boost::assign::map_list_of
             ("HSV", (int) HSV)
@@ -30,12 +40,6 @@ ColorAdjustment::ColorAdjustment() :
     addParameter(param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
 
     addParameter(param::ParameterFactory::declareParameterSet("preset", presets), boost::bind(&ColorAdjustment::setPreset, this));
-}
-
-void ColorAdjustment::setup()
-{
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("adjusted");
 }
 
 namespace {

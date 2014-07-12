@@ -21,23 +21,6 @@ CornerHarris::CornerHarris() :
     block_size_(3),
     border_type_(cv::BORDER_DEFAULT)
 {
-    addParameter(param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
-                 boost::bind(&CornerHarris::update, this));
-    addParameter(param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
-                 boost::bind(&CornerHarris::update, this));
-    addParameter(param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
-                 boost::bind(&CornerHarris::update, this));
-
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("BORDER_DEFAULT", (int) cv::BORDER_DEFAULT)
-            ("BORDER_CONSTANT", (int) cv::BORDER_CONSTANT)
-            ("BORDER_REFLECT", (int) cv::BORDER_REFLECT)
-            ("BORDER_REFLECT101", (int) cv::BORDER_REFLECT101)
-            ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
-            ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("border type", types),
-                 boost::bind(&CornerHarris::update, this));
-
 }
 
 void CornerHarris::process()
@@ -59,6 +42,26 @@ void CornerHarris::setup()
 {
     CornerLineDetection::setup();
     update();
+}
+
+void CornerHarris::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
+                 boost::bind(&CornerHarris::update, this));
+    addParameter(param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
+                 boost::bind(&CornerHarris::update, this));
+    addParameter(param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
+                 boost::bind(&CornerHarris::update, this));
+
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("BORDER_DEFAULT", (int) cv::BORDER_DEFAULT)
+            ("BORDER_CONSTANT", (int) cv::BORDER_CONSTANT)
+            ("BORDER_REFLECT", (int) cv::BORDER_REFLECT)
+            ("BORDER_REFLECT101", (int) cv::BORDER_REFLECT101)
+            ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
+            ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
+    addParameter(param::ParameterFactory::declareParameterSet<int>("border type", types),
+                 boost::bind(&CornerHarris::update, this));
 }
 
 void CornerHarris::update()

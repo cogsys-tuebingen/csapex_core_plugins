@@ -20,9 +20,6 @@ MedianFilter::MedianFilter() :
     addTag(Tag::get("Filter"));
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    addParameter(param::ParameterFactory::declareRange("kernel", 3, 31, kernel_size_, 2),
-                 boost::bind(&MedianFilter::update, this));
 }
 
 void MedianFilter::process()
@@ -30,7 +27,6 @@ void MedianFilter::process()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
-    /// TODO
     if(in->value.channels() > 4)
         throw std::runtime_error("To many channels!");
 
@@ -43,6 +39,12 @@ void MedianFilter::setup()
     input_ = modifier_->addInput<CvMatMessage>("original");
     output_ = modifier_->addOutput<CvMatMessage>("filtered");
     update();
+}
+
+void MedianFilter::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("kernel", 3, 31, kernel_size_, 2),
+                 boost::bind(&MedianFilter::update, this));
 }
 
 void MedianFilter::update()

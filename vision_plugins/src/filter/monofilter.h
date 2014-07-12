@@ -13,16 +13,18 @@ public:
 
     virtual void process();
     virtual void setup();
+    virtual void setupParameters();
 
 protected:
     csapex::ConnectorOut* output_;
     csapex::ConnectorIn*  input_;
 
-    void update();
     int   min_;
     int   max_;
     int   def_;
     bool  invert_;
+
+    void  update();
 };
 
 }

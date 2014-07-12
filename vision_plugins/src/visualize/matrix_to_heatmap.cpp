@@ -9,6 +9,8 @@
 #include <utils_cv/heatmap.hpp>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
+#include <utils_cv/color_functions.hpp>
+
 
 /// SYSTEM
 #include <boost/assign/list_of.hpp>
@@ -27,14 +29,6 @@ MatrixToHeatmap::MatrixToHeatmap() :
     addTag(Tag::get("Visualization"));
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("BEZIER", (int) BEZIER)
-            ("PARABOLA", (int) PARABOLA);
-
-    addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types),
-                 boost::bind(&MatrixToHeatmap::update, this));
-
 }
 
 void MatrixToHeatmap::process()
@@ -68,10 +62,10 @@ void MatrixToHeatmap::process()
     utils_cv::Heatmap::colorFunction fc;
     switch(color_type_) {
     case BEZIER:
-        fc = &utils_cv::Heatmap::bezierColor;
+        fc = &utils_cv::color::bezierColor<cv::Vec3f>;
         break;
     case PARABOLA:
-        fc = &utils_cv::Heatmap::parabolaColor;
+        fc = &utils_cv::color::parabolaColor<cv::Vec3f>;
         break;
     default:
         throw std::runtime_error("Unknown color function type!");
@@ -90,6 +84,16 @@ void MatrixToHeatmap::setup()
     mask_   = modifier_->addInput<CvMatMessage>("mask",true);
 
     update();
+}
+
+void MatrixToHeatmap::setupParameters()
+{
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("BEZIER", (int) BEZIER)
+            ("PARABOLA", (int) PARABOLA);
+
+    addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types),
+                 boost::bind(&MatrixToHeatmap::update, this));
 }
 
 void MatrixToHeatmap::update()

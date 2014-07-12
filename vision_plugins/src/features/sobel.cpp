@@ -18,10 +18,6 @@ Sobel::Sobel() :
     dx_(1),
     dy_(1)
 {
-    addParameter(param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
-                 boost::bind(&Sobel::update, this));
-    addParameter(param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
-                 boost::bind(&Sobel::update, this));
 }
 
 
@@ -32,6 +28,15 @@ void Sobel::process()
     int depth = in->value.type() & 7;
     cv::Sobel(in->value, out->value, depth, dx_, dy_, ksize_, scale_,delta_);
     output_->publish(out);
+}
+
+void Sobel::setupParameters()
+{
+    Operator::setupParameters();
+    addParameter(param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
+                 boost::bind(&Sobel::update, this));
+    addParameter(param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
+                 boost::bind(&Sobel::update, this));
 }
 
 void  Sobel::update()

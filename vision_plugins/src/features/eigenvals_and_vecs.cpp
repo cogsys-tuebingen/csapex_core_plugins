@@ -20,31 +20,6 @@ EigenValsAndVecs::EigenValsAndVecs() :
     block_size_(3),
     border_type_(cv::BORDER_DEFAULT)
 {
-    addParameter(param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
-                 boost::bind(&EigenValsAndVecs::update, this));
-    addParameter(param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
-                 boost::bind(&EigenValsAndVecs::update, this));
-    addParameter(param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
-                 boost::bind(&EigenValsAndVecs::update, this));
-
-    std::map<std::string, int> border_types = boost::assign::map_list_of
-            ("BORDER_DEFAULT", (int) cv::BORDER_DEFAULT)
-            ("BORDER_CONSTANT", (int) cv::BORDER_CONSTANT)
-            ("BORDER_REFLECT", (int) cv::BORDER_REFLECT)
-            ("BORDER_REFLECT101", (int) cv::BORDER_REFLECT101)
-            ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
-            ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
-
-    addParameter(param::ParameterFactory::declareParameterSet<int>("border type", border_types),
-                 boost::bind(&EigenValsAndVecs::update, this));
-
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("MIN_EIGEN_VAL", (int) MIN_EIGEN_VAL)
-            ("EIGEN_VALS_AND_VECS", (int) EIGEN_VALS_AND_VECS);
-
-    addParameter(param::ParameterFactory::declareParameterSet<int>("eigen type", types),
-                 boost::bind(&EigenValsAndVecs::update, this));
-
 }
 
 void EigenValsAndVecs::process()
@@ -71,6 +46,34 @@ void EigenValsAndVecs::setup()
 {
     CornerLineDetection::setup();
     update();
+}
+
+void EigenValsAndVecs::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
+                 boost::bind(&EigenValsAndVecs::update, this));
+    addParameter(param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
+                 boost::bind(&EigenValsAndVecs::update, this));
+    addParameter(param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
+                 boost::bind(&EigenValsAndVecs::update, this));
+
+    std::map<std::string, int> border_types = boost::assign::map_list_of
+            ("BORDER_DEFAULT", (int) cv::BORDER_DEFAULT)
+            ("BORDER_CONSTANT", (int) cv::BORDER_CONSTANT)
+            ("BORDER_REFLECT", (int) cv::BORDER_REFLECT)
+            ("BORDER_REFLECT101", (int) cv::BORDER_REFLECT101)
+            ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
+            ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
+
+    addParameter(param::ParameterFactory::declareParameterSet<int>("border type", border_types),
+                 boost::bind(&EigenValsAndVecs::update, this));
+
+    std::map<std::string, int> types = boost::assign::map_list_of
+            ("MIN_EIGEN_VAL", (int) MIN_EIGEN_VAL)
+            ("EIGEN_VALS_AND_VECS", (int) EIGEN_VALS_AND_VECS);
+
+    addParameter(param::ParameterFactory::declareParameterSet<int>("eigen type", types),
+                 boost::bind(&EigenValsAndVecs::update, this));
 }
 
 void EigenValsAndVecs::update()

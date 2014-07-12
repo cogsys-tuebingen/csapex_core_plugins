@@ -8,11 +8,12 @@ namespace vision_plugins {
 class AbsoluteDifference : public csapex::Node
 {
 public:
+#warning Deprecated plugin.
+
     AbsoluteDifference();
 
     virtual void process();
     virtual void setup();
-
 protected:
     csapex::ConnectorIn     *mat_1_in_;
     csapex::ConnectorIn     *mat_2_in_;

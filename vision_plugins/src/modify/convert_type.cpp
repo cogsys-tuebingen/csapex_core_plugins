@@ -39,21 +39,6 @@ ConvertType::ConvertType() :
     addTag(Tag::get("Conversion"));
     addTag(Tag::get("Vision"));
     addTag(Tag::get("vision_plugins"));
-
-    std::map<std::string, int> types = boost::assign::map_list_of
-            (" 8 Bit unsigned", CV_8U)
-            (" 8 Bit signed",   CV_8S)
-            ("16 Bit usigned",  CV_16U)
-            ("16 Bit signed",   CV_16S)
-            ("32 Bit signed",   CV_32S)
-            ("32 Bit floating", CV_32F)
-            ("64 Bit floating", CV_64F);
-
-    addParameter(param::ParameterFactory::declareParameterSet("convert to", types),
-                 boost::bind(&ConvertType::update, this));
-
-    addParameter(param::ParameterFactory::declareBool("normalize", false),
-                 boost::bind(&ConvertType::update, this));
 }
 
 void ConvertType::process()
@@ -112,6 +97,24 @@ void ConvertType::setup()
     input_ =  modifier_->addInput<CvMatMessage>("original");
     output_ = modifier_->addOutput<CvMatMessage>("converted");
     update();
+}
+
+void ConvertType::setupParameters()
+{
+    std::map<std::string, int> types = boost::assign::map_list_of
+            (" 8 Bit unsigned", CV_8U)
+            (" 8 Bit signed",   CV_8S)
+            ("16 Bit usigned",  CV_16U)
+            ("16 Bit signed",   CV_16S)
+            ("32 Bit signed",   CV_32S)
+            ("32 Bit floating", CV_32F)
+            ("64 Bit floating", CV_64F);
+
+    addParameter(param::ParameterFactory::declareParameterSet("convert to", types),
+                 boost::bind(&ConvertType::update, this));
+
+    addParameter(param::ParameterFactory::declareBool("normalize", false),
+                 boost::bind(&ConvertType::update, this));
 }
 
 void ConvertType::update()

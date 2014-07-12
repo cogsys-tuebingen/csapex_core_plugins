@@ -12,6 +12,7 @@ public:
 
     virtual void process();
     virtual void setup();
+    virtual void setupParameters();
 
 protected:
     enum Mode {HORIZONTAL, VERTICAL};

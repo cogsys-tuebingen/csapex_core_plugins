@@ -11,6 +11,7 @@ public:
     DifferenceMaximum();
 
     virtual void process();
+    virtual void setupParameters();
 
 };
 }
