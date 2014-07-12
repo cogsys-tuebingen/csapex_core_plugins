@@ -31,7 +31,7 @@ void IndexFilter::setup()
 void IndexFilter::process()
 {
     PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
-    boost::apply_visitor (PointCloudMessage::Dispatch<IndexFilter>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<IndexFilter>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -40,7 +40,7 @@ void IndexFilter::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     PointIndecesMessage::Ptr indeces(indeces_input_->getMessage<PointIndecesMessage>());
     typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>(*cloud, indeces->value->indices));
 
-    PointCloudMessage::Ptr out(new PointCloudMessage);
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
     out->value = cloud_filtered;
     output_cloud_->publish(out);
 }

@@ -16,6 +16,15 @@ struct KeypointMessage : public MessageTemplate<std::vector<cv::KeyPoint>, Keypo
     KeypointMessage();
 };
 
+
+/// TRAITS
+template <>
+struct type<KeypointMessage> {
+    static std::string name() {
+        return "std::vector<cv::KeyPoint>";
+    }
+};
+
 }
 }
 

@@ -18,6 +18,14 @@ struct DescriptorMessage : public MessageTemplate<cv::Mat, DescriptorMessage>
     bool isBinary() const;
 };
 
+/// TRAITS
+template <>
+struct type<DescriptorMessage> {
+    static std::string name() {
+        return "cv::Mat (descriptors)";
+    }
+};
+
 }
 }
 

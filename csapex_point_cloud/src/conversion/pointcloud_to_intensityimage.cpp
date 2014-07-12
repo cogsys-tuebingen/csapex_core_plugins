@@ -32,7 +32,7 @@ void PointCloudToIntensityImage::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToIntensityImage>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToIntensityImage>(this, msg), msg->value);
 }
 
 namespace impl {

@@ -3,7 +3,7 @@
 using namespace csapex::connection_types;
 
 PointIndecesMessage::PointIndecesMessage() :
-    MessageTemplate<pcl::PointIndices::Ptr, PointIndecesMessage>("PointIndeces")
+    MessageTemplate<pcl::PointIndices::Ptr, PointIndecesMessage>("/")
 {
     value.reset(new pcl::PointIndices);
 }

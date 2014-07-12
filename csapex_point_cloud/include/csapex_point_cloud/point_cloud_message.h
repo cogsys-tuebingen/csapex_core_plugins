@@ -40,25 +40,26 @@ struct add_point_cloud_ptr
     typedef typename pcl::PointCloud<T>::Ptr type;
 };
 
-
 struct PointCloudMessage : public Message
 {
     template <typename T>
     struct Dispatch : public boost::static_visitor<void>
     {
-        Dispatch(T* pc)
-            : pc_(pc)
+        Dispatch(T* pc, PointCloudMessage::Ptr msg)
+            : pc_(pc), msg_(msg)
         {}
 
         template <typename PointCloudT>
         void operator () (PointCloudT cloud) const
         {
             typedef typename PointCloudT::element_type::PointType PointT;
+            cloud->header.frame_id = msg_->frame_id;
             pc_->template inputCloud<PointT>(cloud);
         }
 
     private:
         T* pc_;
+        PointCloudMessage::Ptr msg_;
     };
 
     typedef boost::shared_ptr<PointCloudMessage> Ptr;
@@ -69,46 +70,36 @@ struct PointCloudMessage : public Message
     >::type
     >::type variant;
 
-    PointCloudMessage()
-        : Message ("PointCloud")
-    {
+    PointCloudMessage(const std::string& frame_id);
 
-    }
+    virtual ConnectionType::Ptr clone();
 
-    virtual ConnectionType::Ptr clone() {
-        Ptr new_msg(new PointCloudMessage);
-        new_msg->value = value;
-        return new_msg;
-    }
+    virtual ConnectionType::Ptr toType();
 
-    virtual ConnectionType::Ptr toType() {
-        Ptr new_msg(new PointCloudMessage);
-        return new_msg;
-    }
+    static ConnectionType::Ptr make();
 
-    static ConnectionType::Ptr make(){
-        Ptr new_msg(new PointCloudMessage);
-        return new_msg;
-    }
+    virtual std::string name() const;
 
+    bool acceptsConnectionFrom(const ConnectionType* other_side) const;
 
-    virtual std::string name() const
-    {
-    	return Message::name();
-    }
-
-    bool acceptsConnectionFrom(const ConnectionType* other_side) const {
-        return dynamic_cast<const PointCloudMessage*> (other_side);
-    }
-
-    void writeYaml(YAML::Emitter& yaml) const {
-        yaml << YAML::Key << "value" << YAML::Value << "not implemented";
-    }
-    void readYaml(const YAML::Node&) {
-    }
+    void writeYaml(YAML::Emitter& yaml) const;
+    void readYaml(const YAML::Node&);
 
     variant value;
+
+private:
+    PointCloudMessage();
 };
+
+
+/// TRAITS
+template <>
+struct type<PointCloudMessage> {
+    static std::string name() {
+        return "PointCloud";
+    }
+};
+
 
 }
 }

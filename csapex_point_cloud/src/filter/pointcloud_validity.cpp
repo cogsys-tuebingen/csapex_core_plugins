@@ -27,7 +27,7 @@ void PointCloudValidity::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudValidity>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudValidity>(this, msg), msg->value);
 }
 
 void PointCloudValidity::setup()

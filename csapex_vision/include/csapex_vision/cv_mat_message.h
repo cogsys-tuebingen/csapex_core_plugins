@@ -38,6 +38,15 @@ private:
     CvMatMessage();
 };
 
+
+/// TRAITS
+template <>
+struct type<CvMatMessage> {
+    static std::string name() {
+        return "cv::Mat";
+    }
+};
+
 }
 }
 

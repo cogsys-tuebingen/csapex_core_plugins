@@ -449,7 +449,7 @@ void CloudRendererAdapter::refresh()
 
 void CloudRendererAdapter::displayCloud()
 {
-    boost::apply_visitor (PointCloudMessage::Dispatch<CloudRendererAdapter>(this), wrapped_->message_->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<CloudRendererAdapter>(this, wrapped_->message_), wrapped_->message_->value);
 }
 
 namespace

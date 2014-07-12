@@ -38,7 +38,7 @@ void VoxelGrid::process()
 {
     PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<VoxelGrid>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<VoxelGrid>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -54,7 +54,7 @@ void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     voxel_f.setLeafSize(leaf);
     voxel_f.filter(*out);
 
-    PointCloudMessage::Ptr msg(new PointCloudMessage);
+    PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id));
     msg->value = out;
 
     output_->publish(msg);

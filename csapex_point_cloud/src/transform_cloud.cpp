@@ -35,7 +35,7 @@ void TransformCloud::process()
 {
     PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<TransformCloud>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<TransformCloud>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -47,7 +47,7 @@ void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
     pcl_ros::transformPointCloud(*cloud, *out, t);
 
-    PointCloudMessage::Ptr msg(new PointCloudMessage);
+    PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id));
     msg->value = out;
 
     output_->publish(msg);

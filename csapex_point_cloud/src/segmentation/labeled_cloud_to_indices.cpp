@@ -32,7 +32,7 @@ void LabeledCloudToIndices::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<LabeledCloudToIndices>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<LabeledCloudToIndices>(this, msg), msg->value);
 }
 
 void LabeledCloudToIndices::setup()
@@ -108,7 +108,7 @@ struct Conversion<pcl::PointXYZRGBL>{
 template <class PointT>
 void LabeledCloudToIndices::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    PointCloudMessage::Ptr out(new PointCloudMessage);
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr out_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
     boost::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);

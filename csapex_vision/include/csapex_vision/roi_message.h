@@ -19,6 +19,15 @@ struct RoiMessage : public MessageTemplate<Roi, RoiMessage>
     void readYaml(const YAML::Node& node);
 };
 
+
+/// TRAITS
+template <>
+struct type<RoiMessage> {
+    static std::string name() {
+        return "ROI";
+    }
+};
+
 }
 }
 

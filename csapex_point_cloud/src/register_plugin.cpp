@@ -89,7 +89,9 @@ struct Sensor2Cloud
         bool& success_;
     };
 
-    static void ros2apex(const sensor_msgs::PointCloud2::ConstPtr &ros_msg, typename connection_types::PointCloudMessage::Ptr& out) {
+    static connection_types::PointCloudMessage::Ptr ros2apex(const sensor_msgs::PointCloud2::ConstPtr &ros_msg) {
+        connection_types::PointCloudMessage::Ptr out(new connection_types::PointCloudMessage(ros_msg->header.frame_id));
+
         bool success;
         try_convert converter(ros_msg, out, success);
         boost::mpl::for_each<connection_types::PointCloudPointTypes>( converter );
@@ -97,9 +99,14 @@ struct Sensor2Cloud
         if(!converter.success_) {
             std::cerr << "cannot convert message, type is not known" << std::endl;
         }
+
+        return out;
     }
-    static void apex2ros(const typename connection_types::PointCloudMessage::Ptr& apex_msg, sensor_msgs::PointCloud2::Ptr &out) {
+    static sensor_msgs::PointCloud2::Ptr apex2ros(const typename connection_types::PointCloudMessage::Ptr& apex_msg) {
+        sensor_msgs::PointCloud2::Ptr out(new sensor_msgs::PointCloud2);
         boost::apply_visitor (Export(out), apex_msg->value);
+        out->header.frame_id = apex_msg->frame_id;
+        return out;
     }
 };
 

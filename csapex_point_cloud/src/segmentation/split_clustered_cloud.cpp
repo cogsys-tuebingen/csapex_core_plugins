@@ -29,7 +29,7 @@ void SplitClusteredCloud::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<SplitClusteredCloud>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<SplitClusteredCloud>(this, msg), msg->value);
 }
 
 void SplitClusteredCloud::setup()
@@ -63,7 +63,7 @@ void SplitClusteredCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud
         cloud_cluster->is_dense = true;
         cloud_cluster->header = cloud->header;
 
-        PointCloudMessage::Ptr out(new PointCloudMessage);
+        PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
         out->value = cloud_cluster;
         out_msgs.push_back(out);
     }

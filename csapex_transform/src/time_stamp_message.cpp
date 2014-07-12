@@ -8,7 +8,7 @@ using namespace csapex;
 using namespace connection_types;
 
 TimeStampMessage::TimeStampMessage()
-    : MessageTemplate<ros::Time, TimeStampMessage> ("TimeStamp")
+    : MessageTemplate<ros::Time, TimeStampMessage> ("/")
 {}
 
 void TimeStampMessage::writeYaml(YAML::Emitter& yaml) const {

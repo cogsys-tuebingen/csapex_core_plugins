@@ -19,6 +19,14 @@ struct TimeStampMessage : public MessageTemplate<ros::Time, TimeStampMessage>
     void readYaml(const YAML::Node& node);
 };
 
+/// TRAITS
+template <>
+struct type<TimeStampMessage> {
+    static std::string name() {
+        return "TimeStamp";
+    }
+};
+
 }
 }
 

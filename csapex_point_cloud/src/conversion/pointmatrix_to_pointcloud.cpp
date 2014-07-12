@@ -52,7 +52,7 @@ PointmatrixToPointcloud::PointmatrixToPointcloud()
 void PointmatrixToPointcloud::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    PointCloudMessage::Ptr out(new PointCloudMessage);
+    PointCloudMessage::Ptr out(new PointCloudMessage(param<std::string>("frame")));
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
 
     implementation::convert(in->value, cloud);
@@ -64,4 +64,9 @@ void PointmatrixToPointcloud::setup()
 {
     input_  = modifier_->addInput<CvMatMessage>("Point Matrix");
     output_ = modifier_->addOutput<PointCloudMessage>("PointCloud");
+}
+
+void PointmatrixToPointcloud::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareText("frame", "/camera"));
 }

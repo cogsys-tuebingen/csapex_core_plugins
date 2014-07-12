@@ -39,7 +39,7 @@ void RadiusOutlierRemoval::setup()
 void RadiusOutlierRemoval::process()
 {
     PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
-    boost::apply_visitor (PointCloudMessage::Dispatch<RadiusOutlierRemoval>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<RadiusOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -72,7 +72,7 @@ void RadiusOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr clou
     if(cloud_out) {
         typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>);
         ror.filter(*cloud_filtered);
-        PointCloudMessage::Ptr out(new PointCloudMessage);
+        PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
         out->value = cloud_filtered;
         output_cloud_->publish(out);
     }

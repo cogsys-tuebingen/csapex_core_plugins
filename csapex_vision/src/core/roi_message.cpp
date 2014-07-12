@@ -9,7 +9,7 @@ using namespace connection_types;
 
 
 RoiMessage::RoiMessage()
-    : MessageTemplate<Roi, RoiMessage> ("Roi")
+    : MessageTemplate<Roi, RoiMessage> ("/")
 {}
 
 void RoiMessage::writeYaml(YAML::Emitter &yaml) const

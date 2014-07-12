@@ -19,6 +19,13 @@ struct LabeledScanMessage : public MessageTemplate<lib_laser_processing::Labeled
     void readYaml(const YAML::Node& node);
 };
 
+/// TRAITS
+template <>
+struct type<LabeledScanMessage> {
+    static std::string name() {
+        return "LabeledScan";
+    }
+};
 }
 }
 

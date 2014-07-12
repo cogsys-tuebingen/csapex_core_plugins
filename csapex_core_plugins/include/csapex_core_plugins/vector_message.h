@@ -14,7 +14,7 @@ struct VectorMessage : public Message
 {
     typedef boost::shared_ptr<VectorMessage> Ptr;
 
-    VectorMessage();
+    VectorMessage(const std::string& frame_id = "/");
 
     ConnectionType::Ptr getSubType() const;
 
@@ -22,12 +22,12 @@ struct VectorMessage : public Message
     template <typename T>
     static VectorMessage::Ptr make()
     {
-        return VectorMessage::Ptr (new VectorMessage(T::make()));
+        return VectorMessage::Ptr (new VectorMessage(T::make(), "/"));
     }
 
     static VectorMessage::Ptr make(ConnectionType::Ptr type)
     {
-        return VectorMessage::Ptr (new VectorMessage(type->toType()));
+        return VectorMessage::Ptr (new VectorMessage(type->toType(), "/"));
     }
 
     static VectorMessage::Ptr make();
@@ -42,7 +42,7 @@ struct VectorMessage : public Message
     void readYaml(const YAML::Node& node);
 
 private:
-    VectorMessage(ConnectionType::Ptr type);
+    VectorMessage(ConnectionType::Ptr type, const std::string& frame_id);
 
 public:
     std::vector<ConnectionType::Ptr> value;
@@ -72,7 +72,7 @@ private:
         }
 
         Implementation()
-            : Message(std::string("std::vector<") + type2nameWithoutNamespace(typeid(T)) + ">")
+            : Message(std::string("std::vector<") + type2nameWithoutNamespace(typeid(T)) + ">", "/")
         {
         }
 
@@ -166,13 +166,13 @@ public:
     template <typename T>
     static GenericVectorMessage::Ptr make(typename boost::enable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
     {
-        return GenericVectorMessage::Ptr(new GenericVectorMessage(MessageImplementation<T>::make()));
+        return GenericVectorMessage::Ptr(new GenericVectorMessage(MessageImplementation<T>::make(), "/"));
     }
 
     template <typename T>
     static GenericVectorMessage::Ptr make(typename boost::disable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
     {
-        return GenericVectorMessage::Ptr(new GenericVectorMessage(Implementation<T>::make()));
+        return GenericVectorMessage::Ptr(new GenericVectorMessage(Implementation<T>::make(), "/"));
     }
 
     template <typename T>
@@ -198,7 +198,7 @@ public:
     void readYaml(const YAML::Node& node);
 
 private:
-    GenericVectorMessage(ConnectionType::Ptr impl);
+    GenericVectorMessage(ConnectionType::Ptr impl, const std::string &frame_id);
 
 private:
     ConnectionType::Ptr impl;

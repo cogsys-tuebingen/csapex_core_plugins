@@ -94,7 +94,7 @@ void CoordinateSwapper::setup()
 void CoordinateSwapper::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
-    boost::apply_visitor (PointCloudMessage::Dispatch<CoordinateSwapper>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<CoordinateSwapper>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -105,7 +105,7 @@ void CoordinateSwapper::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 
     Swapper<PointT>::apply(cloud, cloud_swapped);
 
-    PointCloudMessage::Ptr out(new PointCloudMessage);
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
     out->value = cloud_swapped;
     output_->publish(out);
 }

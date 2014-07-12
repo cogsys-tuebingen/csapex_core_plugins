@@ -4,18 +4,18 @@
 using namespace csapex;
 using namespace connection_types;
 
-GenericVectorMessage::GenericVectorMessage(ConnectionType::Ptr impl)
-    : Message (impl->name()), impl(impl)
+GenericVectorMessage::GenericVectorMessage(ConnectionType::Ptr impl, const std::string& frame_id)
+    : Message (impl->name(), frame_id), impl(impl)
 {
 }
 
 ConnectionType::Ptr GenericVectorMessage::clone() {
-    Ptr new_msg(new GenericVectorMessage(impl->clone()));
+    Ptr new_msg(new GenericVectorMessage(impl->clone(), frame_id));
     return new_msg;
 }
 
 ConnectionType::Ptr GenericVectorMessage::toType() {
-    Ptr new_msg(new GenericVectorMessage(AnyMessage::make()));
+    Ptr new_msg(new GenericVectorMessage(AnyMessage::make(), frame_id));
     return new_msg;
 }
 
@@ -41,13 +41,13 @@ void GenericVectorMessage::readYaml(const YAML::Node& node) {
 
 
 
-VectorMessage::VectorMessage()
-    : Message ("std::vector<?>")
+VectorMessage::VectorMessage(const std::string& frame_id)
+    : Message ("std::vector<?>", frame_id)
 {
     type_ = AnyMessage::make();
 }
-VectorMessage::VectorMessage(ConnectionType::Ptr type)
-    : Message (std::string("std::vector<") + type->rawName()  + "::Ptr>")
+VectorMessage::VectorMessage(ConnectionType::Ptr type, const std::string& frame_id)
+    : Message (std::string("std::vector<") + type->rawName()  + "::Ptr>", frame_id)
 {
     type_ = type;
 }
@@ -58,12 +58,12 @@ ConnectionType::Ptr VectorMessage::getSubType() const
 }
 
 VectorMessage::Ptr VectorMessage::make(){
-    Ptr new_msg(new VectorMessage);
+    Ptr new_msg(new VectorMessage("/"));
     return new_msg;
 }
 
 ConnectionType::Ptr VectorMessage::clone() {
-    Ptr new_msg(new VectorMessage);
+    Ptr new_msg(new VectorMessage(frame_id));
     new_msg->value = value;
     return new_msg;
 }

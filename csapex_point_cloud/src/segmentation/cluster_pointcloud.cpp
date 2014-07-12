@@ -47,7 +47,7 @@ void ClusterPointcloud::process()
 {
     PointCloudMessage::Ptr msg(in_cloud_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointcloud>(this), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointcloud>(this, msg), msg->value);
 
     param_clusterTolerance_ = param<double>("ClusterTolerance");
     param_clusterMinSize_   = param<int>("MinClusterSize");

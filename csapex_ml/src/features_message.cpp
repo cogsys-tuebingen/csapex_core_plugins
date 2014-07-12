@@ -8,7 +8,7 @@ using namespace csapex;
 using namespace connection_types;
 
 FeaturesMessage::FeaturesMessage()
-    : MessageTemplate<std::vector<float>, FeaturesMessage> ("Features")
+    : MessageTemplate<std::vector<float>, FeaturesMessage> ("/")
 {}
 
 void FeaturesMessage::writeYaml(YAML::Emitter &yaml) const

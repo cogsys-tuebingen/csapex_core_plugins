@@ -32,7 +32,7 @@ void LabelClusteredPointCloud::process()
 
     cluster_indices = in_indices_->getMessage<GenericVectorMessage, pcl::PointIndices>();
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<LabelClusteredPointCloud>(this), cloud->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<LabelClusteredPointCloud>(this, cloud), cloud->value);
 }
 
 void LabelClusteredPointCloud::setup()
@@ -128,7 +128,7 @@ struct Label<pcl::PointXY> {
 template <class PointT>
 void LabelClusteredPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    PointCloudMessage::Ptr out(new PointCloudMessage);
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
 
     implementation::Label<PointT>::apply(cloud, out, *cluster_indices);
     output_->publish(out);

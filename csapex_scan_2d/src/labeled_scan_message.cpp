@@ -7,7 +7,7 @@ using namespace lib_laser_processing;
 
 
 LabeledScanMessage::LabeledScanMessage()
-    : MessageTemplate<LabeledScan, LabeledScanMessage> ("LabeledScan")
+    : MessageTemplate<LabeledScan, LabeledScanMessage> ("/")
 {}
 
 void LabeledScanMessage::writeYaml(YAML::Emitter &yaml) const

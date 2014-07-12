@@ -6,11 +6,11 @@ using namespace connection_types;
 
 
 CvMatMessage::CvMatMessage()
-    : MessageTemplate<cv::Mat, CvMatMessage> ("cv::Mat"), encoding(enc::bgr)
+    : MessageTemplate<cv::Mat, CvMatMessage> ("/camera"), encoding(enc::bgr)
 {}
 
 CvMatMessage::CvMatMessage(const Encoding& encoding)
-    : MessageTemplate<cv::Mat, CvMatMessage> ("cv::Mat"), encoding(encoding)
+    : MessageTemplate<cv::Mat, CvMatMessage> ("/camera"), encoding(encoding)
 {}
 
 ConnectionType::Ptr CvMatMessage::clone() {

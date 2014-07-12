@@ -99,7 +99,7 @@ public:
         return ros::message_traits::DataType<ROS>::value();
     }
     std::string apexType() {
-        return (APEX()).name();
+        return csapex::connection_types::type<APEX>::name();
     }
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, ConnectorOut* output) {
@@ -123,8 +123,7 @@ public:
         if(!apex_msg->isValid()) {
             throw std::runtime_error("trying to publish an empty message");
         }
-        typename ROS::Ptr ros_msg(new ROS);
-        Converter::apex2ros(apex_msg, ros_msg);
+        typename ROS::Ptr ros_msg = Converter::apex2ros(apex_msg);
         return pub.publish(ros_msg);
     }
 
@@ -132,8 +131,7 @@ public:
         if(!ros_msg) {
             throw std::runtime_error("received an empty ros message");
         }
-        typename APEX::Ptr apex_msg(new APEX);
-        Converter::ros2apex(ros_msg, apex_msg);
+        typename APEX::Ptr apex_msg = Converter::ros2apex(ros_msg);
         publish_apex(output, apex_msg);
     }
 };
