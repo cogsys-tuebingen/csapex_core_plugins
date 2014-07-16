@@ -18,7 +18,7 @@ ConnectionType::Ptr CvPyramidMessage::clone() {
     return new_msg;
 }
 
-void CvPyramidMessage::writeRaw(const std::string &path, const std::string &suffix)
+void CvPyramidMessage::writeRaw(const std::string &path, const std::string &suffix) const
 {
     for(unsigned int i = 0 ; i < value.size() ; ++i) {
         std::stringstream ss;

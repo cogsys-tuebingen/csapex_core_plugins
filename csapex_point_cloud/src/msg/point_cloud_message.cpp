@@ -58,15 +58,15 @@ struct Import  {
             return;
         }
 
-        YAML::Node points = node["points"];
-        apex_assert(points.Type() == YAML::NodeType::Sequence);
+        YAML::Node data = node["data"];
+        apex_assert(data.Type() == YAML::NodeType::Sequence);
 
         std::string file = "import_cloud.tmp";
         std::ofstream tmp(file.c_str());
 
-        for(std::size_t i = 0; i < points.size(); ++i) {
+        for(std::size_t i = 0; i < data.size(); ++i) {
             std::string line;
-            points[i] >> line;
+            data[i] >> line;
             tmp << line << '\n';
         }
         tmp.flush();
@@ -104,7 +104,7 @@ struct Export : public boost::static_visitor<void> {
         std::ifstream fi(file.c_str());
         std::string line;
 
-        yaml << YAML::Key << "points"  << YAML::Value << YAML::BeginSeq;
+        yaml << YAML::Key << "data"  << YAML::Value << YAML::BeginSeq;
         while(std::getline(fi, line)) {
             yaml << line;
         }
@@ -122,7 +122,7 @@ void PointCloudMessage::readYaml(const YAML::Node& node) {
     if(!YAML::exists(node, "point_type")) {
         return;
     }
-    if(!YAML::exists(node, "points")) {
+    if(!YAML::exists(node, "data")) {
         return;
     }
 

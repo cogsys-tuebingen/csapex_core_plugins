@@ -26,7 +26,7 @@ public:
     CvMatMessage(const Encoding& encoding);
     virtual ConnectionType::Ptr clone();
 
-    virtual void writeRaw(const std::string &file, const std::string &suffix);
+    virtual void writeRaw(const std::string &file, const std::string &suffix) const;
 
     const Encoding &getEncoding() const;
     void setEncoding(const Encoding& e);
