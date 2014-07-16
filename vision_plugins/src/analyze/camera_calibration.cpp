@@ -76,7 +76,7 @@ void vision_plugins::CameraCalibration::setupParameters()
             ("circles grid", (int) utils_cv::CameraCalibration::CIRCLES_GRID)
             ("asym. circles grid", (int) utils_cv::CameraCalibration::ASYMMETRIC_CIRCLES_GRID);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types),
+    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) utils_cv::CameraCalibration::CHESSBOARD),
                  boost::bind(&CameraCalibration::updateCalibration, this));
 
     std::map<std::string, std::pair<int, bool> > corner_flags = boost::assign::map_list_of

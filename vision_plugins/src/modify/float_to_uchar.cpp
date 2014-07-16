@@ -69,7 +69,7 @@ void FloatToUchar::setupParameters()
             ("ABSOLUTE", ABSOLUTE)
             ("SCALE",    SCALE);
 
-    addParameter(param::ParameterFactory::declareParameterSet("type", types),
+    addParameter(param::ParameterFactory::declareParameterSet("type", types, (int) RELATIVE),
                  boost::bind(&FloatToUchar::update, this));
 }
 

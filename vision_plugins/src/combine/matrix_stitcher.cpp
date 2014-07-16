@@ -107,6 +107,6 @@ void MatrixStitcher::setupParameters()
     std::map<std::string, int> modes = boost::assign::map_list_of
             ("HORIZONTAL", HORIZONTAL)
             ("VERTICAL", VERTICAL);
-    addParameter(param::ParameterFactory::declareParameterSet("mode", modes));
+    addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) HORIZONTAL));
     addParameter(param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
 }

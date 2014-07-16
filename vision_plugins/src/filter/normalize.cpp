@@ -60,7 +60,7 @@ void Normalize::setupParameters()
             ("L1",     (int) cv::NORM_L1)
             ("INF",    (int) cv::NORM_INF)
             ("MINMAX", (int) cv::NORM_MINMAX);
-    addParameter(param::ParameterFactory::declareParameterSet("norm", norms));
+    addParameter(param::ParameterFactory::declareParameterSet("norm", norms, (int) cv::NORM_L2));
     addParameter(param::ParameterFactory::declareRange("lower bound scale", -255.0, 255.0, 1.0, 0.1));
     addParameter(param::ParameterFactory::declareRange("upper bound scale", -255.0, 255.0, 0.0, 0.1));
 }

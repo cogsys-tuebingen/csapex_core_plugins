@@ -65,14 +65,14 @@ void EigenValsAndVecs::setupParameters()
             ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
             ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("border type", border_types),
+    addParameter(param::ParameterFactory::declareParameterSet<int>("border type", border_types, (int) cv::BORDER_DEFAULT),
                  boost::bind(&EigenValsAndVecs::update, this));
 
     std::map<std::string, int> types = boost::assign::map_list_of
             ("MIN_EIGEN_VAL", (int) MIN_EIGEN_VAL)
             ("EIGEN_VALS_AND_VECS", (int) EIGEN_VALS_AND_VECS);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("eigen type", types),
+    addParameter(param::ParameterFactory::declareParameterSet<int>("eigen type", types, (int) MIN_EIGEN_VAL),
                  boost::bind(&EigenValsAndVecs::update, this));
 }
 

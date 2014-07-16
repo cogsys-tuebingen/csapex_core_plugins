@@ -43,8 +43,8 @@ void ColorConvert::setupParameters()
             ("HSV", (int) HSV)
             ("MONO", (int) MONO);
 
-    addParameter(param::ParameterFactory::declareParameterSet("input", encodings));
-    addParameter(param::ParameterFactory::declareParameterSet("output", encodings));
+    addParameter(param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
+    addParameter(param::ParameterFactory::declareParameterSet("output", encodings, (int) MONO));
 
     cs_pair_to_operation_.insert(csiPair(csPair(RGB, BGR), (int) CV_RGB2BGR));
     cs_pair_to_operation_.insert(csiPair(csPair(BGR, RGB), (int) CV_BGR2RGB));

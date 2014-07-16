@@ -39,7 +39,8 @@ void ColorAdjustment::setupParameters()
     addParameter(param::ParameterFactory::declareBool("normalize", false));
     addParameter(param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
 
-    addParameter(param::ParameterFactory::declareParameterSet("preset", presets), boost::bind(&ColorAdjustment::setPreset, this));
+    addParameter(param::ParameterFactory::declareParameterSet("preset", presets, (int) HSV),
+                 boost::bind(&ColorAdjustment::setPreset, this));
 }
 
 namespace {

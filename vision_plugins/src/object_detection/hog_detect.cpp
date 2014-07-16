@@ -38,14 +38,14 @@ void HOGDetect::setupParameters()
     std::map<std::string, int> det_types = boost::assign::map_list_of
             ("single scale", SINGLE_SCALE)
             ("multi scale", MULTI_SCALE);
-    addParameter(param::ParameterFactory::declareParameterSet("detection type", det_types));
+    addParameter(param::ParameterFactory::declareParameterSet("detection type", det_types, (int) SINGLE_SCALE));
 
     std::map<std::string, int> svm_types = boost::assign::map_list_of
             ("default", DEFAULT)
             ("custom",  CUSTOM)
             ("daimler", DAIMLER);
 
-    param::Parameter::Ptr svm_param = param::ParameterFactory::declareParameterSet("svm type", svm_types);
+    param::Parameter::Ptr svm_param = param::ParameterFactory::declareParameterSet("svm type", svm_types, (int) DEFAULT);
     addParameter(svm_param);
 
 

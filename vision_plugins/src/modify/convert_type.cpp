@@ -110,7 +110,7 @@ void ConvertType::setupParameters()
             ("32 Bit floating", CV_32F)
             ("64 Bit floating", CV_64F);
 
-    addParameter(param::ParameterFactory::declareParameterSet("convert to", types),
+    addParameter(param::ParameterFactory::declareParameterSet("convert to", types, CV_8U),
                  boost::bind(&ConvertType::update, this));
 
     addParameter(param::ParameterFactory::declareBool("normalize", false),

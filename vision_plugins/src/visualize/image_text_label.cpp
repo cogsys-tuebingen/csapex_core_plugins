@@ -39,7 +39,7 @@ void ImageTextLabel::setupParameters()
             ("BOTTOM_RIGHT", BOTTOM_RIGHT)
             ("TOP_LEFT", TOP_LEFT)
             ("TOP_RIGHT", TOP_RIGHT);
-    addParameter(param::ParameterFactory::declareParameterSet("position", positions));
+    addParameter(param::ParameterFactory::declareParameterSet("position", positions, (int) TOP_LEFT));
     addParameter(param::ParameterFactory::declareColorParameter("color/label", 255, 255, 255));
     addParameter(param::ParameterFactory::declareColorParameter("color/box", 0, 0, 0));
     addParameter(param::ParameterFactory::declareBool("boxed", false));

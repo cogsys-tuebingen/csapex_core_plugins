@@ -60,7 +60,7 @@ void CornerHarris::setupParameters()
             ("BORDER_REFLECT101", (int) cv::BORDER_REFLECT101)
             ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
             ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("border type", types),
+    addParameter(param::ParameterFactory::declareParameterSet<int>("border type", types, (int)  cv::BORDER_DEFAULT),
                  boost::bind(&CornerHarris::update, this));
 }
 

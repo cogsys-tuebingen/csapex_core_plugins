@@ -44,7 +44,7 @@ void Flip::setupParameters()
             ("v", 0)
             ("h", 1)
             ("v+h", -1);
-    addParameter(param::ParameterFactory::declareParameterSet("type", types),
+    addParameter(param::ParameterFactory::declareParameterSet("type", types, -1),
                  boost::bind(&Flip::update, this));
 }
 

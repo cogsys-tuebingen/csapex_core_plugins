@@ -45,7 +45,7 @@ void Scharr::setupParameters()
             ("DX1", DX1)
             ("DY1", DY1);
 
-    addParameter(param::ParameterFactory::declareParameterSet("derive", types),
+    addParameter(param::ParameterFactory::declareParameterSet("derive", types, (int) DX1),
                  boost::bind(&Scharr::update, this));
 }
 

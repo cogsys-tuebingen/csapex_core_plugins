@@ -81,5 +81,5 @@ void SetOperation::setupParameters()
             ("Intersection", (int) INTERSECTION)
             ("Union", (int) UNION);
 
-    addParameter(param::ParameterFactory::declareParameterSet("operation", methods));
+    addParameter(param::ParameterFactory::declareParameterSet("operation", methods, (int) UNION));
 }

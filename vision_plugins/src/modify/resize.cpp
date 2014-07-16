@@ -58,7 +58,7 @@ void Resize::setupParameters()
             ("area", (int) CV_INTER_AREA)
             ("cubic", (int) CV_INTER_CUBIC)
             ("lanczos4", (int) CV_INTER_LANCZOS4);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes), boost::bind(&Resize::update, this));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), boost::bind(&Resize::update, this));
 }
 
 void Resize::update()

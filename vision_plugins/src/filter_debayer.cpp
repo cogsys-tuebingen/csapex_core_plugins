@@ -25,7 +25,7 @@ Debayer::Debayer()
             ("BayerGR2RGB", (int) CV_BayerGR2RGB)
             ("NNRG2RGB", 667);
 
-    addParameter(param::ParameterFactory::declareParameterSet("method", methods));
+    addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
 }
 
 QIcon Debayer::getIcon() const

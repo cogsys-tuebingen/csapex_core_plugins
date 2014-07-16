@@ -21,7 +21,7 @@ LocalPatterns::LocalPatterns()
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("LBP", (int) LBP)
             ("LTP", (int) LTP);
-    param::Parameter::Ptr method = param::ParameterFactory::declareParameterSet("method", methods);
+    param::Parameter::Ptr method = param::ParameterFactory::declareParameterSet("method", methods, (int) LBP);
     addParameter(method);
 
 
