@@ -88,6 +88,8 @@ add_library(csapex_vision_plugin
     src/plugin/image_provider_set.cpp
     src/plugin/hough_circle.cpp
     src/plugin/vectorize_pyramid.cpp
+#    src/plugin/image_roi.cpp
+#    src/plugin/image_roi_adapter.cpp
 
     ${QT_MOC_PLUG}
     ${QT_RESOURCES}
