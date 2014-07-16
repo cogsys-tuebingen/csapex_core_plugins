@@ -41,13 +41,18 @@ CloudRenderer::CloudRenderer()
     addParameter(param::ParameterFactory::declareColorParameter("color/grid", 0, 0, 0), refresh);
     addParameter(param::ParameterFactory::declareColorParameter("color/gradient/start", 0, 255, 0), refresh);
     addParameter(param::ParameterFactory::declareColorParameter("color/gradient/end", 0, 0, 255), refresh);
+    addParameter(param::ParameterFactory::declareBool("color/rainbow",
+                                                      param::ParameterDescription("Sample from a gradient of rainbow colors"),
+                                                      false),
+                 refresh);
     addParameter(param::ParameterFactory::declareBool("color/force gradient", false), refresh);
 
     std::vector<std::string> field;
     field.push_back("x");
     field.push_back("y");
     field.push_back("z");
-    addParameter(param::ParameterFactory::declareParameterStringSet("color/field", field), refresh);
+    field.push_back("i");
+    addParameter(param::ParameterFactory::declareParameterStringSet("color/field", field, "x"), refresh);
 
     addParameter(param::ParameterFactory::declareBool("show axes", false), refresh);
 
