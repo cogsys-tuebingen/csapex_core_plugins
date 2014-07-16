@@ -32,7 +32,7 @@ ConditionalOutlierRemoval::ConditionalOutlierRemoval() :
     std::map<std::string, int> types = boost::assign::map_list_of
             ("AND", (int) AND)
             ("OR", (int) OR);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types), boost::bind(&ConditionalOutlierRemoval::update, this));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) AND), boost::bind(&ConditionalOutlierRemoval::update, this));
 
     addParameter(param::ParameterFactory::declareBool ("keep organized", keep_organized_),
                  boost::bind(&ConditionalOutlierRemoval::update, this));

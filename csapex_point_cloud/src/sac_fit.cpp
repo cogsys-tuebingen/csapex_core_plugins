@@ -39,7 +39,7 @@ SacFit::SacFit()
             ("fit cone", (int) pcl::SACMODEL_CONE);
 
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("models", models),
+    addParameter(param::ParameterFactory::declareParameterSet<int>("models", models, (int) pcl::SACMODEL_PLANE),
                  boost::bind(&SacFit::setParameters, this));
 
     cluster_indices_.reset(new std::vector<pcl::PointIndices>);
