@@ -32,6 +32,7 @@ private:
 protected:
     ConnectorIn*  input_;
     ConnectorOut* output_;
+    cv::Size      last_mat_size_;
 
     connection_types::RoiMessage::Ptr result_;
 

@@ -17,7 +17,8 @@ CSAPEX_REGISTER_CLASS(csapex::ImageRoi, csapex::Node)
 using namespace csapex;
 using namespace connection_types;
 
-ImageRoi::ImageRoi()
+ImageRoi::ImageRoi() :
+    last_mat_size_(-1, -1)
 {
     addTag(Tag::get("General"));
     addTag(Tag::get("Vision"));
@@ -36,11 +37,12 @@ QIcon ImageRoi::getIcon() const
 void ImageRoi::setupParameters()
 {
     addParameter(param::ParameterFactory::declareTrigger("submit", param::ParameterDescription("Continue with the current labeling")),
-                                                         boost::bind(&ImageRoi::submit, this));
+                 boost::bind(&ImageRoi::submit, this));
 
-    addParameter(param::ParameterFactory::declareRange("roi",
-                                                       param::ParameterDescription("The label to be assigned to the selected points"),
-                                                       0, 9, 0, 1));
+    addParameter(param::ParameterFactory::declareRange("roi width", param::ParameterDescription("Set the width of the roi."),
+                                                       0, 0, 0, 1));
+    addParameter(param::ParameterFactory::declareRange("roi height", param::ParameterDescription("Set the width of the roi."),
+                                                       0, 0, 0, 1));
 }
 
 void ImageRoi::setup()
@@ -61,11 +63,29 @@ void ImageRoi::process()
     result_.reset();
 
     CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
-    display_request(&in->value);
+    int in_rows = in->value.rows;
+    int in_cols = in->value.cols;
 
-    waitForView();
+    if(in_rows != last_mat_size_.height ||
+            in_cols != last_mat_size_.width) {
+        param::RangeParameter::Ptr width =
+                getParameter<param::RangeParameter>("roi width");
+        width->setInterval<int>(0, in_cols);
+        width->triggerChange();
 
-    output_->publish(result_);
+        param::RangeParameter::Ptr height =
+                getParameter<param::RangeParameter>("roi height");
+        height->setInterval<int>(0, in_rows);
+        height->triggerChange();
+
+        last_mat_size_.height = in->value.rows;
+        last_mat_size_.width  = in->value.cols;
+    }
+    //    display_request(&in->value);
+
+    //    waitForView();
+
+    // output_->publish(result_);
 }
 
 

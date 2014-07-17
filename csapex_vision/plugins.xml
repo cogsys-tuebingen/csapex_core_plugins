@@ -18,6 +18,13 @@
   <description></description>
 </class>
 
+<class type="csapex::ImageRoi" base_class_type="csapex::Node">
+  <description></description>
+</class>
+<class type="csapex::ImageRoiAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+
 
 <class type="csapex::ImagePadding" base_class_type="csapex::Node">
   <description>Adds padding pixels to an image</description>
