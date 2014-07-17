@@ -18,7 +18,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
+CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
 
 ImageRoiAdapter::ImageRoiAdapter(ImageRoi *node, WidgetController* widget_ctrl)
@@ -34,35 +34,6 @@ ImageRoiAdapter::ImageRoiAdapter(ImageRoi *node, WidgetController* widget_ctrl)
     node->submit_request.connect(boost::bind(&ImageRoiAdapter::submitRequest, this));
 }
 
-void ImageRoiAdapter::labelSelected()
-{
-    labelSelected(label_);
-    view_->scene()->clearSelection();
-}
-
-void ImageRoiAdapter::labelSelected(int label)
-{
-    QBrush brush(color::fromCount(label), Qt::SolidPattern);
-    QPen pen(color::fromCount(label));
-
-    Q_FOREACH(QGraphicsItem* item, view_->scene()->selectedItems()) {
-        result_->value.labels[item->data(0).toUInt()] = label;
-
-        QGraphicsEllipseItem* ellipse = dynamic_cast<QGraphicsEllipseItem*> (item);
-        if(ellipse) {
-            ellipse->setPen(pen);
-            ellipse->setBrush(brush);
-        }
-    }
-    view_->update();
-}
-
-void ImageRoiAdapter::setLabel(int label)
-{
-    label_ = label;
-    node_->getParameter("label")->set(label_);
-}
-
 bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
 {
     QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
@@ -72,12 +43,6 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
         QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e);
 
         int key = ke->key();
-
-        if(Qt::Key_0 <= key && key <= Qt::Key_9) {
-            setLabel(ke->key() - Qt::Key_0);
-        } else if(key == Qt::Key_Escape) {
-            setLabel(0);
-        }
 
         break;
     }
@@ -94,7 +59,6 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
             e->accept();
         }
 
-        labelSelected();
         return true;
     }
     case QEvent::GraphicsSceneMouseMove:
@@ -146,7 +110,7 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
 
     layout->addWidget(view_);
 
-    connect(this, SIGNAL(displayRequest(lib_laser_processing::Scan* )), this, SLOT(display(lib_laser_processing::Scan* )));
+    connect(this, SIGNAL(displayRequest(cv::Mat* )), this, SLOT(display(cv::Mat* )));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
 
     DefaultNodeAdapter::setupUi(layout);
@@ -167,9 +131,9 @@ void ImageRoiAdapter::setState(Memento::Ptr memento)
     view_->setFixedSize(QSize(state.width, state.height));
 }
 
-void ImageRoiAdapter::display(lib_laser_processing::Scan* scan)
+void ImageRoiAdapter::display(cv::Mat *scan)
 {
-    result_.reset(new connection_types::LabeledScanMessage);
+    result_.reset(new connection_types::RoiMessage);
 
     QGraphicsScene* scene = view_->scene();
 
@@ -180,19 +144,16 @@ void ImageRoiAdapter::display(lib_laser_processing::Scan* scan)
 
     float dim = 0.05f;
 
-    result_->value.rays = scan->rays;
-    result_->value.labels.resize(scan->rays.size(), 0);
-
     QBrush brush(color::fromCount(0), Qt::SolidPattern);
-    for(std::size_t i = 0, n = scan->rays.size(); i < n; ++i) {
-        const lib_laser_processing::LaserBeam& beam = scan->rays[i];
-        QGraphicsEllipseItem* item = scene->addEllipse(beam.pos(0), beam.pos(1), dim, dim, QPen(brush.color()), brush);
+//    for(std::size_t i = 0, n = scan->rays.size(); i < n; ++i) {
+//        const lib_laser_processing::LaserBeam& beam = scan->rays[i];
+//        QGraphicsEllipseItem* item = scene->addEllipse(beam.pos(0), beam.pos(1), dim, dim, QPen(brush.color()), brush);
 
-        item->setData(0, QVariant::fromValue(i));
+//        item->setData(0, QVariant::fromValue(i));
 
-        item->setFlag(QGraphicsItem::ItemIsSelectable);
-        item->setFlag(QGraphicsItem::ItemIsFocusable);
-    }
+//        item->setFlag(QGraphicsItem::ItemIsSelectable);
+//        item->setFlag(QGraphicsItem::ItemIsFocusable);
+//    }
 
 
     scene->setSceneRect(rect);

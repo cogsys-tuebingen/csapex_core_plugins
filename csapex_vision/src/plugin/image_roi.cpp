@@ -5,8 +5,6 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <utils_qt/QtCvImageConverter.h>
-#include <csapex_scan_2d/scan_message.h>
-#include <csapex_scan_2d/labeled_scan_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
@@ -71,7 +69,7 @@ void ImageRoi::process()
 }
 
 
-void ImageRoi::setResult(connection_types::LabeledScanMessage::Ptr result)
+void ImageRoi::setResult(connection_types::RoiMessage::Ptr result)
 {
     result_ = result;
     done();

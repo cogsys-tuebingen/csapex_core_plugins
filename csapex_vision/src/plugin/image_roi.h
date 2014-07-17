@@ -1,5 +1,5 @@
-#ifndef SCAN_LABELER_H
-#define SCAN_LABELER_H
+#ifndef ROI_IMAGE_H
+#define ROI_IMAGE_H
 
 /// PROJECT
 #include <csapex_core_plugins/interactive_node.h>
@@ -42,4 +42,4 @@ public:
 
 }
 
-#endif // SCAN_LABELER_H
+#endif // ROI_IMAGE_H
