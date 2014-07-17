@@ -40,9 +40,9 @@ void ImageRoi::setupParameters()
                  boost::bind(&ImageRoi::submit, this));
 
     addParameter(param::ParameterFactory::declareRange("roi width", param::ParameterDescription("Set the width of the roi."),
-                                                       0, 0, 0, 1));
+                                                       0, 640, 640, 1));
     addParameter(param::ParameterFactory::declareRange("roi height", param::ParameterDescription("Set the width of the roi."),
-                                                       0, 0, 0, 1));
+                                                       0, 480, 480, 1));
 }
 
 void ImageRoi::setup()
