@@ -124,6 +124,8 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
     sub->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
     layout_->addLayout(sub);
 
+    rect_ = view_->scene()->addRect(0,0,0,0,QPen(Qt::red));
+
     connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>)), this, SLOT(display(QSharedPointer<QImage>)));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
 
@@ -147,17 +149,25 @@ void ImageRoiAdapter::setState(Memento::Ptr memento)
 
 void ImageRoiAdapter::display(QSharedPointer<QImage> img)
 {
-    result_.reset(new connection_types::RoiMessage);
-    view_->scene()->clear();
     QPixmap pixmap = QPixmap::fromImage(*img);
-
     if(last_size_.width() != img->width() ||
             last_size_.height() != img->height()) {
         view_->scene()->setSceneRect(img->rect());
         view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
+        result_.setX(0);
+        result_.setY(0);
     }
 
-    view_->scene()->addPixmap(pixmap);
+    result_.setWidth(wrapped_->param<int>("roi width"));
+    result_.setHeight(wrapped_->param<int>("roi height"));
+
+    if(pixmap_ != NULL)
+        view_->scene()->removeItem(pixmap_);
+
+    pixmap_ = view_->scene()->addPixmap(pixmap);
+    rect_->setRect(result_);
+    rect_->setZValue(pixmap_->zValue() + 0.1);
+
     view_->scene()->update();
 
     last_size_ = img->size();
@@ -176,5 +186,8 @@ void ImageRoiAdapter::fitInView()
 
 void ImageRoiAdapter::submit()
 {
-    wrapped_->setResult(result_);
+    connection_types::RoiMessage::Ptr result_msg(new connection_types::RoiMessage);
+
+    wrapped_->setResult(result_msg);
+
 }

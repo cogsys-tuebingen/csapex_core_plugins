@@ -81,12 +81,14 @@ void ImageRoi::process()
             in_cols != last_mat_size_.width) {
         param::RangeParameter::Ptr width =
                 getParameter<param::RangeParameter>("roi width");
-        width->setInterval<int>(0, in_cols);
+        width->setInterval<int>(1, in_cols);
+        width->set(in_cols);
         width->triggerChange();
 
         param::RangeParameter::Ptr height =
                 getParameter<param::RangeParameter>("roi height");
-        height->setInterval<int>(0, in_rows);
+        height->setInterval<int>(1, in_rows);
+        height->set(in_rows);
         height->triggerChange();
 
         last_mat_size_.height = in->value.rows;

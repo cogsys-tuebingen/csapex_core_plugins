@@ -58,12 +58,13 @@ protected:
     ImageRoi *wrapped_;
 
 private:
-    connection_types::RoiMessage::Ptr result_;
+    QRectF               result_;
 
     QSize                last_size_;
     State                state;
 
-    QGraphicsPixmapItem* pixmap_;
+    QGraphicsPixmapItem *pixmap_;
+    QGraphicsRectItem   *rect_;
 
     QGraphicsView*       view_;
 
