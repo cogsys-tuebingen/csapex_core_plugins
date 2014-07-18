@@ -20,26 +20,26 @@ public:
     ImageRoiAdapter(ImageRoi *node, WidgetController *widget_ctrl);
 
     virtual Memento::Ptr getState() const;
-    virtual void setState(Memento::Ptr memento);
+    virtual void         setState(Memento::Ptr memento);
 
-    virtual void setupUi(QBoxLayout* layout);
+    virtual void         setupUi(QBoxLayout* layout);
 
 public Q_SLOTS:
-    void display(cv::Mat* img);
+    void display(QSharedPointer<QImage> img);
+    void fitInView();
     void submit();
 
+
 Q_SIGNALS:
-    void displayRequest(cv::Mat* img);
+    void displayRequest(QSharedPointer<QImage> img);
     void submitRequest();
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);
 
-    ImageRoi* wrapped_;
-
     struct State : public Memento {
-        int width;
-        int height;
+        int    width;
+        int    height;
 
         State()
             : width(300), height(300)
@@ -50,28 +50,28 @@ protected:
             out << YAML::Key << "height" << YAML::Value << height;
         }
         virtual void readYaml(const YAML::Node& node) {
-            node["width"] >> width;
+            node["width"]  >> width;
             node["height"] >> height;
         }
     };
 
+    ImageRoi *wrapped_;
 
 private:
     connection_types::RoiMessage::Ptr result_;
 
-    QSize last_size_;
-    State state;
+    QSize                last_size_;
+    State                state;
 
     QGraphicsPixmapItem* pixmap_;
 
-    QGraphicsView* view_;
+    QGraphicsView*       view_;
 
-    QImage          empty;
-    QPainter        painter;
+    QImage               empty;
+    QPainter             painter;
 
-    int             label_;
-    bool            down_;
-    QPoint          last_pos_;
+    bool                 down_;
+    QPoint               last_pos_;
 };
 
 }

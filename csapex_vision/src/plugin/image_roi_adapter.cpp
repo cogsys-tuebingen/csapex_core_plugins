@@ -22,7 +22,13 @@ CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
 
 ImageRoiAdapter::ImageRoiAdapter(ImageRoi *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(node, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), label_(0), down_(false)
+    : DefaultNodeAdapter(node, widget_ctrl),
+      wrapped_(node),
+      pixmap_(NULL),
+      view_(new QGraphicsView),
+      empty(32, 32, QImage::Format_RGB16),
+      painter(&empty),
+      down_(false)
 {
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
@@ -43,7 +49,6 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
         QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e);
 
         int key = ke->key();
-
         break;
     }
     case QEvent::GraphicsSceneMousePress:
@@ -107,10 +112,19 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
     view_->setMouseTracking(true);
     view_->setAcceptDrops(false);
     view_->setDragMode(QGraphicsView::RubberBandDrag);
+    view_->scene()->installEventFilter(this);
 
     layout->addWidget(view_);
 
-    connect(this, SIGNAL(displayRequest(cv::Mat* )), this, SLOT(display(cv::Mat* )));
+    QHBoxLayout* sub = new QHBoxLayout;
+    QPushButton* fit = new QPushButton("fit size");
+    sub->addWidget(fit, 0,  Qt::AlignLeft);
+    QObject::connect(fit, SIGNAL(clicked()), this, SLOT(fitInView()));
+
+    sub->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    layout_->addLayout(sub);
+
+    connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>)), this, SLOT(display(QSharedPointer<QImage>)));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
 
     DefaultNodeAdapter::setupUi(layout);
@@ -131,34 +145,33 @@ void ImageRoiAdapter::setState(Memento::Ptr memento)
     view_->setFixedSize(QSize(state.width, state.height));
 }
 
-void ImageRoiAdapter::display(cv::Mat *scan)
+void ImageRoiAdapter::display(QSharedPointer<QImage> img)
 {
     result_.reset(new connection_types::RoiMessage);
+    view_->scene()->clear();
+    QPixmap pixmap = QPixmap::fromImage(*img);
 
-    QGraphicsScene* scene = view_->scene();
+    if(last_size_.width() != img->width() ||
+            last_size_.height() != img->height()) {
+        view_->scene()->setSceneRect(img->rect());
+        view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
+    }
 
-    scene->clear();
+    view_->scene()->addPixmap(pixmap);
+    view_->scene()->update();
 
-    QRectF rect(-5.0, -5.0, 10.0, 10.0);
+    last_size_ = img->size();
+}
 
-
-    float dim = 0.05f;
-
-    QBrush brush(color::fromCount(0), Qt::SolidPattern);
-//    for(std::size_t i = 0, n = scan->rays.size(); i < n; ++i) {
-//        const lib_laser_processing::LaserBeam& beam = scan->rays[i];
-//        QGraphicsEllipseItem* item = scene->addEllipse(beam.pos(0), beam.pos(1), dim, dim, QPen(brush.color()), brush);
-
-//        item->setData(0, QVariant::fromValue(i));
-
-//        item->setFlag(QGraphicsItem::ItemIsSelectable);
-//        item->setFlag(QGraphicsItem::ItemIsFocusable);
-//    }
-
-
-    scene->setSceneRect(rect);
-    view_->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
-    scene->update();
+void ImageRoiAdapter::fitInView()
+{
+    if(last_size_.isNull()) {
+        return;
+    }
+    state.width  = last_size_.width();
+    state.height = last_size_.height();
+    view_->setFixedSize(QSize(state.width, state.height));
+    view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void ImageRoiAdapter::submit()

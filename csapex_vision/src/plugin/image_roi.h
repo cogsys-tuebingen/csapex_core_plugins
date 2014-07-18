@@ -37,8 +37,8 @@ protected:
     connection_types::RoiMessage::Ptr result_;
 
 public:
-    boost::signals2::signal<void(cv::Mat* )> display_request;
-    boost::signals2::signal<void()>          submit_request;
+    boost::signals2::signal<void(QSharedPointer<QImage>)> display_request;
+    boost::signals2::signal<void()>                       submit_request;
 };
 
 }

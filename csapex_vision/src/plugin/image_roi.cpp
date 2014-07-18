@@ -36,8 +36,16 @@ QIcon ImageRoi::getIcon() const
 
 void ImageRoi::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareTrigger("submit", param::ParameterDescription("Continue with the current labeling")),
+    param::Parameter::Ptr method = param::ParameterFactory::declareBool("step",
+                                                                        param::ParameterDescription("Step by step submission."),
+                                                                        true);
+    addParameter(method,
                  boost::bind(&ImageRoi::submit, this));
+
+    boost::function<bool()> k_cond = (boost::bind(&param::Parameter::as<bool>, method.get()));
+    addConditionalParameter(param::ParameterFactory::declareTrigger("submit"),
+                            k_cond,
+                            boost::bind(&ImageRoi::submit, this));
 
     addParameter(param::ParameterFactory::declareRange("roi width", param::ParameterDescription("Set the width of the roi."),
                                                        0, 640, 640, 1));
@@ -47,7 +55,7 @@ void ImageRoi::setupParameters()
 
 void ImageRoi::setup()
 {
-    input_  = modifier_->addInput<CvMatMessage>("Image");
+    input_  = modifier_->addInput<CvMatMessage>("Image", false, true);
     output_ = modifier_->addOutput<RoiMessage>("Roi");
 }
 
@@ -63,6 +71,9 @@ void ImageRoi::process()
     result_.reset();
 
     CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
+    if(in->value.empty())
+        return;
+
     int in_rows = in->value.rows;
     int in_cols = in->value.cols;
 
@@ -81,9 +92,15 @@ void ImageRoi::process()
         last_mat_size_.height = in->value.rows;
         last_mat_size_.width  = in->value.cols;
     }
-    //    display_request(&in->value);
 
-    //    waitForView();
+    QSharedPointer<QImage> img =
+            QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(in->value);
+
+    display_request(img);
+
+    bool wait = param<bool>("step");
+    if(wait)
+        waitForView();
 
     // output_->publish(result_);
 }
