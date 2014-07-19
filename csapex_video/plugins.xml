@@ -1,0 +1,5 @@
+<library path="libcsapex_video_plugin">
+<class type="csapex::ImageCollage" base_class_type="csapex::Node">
+  <description>Composes two images</description>
+</class>
+</library>
