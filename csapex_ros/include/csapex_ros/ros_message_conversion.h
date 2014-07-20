@@ -6,7 +6,7 @@
 #include <csapex/model/message.h>
 
 /// PROJECT
-#include <utils_plugin/singleton.hpp>
+#include <csapex/utility/singleton.hpp>
 
 /// SYSTEM
 #include <ros/master.h>
