@@ -17,6 +17,9 @@
   <class type="csapex::ColorAdjustment" base_class_type="csapex::Node">
     <description>Lightness adjustment and normalization</description>
   </class>
+  <class type="csapex::GammaCorrection" base_class_type="csapex::Node">
+    <description>Gamma Correction using power low and logarithm transformations</description>
+  </class>
   <class type="vision_plugins::PerspectiveTransform" base_class_type="csapex::Node">
     <description>Transforms an image using a perspective transformation</description>
   </class>
