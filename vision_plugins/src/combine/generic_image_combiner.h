@@ -75,6 +75,42 @@ struct FunctionExpression : AbstractExpression
         if(op_ == "abs"){
             return cv::abs(args_[0].evaluate());
 
+        } else if(op_ == "log"){
+            cv::Mat r;
+            cv::log(args_[0].evaluate(), r);
+            return r;
+
+        } else if(op_ == "exp"){
+            cv::Mat r;
+            cv::exp(args_[0].evaluate(), r);
+            return r;
+
+        } else if(op_ == "pow") {
+            if(args_.size() != 2) {
+                throw std::runtime_error(std::string("'pow'' needs 2 parameters"));
+            }
+
+            cv::Mat first = args_[0].evaluate();
+            cv::Mat second = args_[1].evaluate();
+            if(second.rows != 1 || second.cols != 1) {
+                throw std::runtime_error(std::string("'pow'' needs its second parameter to be a number"));
+            }
+
+            double power = second.at<double>(0,0);
+
+            cv::Mat r;
+            cv::pow(first, power, r);
+            return r;
+
+        } else if(op_ == "sqrt"){
+            if(args_.size() != 1) {
+                throw std::runtime_error(std::string("'sqrt'' needs 1 parameter"));
+            }
+
+            cv::Mat r;
+            cv::sqrt(args_[0].evaluate(), r);
+            return r;
+
         } else if(op_ == "min") {
             if(args_.size() == 1) {
                 return args_[0].evaluate();
