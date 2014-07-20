@@ -61,11 +61,10 @@ void ImageCollage::process()
     int max_x = std::max(0, w_1 - w_2);
     int max_y = std::max(0, h_1 - h_2);
 
-    if(p_x_->max<int>() != max_x/* && max_x > 0 && max_x < 1e4*/) {
-        aerr << max_x << std::endl;
+    if(p_x_->max<int>() != max_x) {
         p_x_->setMax(max_x);
     }
-    if(p_y_->max<int>() != max_y/* && max_y > 0 && max_y < 1e4*/) {
+    if(p_y_->max<int>() != max_y) {
         p_y_->setMax(max_y);
     }
 
@@ -74,9 +73,6 @@ void ImageCollage::process()
 
     int w = std::min(w_2, w_1 - x - 1);
     int h = std::min(h_2, h_1 - y - 1);
-
-
-
 
     cv::Mat source(secondary->value, cv::Rect(0, 0, w, h));
     cv::Mat target(output->value, cv::Rect(x, y, w, h));
