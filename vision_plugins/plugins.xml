@@ -224,7 +224,12 @@
         Render some text into an image.
    </description>
   </class>
-  <class type="vision_plugins::HOGDetect" base_class_type="csapex::Node">
+  <class type="vision_plugins::HOGDetector" base_class_type="csapex::Node">
+    <description>
+        Detect objects via hog.
+    </description>
+  </class>
+  <class type="vision_plugins::HOGExtractor" base_class_type="csapex::Node">
     <description>
         Detect objects via hog.
     </description>
