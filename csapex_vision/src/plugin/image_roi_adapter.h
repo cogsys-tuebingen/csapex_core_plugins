@@ -71,8 +71,10 @@ private:
     QImage               empty;
     QPainter             painter;
 
-    bool                 down_;
-    QPoint               last_pos_;
+    bool                 middle_button_down_;
+    bool                 left_button_down_;
+    QPoint               middle_last_pos_;
+    QPoint               left_last_pos_;
 };
 
 }

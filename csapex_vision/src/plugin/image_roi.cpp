@@ -104,7 +104,8 @@ void ImageRoi::process()
     if(wait)
         waitForView();
 
-    // output_->publish(result_);
+    std::cout << "was here" << std::endl;
+    output_->publish(result_);
 }
 
 
