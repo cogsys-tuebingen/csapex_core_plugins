@@ -58,13 +58,14 @@ protected:
     ImageRoi *wrapped_;
 
 private:
-    QRectF               result_;
 
     QSize                last_size_;
+    QSize                last_roi_size_;
     State                state;
 
     QGraphicsPixmapItem *pixmap_;
     QGraphicsRectItem   *rect_;
+    QRectF               roi_rect_;
 
     QGraphicsView*       view_;
 
