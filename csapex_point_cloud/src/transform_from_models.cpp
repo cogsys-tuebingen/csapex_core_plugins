@@ -33,7 +33,7 @@ void TransformFromModels::setup()
     input_models_ref_ = modifier_->addInput<GenericVectorMessage, ModelMessage >("Reference Models");
     input_models_new_ = modifier_->addInput<GenericVectorMessage, ModelMessage >("New Models");
     output_ = modifier_->addOutput<connection_types::TransformMessage>("Transformation");
-    output_text_ = modifier_->addOutput<DirectMessage<std::string> >("String"); // create a debug output
+    output_text_ = modifier_->addOutput<GenericValueMessage<std::string> >("String"); // create a debug output
 
 
     addParameter(param::ParameterFactory::declare("Apex height", 0.0, 2.0, 0.5, 0.01));
@@ -96,7 +96,7 @@ void TransformFromModels::process()
         // Publish Output - Debug
         stringstream << "x = " << x << ",y = " << y << ",z = " << z
                      << ",r = " << RAD_TO_DEG(roll) << ",p = " << RAD_TO_DEG(pitch)<< ",y = " << RAD_TO_DEG(yaw);
-        DirectMessage<std::string>::Ptr text_msg(new DirectMessage<std::string>);
+        GenericValueMessage<std::string>::Ptr text_msg(new GenericValueMessage<std::string>);
         text_msg->value = stringstream.str();
         output_text_->publish(text_msg);
 

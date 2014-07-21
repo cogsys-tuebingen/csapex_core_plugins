@@ -27,12 +27,12 @@ void Toggle::process()
 
 void Toggle::setup()
 {
-    out = modifier_->addOutput<connection_types::DirectMessage<bool> >("Signal");
+    out = modifier_->addOutput<connection_types::GenericValueMessage<bool> >("Signal");
 }
 
 void Toggle::tick()
 {
-    csapex::connection_types::DirectMessage<bool>::Ptr msg(new csapex::connection_types::DirectMessage<bool>);
+    csapex::connection_types::GenericValueMessage<bool>::Ptr msg(new csapex::connection_types::GenericValueMessage<bool>);
     msg->value = signal_;
     out->publish(msg);
 }

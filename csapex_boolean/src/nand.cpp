@@ -22,18 +22,18 @@ NAND::NAND()
 
 void NAND::setup()
 {
-    in_a = modifier_->addInput<DirectMessage<bool> >("A");
-    in_b = modifier_->addInput<DirectMessage<bool> >("B");
+    in_a = modifier_->addInput<GenericValueMessage<bool> >("A");
+    in_b = modifier_->addInput<GenericValueMessage<bool> >("B");
 
-    out = modifier_->addOutput<DirectMessage<bool> >("A nand B");
+    out = modifier_->addOutput<GenericValueMessage<bool> >("A nand B");
 }
 
 void NAND::process()
 {
-    DirectMessage<bool>::Ptr a = in_a->getMessage<DirectMessage<bool> >();
-    DirectMessage<bool>::Ptr b = in_b->getMessage<DirectMessage<bool> >();
+    GenericValueMessage<bool>::Ptr a = in_a->getMessage<GenericValueMessage<bool> >();
+    GenericValueMessage<bool>::Ptr b = in_b->getMessage<GenericValueMessage<bool> >();
 
-    DirectMessage<bool>::Ptr msg(new DirectMessage<bool>);
+    GenericValueMessage<bool>::Ptr msg(new GenericValueMessage<bool>);
     msg->value = !(a->value && b->value);
     out->publish(msg);
 }

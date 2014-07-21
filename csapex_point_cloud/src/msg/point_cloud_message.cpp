@@ -58,7 +58,7 @@ struct Import  {
             return;
         }
 
-        YAML::Node data = node["data"];
+        const YAML::Node& data = node["data"];
         apex_assert(data.Type() == YAML::NodeType::Sequence);
 
         std::string file = "import_cloud.tmp";

@@ -23,11 +23,11 @@ Indicator::Indicator()
 
 void Indicator::setup()
 {
-    in = modifier_->addInput<DirectMessage<bool> >("Signal");
+    in = modifier_->addInput<GenericValueMessage<bool> >("Signal");
 }
 
 void Indicator::process()
 {
-    DirectMessage<bool>::Ptr a = in->getMessage<DirectMessage<bool> >();
+    GenericValueMessage<bool>::Ptr a = in->getMessage<GenericValueMessage<bool> >();
     getParameter("signal")->set<bool>(a->value);
 }
