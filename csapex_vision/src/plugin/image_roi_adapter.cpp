@@ -39,6 +39,7 @@ ImageRoiAdapter::ImageRoiAdapter(ImageRoi *node, WidgetController* widget_ctrl)
     // translate to UI thread via Qt signal
     node->display_request.connect(boost::bind(&ImageRoiAdapter::displayRequest, this, _1));
     node->submit_request.connect(boost::bind(&ImageRoiAdapter::submitRequest, this));
+    node->drop_request.connect(boost::bind(&ImageRoiAdapter::dropRequest, this));
 }
 
 bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
@@ -132,13 +133,16 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
     sub->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
     layout_->addLayout(sub);
 
+    pixmap_ = new QGraphicsPixmapItem;
     rect_ = new QGraphicsRectItem(0, 0, 0, 0);
     rect_->setPen(QPen(Qt::red));
     rect_->setFlags(QGraphicsItem::ItemIsMovable);
+    view_->scene()->addItem(pixmap_);
     view_->scene()->addItem(rect_);
 
     connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>)), this, SLOT(display(QSharedPointer<QImage>)));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
+    connect(this, SIGNAL(dropRequest()), this, SLOT(drop()));
 
     DefaultNodeAdapter::setupUi(layout);
 }
@@ -174,9 +178,8 @@ void ImageRoiAdapter::display(QSharedPointer<QImage> img)
     }
 
     if(pixmap_ != NULL)
-        view_->scene()->removeItem(pixmap_);
+        pixmap_->setPixmap(pixmap);
 
-    pixmap_ = view_->scene()->addPixmap(pixmap);
     rect_->setRect(roi_rect_);
     rect_->setZValue(pixmap_->zValue() + 0.1);
 
@@ -186,6 +189,7 @@ void ImageRoiAdapter::display(QSharedPointer<QImage> img)
     view_->scene()->update();
     last_size_     = img->size();
     last_roi_size_ = roi_size;
+
 }
 
 void ImageRoiAdapter::fitInView()
@@ -226,5 +230,10 @@ void ImageRoiAdapter::submit()
         result_msg->value = roi;
         wrapped_->setResult(result_msg);
     }
+}
 
+void ImageRoiAdapter::drop()
+{
+    connection_types::RoiMessage::Ptr result_msg(new connection_types::RoiMessage);
+    wrapped_->setResult(result_msg);
 }

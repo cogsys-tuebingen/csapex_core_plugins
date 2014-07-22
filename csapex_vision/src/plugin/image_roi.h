@@ -28,6 +28,7 @@ public:
 
 private:
     void submit();
+    void drop();
 
 protected:
     ConnectorIn*  input_;
@@ -39,6 +40,7 @@ protected:
 public:
     boost::signals2::signal<void(QSharedPointer<QImage>)> display_request;
     boost::signals2::signal<void()>                       submit_request;
+    boost::signals2::signal<void()>                       drop_request;
 };
 
 }

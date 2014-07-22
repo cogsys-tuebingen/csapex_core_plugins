@@ -47,6 +47,10 @@ void ImageRoi::setupParameters()
                             k_cond,
                             boost::bind(&ImageRoi::submit, this));
 
+    addConditionalParameter(param::ParameterFactory::declareTrigger("drop"),
+                            k_cond,
+                            boost::bind(&ImageRoi::drop, this));
+
     addParameter(param::ParameterFactory::declareRange("roi width", param::ParameterDescription("Set the width of the roi."),
                                                        0, 640, 640, 1));
     addParameter(param::ParameterFactory::declareRange("roi height", param::ParameterDescription("Set the width of the roi."),
@@ -62,6 +66,11 @@ void ImageRoi::setup()
 void ImageRoi::submit()
 {
     submit_request();
+}
+
+void ImageRoi::drop()
+{
+    drop_request();
 }
 
 void ImageRoi::process()

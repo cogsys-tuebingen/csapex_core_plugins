@@ -28,11 +28,12 @@ public Q_SLOTS:
     void display(QSharedPointer<QImage> img);
     void fitInView();
     void submit();
-
+    void drop();
 
 Q_SIGNALS:
     void displayRequest(QSharedPointer<QImage> img);
     void submitRequest();
+    void dropRequest();
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);
