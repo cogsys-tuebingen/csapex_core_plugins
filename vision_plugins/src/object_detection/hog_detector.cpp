@@ -78,7 +78,7 @@ void HOGDetector::process()
 
 
     if(in->getEncoding() != enc::mono)
-        throw std::runtime_error("Need grayscale or bgr!");
+        throw std::runtime_error("Need grayscale!");
 
     cv::HOGDescriptor h;
 

@@ -42,7 +42,7 @@ void HOGExtractor::setupParameters()
 
     addParameter(param::ParameterFactory::declareRange("cell size",
                                                        param::ParameterDescription("Set the size of a cell"),
-                                                       HOG_CELL_HEIGHT, 64, HOG_CELL_HEIGHT, 1));
+                                                       8, 64, 8, 1));
 
 
     param::Parameter::Ptr cells_per_block =

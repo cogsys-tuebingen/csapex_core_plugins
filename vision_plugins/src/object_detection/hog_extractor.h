@@ -16,11 +16,6 @@ public:
     void process();
 
 private:
-    const static int HOG_BLOCK_WIDTH  = 16; /// ONLY SUPPORT BY NOW
-    const static int HOG_BLOCK_HEIGHT = 16; /// ONLY SUPPORT BY NOW
-    const static int HOG_CELL_WIDTH   = 8;  /// ONLY SUPPORT BY NOW
-    const static int HOG_CELL_HEIGHT  = 8;  /// ONLY SUPPORT BY NOW
-
     csapex::ConnectorIn        *in_;
     csapex::ConnectorOut       *out_;
 
