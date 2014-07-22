@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <utils_param/range_parameter.h>
 
 namespace vision_plugins {
 class HOGExtractor : public csapex::Node
@@ -20,8 +21,11 @@ private:
     const static int HOG_CELL_WIDTH   = 8;  /// ONLY SUPPORT BY NOW
     const static int HOG_CELL_HEIGHT  = 8;  /// ONLY SUPPORT BY NOW
 
-    csapex::ConnectorIn  *in_;
-    csapex::ConnectorOut *out_;
+    csapex::ConnectorIn        *in_;
+    csapex::ConnectorOut       *out_;
+
+    param::RangeParameter::Ptr       overlap_;
+    void updateOverlap();
 
 };
 }

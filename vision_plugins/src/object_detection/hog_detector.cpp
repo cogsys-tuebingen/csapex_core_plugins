@@ -51,6 +51,18 @@ void HOGDetector::setupParameters()
                             condition, boost::bind(&HOGDetector::load, this));
 
     setParameterEnabled("svm path", false);
+
+    addParameter(param::ParameterFactory::declareRange("window incrementations",
+                                                       param::ParameterDescription("Scale levels to observe."),
+                                                       1, 128, 64, 1));
+
+    addParameter(param::ParameterFactory::declareRange("gaussian sigma",
+                                                       param::ParameterDescription("Standard deviation for Gaussian blur."),
+                                                       0.0, 10.0, 0.0, 0.1));
+
+    addParameter(param::ParameterFactory::declareBool("gamma correction",
+                                                      param::ParameterDescription("Enable the gamma correction."),
+                                                      true));
 }
 
 void HOGDetector::setup()
@@ -96,10 +108,11 @@ void HOGDetector::process()
         throw std::runtime_error("Unkown SVM type!");
     }
 
-    /// TODO
-    h.gammaCorrection ;
-    h.nlevels;
-    h.winSigma;
+    h.gammaCorrection = param<bool>("gamma correction");
+    h.nlevels         = param<int>("window incrementations");
+    h.winSigma        = param<double>("gaussian sigma");
+    if(h.winSigma == 0)
+        h.winSigma = -1;
 
     std::vector<cv::Rect>  loc_rects;
     std::vector<cv::Point> loc_points;
