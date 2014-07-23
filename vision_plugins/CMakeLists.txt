@@ -38,6 +38,7 @@ include_directories(include
 add_subdirectory(src/cvBlob)
 
 add_library(vision_plugins
+    src/object_detection/hog_training_rois.cpp
     src/filter/gamma_correction.cpp
     src/blob_detector.cpp
     src/filter_merger.cpp

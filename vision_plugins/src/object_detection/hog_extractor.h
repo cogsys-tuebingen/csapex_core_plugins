@@ -16,8 +16,8 @@ public:
     void process();
 
 private:
-    csapex::ConnectorIn        *in_;
-    csapex::ConnectorOut       *out_;
+    csapex::ConnectorIn             *in_;
+    csapex::ConnectorOut            *out_;
 
     param::RangeParameter::Ptr       overlap_;
     void updateOverlap();
