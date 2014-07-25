@@ -1,5 +1,5 @@
 /// HEADER
-#include "hog_detect.h"
+#include "hog_detector.h"
 
 /// PROJECT
 #include <csapex/model/connector_in.h>
@@ -17,22 +17,18 @@
 #include <opencv2/objdetect/objdetect.hpp>
 #include <boost/assign.hpp>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::HOGDetect, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::HOGDetector, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 using namespace vision_plugins;
 
-HOGDetect::HOGDetect()
+HOGDetector::HOGDetector()
 {
     addTag(Tag::get("vision_plugins"));
 }
 
-HOGDetect::~HOGDetect()
-{
-}
-
-void HOGDetect::setupParameters()
+void HOGDetector::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("thresh", -10.0, 10.0, 0.0, 0.1));
     std::map<std::string, int> det_types = boost::assign::map_list_of
@@ -52,25 +48,37 @@ void HOGDetect::setupParameters()
     boost::function<bool()> condition = (boost::bind(&param::Parameter::as<int>, svm_param.get()) == CUSTOM);
 
     addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm path","", "*.yml *.yaml *.tar.gz"),
-                            condition, boost::bind(&HOGDetect::load, this));
+                            condition, boost::bind(&HOGDetector::load, this));
 
     setParameterEnabled("svm path", false);
+
+    addParameter(param::ParameterFactory::declareRange("window incrementations",
+                                                       param::ParameterDescription("Scale levels to observe."),
+                                                       1, 128, 64, 1));
+
+    addParameter(param::ParameterFactory::declareRange("gaussian sigma",
+                                                       param::ParameterDescription("Standard deviation for Gaussian blur."),
+                                                       0.0, 10.0, 0.0, 0.1));
+
+    addParameter(param::ParameterFactory::declareBool("gamma correction",
+                                                      param::ParameterDescription("Enable the gamma correction."),
+                                                      true));
 }
 
-void HOGDetect::setup()
+void HOGDetector::setup()
 {
     in_  = modifier_->addInput<CvMatMessage>("image");
     out_ = modifier_->addOutput<VectorMessage, RoiMessage>("detections");
 }
 
-void HOGDetect::process()
+void HOGDetector::process()
 {
     CvMatMessage::Ptr  in = in_->getMessage<CvMatMessage>();
     VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
 
     if(in->getEncoding() != enc::mono)
-        throw std::runtime_error("Need grayscale or bgr!");
+        throw std::runtime_error("Need grayscale!");
 
     cv::HOGDescriptor h;
 
@@ -80,12 +88,12 @@ void HOGDetect::process()
 
     switch(svm_type) {
     case DEFAULT:
-        h.winSize.width = 64;
+        h.winSize.width  = 64;
         h.winSize.height = 128;
         h.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
         break;
     case DAIMLER:
-        h.winSize.width = 48;
+        h.winSize.width  = 48;
         h.winSize.height = 96;
         h.setSVMDetector(cv::HOGDescriptor::getDaimlerPeopleDetector());
         break;
@@ -100,6 +108,11 @@ void HOGDetect::process()
         throw std::runtime_error("Unkown SVM type!");
     }
 
+    h.gammaCorrection = param<bool>("gamma correction");
+    h.nlevels         = param<int>("window incrementations");
+    h.winSigma        = param<double>("gaussian sigma");
+    if(h.winSigma == 0)
+        h.winSigma = -1;
 
     std::vector<cv::Rect>  loc_rects;
     std::vector<cv::Point> loc_points;
@@ -132,7 +145,7 @@ void HOGDetect::process()
      out_->publish(out);
 }
 
-void HOGDetect::load()
+void HOGDetector::load()
 {
     std::string     path = param<std::string>("svm path");
 

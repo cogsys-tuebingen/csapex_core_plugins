@@ -1,21 +1,14 @@
 #ifndef HOG_DETECT_H
 #define HOG_DETECT_H
 
-/// COMPONENT
-
 /// PROJECT
 #include <csapex/model/node.h>
 
-/// SYSTEM
-
 namespace vision_plugins {
-
-
-class HOGDetect : public csapex::Node
+class HOGDetector : public csapex::Node
 {
 public:
-    HOGDetect();
-    virtual ~HOGDetect();
+    HOGDetector();
 
     void setupParameters();
     void setup();
@@ -29,13 +22,11 @@ private:
     csapex::ConnectorOut* out_;
 
     std::vector<float>    svm_;
-    int          svm_width_;
-    int          svm_height_;
+    int                   svm_width_;
+    int                   svm_height_;
 
     void load();
 };
-
-
 }
 
 #endif // HOG_DETECT_H
