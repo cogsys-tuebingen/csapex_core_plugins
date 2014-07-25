@@ -145,28 +145,43 @@ void GenericImageCombiner::process()
     if(!e.valid()) {
         return;
     }
-    CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr img2 = i2_->getMessage<CvMatMessage>();
-
-    if(img1->value.channels() != img2->value.channels()) {
-        throw std::runtime_error("images have different number of channels.");
-    }
 
     cv::Mat f1, f2;
+
+    CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
+
     if(img1->value.channels() == 1) {
         img1->value.convertTo(f1, CV_32FC1);
-        img2->value.convertTo(f2, CV_32FC1);
     } else if(img1->value.channels() == 3) {
         img1->value.convertTo(f1, CV_32FC3);
-        img2->value.convertTo(f2, CV_32FC3);
     } else {
         std::stringstream msg;
-        msg << "images with " << img1->value.channels() << " channels not yet supported";
+        msg << "Image 1: images with " << img1->value.channels() << " channels not yet supported";
         throw std::runtime_error(msg.str());
     }
 
     VariableExpression::get("1") = f1;
-    VariableExpression::get("2") = f2;
+
+    // handle optional second image
+    if(i2_->isConnected()) {
+        CvMatMessage::Ptr img2 = i2_->getMessage<CvMatMessage>();
+
+        if(img1->value.channels() != img2->value.channels()) {
+            throw std::runtime_error("images have different number of channels.");
+        }
+
+        if(img2->value.channels() == 1) {
+            img2->value.convertTo(f2, CV_32FC1);
+        } else if(img2->value.channels() == 3) {
+            img2->value.convertTo(f2, CV_32FC3);
+        } else {
+            std::stringstream msg;
+            msg << "Image 2: images with " << img2->value.channels() << " channels not yet supported";
+            throw std::runtime_error(msg.str());
+        }
+
+        VariableExpression::get("2") = f2;
+    }
 
     CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));
 
@@ -181,12 +196,12 @@ void GenericImageCombiner::process()
 void GenericImageCombiner::setup()
 {
     i1_ = modifier_->addInput<CvMatMessage>("image 1");
-    i2_ = modifier_->addInput<CvMatMessage>("image 2");
+    i2_ = modifier_->addInput<CvMatMessage>("image 2", true);
     out_ = modifier_->addOutput<CvMatMessage>("combined");
 }
 
 void GenericImageCombiner::setupParameters()
 {
-        addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
-                     boost::bind(&GenericImageCombiner::updateFormula, this));
+    addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
+                 boost::bind(&GenericImageCombiner::updateFormula, this));
 }
