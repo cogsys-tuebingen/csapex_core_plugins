@@ -31,11 +31,11 @@ void AdaptiveThreshold::process()
         throw std::runtime_error("image must be grayscale.");
     }
 
-    double maxValue = param<double>("maxValue");
-    int adaptiveMethod = param<int>("adaptiveMethod");
-    int thresholdType = param<int>("thresholdType");
-    int blockSize = param<int>("blockSize");
-    double C = param<double>("C");
+    double maxValue = readParameter<double>("maxValue");
+    int adaptiveMethod = readParameter<int>("adaptiveMethod");
+    int thresholdType = readParameter<int>("thresholdType");
+    int blockSize = readParameter<int>("blockSize");
+    double C = readParameter<double>("C");
 
     if((blockSize % 2) == 0) {
         --blockSize;

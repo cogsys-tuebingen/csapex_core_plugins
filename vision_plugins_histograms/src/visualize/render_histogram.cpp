@@ -52,7 +52,7 @@ void RenderHistogram::process()
     CvMatMessage::Ptr out(new CvMatMessage(enc::bgr));
     out->value = cv::Mat(height_, width_, CV_8UC3, cv::Scalar(0,0,0));
 
-    int line_width = param<int>("line width");
+    int line_width = readParameter<int>("line width");
 
     if(maxima.get() == NULL) {
         int color_count = 0;
@@ -119,6 +119,6 @@ void RenderHistogram::setup()
 
 void RenderHistogram::update()
 {
-    width_  = param<int>("width");
-    height_ = param<int>("height");
+    width_  = readParameter<int>("width");
+    height_ = readParameter<int>("height");
 }

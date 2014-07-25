@@ -34,8 +34,8 @@ void ThresholdNoiseFilter::process()
         throw std::runtime_error("Threshold needs to be mono!");
     }
 
-    bool  interpolate = param<bool>("interpolate");
-    uchar thresh = param<int>("threshold");
+    bool  interpolate = readParameter<bool>("interpolate");
+    uchar thresh = readParameter<int>("threshold");
     int   type   = input->value.type();
     switch(type) {
     case CV_8UC1:

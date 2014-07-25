@@ -70,11 +70,11 @@ void HoughLinesP::setupParameters()
 
 void HoughLinesP::update()
 {
-    rho_ = param<double>("rho");
-    theta_ = param<double>("theta");
-    threshold_ = param<int>("threshold");
-    min_line_length_ = param<double>("min length");
-    max_line_gap_ = param<double>("max gap");
+    rho_ = readParameter<double>("rho");
+    theta_ = readParameter<double>("theta");
+    threshold_ = readParameter<int>("threshold");
+    min_line_length_ = readParameter<double>("min length");
+    max_line_gap_ = readParameter<double>("max gap");
 }
 
 

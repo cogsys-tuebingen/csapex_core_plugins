@@ -154,11 +154,11 @@ void Histogram::setup()
 void Histogram::update()
 {
 
-    bins_           = param<int> ("bins");
-    uniform_        = param<bool>("uniform");
-    accumulate_     = param<bool>("accumulate");
-    min_max_        = param<bool>("min max range");
-    min_max_global_ = param<bool>("global min max") && min_max_;
+    bins_           = readParameter<int> ("bins");
+    uniform_        = readParameter<bool>("uniform");
+    accumulate_     = readParameter<bool>("accumulate");
+    min_max_        = readParameter<bool>("min max range");
+    min_max_global_ = readParameter<bool>("global min max") && min_max_;
     setParameterEnabled("global min max", min_max_);
     if(min_max_global_) {
         resetMinMax();

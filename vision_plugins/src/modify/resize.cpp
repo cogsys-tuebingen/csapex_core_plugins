@@ -63,7 +63,7 @@ void Resize::setupParameters()
 
 void Resize::update()
 {
-    size_.width  = param<int>("size width");
-    size_.height = param<int>("size height");
-    mode_     = param<int>("mode");
+    size_.width  = readParameter<int>("size width");
+    size_.height = readParameter<int>("size height");
+    mode_     = readParameter<int>("mode");
 }

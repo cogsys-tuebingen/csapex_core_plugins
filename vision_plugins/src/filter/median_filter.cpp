@@ -49,5 +49,5 @@ void MedianFilter::setupParameters()
 
 void MedianFilter::update()
 {
-    kernel_size_ = param<int>("kernel");
+    kernel_size_ = readParameter<int>("kernel");
 }

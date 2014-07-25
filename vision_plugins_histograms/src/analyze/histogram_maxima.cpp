@@ -37,8 +37,8 @@ void HistogramMaxima::process()
     output->value.maxima.resize(count);
     output->value.bin_range = input->value.bin_range;
 
-    unsigned int k = param<int>("k");
-    float thresh   = param<int>("thresh");
+    unsigned int k = readParameter<int>("k");
+    float thresh   = readParameter<int>("thresh");
     for(unsigned int i = 0 ; i < count ; ++i) {
         cv::Mat &src = input->value.histograms.at(i);
         int type = src.type() & 7;

@@ -82,9 +82,9 @@ void HOGDetector::process()
 
     cv::HOGDescriptor h;
 
-    double        det_threshold = param<double>("thresh");
-    DetectionType det_type      = (DetectionType) param<int>("detection type");
-    SVMType       svm_type      = (SVMType) param<int>("svm type");
+    double        det_threshold = readParameter<double>("thresh");
+    DetectionType det_type      = (DetectionType) readParameter<int>("detection type");
+    SVMType       svm_type      = (SVMType) readParameter<int>("svm type");
 
     switch(svm_type) {
     case DEFAULT:
@@ -108,9 +108,9 @@ void HOGDetector::process()
         throw std::runtime_error("Unkown SVM type!");
     }
 
-    h.gammaCorrection = param<bool>("gamma correction");
-    h.nlevels         = param<int>("window incrementations");
-    h.winSigma        = param<double>("gaussian sigma");
+    h.gammaCorrection = readParameter<bool>("gamma correction");
+    h.nlevels         = readParameter<int>("window incrementations");
+    h.winSigma        = readParameter<double>("gaussian sigma");
     if(h.winSigma == 0)
         h.winSigma = -1;
 
@@ -147,7 +147,7 @@ void HOGDetector::process()
 
 void HOGDetector::load()
 {
-    std::string     path = param<std::string>("svm path");
+    std::string     path = readParameter<std::string>("svm path");
 
     if(path == "")
         return;

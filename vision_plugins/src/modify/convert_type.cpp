@@ -119,5 +119,5 @@ void ConvertType::setupParameters()
 
 void ConvertType::update()
 {
-    mode_ = param<int>("convert to");
+    mode_ = readParameter<int>("convert to");
 }

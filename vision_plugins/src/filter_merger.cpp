@@ -40,7 +40,7 @@ void Merger::process()
 
 void Merger::updateInputs()
 {
-    int input_count = param<int>("input count");
+    int input_count = readParameter<int>("input count");
     int current_amount = countInputs();
 
     if(current_amount > input_count) {

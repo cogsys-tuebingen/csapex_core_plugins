@@ -41,8 +41,8 @@ void RenderROIs::process()
 
     CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding()));
 
-    int thickness = param<int>("thickness");
-    bool force_color = param<bool>("force color");
+    int thickness = readParameter<int>("thickness");
+    bool force_color = readParameter<bool>("force color");
 
     if(img->getEncoding().size() == 1) {
         cv::cvtColor(img->value, out->value, CV_GRAY2BGR);
@@ -53,11 +53,11 @@ void RenderROIs::process()
 
     cv::Scalar color;
     if(force_color) {
-        std::vector<int> c = param<std::vector<int> >("color");
+        std::vector<int> c = readParameter<std::vector<int> >("color");
         color = cv::Scalar(c[2], c[1], c[0]);
     }
 
-    bool ignore_uc = param<bool>("ignore unclassified");
+    bool ignore_uc = readParameter<bool>("ignore unclassified");
 
     BOOST_FOREACH(const ConnectionType::Ptr& e, rois->value) {
         RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(e);

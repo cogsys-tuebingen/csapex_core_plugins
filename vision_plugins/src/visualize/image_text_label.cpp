@@ -58,19 +58,19 @@ void ImageTextLabel::process()
     CvMatMessage::Ptr output(new CvMatMessage(input->getEncoding()));
     output->value = input->value.clone();
 
-    std::string label       = param<std::string>("label");
-    double      font_scale  = param<double>("scale");
-    int         thickness   = param<int>("thickness");
-    Position    pos         = (Position) param<int>("position");
-    bool        boxed       = param<bool>("boxed");
+    std::string label       = readParameter<std::string>("label");
+    double      font_scale  = readParameter<double>("scale");
+    int         thickness   = readParameter<int>("thickness");
+    Position    pos         = (Position) readParameter<int>("position");
+    bool        boxed       = readParameter<bool>("boxed");
 
     int         basel_line  = 0;
     cv::Size text_size = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX,
                                          font_scale, thickness,
                                          &basel_line);
 
-    const std::vector<int>& color_label = param<std::vector<int> >("color/label");
-    const std::vector<int>& color_box   = param<std::vector<int> >("color/box");
+    const std::vector<int>& color_label = readParameter<std::vector<int> >("color/label");
+    const std::vector<int>& color_box   = readParameter<std::vector<int> >("color/box");
 
     cv::Scalar cv_color_label(color_label[2], color_label[1], color_label[0]);
     cv::Scalar cv_color_box(color_box[2], color_box[1], color_box[0]);

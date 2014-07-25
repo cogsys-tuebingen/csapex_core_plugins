@@ -37,7 +37,7 @@ void GrowROI::process()
     RoiMessage::Ptr out(new RoiMessage);
 
     out->value = roi->value;
-    out->value.grow(param<int>("x"), param<int>("y"));
+    out->value.grow(readParameter<int>("x"), readParameter<int>("y"));
     output_->publish(out);
 }
 

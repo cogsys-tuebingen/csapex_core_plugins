@@ -66,8 +66,8 @@ void CornerHarris::setupParameters()
 
 void CornerHarris::update()
 {
-    k_ = param<double>("k");
-    k_size_ = param<int>("k size");
-    block_size_ = param<int>("block size");
-    border_type_ = param<int>("border type");
+    k_ = readParameter<double>("k");
+    k_size_ = readParameter<int>("k size");
+    block_size_ = readParameter<int>("block size");
+    border_type_ = readParameter<int>("border type");
 }

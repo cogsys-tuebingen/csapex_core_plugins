@@ -42,7 +42,7 @@ void Slicing::process()
 
     apex_assert_hard(matrix->value.channels() == maxima->value.maxima.size());
     unsigned int size      = maxima->value.maxima.size();
-    unsigned int padding   = param<int>("padding");
+    unsigned int padding   = readParameter<int>("padding");
     float        bin_range = maxima->value.bin_range;
     float        offset    = padding * bin_range;
     std::vector<cv::Mat>     output_channels;

@@ -39,7 +39,7 @@ void SetOperation::process()
 
     CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));
 
-    int op = param<int>("operation");
+    int op = readParameter<int>("operation");
     if(op == COMPLEMENT) {
         out->value = ~img1->value;
 

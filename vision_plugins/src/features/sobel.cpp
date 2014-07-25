@@ -42,6 +42,6 @@ void Sobel::setupParameters()
 void  Sobel::update()
 {
     Operator::update();
-    dx_     = param<int>("dx");
-    dy_     = param<int>("dy");
+    dx_     = readParameter<int>("dx");
+    dy_     = readParameter<int>("dy");
 }

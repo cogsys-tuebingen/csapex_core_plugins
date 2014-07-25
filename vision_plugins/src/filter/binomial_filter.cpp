@@ -28,7 +28,7 @@ void BinomialFilter::process()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
-    int kernel_size = param<int>("kernel");
+    int kernel_size = readParameter<int>("kernel");
     if(kernel_size != kernel_size_) {
         utils_cv::buildBinomialKernel(kernel_, kernel_size);
         kernel_size_ = kernel_size;

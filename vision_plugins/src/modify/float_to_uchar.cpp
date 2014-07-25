@@ -75,5 +75,5 @@ void FloatToUchar::setupParameters()
 
 void FloatToUchar::update()
 {
-    type_ = (Type) param<int>("type");
+    type_ = (Type) readParameter<int>("type");
 }

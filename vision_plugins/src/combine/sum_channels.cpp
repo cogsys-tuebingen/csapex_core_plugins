@@ -29,14 +29,14 @@ void SumChannels::process()
     out->value = cv::Mat(in->value.rows, in->value.cols, CV_32F, 0.f);
     std::vector<cv::Mat> channels;
     cv::split(in->value, channels);
-    bool abs = param<bool>("abs");
+    bool abs = readParameter<bool>("abs");
     for(std::vector<cv::Mat>::iterator it = channels.begin() ; it != channels.end() ; ++it) {
         it->convertTo(*it, CV_32FC1);
         if(abs)
             *it = cv::abs(*it);
         cv::add(*it, out->value, out->value);
     }
-    if(param<bool>("mean")) {
+    if(readParameter<bool>("mean")) {
        out->value = out->value * (1.0 / (double) channels.size());
     }
     output_->publish(out);

@@ -51,7 +51,7 @@ void LocalPatterns::filter(Mat &img, Mat &mask)
 
     cv::Mat out;
 
-    switch(param<int>("method")) {
+    switch(readParameter<int>("method")) {
     case LBP:
     {
         std::vector<cv::Mat> channel_hists;
@@ -74,7 +74,7 @@ void LocalPatterns::filter(Mat &img, Mat &mask)
         std::vector<cv::Mat> channel_hists_neg;
         std::vector<int>     bins;
 
-        double k = param<double>("k");
+        double k = readParameter<double>("k");
 
         Q_FOREACH(cv::Mat channel, channels) {
             ltp_.stdExtraction<uchar>(channel, k);

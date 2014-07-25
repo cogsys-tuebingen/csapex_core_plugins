@@ -58,7 +58,7 @@ void DifferenceMaximum::process()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
     int  depth = in->value.type() & 7;
-    bool abs_diff = param<bool>("abs difference");
+    bool abs_diff = readParameter<bool>("abs difference");
 
     switch (depth) {
     case CV_8U:

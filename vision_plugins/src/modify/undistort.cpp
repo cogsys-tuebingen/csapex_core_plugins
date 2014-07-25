@@ -28,7 +28,7 @@ void Undistort::process()
 
     out->value = in->value.clone();
     if(undist_.get() != NULL) {
-        int margin       = param<int>("margin");
+        int margin       = readParameter<int>("margin");
         cv::Size  margin_size(2 * margin + in->value.cols, 2 * margin + in->value.rows);
         undist_->reset_map(margin_size, margin, margin);
         undist_->undistort(out->value, out->value);
@@ -81,10 +81,10 @@ bool Undistort::read_matrices(const std::string &path, cv::Mat &intrinsics, cv::
 void Undistort::update()
 {
 
-    std::string path = param<std::string>("file");
+    std::string path = readParameter<std::string>("file");
     cv::Mat intr;
     cv::Mat coef;
-    int mode = param<int>("mode");
+    int mode = readParameter<int>("mode");
 
     if(read_matrices(path, intr, coef)) {
         undist_.reset(new utils_cv::Undistortion(intr, coef, mode));

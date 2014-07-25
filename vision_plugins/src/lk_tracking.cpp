@@ -58,7 +58,7 @@ void LKTracking::process()
 
         setError(false);
 
-        int spws = param<int>("subPixWinSize");
+        int spws = readParameter<int>("subPixWinSize");
         cv::Size subPixWinSize (spws, spws);
 
 
@@ -71,7 +71,7 @@ void LKTracking::process()
         init_ = false;
 
     } else if(!points[0].empty()) {
-        int ws = param<int>("winSize");
+        int ws = readParameter<int>("winSize");
         cv::Size winSize(ws, ws);
 
         std::vector<uchar> status;
@@ -89,7 +89,7 @@ void LKTracking::process()
             cv::cvtColor(img->value, out_dbg->value, CV_GRAY2BGR);
         }
 
-        int circlesize = param<int>("debug/circlesize");
+        int circlesize = readParameter<int>("debug/circlesize");
 
         for( std::size_t i = 0; i < points[1].size(); i++ ) {
             if( !status[i] )

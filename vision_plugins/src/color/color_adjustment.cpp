@@ -84,7 +84,7 @@ void ColorAdjustment::process()
     std::vector<cv::Mat> channels;
     cv::split(img->value, channels);
 
-    bool normalize = param<bool>("normalize");
+    bool normalize = readParameter<bool>("normalize");
 
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         double min = mins[i];
@@ -128,7 +128,7 @@ void ColorAdjustment::update()
     maxs.clear();
 
     for(std::size_t i = 0; i < current_encoding.size(); ++i) {
-        std::pair<int,int> val = param<std::pair<int, int> >(channelName(i, current_encoding[i]));
+        std::pair<int,int> val = readParameter<std::pair<int, int> >(channelName(i, current_encoding[i]));
 
         mins.push_back(val.first);
         maxs.push_back(val.second);
@@ -137,13 +137,13 @@ void ColorAdjustment::update()
 
 void ColorAdjustment::setPreset()
 {
-    active_preset_  = static_cast<Preset> (param<int>("preset"));
+    active_preset_  = static_cast<Preset> (readParameter<int>("preset"));
     Q_EMIT modelChanged();
 }
 
 void ColorAdjustment::addLightness(cv::Mat &img)
 {
-    double param_lightness = param<int>("lightness");
+    double param_lightness = readParameter<int>("lightness");
     double abs_lightness = std::abs(param_lightness);
 
     cv::Scalar  cv_value;

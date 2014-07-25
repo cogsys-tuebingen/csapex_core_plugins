@@ -29,11 +29,11 @@ void PerspectiveTransform::filter(cv::Mat &img, cv::Mat &mask)
 
 void PerspectiveTransform::update()
 {
-    double rot_x = param<double>("Rotation x");
-    double rot_y = param<double>("Rotation y");
-    double rot_z = param<double>("Rotation z");
-    double foca  = param<double>("Virt. Distance");
-    double dist  = param<double>("Virt. Focal Length");
+    double rot_x = readParameter<double>("Rotation x");
+    double rot_y = readParameter<double>("Rotation y");
+    double rot_z = readParameter<double>("Rotation z");
+    double foca  = readParameter<double>("Virt. Distance");
+    double dist  = readParameter<double>("Virt. Focal Length");
     transformer_.set_rot_x(rot_x);
     transformer_.set_rot_y(rot_y);
     transformer_.set_rot_z(rot_z);

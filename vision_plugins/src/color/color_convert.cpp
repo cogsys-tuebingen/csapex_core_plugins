@@ -82,8 +82,8 @@ void ColorConvert::process()
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
 
     csPair cspair;
-    cspair.first  = static_cast<ColorSpace> (param<int>("input"));
-    cspair.second = static_cast<ColorSpace> (param<int>("output"));
+    cspair.first  = static_cast<ColorSpace> (readParameter<int>("input"));
+    cspair.second = static_cast<ColorSpace> (readParameter<int>("output"));
 
     CvMatMessage::Ptr out(new CvMatMessage(cs_to_encoding_[cspair.second]));
 

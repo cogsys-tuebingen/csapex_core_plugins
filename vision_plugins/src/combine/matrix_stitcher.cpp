@@ -81,8 +81,8 @@ void MatrixStitcher::process()
     if(mat_1->value.type() != mat_2->value.type())
         throw std::runtime_error("Matrices need the same type!");
 
-    Mode mode           = (Mode) param<int>("mode");
-    unsigned int offset = param<int>("offset");
+    Mode mode           = (Mode) readParameter<int>("mode");
+    unsigned int offset = readParameter<int>("offset");
     switch(mode) {
     case HORIZONTAL:
         stitch(mat_1->value, mat_2->value, false, offset, out->value);

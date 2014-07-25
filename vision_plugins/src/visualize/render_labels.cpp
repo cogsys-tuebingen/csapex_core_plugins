@@ -55,7 +55,7 @@ void RenderLabels::process()
     if(output->value.empty()) {
         output->value = label_colors;
     } else {
-        double occ = param<double>("color occupancy");
+        double occ = readParameter<double>("color occupancy");
         cv::addWeighted(output->value, 1.0 - occ, label_colors, occ, 0.0, output->value);
     }
     output_->publish(output);

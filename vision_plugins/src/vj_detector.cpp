@@ -41,7 +41,7 @@ VJDetector::~VJDetector()
 
 void VJDetector::process()
 {
-    std::string filename = param<std::string>("file");
+    std::string filename = readParameter<std::string>("file");
 
     if(!vj_detector || filename != file_) {
         file_ = filename;

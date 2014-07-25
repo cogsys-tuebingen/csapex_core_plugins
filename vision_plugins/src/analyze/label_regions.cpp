@@ -31,9 +31,9 @@ void LabelRegions::process()
         throw std::runtime_error("Edges should be mask with type of CV_8UC1!");
     }
 
-    unsigned int threshold = param<int>("area thresh");
+    unsigned int threshold = readParameter<int>("area thresh");
 
-    uchar   edge   = param<int>("edge value");
+    uchar   edge   = readParameter<int>("edge value");
     if(threshold > 0)
         utils_cv::label(in->value, out->value, edge, threshold);
     else

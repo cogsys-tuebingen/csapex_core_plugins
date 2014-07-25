@@ -97,7 +97,7 @@ void vision_plugins::CameraCalibration::setupParameters()
 
 void vision_plugins::CameraCalibration::calibrate()
 {
-    std::string path = param<std::string>("results");
+    std::string path = readParameter<std::string>("results");
     if(path == "") {
         aerr << "Cannot save to empty path!" << std::endl;
         return;
@@ -116,12 +116,12 @@ void vision_plugins::CameraCalibration::calibrate()
 void vision_plugins::CameraCalibration::updateCalibration()
 {
     cv::Size board_size;
-    utils_cv::CameraCalibration::Mode mode = (utils_cv::CameraCalibration::Mode) param<int>("type");
-    board_size.width   = param<int>("squares x");
-    board_size.height  = param<int>("squares y");
-    double square_size = param<double>("squares scale");
-    int    kernel_size = param<int>("kernel");
-    int    flag_corner = param<int>("corner flags");
-    int    flag_calib  = param<int>("calib flags");
+    utils_cv::CameraCalibration::Mode mode = (utils_cv::CameraCalibration::Mode) readParameter<int>("type");
+    board_size.width   = readParameter<int>("squares x");
+    board_size.height  = readParameter<int>("squares y");
+    double square_size = readParameter<double>("squares scale");
+    int    kernel_size = readParameter<int>("kernel");
+    int    flag_corner = readParameter<int>("corner flags");
+    int    flag_calib  = readParameter<int>("calib flags");
     calibration_.reset(new utils_cv::CameraCalibration(mode, board_size, square_size, kernel_size, flag_corner, flag_calib));
 }

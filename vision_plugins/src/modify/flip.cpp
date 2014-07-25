@@ -50,5 +50,5 @@ void Flip::setupParameters()
 
 void Flip::update()
 {
-    mode_ = param<int>("type");
+    mode_ = readParameter<int>("type");
 }

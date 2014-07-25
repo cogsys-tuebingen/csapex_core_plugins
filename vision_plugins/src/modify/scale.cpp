@@ -59,7 +59,7 @@ void Scale::setupParameters()
 
 void Scale::update()
 {
-    scales_[0] = param<double>("percent x");
-    scales_[1] = param<double>("percent y");
-    mode_      = param<int>("mode");
+    scales_[0] = readParameter<double>("percent x");
+    scales_[1] = readParameter<double>("percent y");
+    mode_      = readParameter<int>("mode");
 }

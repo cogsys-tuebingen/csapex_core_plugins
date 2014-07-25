@@ -62,8 +62,8 @@ void Canny::setupParameters()
 
 void Canny::update()
 {
-    threshold_1_   = param<double>("threshold 1");
-    threshold_2_   = param<double>("threshold 2");
-    aperture_size_ = param<int>("aperture");
-    L2_gradient_   = param<bool>("L2 gradient");
+    threshold_1_   = readParameter<double>("threshold 1");
+    threshold_2_   = readParameter<double>("threshold 2");
+    aperture_size_ = readParameter<int>("aperture");
+    L2_gradient_   = readParameter<bool>("L2 gradient");
 }

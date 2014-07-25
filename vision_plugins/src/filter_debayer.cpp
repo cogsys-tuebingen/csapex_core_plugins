@@ -35,7 +35,7 @@ QIcon Debayer::getIcon() const
 
 void Debayer::filter(cv::Mat &img, cv::Mat &mask)
 {
-    int mode = param<int>("method");
+    int mode = readParameter<int>("method");
 
     // assume 1 channel raw image comes in
     cv::Mat raw;

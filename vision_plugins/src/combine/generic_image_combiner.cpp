@@ -122,7 +122,7 @@ GenericImageCombiner::GenericImageCombiner()
 
 void GenericImageCombiner::updateFormula()
 {
-    std::string script = param<std::string>("script");
+    std::string script = readParameter<std::string>("script");
 
     std::string::const_iterator iter = script.begin();
     std::string::const_iterator end = script.end();

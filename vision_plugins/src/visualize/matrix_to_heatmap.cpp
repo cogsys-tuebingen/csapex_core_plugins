@@ -98,5 +98,5 @@ void MatrixToHeatmap::setupParameters()
 
 void MatrixToHeatmap::update()
 {
-    color_type_ = (ColorType) param<int>("coloring");
+    color_type_ = (ColorType) readParameter<int>("coloring");
 }

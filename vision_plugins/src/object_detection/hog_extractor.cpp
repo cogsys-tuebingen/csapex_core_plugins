@@ -77,12 +77,12 @@ void HOGExtractor::process()
 
     cv::Mat &value = in->value;
 
-    double gauss            = param<double>("gaussian sigma");
-    bool   gamma            = param<bool>("gamma correction");
-    int    bins             = param<int>("orientation bins");
-    int    cells_per_block  = param<int>("cells per block");
-    int    cell_size        = param<int>("cell size");
-    int    overlap          = param<int>("overlap");
+    double gauss            = readParameter<double>("gaussian sigma");
+    bool   gamma            = readParameter<bool>("gamma correction");
+    int    bins             = readParameter<int>("orientation bins");
+    int    cells_per_block  = readParameter<int>("cells per block");
+    int    cell_size        = readParameter<int>("cell size");
+    int    overlap          = readParameter<int>("overlap");
 
     int    block_size_px = cells_per_block * cell_size;
     int    overlap_px    = overlap * cell_size;
@@ -117,7 +117,7 @@ void HOGExtractor::process()
 void HOGExtractor::updateOverlap()
 {
     if(overlap_->isEnabled()) {
-        int cells_per_block = param<int>("cells per block");
+        int cells_per_block = readParameter<int>("cells per block");
         overlap_->setMax(cells_per_block - 1);
         overlap_->set(1);
     }

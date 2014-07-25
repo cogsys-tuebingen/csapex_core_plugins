@@ -74,7 +74,7 @@ void SequenceMean::setupParameters()
 
 void SequenceMean::update()
 {
-    sequence_size_ = (unsigned int) param<int>("acc");
+    sequence_size_ = (unsigned int) readParameter<int>("acc");
 }
 
 bool SequenceMean::check(const cv::Mat &mat)

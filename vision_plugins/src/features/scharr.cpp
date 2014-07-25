@@ -52,5 +52,5 @@ void Scharr::setupParameters()
 void Scharr::update()
 {
     Operator::update();
-    type_ = (Type) param<int>("derive");
+    type_ = (Type) readParameter<int>("derive");
 }

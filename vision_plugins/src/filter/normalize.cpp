@@ -36,9 +36,9 @@ void Normalize::process()
         mask = mask_->getMessage<CvMatMessage>();
     }
 
-    int     norm  = param<int>("norm");
-    double  lower = param<double>("lower bound scale");
-    double  upper = param<double>("upper bound scale");
+    int     norm  = readParameter<int>("norm");
+    double  lower = readParameter<double>("lower bound scale");
+    double  upper = readParameter<double>("upper bound scale");
 
     cv::normalize(in->value,out->value, lower, upper, norm, -1,
                   mask.get() == NULL ? cv::noArray() : mask->value);

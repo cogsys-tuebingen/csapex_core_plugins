@@ -61,12 +61,12 @@ void GammaCorrection::process()
     in.convertTo(tmp, CV_32F);
 
 
-    double c = param<double>("c");
+    double c = readParameter<double>("c");
 
-    switch(param<int>("type")) {
+    switch(readParameter<int>("type")) {
     case POWER_LAW:
         tmp /= 255.0;
-        cv::pow(tmp, param<double>("gamma"), tmp);
+        cv::pow(tmp, readParameter<double>("gamma"), tmp);
         tmp *= c * 255.0;
         break;
 

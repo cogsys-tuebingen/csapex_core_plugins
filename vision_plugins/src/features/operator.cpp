@@ -38,7 +38,7 @@ void Operator::setupParameters()
 
 void Operator::update()
 {
-    ksize_  = param<int>("kernel");
-    scale_  = param<double>("scale");
-    delta_  = param<double>("delta");
+    ksize_  = readParameter<int>("kernel");
+    scale_  = readParameter<double>("scale");
+    delta_  = readParameter<double>("delta");
 }

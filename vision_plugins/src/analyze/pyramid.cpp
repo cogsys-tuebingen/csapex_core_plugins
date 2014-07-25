@@ -57,8 +57,8 @@ void Pyramid::setupParameters()
 
 void Pyramid::update()
 {
-    out_levels_ = param<int>("levels");
-    out_level_idx_ = param<int>("preview");
+    out_levels_ = readParameter<int>("levels");
+    out_level_idx_ = readParameter<int>("preview");
 
     if(out_level_idx_ >= out_levels_) {
         out_level_idx_ = out_levels_ - 1;

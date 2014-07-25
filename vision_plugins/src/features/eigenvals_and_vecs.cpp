@@ -78,8 +78,8 @@ void EigenValsAndVecs::setupParameters()
 
 void EigenValsAndVecs::update()
 {
-    k_size_ = param<int>("k size");
-    block_size_ = param<int>("block size");
-    border_type_ = param<int>("border type");
-    eigen_type_  = (EigenType) param<int>("eigen type");
+    k_size_ = readParameter<int>("k size");
+    block_size_ = readParameter<int>("block size");
+    border_type_ = readParameter<int>("border type");
+    eigen_type_  = (EigenType) readParameter<int>("eigen type");
 }

@@ -71,8 +71,8 @@ void MonoFilter::setupParameters()
 
 void MonoFilter::update()
 {
-    max_    = param<int>("max");
-    min_    = param<int>("min");
-    def_    = param<int>("def");
-    invert_ = param<bool>("invert");
+    max_    = readParameter<int>("max");
+    min_    = readParameter<int>("min");
+    def_    = readParameter<int>("def");
+    invert_ = readParameter<bool>("invert");
 }

@@ -48,12 +48,12 @@ void Morpholocial::process()
     connection_types::CvMatMessage::Ptr a = input_->getMessage<connection_types::CvMatMessage>();
 
     connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(a->getEncoding()));
-    int op = param<int>("type");
-    int morph_elem = param<int>("elem");
-    int morph_size = param<int>("size");
+    int op = readParameter<int>("type");
+    int morph_elem = readParameter<int>("elem");
+    int morph_size = readParameter<int>("size");
     cv::Mat kernel = cv::getStructuringElement(morph_elem, cv::Size(2*morph_size+1, 2*morph_size+1), cv::Point(morph_size, morph_size));
     cv::Point anchor(-1,-1);
-    int iterations = param<int>("iterations");
+    int iterations = readParameter<int>("iterations");
     int border_type = cv::BORDER_CONSTANT;
     const cv::Scalar& border_value = cv::morphologyDefaultBorderValue();
 
