@@ -28,11 +28,6 @@ Debayer::Debayer()
     addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
 }
 
-QIcon Debayer::getIcon() const
-{
-    return QIcon(":/bayer.png");
-}
-
 void Debayer::filter(cv::Mat &img, cv::Mat &mask)
 {
     int mode = readParameter<int>("method");

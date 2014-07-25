@@ -28,6 +28,7 @@
   </class>
   <class type="vision_plugins::Debayer" base_class_type="csapex::Node">
     <description>Debayering of images</description>
+    <icon>:/bayer.png</icon>
   </class>
   <class type="csapex::Morpholocial" base_class_type="csapex::Node">
     <description>Different Morphological operators like "open", "close", "tophat", "gradient"</description>
