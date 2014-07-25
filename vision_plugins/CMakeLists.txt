@@ -62,7 +62,6 @@ add_library(vision_plugins
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp
     src/combine/sum_channels.cpp
-    src/combine/absolute_difference.cpp
     src/combine/matrix_stitcher.cpp
 
     src/modify/undistort.cpp

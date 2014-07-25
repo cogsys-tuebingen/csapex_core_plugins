@@ -197,12 +197,6 @@
         Build the maxmimum difference of neighbouring pixels.
     </description>
   </class>
-  <class type="vision_plugins::AbsoluteDifference" base_class_type="csapex::Node">
-    <description>
-        Build the absoulute difference of two matrices. Temporary available until
-        GenericImageCombiner does support the function.
-    </description>
-  </class>
   <class type="vision_plugins::ThresholdNoiseFilter" base_class_type="csapex::Node">
     <description>
         Filter noise by applying a threshold matrix.
