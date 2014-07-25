@@ -20,11 +20,6 @@ Relay::Relay()
     addTag(Tag::get("General"));
 }
 
-QIcon Relay::getIcon() const
-{
-    return QIcon(":/buffer.png");
-}
-
 void Relay::setup()
 {
     input_ = modifier_->addInput<connection_types::AnyMessage>("Anything");

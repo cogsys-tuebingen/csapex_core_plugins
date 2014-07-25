@@ -32,11 +32,6 @@ ExportRos::ExportRos()
                  boost::bind(&ExportRos::updateTopic, this));
 }
 
-QIcon ExportRos::getIcon() const
-{
-    return QIcon(":/terminal.png");
-}
-
 void ExportRos::setup()
 {
     connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");

@@ -26,11 +26,6 @@ DoubleBuffer::DoubleBuffer()
     addParameter(param::ParameterFactory::declareBool("synchronized", true));
 }
 
-QIcon DoubleBuffer::getIcon() const
-{
-    return QIcon(":/buffer.png");
-}
-
 void DoubleBuffer::setup()
 {
     input_ = modifier_->addInput<connection_types::AnyMessage>("Anything");

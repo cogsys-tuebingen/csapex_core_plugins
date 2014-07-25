@@ -27,11 +27,6 @@ Filter::~Filter()
 {
 }
 
-QIcon Filter::getIcon() const
-{
-    return QIcon(":/filter.png");
-}
-
 void Filter::setup()
 {
     input_img_ = modifier_->addInput<CvMatMessage>("Image");

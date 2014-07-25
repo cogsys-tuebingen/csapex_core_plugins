@@ -29,11 +29,6 @@ ImageRoi::~ImageRoi()
 {
 }
 
-QIcon ImageRoi::getIcon() const
-{
-    return QIcon(":/picture.png");
-}
-
 void ImageRoi::setupParameters()
 {
     param::Parameter::Ptr method = param::ParameterFactory::declareBool("step",

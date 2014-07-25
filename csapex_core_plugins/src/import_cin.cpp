@@ -26,11 +26,6 @@ void ImportCin::process()
 
 }
 
-QIcon ImportCin::getIcon() const
-{
-    return QIcon(":/terminal.png");
-}
-
 void ImportCin::setup()
 {
     connector_ = modifier_->addOutput<connection_types::AnyMessage>("Anything");

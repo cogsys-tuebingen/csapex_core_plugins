@@ -5,6 +5,9 @@
 #include <csapex_core_plugins/interactive_node.h>
 #include <csapex_vision/roi_message.h>
 
+/// SYSTEM
+#include <QImage>
+
 namespace csapex
 {
 
@@ -17,8 +20,6 @@ class ImageRoi : public InteractiveNode
 public:
     ImageRoi();
     virtual ~ImageRoi();
-
-    virtual QIcon getIcon() const;
 
     void setup();
     void setupParameters();

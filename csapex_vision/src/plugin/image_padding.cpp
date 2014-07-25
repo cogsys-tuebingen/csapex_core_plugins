@@ -25,11 +25,6 @@ ImagePadding::ImagePadding()
     addParameter(param::ParameterFactory::declareRange("mask offset", 0, 100, 0, 1));
 }
 
-QIcon ImagePadding::getIcon() const
-{
-    return QIcon(":/border.png");
-}
-
 void ImagePadding::setup()
 {
     input_ = modifier_->addInput<CvMatMessage>("Image");

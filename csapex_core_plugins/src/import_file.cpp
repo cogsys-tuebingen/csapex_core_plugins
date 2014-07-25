@@ -104,9 +104,3 @@ void ImportFile::tick()
         }
     }
 }
-
-QIcon ImportFile::getIcon() const
-{
-    return QIcon(":/terminal.png");
-}
-

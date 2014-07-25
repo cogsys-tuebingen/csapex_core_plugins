@@ -42,11 +42,6 @@ void ExportFile::setupParameters()
                                                                      "", ""), boost::bind(&ExportFile::setExportPath, this));
 }
 
-QIcon ExportFile::getIcon() const
-{
-    return QIcon(":/terminal.png");
-}
-
 void ExportFile::setup()
 {
     connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");

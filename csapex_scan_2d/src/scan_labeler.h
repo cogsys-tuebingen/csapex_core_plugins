@@ -19,8 +19,6 @@ public:
     ScanLabeler();
     virtual ~ScanLabeler();
 
-    virtual QIcon getIcon() const;
-
     void setup();
     void setupParameters();
     void process();

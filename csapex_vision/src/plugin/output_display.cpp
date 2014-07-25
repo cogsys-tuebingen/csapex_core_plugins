@@ -25,11 +25,6 @@ OutputDisplay::~OutputDisplay()
 {
 }
 
-QIcon OutputDisplay::getIcon() const
-{
-    return QIcon(":/picture.png");
-}
-
 void OutputDisplay::setup()
 {
     input_ = modifier_->addInput<CvMatMessage>("Image", false, true);

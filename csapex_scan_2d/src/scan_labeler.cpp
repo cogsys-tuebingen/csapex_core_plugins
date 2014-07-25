@@ -30,11 +30,6 @@ ScanLabeler::~ScanLabeler()
 {
 }
 
-QIcon ScanLabeler::getIcon() const
-{
-    return QIcon(":/picture.png");
-}
-
 void ScanLabeler::setupParameters()
 {
     addParameter(param::ParameterFactory::declareTrigger("submit", param::ParameterDescription("Continue with the current labeling")),

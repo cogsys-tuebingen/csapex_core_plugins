@@ -100,11 +100,6 @@ bool FileImporter::doImport(const QString& _path)
     return provider_.get();
 }
 
-QIcon FileImporter::getIcon() const
-{
-    return QIcon(":/folder_picture.png");
-}
-
 void FileImporter::setup()
 {
     output_ = modifier_->addOutput<connection_types::AnyMessage>("Unknown");

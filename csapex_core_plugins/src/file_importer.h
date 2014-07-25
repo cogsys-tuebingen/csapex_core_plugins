@@ -19,8 +19,6 @@ public:
     void setupParameters();
     void setup();
 
-    virtual QIcon getIcon() const;
-
     void import();
 
     void process();

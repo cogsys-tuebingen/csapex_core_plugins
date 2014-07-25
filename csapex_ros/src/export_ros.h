@@ -14,8 +14,6 @@ public:
     void setup();
     virtual void process();
 
-    virtual QIcon getIcon() const;
-
 protected:
     void updateTopic();
 

@@ -17,11 +17,6 @@ TextDisplay::TextDisplay()
     addTag(Tag::get("General"));
 }
 
-QIcon TextDisplay::getIcon() const
-{
-    return QIcon(":/pencil.png");
-}
-
 void TextDisplay::setup()
 {
     connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything", false, true);

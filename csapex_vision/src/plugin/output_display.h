@@ -4,6 +4,9 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
+/// SYSTEM
+#include <QImage>
+
 namespace csapex
 {
 
@@ -16,8 +19,6 @@ class OutputDisplay : public Node
 public:
     OutputDisplay();
     virtual ~OutputDisplay();
-
-    virtual QIcon getIcon() const;
 
     void setup();
     void process();

@@ -29,11 +29,6 @@ void TextInput::process()
 
 }
 
-QIcon TextInput::getIcon() const
-{
-    return QIcon(":/pencil.png");
-}
-
 void TextInput::setup()
 {
     connector_ = modifier_->addOutput<connection_types::GenericValueMessage<std::string> >("Text");

@@ -22,11 +22,6 @@ ExportCout::ExportCout()
     addTag(Tag::get("Output"));
 }
 
-QIcon ExportCout::getIcon() const
-{
-    return QIcon(":/terminal.png");
-}
-
 void ExportCout::setup()
 {
     connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");

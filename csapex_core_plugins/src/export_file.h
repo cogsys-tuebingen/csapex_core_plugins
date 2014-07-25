@@ -19,8 +19,6 @@ public:
     virtual void setupParameters();
     virtual void process();
 
-    virtual QIcon getIcon() const;
-
 protected:
     void setExportPath();
 

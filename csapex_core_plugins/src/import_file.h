@@ -20,8 +20,6 @@ public:
     void process();
     void tick();
 
-    virtual QIcon getIcon() const;
-
 protected:
     void setImportPath();
     void setImportPrefix();

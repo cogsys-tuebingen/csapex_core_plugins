@@ -46,11 +46,6 @@ ImportRos::ImportRos()
                  boost::bind(&ImportRos::refresh, this));
 }
 
-QIcon ImportRos::getIcon() const
-{
-    return QIcon(":/terminal.png");
-}
-
 void ImportRos::setup()
 {
 

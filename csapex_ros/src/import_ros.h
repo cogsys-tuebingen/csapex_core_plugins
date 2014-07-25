@@ -15,8 +15,6 @@ public:
     virtual void process();
     virtual void tick();
 
-    virtual QIcon getIcon() const;
-
 protected:
     void refresh();
     void update();

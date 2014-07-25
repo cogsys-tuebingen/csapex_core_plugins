@@ -19,8 +19,6 @@ public:
     virtual void process();
     virtual void tick();
 
-    virtual QIcon getIcon() const;
-
 private:
     void swapBuffers();
 

@@ -23,7 +23,6 @@ public:
     virtual ~Filter();
 
     void setup();
-    virtual QIcon getIcon() const;
 
 public:
     virtual void filter(cv::Mat& img, cv::Mat& mask) = 0;

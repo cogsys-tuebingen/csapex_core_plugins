@@ -29,12 +29,6 @@ void NumberInput<T>::tick()
 }
 
 template <typename T>
-QIcon NumberInput<T>::getIcon() const
-{
-    return QIcon(":/pencil.png");
-}
-
-template <typename T>
 void NumberInput<T>::setup()
 {
     out_ = modifier_->addOutput<T>(type2name(typeid(T)));

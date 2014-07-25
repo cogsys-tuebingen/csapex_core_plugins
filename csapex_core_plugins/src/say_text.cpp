@@ -17,11 +17,6 @@ SayText::SayText()
     addTag(Tag::get("General"));
 }
 
-QIcon SayText::getIcon() const
-{
-    return QIcon(":/pencil.png");
-}
-
 void SayText::setup()
 {
     connector_ = modifier_->addInput<connection_types::GenericValueMessage<std::string> >("Text");

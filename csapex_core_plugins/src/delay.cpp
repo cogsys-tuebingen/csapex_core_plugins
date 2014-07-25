@@ -18,17 +18,10 @@ using namespace csapex;
 Delay::Delay()
     : input_(NULL), output_(NULL)
 {
-    addTag(Tag::get("Debug"));
-
     addParameter(param::ParameterFactory::declareRange<double>
                  ("delay",
                   param::ParameterDescription("Delay <b><span style='color: red'>in seconds</style></b> to wait after each message."),
                   0.0, 10.0, 1.0, 0.1));
-}
-
-QIcon Delay::getIcon() const
-{
-    return QIcon(":/buffer.png");
 }
 
 void Delay::setup()
