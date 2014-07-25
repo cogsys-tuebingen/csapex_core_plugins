@@ -1,4 +1,7 @@
 <library path="libcsapex_vision_plugin">
+<class type="csapex::GrabCut" base_class_type="csapex::Node">
+  <description>GrabCut image segmentation</description>
+</class>
 <class type="csapex::RegisterPlugin" base_class_type="csapex::CorePlugin">
   <description></description>
 </class>
