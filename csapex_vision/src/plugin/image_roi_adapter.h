@@ -28,11 +28,12 @@ public Q_SLOTS:
     void display(QSharedPointer<QImage> img);
     void fitInView();
     void submit();
-
+    void drop();
 
 Q_SIGNALS:
     void displayRequest(QSharedPointer<QImage> img);
     void submitRequest();
+    void dropRequest();
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);
@@ -58,13 +59,14 @@ protected:
     ImageRoi *wrapped_;
 
 private:
-    QRectF               result_;
 
     QSize                last_size_;
+    QSize                last_roi_size_;
     State                state;
 
     QGraphicsPixmapItem *pixmap_;
     QGraphicsRectItem   *rect_;
+    QRectF               roi_rect_;
 
     QGraphicsView*       view_;
 

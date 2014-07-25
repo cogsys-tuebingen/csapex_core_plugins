@@ -18,11 +18,11 @@ using namespace csapex;
 using namespace connection_types;
 
 ImageRoi::ImageRoi() :
-    last_mat_size_(-1, -1)
+    last_mat_size_(-1, -1),
+    result_(new RoiMessage)
 {
     addTag(Tag::get("General"));
     addTag(Tag::get("Vision"));
-
 }
 
 ImageRoi::~ImageRoi()
@@ -47,6 +47,10 @@ void ImageRoi::setupParameters()
                             k_cond,
                             boost::bind(&ImageRoi::submit, this));
 
+    addConditionalParameter(param::ParameterFactory::declareTrigger("drop"),
+                            k_cond,
+                            boost::bind(&ImageRoi::drop, this));
+
     addParameter(param::ParameterFactory::declareRange("roi width", param::ParameterDescription("Set the width of the roi."),
                                                        0, 640, 640, 1));
     addParameter(param::ParameterFactory::declareRange("roi height", param::ParameterDescription("Set the width of the roi."),
@@ -55,7 +59,7 @@ void ImageRoi::setupParameters()
 
 void ImageRoi::setup()
 {
-    input_  = modifier_->addInput<CvMatMessage>("Image", false, true);
+    input_  = modifier_->addInput<CvMatMessage>("Image");
     output_ = modifier_->addOutput<RoiMessage>("Roi");
 }
 
@@ -64,11 +68,14 @@ void ImageRoi::submit()
     submit_request();
 }
 
+void ImageRoi::drop()
+{
+    drop_request();
+}
+
 void ImageRoi::process()
 {
     InteractiveNode::process();
-
-    result_.reset();
 
     CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
     if(in->value.empty())
@@ -104,10 +111,8 @@ void ImageRoi::process()
     if(wait)
         waitForView();
 
-    std::cout << "was here" << std::endl;
     output_->publish(result_);
 }
-
 
 void ImageRoi::setResult(connection_types::RoiMessage::Ptr result)
 {

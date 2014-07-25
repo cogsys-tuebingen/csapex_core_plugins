@@ -20,10 +20,11 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
-
 ImageRoiAdapter::ImageRoiAdapter(ImageRoi *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(node, widget_ctrl),
       wrapped_(node),
+      last_size_(-1,-1),
+      last_roi_size_(-1,-1),
       pixmap_(NULL),
       view_(new QGraphicsView),
       empty(32, 32, QImage::Format_RGB16),
@@ -38,6 +39,7 @@ ImageRoiAdapter::ImageRoiAdapter(ImageRoi *node, WidgetController* widget_ctrl)
     // translate to UI thread via Qt signal
     node->display_request.connect(boost::bind(&ImageRoiAdapter::displayRequest, this, _1));
     node->submit_request.connect(boost::bind(&ImageRoiAdapter::submitRequest, this));
+    node->drop_request.connect(boost::bind(&ImageRoiAdapter::dropRequest, this));
 }
 
 bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
@@ -58,11 +60,6 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
             e->accept();
             return true;
         }
-//        if(me->button() == Qt::LeftButton) {
-//            left_button_down_ = true;
-//            left_last_pos_ = me->screenPos();
-//            e->accept();
-//        }
         break;
     case QEvent::GraphicsSceneMouseRelease: {
         if(me->button() == Qt::MiddleButton) {
@@ -71,11 +68,12 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
             return true;
         }
         if(me->button() == Qt::LeftButton) {
-            submit();
+            if(!wrapped_->param<bool>("step"))
+                submit();
             e->accept();
         }
     }
-    break;
+        break;
     case QEvent::GraphicsSceneMouseMove:
         if(middle_button_down_) {
             QPoint delta     = me->screenPos() - middle_last_pos_;
@@ -90,21 +88,6 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
             return true;
         }
         break;
-//        if(left_button_down_) {
-//            QPoint delta   = me->screenPos() - left_last_pos_;
-//            left_last_pos_ = me->screenPos();
-
-//            QRectF r       = rect_->boundingRect();
-//            QRectF scene_r = view_->sceneRect();
-//            if(r.left() + delta.x() >= scene_r.left() &&
-//                    r.top() + delta.y() >= scene_r.top() &&
-//                    r.right() + delta.x() <= scene_r.right() &&
-//                    r.bottom() + delta.y() <= scene_r.bottom()) {
-//                std::cout << delta.x() << " " << delta.y() << std::endl;
-//                rect_->moveBy(delta.x(), delta.y());
-//            }
-
-//        }
     case QEvent::GraphicsSceneWheel: {
         e->accept();
 
@@ -150,13 +133,16 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
     sub->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
     layout_->addLayout(sub);
 
+    pixmap_ = new QGraphicsPixmapItem;
     rect_ = new QGraphicsRectItem(0, 0, 0, 0);
     rect_->setPen(QPen(Qt::red));
     rect_->setFlags(QGraphicsItem::ItemIsMovable);
+    view_->scene()->addItem(pixmap_);
     view_->scene()->addItem(rect_);
 
     connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>)), this, SLOT(display(QSharedPointer<QImage>)));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
+    connect(this, SIGNAL(dropRequest()), this, SLOT(drop()));
 
     DefaultNodeAdapter::setupUi(layout);
 }
@@ -179,27 +165,31 @@ void ImageRoiAdapter::setState(Memento::Ptr memento)
 void ImageRoiAdapter::display(QSharedPointer<QImage> img)
 {
     QPixmap pixmap = QPixmap::fromImage(*img);
-    if(last_size_.width() != img->width() ||
-            last_size_.height() != img->height()) {
+    roi_rect_.setWidth(wrapped_->param<int>("roi width"));
+    roi_rect_.setHeight(wrapped_->param<int>("roi height"));
+
+    QSize roi_size(roi_rect_.width(), roi_rect_.height());
+    bool change = last_size_ != img->size() || last_roi_size_ != roi_size;
+    if(change) {
         view_->scene()->setSceneRect(img->rect());
         view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
-        result_.setX(0);
-        result_.setY(0);
+        roi_rect_.setX(0);
+        roi_rect_.setY(0);
     }
 
-    result_.setWidth(wrapped_->param<int>("roi width"));
-    result_.setHeight(wrapped_->param<int>("roi height"));
-
     if(pixmap_ != NULL)
-        view_->scene()->removeItem(pixmap_);
+        pixmap_->setPixmap(pixmap);
 
-    pixmap_ = view_->scene()->addPixmap(pixmap);
-    rect_->setRect(result_);
+    rect_->setRect(roi_rect_);
     rect_->setZValue(pixmap_->zValue() + 0.1);
 
-    view_->scene()->update();
+    if(change)
+        submit();
 
-    last_size_ = img->size();
+    view_->scene()->update();
+    last_size_     = img->size();
+    last_roi_size_ = roi_size;
+
 }
 
 void ImageRoiAdapter::fitInView()
@@ -218,20 +208,32 @@ void ImageRoiAdapter::submit()
     if(pixmap_ == NULL)
         return;
 
-    connection_types::RoiMessage::Ptr result_msg(new connection_types::RoiMessage);
 
-    QPointF top_left     = rect_->rect().topLeft() - view_->sceneRect().topLeft();
-    QPointF bottom_right = rect_->rect().bottomRight() - view_->sceneRect().bottomRight();
-    top_left.setX(std::min(pixmap_->pixmap().width(), std::max(0, (int) top_left.x())));
-    top_left.setY(std::min(pixmap_->pixmap().height(), std::max(0, (int) top_left.y())));
-    bottom_right.setX(std::min(pixmap_->pixmap().width(), std::max(0, (int) bottom_right.x())));
-    bottom_right.setY(std::min(pixmap_->pixmap().height(), std::max(0, (int) bottom_right.y())));
+    QPointF top_left     = rect_->sceneBoundingRect().topLeft();
+    QPointF bottom_right = rect_->sceneBoundingRect().bottomRight();
+
+    top_left.setX(std::min(pixmap_->pixmap().width(),
+                           std::max(0, (int) top_left.x())));
+    top_left.setY(std::min(pixmap_->pixmap().height(),
+                           std::max(0, (int) top_left.y())));
+    bottom_right.setX(std::min(pixmap_->pixmap().width(),
+                               std::max(0, (int) bottom_right.x())));
+    bottom_right.setY(std::min(pixmap_->pixmap().height(),
+                               std::max(0, (int) bottom_right.y())));
 
     Roi roi(top_left.x(), top_left.y(),
             bottom_right.x() - top_left.x(),
             bottom_right.y() - top_left.y());
 
-    if(roi.w() > 0 && roi.h() > 0)
+    if(roi.w() > 0 && roi.h() > 0) {
+        connection_types::RoiMessage::Ptr result_msg(new connection_types::RoiMessage);
+        result_msg->value = roi;
         wrapped_->setResult(result_msg);
+    }
+}
 
+void ImageRoiAdapter::drop()
+{
+    connection_types::RoiMessage::Ptr result_msg(new connection_types::RoiMessage);
+    wrapped_->setResult(result_msg);
 }

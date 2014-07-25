@@ -16,6 +16,8 @@ struct DescriptorMessage : public MessageTemplate<cv::Mat, DescriptorMessage>
     DescriptorMessage();
 
     bool isBinary() const;
+
+    void write(std::ostream &out) const;
 };
 
 /// TRAITS
