@@ -44,7 +44,7 @@ void PassThrough::setup()
 
 void PassThrough::updateBorders()
 {
-    std::string field = param<std::string>("field");
+    std::string field = readParameter<std::string>("field");
     param::IntervalParameter::Ptr interv = getParameter<param::IntervalParameter>("interval");
 
     if(field == "x" || field == "y" || field == "z") {
@@ -65,7 +65,7 @@ void PassThrough::updateFields(const std::vector<std::string>& fields)
     param::SetParameter::Ptr setp = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("field"));
     if(setp) {
         setError(false);
-        std::string old_field = param<std::string>("field");
+        std::string old_field = readParameter<std::string>("field");
         setp->setSet(fields);
         setp->set(old_field);
     }
@@ -94,12 +94,12 @@ void PassThrough::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 
     // check available fields!
     pcl::PassThrough<PointT> pass;
-    pass.setFilterFieldName (param<std::string>("field"));
+    pass.setFilterFieldName (readParameter<std::string>("field"));
 
     param::IntervalParameter::Ptr interv = getParameter<param::IntervalParameter>("interval");
     pass.setFilterLimits (interv->lower<double>(), interv->upper<double>());
     pass.setInputCloud(cloud);
-    pass.setKeepOrganized(param<bool>("keep organized"));
+    pass.setKeepOrganized(readParameter<bool>("keep organized"));
 
     if(output_pos_->isConnected()) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);

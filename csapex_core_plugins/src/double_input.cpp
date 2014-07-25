@@ -23,7 +23,7 @@ NumberInput<T>::NumberInput()
 template <typename T>
 void NumberInput<T>::tick()
 {
-    if(param<bool>("tick")) {
+    if(readParameter<bool>("tick")) {
         process();
     }
 }
@@ -43,7 +43,7 @@ void NumberInput<T>::setup()
 template <typename T>
 void NumberInput<T>::process()
 {
-    T val = param<T>("value");
+    T val = readParameter<T>("value");
     out_->publishIntegral(val);
 }
 

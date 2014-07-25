@@ -71,9 +71,9 @@ void BilateralFilter::process()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
-    d_           = param<int>("d");
-    sigma_color_ = param<double>("sigma color");
-    sigma_space_ = param<double>("sigma space");
+    d_           = readParameter<int>("d");
+    sigma_color_ = readParameter<double>("sigma color");
+    sigma_space_ = readParameter<double>("sigma space");
 
     /// WORKAROUND
     bilateralFilter(in->value, out->value, d_, sigma_color_, sigma_space_);

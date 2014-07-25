@@ -68,7 +68,7 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
             return true;
         }
         if(me->button() == Qt::LeftButton) {
-            if(!wrapped_->param<bool>("step"))
+            if(!wrapped_->readParameter<bool>("step"))
                 submit();
             e->accept();
         }
@@ -165,8 +165,8 @@ void ImageRoiAdapter::setState(Memento::Ptr memento)
 void ImageRoiAdapter::display(QSharedPointer<QImage> img)
 {
     QPixmap pixmap = QPixmap::fromImage(*img);
-    roi_rect_.setWidth(wrapped_->param<int>("roi width"));
-    roi_rect_.setHeight(wrapped_->param<int>("roi height"));
+    roi_rect_.setWidth(wrapped_->readParameter<int>("roi width"));
+    roi_rect_.setHeight(wrapped_->readParameter<int>("roi height"));
 
     QSize roi_size(roi_rect_.width(), roi_rect_.height());
     bool change = last_size_ != img->size() || last_roi_size_ != roi_size;

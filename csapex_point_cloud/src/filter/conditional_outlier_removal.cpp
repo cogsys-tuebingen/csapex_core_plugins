@@ -122,8 +122,8 @@ void ConditionalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr
 
 void ConditionalOutlierRemoval::update()
 {
-    type_ = (ConditionType) param<int>("type");
-    conditions_ = param<int>("conditions");
+    type_ = (ConditionType) readParameter<int>("type");
+    conditions_ = readParameter<int>("conditions");
     bool x = (conditions_ & 1 & 3 & 5) == 1;
     bool y = (conditions_ & 2 & 3 & 6) == 2;
     bool z = (conditions_ & 4 & 5 & 6) == 4;
@@ -135,16 +135,16 @@ void ConditionalOutlierRemoval::update()
     setParameterEnabled("max z", z);
 
     if(x) {
-        x_range_.x() = param<double>("min x");
-        x_range_.y() = param<double>("max x");
+        x_range_.x() = readParameter<double>("min x");
+        x_range_.y() = readParameter<double>("max x");
     }
     if(y) {
-        y_range_.x() = param<double>("min y");
-        y_range_.y() = param<double>("max y");
+        y_range_.x() = readParameter<double>("min y");
+        y_range_.y() = readParameter<double>("max y");
     }
     if(z)  {
-        z_range_.x() = param<double>("min z");
-        z_range_.y() = param<double>("max z");
+        z_range_.x() = readParameter<double>("min z");
+        z_range_.y() = readParameter<double>("max z");
     }
 
 

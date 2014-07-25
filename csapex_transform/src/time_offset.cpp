@@ -29,7 +29,7 @@ void TimeOffset::process()
     connection_types::TimeStampMessage::Ptr in = input_->getMessage<connection_types::TimeStampMessage>();
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
 
-    double offset = param<double>("offset");
+    double offset = readParameter<double>("offset");
 
     if(in->value.toNSec() != 0) {
         aerr << in->value.toNSec() << " + " << offset << " * " << 1e6 << " = " << (in->value.toNSec() + offset * 1e6) << std::endl,

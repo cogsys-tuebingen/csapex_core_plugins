@@ -8,8 +8,6 @@ namespace csapex {
 
 class TransformInverter : public csapex::Node
 {
-    Q_OBJECT
-
 public:
     TransformInverter();
 

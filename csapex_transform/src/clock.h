@@ -2,12 +2,11 @@
 #define CLOCK_H
 
 /// PROJECT
-#include <csapex/model/node.h>
-#include <csapex_ros/ros_handler.h>
+#include <csapex_ros/ros_node.h>
 
 namespace csapex {
 
-class Clock : public Node
+class Clock : public RosNode
 {
 private:
     enum Type {

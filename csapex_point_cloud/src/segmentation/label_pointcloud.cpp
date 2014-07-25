@@ -146,7 +146,7 @@ void LabelPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
 
-    bool exclude_default_label = param<bool>("exclude default label");
+    bool exclude_default_label = readParameter<bool>("exclude default label");
     implementation::Label<PointT>::apply(cloud, out, label_msg_->value, exclude_default_label);
     output_->publish(out);
 }

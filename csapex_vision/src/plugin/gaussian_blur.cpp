@@ -51,7 +51,7 @@ void GaussianBlur::setup()
 
 void GaussianBlur::update()
 {
-    kernel_  = param<int>("kernel");
-    sigma_x_ = param<double>("sigma x");
-    sigma_y_ = param<double>("sigma y");
+    kernel_  = readParameter<int>("kernel");
+    sigma_x_ = readParameter<double>("sigma x");
+    sigma_y_ = readParameter<double>("sigma y");
 }

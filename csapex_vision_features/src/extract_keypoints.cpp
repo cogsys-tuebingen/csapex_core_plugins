@@ -97,7 +97,7 @@ void ExtractKeypoints::process()
 
 void ExtractKeypoints::update()
 {
-    std::string method = param<std::string>("method");
+    std::string method = readParameter<std::string>("method");
     Extractor::Ptr next = ExtractorFactory::create(method, "", param::StaticParameterProvider(getParameters()));
 
     QMutexLocker lock(&extractor_mutex);

@@ -107,7 +107,7 @@ void ImageRoi::process()
 
     display_request(img);
 
-    bool wait = param<bool>("step");
+    bool wait = readParameter<bool>("step");
     if(wait)
         waitForView();
 

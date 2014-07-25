@@ -393,51 +393,51 @@ void CloudRendererAdapter::refresh()
 {
     if(!drag_){
         {
-            const std::vector<int>& c = wrapped_->param<std::vector<int> >("color/background");
+            const std::vector<int>& c = wrapped_->readParameter<std::vector<int> >("color/background");
             color_bg_ = QColor::fromRgb(c[0], c[1], c[2]);
         }
         {
-            const std::vector<int>& c = wrapped_->param<std::vector<int> >("color/grid");
+            const std::vector<int>& c = wrapped_->readParameter<std::vector<int> >("color/grid");
             color_grid_ = QColor::fromRgb(c[0], c[1], c[2]);
         }
         {
-            const std::vector<int>& c = wrapped_->param<std::vector<int> >("color/gradient/start");
+            const std::vector<int>& c = wrapped_->readParameter<std::vector<int> >("color/gradient/start");
             color_grad_start_ = QVector3D(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
         }
         {
-            const std::vector<int>& c = wrapped_->param<std::vector<int> >("color/gradient/end");
+            const std::vector<int>& c = wrapped_->readParameter<std::vector<int> >("color/gradient/end");
             color_grad_end_ = QVector3D(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
         }
-        r_ = wrapped_->param<double>("~view/r");
-        theta_ = wrapped_->param<double>("~view/theta");
-        phi_ = wrapped_->param<double>("~view/phi");
+        r_ = wrapped_->readParameter<double>("~view/r");
+        theta_ = wrapped_->readParameter<double>("~view/theta");
+        phi_ = wrapped_->readParameter<double>("~view/phi");
 
-        double dx = wrapped_->param<double>("~view/dx");
-        double dy = wrapped_->param<double>("~view/dy");
-        double dz = wrapped_->param<double>("~view/dz");
+        double dx = wrapped_->readParameter<double>("~view/dx");
+        double dy = wrapped_->readParameter<double>("~view/dy");
+        double dz = wrapped_->readParameter<double>("~view/dz");
 
         offset_ = QVector3D(dx,dy,dz);
-        point_size_ = wrapped_->param<double>("point/size");
+        point_size_ = wrapped_->readParameter<double>("point/size");
 
-        size_sync_ = wrapped_->param<bool>("~size/out/sync");
-        w_view_ = wrapped_->param<int>("~size/width");
-        h_view_ = wrapped_->param<int>("~size/height");
+        size_sync_ = wrapped_->readParameter<bool>("~size/out/sync");
+        w_view_ = wrapped_->readParameter<int>("~size/width");
+        h_view_ = wrapped_->readParameter<int>("~size/height");
 
         if(size_sync_) {
             w_out_ = w_view_;
             h_out_ = h_view_;
         } else {
-            w_out_ = wrapped_->param<int>("~size/out/width");
-            h_out_ = wrapped_->param<int>("~size/out/height");
+            w_out_ = wrapped_->readParameter<int>("~size/out/width");
+            h_out_ = wrapped_->readParameter<int>("~size/out/height");
         }
 
-        axes_ = wrapped_->param<bool>("show axes");
+        axes_ = wrapped_->readParameter<bool>("show axes");
 
-        grid_size_ = wrapped_->param<int>("~grid/size");
-        grid_resolution_ = wrapped_->param<double>("~grid/resolution");
-        grid_xy_ = wrapped_->param<bool>("~grid/xy");
-        grid_yz_ = wrapped_->param<bool>("~grid/yz");
-        grid_xz_ = wrapped_->param<bool>("~grid/xz");
+        grid_size_ = wrapped_->readParameter<int>("~grid/size");
+        grid_resolution_ = wrapped_->readParameter<double>("~grid/resolution");
+        grid_xy_ = wrapped_->readParameter<bool>("~grid/xy");
+        grid_yz_ = wrapped_->readParameter<bool>("~grid/yz");
+        grid_xz_ = wrapped_->readParameter<bool>("~grid/xz");
 
         repaint_ = true;
 
@@ -636,11 +636,11 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::Ptr clou
 
     glBegin(GL_POINTS);
 
-    std::string component = wrapped_->param<std::string>("color/field");
+    std::string component = wrapped_->readParameter<std::string>("color/field");
 
-    bool rainbow = wrapped_->param<bool>("color/rainbow");
+    bool rainbow = wrapped_->readParameter<bool>("color/rainbow");
 
-    if(wrapped_->param<bool>("color/force gradient")) {
+    if(wrapped_->readParameter<bool>("color/force gradient")) {
         if(component == "x") {
             RendererGradient<PointT, X>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "y") {

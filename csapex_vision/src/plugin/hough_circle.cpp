@@ -46,13 +46,13 @@ void HoughCircle::process()
 {
     CvMatMessage::Ptr msg = input_->getMessage<CvMatMessage>();
 
-    int method = param<int>("method");
-    double dp = param<double>("dp");
-    double minDist = param<double>("minDist");
-    double param1 = param<double>("param1");
-    double param2 = param<double>("param2");
-    int minRadius = param<int>("minRadius");
-    int maxRadius = param<int>("maxRadius");
+    int method = readParameter<int>("method");
+    double dp = readParameter<double>("dp");
+    double minDist = readParameter<double>("minDist");
+    double param1 = readParameter<double>("param1");
+    double param2 = readParameter<double>("param2");
+    int minRadius = readParameter<int>("minRadius");
+    int maxRadius = readParameter<int>("maxRadius");
 
     std::vector<cv::Vec3f> circles;
     cv::HoughCircles(msg->value, circles, method, dp, minDist, param1, param2, minRadius, maxRadius);

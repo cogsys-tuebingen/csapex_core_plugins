@@ -311,7 +311,7 @@ MatchDescriptors::MatchDescriptors()
 
 void MatchDescriptors::update()
 {
-    current_method_ = static_cast<Method> (param<int>("method"));
+    current_method_ = static_cast<Method> (readParameter<int>("method"));
 }
 
 void MatchDescriptors::process()
@@ -340,9 +340,9 @@ void MatchDescriptors::process()
     CvMatMessage::Ptr out(new CvMatMessage(image1->getEncoding()));
 
     std::vector<int> c;
-    c = param<std::vector<int> >("color/match");
+    c = readParameter<std::vector<int> >("color/match");
     cv::Scalar matchColor  = cv::Scalar(c[2], c[1], c[0]);
-    c = param<std::vector<int> >("color/single");
+    c = readParameter<std::vector<int> >("color/single");
     cv::Scalar singlePointColor  = cv::Scalar(c[2], c[1], c[0]);
 
     std::vector<std::vector<char> > mask;
@@ -434,13 +434,13 @@ void MatchDescriptors::matchPeak(CvMatMessage::Ptr,
     HoughAlgorithm* h;
 
     if(false) {
-        h = new HoughPeak<true, true> (param<int>("peak/cluster_count"), param<int>("peak/scaling"), param<int>("peak/octaves"), m1, m2);
+        h = new HoughPeak<true, true> (readParameter<int>("peak/cluster_count"), readParameter<int>("peak/scaling"), readParameter<int>("peak/octaves"), m1, m2);
     } else {
-        h = new HoughPeak<true, false>(param<int>("peak/cluster_count"), param<int>("peak/scaling"), param<int>("peak/octaves"), m1, m2);
+        h = new HoughPeak<true, false>(readParameter<int>("peak/cluster_count"), readParameter<int>("peak/scaling"), readParameter<int>("peak/octaves"), m1, m2);
     }
 
 
-    h->min_count = param<int>("peak/min_cluster_size");
+    h->min_count = readParameter<int>("peak/min_cluster_size");
 
     std::vector<HoughData::Cluster> clusters;
     h->filter(matches, clusters);

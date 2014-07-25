@@ -80,6 +80,6 @@ void ExportRos::process()
 
 void ExportRos::updateTopic()
 {
-    topic_ = param<std::string>("topic");
+    topic_ = readParameter<std::string>("topic");
     create_pub = true;
 }

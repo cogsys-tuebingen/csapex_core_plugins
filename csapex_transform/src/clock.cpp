@@ -31,10 +31,10 @@ Clock::Clock()
 
 void Clock::tick()
 {
-    ROSHandler::instance().waitForConnection();
+    getRosHandler().waitForConnection();
 
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
-    if(param<int>("method") == CURRENT) {
+    if(readParameter<int>("method") == CURRENT) {
         time->value = ros::Time::now();
     } else {
         time->value = ros::Time(0);

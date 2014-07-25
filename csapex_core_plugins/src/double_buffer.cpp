@@ -63,7 +63,7 @@ void DoubleBuffer::swapBuffers()
 
 void DoubleBuffer::tick()
 {
-    if(!dirty_ && param<bool>("synchronized")) {
+    if(!dirty_ && readParameter<bool>("synchronized")) {
         return;
     }
 

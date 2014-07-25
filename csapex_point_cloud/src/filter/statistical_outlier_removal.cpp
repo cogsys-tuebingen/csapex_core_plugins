@@ -52,10 +52,10 @@ void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr
     if(!indeces_out && !cloud_out)
         return;
 
-    int    mean_k             = param<int>("mean k");
-    bool   keep_organized     = param<bool>("keep organized");
-    bool   negative           = param<bool>("negate");
-    double std_dev_mul_thresh = param<double>("std dev threshold");
+    int    mean_k             = readParameter<int>("mean k");
+    bool   keep_organized     = readParameter<bool>("keep organized");
+    bool   negative           = readParameter<bool>("negate");
+    double std_dev_mul_thresh = readParameter<double>("std dev threshold");
 
     pcl::StatisticalOutlierRemoval<PointT> sor;
     sor.setInputCloud(cloud);

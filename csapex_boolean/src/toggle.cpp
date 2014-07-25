@@ -39,5 +39,5 @@ void Toggle::tick()
 
 void Toggle::setSignal()
 {
-    signal_ = param<bool>("true");
+    signal_ = readParameter<bool>("true");
 }

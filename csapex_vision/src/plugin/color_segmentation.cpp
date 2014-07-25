@@ -82,7 +82,7 @@ void ColorSegmentation::update()
     max = cv::Scalar::all(0);
 
     for(std::size_t i = 0; i < current_encoding.size(); ++i) {
-        std::pair<int,int> val = param<std::pair<int, int> >(channelName(i, current_encoding[i]));
+        std::pair<int,int> val = readParameter<std::pair<int, int> >(channelName(i, current_encoding[i]));
 
         min[i] = val.first;
         max[i] = val.second;

@@ -49,9 +49,9 @@ void ClusterPointcloud::process()
 
     boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointcloud>(this, msg), msg->value);
 
-    param_clusterTolerance_ = param<double>("ClusterTolerance");
-    param_clusterMinSize_   = param<int>("MinClusterSize");
-    param_clusterMaxSize_   = param<int>("MaxClusterSize");
+    param_clusterTolerance_ = readParameter<double>("ClusterTolerance");
+    param_clusterMinSize_   = readParameter<int>("MinClusterSize");
+    param_clusterMaxSize_   = readParameter<int>("MaxClusterSize");
 }
 
 void ClusterPointcloud::setup()

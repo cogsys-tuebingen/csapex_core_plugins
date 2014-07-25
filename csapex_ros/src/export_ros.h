@@ -1,18 +1,13 @@
 #ifndef EXPORTROS_H
 #define EXPORTROS_H
 
-/// PROJECT
-#include <csapex/model/node.h>
-
-/// SYSTEM
-#include <ros/publisher.h>
+/// COMPONENT
+#include <csapex_ros/ros_node.h>
 
 namespace csapex {
 
-class ExportRos : public Node
+class ExportRos : public RosNode
 {
-    Q_OBJECT
-
 public:
     ExportRos();
 

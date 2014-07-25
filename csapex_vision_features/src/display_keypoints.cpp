@@ -42,12 +42,12 @@ void DisplayKeypoints::process()
 
 
     cv::Scalar color(-1,-1,-1,-1);
-    if(!param<bool>("random color")) {
-        const std::vector<int>& c = param<std::vector<int> >("color");
+    if(!readParameter<bool>("random color")) {
+        const std::vector<int>& c = readParameter<std::vector<int> >("color");
         color = cv::Scalar(c[2], c[1], c[0]);
     }
 
-    int flags = param<int>("flags");
+    int flags = readParameter<int>("flags");
 
     cv::drawKeypoints(img_msg->value, key_msg->value, out->value, color, flags);
 

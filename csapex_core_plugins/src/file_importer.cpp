@@ -49,10 +49,10 @@ FileImporter::~FileImporter()
 
 void FileImporter::changeMode()
 {
-    if(param<bool>("playback/immediate")) {
+    if(readParameter<bool>("playback/immediate")) {
         getNodeWorker()->setTickFrequency(1000.0);
     } else {
-        getNodeWorker()->setTickFrequency(param<double>("playback/frequency"));
+        getNodeWorker()->setTickFrequency(readParameter<double>("playback/frequency"));
     }
 }
 
@@ -123,5 +123,5 @@ void FileImporter::process()
 
 void FileImporter::import()
 {
-    doImport(QString::fromStdString(param<std::string>("path")));
+    doImport(QString::fromStdString(readParameter<std::string>("path")));
 }

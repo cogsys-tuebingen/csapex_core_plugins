@@ -61,8 +61,8 @@ void ImportRos::setup()
 
 void ImportRos::refresh()
 {
-    if(ROSHandler::instance().nh()) {
-        std::string old_topic = param<std::string>("topic");
+    if(getRosHandler().nh()) {
+        std::string old_topic = readParameter<std::string>("topic");
 
         ros::master::V_TopicInfo topics;
         ros::master::getTopics(topics);
@@ -102,16 +102,16 @@ void ImportRos::update()
 
 void ImportRos::doSetTopic()
 {
-    ROSHandler::instance().refresh();
+    getRosHandler().refresh();
 
-    if(!ROSHandler::instance().isConnected()) {
+    if(!getRosHandler().isConnected()) {
         return;
     }
 
     ros::master::V_TopicInfo topics;
     ros::master::getTopics(topics);
 
-    std::string topic = param<std::string>("topic");
+    std::string topic = readParameter<std::string>("topic");
 
     for(ros::master::V_TopicInfo::iterator it = topics.begin(); it != topics.end(); ++it) {
         if(it->name == topic) {

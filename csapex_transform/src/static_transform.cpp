@@ -40,12 +40,12 @@ void StaticTransform::process()
 
 void StaticTransform::tick()
 {
-    double roll = param<double>("roll");
-    double pitch = param<double>("pitch");
-    double yaw = param<double>("yaw");
-    double x = param<double>("dx");
-    double y = param<double>("dy");
-    double z = param<double>("dz");
+    double roll = readParameter<double>("roll");
+    double pitch = readParameter<double>("pitch");
+    double yaw = readParameter<double>("yaw");
+    double x = readParameter<double>("dx");
+    double y = readParameter<double>("dy");
+    double z = readParameter<double>("dz");
 
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
     msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));

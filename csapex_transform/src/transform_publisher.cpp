@@ -36,7 +36,7 @@ TransformPublisher::~TransformPublisher()
 
 void TransformPublisher::process()
 {
-    if(!ROSHandler::instance().isConnected()) {
+    if(!getRosHandler().isConnected()) {
         return;
     }
 
@@ -54,7 +54,7 @@ void TransformPublisher::process()
 
     TransformMessage::Ptr trafo_msg = input_transform->getMessage<TransformMessage>();
 
-    tfb_->sendTransform(tf::StampedTransform(trafo_msg->value, time, param<std::string>("from"), param<std::string>("to")));
+    tfb_->sendTransform(tf::StampedTransform(trafo_msg->value, time, readParameter<std::string>("from"), readParameter<std::string>("to")));
 }
 
 

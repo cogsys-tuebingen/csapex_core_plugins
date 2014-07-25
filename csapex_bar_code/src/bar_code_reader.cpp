@@ -39,7 +39,7 @@ void BarCodeReader::process()
         throw std::runtime_error("Input must be 1-channel image!");
     }
 
-    bool republish = param<bool>("republish");
+    bool republish = readParameter<bool>("republish");
     bool published = false;
 
     zbar::ImageScanner scanner;

@@ -58,5 +58,5 @@ void ImageProviderImg::next(cv::Mat& img, cv::Mat& mask)
 
 bool ImageProviderImg::hasNext()
 {
-    return state.param<bool>("playback/resend");
+    return state.readParameter<bool>("playback/resend");
 }

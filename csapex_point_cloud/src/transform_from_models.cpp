@@ -42,8 +42,8 @@ void TransformFromModels::setup()
 
 void TransformFromModels::process()
 {
-    param_apex_height_ = param<double>("Apex height");
-    param_cone_angle_ = param<double>("Cone angle");
+    param_apex_height_ = readParameter<double>("Apex height");
+    param_cone_angle_ = readParameter<double>("Cone angle");
 
     // Read Inputs
     boost::shared_ptr<std::vector<ModelMessage> const> models_ref = input_models_ref_->getMessage<GenericVectorMessage, ModelMessage>();

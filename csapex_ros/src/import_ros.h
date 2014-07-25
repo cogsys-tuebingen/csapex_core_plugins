@@ -1,15 +1,12 @@
 #ifndef IMPORT_ROS_H
 #define IMPORT_ROS_H
 
-/// PROJECT
-#include <csapex/model/node.h>
-
-/// SYSTEM
-#include <ros/ros.h>
+/// COMPONENT
+#include <csapex_ros/ros_node.h>
 
 namespace csapex {
 
-class ImportRos : public Node
+class ImportRos : public RosNode
 {
 public:
     ImportRos();

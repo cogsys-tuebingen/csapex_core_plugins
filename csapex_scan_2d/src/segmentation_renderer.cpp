@@ -51,7 +51,7 @@ ScanSegmentation2DRenderer::ScanSegmentation2DRenderer() :
 void ScanSegmentation2DRenderer::process()
 {
     boost::shared_ptr<std::vector<Segment> const> segments = input_->getMessage<GenericVectorMessage, Segment>();
-    if(param<bool>("publish marker")) {
+    if(readParameter<bool>("publish marker")) {
         publishMarkers(*segments);
     }
 
@@ -71,26 +71,26 @@ void ScanSegmentation2DRenderer::render(const std::vector<Segment> &segments)
 {
     CvMatMessage::Ptr output(new CvMatMessage(enc::bgr));
 
-    int w = param<int>("width");
-    int h = param<int>("height");
+    int w = readParameter<int>("width");
+    int h = readParameter<int>("height");
 
-    const std::vector<int>& bg_color = param<std::vector<int> >("color/bg");
+    const std::vector<int>& bg_color = readParameter<std::vector<int> >("color/bg");
     cv::Scalar bgColor(bg_color[2], bg_color[1], bg_color[0]);
 
     output->value = cv::Mat(h, w, CV_8UC3, bgColor);
 
     cv::Point2f origin(w/2, h/2);
-    double scale = param<double>("scale") * 10.0;
+    double scale = readParameter<double>("scale") * 10.0;
 
-    bool random_color = param<bool>("use random color");
+    bool random_color = readParameter<bool>("use random color");
 
-    const std::vector<int>& color = param<std::vector<int> >("color/segments");
+    const std::vector<int>& color = readParameter<std::vector<int> >("color/segments");
     cv::Scalar defaultColor(color[2], color[1], color[0]);
 
-    const std::vector<int>& color_classified = param<std::vector<int> >("color/segments/classified");
+    const std::vector<int>& color_classified = readParameter<std::vector<int> >("color/segments/classified");
     cv::Scalar classifiedColor(color_classified[2], color_classified[1], color_classified[0]);
 
-    bool draw_all_points = param<bool>("draw all points");
+    bool draw_all_points = readParameter<bool>("draw all points");
 
     int n = segments.size();
     for(int i = 0; i < n; ++i) {

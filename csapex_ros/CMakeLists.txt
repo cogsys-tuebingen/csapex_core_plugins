@@ -20,6 +20,7 @@ catkin_package(
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_library(csapex_ros_core
+    src/ros_node.cpp
     src/ros_handler.cpp
     src/ros_message_conversion.cpp
 )

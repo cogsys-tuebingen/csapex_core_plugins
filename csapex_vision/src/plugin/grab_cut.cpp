@@ -77,12 +77,12 @@ void GrabCut::process()
 
     bool has_fg = false;
     bool has_bg = false;
-    cv::Mat mask(img.rows, img.cols, CV_8UC1, cv::Scalar::all(param<int>("initial value")));
+    cv::Mat mask(img.rows, img.cols, CV_8UC1, cv::Scalar::all(readParameter<int>("initial value")));
 
     {
         INTERLUDE("create mask");
 
-        unsigned char threshold = param<int>("threshold");
+        unsigned char threshold = readParameter<int>("threshold");
         for(int i = 0; i < img.rows; ++i) {
             for(int j = 0; j < img.rows; ++j) {
                 if(fg_certain.at<unsigned char>(i,j) > threshold) {
@@ -116,7 +116,7 @@ void GrabCut::process()
     }
 
     // todo: allow state to be remembered
-    int iter = param<int>("iterations");
+    int iter = readParameter<int>("iterations");
     int mode = cv::GC_INIT_WITH_MASK;
     cv::Mat fg, bg;
 

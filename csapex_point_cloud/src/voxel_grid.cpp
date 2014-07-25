@@ -44,7 +44,7 @@ void VoxelGrid::process()
 template <class PointT>
 void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    double res = param<double>("resolution");
+    double res = readParameter<double>("resolution");
     Eigen::Vector4f leaf(res, res, res, 0);
 
     typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);

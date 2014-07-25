@@ -26,7 +26,7 @@ void BoxBlur::process()
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
-    int kernel = param<int>("kernel");
+    int kernel = readParameter<int>("kernel");
 
     cv::blur(in->value,out->value, cv::Size(kernel, kernel));
 

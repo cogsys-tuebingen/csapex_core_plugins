@@ -38,12 +38,12 @@ void ImportFile::setupParameters()
 
 void ImportFile::setImportPrefix()
 {
-    prefix_ = param<std::string>("filename");
+    prefix_ = readParameter<std::string>("filename");
 }
 
 void ImportFile::setImportPath()
 {
-    std::string path = param<std::string>("path");
+    std::string path = readParameter<std::string>("path");
 
     if(path.empty() || path_ == path) {
         return;
@@ -79,7 +79,7 @@ void ImportFile::tick()
     bool continue_searching = true;
     while(continue_searching) {
         if(current_file_ == end) {
-            if(param<bool>("loop")) {
+            if(readParameter<bool>("loop")) {
                 current_file_ = bfs::directory_iterator(path_);
             }
             continue_searching = false;

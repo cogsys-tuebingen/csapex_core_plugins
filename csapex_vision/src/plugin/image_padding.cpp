@@ -49,7 +49,7 @@ void ImagePadding::process()
     int rows = img_msg->value.rows;
     int cols = img_msg->value.cols;
 
-    int border = param<int>("border");
+    int border = readParameter<int>("border");
 
     if(output_->isConnected()) {
         CvMatMessage::Ptr result(new CvMatMessage(img_msg->getEncoding()));
@@ -66,7 +66,7 @@ void ImagePadding::process()
 
         result->value = cv::Mat(rows + 2 * border, cols + 2 * border, CV_8UC1, cv::Scalar::all(0));
 
-        int mask_offset = param<int>("mask offset");
+        int mask_offset = readParameter<int>("mask offset");
         cv::Rect roi_rect(border+mask_offset, border+mask_offset, cols-2*mask_offset, rows-2*mask_offset);
         cv::rectangle(result->value, roi_rect, cv::Scalar::all(255), CV_FILLED);
 

@@ -64,8 +64,8 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
 {
     typename pcl::PointCloud<PointT>::Ptr cloud(new pcl::PointCloud<PointT>);
 
-    double fov_h = param<double>("fov/h") / 180.0 * M_PI;
-    double fov_v = param<double>("fov/v") / 180.0 * M_PI;
+    double fov_h = readParameter<double>("fov/h") / 180.0 * M_PI;
+    double fov_v = readParameter<double>("fov/v") / 180.0 * M_PI;
 
     double fov_h2 = fov_h / 2.0;
     double fov_v2 = fov_v / 2.0;
@@ -76,16 +76,16 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
     double mid_x = w / 2.0;
     double mid_y = h / 2.0;
 
-    bool error_comp = param<bool>("experimental error compensation");
-    int correction_start = param<int>("correct/start");
-    double correction_f = param<double>("correct/f");
+    bool error_comp = readParameter<bool>("experimental error compensation");
+    int correction_start = readParameter<int>("correct/start");
+    double correction_f = readParameter<double>("correct/f");
 
     if(boost::is_same<PointT, pcl::PointXYZI>()) {
         apex_assert_hard(intensity.type() == CV_8UC1);
     }
     apex_assert_hard(depth.type() == CV_32FC1);
 
-    std::pair<int,int> range = param<std::pair<int,int> >("intensity");
+    std::pair<int,int> range = readParameter<std::pair<int,int> >("intensity");
 
     for(int y = 0; y < depth.rows; ++y) {
         for(int x = 0; x < depth.cols; ++x) {
@@ -127,7 +127,7 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
         }
     }
 
-    PointCloudMessage::Ptr result(new PointCloudMessage(param<std::string>("frame")));
+    PointCloudMessage::Ptr result(new PointCloudMessage(readParameter<std::string>("frame")));
     result->value = cloud;
 
     return result;
@@ -137,7 +137,7 @@ void ImageToPointCloud::process()
 {
     CvMatMessage::Ptr depth_msg(input_depth_->getMessage<CvMatMessage>());
 
-    PointCloudMessage::Ptr result(new PointCloudMessage(param<std::string>("frame")));
+    PointCloudMessage::Ptr result(new PointCloudMessage(readParameter<std::string>("frame")));
     if(input_intensity_->isConnected()) {
         CvMatMessage::Ptr intensity_msg(input_intensity_->getMessage<CvMatMessage>());
         result = transform<pcl::PointXYZI>(depth_msg->value, intensity_msg->value);

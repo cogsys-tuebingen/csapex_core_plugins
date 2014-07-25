@@ -41,7 +41,7 @@ void Delay::process()
 {
     ConnectionType::Ptr msg = input_->getMessage<ConnectionType>();
 
-    long t = param<double>("delay") * 1000;
+    long t = readParameter<double>("delay") * 1000;
     qt_helper::QSleepThread::msleep(t);
 
     output_->setType(input_->getType());

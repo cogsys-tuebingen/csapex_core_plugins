@@ -2,7 +2,7 @@
 #define TRANSFORM_PUBLISHER_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex_ros/ros_node.h>
 
 /// SYSTEM
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
@@ -10,10 +10,8 @@
 
 namespace csapex {
 
-class TransformPublisher : public csapex::Node
+class TransformPublisher : public RosNode
 {
-    Q_OBJECT
-
 public:
     TransformPublisher();
     ~TransformPublisher();

@@ -68,8 +68,8 @@ void ImageCollage::process()
         p_y_->setMax(max_y);
     }
 
-    int x = param<int>("x");
-    int y = param<int>("y");
+    int x = readParameter<int>("x");
+    int y = readParameter<int>("y");
 
     int w = std::min(w_2, w_1 - x - 1);
     int h = std::min(h_2, h_1 - y - 1);

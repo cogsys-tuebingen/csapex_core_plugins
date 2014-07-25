@@ -313,15 +313,15 @@ void SacFit::estimateNormals(typename pcl::PointCloud<PointT>::Ptr cloud, pcl::P
 void SacFit::setParameters()
 {
     //Set Parameters
-    iterations_ = param<int>("iterations");
-    min_inliers_ = param<int>("min inliers");
+    iterations_ = readParameter<int>("iterations");
+    min_inliers_ = readParameter<int>("min inliers");
     ransac_ = pcl::SAC_RANSAC;
 
-    normal_distance_weight_ = param<double>("normal distance weight");
-    distance_threshold_ = param<double>("distance threshold");
-    sphere_r_min_ = param<double>("sphere min radius");
-    sphere_r_max_ = param<double>("sphere max radius");
-    model_ = (pcl::SacModel) param<int>("models");
+    normal_distance_weight_ = readParameter<double>("normal distance weight");
+    distance_threshold_ = readParameter<double>("distance threshold");
+    sphere_r_min_ = readParameter<double>("sphere min radius");
+    sphere_r_max_ = readParameter<double>("sphere max radius");
+    model_ = (pcl::SacModel) readParameter<int>("models");
 }
 
 template <class PointT>

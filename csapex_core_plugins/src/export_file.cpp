@@ -54,8 +54,8 @@ void ExportFile::setup()
 
 void ExportFile::setExportPath()
 {
-    path_ = param<std::string>("path");
-    base_ = param<std::string>("filename");
+    path_ = readParameter<std::string>("path");
+    base_ = readParameter<std::string>("filename");
 }
 
 void ExportFile::process()
@@ -74,7 +74,7 @@ void ExportFile::process()
     std::stringstream ss;
     ss << "_" << suffix_;
 
-    if(param<bool>("yaml")) {
+    if(readParameter<bool>("yaml")) {
         std::string file = path_ + "/" + base_ + ss.str().c_str() + Settings::message_extension;
         MessageFactory::writeMessage(file, msg);
     } else {

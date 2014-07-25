@@ -46,7 +46,7 @@ void TransformFilter::setup()
 
 void TransformFilter::process()
 {
-    filter_size_ =  (unsigned int)param<int>("filter size");
+    filter_size_ =  (unsigned int)readParameter<int>("filter size");
 
     // Output Varibales
     double x,y,z;

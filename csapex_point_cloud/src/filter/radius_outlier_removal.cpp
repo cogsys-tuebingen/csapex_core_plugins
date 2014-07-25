@@ -52,10 +52,10 @@ void RadiusOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr clou
     if(!indeces_out && !cloud_out)
         return;
 
-    int    min_neighbours_= param<int>("min neighbours");
-    bool   keep_organized_= param<bool>("keep organized");
-    bool   negative_      = param<bool>("negate");
-    double search_radius_ = param<double>("search radius");
+    int    min_neighbours_= readParameter<int>("min neighbours");
+    bool   keep_organized_= readParameter<bool>("keep organized");
+    bool   negative_      = readParameter<bool>("negate");
+    double search_radius_ = readParameter<double>("search radius");
 
     pcl::RadiusOutlierRemoval<PointT> ror;
     ror.setInputCloud(cloud);

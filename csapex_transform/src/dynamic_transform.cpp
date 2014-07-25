@@ -49,7 +49,7 @@ void DynamicTransform::process()
     if(use_in_frame) {
         std::string from = frame_in_from_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;
 
-        if(param<std::string>("from") != from) {
+        if(readParameter<std::string>("from") != from) {
             parameter_state_["from"] = from;
             update = true;
         }
@@ -61,7 +61,7 @@ void DynamicTransform::process()
     if(use_to_frame) {
         std::string to = frame_in_to_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;
 
-        if(param<std::string>("to") != to) {
+        if(readParameter<std::string>("to") != to) {
             parameter_state_["to"] = to;
             update = true;
         }
@@ -93,7 +93,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
         LockedListener l = Listener::getLocked();
 
         if(l.l) {
-            l.l->tfl->lookupTransform(param<std::string>("to"), param<std::string>("from"), time, t);
+            l.l->tfl->lookupTransform(readParameter<std::string>("to"), readParameter<std::string>("from"), time, t);
             setError(false);
         } else {
             return;
@@ -109,7 +109,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
     output_->publish(msg);
 
     connection_types::GenericValueMessage<std::string>::Ptr frame(new connection_types::GenericValueMessage<std::string>);
-    frame->value = param<std::string>("to");
+    frame->value = readParameter<std::string>("to");
     output_frame_->publish(frame);
 }
 

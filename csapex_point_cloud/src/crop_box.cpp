@@ -48,9 +48,9 @@ void CropBox::process()
 template <class PointT>
 void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    std::pair<double,double> dx = param<std::pair<double, double> >("dx");
-    std::pair<double,double> dy = param<std::pair<double, double> >("dy");
-    std::pair<double,double> dz = param<std::pair<double, double> >("dz");
+    std::pair<double,double> dx = readParameter<std::pair<double, double> >("dx");
+    std::pair<double,double> dy = readParameter<std::pair<double, double> >("dy");
+    std::pair<double,double> dz = readParameter<std::pair<double, double> >("dz");
 
     Eigen::Vector4f min_pt_(dx.first, dy.first, dz.first, 0);
     Eigen::Vector4f max_pt_(dx.second, dy.second, dz.second, 0);

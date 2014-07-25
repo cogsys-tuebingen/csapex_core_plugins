@@ -20,29 +20,29 @@ public:
     template <typename ScanType>
     void render(ScanType& scan, cv::Mat& output)
     {
-        int w = param<int>("width");
-        int h = param<int>("height");
-        double radius = param<double>("radius");
+        int w = readParameter<int>("width");
+        int h = readParameter<int>("height");
+        double radius = readParameter<double>("radius");
 
-        const std::vector<int>& color = param<std::vector<int> >("color/bg");
+        const std::vector<int>& color = readParameter<std::vector<int> >("color/bg");
         cv::Scalar bgColor(color[2], color[1], color[0]);
 
         cv::Mat(h, w, CV_8UC3, bgColor).copyTo(output);
 
         cv::Point2f origin(w/2, h/2);
-        double scale = param<double>("scale") * 10.0;
-        double angle = param<double>("rotation");
+        double scale = readParameter<double>("scale") * 10.0;
+        double angle = readParameter<double>("rotation");
 
-        if(param<bool>("drawRays")) {
+        if(readParameter<bool>("drawRays")) {
             INTERLUDE("draw rays");
-            const std::vector<int>& color = param<std::vector<int> >("color/ray");
+            const std::vector<int>& color = readParameter<std::vector<int> >("color/ray");
             cv::Scalar rayColor(color[2], color[1], color[0]);
             drawRays(scan, output, origin, rayColor, angle, scale, radius);
         }
-        if(param<bool>("drawHits")) {
+        if(readParameter<bool>("drawHits")) {
             INTERLUDE("draw hits");
-            const std::vector<int>& color = param<std::vector<int> >("color/hit");
-            const std::vector<int>& marked = param<std::vector<int> >("color/marked");
+            const std::vector<int>& color = readParameter<std::vector<int> >("color/hit");
+            const std::vector<int>& marked = readParameter<std::vector<int> >("color/marked");
             cv::Scalar hitColor(color[2], color[1], color[0]);
             cv::Scalar markedColor(marked[2], marked[1], marked[0]);
             drawHits(scan, output, origin, hitColor, markedColor, angle, scale, radius);

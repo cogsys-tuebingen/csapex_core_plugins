@@ -42,6 +42,6 @@ void TextInput::setup()
 void TextInput::publish()
 {
     connection_types::GenericValueMessage<std::string>::Ptr msg(new connection_types::GenericValueMessage<std::string>);
-    msg->value = param<std::string>("text");
+    msg->value = readParameter<std::string>("text");
     connector_->publish(msg);
 }

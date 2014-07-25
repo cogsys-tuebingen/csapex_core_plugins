@@ -26,9 +26,9 @@ void ModelToMarker::process()
 {
     boost::shared_ptr<std::vector<ModelMessage> const> models = input_->getMessage<GenericVectorMessage, ModelMessage>();
 
-    const std::vector<int>& color = param<std::vector<int> >("color/marker");
+    const std::vector<int>& color = readParameter<std::vector<int> >("color/marker");
 
-    if(param<bool>("publish marker")) {
+    if(readParameter<bool>("publish marker")) {
         visualization_msgs::MarkerArray::Ptr marker_array(new visualization_msgs::MarkerArray);
         int marker_id = 0;
         for (std::vector<ModelMessage>::const_iterator it = models->begin(); it != models->end(); it++) {

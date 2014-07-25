@@ -57,9 +57,9 @@ void Camera::update()
     setError(false);
 
 
-    int dev = param<int>("device");
-    int w = param<int>("w");
-    int h = param<int>("h");
+    int dev = readParameter<int>("device");
+    int w = readParameter<int>("w");
+    int h = readParameter<int>("h");
 
 
     if(dev == current_dev_ && w == w_ && h == h_) {

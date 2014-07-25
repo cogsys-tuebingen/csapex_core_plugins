@@ -57,7 +57,7 @@ void ImageProviderMov::reallyNext(cv::Mat& img, cv::Mat& mask)
         return;
     }
 
-    int requested_frame = state.param<int>("set/current_frame");
+    int requested_frame = state.readParameter<int>("set/current_frame");
     bool skip = next_frame != requested_frame;
 
     if(next_frame >= frames_ && !skip) {
@@ -78,7 +78,7 @@ void ImageProviderMov::reallyNext(cv::Mat& img, cv::Mat& mask)
     state["set/current_frame"] = next_frame;
 
     if(next_frame == frames_) {
-        bool loop = state.param<bool>("set/loop");
+        bool loop = state.readParameter<bool>("set/loop");
         if(loop) {
             state["set/current_frame"] = 0;
         } else {

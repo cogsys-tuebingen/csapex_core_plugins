@@ -203,9 +203,9 @@ template <class PointT>
 void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
     CvMatMessage::Ptr thresholds  = thresholds_->getMessage<CvMatMessage>();
-    uchar             threshold   = param<int>("threshold");
-    double            max_dist    = param<double>("max. distance");
-    bool              interpolate = param<bool>("interpolate");
+    uchar             threshold   = readParameter<int>("threshold");
+    double            max_dist    = readParameter<double>("max. distance");
+    bool              interpolate = readParameter<bool>("interpolate");
 
     if(thresholds->value.rows != cloud->height)
         throw std::runtime_error("Height of pointcloud and threshold matrix not matching!");
