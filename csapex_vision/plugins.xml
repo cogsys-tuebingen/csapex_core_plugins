@@ -12,11 +12,13 @@
   <description>
     Import image data by a webcam or another camera device.
   </description>
+  <tags>Vision, Input</tags>
 </class>
 
 <class type="csapex::OutputDisplay" base_class_type="csapex::Node">
   <description>Displays an image message</description>
   <icon>:/picture.png</icon>
+  <tags>Output, Vision, General</tags>
 </class>
 <class type="csapex::OutputDisplayAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
@@ -25,6 +27,7 @@
 <class type="csapex::ImageRoi" base_class_type="csapex::Node">
   <description></description>
   <icon>:/picture.png</icon>
+  <tags>Vision, ROI</tags>
 </class>
 <class type="csapex::ImageRoiAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
@@ -34,33 +37,40 @@
 <class type="csapex::ImagePadding" base_class_type="csapex::Node">
   <description>Adds padding pixels to an image</description>
   <icon>:/border.png</icon>
+  <tags>Vision</tags>
 </class>
 
 <class type="csapex::BoxBlur" base_class_type="csapex::Node">
   <description>
     Blur an image or a matrix applying a box filter.
   </description>
+  <tags>Vision</tags>
 </class>
 <class type="csapex::GaussianBlur" base_class_type="csapex::Node">
   <description>
     Blur an image or a matrix applying a gaussian function.
   </description>
+  <tags>Vision</tags>
 </class>
 <class type="csapex::BilateralFilter" base_class_type="csapex::Node">
   <description>
     Apply a bilateral filter to an image.
   </description>
+  <tags>Vision</tags>
 </class>
 <class type="csapex::ColorSegmentation" base_class_type="csapex::Node">
   <description>Allows the user to segment an image based on its channels</description>
+  <tags>Vision, Segmentation, Filter</tags>
 </class>
 <class type="csapex::FilterApplyMask" base_class_type="csapex::Node">
   <description>Applies a mask to an image, turning all masked images to black</description>
   <icon>:/filter.png</icon>
+  <tags>Vision, Filter</tags>
 </class>
 <class type="csapex::FilterStaticMask" base_class_type="csapex::Node">
   <description>Allows the user to generate a static mask</description>
   <icon>:/filter.png</icon>
+  <tags>Vision, Filter</tags>
 </class>
 <class type="csapex::FilterStaticMaskAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
@@ -68,10 +78,12 @@
 
 <class type="csapex::HoughCircle" base_class_type="csapex::Node">
   <description>Finds circles in an image</description>
+  <tags>Vision</tags>
 </class>
 
 <class type="csapex::VectorizePyramid" base_class_type="csapex::Node">
-  <description>Convert a CvPyramidMessage to a VectorMessage of CvMatMessages.</description>
+  <description>Convert a CvPyramidMessage to a VectorMessage of CvMatMessages.</description>  
+  <tags>Vision</tags>
 </class>
 
 

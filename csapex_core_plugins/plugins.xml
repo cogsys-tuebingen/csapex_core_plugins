@@ -11,18 +11,22 @@
 <class type="csapex::TextInput" base_class_type="csapex::Node">
   <description>Allows the user to input text</description>
   <icon>:/pencil.png</icon>
+  <tags>General, Input</tags>
 </class>
 <class type="csapex::DoubleInput" base_class_type="csapex::Node">
   <description>Allows the user to input a floating point number</description>
   <icon>:/pencil.png</icon>
+  <tags>General, Input</tags>
 </class>
 <class type="csapex::IntInput" base_class_type="csapex::Node">
   <description>Allows the user to input an integer number</description>
   <icon>:/pencil.png</icon>
+  <tags>General, Input</tags>
 </class>
 
 <class type="csapex::TextDisplay" base_class_type="csapex::Node">
   <description>Displays the content of messages</description>
+  <tags>General, Output</tags>
 </class>
 <class type="csapex::TextDisplayAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
@@ -30,33 +34,40 @@
 
 <class type="csapex::SayText" base_class_type="csapex::Node">
   <description>Converts a text into an audio signal</description>
+  <tags>General, Output</tags>
 </class>
 <class type="csapex::ExportCout" base_class_type="csapex::Node">
   <description>Exports messages via std::cout</description>
   <icon>:/terminal.png</icon>
+  <tags>General, ConsoleIO, Output</tags>
 </class>
 <class type="csapex::ExportFile" base_class_type="csapex::Node">
   <description>Exports messages into a directory</description>
+  <tags>General, Output</tags>
 </class>
 <class type="csapex::ImportCin" base_class_type="csapex::Node">
   <description>Imports messages from std::cin</description>
   <icon>:/terminal.png</icon>
+  <tags>General, ConsoleIO, Input</tags>
 </class>
 <class type="csapex::FileImporter" base_class_type="csapex::Node">
   <description>Import messages from a directory ("ImportFile")</description>
   <icon>:/folder_picture.png</icon>
+  <tags>General, Input</tags>
 </class>
 
 <class type="csapex::DoubleBuffer" base_class_type="csapex::Node">
   <description>Buffers a message, allows to bridge connections and make them asynchronous</description>
   <icon>:/buffer.png</icon>
+  <tags>General, Buffer</tags>
 </class>
 <class type="csapex::Relay" base_class_type="csapex::Node">
   <description>Relays a message directly</description>
   <icon>:/buffer.png</icon>
+  <tags>General, Buffer</tags>
 </class>
 <class type="csapex::Delay" base_class_type="csapex::Node">
-  <tags>Debug, Delay    ,    Foo</tags>
+  <tags>Debug, Delay</tags>
   <description>[DEBUG] Delays a message</description>
   <icon>:/buffer.png</icon>
 </class>
