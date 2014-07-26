@@ -27,7 +27,7 @@ protected:
 private:
     std::string prefix_;
     std::string path_;
-    ConnectorOut* out_;
+    Output* out_;
 
     boost::filesystem::directory_iterator current_file_;
 };

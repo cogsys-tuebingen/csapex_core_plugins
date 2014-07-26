@@ -6,8 +6,8 @@
 #include <csapex/utility/assert.h>
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/timer.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -38,8 +38,8 @@ void Foreach::setup()
     output_ = modifier_->addOutput<VectorMessage>("Content");
 
 
-    out_sub = new ConnectorOut(getSettings(), UUID::make_sub(getUUID(), "out_sub"));
-    in_sub = new ConnectorIn(getSettings(), UUID::make_sub(getUUID(), "in_sub"));
+    out_sub = new Output(getSettings(), UUID::make_sub(getUUID(), "out_sub"));
+    in_sub = new Input(getSettings(), UUID::make_sub(getUUID(), "in_sub"));
 
     out_sub->setType(AnyMessage::make());
     in_sub->setType(AnyMessage::make());
@@ -89,7 +89,7 @@ void Foreach::process()
         msg_mutex_.unlock();
 
         // read the result
-        ConnectorOut* out = dynamic_cast<ConnectorOut*>(in_sub->getSource());
+        Output* out = dynamic_cast<Output*>(in_sub->getSource());
         ConnectionType::Ptr msg = out->getMessage();
         result->value.push_back(msg);
 

@@ -18,7 +18,7 @@ public:
     virtual void setup();
 
 private:
-    ConnectorIn* connector_;
+    Input* connector_;
 };
 
 }

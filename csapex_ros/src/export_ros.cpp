@@ -6,7 +6,7 @@
 #include <csapex_ros/ros_handler.h>
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>

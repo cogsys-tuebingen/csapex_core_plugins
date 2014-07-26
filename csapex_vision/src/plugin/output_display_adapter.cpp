@@ -2,7 +2,7 @@
 #include "output_display_adapter.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/register_node_adapter.h>
 #include <csapex/utility/assert.h>
 

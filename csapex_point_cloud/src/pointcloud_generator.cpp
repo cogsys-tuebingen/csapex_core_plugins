@@ -2,7 +2,7 @@
 #include "pointcloud_generator.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 
 /// SYSTEM

@@ -26,7 +26,7 @@ private:
     void setSignal();
 
 private:
-    ConnectorOut* out;
+    Output* out;
     bool signal_;
 };
 

@@ -15,8 +15,8 @@ public:
     virtual void setup();
 
 private:
-    ConnectorOut* output_;
-    ConnectorIn* input_;
+    Output* output_;
+    Input* input_;
 };
 
 }

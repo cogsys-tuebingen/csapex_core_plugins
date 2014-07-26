@@ -11,7 +11,7 @@
 namespace csapex
 {
 
-class ConnectorIn;
+class Input;
 
 class ImageRoi : public InteractiveNode
 {
@@ -32,8 +32,8 @@ private:
     void drop();
 
 protected:
-    ConnectorIn*  input_;
-    ConnectorOut* output_;
+    Input*  input_;
+    Output* output_;
     cv::Size      last_mat_size_;
 
     connection_types::RoiMessage::Ptr result_;

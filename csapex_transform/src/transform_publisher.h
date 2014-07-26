@@ -20,8 +20,8 @@ public:
     virtual void setup();
 
 private:
-    ConnectorIn* input_transform;
-    ConnectorIn* input_time;
+    Input* input_transform;
+    Input* input_time;
 
     tf::TransformBroadcaster* tfb_;
 };

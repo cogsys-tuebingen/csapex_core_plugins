@@ -2,8 +2,8 @@
 #include "label_clustered_pointcloud.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/model/node_modifier.h>

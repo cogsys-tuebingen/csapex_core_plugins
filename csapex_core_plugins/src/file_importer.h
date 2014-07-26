@@ -8,7 +8,7 @@
 namespace csapex
 {
 
-class ConnectorOut;
+class Output;
 
 class FileImporter : public Node
 {
@@ -34,7 +34,7 @@ private:
     MessageProvider::Ptr provider_;
 
     QString file_;
-    ConnectorOut* output_;
+    Output* output_;
 };
 
 }

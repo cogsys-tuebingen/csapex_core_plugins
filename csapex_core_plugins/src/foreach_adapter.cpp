@@ -2,11 +2,11 @@
 #include "foreach_adapter.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/register_node_adapter.h>
 #include <csapex/view/port.h>
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <csapex/view/widget_controller.h>
 
 using namespace csapex;

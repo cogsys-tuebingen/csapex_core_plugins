@@ -20,8 +20,8 @@ public:
 private:
     enum ConditionType {AND, OR};
 
-    ConnectorIn*  input_;
-    ConnectorOut* output_;
+    Input*  input_;
+    Output* output_;
 
     void update();
 

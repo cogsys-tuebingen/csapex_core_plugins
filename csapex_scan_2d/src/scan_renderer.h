@@ -21,8 +21,8 @@ public:
     void doProcess(ScanType& s);
 
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
+    Input* input_;
+    Output* output_;
 
     Renderer renderer;
 };

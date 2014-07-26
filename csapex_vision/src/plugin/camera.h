@@ -8,8 +8,8 @@
 #include <opencv2/opencv.hpp>
 
 /// HEADER
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 
 namespace csapex
 {
@@ -27,7 +27,7 @@ protected:
     void update();
 
 private:
-    ConnectorOut* output_;
+    Output* output_;
     cv::VideoCapture cap_;
 
     int current_dev_;

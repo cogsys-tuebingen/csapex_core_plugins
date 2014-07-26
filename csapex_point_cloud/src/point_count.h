@@ -19,7 +19,7 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 private:
-    ConnectorIn* input_;
+    Input* input_;
 
 public:
     boost::signals2::signal<void(int)> display_request;

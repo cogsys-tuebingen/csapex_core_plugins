@@ -18,7 +18,7 @@ protected:
     void publish();
 
 private:
-    ConnectorOut* connector_;
+    Output* connector_;
 };
 
 }

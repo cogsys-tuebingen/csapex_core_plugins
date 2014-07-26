@@ -18,7 +18,7 @@ protected:
     void updateTopic();
 
 private:
-    ConnectorIn* connector_;
+    Input* connector_;
 
     bool create_pub;
 

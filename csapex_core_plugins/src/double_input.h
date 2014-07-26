@@ -20,7 +20,7 @@ public:
     void process();
 
 private:
-    ConnectorOut* out_;
+    Output* out_;
 };
 
 }

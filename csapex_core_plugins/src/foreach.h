@@ -30,11 +30,11 @@ private Q_SLOTS:
     void messageProcessed();
 
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
+    Input* input_;
+    Output* output_;
 
-    ConnectorIn* in_sub;
-    ConnectorOut* out_sub;
+    Input* in_sub;
+    Output* out_sub;
 
     bool msg_received_;
     QMutex msg_mutex_;

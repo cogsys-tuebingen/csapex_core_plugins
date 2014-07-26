@@ -26,9 +26,9 @@ private:
 
 private:
     /// APEX
-    ConnectorIn            *input_;
-    ConnectorOut           *output_;
-    ConnectorOut           *output_marker_;
+    Input            *input_;
+    Output           *output_;
+    Output           *output_marker_;
 
     /// RENDERING
     int                     last_id_;

@@ -2,8 +2,8 @@
 #include "export_file.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/model/connection_type.h>
 #include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>

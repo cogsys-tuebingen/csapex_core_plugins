@@ -60,15 +60,15 @@ private:
                    std::vector<std::vector<cv::DMatch> > &matches);
 
 private:
-    ConnectorIn* in_img_1;
-    ConnectorIn* in_key_1;
-    ConnectorIn* in_des_1;
+    Input* in_img_1;
+    Input* in_key_1;
+    Input* in_des_1;
 
-    ConnectorIn* in_img_2;
-    ConnectorIn* in_key_2;
-    ConnectorIn* in_des_2;
+    Input* in_img_2;
+    Input* in_key_2;
+    Input* in_des_2;
 
-    ConnectorOut* out_img;
+    Output* out_img;
 
     Method current_method_;
 };

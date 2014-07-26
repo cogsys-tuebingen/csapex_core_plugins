@@ -18,7 +18,7 @@ public:
     boost::signals2::signal<void(const std::string&)> display_request;
 
 private:
-    ConnectorIn* connector_;
+    Input* connector_;
 };
 
 }

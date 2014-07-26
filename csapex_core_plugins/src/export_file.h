@@ -23,7 +23,7 @@ protected:
     void setExportPath();
 
 private:
-    ConnectorIn* connector_;
+    Input* connector_;
 
     std::string path_;
     std::string base_;

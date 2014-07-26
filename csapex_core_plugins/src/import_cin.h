@@ -16,7 +16,7 @@ public:
     virtual void tick();
 
 private:
-    ConnectorOut* connector_;
+    Output* connector_;
 
     std::stringstream buffer;
 };

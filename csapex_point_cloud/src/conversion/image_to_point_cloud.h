@@ -27,9 +27,9 @@ private:
     transform(const cv::Mat& range, const cv::Mat& intensity);
 
 private:
-    ConnectorIn* input_depth_;
-    ConnectorIn* input_intensity_;
-    ConnectorOut* output_;
+    Input* input_depth_;
+    Input* input_intensity_;
+    Output* output_;
 };
 
 }

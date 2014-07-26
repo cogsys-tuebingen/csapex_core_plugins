@@ -2,7 +2,7 @@
 #include "export_cout.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
 #include <csapex/model/node_modifier.h>

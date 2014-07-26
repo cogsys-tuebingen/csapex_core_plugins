@@ -19,9 +19,9 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 protected:
-    ConnectorIn*                        input_;
-    ConnectorIn*                        labels_;
-    ConnectorOut*                       output_;
+    Input*                        input_;
+    Input*                        labels_;
+    Output*                       output_;
     connection_types::CvMatMessage::Ptr label_msg_;
 };
 }

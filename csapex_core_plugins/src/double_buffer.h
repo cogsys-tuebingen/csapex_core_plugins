@@ -23,8 +23,8 @@ private:
     void swapBuffers();
 
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
+    Input* input_;
+    Output* output_;
 
     QMutex mutex_;
 

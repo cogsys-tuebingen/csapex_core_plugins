@@ -16,8 +16,8 @@ public:
     virtual void process();
 
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
+    Input* input_;
+    Output* output_;
 };
 
 }

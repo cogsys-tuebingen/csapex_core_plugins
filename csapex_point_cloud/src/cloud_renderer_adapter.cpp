@@ -2,7 +2,7 @@
 #include "cloud_renderer_adapter.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/output.h>
 #include <csapex/utility/register_node_adapter.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/q_signal_relay.h>

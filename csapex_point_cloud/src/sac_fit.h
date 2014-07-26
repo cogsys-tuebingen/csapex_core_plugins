@@ -26,12 +26,12 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 private:
-    ConnectorIn* input_;
-    ConnectorIn* in_indices_;
-    ConnectorOut* out_text_;
-    ConnectorOut* out_model_;
-    ConnectorOut* out_cloud_;
-    ConnectorOut* out_cloud_residue_;
+    Input* input_;
+    Input* in_indices_;
+    Output* out_text_;
+    Output* out_model_;
+    Output* out_cloud_;
+    Output* out_cloud_residue_;
 
     int shape_inliers_;
     double ransac_probability_;

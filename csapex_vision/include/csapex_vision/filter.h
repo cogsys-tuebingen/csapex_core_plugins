@@ -11,8 +11,8 @@
 namespace csapex
 {
 
-class ConnectorIn;
-class ConnectorOut;
+class Input;
+class Output;
 
 class Filter : public Node
 {
@@ -34,11 +34,11 @@ protected:
     virtual bool usesMask();
 
 protected:
-    ConnectorIn* input_img_;
-    ConnectorIn* input_mask_;
+    Input* input_img_;
+    Input* input_mask_;
 
-    ConnectorOut* output_img_;
-    ConnectorOut* output_mask_;
+    Output* output_img_;
+    Output* output_mask_;
 };
 
 } /// NAMESPACE

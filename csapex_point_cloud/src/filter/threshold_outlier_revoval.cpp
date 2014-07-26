@@ -2,8 +2,8 @@
 #include "threshold_outlier_revoval.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_transform/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>

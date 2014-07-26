@@ -2,7 +2,7 @@
 #include "import_cin.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/output.h>
 #include <csapex/msg/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>

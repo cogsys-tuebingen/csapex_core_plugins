@@ -18,10 +18,10 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 protected:
-    ConnectorIn*  input_cloud_;
-    ConnectorIn*  indeces_input_;
-    ConnectorOut* output_cloud_;
-    ConnectorOut* output_indeces_;
+    Input*  input_cloud_;
+    Input*  indeces_input_;
+    Output* output_cloud_;
+    Output* output_indeces_;
 
 };
 }

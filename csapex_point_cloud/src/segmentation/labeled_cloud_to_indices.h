@@ -18,8 +18,8 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 protected:
-    ConnectorIn*  input_;
-    ConnectorOut* output_;
+    Input*  input_;
+    Output* output_;
 };
 }
 #endif // LABELED_CLOUD_TO_INDICES_H

@@ -2,7 +2,7 @@
 #include "image_roi_adapter.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/register_node_adapter.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex/utility/color.hpp>

@@ -19,9 +19,9 @@ public:
     void process();
 
 private:
-    ConnectorIn* in_main_;
-    ConnectorIn* in_secondary_;
-    ConnectorOut* out_;
+    Input* in_main_;
+    Input* in_secondary_;
+    Output* out_;
 
     param::RangeParameter::Ptr p_x_;
     param::RangeParameter::Ptr p_y_;

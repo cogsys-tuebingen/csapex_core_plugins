@@ -5,7 +5,7 @@
 #include "filter_static_mask_painter.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/register_node_adapter.h>
 
 /// SYSTEM

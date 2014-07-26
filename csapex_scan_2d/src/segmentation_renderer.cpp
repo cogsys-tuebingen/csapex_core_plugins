@@ -8,9 +8,9 @@
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_laser_processing/data/segment.h>

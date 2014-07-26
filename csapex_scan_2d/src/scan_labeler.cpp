@@ -2,8 +2,8 @@
 #include "scan_labeler.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex_scan_2d/labeled_scan_message.h>

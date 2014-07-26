@@ -10,7 +10,7 @@
 namespace csapex
 {
 
-class ConnectorIn;
+class Input;
 
 class OutputDisplay : public Node
 {
@@ -24,7 +24,7 @@ public:
     void process();
 
 protected:
-    ConnectorIn* input_;
+    Input* input_;
 
 public:
     boost::signals2::signal<void(QSharedPointer<QImage>)> display_request;

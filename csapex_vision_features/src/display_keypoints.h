@@ -21,10 +21,10 @@ public:
     virtual void process();
 
 private:
-    ConnectorIn* in_img;
-    ConnectorIn* in_key;
+    Input* in_img;
+    Input* in_key;
 
-    ConnectorOut* out_img;
+    Output* out_img;
 };
 
 }

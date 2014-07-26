@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex_ros/ros_message_conversion.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_scan_2d/scan_message.h>

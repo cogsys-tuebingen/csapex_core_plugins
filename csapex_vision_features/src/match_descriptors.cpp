@@ -2,8 +2,8 @@
 #include "match_descriptors.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <utils_vision/utils/matcher.h>
 #include <utils_vision/data/matchable.h>
 #include <utils_vision/utils/hough_peak.h>

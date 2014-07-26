@@ -18,9 +18,9 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 protected:
-    ConnectorIn*  input_;
-    ConnectorOut* mask_;
-    ConnectorOut* index_;
+    Input*  input_;
+    Output* mask_;
+    Output* index_;
 };
 }
 

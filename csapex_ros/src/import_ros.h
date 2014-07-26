@@ -24,7 +24,7 @@ protected:
     virtual void setState(Memento::Ptr memento);
 
 private:
-    ConnectorOut* connector_;
+    Output* connector_;
 
     ros::Subscriber current_subscriber;
 
