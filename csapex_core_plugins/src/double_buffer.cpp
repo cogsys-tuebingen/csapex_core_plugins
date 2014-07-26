@@ -5,7 +5,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connection_type.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 

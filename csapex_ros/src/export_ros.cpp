@@ -8,7 +8,7 @@
 /// PROJECT
 #include <csapex/model/connector_in.h>
 #include <csapex/utility/stream_interceptor.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>

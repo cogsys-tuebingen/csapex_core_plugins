@@ -2,7 +2,7 @@
 #define FILE_IMPORTER_H
 
 /// PROJECT
-#include <csapex/model/message_provider.h>
+#include <csapex/msg/message_provider.h>
 #include <csapex/model/node.h>
 
 namespace csapex

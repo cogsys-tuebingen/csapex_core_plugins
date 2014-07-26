@@ -5,7 +5,7 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 
 /// PROJECT
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/utility/register_apex_plugin.h>

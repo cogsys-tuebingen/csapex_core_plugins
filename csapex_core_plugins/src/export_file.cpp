@@ -5,13 +5,13 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/model/connector_out.h>
 #include <csapex/model/connection_type.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/path_parameter.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/core/settings.h>
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/message_factory.h>
 
 /// SYSTEM
 #include <QFileDialog>

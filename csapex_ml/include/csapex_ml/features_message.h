@@ -2,7 +2,7 @@
 #define FEATURES_MESSAGE_H
 
 /// PROJECT
-#include <csapex/model/message.h>
+#include <csapex/msg/message_template.hpp>
 
 namespace csapex {
 namespace connection_types {

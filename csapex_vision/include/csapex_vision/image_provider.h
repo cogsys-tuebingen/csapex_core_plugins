@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/memento.h>
-#include <csapex/model/message_provider.h>
+#include <csapex/msg/message_provider.h>
 
 /// SYSTEM
 #include <boost/algorithm/string.hpp>

@@ -8,7 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/core/settings.h>
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/message_factory.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportFile, csapex::Node)
 

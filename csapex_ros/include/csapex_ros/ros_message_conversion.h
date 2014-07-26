@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex_ros/ros_handler.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/generic_pointer_message.hpp>
 
 /// PROJECT
 #include <csapex/utility/singleton.hpp>

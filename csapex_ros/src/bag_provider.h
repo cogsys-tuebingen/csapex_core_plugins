@@ -2,7 +2,7 @@
 #define BAG_PROVIDER_H
 
 /// COMPONENT
-#include <csapex/model/message_provider.h>
+#include <csapex/msg/message_provider.h>
 
 /// SYSTEM
 #include <rosbag/bag.h>

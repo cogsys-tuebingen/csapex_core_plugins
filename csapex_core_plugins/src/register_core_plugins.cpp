@@ -5,7 +5,7 @@
 #include "file_importer.h"
 
 /// PROJECT
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex/core/drag_io.h>
 #include <csapex/command/add_node.h>

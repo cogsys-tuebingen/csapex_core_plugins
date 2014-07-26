@@ -2,7 +2,7 @@
 #define VECTOR_MESSAGE_H
 
 /// PROJECT
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 
 /// SYSTEM
 #include <string>

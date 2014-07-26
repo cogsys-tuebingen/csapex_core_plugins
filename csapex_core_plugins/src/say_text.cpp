@@ -5,6 +5,7 @@
 #include <csapex/model/connector_in.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::SayText, csapex::Node)
 
