@@ -17,8 +17,6 @@ using namespace vision_plugins;
 
 Undistort::Undistort()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void Undistort::process()

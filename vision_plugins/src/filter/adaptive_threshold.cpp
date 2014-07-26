@@ -18,8 +18,6 @@ using namespace connection_types;
 
 AdaptiveThreshold::AdaptiveThreshold()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 

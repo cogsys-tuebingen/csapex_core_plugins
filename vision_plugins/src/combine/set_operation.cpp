@@ -24,8 +24,6 @@ using namespace boost::assign;
 
 SetOperation::SetOperation()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void SetOperation::process()

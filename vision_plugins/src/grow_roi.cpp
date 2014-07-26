@@ -24,9 +24,6 @@ using namespace connection_types;
 
 GrowROI::GrowROI()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("ROI"));
-
     addParameter(param::ParameterFactory::declareRange("x", 0, 100, 0, 1));
     addParameter(param::ParameterFactory::declareRange("y", 0, 100, 0, 1));
 }

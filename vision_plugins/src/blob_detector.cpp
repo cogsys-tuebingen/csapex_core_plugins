@@ -28,8 +28,6 @@ using namespace cvb;
 
 BlobDetector::BlobDetector()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("ROI"));
 }
 
 BlobDetector::~BlobDetector()

@@ -18,10 +18,6 @@ using namespace vision_plugins;
 
 CornerLineDetection::CornerLineDetection()
 {
-    Tag::createIfNotExists("Features");
-    addTag(Tag::get("Features"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void CornerLineDetection::setup()

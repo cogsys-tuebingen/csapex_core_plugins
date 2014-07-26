@@ -24,7 +24,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::FloatToUchar, csapex::Node)
 FloatToUchar::FloatToUchar() :
     type_(RELATIVE)
 {
-    addTag(Tag::get("Vision"));
 }
 
 void FloatToUchar::process()

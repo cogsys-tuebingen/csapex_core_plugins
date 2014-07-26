@@ -18,9 +18,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::ThresholdNoiseFilter, csapex::Node)
 
 ThresholdNoiseFilter::ThresholdNoiseFilter()
 {
-    addTag(Tag::get("Experimental"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 

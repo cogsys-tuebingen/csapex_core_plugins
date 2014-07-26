@@ -23,7 +23,6 @@ using namespace vision_plugins;
 
 HOGExtractor::HOGExtractor()
 {
-    addTag(Tag::get("vision_plugins"));
 }
 
 void HOGExtractor::setupParameters()

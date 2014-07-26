@@ -20,8 +20,6 @@ using namespace csapex;
 
 Morpholocial::Morpholocial()
 {
-    addTag(Tag::get("Vision"));
-
     addParameter(param::ParameterFactory::declareRange<int>("size", 1, 20, 2, 1));
     addParameter(param::ParameterFactory::declareRange<int>("iterations", 0, 10, 1, 1));
 

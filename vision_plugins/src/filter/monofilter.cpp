@@ -18,10 +18,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::MonoFilter, csapex::Node)
 
 MonoFilter::MonoFilter()
 {
-    Tag::createIfNotExists("Filter");
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void MonoFilter::process()

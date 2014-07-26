@@ -21,8 +21,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::ImageTextLabel, csapex::Node)
 
 ImageTextLabel::ImageTextLabel()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void ImageTextLabel::setup()

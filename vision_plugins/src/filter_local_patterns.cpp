@@ -32,9 +32,6 @@ LocalPatterns::LocalPatterns()
     colors_.push_back(utils_cv::histogram::COLOR_GREEN);
     colors_.push_back(utils_cv::histogram::COLOR_CYAN);
     colors_.push_back(utils_cv::histogram::COLOR_RED);
-
-    Tag::createIfNotExists("Analysis");
-    addTag(Tag::get("Analysis"));
 }
 
 void LocalPatterns::filter(Mat &img, Mat &mask)

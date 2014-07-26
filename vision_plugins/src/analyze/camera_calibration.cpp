@@ -20,9 +20,6 @@ using namespace vision_plugins;
 
 vision_plugins::CameraCalibration::CameraCalibration()
 {
-    addTag(Tag::get("Vision"));
-    Tag::createIfNotExists("vision_plugins");
-    addTag(Tag::get("vision_plugins"));
 }
 
 void vision_plugins::CameraCalibration::process()

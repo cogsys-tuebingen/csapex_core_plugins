@@ -23,9 +23,6 @@ using namespace connection_types;
 VJDetector::VJDetector()
     : vj_detector(NULL), image_scanner(NULL)
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("ROI"));
-
     addParameter(param::ParameterFactory::declareFileInputPath("file", ""));
 }
 

@@ -17,9 +17,6 @@ using namespace vision_plugins;
 MedianFilter::MedianFilter() :
     kernel_size_(3)
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void MedianFilter::process()

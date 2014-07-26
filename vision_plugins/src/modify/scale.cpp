@@ -17,8 +17,6 @@ using namespace vision_plugins;
 
 Scale::Scale()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void Scale::process()

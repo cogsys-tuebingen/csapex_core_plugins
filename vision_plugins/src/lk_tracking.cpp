@@ -22,9 +22,6 @@ using namespace connection_types;
 LKTracking::LKTracking()
     : init_(true)
 {
-    Tag::createIfNotExists("Tracking");
-    addTag(Tag::get("Tracking"));
-
     boost::function<void(const param::Parameter*)> cb = boost::bind(&LKTracking::update, this, _1);
 
     addParameter(param::ParameterFactory::declare<int>("winSize", 10, 80, 31, 1));

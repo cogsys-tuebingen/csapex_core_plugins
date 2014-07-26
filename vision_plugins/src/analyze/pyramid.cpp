@@ -20,8 +20,6 @@ Pyramid::Pyramid() :
     out_levels_(8),
     out_level_idx_(0)
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void Pyramid::process()

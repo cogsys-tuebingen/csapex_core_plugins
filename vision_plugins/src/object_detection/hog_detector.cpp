@@ -25,7 +25,6 @@ using namespace vision_plugins;
 
 HOGDetector::HOGDetector()
 {
-    addTag(Tag::get("vision_plugins"));
 }
 
 void HOGDetector::setupParameters()

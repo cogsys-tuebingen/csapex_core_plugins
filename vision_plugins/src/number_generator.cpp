@@ -18,7 +18,6 @@ using namespace csapex;
 NumberGenerator::NumberGenerator()
     : n(0)
 {
-    addTag(Tag::get("Debug"));
 }
 
 void NumberGenerator::process()

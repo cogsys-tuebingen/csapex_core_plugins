@@ -18,8 +18,6 @@ using namespace connection_types;
 ColorAdjustment::ColorAdjustment() :
     active_preset_(NONE)
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void ColorAdjustment::setup()

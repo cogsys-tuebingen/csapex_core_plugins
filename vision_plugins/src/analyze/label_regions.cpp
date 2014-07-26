@@ -18,7 +18,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::LabelRegions, csapex::Node)
 
 LabelRegions::LabelRegions()
 {
-    addTag(Tag::get("vision_plugins"));
 }
 
 void LabelRegions::process()

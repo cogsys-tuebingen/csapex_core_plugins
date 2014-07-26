@@ -20,8 +20,6 @@ using namespace vision_plugins;
 
 Resize::Resize()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void Resize::process()

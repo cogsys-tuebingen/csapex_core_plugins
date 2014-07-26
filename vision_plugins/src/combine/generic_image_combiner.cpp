@@ -116,8 +116,6 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
 
 GenericImageCombiner::GenericImageCombiner()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void GenericImageCombiner::updateFormula()

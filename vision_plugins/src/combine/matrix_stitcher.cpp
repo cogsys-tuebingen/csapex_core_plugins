@@ -66,8 +66,6 @@ namespace {
 
 MatrixStitcher::MatrixStitcher()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void MatrixStitcher::process()

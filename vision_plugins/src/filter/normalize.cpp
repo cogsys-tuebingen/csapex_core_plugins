@@ -21,9 +21,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::Normalize, csapex::Node)
 
 Normalize::Normalize()
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));;
 }
 
 void Normalize::process()

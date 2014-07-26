@@ -20,8 +20,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::Flip, csapex::Node)
 
 Flip::Flip()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void Flip::process()

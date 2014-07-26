@@ -21,9 +21,6 @@ using namespace connection_types;
 
 RenderROIs::RenderROIs()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
-    addTag(Tag::get("ROI"));
 }
 
 void RenderROIs::setupParameters()

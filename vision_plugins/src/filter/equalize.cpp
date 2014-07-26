@@ -18,10 +18,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::Equalize, csapex::Node)
 
 Equalize::Equalize()
 {
-    addTag(Tag::get("Histogram"));
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));;
 }
 
 void Equalize::process()

@@ -27,11 +27,6 @@ Histogram::Histogram() :
     min_max_value_(std::make_pair<float, float>(std::numeric_limits<float>::max(),
                                                 std::numeric_limits<float>::min()))
 {
-    Tag::createIfNotExists("Histogram");
-    addTag(Tag::get("Histogram"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
-
     addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
                  boost::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("uniform", uniform_),

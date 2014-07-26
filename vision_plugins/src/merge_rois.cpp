@@ -22,8 +22,6 @@ using namespace connection_types;
 
 MergeROIs::MergeROIs()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("ROI"));
 }
 
 void MergeROIs::process()

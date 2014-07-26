@@ -35,10 +35,6 @@ namespace {
 ConvertType::ConvertType() :
     mode_(CV_8U)
 {
-    Tag::createIfNotExists("Conversion");
-    addTag(Tag::get("Conversion"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void ConvertType::process()

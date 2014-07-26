@@ -19,11 +19,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::HistogramMaxima, csapex::Node)
 
 HistogramMaxima::HistogramMaxima()
 {
-    Tag::createIfNotExists("Histogram");
-    addTag(Tag::get("Histogram"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
-
     addParameter(param::ParameterFactory::declareRange("k", 1, 128, 2, 1));
     addParameter(param::ParameterFactory::declareRange("thresh", 0, 1000, 0, 1));
 }

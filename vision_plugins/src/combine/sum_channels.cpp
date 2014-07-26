@@ -17,8 +17,6 @@ using namespace vision_plugins;
 
 SumChannels::SumChannels()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void SumChannels::process()

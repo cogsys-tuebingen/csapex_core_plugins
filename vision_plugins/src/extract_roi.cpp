@@ -21,9 +21,6 @@ using namespace connection_types;
 
 ExtractROI::ExtractROI()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("ROI"));
-
     addParameter(param::ParameterFactory::declare<int>("thickness", 1, 20, 1, 1));
 }
 

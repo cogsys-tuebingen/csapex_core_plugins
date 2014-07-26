@@ -25,10 +25,6 @@ using namespace vision_plugins;
 MatrixToHeatmap::MatrixToHeatmap() :
     color_type_(BEZIER)
 {
-    Tag::createIfNotExists("Visualization");
-    addTag(Tag::get("Visualization"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void MatrixToHeatmap::process()

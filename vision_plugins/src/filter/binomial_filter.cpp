@@ -18,9 +18,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::BinomialFilter, csapex::Node)
 
 BinomialFilter::BinomialFilter()
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void BinomialFilter::process()

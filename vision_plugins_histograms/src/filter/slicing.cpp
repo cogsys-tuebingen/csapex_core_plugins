@@ -25,11 +25,6 @@ namespace {
 
 Slicing::Slicing()
 {
-    Tag::createIfNotExists("Histogram");
-    addTag(Tag::get("Histogram"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
-
     addParameter(param::ParameterFactory::declareRange("padding", 0, 128, 0, 1));
 }
 

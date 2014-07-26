@@ -19,8 +19,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::RenderLabels, csapex::Node)
 
 RenderLabels::RenderLabels()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void RenderLabels::process()
