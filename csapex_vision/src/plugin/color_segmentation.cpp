@@ -18,9 +18,6 @@ using namespace csapex::connection_types;
 
 ColorSegmentation::ColorSegmentation()
 {
-    addTag(Tag::get("Vision"));
-    Tag::createIfNotExists("Segmentation");
-    addTag(Tag::get("Segmentation"));
 }
 
 void ColorSegmentation::setState(Memento::Ptr memento)

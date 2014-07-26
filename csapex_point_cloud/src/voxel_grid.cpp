@@ -22,8 +22,6 @@ using namespace csapex::connection_types;
 
 VoxelGrid::VoxelGrid()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareRange("resolution", 0.01, 1.0, 0.1, 0.01));
 }
 

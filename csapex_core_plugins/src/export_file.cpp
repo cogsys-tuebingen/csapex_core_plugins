@@ -23,9 +23,6 @@ using namespace csapex;
 
 ExportFile::ExportFile()
 {
-    addTag(Tag::get("Output"));
-    addTag(Tag::get("General"));
-
     suffix_ = 0;
 }
 

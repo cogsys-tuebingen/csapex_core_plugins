@@ -16,9 +16,6 @@ using namespace connection_types;
 
 OutputDisplay::OutputDisplay()
 {
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Vision"));
-
 }
 
 OutputDisplay::~OutputDisplay()

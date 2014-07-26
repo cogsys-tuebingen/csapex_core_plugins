@@ -16,8 +16,6 @@ using namespace csapex;
 Relay::Relay()
     : input_(NULL), output_(NULL)
 {
-    addTag(Tag::get("Buffer"));
-    addTag(Tag::get("General"));
 }
 
 void Relay::setup()

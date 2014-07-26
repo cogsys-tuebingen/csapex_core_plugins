@@ -285,8 +285,6 @@ public:
 MatchDescriptors::MatchDescriptors()
     : in_img_1(NULL), current_method_(SIMPLE)
 {
-    addTag(Tag::get("Features"));
-
     boost::function<void(param::Parameter*)> update = boost::bind(&MatchDescriptors::update, this);
 
     std::map<std::string, int> methods = boost::assign::map_list_of

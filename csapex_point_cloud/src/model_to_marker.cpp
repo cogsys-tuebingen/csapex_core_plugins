@@ -19,7 +19,6 @@ using namespace csapex::connection_types;
 
 ModelToMarker::ModelToMarker()
 {
-    //addTag(Tag::get("PointCloud"));
 }
 
 void ModelToMarker::process()

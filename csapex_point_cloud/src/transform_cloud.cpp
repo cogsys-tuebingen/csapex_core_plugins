@@ -20,7 +20,6 @@ using namespace csapex::connection_types;
 
 TransformCloud::TransformCloud()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void TransformCloud::setup()

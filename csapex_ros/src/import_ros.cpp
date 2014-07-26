@@ -33,10 +33,6 @@ const std::string ImportRos::no_topic_("! Select a topic !");
 ImportRos::ImportRos()
     : connector_(NULL), retries_(0)
 {
-    addTag(Tag::get("RosIO"));
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Input"));
-
     std::vector<std::string> set;
     set.push_back(no_topic_);
     addParameter(param::ParameterFactory::declareParameterStringSet("topic", set),

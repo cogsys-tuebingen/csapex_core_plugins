@@ -16,8 +16,8 @@ using namespace csapex;
 
 TransformCombiner::TransformCombiner()
 {
-    addTag(Tag::get("Transform"));
 }
+
 void TransformCombiner::process()
 {
     connection_types::TransformMessage::Ptr a = input_a_->getMessage<connection_types::TransformMessage>();

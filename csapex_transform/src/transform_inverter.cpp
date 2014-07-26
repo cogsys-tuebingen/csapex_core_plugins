@@ -16,8 +16,8 @@ using namespace csapex;
 
 TransformInverter::TransformInverter()
 {
-    addTag(Tag::get("Transform"));
 }
+
 void TransformInverter::process()
 {
     connection_types::TransformMessage::Ptr trafo = input_->getMessage<connection_types::TransformMessage>();

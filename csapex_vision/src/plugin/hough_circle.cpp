@@ -18,9 +18,6 @@ using namespace csapex::connection_types;
 
 HoughCircle::HoughCircle()
 {
-    addTag(Tag::get("Pattern Recognition"));
-    addTag(Tag::get("Vision"));
-
     std::vector< std::pair<std::string, int> > methods;
     methods.push_back(std::make_pair("CV_HOUGH_GRADIENT", (int) CV_HOUGH_GRADIENT));
     methods.push_back(std::make_pair("CV_HOUGH_STANDARD", (int) CV_HOUGH_STANDARD));

@@ -31,8 +31,6 @@ using namespace connection_types;
 
 ExtractDescriptors::ExtractDescriptors()
 {
-    addTag(Tag::get("Features"));
-
     ExtractorManager& manager = ExtractorManager::instance();
     std::vector<std::string> methods;
 

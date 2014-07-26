@@ -20,8 +20,6 @@ using namespace csapex::connection_types;
 
 RadiusOutlierRemoval::RadiusOutlierRemoval()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareRange("min neighbours", 1, 1000, 2, 1));
     addParameter(param::ParameterFactory::declareBool ("keep organized", false));
     addParameter(param::ParameterFactory::declareBool ("negate", false));

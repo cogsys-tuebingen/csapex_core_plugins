@@ -22,7 +22,6 @@ using namespace csapex;
 
 DynamicTransform::DynamicTransform()
 {
-    addTag(Tag::get("Transform"));
 }
 
 void DynamicTransform::setupParameters()

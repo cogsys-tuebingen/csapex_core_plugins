@@ -18,8 +18,6 @@ using namespace csapex::connection_types;
 
 VectorizePyramid::VectorizePyramid()
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
 }
 
 void VectorizePyramid::process()

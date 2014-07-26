@@ -16,7 +16,6 @@ using namespace csapex::connection_types;
 
 IndexedPointCloud::IndexedPointCloud()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void IndexedPointCloud::setup()

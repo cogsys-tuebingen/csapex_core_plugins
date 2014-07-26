@@ -25,9 +25,6 @@ using namespace connection_types;
 BarCodeReader::BarCodeReader()
     : lost(false), forget(0)
 {
-    Tag::createIfNotExists("Bar Code");
-    addTag(Tag::get("Bar Code"));
-
     addParameter(param::ParameterFactory::declareBool("republish", false));
 }
 

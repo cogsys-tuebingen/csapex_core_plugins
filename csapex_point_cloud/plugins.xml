@@ -5,6 +5,7 @@
 
 <class type="csapex::PointCount" base_class_type="csapex::Node">
   <description>Displays the number of points in a point cloud</description>
+  <tags>PointCloud, Output</tags>
 </class>
 <class type="csapex::PointCountAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
@@ -13,6 +14,7 @@
 
 <class type="csapex::CloudRenderer" base_class_type="csapex::Node">
   <description>Displays a point cloud</description>
+  <tags>PointCloud, Output</tags>
 </class>
 <class type="csapex::CloudRendererAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
@@ -20,111 +22,139 @@
 
 <class type="csapex::TransformCloud" base_class_type="csapex::Node">
   <description>Transforms a point cloud by a given transformation</description>
+  <tags>PointCloud, Transform</tags>
 </class>
 <class type="csapex::VoxelGrid" base_class_type="csapex::Node">
   <description>Generates a voxel grid from a point cloud</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::CropBox" base_class_type="csapex::Node">
   <description>Extracts all point from a point cloud that lie in a specified box</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::PassThrough" base_class_type="csapex::Node">
   <description>Extracts all point from a point cloud that lie on one side of a plane</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::ExtractTimeStamp" base_class_type="csapex::Node">
   <description>Extracts the timestamp and frame id from a point cloud</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::SetTimeStamp" base_class_type="csapex::Node">
   <description>Sets the timestamp and frame id from a point cloud</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::PointCloudToDepthImage" base_class_type="csapex::Node">
   <description>Converts a point cloud to a depth image</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::PointCloudToIntensityImage" base_class_type="csapex::Node">
   <description>Converts a point cloud to an intensity image</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::ImageToPointCloud" base_class_type="csapex::Node">
   <description>Converts a depth image to a point cloud. Optionally uses an intensity image for intensity values</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::StatisticalOutlierRemoval" base_class_type="csapex::Node">
   <description>
     Filter outliers by performing a statistical analysis
     on each point’s neighborhood, and trimming those which do not meet a certain criteria.
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::RadiusOutlierRemoval" base_class_type="csapex::Node">
   <description>
     Filter outliers by performing a radius search
     on each point’s neighborhood, and trimming those which do not meet a certain criteria.
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::ConditionalOutlierRemoval" base_class_type="csapex::Node">
   <description>
     Filter outliers by condition. Currently the Filter only works with ranges in 3D.
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::PointCloudToPointMatrix" base_class_type="csapex::Node">
   <description>
     Convert a point cloud to a multidimensional matrix structure.
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::PointmatrixToPointcloud" base_class_type="csapex::Node">
   <description>
    Create a PointCloud from a Pointmatrix
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::LabelPointCloud" base_class_type="csapex::Node">
   <description>
     Produce a labeled pointcloud given a corresponding matrix holding the label values.
     Label matrix and pointcloud have to be of the same size and organization.
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::LabelClusteredPointCloud" base_class_type="csapex::Node">
   <description>
     Produce a labeled pointcloud given a vector of cluster indices.
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::ColorPointCloud" base_class_type="csapex::Node">
   <description>
     Color a labeled pointlcoud to make the labeling visible.
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::SacFit" base_class_type="csapex::Node">
   <description>
     Apply RANSAC on pointclouds to fit certain models.
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::ModelToMarker" base_class_type="csapex::Node">
   <description>Takes a model message and creates a marker for rviz</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::ClusterPointcloud" base_class_type="csapex::Node">
   <description>Cluster implementation from pcl</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::LabeledCloudToIndices" base_class_type="csapex::Node">
   <description>Converts a labled pointcloud to indices</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::SplitClusteredCloud" base_class_type="csapex::Node">
   <description>Makes several small point clouds from on cloud by indices from a clustering</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::TransformFromModels" base_class_type="csapex::Node">
   <description>Gets model messages with 3 points and trys to find the transformations between the points</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::ThresholdOutlierRemoval" base_class_type="csapex::Node">
   <description>Noise filtering done by thresholding.</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::PointCloudValidity" base_class_type="csapex::Node">
   <description>Get a mask for valid points in the point cloud.</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::CoordinateSwapper" base_class_type="csapex::Node">
   <description>Swap robot coordinate model to pin hole camera model.</description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::IndexedPointCloud" base_class_type="csapex::Node">
   <description>
     Produce a indexed pointcloud with depth value on z and indeces on x and y.
   </description>
+  <tags>PointCloud</tags>
 </class>
 <class type="csapex::IndexFilter" base_class_type="csapex::Node">
   <description>
     Filter PointCloud by given indeces.
   </description>
+  <tags>PointCloud</tags>
 </class>
 </library>

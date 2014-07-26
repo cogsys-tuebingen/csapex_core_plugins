@@ -20,7 +20,6 @@ using namespace connection_types;
 Foreach::Foreach()
     : in_sub(NULL), out_sub(NULL), msg_received_(false)
 {
-    addTag(Tag::get("General"));
 }
 
 Foreach::~Foreach()

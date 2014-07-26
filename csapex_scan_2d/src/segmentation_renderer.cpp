@@ -30,9 +30,6 @@ CSAPEX_REGISTER_CLASS(csapex::ScanSegmentation2DRenderer, csapex::Node)
 ScanSegmentation2DRenderer::ScanSegmentation2DRenderer() :
     last_id_(0)
 {
-    addTag(Tag::get("Laser"));
-    addTag(Tag::get("Scan"));
-
     addParameter(param::ParameterFactory::declareBool("publish marker", false));
 
     addParameter(param::ParameterFactory::declareBool("use random color", false));

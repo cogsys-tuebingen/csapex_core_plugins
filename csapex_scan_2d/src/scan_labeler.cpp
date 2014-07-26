@@ -21,9 +21,6 @@ using namespace lib_laser_processing;
 
 ScanLabeler::ScanLabeler()
 {
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Vision"));
-
 }
 
 ScanLabeler::~ScanLabeler()

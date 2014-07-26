@@ -23,8 +23,6 @@ using namespace csapex::connection_types;
 TransformPublisher::TransformPublisher()
     : tfb_(NULL)
 {
-    addTag(Tag::get("Transform"));
-
     addParameter(param::ParameterFactory::declareText("from", "/"));
     addParameter(param::ParameterFactory::declareText("to", "/"));
 }

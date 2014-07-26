@@ -20,8 +20,6 @@ using namespace connection_types;
 DisplayKeypoints::DisplayKeypoints()
     : in_key(NULL)
 {
-    addTag(Tag::get("Features"));
-
     addParameter(param::ParameterFactory::declareColorParameter("color", 255,0,0));
     addParameter(param::ParameterFactory::declareBool("random color", true));
 

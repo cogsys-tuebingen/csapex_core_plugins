@@ -180,7 +180,6 @@ struct ThresholdNoiseFilter {
 
 ThresholdOutlierRemoval::ThresholdOutlierRemoval()
 {
-    addTag(Tag::get("PointCloud"));
     addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
     addParameter(param::ParameterFactory::declareRange("max. distance", 0.0, 10.0, 0.25, 0.01));
     addParameter(param::ParameterFactory::declareBool("interpolate", false));

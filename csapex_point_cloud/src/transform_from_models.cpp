@@ -25,7 +25,6 @@ using namespace csapex::connection_types;
 
 TransformFromModels::TransformFromModels()
 {
-    addTag(Tag::get("Transform"));
 }
 
 void TransformFromModels::setup()

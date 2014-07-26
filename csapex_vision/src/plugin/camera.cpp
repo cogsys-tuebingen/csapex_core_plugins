@@ -18,9 +18,6 @@ using namespace csapex;
 Camera::Camera()
     : current_dev_(-1)
 {
-    addTag(Tag::get("Input"));
-    addTag(Tag::get("Vision"));
-
     addParameter(param::ParameterFactory::declare<int>("device", 0, 5, 0, 1), boost::bind(&Camera::update, this));
 
     w_ = 640;

@@ -20,8 +20,6 @@ using namespace csapex;
 
 StaticTransform::StaticTransform()
 {
-    addTag(Tag::get("Transform"));
-
     double p = 3.2;
     double d = 5.0;
 

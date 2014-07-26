@@ -12,9 +12,6 @@ using namespace csapex;
 template <typename T>
 NumberInput<T>::NumberInput()
 {
-    addTag(Tag::get("Input"));
-    addTag(Tag::get("General"));
-
     addParameter(param::ParameterFactory::declareValue<T>("value", (T) 0.0));
     addParameter(param::ParameterFactory::declareTrigger("publish"), boost::bind(&NumberInput::process, this));
     addParameter(param::ParameterFactory::declareBool("tick", false));

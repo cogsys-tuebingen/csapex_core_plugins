@@ -18,9 +18,6 @@ using namespace csapex;
 
 TextInput::TextInput()
 {
-    addTag(Tag::get("Input"));
-    addTag(Tag::get("General"));
-
     addParameter(param::ParameterFactory::declareText("text", ""), boost::bind(&TextInput::publish, this));
 }
 

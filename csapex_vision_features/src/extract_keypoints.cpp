@@ -31,8 +31,6 @@ using namespace connection_types;
 
 ExtractKeypoints::ExtractKeypoints()
 {
-    addTag(Tag::get("Features"));
-
     ExtractorManager& manager = ExtractorManager::instance();
     std::vector<std::string> methods;
 

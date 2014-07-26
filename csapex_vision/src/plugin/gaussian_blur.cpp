@@ -20,8 +20,6 @@ GaussianBlur::GaussianBlur() :
     sigma_x_(0.1),
     sigma_y_(0.0)
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
     addParameter(param::ParameterFactory::declareRange("kernel", 1, 255, kernel_, 2),
                  boost::bind(&GaussianBlur::update, this));
     addParameter(param::ParameterFactory::declareRange("sigma x", 0.1, 128.0, sigma_x_, 0.1),

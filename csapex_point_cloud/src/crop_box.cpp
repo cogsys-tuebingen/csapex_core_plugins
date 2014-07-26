@@ -23,8 +23,6 @@ using namespace csapex::connection_types;
 
 CropBox::CropBox()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareInterval("dx", -10.0, 10.0, -10.0, 10.0, 0.01));
     addParameter(param::ParameterFactory::declareInterval("dy", -10.0, 10.0, -10.0, 10.0, 0.01));
     addParameter(param::ParameterFactory::declareInterval("dz", -10.0, 10.0, -10.0, 10.0, 0.01));

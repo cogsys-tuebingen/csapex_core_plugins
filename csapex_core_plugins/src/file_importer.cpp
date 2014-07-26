@@ -30,8 +30,6 @@ using namespace connection_types;
 
 FileImporter::FileImporter()
 {
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Input"));
 }
 
 void FileImporter::setupParameters()

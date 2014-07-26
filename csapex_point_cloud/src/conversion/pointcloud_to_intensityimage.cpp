@@ -17,8 +17,6 @@ using namespace csapex::connection_types;
 
 PointCloudToIntensityImage::PointCloudToIntensityImage()
 {
-    addTag(Tag::get("PointCloud"));
-    addTag(Tag::get("Time"));
 }
 
 void PointCloudToIntensityImage::setup()

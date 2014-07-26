@@ -15,8 +15,6 @@ using namespace csapex::connection_types;
 
 ExtractTimeStamp::ExtractTimeStamp()
 {
-    addTag(Tag::get("PointCloud"));
-    addTag(Tag::get("Time"));
 }
 
 void ExtractTimeStamp::setup()

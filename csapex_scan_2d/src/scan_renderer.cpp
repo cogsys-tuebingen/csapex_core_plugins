@@ -23,9 +23,6 @@ CSAPEX_REGISTER_CLASS(csapex::ScanRenderer, csapex::Node)
 
 ScanRenderer::ScanRenderer()
 {
-    addTag(Tag::get("Laser"));
-    addTag(Tag::get("Scan"));
-
     setTemporaryParameters(renderer.getParameters());
 
     renderer.useTimer(profiling_timer_);

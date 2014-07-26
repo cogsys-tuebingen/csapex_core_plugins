@@ -21,8 +21,6 @@ using namespace csapex::connection_types;
 
 StatisticalOutlierRemoval::StatisticalOutlierRemoval()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareRange("mean k", 1, 100, 2, 1));
     addParameter(param::ParameterFactory::declareBool ("keep organized", false));
     addParameter(param::ParameterFactory::declareBool ("negate", false));

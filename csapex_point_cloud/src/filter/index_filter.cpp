@@ -18,7 +18,6 @@ using namespace csapex::connection_types;
 
 IndexFilter::IndexFilter()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void IndexFilter::setup()

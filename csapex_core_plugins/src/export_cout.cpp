@@ -17,9 +17,6 @@ using namespace csapex;
 ExportCout::ExportCout()
     : connector_(NULL)
 {
-    addTag(Tag::get("ConsoleIO"));
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Output"));
 }
 
 void ExportCout::setup()

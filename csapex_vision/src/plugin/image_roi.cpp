@@ -21,8 +21,6 @@ ImageRoi::ImageRoi() :
     last_mat_size_(-1, -1),
     result_(new RoiMessage)
 {
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Vision"));
 }
 
 ImageRoi::~ImageRoi()

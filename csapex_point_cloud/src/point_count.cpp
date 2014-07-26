@@ -16,7 +16,6 @@ using namespace csapex::connection_types;
 
 PointCount::PointCount()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void PointCount::setup()

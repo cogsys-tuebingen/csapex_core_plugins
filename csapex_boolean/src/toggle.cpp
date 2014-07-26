@@ -15,7 +15,6 @@ using namespace csapex::boolean;
 
 Toggle::Toggle()
 {
-    addTag(Tag::get("Boolean"));
     addParameter(param::ParameterFactory::declareBool("true", true),
                  boost::bind(&Toggle::setSignal, this));
 }

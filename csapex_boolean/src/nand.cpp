@@ -17,7 +17,6 @@ using namespace csapex::connection_types;
 
 NAND::NAND()
 {
-    addTag(Tag::get("Boolean"));
 }
 
 void NAND::setup()

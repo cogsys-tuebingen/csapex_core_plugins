@@ -16,8 +16,6 @@ using namespace csapex::connection_types;
 
 Indicator::Indicator()
 {
-    addTag(Tag::get("Boolean"));
-
     addParameter(param::ParameterFactory::declareBool("signal", true));
 }
 

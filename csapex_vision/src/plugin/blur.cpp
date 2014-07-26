@@ -17,8 +17,6 @@ using namespace csapex::connection_types;
 
 BoxBlur::BoxBlur()
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
 }
 
 void BoxBlur::process()

@@ -23,7 +23,6 @@ using namespace csapex::connection_types;
 
 LabelPointCloud::LabelPointCloud()
 {
-    addTag(Tag::get("PointCloud"));
     addParameter(param::ParameterFactory::declareBool("exclude default label", false));
 }
 

@@ -19,10 +19,6 @@ using namespace csapex;
 DoubleBuffer::DoubleBuffer()
     : input_(NULL), output_(NULL), dirty_(false)
 {
-    addTag(Tag::get("Buffer"));
-    addTag(Tag::get("General"));
-
-
     addParameter(param::ParameterFactory::declareBool("synchronized", true));
 }
 

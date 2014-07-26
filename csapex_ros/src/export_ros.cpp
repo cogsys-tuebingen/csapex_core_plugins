@@ -24,10 +24,6 @@ using namespace csapex;
 ExportRos::ExportRos()
     : connector_(NULL), create_pub(false)
 {
-    addTag(Tag::get("RosIO"));
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Output"));
-
     addParameter(param::ParameterFactory::declareText("topic", "export"),
                  boost::bind(&ExportRos::updateTopic, this));
 }

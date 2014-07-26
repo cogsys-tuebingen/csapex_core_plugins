@@ -23,7 +23,6 @@ using namespace csapex::connection_types;
 
 LabelClusteredPointCloud::LabelClusteredPointCloud()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void LabelClusteredPointCloud::process()

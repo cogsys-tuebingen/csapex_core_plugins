@@ -24,8 +24,6 @@ using namespace csapex::connection_types;
 
 PassThrough::PassThrough()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareInterval("interval", -100.0, 100.0, 0.0, 100.0, 0.01));
     addParameter(param::ParameterFactory::declareBool("keep organized", true));
 

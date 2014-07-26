@@ -22,7 +22,6 @@ using namespace csapex::connection_types;
 
 SplitClusteredCloud::SplitClusteredCloud()
 {
-      addTag(Tag::get("PointCloud"));
 }
 
 void SplitClusteredCloud::process()

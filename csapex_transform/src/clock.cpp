@@ -20,8 +20,6 @@ using namespace csapex;
 
 Clock::Clock()
 {
-    addTag(Tag::get("Time"));
-
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("ros::Time::now()", (int) CURRENT)
             ("ros::Time(0)", (int) ZERO);

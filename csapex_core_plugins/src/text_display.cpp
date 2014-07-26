@@ -13,8 +13,6 @@ using namespace csapex;
 TextDisplay::TextDisplay()
     : connector_(NULL)
 {
-    addTag(Tag::get("Output"));
-    addTag(Tag::get("General"));
 }
 
 void TextDisplay::setup()

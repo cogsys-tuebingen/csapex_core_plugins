@@ -25,7 +25,6 @@ using namespace csapex::connection_types;
 
 ColorPointCloud::ColorPointCloud()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void ColorPointCloud::process()

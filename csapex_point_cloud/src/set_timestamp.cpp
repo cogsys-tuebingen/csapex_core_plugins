@@ -15,8 +15,6 @@ using namespace csapex::connection_types;
 
 SetTimeStamp::SetTimeStamp()
 {
-    addTag(Tag::get("PointCloud"));
-    addTag(Tag::get("Time"));
 }
 
 void SetTimeStamp::setup()

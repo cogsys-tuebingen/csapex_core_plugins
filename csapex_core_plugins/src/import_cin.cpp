@@ -16,9 +16,6 @@ using namespace csapex;
 ImportCin::ImportCin()
     : connector_(NULL)
 {
-    addTag(Tag::get("ConsoleIO"));
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Input"));
 }
 
 void ImportCin::process()

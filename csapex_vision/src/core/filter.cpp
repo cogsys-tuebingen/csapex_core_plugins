@@ -19,8 +19,6 @@ using namespace connection_types;
 Filter::Filter(const UUID& uuid)
     : Node(uuid), input_img_(NULL), input_mask_(NULL), output_img_(NULL), output_mask_(NULL)
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
 }
 
 Filter::~Filter()

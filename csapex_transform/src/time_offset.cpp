@@ -18,8 +18,6 @@ using namespace csapex;
 
 TimeOffset::TimeOffset()
 {
-    addTag(Tag::get("Time"));
-
     addParameter(param::ParameterFactory::declareRange<double>("offset", -5000.0, 5000.0, 0.0, 0.5));
 }
 

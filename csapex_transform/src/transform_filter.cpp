@@ -23,9 +23,6 @@ using namespace csapex::connection_types;
 
 TransformFilter::TransformFilter()
 {
-    addTag(Tag::get("Transform"));
-    addTag(Tag::get("Filter"));
-
     median_matrix_.resize(6);
 
     // Initialize the out_vector_latch with zeros

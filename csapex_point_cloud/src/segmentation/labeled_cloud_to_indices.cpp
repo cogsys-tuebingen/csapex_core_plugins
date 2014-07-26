@@ -24,7 +24,6 @@ using namespace csapex::connection_types;
 
 LabeledCloudToIndices::LabeledCloudToIndices()
 {
-      addTag(Tag::get("PointCloud"));
 }
 
 

@@ -13,8 +13,6 @@ using namespace csapex;
 SayText::SayText()
     : connector_(NULL)
 {
-    addTag(Tag::get("Output"));
-    addTag(Tag::get("General"));
 }
 
 void SayText::setup()

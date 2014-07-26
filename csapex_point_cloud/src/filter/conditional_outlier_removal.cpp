@@ -27,8 +27,6 @@ ConditionalOutlierRemoval::ConditionalOutlierRemoval() :
     z_range_(-30.0, 30.0),
     keep_organized_(false)
 {
-    addTag(Tag::get("PointCloud"));
-
     std::map<std::string, int> types = boost::assign::map_list_of
             ("AND", (int) AND)
             ("OR", (int) OR);

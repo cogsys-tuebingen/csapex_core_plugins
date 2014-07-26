@@ -82,7 +82,6 @@ struct Swapper {
 
 CoordinateSwapper::CoordinateSwapper()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void CoordinateSwapper::setup()
