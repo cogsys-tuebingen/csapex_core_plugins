@@ -27,8 +27,8 @@ private:
     enum Preset{NONE, HSV, HSL, STD};
 
     /// connectors
-    ConnectorIn   *input_;
-    ConnectorOut  *output_;
+    Input   *input_;
+    Output  *output_;
 
     GenericStatePtr loaded_state_;
 

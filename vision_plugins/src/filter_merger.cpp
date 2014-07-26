@@ -2,8 +2,8 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -45,7 +45,7 @@ void Merger::updateInputs()
 
     if(current_amount > input_count) {
         for(int i = current_amount; i > input_count ; i--) {
-            ConnectorIn* in = getInput(i - 1);
+            Input* in = getInput(i - 1);
             if(in->isConnected()) {
                 in->disable();
             } else {
@@ -67,7 +67,7 @@ void Merger::updateInputs()
 void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
 {
     for(int i = 0 ; i < countInputs() ; i++) {
-        ConnectorIn *in = getInput(i);
+        Input *in = getInput(i);
         if(in->isConnected()) {
             CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
             in->setLabel(msg->getEncoding().toString());

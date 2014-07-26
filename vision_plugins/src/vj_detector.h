@@ -18,9 +18,9 @@ public:
     virtual void setup();
 
 private:
-    ConnectorOut* output_;
+    Output* output_;
 
-    ConnectorIn* input_;
+    Input* input_;
 
     std::string file_;
 

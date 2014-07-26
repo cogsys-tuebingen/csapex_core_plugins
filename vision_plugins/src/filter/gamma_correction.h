@@ -22,8 +22,8 @@ public:
     void process();
 
 private:
-    ConnectorIn* in_;
-    ConnectorOut* out_;
+    Input* in_;
+    Output* out_;
 };
 
 

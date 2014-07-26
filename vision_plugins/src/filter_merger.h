@@ -33,7 +33,7 @@ private Q_SLOTS:
     void updateInputs();
 
 private:
-    ConnectorOut *output_;
+    Output *output_;
 
     void collectMessage(std::vector<cv::Mat> &messages, Encoding &encoding);
 };

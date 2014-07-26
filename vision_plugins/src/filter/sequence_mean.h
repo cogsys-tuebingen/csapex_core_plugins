@@ -17,8 +17,8 @@ public:
     virtual void setupParameters();
 
 protected:
-    csapex::ConnectorIn  *input_;
-    csapex::ConnectorOut *output_;
+    csapex::Input  *input_;
+    csapex::Output *output_;
 
     int                     type_;
     int                     channels_;

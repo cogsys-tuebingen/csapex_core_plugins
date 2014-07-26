@@ -25,10 +25,10 @@ private:
     void update(const param::Parameter *);
 
 private:
-    ConnectorIn* in_image_;
-    ConnectorIn* in_keypoints_;
+    Input* in_image_;
+    Input* in_keypoints_;
 
-    ConnectorOut* out_debug_;
+    Output* out_debug_;
 
     bool init_;
 

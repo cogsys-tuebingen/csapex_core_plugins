@@ -18,8 +18,8 @@ public:
     virtual void setupParameters();
 
 protected:
-    csapex::ConnectorOut*            output_;
-    csapex::ConnectorIn*             input_;
+    csapex::Output*            output_;
+    csapex::Input*             input_;
 
     cv::Size                         size_;
     int                              mode_;

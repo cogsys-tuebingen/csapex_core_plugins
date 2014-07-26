@@ -15,9 +15,9 @@ public:
     virtual void setupParameters();
 
 protected:
-    csapex::ConnectorIn*    labels_;
-    csapex::ConnectorIn*    image_;
-    csapex::ConnectorOut*   output_;
+    csapex::Input*    labels_;
+    csapex::Input*    image_;
+    csapex::Output*   output_;
 
 };
 }

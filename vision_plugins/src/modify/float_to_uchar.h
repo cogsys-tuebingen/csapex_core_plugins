@@ -19,8 +19,8 @@ protected:
 
     Type           type_;
 
-    csapex::ConnectorIn*   input_;
-    csapex::ConnectorOut*  output_;
+    csapex::Input*   input_;
+    csapex::Output*  output_;
 
     void update();
 };

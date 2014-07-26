@@ -18,8 +18,8 @@ public:
     virtual void setupParameters();
 
 private:
-    csapex::ConnectorOut*   output_;
-    csapex::ConnectorIn*    input_;
+    csapex::Output*   output_;
+    csapex::Input*    input_;
 
     cv::Vec2d               scales_;
     int                     mode_;

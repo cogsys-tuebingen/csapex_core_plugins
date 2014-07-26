@@ -15,9 +15,9 @@ public:
     virtual void setup();
 
 protected:
-    csapex::ConnectorIn*    histogram_maxima_;
-    csapex::ConnectorOut*   slices_;
-    csapex::ConnectorIn*    matrix_;
+    csapex::Input*    histogram_maxima_;
+    csapex::Output*   slices_;
+    csapex::Input*    matrix_;
 };
 }
 #endif // SLICING_H

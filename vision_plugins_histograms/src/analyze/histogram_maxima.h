@@ -14,8 +14,8 @@ public:
     virtual void setup();
 
 protected:
-    csapex::ConnectorOut* maxima_;
-    csapex::ConnectorIn*  histograms_;
+    csapex::Output* maxima_;
+    csapex::Input*  histograms_;
 
 };
 }

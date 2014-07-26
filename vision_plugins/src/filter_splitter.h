@@ -23,7 +23,7 @@ private Q_SLOTS:
     void process();
 
 private:
-    ConnectorIn *input_;
+    Input *input_;
 
     void updateOutputs();
 

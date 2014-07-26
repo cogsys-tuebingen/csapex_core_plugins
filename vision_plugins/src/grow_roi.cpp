@@ -7,8 +7,8 @@
 #include <csapex_vision/roi_message.h>
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_vision/utils/rectangle_cluster.h>
 #include <csapex/model/node_modifier.h>

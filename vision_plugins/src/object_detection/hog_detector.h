@@ -18,8 +18,8 @@ private:
     enum SVMType        {DEFAULT, DAIMLER, CUSTOM};
     enum DetectionType  {SINGLE_SCALE, MULTI_SCALE};
 
-    csapex::ConnectorIn*  in_;
-    csapex::ConnectorOut* out_;
+    csapex::Input*  in_;
+    csapex::Output* out_;
 
     std::vector<float>    svm_;
     int                   svm_width_;

@@ -18,9 +18,9 @@ protected:
     int                     out_levels_;
     int                     out_level_idx_;
 
-    csapex::ConnectorOut*   out_pyr_;
-    csapex::ConnectorOut*   out_level_;
-    csapex::ConnectorIn*    input_;
+    csapex::Output*   out_pyr_;
+    csapex::Output*   out_level_;
+    csapex::Input*    input_;
 
     void update();
 };
