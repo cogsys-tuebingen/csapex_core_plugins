@@ -71,10 +71,4 @@
   <description>[DEBUG] Delays a message</description>
   <icon>:/buffer.png</icon>
 </class>
-<class type="csapex::Foreach" base_class_type="csapex::Node">
-  <description>Iterates a VectorMessage and calls other nodes for each contained message</description>
-</class>
-<class type="csapex::ForeachAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
-  <description></description>
-</class>
 </library>
