@@ -8,15 +8,12 @@ namespace csapex {
 
 class StaticTransform : public csapex::Node
 {
-    Q_OBJECT
-
 public:
     StaticTransform();
 
     void process();
     virtual void setup();
 
-public Q_SLOTS:
     virtual void tick();
 
 private:

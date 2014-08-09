@@ -8,8 +8,6 @@ namespace csapex {
 
 class TransformCombiner : public csapex::Node
 {
-    Q_OBJECT
-
 public:
     TransformCombiner();
 

@@ -45,7 +45,7 @@ void ColorSegmentation::process()
             update();
         }
 
-        Q_EMIT modelChanged();
+        triggerModelChanged();
 
         output_mask_->publish(out_mask);
         return;
