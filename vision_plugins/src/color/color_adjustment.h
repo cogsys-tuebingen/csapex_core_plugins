@@ -15,7 +15,7 @@ public:
     void setupParameters();
     void process();
 
-    void setState(Memento::Ptr memento);
+    void setParameterState(Memento::Ptr memento);
     void setPreset();
 
 private:

@@ -14,8 +14,8 @@ public:
 
     void setup();
 
-    void setState(Memento::Ptr memento);
-    Memento::Ptr getChildState() const;
+    void setParameterState(Memento::Ptr memento);
+    Memento::Ptr getParameterState() const;
 
     void process();
 
