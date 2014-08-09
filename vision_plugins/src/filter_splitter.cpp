@@ -64,7 +64,7 @@ void Splitter::process()
 
         input_->setLabel(m->getEncoding().toString());
         updateOutputs();
-        Q_EMIT modelChanged();
+        triggerModelChanged();
         return;
     }
 
@@ -138,7 +138,7 @@ void Splitter::setState(Memento::Ptr memento)
         state_.encoding_.push_back(Channel("Channel", 0, 255));
     }
 
-    Q_EMIT modelChanged();
+    triggerModelChanged();
 }
 
 /// MEMENTO

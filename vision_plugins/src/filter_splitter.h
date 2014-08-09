@@ -8,8 +8,6 @@
 namespace csapex {
 class Splitter : public csapex::Node
 {
-    Q_OBJECT
-
 public:
     Splitter();
     ~Splitter();
@@ -19,7 +17,6 @@ public:
     void setState(Memento::Ptr memento);
     Memento::Ptr getChildState() const;
 
-private Q_SLOTS:
     void process();
 
 private:

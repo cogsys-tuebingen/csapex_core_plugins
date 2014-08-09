@@ -74,7 +74,7 @@ void ColorAdjustment::process()
             update();
         }
 
-        Q_EMIT modelChanged();
+        triggerModelChanged();
         return;
     }
 
@@ -136,7 +136,7 @@ void ColorAdjustment::update()
 void ColorAdjustment::setPreset()
 {
     active_preset_  = static_cast<Preset> (readParameter<int>("preset"));
-    Q_EMIT modelChanged();
+    triggerModelChanged();
 }
 
 void ColorAdjustment::addLightness(cv::Mat &img)
