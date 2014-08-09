@@ -20,9 +20,9 @@ ColorSegmentation::ColorSegmentation()
 {
 }
 
-void ColorSegmentation::setState(Memento::Ptr memento)
+void ColorSegmentation::setParameterState(Memento::Ptr memento)
 {
-    Node::setState(memento);
+    Node::setParameterState(memento);
     loaded_state_ = boost::dynamic_pointer_cast<GenericState>(memento);
 }
 
@@ -39,7 +39,7 @@ void ColorSegmentation::process()
         recompute();
 
         if(loaded_state_) {
-            Node::setState(loaded_state_);
+            Node::setParameterState(loaded_state_);
             loaded_state_.reset((GenericState*)NULL);
             triggerParameterSetChanged();
             update();

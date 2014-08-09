@@ -21,7 +21,7 @@ protected:
     void doSetTopic();
     void setTopic(const ros::master::TopicInfo& topic);
 
-    virtual void setState(Memento::Ptr memento);
+    virtual void setParameterState(Memento::Ptr memento);
 
 private:
     Output* connector_;

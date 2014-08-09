@@ -69,7 +69,7 @@ class RosHandler
                     NodeState::Ptr state(new NodeState(NULL));
                     ImportRos dummy;
                     dummy.getParameter("topic")->set(cmd);
-                    state->setChildState(dummy.getChildState());
+                    state->setParameterState(dummy.getParameterState());
 
                     std::string type("csapex::ImportRos");
                     dispatcher->execute(Command::Ptr(new command::AddNode(type, pos, UUID::NONE, uuid, state)));

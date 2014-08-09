@@ -152,7 +152,7 @@ Memento::Ptr ImageRoiAdapter::getState() const
     return boost::shared_ptr<State>(new State(state));
 }
 
-void ImageRoiAdapter::setState(Memento::Ptr memento)
+void ImageRoiAdapter::setParameterState(Memento::Ptr memento)
 {
     boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
     apex_assert_hard(m.get());

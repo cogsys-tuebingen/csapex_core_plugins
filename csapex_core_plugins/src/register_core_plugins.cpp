@@ -68,7 +68,7 @@ class FileHandler
                 NodeState::Ptr state(new NodeState(NULL));
                 GenericState::Ptr child_state(new GenericState);
                 child_state->addParameter(param::ParameterFactory::declareFileInputPath("path", files.first().toString().toStdString()));
-                state->setChildState(child_state);
+                state->setParameterState(child_state);
 
                 std::string type("csapex::FileImporter");
                 dispatcher->execute(Command::Ptr(new command::AddNode(type, scene_pos.toPoint(), UUID::NONE, uuid, state)));

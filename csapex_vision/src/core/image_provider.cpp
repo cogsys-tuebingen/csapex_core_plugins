@@ -61,7 +61,7 @@ Memento::Ptr ImageProvider::getState() const
     return r;
 }
 
-void ImageProvider::setState(Memento::Ptr memento)
+void ImageProvider::setParameterState(Memento::Ptr memento)
 {
     boost::shared_ptr<GenericState> m = boost::dynamic_pointer_cast<GenericState> (memento);
     if(m) {

@@ -91,7 +91,7 @@ using namespace csapex;
 //    return Memento::Ptr();
 //}
 
-//void BagProvider::setState(Memento::Ptr memento)
+//void BagProvider::setParameterState(Memento::Ptr memento)
 //{
 
 //}

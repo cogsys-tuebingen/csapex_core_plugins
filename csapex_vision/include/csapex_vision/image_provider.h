@@ -46,7 +46,7 @@ public:
     virtual int sleepTime();
 
     Memento::Ptr getState() const;
-    void setState(Memento::Ptr memento);
+    void setParameterState(Memento::Ptr memento);
 
 private:
     static std::map<std::string, ProviderConstructor> plugins;

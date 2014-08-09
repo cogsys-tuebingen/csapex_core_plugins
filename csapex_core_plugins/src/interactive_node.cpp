@@ -40,6 +40,4 @@ void InteractiveNode::stop()
 {
     stopped_ = true;
     wait_for_view_.wakeAll();
-
-    Node::stop();
 }

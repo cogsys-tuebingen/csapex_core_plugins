@@ -162,7 +162,7 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 }
 
 
-void ImportRos::setState(Memento::Ptr memento)
+void ImportRos::setParameterState(Memento::Ptr memento)
 {
-    Node::setState(memento);
+    Node::setParameterState(memento);
 }

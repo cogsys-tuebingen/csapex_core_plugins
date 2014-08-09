@@ -26,7 +26,7 @@ namespace csapex
 //    virtual std::vector<std::string> getExtensions() const;
 
 //    virtual Memento::Ptr getState() const;
-//    virtual void setState(Memento::Ptr memento);
+//    virtual void setParameterState(Memento::Ptr memento);
 
 //private:
 //    std::string file_;

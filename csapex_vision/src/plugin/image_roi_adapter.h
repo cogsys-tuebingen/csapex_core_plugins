@@ -20,7 +20,7 @@ public:
     ImageRoiAdapter(ImageRoi *node, WidgetController *widget_ctrl);
 
     virtual Memento::Ptr getState() const;
-    virtual void         setState(Memento::Ptr memento);
+    virtual void         setParameterState(Memento::Ptr memento);
 
     virtual void         setupUi(QBoxLayout* layout);
 

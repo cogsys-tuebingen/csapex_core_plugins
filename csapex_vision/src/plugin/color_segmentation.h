@@ -18,7 +18,7 @@ public:
     virtual void setup();
 
 protected:
-    virtual void setState(Memento::Ptr memento);
+    virtual void setParameterState(Memento::Ptr memento);
 
 private:
     void recompute();
