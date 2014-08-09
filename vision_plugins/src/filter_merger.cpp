@@ -70,7 +70,7 @@ void Merger::updateInputs()
 void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
 {
     std::vector<Input*> inputs = getMessageInputs();
-    for(int i = 0 ; i < inputs.size() ; i++) {
+    for(std::size_t i = 0 ; i < inputs.size() ; i++) {
         Input *in = inputs[i];
         if(in->isConnected()) {
             CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
@@ -79,4 +79,9 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
             encoding.insert(encoding.end(), msg->getEncoding().begin(), msg->getEncoding().end());
         }
     }
+}
+
+void Merger::stateChanged()
+{
+    updateInputs();
 }

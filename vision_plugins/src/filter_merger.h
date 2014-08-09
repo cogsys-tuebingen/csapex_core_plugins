@@ -28,9 +28,9 @@ public:
      */
     virtual void setup();
 
-private Q_SLOTS:
     void process();
     void updateInputs();
+    void stateChanged();
 
 private:
     Output *output_;
