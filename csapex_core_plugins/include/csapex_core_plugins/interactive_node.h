@@ -19,7 +19,6 @@ public:
 
     virtual void process();
     virtual void stop();
-    virtual void setNodeWorker(NodeWorker* nw);
 
     void done();
 
