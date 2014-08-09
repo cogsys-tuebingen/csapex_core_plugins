@@ -69,6 +69,7 @@ void Splitter::process()
     }
 
 
+    std::vector<Output*> outputs = getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
         if(i < state_.encoding_.size()) {
@@ -79,13 +80,14 @@ void Splitter::process()
 
         CvMatMessage::Ptr channel_out(new CvMatMessage(e));
         channel_out->value = channels[i];
-        getOutput(i)->publish(channel_out);
+        outputs[i]->publish(channel_out);
     }
 }
 
 void Splitter::updateOutputs()
 {
-    int n = countOutputs();
+    std::vector<Output*> outputs = getMessageOutputs();
+    int n = outputs.size();
 
     if(state_.channel_count_ > n) {
         for(int i = n ; i < state_.channel_count_ ; ++i) {
@@ -98,25 +100,29 @@ void Splitter::updateOutputs()
     } else {
         bool del = true;
         for(int i = n-1 ; i >= (int) state_.channel_count_; --i) {
-            if(getOutput(i)->isConnected()) {
+            Output* output = outputs[i];
+            if(output->isConnected()) {
                 del = false;
             }
 
             if(del) {
-                removeOutput(getOutput(i));
+                removeOutput(output->getUUID());
             } else {
-                getOutput(i)->disable();;
+                output->disable();
             }
         }
     }
 
+
+    outputs = getMessageOutputs();
     for(int i = 0, n = state_.channel_count_; i < n; ++i) {
+        Output* output = outputs[i];
         if(i < (int) state_.encoding_.size()) {
-            getOutput(i)->setLabel(state_.encoding_[i].name);
+            output->setLabel(state_.encoding_[i].name);
         } else {
-            getOutput(i)->setLabel("unknown");
+            output->setLabel("unknown");
         }
-        getOutput(i)->enable();
+        output->enable();
     }
 
 }
