@@ -7,6 +7,7 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#include <QByteArray>
 
 CSAPEX_REGISTER_CLASS(csapex::FilterStaticMask, csapex::Node)
 

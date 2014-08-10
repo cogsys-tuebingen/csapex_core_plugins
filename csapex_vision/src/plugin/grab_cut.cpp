@@ -9,6 +9,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
+#include <csapex/utility/timer.h>
 
 /// SYSTEM
 #include <boost/assign.hpp>
