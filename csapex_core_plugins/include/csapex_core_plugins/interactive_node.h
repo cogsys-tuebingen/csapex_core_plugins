@@ -18,7 +18,7 @@ public:
     InteractiveNode();
 
     virtual void process();
-    virtual void stop();
+    virtual void abort();
 
     void done();
 

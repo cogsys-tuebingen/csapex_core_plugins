@@ -36,7 +36,7 @@ bool InteractiveNode::waitForView()
     return !stopped_;
 }
 
-void InteractiveNode::stop()
+void InteractiveNode::abort()
 {
     stopped_ = true;
     wait_for_view_.wakeAll();
