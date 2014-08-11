@@ -75,6 +75,8 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
 
         if(Qt::Key_0 <= key && key <= Qt::Key_9) {
             setLabel(ke->key() - Qt::Key_0);
+        } else if(key == Qt::Key_Space) {
+            submit();
         } else if(key == Qt::Key_Escape) {
             setLabel(0);
         }
@@ -150,6 +152,8 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
 
     DefaultNodeAdapter::setupUi(layout);
+
+    setLabel(wrapped_->readParameter<int>("label"));
 }
 
 Memento::Ptr ScanLabelerAdapter::getState() const
