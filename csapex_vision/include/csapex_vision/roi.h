@@ -19,16 +19,26 @@ public:
     void grow(int pixels_x, int pixels_y);
 
     int x() const;
+    void setX(const int x);
     int y() const;
+    void setY(const int y);
     int w() const;
+    void setW(const int w);
     int h() const;
+    void setH(const int h);
 
     void setLabel(const std::string& label);
     std::string label() const;
 
-    int classification() const;
-    cv::Rect rect() const;
+    int        classification() const;
+    void       setClassification(const int c);
+    cv::Rect   rect() const;
+    void       setRect(const cv::Rect &r);
     cv::Scalar color() const;
+    void       setColor(const cv::Scalar &c);
+
+
+
 
 private:
     void check();

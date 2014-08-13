@@ -51,10 +51,16 @@ void ImageRoi::setupParameters()
                             k_cond,
                             boost::bind(&ImageRoi::drop, this));
 
-    addParameter(param::ParameterFactory::declareRange("roi width", param::ParameterDescription("Set the width of the roi."),
+    addParameter(param::ParameterFactory::declareRange("roi width",
+                                                       param::ParameterDescription("Set the width of the roi."),
                                                        0, 640, 640, 1));
-    addParameter(param::ParameterFactory::declareRange("roi height", param::ParameterDescription("Set the width of the roi."),
+    addParameter(param::ParameterFactory::declareRange("roi height",
+                                                       param::ParameterDescription("Set the width of the roi."),
                                                        0, 480, 480, 1));
+
+    addParameter(param::ParameterFactory::declareRange("class label",
+                                                        param::ParameterDescription("Assign a class label to roi."),
+                                                       -1, 255, -1, 1));
 }
 
 void ImageRoi::setup()
@@ -110,6 +116,9 @@ void ImageRoi::process()
     bool wait = readParameter<bool>("step");
     if(wait)
         waitForView();
+
+    int class_label = readParameter<int>("class label");
+    result_->value.setClassification(class_label);
 
     output_->publish(result_);
 }

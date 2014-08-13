@@ -60,16 +60,29 @@ int Roi::x() const
     return rect_.x;
 }
 
+void Roi::setX(const int x)
+{
+    rect_.x = x;
+}
 
 int Roi::y() const
 {
     return rect_.y;
 }
 
+void Roi::setY(const int y)
+{
+    rect_.y = y;
+}
 
 int Roi::w() const
 {
     return rect_.width;
+}
+
+void Roi::setW(const int w)
+{
+   rect_.width = w;
 }
 
 
@@ -78,9 +91,19 @@ int Roi::h() const
     return rect_.height;
 }
 
+void Roi::setH(const int h)
+{
+    rect_.height = h;
+}
+
 int Roi::classification() const
 {
     return classification_;
+}
+
+void Roi::setClassification(const int c)
+{
+    classification_ = c;
 }
 
 cv::Rect Roi::rect() const
@@ -88,7 +111,17 @@ cv::Rect Roi::rect() const
     return rect_;
 }
 
+void Roi::setRect(const cv::Rect &r)
+{
+    rect_ = r;
+}
+
 cv::Scalar Roi::color() const
 {
     return color_;
+}
+
+void Roi::setColor(const cv::Scalar &c)
+{
+    color_ = c;
 }
