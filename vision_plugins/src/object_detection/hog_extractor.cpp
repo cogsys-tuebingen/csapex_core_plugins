@@ -46,9 +46,9 @@ void HOGExtractor::setupParameters()
 
 
     param::Parameter::Ptr cells_per_block =
-            param::ParameterFactory::declareRange("cells per block",
-                                                  param::ParameterDescription("Set the amount of cells in each direction of block."),
-                                                  2, 8, 2, 1);
+    param::ParameterFactory::declareRange("cells per block",
+                                          param::ParameterDescription("Set the amount of cells in each direction of block."),
+                                          2, 8, 2, 1);
 
     addParameter(cells_per_block, boost::bind(&HOGExtractor::updateOverlap, this));
 
@@ -63,8 +63,8 @@ void HOGExtractor::setupParameters()
 
 void HOGExtractor::setup()
 {
-    in_  = modifier_->addInput<CvMatMessage>("image");
-    out_ = modifier_->addOutput<DescriptorMessage>("descriptor");
+    in_    = modifier_->addInput<CvMatMessage>("image");
+    out_   = modifier_->addOutput<DescriptorMessage>("descriptor");
 }
 
 void HOGExtractor::process()

@@ -21,8 +21,9 @@ public:
     void process();
 
 private:
-    ConnectorIn* in_;
-    ConnectorOut* out_;
+    ConnectorIn*    in_image_;
+    ConnectorIn*    in_roi_;
+    ConnectorOut*   out_;
 };
 
 

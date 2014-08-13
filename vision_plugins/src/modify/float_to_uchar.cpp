@@ -33,23 +33,26 @@ void FloatToUchar::process()
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
     out->value = in->value.clone();
 
-    switch(type_) {
-    case RELATIVE:
-        utils_cv::normalizeRelative<uchar>(out->value);
-        break;
-    case ABSOLUTE:
-        if((in->value.type() & 7) == CV_32F)
-            utils_cv::normalizeAbsolute<float, uchar>(out->value);
-        else
-            utils_cv::normalizeAbsolute<double, uchar>(out->value);
-        break;
-    case SCALE:
-            utils_cv::scale<uchar>(out->value);
-        break;
-    default:
-        throw std::runtime_error("Cannot perfom this operation!");
-    }
 
+
+//    switch(type_) {
+//    case RELATIVE:
+//        utils_cv::normalizeRelative<uchar>(out->value);
+//        break;
+//    case ABSOLUTE:
+//        if((in->value.type() & 7) == CV_32F)
+//            utils_cv::normalizeAbsolute<float, uchar>(out->value);
+//        else
+//            utils_cv::normalizeAbsolute<double, uchar>(out->value);
+//        break;
+//    case SCALE:
+//            utils_cv::scale<uchar>(out->value);
+//        break;
+//    default:
+//        throw std::runtime_error("Cannot perfom this operation!");
+//    }
+
+//    out->value *= 255.0;
     out->value.convertTo(out->value, CV_8UC(in->value.channels()));
     output_->publish(out);
 }
