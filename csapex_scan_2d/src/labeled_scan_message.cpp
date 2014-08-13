@@ -39,7 +39,7 @@ void LabeledScanMessage::readYaml(const YAML::Node &doc)
     value.labels.resize(count);
 
     for(std::size_t i = 0; i< count; ++i) {
-        YAML::Node ray = node[i];
+        const YAML::Node& ray = node[i];
 
         double yaw = 0;
         ray[0] >> yaw;

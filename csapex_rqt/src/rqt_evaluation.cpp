@@ -5,11 +5,12 @@
 #include <csapex/msg/message_factory.h>
 #include <csapex/view/designer.h>
 #include <csapex/model/graph.h>
+#include <csapex/model/graph_worker.h>
 #include <csapex/core/graphio.h>
 #include <csapex/view/designer_view.h>
 #include <csapex/view/designer.h>
 #include <csapex/core/settings.h>
-#include <csapex/manager/box_manager.h>
+#include <csapex/model/node_factory.h>
 #include <csapex/view/widget_controller.h>
 #include <csapex/view/designer_scene.h>
 
@@ -25,16 +26,19 @@ using namespace csapex_rqt;
 using namespace csapex;
 
 CsApex::CsApex()
-    : graph_(new Graph(settings_)),
-      widget_controller_(new csapex::WidgetController(graph_)),
-      dispatcher_(new CommandDispatcher(graph_, widget_controller_)),
-      core_(settings_, graph_, dispatcher_.get()),
+    : graph_(new Graph),
+      graph_worker_(new GraphWorker(&settings_, graph_.get())),
+      node_factory_(new NodeFactory(settings_)),
+      widget_controller_(new csapex::WidgetController(settings_, graph_, node_factory_.get())),
+      dispatcher_(new CommandDispatcher(settings_, graph_worker_, widget_controller_)),
+      core_(settings_, graph_worker_, node_factory_.get(), dispatcher_.get()),
       drag_io_(graph_.get(), dispatcher_.get(), widget_controller_),
       scene_(new DesignerScene(graph_, dispatcher_.get(), widget_controller_)),
       view_ (new DesignerView(scene_, graph_, dispatcher_.get(), widget_controller_, drag_io_)),
       designer_(new Designer(settings_, graph_, dispatcher_.get(), widget_controller_, view_, scene_))
 {
-    BoxManager::instance().settings_ = &settings_;
+    // TODO: remove
+    node_factory_->dispatcher_ = dispatcher_.get();
 
     widget_controller_->setDesigner(designer_);
 }
@@ -49,7 +53,7 @@ void CsApex::initPlugin(qt_gui_cpp::PluginContext& context)
 {
     context_ = &context;
 
-    eva_ = new CsApexWindow(core_, dispatcher_.get(), widget_controller_, graph_, designer_);
+    eva_ = new CsApexWindow(core_, dispatcher_.get(), widget_controller_, graph_worker_, designer_);
 //    eva_->showMenu();
 
     context_->addWidget(eva_);

@@ -10,7 +10,7 @@
 #include <csapex/core/drag_io.h>
 #include <csapex/command/add_node.h>
 #include <csapex/command/dispatcher.h>
-#include <csapex/manager/box_manager.h>
+#include <csapex/model/node_factory.h>
 #include <csapex/model/graph.h>
 #include <csapex/model/node_state.h>
 #include <utils_param/parameter_factory.h>

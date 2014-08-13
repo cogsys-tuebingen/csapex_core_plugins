@@ -26,6 +26,8 @@ private:
 
     csapex::Settings settings_;
     csapex::GraphPtr graph_;
+    csapex::GraphWorkerPtr graph_worker_;
+    csapex::NodeFactoryPtr node_factory_;
     csapex::WidgetControllerPtr widget_controller_;
     csapex::CommandDispatcher::Ptr dispatcher_;
     csapex::CsApexCore core_;
