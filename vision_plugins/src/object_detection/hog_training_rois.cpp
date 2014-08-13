@@ -44,6 +44,7 @@ void HOGTrainingRois::process()
 {
     RoiMessage::Ptr in_roi = in_roi_->getMessage<RoiMessage>();
     Roi &roi = in_roi->value;
+    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
     int limit_x = std::numeric_limits<int>::max();
     int limit_y = std::numeric_limits<int>::max();
@@ -59,7 +60,6 @@ void HOGTrainingRois::process()
     double dy       = (1.0 - overlap) * roi.h();
 
 
-    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
     roi.setColor(cv::Scalar(0,255,0));
     roi.setClassification(0);
     RoiMessage::Ptr msg(new RoiMessage);

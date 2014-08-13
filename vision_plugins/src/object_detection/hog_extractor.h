@@ -16,8 +16,9 @@ public:
     void process();
 
 private:
-    csapex::Input             *in_;
-    csapex::Output            *out_;
+    csapex::Input                  *in_img_;
+    csapex::Input                  *in_rois_;
+    csapex::Output                 *out_;
 
     param::RangeParameter::Ptr       overlap_;
     void updateOverlap();
