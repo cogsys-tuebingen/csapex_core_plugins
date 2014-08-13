@@ -1,5 +1,6 @@
 <library path="libcsapex_bar_code_plugin">
 <class type="csapex::BarCodeReader" base_class_type="csapex::Node">
   <description>Extracts barcodes and QR codes from an image</description>
+  <tags>Vision, Bar Code</tags>
 </class>
 </library>
