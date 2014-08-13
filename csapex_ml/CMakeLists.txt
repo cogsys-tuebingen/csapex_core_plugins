@@ -3,6 +3,7 @@ project(csapex_ml)
 
 find_package(catkin REQUIRED COMPONENTS
   csapex
+  csapex_core_plugins
 )
 
 catkin_package(
