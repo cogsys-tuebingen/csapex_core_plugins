@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_cv/heatmap.hpp>
 #include <csapex_vision/cv_mat_message.h>
@@ -25,10 +25,6 @@ using namespace vision_plugins;
 MatrixToHeatmap::MatrixToHeatmap() :
     color_type_(BEZIER)
 {
-    Tag::createIfNotExists("Visualization");
-    addTag(Tag::get("Visualization"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void MatrixToHeatmap::process()

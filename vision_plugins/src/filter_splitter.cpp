@@ -4,8 +4,8 @@
 #include <csapex/view/box.h>
 #include <csapex/command/meta.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/assert.h>
@@ -64,11 +64,12 @@ void Splitter::process()
 
         input_->setLabel(m->getEncoding().toString());
         updateOutputs();
-        Q_EMIT modelChanged();
+        triggerModelChanged();
         return;
     }
 
 
+    std::vector<Output*> outputs = getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
         if(i < state_.encoding_.size()) {
@@ -79,13 +80,14 @@ void Splitter::process()
 
         CvMatMessage::Ptr channel_out(new CvMatMessage(e));
         channel_out->value = channels[i];
-        getOutput(i)->publish(channel_out);
+        outputs[i]->publish(channel_out);
     }
 }
 
 void Splitter::updateOutputs()
 {
-    int n = countOutputs();
+    std::vector<Output*> outputs = getMessageOutputs();
+    int n = outputs.size();
 
     if(state_.channel_count_ > n) {
         for(int i = n ; i < state_.channel_count_ ; ++i) {
@@ -98,47 +100,52 @@ void Splitter::updateOutputs()
     } else {
         bool del = true;
         for(int i = n-1 ; i >= (int) state_.channel_count_; --i) {
-            if(getOutput(i)->isConnected()) {
+            Output* output = outputs[i];
+            if(output->isConnected()) {
                 del = false;
             }
 
             if(del) {
-                removeOutput(getOutput(i));
+                removeOutput(output->getUUID());
             } else {
-                getOutput(i)->disable();;
+                output->disable();
             }
         }
     }
 
+
+    outputs = getMessageOutputs();
     for(int i = 0, n = state_.channel_count_; i < n; ++i) {
+        Output* output = outputs[i];
         if(i < (int) state_.encoding_.size()) {
-            getOutput(i)->setLabel(state_.encoding_[i].name);
+            output->setLabel(state_.encoding_[i].name);
         } else {
-            getOutput(i)->setLabel("unknown");
+            output->setLabel("unknown");
         }
-        getOutput(i)->enable();
+        output->enable();
     }
 
 }
 
 /// MEMENTO ------------------------------------------------------------------------------------
-Memento::Ptr Splitter::getChildState() const
+Memento::Ptr Splitter::getParameterState() const
 {
     return boost::shared_ptr<State>(new State(state_));
 }
 
-void Splitter::setState(Memento::Ptr memento)
+void Splitter::setParameterState(Memento::Ptr memento)
 {
     boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
     apex_assert_hard(m.get());
 
     state_ = *m;
 
-    while((int) state_.encoding_.size() < state_.channel_count_) {
-        state_.encoding_.push_back(Channel("Channel", 0, 255));
-    }
+//    while((int) state_.encoding_.size() < state_.channel_count_) {
+//        state_.encoding_.push_back(Channel("Channel", 0, 255));
+//    }
 
-    Q_EMIT modelChanged();
+    updateOutputs();
+    triggerModelChanged();
 }
 
 /// MEMENTO

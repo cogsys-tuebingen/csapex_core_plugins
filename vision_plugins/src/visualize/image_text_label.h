@@ -18,8 +18,8 @@ protected:
     enum Position {TOP_LEFT, BOTTOM_LEFT,
                    TOP_RIGHT, BOTTOM_RIGHT};
 
-    csapex::ConnectorIn  *input_;
-    csapex::ConnectorOut *output_;
+    csapex::Input  *input_;
+    csapex::Output *output_;
 
 };
 }

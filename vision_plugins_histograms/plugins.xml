@@ -4,20 +4,24 @@
         Calculate an 1D histogram for an image. Multiple Channels are supported, but only
         one value for the bin amount can be set.
     </description>
+    <tags>Vision, Histogram</tags>
   </class>
   <class type="vision_plugins::RenderHistogram" base_class_type="csapex::Node">
     <description>
         Render histogram results.
     </description>
+    <tags>Vision, Histogram</tags>
   </class>
   <class type="vision_plugins::HistogramMaxima" base_class_type="csapex::Node">
     <description>
         Simple method to find maxima in histograms.
     </description>
+    <tags>Vision, Histogram</tags>
   </class>
   <class type="vision_plugins::Slicing" base_class_type="csapex::Node">
     <description>
         Slice image and its channels given the histogram peaks.
     </description>
+    <tags>Vision, Histogram</tags>
   </class>
 </library>

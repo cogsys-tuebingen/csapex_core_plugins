@@ -2,8 +2,8 @@
 #include "histogram.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
@@ -27,11 +27,6 @@ Histogram::Histogram() :
     min_max_value_(std::make_pair<float, float>(std::numeric_limits<float>::max(),
                                                 std::numeric_limits<float>::min()))
 {
-    Tag::createIfNotExists("Histogram");
-    addTag(Tag::get("Histogram"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
-
     addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
                  boost::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("uniform", uniform_),

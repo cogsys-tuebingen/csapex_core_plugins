@@ -2,8 +2,8 @@
 #include "camera_calibration.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -20,9 +20,6 @@ using namespace vision_plugins;
 
 vision_plugins::CameraCalibration::CameraCalibration()
 {
-    addTag(Tag::get("Vision"));
-    Tag::createIfNotExists("vision_plugins");
-    addTag(Tag::get("vision_plugins"));
 }
 
 void vision_plugins::CameraCalibration::process()

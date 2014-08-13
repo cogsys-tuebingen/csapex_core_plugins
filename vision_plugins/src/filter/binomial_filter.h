@@ -18,8 +18,8 @@ public:
 protected:
     int                     kernel_size_;
     cv::Mat                 kernel_;
-    csapex::ConnectorOut*   output_;
-    csapex::ConnectorIn*    input_;
+    csapex::Output*   output_;
+    csapex::Input*    input_;
 
 };
 }

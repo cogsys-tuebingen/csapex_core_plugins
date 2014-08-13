@@ -28,12 +28,12 @@ public:
      */
     virtual void setup();
 
-private Q_SLOTS:
     void process();
     void updateInputs();
+    void stateChanged();
 
 private:
-    ConnectorOut *output_;
+    Output *output_;
 
     void collectMessage(std::vector<cv::Mat> &messages, Encoding &encoding);
 };

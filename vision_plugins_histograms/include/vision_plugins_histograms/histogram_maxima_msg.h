@@ -2,7 +2,7 @@
 #define HISTOGRAM_MAXIMA_MESSAGE_H
 
 /// PROJECT
-#include <csapex/model/message.h>
+#include <csapex/msg/message_template.hpp>
 #include "histogram_maxima_container.h"
 
 namespace csapex {

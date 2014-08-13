@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -20,8 +20,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::Flip, csapex::Node)
 
 Flip::Flip()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void Flip::process()

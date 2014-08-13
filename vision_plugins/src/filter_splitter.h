@@ -8,22 +8,19 @@
 namespace csapex {
 class Splitter : public csapex::Node
 {
-    Q_OBJECT
-
 public:
     Splitter();
     ~Splitter();
 
     void setup();
 
-    void setState(Memento::Ptr memento);
-    Memento::Ptr getChildState() const;
+    void setParameterState(Memento::Ptr memento);
+    Memento::Ptr getParameterState() const;
 
-private Q_SLOTS:
     void process();
 
 private:
-    ConnectorIn *input_;
+    Input *input_;
 
     void updateOutputs();
 

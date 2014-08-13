@@ -6,8 +6,8 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -21,9 +21,6 @@ using namespace connection_types;
 
 RenderROIs::RenderROIs()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
-    addTag(Tag::get("ROI"));
 }
 
 void RenderROIs::setupParameters()

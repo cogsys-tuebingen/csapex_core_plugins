@@ -2,8 +2,8 @@
 #include "histogram_maxima.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -19,11 +19,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::HistogramMaxima, csapex::Node)
 
 HistogramMaxima::HistogramMaxima()
 {
-    Tag::createIfNotExists("Histogram");
-    addTag(Tag::get("Histogram"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
-
     addParameter(param::ParameterFactory::declareRange("k", 1, 128, 2, 1));
     addParameter(param::ParameterFactory::declareRange("thresh", 0, 1000, 0, 1));
 }

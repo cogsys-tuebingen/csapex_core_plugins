@@ -18,8 +18,8 @@ public:
 private:
     utils_cv::CameraCalibration::Ptr calibration_;
 
-    csapex::ConnectorOut*            output_;
-    csapex::ConnectorIn*             input_;
+    csapex::Output*            output_;
+    csapex::Input*             input_;
 
     cv::Mat                          buffer_frame_;
 

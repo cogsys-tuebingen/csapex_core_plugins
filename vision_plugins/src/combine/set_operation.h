@@ -28,9 +28,9 @@ public:
     void process();
 
 private:
-    csapex::ConnectorIn* i1_;
-    csapex::ConnectorIn* i2_;
-    csapex::ConnectorOut* out_;
+    csapex::Input* i1_;
+    csapex::Input* i2_;
+    csapex::Output* out_;
 };
 }
 #endif // COMBINER_SET_OPERATION_H

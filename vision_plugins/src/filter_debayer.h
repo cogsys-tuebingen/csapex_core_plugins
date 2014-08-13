@@ -21,8 +21,6 @@ public:
      */
     virtual void filter(cv::Mat &img, cv::Mat &mask);
 
-    virtual QIcon getIcon() const;
-
 private:
     virtual bool usesMask();
     void debayerAndResize(cv::Mat& source, cv::Mat& dest);

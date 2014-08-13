@@ -2,11 +2,12 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_worker.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Merger, csapex::Node)
 
@@ -41,21 +42,23 @@ void Merger::process()
 void Merger::updateInputs()
 {
     int input_count = readParameter<int>("input count");
-    int current_amount = countInputs();
+
+    std::vector<Input*> inputs = getMessageInputs();
+    int current_amount = inputs.size();
 
     if(current_amount > input_count) {
         for(int i = current_amount; i > input_count ; i--) {
-            ConnectorIn* in = getInput(i - 1);
+            Input* in = inputs[i - 1];
             if(in->isConnected()) {
                 in->disable();
             } else {
-                removeInput(in);
+                removeInput(in->getUUID());
             }
         }
     } else {
         int to_add = input_count - current_amount;
         for(int i = 0 ; i < current_amount; i++) {
-            getInput(i)->enable();
+            inputs[i]->enable();
         }
         for(int i = 0 ; i < to_add ; i++) {
             modifier_->addInput<CvMatMessage>("Channel", true);
@@ -66,8 +69,9 @@ void Merger::updateInputs()
 
 void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
 {
-    for(int i = 0 ; i < countInputs() ; i++) {
-        ConnectorIn *in = getInput(i);
+    std::vector<Input*> inputs = getMessageInputs();
+    for(std::size_t i = 0 ; i < inputs.size() ; i++) {
+        Input *in = inputs[i];
         if(in->isConnected()) {
             CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
             in->setLabel(msg->getEncoding().toString());
@@ -75,4 +79,9 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
             encoding.insert(encoding.end(), msg->getEncoding().begin(), msg->getEncoding().end());
         }
     }
+}
+
+void Merger::stateChanged()
+{
+    updateInputs();
 }

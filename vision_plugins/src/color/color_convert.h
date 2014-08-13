@@ -47,8 +47,8 @@ protected:
     std::map<int, ColorSpace> index_to_cs_in_;
     std::map<int, ColorSpace> index_to_cs_out_;
 
-    csapex::ConnectorIn* input_img_;
-    csapex::ConnectorOut* output_img_;
+    csapex::Input* input_img_;
+    csapex::Output* output_img_;
 };
 
 }

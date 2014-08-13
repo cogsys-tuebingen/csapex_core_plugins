@@ -2,8 +2,8 @@
 #include "render_labels.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
@@ -19,8 +19,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::RenderLabels, csapex::Node)
 
 RenderLabels::RenderLabels()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void RenderLabels::process()

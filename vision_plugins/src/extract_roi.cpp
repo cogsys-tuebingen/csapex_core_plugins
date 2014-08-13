@@ -5,8 +5,8 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -21,9 +21,6 @@ using namespace connection_types;
 
 ExtractROI::ExtractROI()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("ROI"));
-
     addParameter(param::ParameterFactory::declare<int>("thickness", 1, 20, 1, 1));
 }
 

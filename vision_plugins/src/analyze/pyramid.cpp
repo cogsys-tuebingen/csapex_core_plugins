@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/cv_pyramid_message.h>
@@ -20,8 +20,6 @@ Pyramid::Pyramid() :
     out_levels_(8),
     out_level_idx_(0)
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void Pyramid::process()

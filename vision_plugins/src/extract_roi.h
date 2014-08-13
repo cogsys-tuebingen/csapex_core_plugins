@@ -15,10 +15,10 @@ public:
     virtual void setup();
 
 private:
-    ConnectorIn* input_img_;
-    ConnectorIn* input_roi_;
+    Input* input_img_;
+    Input* input_roi_;
 
-    ConnectorOut* output_;
+    Output* output_;
 };
 
 }

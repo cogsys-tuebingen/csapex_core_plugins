@@ -17,9 +17,9 @@ public:
 protected:
     enum Mode {HORIZONTAL, VERTICAL};
 
-    csapex::ConnectorIn     *matrix_1_;
-    csapex::ConnectorIn     *matrix_2_;
-    csapex::ConnectorOut    *stitched_;
+    csapex::Input     *matrix_1_;
+    csapex::Input     *matrix_2_;
+    csapex::Output    *stitched_;
 };
 }
 #endif // IMAGE_STITCHER_H

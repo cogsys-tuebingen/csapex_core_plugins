@@ -14,8 +14,8 @@ public:
     virtual void setup();
 
 protected:
-    csapex::ConnectorOut*                    output_;
-    csapex::ConnectorIn*                     input_;
+    csapex::Output*                    output_;
+    csapex::Input*                     input_;
 };
 
 }

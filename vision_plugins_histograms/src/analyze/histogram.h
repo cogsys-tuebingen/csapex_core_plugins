@@ -14,9 +14,9 @@ public:
     virtual void setup();
 
 protected:
-    csapex::ConnectorOut*   output_;
-    csapex::ConnectorIn*    input_;
-    csapex::ConnectorIn*    mask_;
+    csapex::Output*   output_;
+    csapex::Input*    input_;
+    csapex::Input*    mask_;
 
     int  bins_;
     int  last_type_;

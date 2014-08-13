@@ -16,8 +16,8 @@ public:
 
 private:
     int           kernel_size_;
-    csapex::ConnectorOut* output_;
-    csapex::ConnectorIn*  input_;
+    csapex::Output* output_;
+    csapex::Input*  input_;
 
     void update();
 };

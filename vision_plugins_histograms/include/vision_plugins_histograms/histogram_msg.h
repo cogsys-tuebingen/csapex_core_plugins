@@ -2,7 +2,7 @@
 #define HISTOGRAM_MSG_H
 
 /// PROJECT
-#include <csapex/model/message.h>
+#include <csapex/msg/message_template.hpp>
 #include "histogram_container.h"
 
 namespace csapex {

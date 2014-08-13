@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/histogram.hpp>
@@ -18,10 +18,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::Equalize, csapex::Node)
 
 Equalize::Equalize()
 {
-    addTag(Tag::get("Histogram"));
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));;
 }
 
 void Equalize::process()

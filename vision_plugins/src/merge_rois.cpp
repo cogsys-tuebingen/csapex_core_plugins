@@ -5,8 +5,8 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_vision/utils/rectangle_cluster.h>
 #include <csapex/model/node_modifier.h>
@@ -22,8 +22,6 @@ using namespace connection_types;
 
 MergeROIs::MergeROIs()
 {
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("ROI"));
 }
 
 void MergeROIs::process()

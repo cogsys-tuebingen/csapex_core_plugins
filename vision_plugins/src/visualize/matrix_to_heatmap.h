@@ -20,9 +20,9 @@ private:
     void update();
 
     ColorType             color_type_;
-    csapex::ConnectorOut* output_;
-    csapex::ConnectorIn*  input_;
-    csapex::ConnectorIn*  mask_;
+    csapex::Output* output_;
+    csapex::Input*  input_;
+    csapex::Input*  mask_;
 };
 }
 #endif // EXTREMUM_RENDERER_H

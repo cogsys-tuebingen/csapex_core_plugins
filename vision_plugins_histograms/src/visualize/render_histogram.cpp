@@ -2,8 +2,8 @@
 #include "render_histogram.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -23,11 +23,6 @@ RenderHistogram::RenderHistogram() :
     height_(480),
     width_(640)
 {
-    Tag::createIfNotExists("Histogram");
-    addTag(Tag::get("Histogram"));
-    addTag(Tag::get("Vision"));
-    addTag(Tag::get("vision_plugins"));
-
     addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
                  boost::bind(&RenderHistogram::update, this));
     addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),

@@ -3,8 +3,8 @@
 
 /// COMPONENT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_cv/histogram.hpp>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -18,8 +18,6 @@ using namespace connection_types;
 ColorAdjustment::ColorAdjustment() :
     active_preset_(NONE)
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("vision_plugins"));
 }
 
 void ColorAdjustment::setup()
@@ -52,9 +50,9 @@ std::string channelName(int idx, const Channel& c)
 }
 }
 
-void ColorAdjustment::setState(Memento::Ptr memento)
+void ColorAdjustment::setParameterState(Memento::Ptr memento)
 {
-    Node::setState(memento);
+    Node::setParameterState(memento);
     loaded_state_ = boost::dynamic_pointer_cast<GenericState>(memento);
 }
 
@@ -70,13 +68,13 @@ void ColorAdjustment::process()
         recompute();
 
         if(loaded_state_) {
-            Node::setState(loaded_state_);
+            Node::setParameterState(loaded_state_);
             loaded_state_.reset((GenericState*)NULL);
             triggerParameterSetChanged();
             update();
         }
 
-        Q_EMIT modelChanged();
+        triggerModelChanged();
         return;
     }
 
@@ -138,7 +136,7 @@ void ColorAdjustment::update()
 void ColorAdjustment::setPreset()
 {
     active_preset_  = static_cast<Preset> (readParameter<int>("preset"));
-    Q_EMIT modelChanged();
+    triggerModelChanged();
 }
 
 void ColorAdjustment::addLightness(cv::Mat &img)
