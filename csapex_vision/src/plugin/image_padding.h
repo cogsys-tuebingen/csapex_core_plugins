@@ -18,12 +18,10 @@ public:
     void setup();
     void process();
 
-    virtual QIcon getIcon() const;
-
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
-    ConnectorOut* output_mask_;
+    Input* input_;
+    Output* output_;
+    Output* output_mask_;
 };
 
 } /// NAMESPACE

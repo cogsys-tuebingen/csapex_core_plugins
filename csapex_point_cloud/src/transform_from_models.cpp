@@ -4,8 +4,8 @@
 #include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -25,7 +25,6 @@ using namespace csapex::connection_types;
 
 TransformFromModels::TransformFromModels()
 {
-    addTag(Tag::get("Transform"));
 }
 
 void TransformFromModels::setup()

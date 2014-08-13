@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex_ros/ros_handler.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/generic_pointer_message.hpp>
 
 /// PROJECT
 #include <csapex/utility/singleton.hpp>
@@ -17,7 +17,7 @@
 namespace csapex
 {
 
-class ConnectorOut;
+class Output;
 
 
 template <typename T>
@@ -29,7 +29,7 @@ public:
     typedef boost::shared_ptr<Convertor> Ptr;
 
 public:
-    virtual ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, ConnectorOut* output) = 0;
+    virtual ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Output* output) = 0;
     virtual ros::Publisher advertise(const std::string& topic,  int queue, bool latch = false) = 0;
 
     virtual void publish(ros::Publisher& pub, ConnectionType::Ptr msg) = 0;
@@ -38,7 +38,7 @@ public:
     virtual std::string apexType() = 0;
 
 protected:
-    void publish_apex(ConnectorOut* output, csapex::ConnectionType::Ptr msg);
+    void publish_apex(Output* output, csapex::ConnectionType::Ptr msg);
 };
 
 
@@ -54,7 +54,7 @@ public:
         return ros::message_traits::DataType<T>::value();
     }
 
-    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, ConnectorOut* output) {
+    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Output* output) {
         boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
@@ -79,7 +79,7 @@ public:
         return pub.publish(msg->value);
     }
 
-    void callback(ConnectorOut* output, const typename T::ConstPtr& ros_msg) {
+    void callback(Output* output, const typename T::ConstPtr& ros_msg) {
         if(!ros_msg) {
             throw std::runtime_error("received an empty ros message");
         }
@@ -102,7 +102,7 @@ public:
         return csapex::connection_types::type<APEX>::name();
     }
 
-    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, ConnectorOut* output) {
+    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Output* output) {
         boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
@@ -127,7 +127,7 @@ public:
         return pub.publish(ros_msg);
     }
 
-    void callback(ConnectorOut* output, const typename ROS::ConstPtr& ros_msg) {
+    void callback(Output* output, const typename ROS::ConstPtr& ros_msg) {
         if(!ros_msg) {
             throw std::runtime_error("received an empty ros message");
         }
@@ -155,7 +155,7 @@ public:
 
     bool canHandle(const ros::master::TopicInfo &topic);
 
-    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, ConnectorOut *output);
+    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Output *output);
     ros::Publisher advertise(ConnectionType::Ptr, const std::string& topic,  int queue, bool latch = false);
     void publish(ros::Publisher& pub, ConnectionType::Ptr msg);
 

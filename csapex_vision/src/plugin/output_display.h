@@ -4,10 +4,14 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
+/// SYSTEM
+#include <QImage>
+#include <QSharedPointer>
+
 namespace csapex
 {
 
-class ConnectorIn;
+class Input;
 
 class OutputDisplay : public Node
 {
@@ -17,13 +21,11 @@ public:
     OutputDisplay();
     virtual ~OutputDisplay();
 
-    virtual QIcon getIcon() const;
-
     void setup();
     void process();
 
 protected:
-    ConnectorIn* input_;
+    Input* input_;
 
 public:
     boost::signals2::signal<void(QSharedPointer<QImage>)> display_request;

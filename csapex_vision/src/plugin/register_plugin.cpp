@@ -5,11 +5,11 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_ros/ros_handler.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/output.h>
 
 /// SYSTEM
 #include <boost/bind.hpp>

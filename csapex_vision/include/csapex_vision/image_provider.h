@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/memento.h>
-#include <csapex/model/message_provider.h>
+#include <csapex/msg/message_provider.h>
 
 /// SYSTEM
 #include <boost/algorithm/string.hpp>
@@ -46,7 +46,7 @@ public:
     virtual int sleepTime();
 
     Memento::Ptr getState() const;
-    void setState(Memento::Ptr memento);
+    void setParameterState(Memento::Ptr memento);
 
 private:
     static std::map<std::string, ProviderConstructor> plugins;

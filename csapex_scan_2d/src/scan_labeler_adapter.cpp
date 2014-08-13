@@ -2,7 +2,7 @@
 #include "scan_labeler_adapter.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/register_node_adapter.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex/utility/color.hpp>
@@ -75,6 +75,8 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
 
         if(Qt::Key_0 <= key && key <= Qt::Key_9) {
             setLabel(ke->key() - Qt::Key_0);
+        } else if(key == Qt::Key_Space) {
+            submit();
         } else if(key == Qt::Key_Escape) {
             setLabel(0);
         }
@@ -150,6 +152,8 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
 
     DefaultNodeAdapter::setupUi(layout);
+
+    setLabel(wrapped_->readParameter<int>("label"));
 }
 
 Memento::Ptr ScanLabelerAdapter::getState() const
@@ -157,7 +161,7 @@ Memento::Ptr ScanLabelerAdapter::getState() const
     return boost::shared_ptr<State>(new State(state));
 }
 
-void ScanLabelerAdapter::setState(Memento::Ptr memento)
+void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
 {
     boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
     apex_assert_hard(m.get());

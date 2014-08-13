@@ -28,8 +28,8 @@ private:
     void refresh();
 
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
+    Input* input_;
+    Output* output_;
 
 public:
     boost::signals2::signal<void()> display_request;

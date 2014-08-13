@@ -2,8 +2,8 @@
 #include "crop_box.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
@@ -23,8 +23,6 @@ using namespace csapex::connection_types;
 
 CropBox::CropBox()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareInterval("dx", -10.0, 10.0, -10.0, 10.0, 0.01));
     addParameter(param::ParameterFactory::declareInterval("dy", -10.0, 10.0, -10.0, 10.0, 0.01));
     addParameter(param::ParameterFactory::declareInterval("dz", -10.0, 10.0, -10.0, 10.0, 0.01));

@@ -18,8 +18,8 @@ public:
 private:
     void update();
 
-    ConnectorIn  *input_;
-    ConnectorOut *output_;
+    Input  *input_;
+    Output *output_;
 
     int           kernel_;
     double        sigma_x_;

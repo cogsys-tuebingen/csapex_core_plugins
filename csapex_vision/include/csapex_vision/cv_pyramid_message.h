@@ -5,7 +5,7 @@
 #include <csapex_vision/encoding.h>
 
 /// PROJECT
-#include <csapex/model/message.h>
+#include <csapex/msg/message_template.hpp>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>

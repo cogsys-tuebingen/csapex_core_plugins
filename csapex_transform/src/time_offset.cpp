@@ -5,8 +5,8 @@
 #include <csapex_transform/time_stamp_message.h>
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -18,8 +18,6 @@ using namespace csapex;
 
 TimeOffset::TimeOffset()
 {
-    addTag(Tag::get("Time"));
-
     addParameter(param::ParameterFactory::declareRange<double>("offset", -5000.0, 5000.0, 0.0, 0.5));
 }
 

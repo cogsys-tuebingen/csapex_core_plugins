@@ -2,7 +2,7 @@
 #include "text_display.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 
@@ -13,13 +13,6 @@ using namespace csapex;
 TextDisplay::TextDisplay()
     : connector_(NULL)
 {
-    addTag(Tag::get("Output"));
-    addTag(Tag::get("General"));
-}
-
-QIcon TextDisplay::getIcon() const
-{
-    return QIcon(":/pencil.png");
 }
 
 void TextDisplay::setup()

@@ -2,8 +2,8 @@
 #include "vectorize_pyramid.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/cv_pyramid_message.h>
 #include <csapex_core_plugins/vector_message.h>
@@ -18,8 +18,6 @@ using namespace csapex::connection_types;
 
 VectorizePyramid::VectorizePyramid()
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
 }
 
 void VectorizePyramid::process()

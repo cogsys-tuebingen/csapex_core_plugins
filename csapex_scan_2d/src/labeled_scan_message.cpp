@@ -20,7 +20,7 @@ void LabeledScanMessage::writeYaml(YAML::Emitter &yaml) const
     std::vector<LaserBeam>::const_iterator r = value.rays.begin();
     std::vector<int>::const_iterator l = value.labels.begin();
     for(; r != value.rays.end(); ++r, ++l) {
-        yaml << r->yaw << r->range << *l;
+        yaml << YAML::Flow << YAML::BeginSeq << r->yaw << r->range << *l << YAML::EndSeq;
     }
     yaml << YAML::EndSeq;
 }
@@ -35,20 +35,30 @@ void LabeledScanMessage::readYaml(const YAML::Node &doc)
     apex_assert_hard(node.Type() == YAML::NodeType::Sequence);
 
     std::size_t count = node.size(); // infs and nans cause problems?
-    value.rays.resize(count / 3);
-    value.labels.resize(count / 3);
+    value.rays.resize(count);
+    value.labels.resize(count);
 
-    for(std::size_t i = 0, j = 0; j < count; ++i) {
-        double range = 0;
-        node[j++] >> range;
+    for(std::size_t i = 0; i< count; ++i) {
+        YAML::Node ray = node[i];
 
         double yaw = 0;
-        node[j++] >> yaw;
+        ray[0] >> yaw;
+
+        double range = 0;
+        std::string range_s;
+        ray[1] >> range_s;
+        if(range_s == "inf") {
+            range = std::numeric_limits<double>::infinity();
+        } else {
+            std::stringstream converter;
+            converter.str(range_s);
+            converter >> range;
+        }
 
         value.rays[i] = LaserBeam(yaw, range);
 
         int label;
-        node[j++] >> label;
+        ray[2] >> label;
         value.labels[i] = label;
     }
 }

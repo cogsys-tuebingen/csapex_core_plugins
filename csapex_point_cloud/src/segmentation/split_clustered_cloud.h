@@ -18,12 +18,12 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 protected:
-    ConnectorIn*  input_;
-    ConnectorIn* in_indices_;
-    ConnectorOut* output1_;
-    ConnectorOut* output2_;
-    ConnectorOut* output3_;
-    ConnectorOut* output4_;
+    Input*  input_;
+    Input* in_indices_;
+    Output* output1_;
+    Output* output2_;
+    Output* output3_;
+    Output* output4_;
 };
 }
 #endif // SPLIT_CLUSTERED_CLOUD_H

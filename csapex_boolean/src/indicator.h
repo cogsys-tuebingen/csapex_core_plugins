@@ -19,7 +19,7 @@ public:
     virtual void process();
 
 private:
-    ConnectorIn* in;
+    Input* in;
 };
 
 }

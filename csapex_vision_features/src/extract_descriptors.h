@@ -31,9 +31,9 @@ private:
     QMutex extractor_mutex;
     Extractor::Ptr extractor;
 
-    ConnectorIn* in_img;
-    ConnectorIn* in_key;
-    ConnectorOut* out_des;
+    Input* in_img;
+    Input* in_key;
+    Output* out_des;
 };
 
 }

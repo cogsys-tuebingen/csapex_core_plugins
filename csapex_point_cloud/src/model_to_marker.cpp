@@ -2,8 +2,8 @@
 #include "model_to_marker.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -19,7 +19,6 @@ using namespace csapex::connection_types;
 
 ModelToMarker::ModelToMarker()
 {
-    //addTag(Tag::get("PointCloud"));
 }
 
 void ModelToMarker::process()

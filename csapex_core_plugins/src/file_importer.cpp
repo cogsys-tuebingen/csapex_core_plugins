@@ -2,8 +2,8 @@
 #include "file_importer.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <csapex/manager/message_provider_manager.h>
 #include <utils_param/parameter_factory.h>
@@ -30,8 +30,6 @@ using namespace connection_types;
 
 FileImporter::FileImporter()
 {
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Input"));
 }
 
 void FileImporter::setupParameters()
@@ -98,11 +96,6 @@ bool FileImporter::doImport(const QString& _path)
     setTemporaryParameters(provider_->getParameters());
 
     return provider_.get();
-}
-
-QIcon FileImporter::getIcon() const
-{
-    return QIcon(":/folder_picture.png");
 }
 
 void FileImporter::setup()

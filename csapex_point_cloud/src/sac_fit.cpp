@@ -1,8 +1,8 @@
 #include "sac_fit.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
@@ -23,8 +23,6 @@ using namespace std;
 
 SacFit::SacFit()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declare("iterations", 1, 20000, 5000, 200));
     addParameter(param::ParameterFactory::declare("min inliers", 5, 20000, 100, 100));
     addParameter(param::ParameterFactory::declare("normal distance weight", 0.0, 2.0, 0.085, 0.001));

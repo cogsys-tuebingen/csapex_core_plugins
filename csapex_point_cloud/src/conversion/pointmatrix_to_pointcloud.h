@@ -15,8 +15,8 @@ public:
     virtual void setupParameters();
 
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
+    Input* input_;
+    Output* output_;
 
 };
 }

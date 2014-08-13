@@ -1,12 +1,9 @@
 #ifndef DECISION_TREE_TRAINER_H
 #define DECISION_TREE_TRAINER_H
 
-/// COMPONENT
-
 /// PROJECT
 #include <csapex/model/node.h>
-
-/// SYSTEM
+#include <csapex_ml/features_message.h>
 
 namespace csapex {
 
@@ -21,8 +18,13 @@ public:
     void process();
 
 private:
-    ConnectorIn* in_;
-    ConnectorOut* out_;
+    void train();
+
+private:
+    Input* in_;
+    Output* out_;
+
+    std::vector<connection_types::FeaturesMessage> features_;
 };
 
 

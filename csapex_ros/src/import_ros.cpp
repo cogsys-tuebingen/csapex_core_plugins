@@ -6,10 +6,10 @@
 #include <csapex_ros/ros_message_conversion.h>
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/set_parameter.h>
@@ -33,10 +33,6 @@ const std::string ImportRos::no_topic_("! Select a topic !");
 ImportRos::ImportRos()
     : connector_(NULL), retries_(0)
 {
-    addTag(Tag::get("RosIO"));
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Input"));
-
     std::vector<std::string> set;
     set.push_back(no_topic_);
     addParameter(param::ParameterFactory::declareParameterStringSet("topic", set),
@@ -44,11 +40,6 @@ ImportRos::ImportRos()
 
     addParameter(param::ParameterFactory::declareTrigger("refresh"),
                  boost::bind(&ImportRos::refresh, this));
-}
-
-QIcon ImportRos::getIcon() const
-{
-    return QIcon(":/terminal.png");
 }
 
 void ImportRos::setup()
@@ -171,7 +162,7 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 }
 
 
-void ImportRos::setState(Memento::Ptr memento)
+void ImportRos::setParameterState(Memento::Ptr memento)
 {
-    Node::setState(memento);
+    Node::setParameterState(memento);
 }

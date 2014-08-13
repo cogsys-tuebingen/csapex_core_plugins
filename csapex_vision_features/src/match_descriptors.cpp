@@ -2,8 +2,8 @@
 #include "match_descriptors.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <utils_vision/utils/matcher.h>
 #include <utils_vision/data/matchable.h>
 #include <utils_vision/utils/hough_peak.h>
@@ -285,8 +285,6 @@ public:
 MatchDescriptors::MatchDescriptors()
     : in_img_1(NULL), current_method_(SIMPLE)
 {
-    addTag(Tag::get("Features"));
-
     boost::function<void(param::Parameter*)> update = boost::bind(&MatchDescriptors::update, this);
 
     std::map<std::string, int> methods = boost::assign::map_list_of

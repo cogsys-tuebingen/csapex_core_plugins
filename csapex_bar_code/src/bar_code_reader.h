@@ -18,9 +18,9 @@ public:
     virtual void process();
 
 private:
-    ConnectorIn* in_img;
-    ConnectorOut* out_str;
-    ConnectorOut* out_roi;
+    Input* in_img;
+    Output* out_str;
+    Output* out_roi;
 
     std::string data_;
     bool lost;

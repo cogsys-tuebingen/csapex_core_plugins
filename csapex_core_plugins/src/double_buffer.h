@@ -19,14 +19,12 @@ public:
     virtual void process();
     virtual void tick();
 
-    virtual QIcon getIcon() const;
-
 private:
     void swapBuffers();
 
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
+    Input* input_;
+    Output* output_;
 
     QMutex mutex_;
 

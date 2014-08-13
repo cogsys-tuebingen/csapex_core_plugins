@@ -19,9 +19,9 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
-    ConnectorOut* output_frame_;
+    Input* input_;
+    Output* output_;
+    Output* output_frame_;
 };
 
 }

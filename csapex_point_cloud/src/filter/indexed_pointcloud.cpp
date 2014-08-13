@@ -2,8 +2,8 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/model/node_modifier.h>
@@ -16,7 +16,6 @@ using namespace csapex::connection_types;
 
 IndexedPointCloud::IndexedPointCloud()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void IndexedPointCloud::setup()

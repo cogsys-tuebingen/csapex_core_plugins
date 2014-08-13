@@ -17,10 +17,8 @@ public:
     virtual void process();
     virtual void setup();
 
-    virtual QIcon getIcon() const;
-
 private:
-    ConnectorIn* connector_;
+    Input* connector_;
 };
 
 }

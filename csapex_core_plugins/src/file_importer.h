@@ -2,13 +2,13 @@
 #define FILE_IMPORTER_H
 
 /// PROJECT
-#include <csapex/model/message_provider.h>
+#include <csapex/msg/message_provider.h>
 #include <csapex/model/node.h>
 
 namespace csapex
 {
 
-class ConnectorOut;
+class Output;
 
 class FileImporter : public Node
 {
@@ -18,8 +18,6 @@ public:
 
     void setupParameters();
     void setup();
-
-    virtual QIcon getIcon() const;
 
     void import();
 
@@ -36,7 +34,7 @@ private:
     MessageProvider::Ptr provider_;
 
     QString file_;
-    ConnectorOut* output_;
+    Output* output_;
 };
 
 }

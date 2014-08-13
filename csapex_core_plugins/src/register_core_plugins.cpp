@@ -5,7 +5,7 @@
 #include "file_importer.h"
 
 /// PROJECT
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex/core/drag_io.h>
 #include <csapex/command/add_node.h>
@@ -30,39 +30,27 @@ namespace {
 class FileHandler
         : public DragIO::HandlerEnter, public DragIO::HandlerMove, public DragIO::HandlerDrop
 {
-    static const std::string format;
-
-    QList<QUrl> getFiles(QDropEvent* e)
-    {
-        QByteArray itemData = e->mimeData()->data(format.c_str());
-        QDataStream stream(&itemData, QIODevice::ReadOnly);
-
-        int r, c;
-        QMap<int, QVariant> v;
-        stream >> r >> c >> v;
-
-        e->accept();
-
-        return e->mimeData()->urls();
-    }
-
     virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragEnterEvent* e) {
-        if(e->mimeData()->hasFormat(format.c_str())) {
-            QList<QUrl> files = getFiles(e);
+        if(e->mimeData()->hasUrls()) {
+            e->acceptProposedAction();
+            return true;
 
-            if(files.size() != 0) {
-                e->accept();
-                return true;
-            }
+        } else{
+            return false;
         }
-        return false;
     }
     virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragMoveEvent* e){
-        return false;
+        if(e->mimeData()->hasUrls()) {
+            e->acceptProposedAction();
+            return true;
+
+        } else{
+            return false;
+        }
     }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e) {
-        if(e->mimeData()->hasFormat(format.c_str())) {
-            QList<QUrl> files = getFiles(e);
+    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e, const QPointF& scene_pos) {
+        if(e->mimeData()->hasUrls()) {
+            QList<QUrl> files = e->mimeData()->urls();
 
             if(files.size() == 0) {
                 return false;
@@ -75,18 +63,15 @@ class FileHandler
             std::cout << "file: " << files.first().toString().toStdString() << std::endl;
             QFile file(files.first().toLocalFile());
             if(file.exists()) {
-                QPoint pos = e->pos();
-
                 UUID uuid = UUID::make(dispatcher->getGraph()->makeUUIDPrefix("csapex::FileImporter"));
-
 
                 NodeState::Ptr state(new NodeState(NULL));
                 GenericState::Ptr child_state(new GenericState);
                 child_state->addParameter(param::ParameterFactory::declareFileInputPath("path", files.first().toString().toStdString()));
-                state->setChildState(child_state);
+                state->setParameterState(child_state);
 
                 std::string type("csapex::FileImporter");
-                dispatcher->execute(Command::Ptr(new command::AddNode(type, pos, UUID::NONE, uuid, state)));
+                dispatcher->execute(Command::Ptr(new command::AddNode(type, scene_pos.toPoint(), UUID::NONE, uuid, state)));
 
                 e->accept();
                 return true;
@@ -95,8 +80,6 @@ class FileHandler
         return false;
     }
 };
-
-const std::string FileHandler::format = "text/uri-list";
 
 }
 

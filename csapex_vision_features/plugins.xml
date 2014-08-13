@@ -5,15 +5,19 @@
 
 <class type="csapex::ExtractKeypoints" base_class_type="csapex::Node">
   <description>Extracts local image features</description>
+  <tags>Vision, Features</tags>
 </class>
 <class type="csapex::ExtractDescriptors" base_class_type="csapex::Node">
   <description>Extracts local image descriptors from local features</description>
+  <tags>Vision, Features</tags>
 </class>
 <class type="csapex::DisplayKeypoints" base_class_type="csapex::Node">
   <description>Renders keypoints onto an image</description>
+  <tags>Vision, Features</tags>
 </class>
 
 <class type="csapex::MatchDescriptors" base_class_type="csapex::Node">
   <description>Finds matches between two sets of descriptors</description>
+  <tags>Vision, Features</tags>
 </class>
 </library>

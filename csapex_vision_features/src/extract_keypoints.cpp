@@ -11,8 +11,8 @@
 #include <utils_param/range_parameter.h>
 #include <utils_param/value_parameter.h>
 #include <utils_param/io.h>
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <csapex/utility/q_signal_relay.h>
@@ -31,8 +31,6 @@ using namespace connection_types;
 
 ExtractKeypoints::ExtractKeypoints()
 {
-    addTag(Tag::get("Features"));
-
     ExtractorManager& manager = ExtractorManager::instance();
     std::vector<std::string> methods;
 

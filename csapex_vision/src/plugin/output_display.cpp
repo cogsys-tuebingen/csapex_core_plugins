@@ -2,7 +2,7 @@
 #include "output_display.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -16,18 +16,10 @@ using namespace connection_types;
 
 OutputDisplay::OutputDisplay()
 {
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Vision"));
-
 }
 
 OutputDisplay::~OutputDisplay()
 {
-}
-
-QIcon OutputDisplay::getIcon() const
-{
-    return QIcon(":/picture.png");
 }
 
 void OutputDisplay::setup()

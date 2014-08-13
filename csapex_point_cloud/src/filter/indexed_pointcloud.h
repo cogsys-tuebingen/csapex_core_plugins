@@ -14,8 +14,8 @@ public:
     virtual void process();
 
 protected:
-    ConnectorIn  *input_;
-    ConnectorOut *output_;
+    Input  *input_;
+    Output *output_;
 };
 }
 #endif // INDEXED_POINTCLOUD_H

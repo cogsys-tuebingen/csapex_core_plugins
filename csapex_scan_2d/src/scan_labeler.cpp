@@ -2,8 +2,8 @@
 #include "scan_labeler.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
@@ -21,18 +21,10 @@ using namespace lib_laser_processing;
 
 ScanLabeler::ScanLabeler()
 {
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Vision"));
-
 }
 
 ScanLabeler::~ScanLabeler()
 {
-}
-
-QIcon ScanLabeler::getIcon() const
-{
-    return QIcon(":/picture.png");
 }
 
 void ScanLabeler::setupParameters()

@@ -14,13 +14,11 @@ public:
     void process();
     virtual void setup();
 
-    virtual QIcon getIcon() const;
-
 protected:
     void publish();
 
 private:
-    ConnectorOut* connector_;
+    Output* connector_;
 };
 
 }

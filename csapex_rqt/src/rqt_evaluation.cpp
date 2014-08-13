@@ -2,7 +2,7 @@
 #include "rqt_evaluation.h"
 
 /// PROJECT
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/message_factory.h>
 #include <csapex/view/designer.h>
 #include <csapex/model/graph.h>
 #include <csapex/core/graphio.h>

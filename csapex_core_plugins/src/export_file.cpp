@@ -2,16 +2,16 @@
 #include "export_file.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/model/connection_type.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/path_parameter.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/core/settings.h>
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/message_factory.h>
 
 /// SYSTEM
 #include <QFileDialog>
@@ -23,9 +23,6 @@ using namespace csapex;
 
 ExportFile::ExportFile()
 {
-    addTag(Tag::get("Output"));
-    addTag(Tag::get("General"));
-
     suffix_ = 0;
 }
 
@@ -40,11 +37,6 @@ void ExportFile::setupParameters()
     addParameter(param::ParameterFactory::declareDirectoryOutputPath("path",
                                                                      param::ParameterDescription("Directory to write messages to"),
                                                                      "", ""), boost::bind(&ExportFile::setExportPath, this));
-}
-
-QIcon ExportFile::getIcon() const
-{
-    return QIcon(":/terminal.png");
 }
 
 void ExportFile::setup()

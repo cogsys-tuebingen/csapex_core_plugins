@@ -2,7 +2,7 @@
 #include "point_count.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 
@@ -16,7 +16,6 @@ using namespace csapex::connection_types;
 
 PointCount::PointCount()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void PointCount::setup()

@@ -9,7 +9,7 @@
 namespace csapex
 {
 
-class ConnectorIn;
+class Input;
 
 class ScanLabeler : public InteractiveNode
 {
@@ -18,8 +18,6 @@ class ScanLabeler : public InteractiveNode
 public:
     ScanLabeler();
     virtual ~ScanLabeler();
-
-    virtual QIcon getIcon() const;
 
     void setup();
     void setupParameters();
@@ -31,8 +29,8 @@ private:
     void submit();
 
 protected:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
+    Input* input_;
+    Output* output_;
 
     connection_types::LabeledScanMessage::Ptr result_;
 

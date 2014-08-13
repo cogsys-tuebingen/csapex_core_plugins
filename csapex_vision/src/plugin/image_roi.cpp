@@ -2,8 +2,8 @@
 #include "image_roi.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -21,17 +21,10 @@ ImageRoi::ImageRoi() :
     last_mat_size_(-1, -1),
     result_(new RoiMessage)
 {
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Vision"));
 }
 
 ImageRoi::~ImageRoi()
 {
-}
-
-QIcon ImageRoi::getIcon() const
-{
-    return QIcon(":/picture.png");
 }
 
 void ImageRoi::setupParameters()

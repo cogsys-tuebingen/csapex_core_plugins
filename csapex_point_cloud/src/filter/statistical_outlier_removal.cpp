@@ -2,8 +2,8 @@
 #include "statistical_outlier_removal.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -21,8 +21,6 @@ using namespace csapex::connection_types;
 
 StatisticalOutlierRemoval::StatisticalOutlierRemoval()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareRange("mean k", 1, 100, 2, 1));
     addParameter(param::ParameterFactory::declareBool ("keep organized", false));
     addParameter(param::ParameterFactory::declareBool ("negate", false));

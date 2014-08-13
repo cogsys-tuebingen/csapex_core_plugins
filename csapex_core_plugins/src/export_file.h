@@ -19,13 +19,11 @@ public:
     virtual void setupParameters();
     virtual void process();
 
-    virtual QIcon getIcon() const;
-
 protected:
     void setExportPath();
 
 private:
-    ConnectorIn* connector_;
+    Input* connector_;
 
     std::string path_;
     std::string base_;

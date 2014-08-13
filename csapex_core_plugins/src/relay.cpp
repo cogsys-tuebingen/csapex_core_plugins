@@ -2,10 +2,10 @@
 #include "relay.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/model/connection_type.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -16,13 +16,6 @@ using namespace csapex;
 Relay::Relay()
     : input_(NULL), output_(NULL)
 {
-    addTag(Tag::get("Buffer"));
-    addTag(Tag::get("General"));
-}
-
-QIcon Relay::getIcon() const
-{
-    return QIcon(":/buffer.png");
 }
 
 void Relay::setup()

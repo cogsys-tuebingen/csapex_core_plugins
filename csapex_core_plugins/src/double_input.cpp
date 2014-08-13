@@ -2,7 +2,7 @@
 #include "double_input.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -12,9 +12,6 @@ using namespace csapex;
 template <typename T>
 NumberInput<T>::NumberInput()
 {
-    addTag(Tag::get("Input"));
-    addTag(Tag::get("General"));
-
     addParameter(param::ParameterFactory::declareValue<T>("value", (T) 0.0));
     addParameter(param::ParameterFactory::declareTrigger("publish"), boost::bind(&NumberInput::process, this));
     addParameter(param::ParameterFactory::declareBool("tick", false));
@@ -26,12 +23,6 @@ void NumberInput<T>::tick()
     if(readParameter<bool>("tick")) {
         process();
     }
-}
-
-template <typename T>
-QIcon NumberInput<T>::getIcon() const
-{
-    return QIcon(":/pencil.png");
 }
 
 template <typename T>

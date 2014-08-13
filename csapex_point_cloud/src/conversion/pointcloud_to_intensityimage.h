@@ -22,8 +22,8 @@ public:
     void inputCloudImpl(typename pcl::PointCloud<pcl::PointXYZI>::Ptr cloud);
 
 private:
-    ConnectorIn* input_;
-    ConnectorOut* output_;
+    Input* input_;
+    Output* output_;
 };
 
 }

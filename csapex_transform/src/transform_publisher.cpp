@@ -6,8 +6,8 @@
 #include <csapex_transform/time_stamp_message.h>
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_ros/ros_handler.h>
 #include <csapex/model/node_modifier.h>
@@ -23,8 +23,6 @@ using namespace csapex::connection_types;
 TransformPublisher::TransformPublisher()
     : tfb_(NULL)
 {
-    addTag(Tag::get("Transform"));
-
     addParameter(param::ParameterFactory::declareText("from", "/"));
     addParameter(param::ParameterFactory::declareText("to", "/"));
 }

@@ -15,7 +15,7 @@ public:
     virtual void setup();
 
 private:
-    ConnectorOut *out_;
+    Output *out_;
 };
 }
 

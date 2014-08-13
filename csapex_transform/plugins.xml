@@ -5,26 +5,34 @@
 
 <class type="csapex::StaticTransform" base_class_type="csapex::Node">
   <description>Computes a static 6D transformation</description>
+  <tags>Transform</tags>
 </class>
 <class type="csapex::DynamicTransform" base_class_type="csapex::Node">
   <description>Reads a transformation from ROS / TF</description>
+  <tags>Transform</tags>
 </class>
 <class type="csapex::Clock" base_class_type="csapex::Node">
   <description>Generates a time message</description>
+  <tags>Time</tags>
 </class>
 <class type="csapex::TransformCombiner" base_class_type="csapex::Node">
   <description>Combines two transformation into one</description>
+  <tags>Transform</tags>
 </class>
 <class type="csapex::TransformInverter" base_class_type="csapex::Node">
   <description>Inverts a transformation</description>
+  <tags>Transform</tags>
 </class>
 <class type="csapex::TransformPublisher" base_class_type="csapex::Node">
   <description>Publishes a transformation to ROS / TF</description>
+  <tags>Transform</tags>
 </class>
 <class type="csapex::TimeOffset" base_class_type="csapex::Node">
   <description>Adds an offset to a time message</description>
+  <tags>Transform, Time</tags>
 </class>
 <class type="csapex::TransformFilter" base_class_type="csapex::Node">
   <description>Filters several transformation over a time</description>
+  <tags>Transform, Filter</tags>
 </class>
 </library>

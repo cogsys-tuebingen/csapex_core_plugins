@@ -18,17 +18,17 @@ public:
     virtual void setup();
 
 protected:
-    virtual void setState(Memento::Ptr memento);
+    virtual void setParameterState(Memento::Ptr memento);
 
 private:
     void recompute();
     void update();
 
 private:
-    ConnectorIn* input_img_;
-    ConnectorIn* input_mask_;
+    Input* input_img_;
+    Input* input_mask_;
 
-    ConnectorOut* output_mask_;
+    Output* output_mask_;
 
     GenericStatePtr loaded_state_;
 

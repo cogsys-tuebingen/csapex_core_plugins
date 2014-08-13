@@ -22,11 +22,6 @@ void InteractiveNode::done()
     wait_for_view_.wakeAll();
 }
 
-void InteractiveNode::setNodeWorker(NodeWorker *nw)
-{
-    Node::setNodeWorker(nw);
-}
-
 bool InteractiveNode::waitForView()
 {
     result_mutex_.lock();
@@ -41,10 +36,8 @@ bool InteractiveNode::waitForView()
     return !stopped_;
 }
 
-void InteractiveNode::stop()
+void InteractiveNode::abort()
 {
     stopped_ = true;
     wait_for_view_.wakeAll();
-
-    Node::stop();
 }

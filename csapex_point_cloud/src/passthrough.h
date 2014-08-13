@@ -23,9 +23,9 @@ private:
     void updateFields(const std::vector<std::string> &fields);
 
 private:
-    ConnectorIn* input_cloud_;
-    ConnectorOut* output_pos_;
-    ConnectorOut* output_neg_;
+    Input* input_cloud_;
+    Output* output_pos_;
+    Output* output_neg_;
 
     std::vector<std::string> fields_;
 };

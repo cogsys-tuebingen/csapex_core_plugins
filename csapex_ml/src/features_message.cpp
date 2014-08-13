@@ -8,8 +8,26 @@ using namespace csapex;
 using namespace connection_types;
 
 FeaturesMessage::FeaturesMessage()
-    : MessageTemplate<std::vector<float>, FeaturesMessage> ("/")
+    : Message("FeatureMessage", "/"), classification(0)
 {}
+
+ConnectionType::Ptr FeaturesMessage::clone() {
+    Ptr new_msg(new FeaturesMessage);
+    new_msg->value = value;
+    new_msg->classification = classification;
+    return new_msg;
+}
+
+ConnectionType::Ptr FeaturesMessage::toType() {
+    Ptr new_msg(new FeaturesMessage);
+    return new_msg;
+}
+
+ConnectionType::Ptr FeaturesMessage::make(){
+    Ptr new_msg(new FeaturesMessage);
+    return new_msg;
+}
+
 
 void FeaturesMessage::writeYaml(YAML::Emitter &yaml) const
 {
@@ -20,6 +38,7 @@ void FeaturesMessage::writeYaml(YAML::Emitter &yaml) const
         yaml << *r;
     }
     yaml << YAML::EndSeq;
+    yaml << YAML::Key << "classification" << YAML::Value << classification;
 }
 
 void FeaturesMessage::readYaml(const YAML::Node &node)

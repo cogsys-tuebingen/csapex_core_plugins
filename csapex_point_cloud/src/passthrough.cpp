@@ -2,8 +2,8 @@
 #include "passthrough.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/interval_parameter.h>
@@ -24,8 +24,6 @@ using namespace csapex::connection_types;
 
 PassThrough::PassThrough()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareInterval("interval", -100.0, 100.0, 0.0, 100.0, 0.01));
     addParameter(param::ParameterFactory::declareBool("keep organized", true));
 

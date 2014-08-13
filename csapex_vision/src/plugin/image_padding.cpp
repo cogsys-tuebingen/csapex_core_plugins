@@ -2,8 +2,8 @@
 #include "image_padding.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -17,17 +17,8 @@ using namespace connection_types;
 
 ImagePadding::ImagePadding()
 {
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Vision"));
-
-
     addParameter(param::ParameterFactory::declareRange("border", 0, 1000, 0, 1));
     addParameter(param::ParameterFactory::declareRange("mask offset", 0, 100, 0, 1));
-}
-
-QIcon ImagePadding::getIcon() const
-{
-    return QIcon(":/border.png");
 }
 
 void ImagePadding::setup()

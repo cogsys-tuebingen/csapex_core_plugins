@@ -18,9 +18,9 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 private:
-    ConnectorIn*  input_;
-    ConnectorIn*  thresholds_;
-    ConnectorOut* output_;
+    Input*  input_;
+    Input*  thresholds_;
+    Output* output_;
 
 
 };

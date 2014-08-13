@@ -5,8 +5,8 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -18,9 +18,6 @@ using namespace csapex::connection_types;
 
 HoughCircle::HoughCircle()
 {
-    addTag(Tag::get("Pattern Recognition"));
-    addTag(Tag::get("Vision"));
-
     std::vector< std::pair<std::string, int> > methods;
     methods.push_back(std::make_pair("CV_HOUGH_GRADIENT", (int) CV_HOUGH_GRADIENT));
     methods.push_back(std::make_pair("CV_HOUGH_STANDARD", (int) CV_HOUGH_STANDARD));

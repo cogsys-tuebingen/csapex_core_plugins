@@ -2,8 +2,8 @@
 #include "nand.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <csapex/model/node_modifier.h>
 
 /// SYSTEM
@@ -17,7 +17,6 @@ using namespace csapex::connection_types;
 
 NAND::NAND()
 {
-    addTag(Tag::get("Boolean"));
 }
 
 void NAND::setup()

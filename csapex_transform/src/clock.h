@@ -23,7 +23,7 @@ public:
     virtual void tick();
 
 private:
-    ConnectorOut* output_;
+    Output* output_;
 };
 
 }

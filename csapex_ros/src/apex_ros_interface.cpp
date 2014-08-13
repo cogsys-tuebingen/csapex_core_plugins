@@ -54,7 +54,7 @@ class RosHandler
     virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragMoveEvent* e){
         return false;
     }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e) {
+    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e, const QPointF& scene_pos) {
         if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
             std::string cmd = getCmd(e);
 
@@ -69,7 +69,7 @@ class RosHandler
                     NodeState::Ptr state(new NodeState(NULL));
                     ImportRos dummy;
                     dummy.getParameter("topic")->set(cmd);
-                    state->setChildState(dummy.getChildState());
+                    state->setParameterState(dummy.getParameterState());
 
                     std::string type("csapex::ImportRos");
                     dispatcher->execute(Command::Ptr(new command::AddNode(type, pos, UUID::NONE, uuid, state)));

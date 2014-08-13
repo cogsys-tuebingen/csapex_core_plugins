@@ -15,10 +15,8 @@ public:
     virtual void setup();
     virtual void tick();
 
-    virtual QIcon getIcon() const;
-
 private:
-    ConnectorOut* connector_;
+    Output* connector_;
 
     std::stringstream buffer;
 };

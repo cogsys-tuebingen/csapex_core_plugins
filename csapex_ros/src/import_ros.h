@@ -15,18 +15,16 @@ public:
     virtual void process();
     virtual void tick();
 
-    virtual QIcon getIcon() const;
-
 protected:
     void refresh();
     void update();
     void doSetTopic();
     void setTopic(const ros::master::TopicInfo& topic);
 
-    virtual void setState(Memento::Ptr memento);
+    virtual void setParameterState(Memento::Ptr memento);
 
 private:
-    ConnectorOut* connector_;
+    Output* connector_;
 
     ros::Subscriber current_subscriber;
 

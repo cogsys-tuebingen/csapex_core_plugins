@@ -2,8 +2,8 @@
 #include "color_segmentation.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -18,14 +18,11 @@ using namespace csapex::connection_types;
 
 ColorSegmentation::ColorSegmentation()
 {
-    addTag(Tag::get("Vision"));
-    Tag::createIfNotExists("Segmentation");
-    addTag(Tag::get("Segmentation"));
 }
 
-void ColorSegmentation::setState(Memento::Ptr memento)
+void ColorSegmentation::setParameterState(Memento::Ptr memento)
 {
-    Node::setState(memento);
+    Node::setParameterState(memento);
     loaded_state_ = boost::dynamic_pointer_cast<GenericState>(memento);
 }
 
@@ -42,13 +39,13 @@ void ColorSegmentation::process()
         recompute();
 
         if(loaded_state_) {
-            Node::setState(loaded_state_);
+            Node::setParameterState(loaded_state_);
             loaded_state_.reset((GenericState*)NULL);
             triggerParameterSetChanged();
             update();
         }
 
-        Q_EMIT modelChanged();
+        triggerModelChanged();
 
         output_mask_->publish(out_mask);
         return;

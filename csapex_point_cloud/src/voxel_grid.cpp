@@ -2,8 +2,8 @@
 #include "voxel_grid.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -22,8 +22,6 @@ using namespace csapex::connection_types;
 
 VoxelGrid::VoxelGrid()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareRange("resolution", 0.01, 1.0, 0.1, 0.01));
 }
 

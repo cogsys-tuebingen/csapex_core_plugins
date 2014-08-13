@@ -14,8 +14,8 @@ public:
     virtual ~FilterStaticMask();
 
 public:
-    virtual Memento::Ptr getChildState() const;
-    virtual void setState(Memento::Ptr memento);
+    virtual Memento::Ptr getParameterState() const;
+    virtual void setParameterState(Memento::Ptr memento);
 
     virtual void filter(cv::Mat& img, cv::Mat& mask);
 

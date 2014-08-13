@@ -5,7 +5,7 @@
 #include <csapex_transform/time_stamp_message.h>
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/output.h>
 #include <csapex_ros/ros_handler.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -20,8 +20,6 @@ using namespace csapex;
 
 Clock::Clock()
 {
-    addTag(Tag::get("Time"));
-
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("ros::Time::now()", (int) CURRENT)
             ("ros::Time(0)", (int) ZERO);

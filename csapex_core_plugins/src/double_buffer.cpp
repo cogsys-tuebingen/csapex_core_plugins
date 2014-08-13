@@ -2,10 +2,10 @@
 #include "double_buffer.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/model/connection_type.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 
@@ -19,16 +19,7 @@ using namespace csapex;
 DoubleBuffer::DoubleBuffer()
     : input_(NULL), output_(NULL), dirty_(false)
 {
-    addTag(Tag::get("Buffer"));
-    addTag(Tag::get("General"));
-
-
     addParameter(param::ParameterFactory::declareBool("synchronized", true));
-}
-
-QIcon DoubleBuffer::getIcon() const
-{
-    return QIcon(":/buffer.png");
 }
 
 void DoubleBuffer::setup()

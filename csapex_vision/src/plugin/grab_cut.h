@@ -21,14 +21,14 @@ public:
     void process();
 
 private:
-    ConnectorIn* in_;
-    ConnectorIn* in_fg_;
-    ConnectorIn* in_bg_;
+    Input* in_;
+    Input* in_fg_;
+    Input* in_bg_;
 
-    ConnectorIn* in_roi_;
+    Input* in_roi_;
 
-    ConnectorOut* out_fg_;
-    ConnectorOut* out_bg_;
+    Output* out_fg_;
+    Output* out_bg_;
 };
 
 

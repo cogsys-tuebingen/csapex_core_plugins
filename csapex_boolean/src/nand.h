@@ -18,9 +18,9 @@ public:
     virtual void process();
 
 private:
-    ConnectorIn* in_a;
-    ConnectorIn* in_b;
-    ConnectorOut* out;
+    Input* in_a;
+    Input* in_b;
+    Output* out;
 };
 
 }

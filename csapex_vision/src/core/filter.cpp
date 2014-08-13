@@ -5,8 +5,8 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/model/node_modifier.h>
 
 /// SYSTEM
@@ -19,17 +19,10 @@ using namespace connection_types;
 Filter::Filter(const UUID& uuid)
     : Node(uuid), input_img_(NULL), input_mask_(NULL), output_img_(NULL), output_mask_(NULL)
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
 }
 
 Filter::~Filter()
 {
-}
-
-QIcon Filter::getIcon() const
-{
-    return QIcon(":/filter.png");
 }
 
 void Filter::setup()

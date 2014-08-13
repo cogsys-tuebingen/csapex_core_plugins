@@ -2,8 +2,8 @@
 #include "renderer.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>

@@ -2,8 +2,8 @@
 #include "label_pointcloud.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_point_cloud/point_cloud_message.h>
@@ -23,7 +23,6 @@ using namespace csapex::connection_types;
 
 LabelPointCloud::LabelPointCloud()
 {
-    addTag(Tag::get("PointCloud"));
     addParameter(param::ParameterFactory::declareBool("exclude default label", false));
 }
 

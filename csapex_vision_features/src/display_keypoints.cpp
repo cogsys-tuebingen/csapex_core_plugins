@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <utils_vision/utils/extractor.h>
-#include <csapex/model/connector_out.h>
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/input.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision_features/keypoint_message.h>
 #include <utils_param/parameter_factory.h>
@@ -20,8 +20,6 @@ using namespace connection_types;
 DisplayKeypoints::DisplayKeypoints()
     : in_key(NULL)
 {
-    addTag(Tag::get("Features"));
-
     addParameter(param::ParameterFactory::declareColorParameter("color", 255,0,0));
     addParameter(param::ParameterFactory::declareBool("random color", true));
 

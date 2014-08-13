@@ -2,8 +2,8 @@
 #include "extract_timestamp.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_transform/time_stamp_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -15,8 +15,6 @@ using namespace csapex::connection_types;
 
 ExtractTimeStamp::ExtractTimeStamp()
 {
-    addTag(Tag::get("PointCloud"));
-    addTag(Tag::get("Time"));
 }
 
 void ExtractTimeStamp::setup()

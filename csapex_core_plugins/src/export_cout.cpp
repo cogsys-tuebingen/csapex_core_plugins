@@ -2,9 +2,9 @@
 #include "export_cout.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/stream_interceptor.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <csapex/model/node_modifier.h>
 
 /// SYSTEM
@@ -17,14 +17,6 @@ using namespace csapex;
 ExportCout::ExportCout()
     : connector_(NULL)
 {
-    addTag(Tag::get("ConsoleIO"));
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Output"));
-}
-
-QIcon ExportCout::getIcon() const
-{
-    return QIcon(":/terminal.png");
 }
 
 void ExportCout::setup()

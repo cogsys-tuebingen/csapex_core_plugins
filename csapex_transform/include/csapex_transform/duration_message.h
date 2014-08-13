@@ -2,7 +2,7 @@
 #define DURATION_MESSAGE_H
 
 /// PROJECT
-#include <csapex/model/message.h>
+#include <csapex/msg/message_template.hpp>
 
 /// SYSTEM
 #include <ros/time.h>

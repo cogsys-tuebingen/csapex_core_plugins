@@ -18,8 +18,7 @@ public:
     InteractiveNode();
 
     virtual void process();
-    virtual void stop();
-    virtual void setNodeWorker(NodeWorker* nw);
+    virtual void abort();
 
     void done();
 

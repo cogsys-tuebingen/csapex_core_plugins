@@ -2,7 +2,7 @@
 #include "point_count_adapter.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/register_node_adapter.h>
 
 using namespace csapex;

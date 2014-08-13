@@ -16,8 +16,8 @@ public:
     virtual void setup();
 
 protected:
-    ConnectorIn  *input_;
-    ConnectorOut *output_;
+    Input  *input_;
+    Output *output_;
 
     int           d_;
     double        sigma_color_;

@@ -5,8 +5,8 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -18,9 +18,6 @@ using namespace csapex;
 Camera::Camera()
     : current_dev_(-1)
 {
-    addTag(Tag::get("Input"));
-    addTag(Tag::get("Vision"));
-
     addParameter(param::ParameterFactory::declare<int>("device", 0, 5, 0, 1), boost::bind(&Camera::update, this));
 
     w_ = 640;

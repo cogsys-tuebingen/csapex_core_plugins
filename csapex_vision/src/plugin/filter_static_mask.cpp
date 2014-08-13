@@ -7,6 +7,7 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
+#include <QByteArray>
 
 CSAPEX_REGISTER_CLASS(csapex::FilterStaticMask, csapex::Node)
 
@@ -90,12 +91,12 @@ void FilterStaticMask::filter(cv::Mat& img, cv::Mat& mask)
     }
 }
 
-Memento::Ptr FilterStaticMask::getChildState() const
+Memento::Ptr FilterStaticMask::getParameterState() const
 {
     return boost::shared_ptr<State>(new State(state));
 }
 
-void FilterStaticMask::setState(Memento::Ptr memento)
+void FilterStaticMask::setParameterState(Memento::Ptr memento)
 {
     boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
     apex_assert_hard(m.get());

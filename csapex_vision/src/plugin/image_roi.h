@@ -5,10 +5,13 @@
 #include <csapex_core_plugins/interactive_node.h>
 #include <csapex_vision/roi_message.h>
 
+/// SYSTEM
+#include <QImage>
+
 namespace csapex
 {
 
-class ConnectorIn;
+class Input;
 
 class ImageRoi : public InteractiveNode
 {
@@ -17,8 +20,6 @@ class ImageRoi : public InteractiveNode
 public:
     ImageRoi();
     virtual ~ImageRoi();
-
-    virtual QIcon getIcon() const;
 
     void setup();
     void setupParameters();
@@ -31,8 +32,8 @@ private:
     void drop();
 
 protected:
-    ConnectorIn*  input_;
-    ConnectorOut* output_;
+    Input*  input_;
+    Output* output_;
     cv::Size      last_mat_size_;
 
     connection_types::RoiMessage::Ptr result_;

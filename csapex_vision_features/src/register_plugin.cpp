@@ -6,7 +6,7 @@
 #include <csapex_vision_features/descriptor_message.h>
 
 /// PROJECT
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/message_factory.h>
 #include <csapex/model/tag.h>
 
 /// SYSTEM

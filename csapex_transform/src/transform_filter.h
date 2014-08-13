@@ -18,9 +18,9 @@ public:
     std::vector<std::vector<double> > median_matrix_;
 
 private:
-    ConnectorIn* input_transform_;
-    ConnectorOut* output_transform_;
-    ConnectorOut* output_text_; // debug output for text
+    Input* input_transform_;
+    Output* output_transform_;
+    Output* output_text_; // debug output for text
 
     unsigned int filter_size_;
     unsigned int filter_index_;

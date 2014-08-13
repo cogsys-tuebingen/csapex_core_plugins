@@ -2,8 +2,8 @@
 #include "bilateral.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -59,8 +59,6 @@ BilateralFilter::BilateralFilter() :
     sigma_color_(0.0),
     sigma_space_(0.0)
 {
-    addTag(Tag::get("Filter"));
-    addTag(Tag::get("Vision"));
     addParameter(param::ParameterFactory::declareRange("d", 1, 255, d_, 1));
     addParameter(param::ParameterFactory::declareRange("sigma color", -255.0, 255.0, sigma_color_, 0.1));
     addParameter(param::ParameterFactory::declareRange("sigma space", -255.0, 255.0, sigma_space_, 0.1));

@@ -29,12 +29,12 @@ private:
     void publishTransform(const ros::Time& time);
 
 private:
-    ConnectorOut* output_;
-    ConnectorOut* output_frame_;
+    Output* output_;
+    Output* output_frame_;
 
-    ConnectorIn* frame_in_from_;
-    ConnectorIn* frame_in_to_;
-    ConnectorIn* time_in_;
+    Input* frame_in_from_;
+    Input* frame_in_to_;
+    Input* time_in_;
 
     param::SetParameter::Ptr from_p;
     param::SetParameter::Ptr to_p;

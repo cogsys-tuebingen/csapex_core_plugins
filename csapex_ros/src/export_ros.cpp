@@ -6,9 +6,9 @@
 #include <csapex_ros/ros_handler.h>
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
+#include <csapex/msg/input.h>
 #include <csapex/utility/stream_interceptor.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -24,17 +24,8 @@ using namespace csapex;
 ExportRos::ExportRos()
     : connector_(NULL), create_pub(false)
 {
-    addTag(Tag::get("RosIO"));
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Output"));
-
     addParameter(param::ParameterFactory::declareText("topic", "export"),
                  boost::bind(&ExportRos::updateTopic, this));
-}
-
-QIcon ExportRos::getIcon() const
-{
-    return QIcon(":/terminal.png");
 }
 
 void ExportRos::setup()

@@ -25,9 +25,9 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
 
 protected:
-    ConnectorIn*                        input_;
-    ConnectorIn*                        in_indices_;
-    ConnectorOut*                       output_;
+    Input*                        input_;
+    Input*                        in_indices_;
+    Output*                       output_;
 
     IndicesPtr cluster_indices;
 };

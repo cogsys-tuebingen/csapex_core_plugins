@@ -2,7 +2,7 @@
 #define POINT_CLOUD_MESSAGE_H
 
 /// PROJECT
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 
 /// SYSTEM
 #include <pcl/point_cloud.h>

@@ -2,8 +2,8 @@
 #include "color_pointcloud.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/color.hpp>
@@ -25,7 +25,6 @@ using namespace csapex::connection_types;
 
 ColorPointCloud::ColorPointCloud()
 {
-    addTag(Tag::get("PointCloud"));
 }
 
 void ColorPointCloud::process()

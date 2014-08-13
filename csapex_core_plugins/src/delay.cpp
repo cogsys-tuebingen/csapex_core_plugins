@@ -2,10 +2,10 @@
 #include "delay.h"
 
 /// PROJECT
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex/model/connection_type.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/qt_helper.hpp>
@@ -18,17 +18,10 @@ using namespace csapex;
 Delay::Delay()
     : input_(NULL), output_(NULL)
 {
-    addTag(Tag::get("Debug"));
-
     addParameter(param::ParameterFactory::declareRange<double>
                  ("delay",
                   param::ParameterDescription("Delay <b><span style='color: red'>in seconds</style></b> to wait after each message."),
                   0.0, 10.0, 1.0, 0.1));
-}
-
-QIcon Delay::getIcon() const
-{
-    return QIcon(":/buffer.png");
 }
 
 void Delay::setup()

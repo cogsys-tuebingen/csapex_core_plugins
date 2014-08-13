@@ -2,7 +2,7 @@
 #include "text_input.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -18,20 +18,12 @@ using namespace csapex;
 
 TextInput::TextInput()
 {
-    addTag(Tag::get("Input"));
-    addTag(Tag::get("General"));
-
     addParameter(param::ParameterFactory::declareText("text", ""), boost::bind(&TextInput::publish, this));
 }
 
 void TextInput::process()
 {
 
-}
-
-QIcon TextInput::getIcon() const
-{
-    return QIcon(":/pencil.png");
 }
 
 void TextInput::setup()

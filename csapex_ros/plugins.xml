@@ -6,9 +6,11 @@
 
 <class type="csapex::ImportRos" base_class_type="csapex::Node">
   <description>Import messages from ROS</description>
+  <tags>RosIO, General, Input</tags>
 </class>
 <class type="csapex::ExportRos" base_class_type="csapex::Node">
   <description>Exports messages via ROS</description>
+  <tags>RosIO, General, Output</tags>
 </class>
 
 

@@ -2,10 +2,10 @@
 #include "import_cin.h"
 
 /// PROJECT
-#include <csapex/model/connector_out.h>
-#include <csapex/model/message_factory.h>
+#include <csapex/msg/output.h>
+#include <csapex/msg/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
-#include <csapex/model/message.h>
+#include <csapex/msg/message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -16,19 +16,11 @@ using namespace csapex;
 ImportCin::ImportCin()
     : connector_(NULL)
 {
-    addTag(Tag::get("ConsoleIO"));
-    addTag(Tag::get("General"));
-    addTag(Tag::get("Input"));
 }
 
 void ImportCin::process()
 {
 
-}
-
-QIcon ImportCin::getIcon() const
-{
-    return QIcon(":/terminal.png");
 }
 
 void ImportCin::setup()

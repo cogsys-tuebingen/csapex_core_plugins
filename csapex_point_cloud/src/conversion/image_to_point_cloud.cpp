@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/model/connector_in.h>
-#include <csapex/model/connector_out.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 #include <csapex_transform/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -21,8 +21,6 @@ using namespace csapex::connection_types;
 
 ImageToPointCloud::ImageToPointCloud()
 {
-    addTag(Tag::get("PointCloud"));
-
     addParameter(param::ParameterFactory::declareText("frame", "/camera"));
 
     addParameter(param::ParameterFactory::declareRange("fov/h", 30.0, 180.0, 90.0, 0.1));

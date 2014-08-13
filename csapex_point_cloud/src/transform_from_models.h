@@ -16,10 +16,10 @@ public:
     virtual void process();
     virtual void setup();
 private:
-    ConnectorIn* input_models_ref_;
-    ConnectorIn* input_models_new_;
-    ConnectorOut* output_;
-    ConnectorOut* output_text_; // debug output for text
+    Input* input_models_ref_;
+    Input* input_models_new_;
+    Output* output_;
+    Output* output_text_; // debug output for text
 
     double param_apex_height_;
     double param_cone_angle_;
