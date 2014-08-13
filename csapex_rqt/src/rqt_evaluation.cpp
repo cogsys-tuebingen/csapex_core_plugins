@@ -37,9 +37,6 @@ CsApex::CsApex()
       view_ (new DesignerView(scene_, graph_, dispatcher_.get(), widget_controller_, drag_io_)),
       designer_(new Designer(settings_, graph_, dispatcher_.get(), widget_controller_, view_, scene_))
 {
-    // TODO: remove
-    node_factory_->dispatcher_ = dispatcher_.get();
-
     widget_controller_->setDesigner(designer_);
 }
 
