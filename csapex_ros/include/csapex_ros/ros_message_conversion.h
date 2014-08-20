@@ -6,6 +6,8 @@
 #include <csapex/msg/generic_pointer_message.hpp>
 
 /// PROJECT
+#include <csapex/msg/message.h>
+#include <csapex/msg/message_traits.h>
 #include <csapex/utility/singleton.hpp>
 
 /// SYSTEM
@@ -38,7 +40,7 @@ public:
     virtual std::string apexType() = 0;
 
 protected:
-    void publish_apex(Output* output, csapex::ConnectionType::Ptr msg);
+    void publish_apex(Output* output, ConnectionType::Ptr msg);
 };
 
 
@@ -99,7 +101,7 @@ public:
         return ros::message_traits::DataType<ROS>::value();
     }
     std::string apexType() {
-        return csapex::connection_types::type<APEX>::name();
+        return connection_types::type<APEX>::name();
     }
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Output* output) {

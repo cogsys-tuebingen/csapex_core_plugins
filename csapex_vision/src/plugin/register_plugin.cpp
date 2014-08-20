@@ -10,6 +10,8 @@
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_ros/ros_handler.h>
 #include <csapex/msg/output.h>
+#include <csapex/factory/generic_node_factory.hpp>
+#include <csapex/model/node_factory.h>
 
 /// SYSTEM
 #include <boost/bind.hpp>
@@ -59,6 +61,11 @@ struct Image2CvMat
     }
 };
 
+void testWrap(const connection_types::CvMatMessage& input, int flipcode, connection_types::CvMatMessage& output)
+{
+    cv::flip(input.value, output.value, flipcode);
+}
+
 void RegisterPlugin::init(CsApexCore& core)
 {
     Tag::createIfNotExists("Vision");
@@ -74,4 +81,8 @@ void RegisterPlugin::init(CsApexCore& core)
     RosMessageConversion::registerConversion<sensor_msgs::Image, connection_types::CvMatMessage, Image2CvMat>();
 
     ConnectionType::setDefaultConnectionType<connection_types::CvMatMessage>();
+
+    core.getNodeFactory().register_box_type(GenericNodeFactory::createConstructorFromFunction(testWrap,
+                                                                                              "TestWrap", "Test direct wrapping",
+                                                                                              core.getSettings()));
 }

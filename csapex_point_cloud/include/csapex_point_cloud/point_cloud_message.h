@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/message.h>
+#include <csapex/msg/message_traits.h>
 
 /// SYSTEM
 #include <pcl/point_cloud.h>
