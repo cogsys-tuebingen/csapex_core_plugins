@@ -29,4 +29,18 @@ struct type<PointIndecesMessage> {
 };
 }
 }
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::PointIndecesMessage> {
+  static Node encode(const csapex::connection_types::PointIndecesMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::PointIndecesMessage& rhs);
+};
+template<>
+struct convert<pcl::PointIndices> {
+  static Node encode(const pcl::PointIndices& rhs);
+  static bool decode(const Node& node, pcl::PointIndices& rhs);
+};
+}
 #endif // INDECE_MESSAGE_H

@@ -9,6 +9,7 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex_point_cloud/indeces_message.h>
 
 /// PCL
 #include <pcl/point_types.h>

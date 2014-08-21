@@ -9,9 +9,10 @@
 #include <csapex/msg/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <utils_laser_processing/data/segment.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <sensor_msgs/LaserScan.h>
 
 CSAPEX_REGISTER_CLASS(csapex::RegisterScan2DPlugin, csapex::CorePlugin)
@@ -20,6 +21,7 @@ using namespace csapex;
 
 Q_DECLARE_METATYPE(lib_laser_processing::Scan)
 Q_DECLARE_METATYPE(lib_laser_processing::LabeledScan)
+
 
 struct ConvertScan
 {

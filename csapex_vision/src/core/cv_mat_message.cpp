@@ -34,3 +34,19 @@ void CvMatMessage::setEncoding(const Encoding &e)
 {
     encoding = e;
 }
+
+
+
+/// YAML
+namespace YAML {
+Node convert<csapex::connection_types::CvMatMessage>::encode(const csapex::connection_types::CvMatMessage& rhs) {
+    std::cerr << "CvMatMessage can't be encoded" << std::endl;
+    Node node;
+    return node;
+}
+
+bool convert<csapex::connection_types::CvMatMessage>::decode(const Node& node, csapex::connection_types::CvMatMessage& rhs) {
+    std::cerr << "CvMatMessage can't be decoded" << std::endl;
+    return true;
+}
+}

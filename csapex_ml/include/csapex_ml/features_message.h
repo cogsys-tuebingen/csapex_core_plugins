@@ -4,6 +4,9 @@
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
 
+/// SYSTEM
+#include <yaml-cpp/yaml.h>
+
 namespace csapex {
 namespace connection_types {
 
@@ -33,6 +36,15 @@ struct type<FeaturesMessage> {
     }
 };
 }
+}
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::FeaturesMessage> {
+  static Node encode(const csapex::connection_types::FeaturesMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::FeaturesMessage& rhs);
+};
 }
 
 #endif // FEATURES_MESSAGE_H

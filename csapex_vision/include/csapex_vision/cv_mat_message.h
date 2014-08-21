@@ -56,4 +56,13 @@ inline boost::shared_ptr<CvMatMessage> makeEmpty()
 }
 }
 
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::CvMatMessage> {
+  static Node encode(const csapex::connection_types::CvMatMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::CvMatMessage& rhs);
+};
+}
+
 #endif // CV_MAT_MESSAGE_H

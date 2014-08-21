@@ -16,6 +16,7 @@
 #include <utils_laser_processing/data/segment.h>
 #include <csapex/utility/color.hpp>
 #include <csapex/model/node_modifier.h>
+#include <utils_laser_processing/common/yaml-io.hpp>
 
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>

@@ -7,6 +7,7 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_point_cloud/indeces_message.h>
 
 /// SYSTEM
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING

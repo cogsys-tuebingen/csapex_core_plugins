@@ -107,7 +107,8 @@ private:
 
         void writeYaml(YAML::Emitter& yaml) const
         {
-            yaml << YAML::Key << "generic vector" << YAML::Value << "not writable";
+            YAML::Node node(*value);
+            yaml << YAML::Key << "generic vector" << YAML::Value << node;
         }
 
         void readYaml(const YAML::Node& node)

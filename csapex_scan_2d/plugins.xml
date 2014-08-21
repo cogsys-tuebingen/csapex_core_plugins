@@ -1,9 +1,13 @@
 <library path="libcsapex_scan_2d_plugin">
+<class type="csapex::SegmentLabeler" base_class_type="csapex::Node">
+  <description>Assigns labels to segements based on a labeled scan</description>
+</class>
 <class type="csapex::RegisterScan2DPlugin" base_class_type="csapex::CorePlugin">
   <description></description>
 </class>
-
-
+<class type="csapex::SplitLabeledScan" base_class_type="csapex::Node">
+  <description>Split a labeled scan into Scan and vector of int</description>
+</class>
 <class type="csapex::LabeledScanToScan" base_class_type="csapex::Node">
   <description>Strip away labels from a labeled scan</description>
   <tags>Laser, Scan</tags>

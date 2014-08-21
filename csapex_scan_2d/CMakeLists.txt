@@ -55,6 +55,8 @@ target_link_libraries(csapex_scan_2d
 
 
 add_library(csapex_scan_2d_plugin
+    src/segment_labeler.cpp
+    src/split_labeled_scan.cpp
     src/register_plugin.cpp
     src/labeled_scan_to_scan.cpp
     src/renderer.cpp
