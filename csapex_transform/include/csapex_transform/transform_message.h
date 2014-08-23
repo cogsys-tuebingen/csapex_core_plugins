@@ -18,9 +18,6 @@ struct TransformMessage : public MessageTemplate<tf::Transform, TransformMessage
 
     virtual ConnectionType::Ptr clone();
 
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node& node);
-
 public:
     std::string child_frame;
 };
@@ -36,5 +33,15 @@ struct type<TransformMessage> {
 
 }
 }
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::TransformMessage> {
+  static Node encode(const csapex::connection_types::TransformMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::TransformMessage& rhs);
+};
+}
+
 
 #endif // TRANSFORM_MESSAGE_H

@@ -38,9 +38,6 @@ struct VectorMessage : public Message
     virtual bool canConnectTo(const ConnectionType* other_side) const;
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
 
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node& node);
-
 private:
     VectorMessage(ConnectionType::Ptr type, const std::string& frame_id);
 
@@ -134,24 +131,6 @@ private:
         static Self::Ptr make() {
             return Self::Ptr (new Self);
         }
-
-        void writeYaml(YAML::Emitter& yaml) const
-        {
-            yaml << YAML::Key << "generic vector" << YAML::Value << YAML::Flow;
-            yaml << YAML::BeginSeq;
-            for(unsigned i = 0; i < value->size(); ++i) {
-                const T& entry = (*value)[i];
-                yaml << YAML::BeginMap;
-                entry.writeYaml(yaml);
-                yaml << YAML::EndMap;
-            }
-            yaml << YAML::EndSeq;
-        }
-
-        void readYaml(const YAML::Node& node)
-        {
-
-        }
     };
 
 public:
@@ -194,9 +173,6 @@ public:
 
     virtual bool canConnectTo(const ConnectionType* other_side) const;
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
-
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node& node);
 
 private:
     GenericVectorMessage(ConnectionType::Ptr impl, const std::string &frame_id);

@@ -19,6 +19,12 @@ PointCloudMessage::PointCloudMessage(const std::string& frame_id)
 {
 }
 
+PointCloudMessage::PointCloudMessage()
+    : Message (type<PointCloudMessage>::name(), "/")
+{
+}
+
+
 ConnectionType::Ptr PointCloudMessage::clone() {
     Ptr new_msg(new PointCloudMessage(frame_id));
     new_msg->value = value;
@@ -44,6 +50,8 @@ std::string PointCloudMessage::name() const
 bool PointCloudMessage::acceptsConnectionFrom(const ConnectionType* other_side) const {
     return dynamic_cast<const PointCloudMessage*> (other_side);
 }
+
+
 
 namespace {
 struct Import  {
@@ -86,8 +94,8 @@ struct Import  {
 };
 
 struct Export : public boost::static_visitor<void> {
-    Export(YAML::Emitter& yaml)
-        : yaml(yaml)
+    Export(YAML::Node& node)
+        : node(node)
     {}
 
     template <typename PointCloudT>
@@ -95,7 +103,7 @@ struct Export : public boost::static_visitor<void> {
     {
         typedef typename PointCloudT::element_type::PointType PointT;
 
-        yaml << YAML::Key << "point_type" << YAML::Value << traits::name<PointT>();
+        node["point_type"] = traits::name<PointT>();
 
         pcl::PCDWriter writer;
         std::string file = "export_cloud.tmp";
@@ -104,36 +112,45 @@ struct Export : public boost::static_visitor<void> {
         std::ifstream fi(file.c_str());
         std::string line;
 
-        yaml << YAML::Key << "data"  << YAML::Value << YAML::BeginSeq;
         while(std::getline(fi, line)) {
-            yaml << line;
+            node["data"].push_back(line);
         }
-        yaml << YAML::EndSeq;
     }
 
-    YAML::Emitter& yaml;
+    YAML::Node& node;
 };
 }
 
-void PointCloudMessage::writeYaml(YAML::Emitter& yaml) const {
-    boost::apply_visitor (Export(yaml), value);
+
+
+/// YAML
+namespace YAML {
+Node convert<csapex::connection_types::PointCloudMessage>::encode(const csapex::connection_types::PointCloudMessage& rhs)
+{
+    YAML::Node node;
+    boost::apply_visitor (Export(node), rhs.value);
+    return node;
 }
-void PointCloudMessage::readYaml(const YAML::Node& node) {
-    if(!YAML::exists(node, "point_type")) {
-        return;
+
+bool convert<csapex::connection_types::PointCloudMessage>::decode(const Node& node, csapex::connection_types::PointCloudMessage& rhs)
+{
+    if(!node.IsMap()) {
+        return false;
     }
-    if(!YAML::exists(node, "data")) {
-        return;
+
+    if(!node["point_type"].IsDefined()) {
+        return false;
+    }
+    if(!node["data"].IsDefined()) {
+        return false;
     }
 
     std::string type;
     node["point_type"] >> type;
 
-    Import converter(node, value, type);
+    Import converter(node, rhs.value, type);
     boost::mpl::for_each<connection_types::PointCloudPointTypes>( converter );
-}
 
-PointCloudMessage::PointCloudMessage()
-    : Message (type<PointCloudMessage>::name(), "/")
-{
+    return true;
+}
 }

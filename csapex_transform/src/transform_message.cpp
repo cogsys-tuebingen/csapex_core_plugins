@@ -24,31 +24,41 @@ ConnectionType::Ptr TransformMessage::clone() {
     return new_msg;
 }
 
-void TransformMessage::writeYaml(YAML::Emitter& yaml) const {
-    const tf::Quaternion& q = value.getRotation();
-    const tf::Vector3& t = value.getOrigin();
 
-    yaml << YAML::Key << "orientation" << YAML::Value << YAML::Flow << YAML::BeginSeq << q.x() << q.y() << q.z() << q.w() << YAML::EndSeq;
-    yaml << YAML::Key << "translation" << YAML::Value << YAML::Flow << YAML::BeginSeq << t.x() << t.y() << t.z() << YAML::EndSeq;;
+
+/// YAML
+namespace YAML {
+Node convert<csapex::connection_types::TransformMessage>::encode(const csapex::connection_types::TransformMessage& rhs)
+{
+    const tf::Quaternion& q = rhs.value.getRotation();
+    const tf::Vector3& t = rhs.value.getOrigin();
+
+    Node node;
+    node["orientation"].push_back(q.x());
+    node["orientation"].push_back(q.y());
+    node["orientation"].push_back(q.z());
+    node["orientation"].push_back(q.w());
+    node["translation"].push_back(t.x());
+    node["translation"].push_back(t.y());
+    node["translation"].push_back(t.z());
+    return node;
 }
 
-void TransformMessage::readYaml(const YAML::Node& node) {
-    double qx,qy,qz,qw,x,y,z;
-    if(exists(node, "orientation")) {
-        const YAML::Node& doc = node["orientation"];
-        apex_assert_hard(doc.Type() == YAML::NodeType::Sequence);
-        doc[0] >> qx;
-        doc[1] >> qy;
-        doc[2] >> qz;
-        doc[3] >> qw;
-    }
-    if(exists(node, "translation")) {
-        const YAML::Node& doc = node["translation"];
-        apex_assert_hard(doc.Type() == YAML::NodeType::Sequence);
-        doc[0] >> x;
-        doc[1] >> y;
-        doc[2] >> z;
+bool convert<csapex::connection_types::TransformMessage>::decode(const Node& node, csapex::connection_types::TransformMessage& rhs)
+{
+    if(!node.IsMap()) {
+        return false;
     }
 
-    value = tf::Transform(tf::Quaternion(qx,qy,qz,qw), tf::Vector3(x, y, z));
+    std::vector<float> o = node["orientation"].as< std::vector<float> >();
+    std::vector<float> t = node["orientation"].as< std::vector<float> >();
+
+    if(o.size() != 4 || t.size() != 3) {
+        return false;
+    }
+
+    rhs.value = tf::Transform(tf::Quaternion(o[0],o[1],o[2],o[3]), tf::Vector3(t[0], t[1], t[2]));
+
+    return true;
+}
 }

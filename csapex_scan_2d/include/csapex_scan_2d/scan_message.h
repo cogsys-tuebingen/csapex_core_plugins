@@ -14,9 +14,6 @@ namespace connection_types {
 struct ScanMessage : public MessageTemplate<lib_laser_processing::Scan, ScanMessage>
 {
     ScanMessage();
-
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node& node);
 };
 
 /// TRAITS
@@ -28,6 +25,16 @@ struct type<ScanMessage> {
 };
 
 }
+}
+
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::ScanMessage> {
+  static Node encode(const csapex::connection_types::ScanMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::ScanMessage& rhs);
+};
 }
 
 #endif // SCAN_MESSAGE_H

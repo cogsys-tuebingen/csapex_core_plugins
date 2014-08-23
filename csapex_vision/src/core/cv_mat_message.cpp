@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_vision/cv_mat_message.h>
 
+/// COMPONENT
+#include <csapex_vision/yaml_io.hpp>
+
 using namespace csapex;
 using namespace connection_types;
 
@@ -39,14 +42,22 @@ void CvMatMessage::setEncoding(const Encoding &e)
 
 /// YAML
 namespace YAML {
-Node convert<csapex::connection_types::CvMatMessage>::encode(const csapex::connection_types::CvMatMessage& rhs) {
-    std::cerr << "CvMatMessage can't be encoded" << std::endl;
+Node convert<csapex::connection_types::CvMatMessage>::encode(const csapex::connection_types::CvMatMessage& rhs)
+{
     Node node;
+    node["value"] = rhs.value;
+    node["encoding"] = rhs.getEncoding().toString();
     return node;
 }
 
-bool convert<csapex::connection_types::CvMatMessage>::decode(const Node& node, csapex::connection_types::CvMatMessage& rhs) {
-    std::cerr << "CvMatMessage can't be decoded" << std::endl;
+bool convert<csapex::connection_types::CvMatMessage>::decode(const Node& node, csapex::connection_types::CvMatMessage& rhs)
+{
+    if(!node.IsMap()) {
+        return false;
+    }
+    // TODO: ENCODING !
+    // rhs.encoding = node["encoding"].as<>();
+    rhs.value = node["value"].as<cv::Mat>();
     return true;
 }
 }

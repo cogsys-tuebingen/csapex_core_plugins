@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/assert.h>
+#include <utils_laser_processing/common/yaml-io.hpp>
 
 using namespace csapex;
 using namespace connection_types;
@@ -12,18 +13,25 @@ ScanMessage::ScanMessage()
     : MessageTemplate<lib_laser_processing::Scan, ScanMessage> ("/")
 {}
 
-void ScanMessage::writeYaml(YAML::Emitter &yaml) const
+
+
+/// YAML
+namespace YAML {
+Node convert<csapex::connection_types::ScanMessage>::encode(const csapex::connection_types::ScanMessage& rhs)
 {
-    yaml << YAML::Flow << YAML::Key << "ranges" << YAML::Value;
-    yaml << YAML::BeginSeq;
-    std::vector<LaserBeam>::const_iterator r = value.rays.begin();
-    for(; r != value.rays.end(); ++r) {
-        yaml << r->range;
-    }
-    yaml << YAML::EndSeq;
+    Node node;
+
+    node["value"] = rhs.value;
+    return node;
 }
 
-void ScanMessage::readYaml(const YAML::Node &node)
+bool convert<csapex::connection_types::ScanMessage>::decode(const Node& node, csapex::connection_types::ScanMessage& rhs)
 {
-    apex_assert_hard(node.Type() == YAML::NodeType::Sequence);
+    if(!node.IsMap()) {
+        return false;
+    }
+
+    rhs.value = node.as<Scan>();
+    return true;
+}
 }

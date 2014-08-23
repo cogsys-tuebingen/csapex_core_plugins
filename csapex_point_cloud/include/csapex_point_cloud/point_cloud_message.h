@@ -83,9 +83,6 @@ struct PointCloudMessage : public Message
 
     bool acceptsConnectionFrom(const ConnectionType* other_side) const;
 
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node&);
-
     variant value;
 
 private:
@@ -100,9 +97,17 @@ struct type<PointCloudMessage> {
         return "PointCloud";
     }
 };
-
-
 }
 }
 
+
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::PointCloudMessage> {
+  static Node encode(const csapex::connection_types::PointCloudMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::PointCloudMessage& rhs);
+};
+}
 #endif // POINT_CLOUD_MESSAGE_H

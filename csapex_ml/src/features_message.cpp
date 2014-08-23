@@ -29,30 +29,20 @@ ConnectionType::Ptr FeaturesMessage::make(){
 }
 
 
-void FeaturesMessage::writeYaml(YAML::Emitter &yaml) const
-{
-    YAML::Node node(*this);
-    yaml << node;
-}
-
-void FeaturesMessage::readYaml(const YAML::Node &node)
-{
-    apex_assert_hard(node.Type() == YAML::NodeType::Sequence);
-}
-
-
 
 
 /// YAML
 namespace YAML {
-Node convert<csapex::connection_types::FeaturesMessage>::encode(const csapex::connection_types::FeaturesMessage& rhs) {
+Node convert<csapex::connection_types::FeaturesMessage>::encode(const csapex::connection_types::FeaturesMessage& rhs)
+{
     Node node;
     node["features"] = rhs.value;
     node["classification"] = rhs.classification;
     return node;
 }
 
-bool convert<csapex::connection_types::FeaturesMessage>::decode(const Node& node, csapex::connection_types::FeaturesMessage& rhs) {
+bool convert<csapex::connection_types::FeaturesMessage>::decode(const Node& node, csapex::connection_types::FeaturesMessage& rhs)
+{
     if(!node.IsMap()) {
         return false;
     }

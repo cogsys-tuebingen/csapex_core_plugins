@@ -29,14 +29,6 @@ bool GenericVectorMessage::acceptsConnectionFrom(const ConnectionType *other_sid
     return impl->acceptsConnectionFrom(other_side);
 }
 
-void GenericVectorMessage::writeYaml(YAML::Emitter& yaml) const {
-    impl->writeYaml(yaml);
-}
-void GenericVectorMessage::readYaml(const YAML::Node& node) {
-    impl->readYaml(node);
-}
-
-
 //// OLD
 
 
@@ -90,18 +82,4 @@ bool VectorMessage::acceptsConnectionFrom(const ConnectionType *other_side) cons
     } else {
         return other_side->acceptsConnectionFrom(this);
     }
-}
-
-void VectorMessage::writeYaml(YAML::Emitter& yaml) const {
-    yaml << YAML::Key << "vector" << YAML::Value << YAML::Flow;
-    yaml << YAML::BeginSeq;
-    for(unsigned i = 0; i < value.size(); ++i) {
-        yaml << YAML::BeginMap;
-        value[i]->writeYaml(yaml);
-        yaml << YAML::EndMap;
-    }
-    yaml << YAML::EndSeq;
-}
-void VectorMessage::readYaml(const YAML::Node& node) {
-    throw std::runtime_error("deserialization of vectors not implemented");
 }

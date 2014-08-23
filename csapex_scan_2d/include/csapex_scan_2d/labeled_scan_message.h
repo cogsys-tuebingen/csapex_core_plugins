@@ -29,4 +29,15 @@ struct type<LabeledScanMessage> {
 }
 }
 
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::LabeledScanMessage> {
+  static Node encode(const csapex::connection_types::LabeledScanMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::LabeledScanMessage& rhs);
+};
+}
+
+
 #endif // DESCRIPTOR_MESSAGE_H

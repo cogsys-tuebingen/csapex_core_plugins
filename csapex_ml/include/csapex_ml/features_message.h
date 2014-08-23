@@ -21,9 +21,6 @@ struct FeaturesMessage : public Message
     virtual ConnectionType::Ptr toType();
     static ConnectionType::Ptr make();
 
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node& node);
-
     std::vector<float> value;
     int classification;
 };

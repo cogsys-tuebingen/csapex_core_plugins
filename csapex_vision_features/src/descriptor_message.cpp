@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_vision_features/descriptor_message.h>
 
+/// PROJECT
+#include <csapex_vision/yaml_io.hpp>
+
 using namespace csapex;
 using namespace connection_types;
 
@@ -46,3 +49,26 @@ void DescriptorMessage::write(std::ostream &out) const
     out << "  Type: " << typeToString(value.type()) << "C" << value.channels();
     out << "  Data: " << value;
 }
+
+/// YAML
+namespace YAML {
+Node convert<csapex::connection_types::DescriptorMessage>::encode(const csapex::connection_types::DescriptorMessage& rhs)
+{
+    Node node;
+
+    node["type"] = typeToString(rhs.value.type());
+    node["value"] = rhs.value;
+    return node;
+}
+
+bool convert<csapex::connection_types::DescriptorMessage>::decode(const Node& node, csapex::connection_types::DescriptorMessage& rhs)
+{
+    if(!node.IsMap()) {
+        return false;
+    }
+
+    rhs.value = node["value"].as<cv::Mat>();
+    return true;
+}
+}
+
