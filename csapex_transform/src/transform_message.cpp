@@ -3,9 +3,12 @@
 
 /// PROJECT
 #include <csapex/utility/assert.h>
+#include <csapex/utility/register_msg.h>
 
 /// SYSTEM
 #include <tf/transform_datatypes.h>
+
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::TransformMessage)
 
 using namespace csapex;
 using namespace connection_types;
@@ -33,7 +36,7 @@ Node convert<csapex::connection_types::TransformMessage>::encode(const csapex::c
     const tf::Quaternion& q = rhs.value.getRotation();
     const tf::Vector3& t = rhs.value.getOrigin();
 
-    Node node;
+    Node node = convert<csapex::connection_types::Message>::encode(rhs);
     node["orientation"].push_back(q.x());
     node["orientation"].push_back(q.y());
     node["orientation"].push_back(q.z());
@@ -49,6 +52,8 @@ bool convert<csapex::connection_types::TransformMessage>::decode(const Node& nod
     if(!node.IsMap()) {
         return false;
     }
+
+    convert<csapex::connection_types::Message>::decode(node, rhs);
 
     std::vector<float> o = node["orientation"].as< std::vector<float> >();
     std::vector<float> t = node["orientation"].as< std::vector<float> >();

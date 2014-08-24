@@ -62,6 +62,7 @@ add_library(csapex_vision
     src/core/roi_message.cpp
     src/core/image_provider.cpp
     src/core/cv_pyramid_message.cpp
+    src/core/yaml_io.cpp
 
     ${QT_CORE}
     ${QT_RESOURCES}

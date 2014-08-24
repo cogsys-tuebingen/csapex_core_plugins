@@ -51,5 +51,4 @@ private:
 };
 
 }
-
 #endif // ROI_H

@@ -26,7 +26,5 @@ void RegisterTransformPlugin::init(CsApexCore& core)
     Tag::createIfNotExists("Transform");
     Tag::createIfNotExists("Time");
 
-    MessageFactory::registerMessage<connection_types::TransformMessage>();
-
     ROSHandler::instance().registerConnectionCallback(boost::bind(&Listener::start));
 }

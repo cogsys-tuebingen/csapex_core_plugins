@@ -25,6 +25,8 @@ DecisionTreeTrainer::DecisionTreeTrainer()
 void DecisionTreeTrainer::setupParameters()
 {
     addParameter(param::ParameterFactory::declareTrigger("train"), boost::bind(&DecisionTreeTrainer::train, this));
+
+    addParameter(param::ParameterFactory::declareFileOutputPath("file", "dtree.yaml"));
 }
 
 void DecisionTreeTrainer::setup()
@@ -52,7 +54,8 @@ void DecisionTreeTrainer::train()
     cv::Mat responses(features_.size(), 1, CV_32SC1);
     int tflag = CV_ROW_SAMPLE;
 
-    for(std::size_t i = 0, n = features_.size(); i < n; ++i) {
+    std::size_t n = features_.size();
+    for(std::size_t i = 0; i < n; ++i) {
         FeaturesMessage& feature = features_[0];
         for(std::size_t j = 0; j < feature_length; ++j) {
             train_data.at<float>(i,j) = feature.value[j];
@@ -60,7 +63,33 @@ void DecisionTreeTrainer::train()
         }
     }
 
+    float p_weight = 1.0;
+    float priors[] = { 1, p_weight };
+    CvDTreeParams params( 8, // max depth
+                          10, // min sample count
+                          0, // regression accuracy: N/A here
+                          true, // compute surrogate split, as we have missing data
+                          15, // max number of categories (use sub-optimal algorithm for larger numbers)
+                          10, // the number of cross-validation folds
+                          true, // use 1SE rule => smaller tree
+                          true, // throw away the pruned tree branches
+                          priors);
+
+    cv::Mat var_type( train_data.cols + 1, 1, CV_8U, CV_VAR_NUMERICAL);
+    cv::Mat missing;
+
     cv::DecisionTree dtree;
-    dtree.train(train_data, tflag, responses);
+    ainfo << "starting training with " << n << " features" << std::endl;
+    /*bool result = */
+    dtree.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, missing, params);
+
+    ainfo << "training finished, writing tree" << std::endl;
+    dtree.save(readParameter<std::string>("file").c_str());
+    ainfo << "done writing tree." << std::endl;
+
+//    if(result) {
+//    } else {
+//        throw std::runtime_error("training failed for an unknown reason");
+//    }
 }
 

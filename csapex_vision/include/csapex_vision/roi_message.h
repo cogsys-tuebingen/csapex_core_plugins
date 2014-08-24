@@ -14,9 +14,6 @@ namespace connection_types {
 struct RoiMessage : public MessageTemplate<Roi, RoiMessage>
 {
     RoiMessage();
-
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node& node);
 };
 
 
@@ -30,5 +27,15 @@ struct type<RoiMessage> {
 
 }
 }
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::RoiMessage> {
+  static Node encode(const csapex::connection_types::RoiMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::RoiMessage& rhs);
+};
+}
+
 
 #endif // ROI_MESSAGE_H

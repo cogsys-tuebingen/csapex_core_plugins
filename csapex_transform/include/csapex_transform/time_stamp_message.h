@@ -14,9 +14,6 @@ namespace connection_types {
 struct TimeStampMessage : public MessageTemplate<ros::Time, TimeStampMessage>
 {
     TimeStampMessage();
-
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node& node);
 };
 
 /// TRAITS
@@ -28,6 +25,16 @@ struct type<TimeStampMessage> {
 };
 
 }
+}
+
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::TimeStampMessage> {
+  static Node encode(const csapex::connection_types::TimeStampMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::TimeStampMessage& rhs);
+};
 }
 
 #endif // TIME_STAMP_MESSAGE_H

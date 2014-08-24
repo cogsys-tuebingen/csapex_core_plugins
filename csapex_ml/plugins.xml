@@ -1,4 +1,7 @@
 <library path="libcsapex_ml_plugin">
+<class type="csapex::DecisionTree" base_class_type="csapex::Node">
+  <description>Apply a decision tree to a feature vector</description>
+</class>
 <class type="csapex::DecisionTreeTrainer" base_class_type="csapex::Node">
   <description>Train a decision tree</description>
 </class>

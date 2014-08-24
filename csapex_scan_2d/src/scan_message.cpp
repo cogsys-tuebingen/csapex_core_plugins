@@ -3,7 +3,10 @@
 
 /// PROJECT
 #include <csapex/utility/assert.h>
+#include <csapex/utility/register_msg.h>
 #include <utils_laser_processing/common/yaml-io.hpp>
+
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::ScanMessage)
 
 using namespace csapex;
 using namespace connection_types;
@@ -19,7 +22,7 @@ ScanMessage::ScanMessage()
 namespace YAML {
 Node convert<csapex::connection_types::ScanMessage>::encode(const csapex::connection_types::ScanMessage& rhs)
 {
-    Node node;
+    Node node = convert<csapex::connection_types::Message>::encode(rhs);
 
     node["value"] = rhs.value;
     return node;
@@ -31,6 +34,7 @@ bool convert<csapex::connection_types::ScanMessage>::decode(const Node& node, cs
         return false;
     }
 
+    convert<csapex::connection_types::Message>::decode(node, rhs);
     rhs.value = node.as<Scan>();
     return true;
 }

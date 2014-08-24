@@ -120,7 +120,5 @@ void RegisterPointCloudPlugin::init(CsApexCore& core)
 {
     Tag::createIfNotExists("PointCloud");
 
-    MessageFactory::registerMessage<connection_types::PointCloudMessage>();
-
     RosMessageConversion::registerConversion<sensor_msgs::PointCloud2, connection_types::PointCloudMessage, Sensor2Cloud >();
 }

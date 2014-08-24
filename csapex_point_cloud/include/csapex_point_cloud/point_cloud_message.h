@@ -77,8 +77,6 @@ struct PointCloudMessage : public Message
 
     virtual ConnectionType::Ptr toType();
 
-    static ConnectionType::Ptr make();
-
     virtual std::string name() const;
 
     bool acceptsConnectionFrom(const ConnectionType* other_side) const;
@@ -97,6 +95,12 @@ struct type<PointCloudMessage> {
         return "PointCloud";
     }
 };
+
+template <>
+inline boost::shared_ptr<PointCloudMessage> makeEmpty<PointCloudMessage>()
+{
+    return boost::shared_ptr<PointCloudMessage>(new PointCloudMessage("/"));
+}
 }
 }
 

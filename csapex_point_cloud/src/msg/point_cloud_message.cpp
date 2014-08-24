@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/assert.h>
+#include <csapex/utility/register_msg.h>
 
 /// SYSTEM
 #include <pcl/PCLPointField.h>
@@ -10,6 +11,8 @@
 #include <pcl/console/print.h>
 #include <pcl/io/pcd_io.h>
 #include <boost/mpl/for_each.hpp>
+
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::PointCloudMessage)
 
 using namespace csapex;
 using namespace connection_types;
@@ -35,12 +38,6 @@ ConnectionType::Ptr PointCloudMessage::toType() {
     Ptr new_msg(new PointCloudMessage("/"));
     return new_msg;
 }
-
-ConnectionType::Ptr PointCloudMessage::make(){
-    Ptr new_msg(new PointCloudMessage("/"));
-    return new_msg;
-}
-
 
 std::string PointCloudMessage::name() const
 {
@@ -127,7 +124,7 @@ struct Export : public boost::static_visitor<void> {
 namespace YAML {
 Node convert<csapex::connection_types::PointCloudMessage>::encode(const csapex::connection_types::PointCloudMessage& rhs)
 {
-    YAML::Node node;
+    Node node = convert<csapex::connection_types::Message>::encode(rhs);
     boost::apply_visitor (Export(node), rhs.value);
     return node;
 }
@@ -144,6 +141,7 @@ bool convert<csapex::connection_types::PointCloudMessage>::decode(const Node& no
     if(!node["data"].IsDefined()) {
         return false;
     }
+    convert<csapex::connection_types::Message>::decode(node, rhs);
 
     std::string type;
     node["point_type"] >> type;

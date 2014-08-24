@@ -1,4 +1,11 @@
+/// HEADER
 #include <csapex_vision/cv_pyramid_message.h>
+
+/// PROJECT
+#include <csapex/utility/register_msg.h>
+#include <csapex_vision/yaml_io.hpp>
+
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::CvPyramidMessage)
 
 using namespace csapex;
 using namespace connection_types;
@@ -36,4 +43,29 @@ const Encoding& CvPyramidMessage::getEncoding() const
 void CvPyramidMessage::setEncoding(const Encoding &e)
 {
     encoding = e;
+}
+
+
+
+/// YAML
+namespace YAML {
+Node convert<csapex::connection_types::CvPyramidMessage>::encode(const csapex::connection_types::CvPyramidMessage& rhs)
+{
+    Node node = convert<csapex::connection_types::Message>::encode(rhs);
+    node["value"] = rhs.value;
+    node["encoding"] = rhs.getEncoding().toString();
+    return node;
+}
+
+bool convert<csapex::connection_types::CvPyramidMessage>::decode(const Node& node, csapex::connection_types::CvPyramidMessage& rhs)
+{
+    if(!node.IsMap()) {
+        return false;
+    }
+    convert<csapex::connection_types::Message>::decode(node, rhs);
+    // TODO: ENCODING !
+    // rhs.encoding = node["encoding"].as<>();
+    rhs.value = node["value"].as<cv::Mat>();
+    return true;
+}
 }

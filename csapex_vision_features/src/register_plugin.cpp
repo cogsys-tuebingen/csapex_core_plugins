@@ -23,7 +23,4 @@ RegisterVisionFeaturePlugin::RegisterVisionFeaturePlugin()
 void RegisterVisionFeaturePlugin::init(CsApexCore& core)
 {
     Tag::createIfNotExists("Features");
-
-    MessageFactory::registerMessage<connection_types::KeypointMessage>();
-    MessageFactory::registerMessage<connection_types::DescriptorMessage>();
 }

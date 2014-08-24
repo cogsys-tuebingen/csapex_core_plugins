@@ -14,9 +14,6 @@ namespace connection_types {
 struct LabeledScanMessage : public MessageTemplate<lib_laser_processing::LabeledScan, LabeledScanMessage>
 {
     LabeledScanMessage();
-
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node& node);
 };
 
 /// TRAITS

@@ -23,6 +23,7 @@ target_link_libraries(csapex_ml
 
 
 add_library(csapex_ml_plugin
+    src/decision_tree.cpp
     src/decision_tree_trainer.cpp
 )
 

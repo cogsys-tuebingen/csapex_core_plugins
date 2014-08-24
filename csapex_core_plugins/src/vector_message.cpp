@@ -1,11 +1,17 @@
 /// HEADER
 #include <csapex_core_plugins/vector_message.h>
 
+/// COMPONENT
+#include <csapex/msg/message_traits.h>
+#include <csapex/utility/register_msg.h>
+
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::GenericVectorMessage)
+
 using namespace csapex;
 using namespace connection_types;
 
 GenericVectorMessage::GenericVectorMessage(ConnectionType::Ptr impl, const std::string& frame_id)
-    : Message (impl->name(), frame_id), impl(impl)
+    : Message ("Vector<?>", frame_id), impl(impl)
 {
 }
 
@@ -15,7 +21,7 @@ ConnectionType::Ptr GenericVectorMessage::clone() {
 }
 
 ConnectionType::Ptr GenericVectorMessage::toType() {
-    Ptr new_msg(new GenericVectorMessage(AnyMessage::make(), frame_id));
+    Ptr new_msg(new GenericVectorMessage(connection_types::makeEmpty<AnyMessage>(), frame_id));
     return new_msg;
 }
 
@@ -29,14 +35,36 @@ bool GenericVectorMessage::acceptsConnectionFrom(const ConnectionType *other_sid
     return impl->acceptsConnectionFrom(other_side);
 }
 
+
+
+
+/// YAML
+namespace YAML {
+Node convert<csapex::connection_types::GenericVectorMessage>::encode(const csapex::connection_types::GenericVectorMessage& rhs)
+{
+    Node node = convert<csapex::connection_types::Message>::encode(rhs);
+//    rhs.impl->
+//    node["values"].push_back();
+    return node;
+}
+
+bool convert<csapex::connection_types::GenericVectorMessage>::decode(const Node& node, csapex::connection_types::GenericVectorMessage& rhs)
+{
+    if(!node.IsMap()) {
+        return false;
+    }
+    convert<csapex::connection_types::Message>::decode(node, rhs);
+    return true;
+}
+}
+
+
+
 //// OLD
-
-
-
 VectorMessage::VectorMessage(const std::string& frame_id)
     : Message ("std::vector<?>", frame_id)
 {
-    type_ = AnyMessage::make();
+    type_ = connection_types::makeEmpty<AnyMessage>();
 }
 VectorMessage::VectorMessage(ConnectionType::Ptr type, const std::string& frame_id)
     : Message (std::string("std::vector<") + type->rawName()  + "::Ptr>", frame_id)

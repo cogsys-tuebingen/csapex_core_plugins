@@ -47,7 +47,22 @@ struct type<CvPyramidMessage> {
     }
 };
 
+template <>
+inline boost::shared_ptr<CvPyramidMessage> makeEmpty<CvPyramidMessage>()
+{
+    return boost::shared_ptr<CvPyramidMessage>(new CvPyramidMessage(enc::bgr));
 }
+
+}
+}
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::CvPyramidMessage> {
+  static Node encode(const csapex::connection_types::CvPyramidMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::CvPyramidMessage& rhs);
+};
 }
 
 

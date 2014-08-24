@@ -3,6 +3,9 @@
 
 /// PROJECT
 #include <csapex_vision/yaml_io.hpp>
+#include <csapex/utility/register_msg.h>
+
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::DescriptorMessage)
 
 using namespace csapex;
 using namespace connection_types;
@@ -54,7 +57,7 @@ void DescriptorMessage::write(std::ostream &out) const
 namespace YAML {
 Node convert<csapex::connection_types::DescriptorMessage>::encode(const csapex::connection_types::DescriptorMessage& rhs)
 {
-    Node node;
+    Node node = convert<csapex::connection_types::Message>::encode(rhs);
 
     node["type"] = typeToString(rhs.value.type());
     node["value"] = rhs.value;
@@ -66,6 +69,7 @@ bool convert<csapex::connection_types::DescriptorMessage>::decode(const Node& no
     if(!node.IsMap()) {
         return false;
     }
+    convert<csapex::connection_types::Message>::decode(node, rhs);
 
     rhs.value = node["value"].as<cv::Mat>();
     return true;

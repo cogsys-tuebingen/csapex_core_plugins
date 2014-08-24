@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/message.h>
+#include <csapex/msg/message_traits.h>
 
 /// SYSTEM
 #include <string>
@@ -22,7 +23,7 @@ struct VectorMessage : public Message
     template <typename T>
     static VectorMessage::Ptr make()
     {
-        return VectorMessage::Ptr (new VectorMessage(T::make(), "/"));
+        return VectorMessage::Ptr (new VectorMessage(connection_types::makeEmpty<T>(), "/"));
     }
 
     static VectorMessage::Ptr make(ConnectionType::Ptr type)
@@ -102,17 +103,6 @@ private:
             return vec != 0;
         }
 
-        void writeYaml(YAML::Emitter& yaml) const
-        {
-            YAML::Node node(*value);
-            yaml << YAML::Key << "generic vector" << YAML::Value << node;
-        }
-
-        void readYaml(const YAML::Node& node)
-        {
-            throw std::runtime_error("deserialization of generic vectors not implemented");
-        }
-
     public:
         boost::shared_ptr< std::vector<T> > value;
     };
@@ -182,7 +172,30 @@ private:
 
 };
 
+template <>
+struct type<GenericVectorMessage> {
+    static std::string name() {
+        return "Vector";
+    }
+};
+
+template <>
+inline boost::shared_ptr<GenericVectorMessage> makeEmpty<GenericVectorMessage>()
+{
+    return GenericVectorMessage::make<void*>();
 }
+
+}
+}
+
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::GenericVectorMessage> {
+  static Node encode(const csapex::connection_types::GenericVectorMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::GenericVectorMessage& rhs);
+};
 }
 
 #endif // VECTOR_MESSAGE_H

@@ -14,9 +14,6 @@ namespace connection_types {
 struct DurationMessage : public MessageTemplate<ros::Duration, DurationMessage>
 {
     DurationMessage();
-
-    void writeYaml(YAML::Emitter& yaml) const;
-    void readYaml(const YAML::Node& node);
 };
 
 
@@ -29,6 +26,16 @@ struct type<DurationMessage> {
 };
 
 }
+}
+
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::DurationMessage> {
+  static Node encode(const csapex::connection_types::DurationMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::DurationMessage& rhs);
+};
 }
 
 #endif // DURATION_MESSAGE_H

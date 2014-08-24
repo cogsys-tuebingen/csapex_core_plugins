@@ -3,6 +3,10 @@
 
 /// PROJECT
 #include <csapex/utility/assert.h>
+#include <csapex/utility/register_msg.h>
+#include <csapex_vision/yaml_io.hpp>
+
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::RoiMessage)
 
 using namespace csapex;
 using namespace connection_types;
@@ -12,26 +16,25 @@ RoiMessage::RoiMessage()
     : MessageTemplate<Roi, RoiMessage> ("/")
 {}
 
-void RoiMessage::writeYaml(YAML::Emitter &yaml) const
+
+/// YAML
+namespace YAML {
+Node convert<csapex::connection_types::RoiMessage>::encode(const csapex::connection_types::RoiMessage& rhs)
 {
-    yaml << YAML::Flow << YAML::Key << "value" << YAML::Value;
-    yaml << YAML::BeginSeq;
-    yaml << value.x() << value.y() << value.w() << value.h();
-    yaml << YAML::EndSeq;
+    Node node = convert<csapex::connection_types::Message>::encode(rhs);
+
+    node["value"] = rhs.value;
+    return node;
 }
 
-void RoiMessage::readYaml(const YAML::Node &node)
+bool convert<csapex::connection_types::RoiMessage>::decode(const Node& node, csapex::connection_types::RoiMessage& rhs)
 {
-    if(exists(node, "value")) {
-        const YAML::Node& n = node["value"];
-        apex_assert_hard(n.Type() == YAML::NodeType::Sequence);
-
-        int x,y,w,h;
-        n[0] >> x;
-        n[1] >> y;
-        n[2] >> w;
-        n[3] >> h;
-
-        value = Roi(x,y,w,h);
+    if(!node.IsMap()) {
+        return false;
     }
+    convert<csapex::connection_types::Message>::decode(node, rhs);
+
+    rhs.value = node["value"].as<Roi>();
+    return true;
+}
 }

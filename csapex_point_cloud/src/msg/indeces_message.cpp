@@ -1,4 +1,10 @@
+/// HEADER
 #include <csapex_point_cloud/indeces_message.h>
+
+/// PROJECT
+#include <csapex/utility/register_msg.h>
+
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::PointIndecesMessage)
 
 using namespace csapex::connection_types;
 
@@ -12,13 +18,18 @@ PointIndecesMessage::PointIndecesMessage() :
 /// YAML
 namespace YAML {
 Node convert<csapex::connection_types::PointIndecesMessage>::encode(const csapex::connection_types::PointIndecesMessage& rhs) {
-    Node node;
+    Node node = convert<csapex::connection_types::Message>::encode(rhs);
     node["indeces"] = *rhs.value;
     return node;
 }
 
 bool convert<csapex::connection_types::PointIndecesMessage>::decode(const Node& node, csapex::connection_types::PointIndecesMessage& rhs) {
-    std::cerr << "PointIndecesMessage can't be decoded yet" << std::endl;
+    if(!node.IsMap()) {
+        return false;
+    }
+    convert<csapex::connection_types::Message>::decode(node, rhs);
+    rhs.value.reset(new pcl::PointIndices);
+    *rhs.value = node["indeces"].as<pcl::PointIndices>();
     return true;
 }
 

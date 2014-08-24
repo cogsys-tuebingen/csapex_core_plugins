@@ -19,7 +19,6 @@ struct FeaturesMessage : public Message
 
     virtual ConnectionType::Ptr clone();
     virtual ConnectionType::Ptr toType();
-    static ConnectionType::Ptr make();
 
     std::vector<float> value;
     int classification;

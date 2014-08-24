@@ -16,7 +16,7 @@ std::map<std::string, ImageProvider::ProviderConstructor> ImageProvider::plugins
 
 ImageProvider::ImageProvider()
 {
-    setType(connection_types::CvMatMessage::make());
+    setType(connection_types::makeEmpty<connection_types::CvMatMessage>());
 
     state.addParameter(param::ParameterFactory::declareBool("playback/resend", true));
 }

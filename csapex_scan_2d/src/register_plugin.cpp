@@ -63,8 +63,5 @@ void RegisterScan2DPlugin::init(CsApexCore& core)
 
     Tag::createIfNotExists("Features");
 
-    MessageFactory::registerMessage<connection_types::ScanMessage>();
-    MessageFactory::registerMessage<connection_types::LabeledScanMessage>();
-
     RosMessageConversion::registerConversion<sensor_msgs::LaserScan, connection_types::ScanMessage, ConvertScan>();
 }

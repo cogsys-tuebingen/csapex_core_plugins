@@ -68,19 +68,11 @@ void testWrap(const connection_types::CvMatMessage& input, int flipcode, connect
 
 void RegisterPlugin::init(CsApexCore& core)
 {
-    Tag::createIfNotExists("Vision");
-    Tag::createIfNotExists("Filter");
-    Tag::createIfNotExists("Image Combiner");
-    Tag::createIfNotExists("ROI");
-    Tag::createIfNotExists("Pattern Recognition");
-
     qRegisterMetaType<cv::Mat>("cv::Mat");
-
-    MessageFactory::registerMessage<connection_types::CvMatMessage>();
 
     RosMessageConversion::registerConversion<sensor_msgs::Image, connection_types::CvMatMessage, Image2CvMat>();
 
-    ConnectionType::setDefaultConnectionType<connection_types::CvMatMessage>();
+    ConnectionType::setDefaultConnectionType(connection_types::makeEmpty<connection_types::CvMatMessage>());
 
     core.getNodeFactory().register_box_type(GenericNodeFactory::createConstructorFromFunction(testWrap,
                                                                                               "TestWrap", "Test direct wrapping",
