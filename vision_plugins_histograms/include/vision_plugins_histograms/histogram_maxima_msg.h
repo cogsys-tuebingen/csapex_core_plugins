@@ -26,4 +26,14 @@ struct type<HistogramMaximaMessage> {
 }
 }
 
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::HistogramMaximaMessage> {
+  static Node encode(const csapex::connection_types::HistogramMaximaMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::HistogramMaximaMessage& rhs);
+};
+}
+
 #endif // HISTOGRAM_MAXIMA_MESSAGE_H
