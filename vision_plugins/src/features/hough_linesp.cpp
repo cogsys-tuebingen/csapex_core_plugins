@@ -17,7 +17,7 @@ CSAPEX_REGISTER_CLASS(vision_plugins::HoughLinesP, csapex::Node)
 //double rho, double theta, int threshold, double minLineLength=0, double maxLineGap=0
 
 HoughLinesP::HoughLinesP() :
-    rho_(1),
+    rho_(1.),
     theta_(CV_PI),
     threshold_(80),
     min_line_length_(30),
@@ -55,11 +55,11 @@ void HoughLinesP::setup()
 
 void HoughLinesP::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareRange("rho", 0.0, 100.0, 1.0, 1.0),
+    addParameter(param::ParameterFactory::declareRange("rho", 0.1, 100.0, 1.0, 1.0),
                  boost::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("theta", 0.0, 2 * CV_PI, CV_PI, 0.1),
+    addParameter(param::ParameterFactory::declareRange("theta", 0.1, 2 * CV_PI, CV_PI, 0.1),
                  boost::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("threshold", 0, 500, 80, 1),
+    addParameter(param::ParameterFactory::declareRange("threshold", 1, 500, 80, 1),
                  boost::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("min length", 0.0, 1000.0, 30.0, 1.0),
                  boost::bind(&HoughLinesP::update, this));
