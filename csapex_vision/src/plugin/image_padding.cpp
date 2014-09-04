@@ -17,8 +17,13 @@ using namespace connection_types;
 
 ImagePadding::ImagePadding()
 {
+}
+
+void ImagePadding::setupParameters()
+{
     addParameter(param::ParameterFactory::declareRange("border", 0, 1000, 0, 1));
     addParameter(param::ParameterFactory::declareRange("mask offset", 0, 100, 0, 1));
+    addParameter(param::ParameterFactory::declareColorParameter("color", 0x00, 0x00, 0x00));
 }
 
 void ImagePadding::setup()
@@ -44,7 +49,9 @@ void ImagePadding::process()
 
     if(output_->isConnected()) {
         CvMatMessage::Ptr result(new CvMatMessage(img_msg->getEncoding()));
-        result->value = cv::Mat(rows + 2 * border, cols + 2 * border, img_msg->value.type(), cv::Scalar::all(0));
+        const std::vector<int>& c = readParameter<std::vector<int> >("color");
+        cv::Scalar color(c[2], c[1], c[0]);
+        result->value = cv::Mat(rows + 2 * border, cols + 2 * border, img_msg->value.type(), color);
         cv::Mat roi(result->value, cv::Rect(border, border, cols, rows));
 
         img_msg->value.copyTo(roi);

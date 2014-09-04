@@ -16,6 +16,7 @@ public:
     ImagePadding();
 
     void setup();
+    void setupParameters();
     void process();
 
 private:

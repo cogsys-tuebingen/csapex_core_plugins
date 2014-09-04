@@ -2,7 +2,7 @@
 #define ROS_HANDLER_H
 
 /// PROJECT
-#include <csapex/utility/singleton.hpp>
+#include <csapex/core/settings.h>
 
 /// SYSTEM
 #include <ros/ros.h>
@@ -11,9 +11,19 @@
 namespace csapex
 {
 
-class ROSHandler : public Singleton<ROSHandler>
+class ROSHandler : public boost::noncopyable
 {
-    friend class Singleton<ROSHandler>;
+public:
+    static ROSHandler& instance()
+    {
+        assert(g_instance_);
+        return *g_instance_;
+    }
+    static void createInstance(Settings& settings)
+    {
+        assert(!g_instance_);
+        g_instance_ = new ROSHandler(settings);
+    }
 
 public:
     ~ROSHandler();
@@ -32,7 +42,12 @@ public:
     void registerConnectionCallback(boost::function<void()>);
 
 private:
-    ROSHandler();
+    ROSHandler(Settings& settings);
+
+private:
+    static ROSHandler* g_instance_;
+
+    Settings& settings_;
 
     boost::shared_ptr<ros::NodeHandle> nh_;
     boost::shared_ptr<ros::AsyncSpinner> spinner_;

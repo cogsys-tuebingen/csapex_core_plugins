@@ -7,8 +7,10 @@
 
 using namespace csapex;
 
-ROSHandler::ROSHandler()
-    : initialized_(false)
+ROSHandler* ROSHandler::g_instance_ = NULL;
+
+ROSHandler::ROSHandler(Settings& settings)
+    : settings_(settings), initialized_(false)
 {
     initHandle(true);
 }
@@ -103,8 +105,13 @@ void ROSHandler::checkMasterConnection()
     QMutexLocker lock(&has_connection_mutex);
 
     if(!ros::isInitialized()) {
-        int c = 0;
-        ros::init(c, (char**) NULL, "csapex");
+        std::vector<std::string> additional_args;
+        if(settings_.knows("additional_args")) {
+            additional_args = settings_.get< std::vector<std::string> >("additional_args");
+        }
+        int argc = (int) additional_args.size();
+        char** argv = (char**) additional_args.data();
+        ros::init(argc, argv, "csapex");
     }
     //initialized_ = true;
 

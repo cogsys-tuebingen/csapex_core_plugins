@@ -19,7 +19,7 @@ using namespace csapex;
 
 
 namespace {
-class RosHandler
+class RosIoHandler
         : public DragIO::HandlerEnter, public DragIO::HandlerMove, public DragIO::HandlerDrop
 {
     static const boost::regex fmt;
@@ -82,7 +82,7 @@ class RosHandler
     }
 };
 
-const boost::regex RosHandler::fmt("[a-zA-Z0-9_\\-/]+");
+const boost::regex RosIoHandler::fmt("[a-zA-Z0-9_\\-/]+");
 }
 
 APEXRosInterface::APEXRosInterface()
@@ -98,6 +98,7 @@ void APEXRosInterface::init(CsApexCore &core)
 {
     core_ = &core;
 
+    ROSHandler::createInstance(core.getSettings());
     ROSHandler::instance().waitForConnection();
 
     if(ROSHandler::instance().isConnected()) {
@@ -114,7 +115,7 @@ void APEXRosInterface::init(CsApexCore &core)
 
 void APEXRosInterface::initUI(DragIO &dragio)
 {
-    dragio.registerHandler<RosHandler>();
+    dragio.registerHandler<RosIoHandler>();
 }
 
 void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd)

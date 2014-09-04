@@ -17,9 +17,12 @@ struct Channel {
         return ! operator == (lhs, rhs);
     }
 
-    Channel(const std::string& name, int min, int max)
+    Channel(const std::string& name, int min, int max,
+            std::vector<Channel>& container)
         : name(name), min(min), max(max)
-    {}
+    {
+        container.push_back(*this);
+    }
 
     std::string name;
     int min;
@@ -57,41 +60,52 @@ public:
     Encoding();
 
     std::string toString() const;
+    static Encoding fromString(const std::string& str);
 };
 
 namespace enc {
+namespace channel {
+static std::vector<Channel> g_channels;
+
+static const Channel gray("gray",0,255,  g_channels);
+
+static const Channel red("r",0,255,  g_channels);
+static const Channel green("g",0,255,  g_channels);
+static const Channel blue("b",0,255,  g_channels);
+
+static const Channel hue("h",0,255,  g_channels);
+static const Channel saturation("s",0,255,  g_channels);
+static const Channel l("l",0,255,  g_channels);
+static const Channel y("y",0,255,  g_channels);
+static const Channel u("u",0,255,  g_channels);
+static const Channel v("v",0,255,  g_channels);
+
+static const Channel depth("d",0,255,  g_channels);
+static const Channel unknown("?",0,1,  g_channels);
+}
+
 static const Encoding mono = boost::assign::list_of
-        (Channel("gray",0,255));
+        (channel::gray);
 
 static const Encoding bgr = boost::assign::list_of
-        (Channel("b",0,255))
-        (Channel("g",0,255))
-        (Channel("r",0,255));
+        (channel::blue)(channel::green)(channel::red);
 
 static const Encoding unknown = bgr;
 
 static const Encoding rgb = boost::assign::list_of
-        (Channel("r",0,255))
-        (Channel("g",0,255))
-        (Channel("b",0,255));
+        (channel::red)(channel::green)(channel::blue);
 
 static const Encoding hsv = boost::assign::list_of
-        (Channel("h",0,255))
-        (Channel("s",0,255))
-        (Channel("v",0,255));
+        (channel::hue)(channel::saturation)(channel::v);
 
 static const Encoding hsl = boost::assign::list_of
-        (Channel("h",0,255))
-        (Channel("s",0,255))
-        (Channel("l",0,255));
+        (channel::hue)(channel::saturation)(channel::l);
 
 static const Encoding yuv = boost::assign::list_of
-        (Channel("y",0,255))
-        (Channel("u",0,255))
-        (Channel("v",0,255));
+        (channel::y)(channel::u)(channel::v);
 
 static const Encoding depth = boost::assign::list_of
-        (Channel("d",0,255));
+        (channel::depth);
 }
 
 }
