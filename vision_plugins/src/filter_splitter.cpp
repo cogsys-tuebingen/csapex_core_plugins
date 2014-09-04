@@ -75,7 +75,7 @@ void Splitter::process()
         if(i < state_.encoding_.size()) {
             e.push_back(state_.encoding_[i]);
         } else {
-            e.push_back(Channel("unknown", 0, 1));
+            e.push_back(enc::channel::unknown);
         }
 
         CvMatMessage::Ptr channel_out(new CvMatMessage(e));
