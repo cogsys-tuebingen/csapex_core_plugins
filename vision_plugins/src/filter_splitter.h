@@ -13,6 +13,7 @@ public:
     ~Splitter();
 
     void setup();
+    void setupParameters();
 
     void setParameterState(Memento::Ptr memento);
     Memento::Ptr getParameterState() const;

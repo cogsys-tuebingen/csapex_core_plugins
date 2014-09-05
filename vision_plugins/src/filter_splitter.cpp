@@ -9,6 +9,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/assert.h>
+#include <utils_param/parameter_factory.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Splitter, csapex::Node)
 
@@ -31,6 +32,14 @@ void Splitter::setup()
     input_ = modifier_->addInput<CvMatMessage>("Image");
 
     updateOutputs();
+}
+
+void Splitter::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareBool
+                 ("enforce mono",
+                  param::ParameterDescription("Enforce that the encoding is enc::mono"),
+                  true));
 }
 
 void Splitter::process()
@@ -68,12 +77,17 @@ void Splitter::process()
         return;
     }
 
+    bool enforce_mono = readParameter<bool>("enforce mono");
 
     std::vector<Output*> outputs = getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
         if(i < state_.encoding_.size()) {
-            e.push_back(state_.encoding_[i]);
+            if(enforce_mono) {
+                e= enc::mono;
+            } else {
+                e.push_back(state_.encoding_[i]);
+            }
         } else {
             e.push_back(Channel("unknown", 0, 1));
         }

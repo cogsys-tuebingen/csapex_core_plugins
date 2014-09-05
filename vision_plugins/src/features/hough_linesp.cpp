@@ -55,9 +55,9 @@ void HoughLinesP::setup()
 
 void HoughLinesP::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareRange("rho", 0.1, 100.0, 1.0, 1.0),
+    addParameter(param::ParameterFactory::declareRange("rho", 1.0, 100.0, 1.0, 1.0),
                  boost::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("theta", 0.1, 2 * CV_PI, CV_PI, 0.1),
+    addParameter(param::ParameterFactory::declareRange("theta", 1.0, 2 * CV_PI, CV_PI, 0.1),
                  boost::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("threshold", 1, 500, 80, 1),
                  boost::bind(&HoughLinesP::update, this));
