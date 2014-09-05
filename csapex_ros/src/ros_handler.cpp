@@ -120,20 +120,32 @@ void ROSHandler::checkMasterConnection()
     }
 }
 
-bool ROSHandler::waitForConnection()
+void ROSHandler::waitForConnection()
 {
-    if(!initialized_) {
+    ros::WallRate rate(1);
+    while(true) {
         checkMasterConnection();
-    }
 
-    QMutexLocker lock(&has_connection_mutex);
-    has_connection.waitForFinished();
-    return has_connection.result();
+        QMutexLocker lock(&has_connection_mutex);
+        has_connection.waitForFinished();
+
+        if(isConnected()) {
+            return;
+        } else {
+            rate.sleep();
+        }
+    }
 }
 
 void ROSHandler::refresh()
 {
-    waitForConnection();
+    if(!isConnected()) {
+        checkMasterConnection();
+        has_connection.waitForFinished();
+        if(!isConnected()) {
+            return;
+        }
+    }
 
     if(nh_) {
         QMutexLocker lock(&has_connection_mutex);

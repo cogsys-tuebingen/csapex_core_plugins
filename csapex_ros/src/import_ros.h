@@ -12,8 +12,9 @@ public:
     ImportRos();
 
     virtual void setup();
-    virtual void process();
-    virtual void tick();
+    virtual void setupROS();
+    virtual void processROS();
+    virtual void tickROS();
 
 protected:
     void refresh();

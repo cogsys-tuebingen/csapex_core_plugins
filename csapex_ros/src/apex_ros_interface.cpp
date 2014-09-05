@@ -94,23 +94,26 @@ APEXRosInterface::~APEXRosInterface()
 {
 }
 
+void APEXRosInterface::prepare(Settings &settings)
+{
+    ROSHandler::createInstance(settings);
+}
+
 void APEXRosInterface::init(CsApexCore &core)
 {
     core_ = &core;
 
-    ROSHandler::createInstance(core.getSettings());
-    ROSHandler::instance().waitForConnection();
+    ROSHandler::instance().registerConnectionCallback(boost::bind(&APEXRosInterface::registerCommandListener, this));
+}
 
-    if(ROSHandler::instance().isConnected()) {
-        std::cerr << "subscribing to /syscommand" << std::endl;
-        command_sub_ = ROSHandler::instance().nh()->subscribe
-                <std_msgs::String>("/syscommand", 10, boost::bind(&APEXRosInterface::command, this, _1));
+void APEXRosInterface::registerCommandListener()
+{
+    assert(ROSHandler::instance().isConnected());
+    std::cerr << "subscribing to /syscommand" << std::endl;
+    command_sub_ = ROSHandler::instance().nh()->subscribe
+            <std_msgs::String>("/syscommand", 10, boost::bind(&APEXRosInterface::command, this, _1));
 
-        ros::spinOnce();
-
-    } else {
-        std::cerr << "cannot init ros interface, no ros handler" << std::endl;
-    }
+    ros::spinOnce();
 }
 
 void APEXRosInterface::initUI(DragIO &dragio)

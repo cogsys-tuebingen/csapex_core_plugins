@@ -20,11 +20,13 @@ class APEXRosInterface : public CorePlugin
 public:
     APEXRosInterface();
     ~APEXRosInterface();
+    void prepare(Settings& settings);
     void init(CsApexCore& core);
     void initUI(DragIO& dragio);
     void shutdown();
 
 private:
+    void registerCommandListener();
     void command(const std_msgs::StringConstPtr &cmd);
 
 private:

@@ -17,7 +17,8 @@ private:
 public:    
     Clock();
 
-    void process();
+    void setupROS();
+    void processROS();
     void setup();
 
     virtual void tick();

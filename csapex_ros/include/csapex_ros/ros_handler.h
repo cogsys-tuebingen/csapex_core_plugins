@@ -36,7 +36,7 @@ public:
     bool topicExists(const std::string& topic);
 
     void checkMasterConnection();
-    bool waitForConnection();
+    void waitForConnection();
     void refresh();
 
     void registerConnectionCallback(boost::function<void()>);

@@ -16,7 +16,8 @@ public:
     TransformPublisher();
     ~TransformPublisher();
 
-    virtual void process();
+    virtual void setupROS();
+    virtual void processROS();
     virtual void setup();
 
 private:

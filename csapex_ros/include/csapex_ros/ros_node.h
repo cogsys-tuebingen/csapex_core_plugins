@@ -18,7 +18,18 @@ class RosNode : public Node
 protected:
     RosNode();
 
+    void process();
+
+    virtual void setupROS() = 0;
+    virtual void processROS() = 0;
+
+    virtual void tick();
+    virtual void tickROS();
+
     ROSHandler& getRosHandler();
+
+private:
+    bool ros_init_;
 };
 
 }

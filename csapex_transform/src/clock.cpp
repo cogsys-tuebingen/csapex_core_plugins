@@ -40,7 +40,11 @@ void Clock::tick()
     output_->publish(time);
 }
 
-void Clock::process()
+void Clock::setupROS()
+{
+
+}
+void Clock::processROS()
 {
 
 }

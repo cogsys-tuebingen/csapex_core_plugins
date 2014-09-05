@@ -32,12 +32,13 @@ TransformPublisher::~TransformPublisher()
     delete tfb_;
 }
 
-void TransformPublisher::process()
+void TransformPublisher::setupROS()
 {
-    if(!getRosHandler().isConnected()) {
-        return;
-    }
 
+}
+
+void TransformPublisher::processROS()
+{
     if(!tfb_) {
         tfb_ = new tf::TransformBroadcaster;
     }

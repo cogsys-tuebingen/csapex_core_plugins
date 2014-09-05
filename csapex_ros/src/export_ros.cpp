@@ -33,7 +33,12 @@ void ExportRos::setup()
     connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
 }
 
-void ExportRos::process()
+void ExportRos::setupROS()
+{
+
+}
+
+void ExportRos::processROS()
 {
     if(topic_.empty()) {
         return;

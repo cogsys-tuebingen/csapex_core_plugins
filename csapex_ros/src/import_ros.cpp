@@ -44,14 +44,18 @@ ImportRos::ImportRos()
 
 void ImportRos::setup()
 {
-
     connector_ = modifier_->addOutput<connection_types::AnyMessage>("Something");
+}
 
+void ImportRos::setupROS()
+{
     refresh();
 }
 
 void ImportRos::refresh()
 {
+    getRosHandler().refresh();
+
     if(getRosHandler().nh()) {
         std::string old_topic = readParameter<std::string>("topic");
 
@@ -122,12 +126,12 @@ void ImportRos::doSetTopic()
     setError(true, ss.str());
 }
 
-void ImportRos::process()
+void ImportRos::processROS()
 {
     // NO INPUT
 }
 
-void ImportRos::tick()
+void ImportRos::tickROS()
 {
     if(retries_ > 0) {
         if(ros::WallTime::now() > next_retry_) {

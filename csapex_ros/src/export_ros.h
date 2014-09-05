@@ -12,7 +12,8 @@ public:
     ExportRos();
 
     void setup();
-    virtual void process();
+    virtual void setupROS();
+    virtual void processROS();
 
 protected:
     void updateTopic();
