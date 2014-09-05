@@ -25,4 +25,14 @@ struct type<HistogramMessage> {
 
 }
 }
+
+
+/// YAML
+namespace YAML {
+template<>
+struct convert<csapex::connection_types::HistogramMessage> {
+  static Node encode(const csapex::connection_types::HistogramMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::HistogramMessage& rhs);
+};
+}
 #endif // HISTOGRAM_MSG_H
