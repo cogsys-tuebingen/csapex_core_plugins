@@ -45,7 +45,7 @@ void Histogram::process()
     HistogramMessage::Ptr out(new HistogramMessage);
 
     cv::Mat mask;
-    if(mask_->isConnected()) {
+    if(mask_->hasMessage()) {
         CvMatMessage::Ptr mask_ptr = mask_->getMessage<CvMatMessage>();
         mask = mask_ptr->value;
     }
@@ -141,7 +141,7 @@ void Histogram::process()
 void Histogram::setup()
 {
     input_  = modifier_->addInput<CvMatMessage>("input");
-    mask_   = modifier_->addInput<CvMatMessage>("mask", true);
+    mask_   = modifier_->addOptionalInput<CvMatMessage>("mask");
     output_ = modifier_->addOutput<HistogramMessage>("histograms");
     update();
 }

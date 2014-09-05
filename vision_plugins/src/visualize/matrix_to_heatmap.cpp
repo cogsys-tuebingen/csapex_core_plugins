@@ -37,7 +37,7 @@ void MatrixToHeatmap::process()
     cv::Mat heatmap (working.rows, working.cols, CV_32FC3, cv::Scalar::all(0));
     cv::Mat mean    (working.rows, working.cols, CV_32FC1, cv::Scalar::all(0));
     cv::Mat mask;
-    if(mask_->isConnected()) {
+    if(mask_->hasMessage()) {
         CvMatMessage::Ptr mask_msg = mask_->getMessage<connection_types::CvMatMessage>();
         mask = mask_msg->value;
     } else {
@@ -77,7 +77,7 @@ void MatrixToHeatmap::setup()
 {
     input_ = modifier_->addInput<CvMatMessage>("matrix");
     output_ = modifier_->addOutput<CvMatMessage>("heatmap");
-    mask_   = modifier_->addInput<CvMatMessage>("mask",true);
+    mask_   = modifier_->addOptionalInput<CvMatMessage>("mask");
 
     update();
 }

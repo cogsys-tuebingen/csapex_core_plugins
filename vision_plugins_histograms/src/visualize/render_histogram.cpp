@@ -37,7 +37,7 @@ void RenderHistogram::process()
 
     HistogramMessage::Ptr in    = input_->getMessage<HistogramMessage>();
     HistogramMaximaMessage::Ptr maxima;
-    if(maxima_->isConnected()) {
+    if(maxima_->hasMessage()) {
         maxima = maxima_->getMessage<HistogramMaximaMessage>();
         if(maxima->value.maxima.size() != in->value.histograms.size()) {
             throw std::runtime_error("Histograms and maxima entries must have the same size!");
@@ -109,7 +109,7 @@ void RenderHistogram::setup()
 {
     input_  = modifier_->addInput<HistogramMessage>("histograms");
     output_ = modifier_->addOutput<CvMatMessage>("image");
-    maxima_ = modifier_->addInput<HistogramMaximaMessage>("maxima", true);
+    maxima_ = modifier_->addOptionalInput<HistogramMaximaMessage>("maxima");
 }
 
 void RenderHistogram::update()

@@ -61,7 +61,7 @@ void Merger::updateInputs()
             inputs[i]->enable();
         }
         for(int i = 0 ; i < to_add ; i++) {
-            modifier_->addInput<CvMatMessage>("Channel", true);
+            modifier_->addOptionalInput<CvMatMessage>("Channel");
         }
     }
 
@@ -72,7 +72,7 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
     std::vector<Input*> inputs = getMessageInputs();
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
         Input *in = inputs[i];
-        if(in->isConnected()) {
+        if(in->hasMessage()) {
             CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
             in->setLabel(msg->getEncoding().toString());
             messages.push_back(msg->value);

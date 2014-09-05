@@ -29,7 +29,7 @@ void Normalize::process()
     CvMatMessage::Ptr mask;
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
-    if(mask_->isConnected()) {
+    if(mask_->hasMessage()) {
         mask = mask_->getMessage<CvMatMessage>();
     }
 
@@ -46,7 +46,7 @@ void Normalize::process()
 void Normalize::setup()
 {
     input_  = modifier_->addInput<CvMatMessage>("original");
-    mask_   = modifier_->addInput<CvMatMessage>("mask", true);
+    mask_   = modifier_->addOptionalInput<CvMatMessage>("mask");
     output_ = modifier_->addOutput<CvMatMessage>("normalized");
 }
 

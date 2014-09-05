@@ -65,7 +65,7 @@ void HOGExtractor::setupParameters()
 void HOGExtractor::setup()
 {
     in_img_     = modifier_->addInput<CvMatMessage>("image");
-    in_rois_    = modifier_->addInput<VectorMessage, RoiMessage>("rois", true);
+    in_rois_    = modifier_->addOptionalInput<VectorMessage, RoiMessage>("rois");
     out_        = modifier_->addOutput<VectorMessage,FeaturesMessage>("descriptors");
 }
 
@@ -98,7 +98,7 @@ void HOGExtractor::process()
                         gauss == 0.0 ? -1 : gauss,
                         gamma);
 
-    if(!in_rois_->isConnected() && !in_rois_->hasMessage()) {
+    if(!in_rois_->hasMessage() && !in_rois_->hasMessage()) {
         if(value.rows < block_size_px)
             throw std::runtime_error("Image must have at least block height in px.");
         if(value.cols < block_size_px)

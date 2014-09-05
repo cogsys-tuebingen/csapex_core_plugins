@@ -161,7 +161,7 @@ void GenericImageCombiner::process()
     VariableExpression::get("1") = f1;
 
     // handle optional second image
-    if(i2_->isConnected()) {
+    if(i2_->hasMessage()) {
         CvMatMessage::Ptr img2 = i2_->getMessage<CvMatMessage>();
 
         if(img1->value.channels() != img2->value.channels()) {
@@ -194,7 +194,7 @@ void GenericImageCombiner::process()
 void GenericImageCombiner::setup()
 {
     i1_ = modifier_->addInput<CvMatMessage>("image 1");
-    i2_ = modifier_->addInput<CvMatMessage>("image 2", true);
+    i2_ = modifier_->addOptionalInput<CvMatMessage>("image 2");
     out_ = modifier_->addOutput<CvMatMessage>("combined");
 }
 

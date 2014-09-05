@@ -27,7 +27,7 @@ void RenderLabels::process()
     CvMatMessage::Ptr labels = labels_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr output(new CvMatMessage(enc::bgr));
 
-    if(image_->isConnected()) {
+    if(image_->hasMessage()) {
         CvMatMessage::Ptr image = image_->getMessage<connection_types::CvMatMessage>();
         if(image->getEncoding() != enc::bgr)
             throw std::runtime_error("Image encoding must be 'bgr'!");
@@ -62,7 +62,7 @@ void RenderLabels::process()
 void RenderLabels::setup()
 {
     labels_ = modifier_->addInput<CvMatMessage>("labels");
-    image_  = modifier_->addInput<CvMatMessage>("image", true);
+    image_  = modifier_->addOptionalInput<CvMatMessage>("image");
     output_ = modifier_->addOutput<CvMatMessage>("rendered");
 }
 

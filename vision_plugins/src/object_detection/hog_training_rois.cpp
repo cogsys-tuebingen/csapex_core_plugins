@@ -35,7 +35,7 @@ void HOGTrainingRois::setupParameters()
 
 void HOGTrainingRois::setup()
 {
-    in_image_ = modifier_->addInput<CvMatMessage>("image", true);
+    in_image_ = modifier_->addOptionalInput<CvMatMessage>("image");
     in_roi_   = modifier_->addInput<RoiMessage>("roi");
     out_      = modifier_->addOutput<VectorMessage, RoiMessage>("rois");
 }

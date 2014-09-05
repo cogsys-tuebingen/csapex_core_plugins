@@ -42,7 +42,7 @@ void SetOperation::process()
         out->value = ~img1->value;
 
     } else {
-        if(!i2_->isConnected() || !i2_->hasMessage()) {
+        if(!i2_->hasMessage()) {
             return;
         }
 
@@ -68,7 +68,7 @@ void SetOperation::process()
 void SetOperation::setup()
 {
     i1_ = modifier_->addInput<CvMatMessage>("mask 1");
-    i2_ = modifier_->addInput<CvMatMessage>("mask 2", true);
+    i2_ = modifier_->addOptionalInput<CvMatMessage>("mask 2");
     out_ = modifier_->addOutput<CvMatMessage>("combined");
 }
 
