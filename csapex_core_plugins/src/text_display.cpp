@@ -18,7 +18,7 @@ TextDisplay::TextDisplay()
 
 void TextDisplay::setup()
 {
-    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything", false, true);
+    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
 }
 
 void TextDisplay::process()

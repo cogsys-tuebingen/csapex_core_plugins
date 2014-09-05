@@ -66,7 +66,7 @@ void SacFit::setup()
 {
     input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
     out_text_= modifier_->addOutput<GenericValueMessage<std::string> >("String");
-    in_indices_ = modifier_->addInput<GenericVectorMessage, pcl::PointIndices>("Clusters", true); // optional input
+    in_indices_ = modifier_->addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Clusters"); // optional input
 
     out_model_ = modifier_->addOutput<GenericVectorMessage, ModelMessage >("Models");
     out_cloud_ = modifier_->addOutput<PointCloudMessage>("Points of Model");
@@ -93,7 +93,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     point_cloud_out->header = cloud->header;
 
     // If inlices are connected search for models in the clusters
-    if (in_indices_->isConnected()) {
+    if (in_indices_->hasMessage()) {
 
         cluster_indices_ = in_indices_->getMessage<GenericVectorMessage, pcl::PointIndices>();
         // search for clusters

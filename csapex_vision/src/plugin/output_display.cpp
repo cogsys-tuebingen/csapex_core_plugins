@@ -24,7 +24,7 @@ OutputDisplay::~OutputDisplay()
 
 void OutputDisplay::setup()
 {
-    input_ = modifier_->addInput<CvMatMessage>("Image", false, true);
+    input_ = modifier_->addInput<CvMatMessage>("Image");
 }
 
 void OutputDisplay::process()

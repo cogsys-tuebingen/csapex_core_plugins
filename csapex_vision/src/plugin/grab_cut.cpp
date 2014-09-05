@@ -51,7 +51,7 @@ void GrabCut::setup()
     in_fg_  = modifier_->addInput<CvMatMessage>("certain foreground");
     in_bg_  = modifier_->addInput<CvMatMessage>("certain background");
 
-    in_roi_  = modifier_->addInput<RoiMessage>("ROI", true);
+    in_roi_  = modifier_->addOptionalInput<RoiMessage>("ROI");
 
     out_fg_ = modifier_->addOutput<CvMatMessage>("possible foreground");
     out_bg_ = modifier_->addOutput<CvMatMessage>("possible background");
@@ -110,7 +110,7 @@ void GrabCut::process()
     }
 
     cv::Rect roi;
-    if(in_roi_->isConnected()) {
+    if(in_roi_->hasMessage()) {
         roi = in_roi_->getMessage<RoiMessage>()->value.rect();
     } else {
         roi = cv::Rect(0, 0, img.cols, img.rows);

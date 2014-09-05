@@ -29,7 +29,7 @@ RadiusOutlierRemoval::RadiusOutlierRemoval()
 void RadiusOutlierRemoval::setup()
 {
     input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    indeces_input_ = modifier_->addInput<PointIndecesMessage>("Indeces", true);
+    indeces_input_ = modifier_->addOptionalInput<PointIndecesMessage>("Indeces");
     output_cloud_ = modifier_->addOutput<PointCloudMessage>("Pointcloud");
     output_indeces_ = modifier_->addOutput<PointIndecesMessage>("Indeces");
 }
@@ -61,7 +61,7 @@ void RadiusOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr clou
     ror.setNegative(negative_);
     ror.setRadiusSearch(search_radius_);
     ror.setMinNeighborsInRadius (min_neighbours_);
-    if(indeces_input_->isConnected()) {
+    if(indeces_input_->hasMessage()) {
         PointIndecesMessage::Ptr indeces(indeces_input_->getMessage<PointIndecesMessage>());
         ror.setIndices(indeces->value);
         if(indeces->value->indices.size() == 0)

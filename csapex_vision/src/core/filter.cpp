@@ -29,7 +29,7 @@ void Filter::setup()
 {
     input_img_ = modifier_->addInput<CvMatMessage>("Image");
     if(usesMask()) {
-        input_mask_ = modifier_->addInput<CvMatMessage>("Mask", true);
+        input_mask_ = modifier_->addOptionalInput<CvMatMessage>("Mask");
     }
     output_img_ = modifier_->addOutput<CvMatMessage>("Image");
     if(usesMask()) {
@@ -41,7 +41,7 @@ void Filter::process()
 {
     CvMatMessage::Ptr img_msg = input_img_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr mask_msg;
-    if(usesMask() && input_mask_->isConnected()) {
+    if(usesMask() && input_mask_->hasMessage()) {
         mask_msg = input_mask_->getMessage<CvMatMessage>();
     }
 

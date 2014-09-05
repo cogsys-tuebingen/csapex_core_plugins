@@ -57,7 +57,7 @@ ExtractKeypoints::ExtractKeypoints()
 void ExtractKeypoints::setup()
 {
     in_img = modifier_->addInput<CvMatMessage>("Image");
-    in_mask = modifier_->addInput<CvMatMessage>("Mask", true);
+    in_mask = modifier_->addOptionalInput<CvMatMessage>("Mask");
 
     out_key = modifier_->addOutput<csapex::connection_types::KeypointMessage>("Keypoints");
 
@@ -79,7 +79,7 @@ void ExtractKeypoints::process()
 
     {
         QMutexLocker lock(&extractor_mutex);
-        if(in_mask->isConnected()) {
+        if(in_mask->hasMessage()) {
             CvMatMessage::Ptr mask_msg = in_mask->getMessage<CvMatMessage>();
 
             extractor->extractKeypoints(img_msg->value, mask_msg->value, key_msg->value);

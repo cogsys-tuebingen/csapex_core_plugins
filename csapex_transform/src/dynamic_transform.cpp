@@ -43,7 +43,7 @@ void DynamicTransform::process()
     setError(false);
     bool update = false;
 
-    bool use_in_frame = frame_in_from_->isConnected() && frame_in_from_->hasMessage();
+    bool use_in_frame = frame_in_from_->hasMessage();
     from_p->setEnabled(!use_in_frame);
     if(use_in_frame) {
         std::string from = frame_in_from_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;
@@ -55,7 +55,7 @@ void DynamicTransform::process()
     }
 
 
-    bool use_to_frame = frame_in_to_->isConnected() && frame_in_to_->hasMessage();
+    bool use_to_frame = frame_in_to_->hasMessage();
     to_p->setEnabled(!use_to_frame);
     if(use_to_frame) {
         std::string to = frame_in_to_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;
@@ -77,7 +77,7 @@ void DynamicTransform::process()
 
 void DynamicTransform::tick()
 {
-    if(time_in_->isConnected()) {
+    if(time_in_->hasMessage()) {
         return;
     }
 
@@ -114,9 +114,9 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
 void DynamicTransform::setup()
 {
-    time_in_ = modifier_->addInput<connection_types::TimeStampMessage>("Time", true);
-    frame_in_from_ = modifier_->addInput<connection_types::GenericValueMessage<std::string> >("Origin Frame", true);
-    frame_in_to_ = modifier_->addInput<connection_types::GenericValueMessage<std::string> >("Target Frame", true);
+    time_in_ = modifier_->addOptionalInput<connection_types::TimeStampMessage>("Time");
+    frame_in_from_ = modifier_->addOptionalInput<connection_types::GenericValueMessage<std::string> >("Origin Frame");
+    frame_in_to_ = modifier_->addOptionalInput<connection_types::GenericValueMessage<std::string> >("Target Frame");
 
     output_ = modifier_->addOutput<connection_types::TransformMessage>("Transform");
     output_frame_ = modifier_->addOutput<connection_types::GenericValueMessage<std::string> >("Target Frame");

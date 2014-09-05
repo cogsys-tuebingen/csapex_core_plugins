@@ -37,7 +37,7 @@ ImageToPointCloud::ImageToPointCloud()
 void ImageToPointCloud::setup()
 {
     input_depth_ = modifier_->addInput<CvMatMessage>("Depth");
-    input_intensity_ = modifier_->addInput<CvMatMessage>("Intensity", true);
+    input_intensity_ = modifier_->addOptionalInput<CvMatMessage>("Intensity");
 
     output_ = modifier_->addOutput<PointCloudMessage>("PointCloud");
 }
@@ -136,7 +136,7 @@ void ImageToPointCloud::process()
     CvMatMessage::Ptr depth_msg(input_depth_->getMessage<CvMatMessage>());
 
     PointCloudMessage::Ptr result(new PointCloudMessage(readParameter<std::string>("frame")));
-    if(input_intensity_->isConnected()) {
+    if(input_intensity_->hasMessage()) {
         CvMatMessage::Ptr intensity_msg(input_intensity_->getMessage<CvMatMessage>());
         result = transform<pcl::PointXYZI>(depth_msg->value, intensity_msg->value);
 

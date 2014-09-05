@@ -30,7 +30,7 @@ StatisticalOutlierRemoval::StatisticalOutlierRemoval()
 void StatisticalOutlierRemoval::setup()
 {
     input_cloud_    = modifier_->addInput<PointCloudMessage>   ("PointCloud");
-    input_indeces_  = modifier_->addInput<PointIndecesMessage> ("Indeces", true);
+    input_indeces_  = modifier_->addOptionalInput<PointIndecesMessage> ("Indeces");
     output_cloud_   = modifier_->addOutput<PointCloudMessage>  ("Pointcloud");
     output_indeces_ = modifier_->addOutput<PointIndecesMessage>("Indeces");
 }
@@ -61,7 +61,7 @@ void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr
     sor.setMeanK(mean_k);
     sor.setNegative(negative);
     sor.setStddevMulThresh(std_dev_mul_thresh);
-    if(input_indeces_->isConnected() && input_indeces_->hasMessage()) {
+    if(input_indeces_->hasMessage()) {
         PointIndecesMessage::Ptr indeces(input_indeces_->getMessage<PointIndecesMessage>());
         sor.setIndices(indeces->value);
     }

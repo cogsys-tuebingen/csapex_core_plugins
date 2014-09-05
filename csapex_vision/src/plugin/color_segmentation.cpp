@@ -54,7 +54,7 @@ void ColorSegmentation::process()
     cv::Mat bw;
     cv::inRange(img->value, min, max, bw);
 
-    if(input_mask_->isConnected()) {
+    if(input_mask_->hasMessage()) {
         CvMatMessage::Ptr mask = input_mask_->getMessage<CvMatMessage>();
         cv::min(mask->value, bw, out_mask->value);
     } else {
@@ -107,6 +107,6 @@ void ColorSegmentation::recompute()
 void ColorSegmentation::setup()
 {
     input_img_ = modifier_->addInput<CvMatMessage>("Image");
-    input_mask_ = modifier_->addInput<CvMatMessage>("Mask", true);
+    input_mask_ = modifier_->addOptionalInput<CvMatMessage>("Mask");
     output_mask_ = modifier_->addOutput<CvMatMessage>("Mask");
 }

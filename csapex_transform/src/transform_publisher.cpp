@@ -44,7 +44,7 @@ void TransformPublisher::processROS()
     }
 
     ros::Time time;
-    if(input_time->isConnected()) {
+    if(input_time->hasMessage()) {
         TimeStampMessage::Ptr time_msg = input_time->getMessage<TimeStampMessage>();
         time = time_msg->value;
     } else {
@@ -60,5 +60,5 @@ void TransformPublisher::processROS()
 void TransformPublisher::setup()
 {
     input_transform = modifier_->addInput<connection_types::TransformMessage>("T");
-    input_time = modifier_->addInput<connection_types::TimeStampMessage>("time", true);
+    input_time = modifier_->addOptionalInput<connection_types::TimeStampMessage>("time");
 }
