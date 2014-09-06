@@ -60,16 +60,16 @@ void CsApex::shutdownPlugin()
 {
 }
 
-void CsApex::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const
+void CsApex::saveSettings(qt_gui_cpp::Settings& /*plugin_settings*/, qt_gui_cpp::Settings& instance_settings) const
 {
-    instance_settings.setValue("file", core_.getSettings().getConfig().c_str());
+    instance_settings.setValue("file", core_.getSettings().get<std::string>("config").c_str());
 }
 
 void CsApex::restoreSettings(const qt_gui_cpp::Settings& plugin_settings, const qt_gui_cpp::Settings& instance_settings)
 {
     QString file = instance_settings.value("file").toString();
     if(!file.isEmpty()) {
-        core_.getSettings().setCurrentConfig(file.toStdString());
+        core_.getSettings().set("config", file.toStdString());
         eva_->reload();
     }
 }
