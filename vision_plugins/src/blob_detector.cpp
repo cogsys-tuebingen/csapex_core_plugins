@@ -72,8 +72,8 @@ void BlobDetector::process()
 {
     CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
 
-    if(img->getEncoding() != enc::mono) {
-        throw std::runtime_error("image must be grayscale.");
+    if(img->hasChannels(1, CV_8U)) {
+        throw std::runtime_error("image must be one channel grayscale.");
     }
 
     cv::Mat& gray = img->value;

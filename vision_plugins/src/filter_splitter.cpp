@@ -46,10 +46,10 @@ void Splitter::process()
 {
     CvMatMessage::Ptr m = input_->getMessage<CvMatMessage>();
 
-    int esize = m->getEncoding().size();
+    int esize = m->getEncoding().channelCount();
     if(esize != m->value.channels()) {
         std::stringstream error;
-        error << "encoding size (" << m->getEncoding().size() << ") != " << " image channels (" << m->value.channels() << ")";
+        error << "encoding size (" << m->getEncoding().channelCount() << ") != " << " image channels (" << m->value.channels() << ")";
         setError(true, error.str(), EL_WARNING);
     }
 
@@ -57,11 +57,11 @@ void Splitter::process()
     cv::split(m->value, channels);
 
     bool recompute = state_.channel_count_ != (int) channels.size();
-    if(m->getEncoding().size() != state_.encoding_.size()) {
+    if(m->getEncoding().channelCount() != state_.encoding_.channelCount()) {
         recompute = true;
     } else {
         for(int i = 0, n = esize; i < n; ++i) {
-            if(m->getEncoding()[i].name != state_.encoding_[i].name) {
+            if(m->getEncoding().getChannel(i).name != state_.encoding_.getChannel(i).name) {
                 recompute = true;
                 break;
             }
@@ -82,11 +82,11 @@ void Splitter::process()
     std::vector<Output*> outputs = getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
-        if(i < state_.encoding_.size()) {
+        if(i < state_.encoding_.channelCount()) {
             if(enforce_mono) {
-                e= enc::mono;
+                e = enc::mono;
             } else {
-                e.push_back(state_.encoding_[i]);
+                e.push_back(state_.encoding_.getChannel(i));
             }
         } else {
             e.push_back(enc::channel::unknown);
@@ -105,8 +105,8 @@ void Splitter::updateOutputs()
 
     if(state_.channel_count_ > n) {
         for(int i = n ; i < state_.channel_count_ ; ++i) {
-            if(i < (int) state_.encoding_.size()) {
-                modifier_->addOutput<CvMatMessage>(state_.encoding_[i].name);
+            if(i < (int) state_.encoding_.channelCount()) {
+                modifier_->addOutput<CvMatMessage>(state_.encoding_.getChannel(i).name);
             } else {
                 modifier_->addOutput<CvMatMessage>("unknown");
             }
@@ -131,8 +131,8 @@ void Splitter::updateOutputs()
     outputs = getMessageOutputs();
     for(int i = 0, n = state_.channel_count_; i < n; ++i) {
         Output* output = outputs[i];
-        if(i < (int) state_.encoding_.size()) {
-            output->setLabel(state_.encoding_[i].name);
+        if(i < (int) state_.encoding_.channelCount()) {
+            output->setLabel(state_.encoding_.getChannel(i).name);
         } else {
             output->setLabel("unknown");
         }

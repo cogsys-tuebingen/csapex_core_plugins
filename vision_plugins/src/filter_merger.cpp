@@ -76,7 +76,7 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
             CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
             in->setLabel(msg->getEncoding().toString());
             messages.push_back(msg->value);
-            encoding.insert(encoding.end(), msg->getEncoding().begin(), msg->getEncoding().end());
+            encoding.append(msg->getEncoding());
         }
     }
 }

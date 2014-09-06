@@ -61,7 +61,7 @@ void ColorAdjustment::process()
 {
     CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
 
-    bool encoding_changed = img->getEncoding() != current_encoding;
+    bool encoding_changed = !img->getEncoding().matches(current_encoding);
     current_encoding = img->getEncoding();
 
     if(encoding_changed) {
@@ -106,11 +106,16 @@ void ColorAdjustment::recompute()
 {
     setParameterSetSilence(true);
     removeTemporaryParameters();
-    for(std::size_t i = 0; i < current_encoding.size(); ++i) {
-        Channel c = current_encoding[i];
+    for(std::size_t i = 0; i < current_encoding.channelCount(); ++i) {
+        Channel c = current_encoding.getChannel(i);
 
         std::string name = channelName(i, c);
-        param::Parameter::Ptr p = param::ParameterFactory::declareInterval(name, c.min, c.max, c.min, c.max, 1);
+        param::Parameter::Ptr p;
+        if(c.fp) {
+            p = param::ParameterFactory::declareInterval<double>(name, c.min_f, c.max_f, c.min_f, c.max_f, 1.0);
+        } else {
+            p = param::ParameterFactory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
+        }
         addTemporaryParameter(p, boost::bind(&ColorAdjustment::update, this));
     }
 
@@ -125,8 +130,8 @@ void ColorAdjustment::update()
     mins.clear();
     maxs.clear();
 
-    for(std::size_t i = 0; i < current_encoding.size(); ++i) {
-        std::pair<int,int> val = readParameter<std::pair<int, int> >(channelName(i, current_encoding[i]));
+    for(std::size_t i = 0; i < current_encoding.channelCount(); ++i) {
+        std::pair<int,int> val = readParameter<std::pair<int, int> >(channelName(i, current_encoding.getChannel(i)));
 
         mins.push_back(val.first);
         maxs.push_back(val.second);

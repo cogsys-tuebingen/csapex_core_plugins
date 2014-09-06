@@ -74,7 +74,7 @@ void MatrixStitcher::process()
     CvMatMessage::Ptr mat_2  = matrix_2_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr out(new CvMatMessage(mat_1->getEncoding()));
 
-    if(mat_1->getEncoding() != mat_2->getEncoding())
+    if(!mat_1->getEncoding().matches(mat_2->getEncoding()))
         throw std::runtime_error("Matrices need the same encoding!");
     if(mat_1->value.type() != mat_2->value.type())
         throw std::runtime_error("Matrices need the same type!");

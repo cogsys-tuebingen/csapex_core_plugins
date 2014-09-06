@@ -29,7 +29,7 @@ void RenderLabels::process()
 
     if(image_->hasMessage()) {
         CvMatMessage::Ptr image = image_->getMessage<connection_types::CvMatMessage>();
-        if(image->getEncoding() != enc::bgr)
+        if(!image->getEncoding().matches(enc::bgr))
             throw std::runtime_error("Image encoding must be 'bgr'!");
         output->value = image->value.clone();
     }

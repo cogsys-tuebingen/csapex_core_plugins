@@ -28,7 +28,7 @@ void EigenValsAndVecs::process()
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
 
     cv::Mat tmp;
-    if(in->getEncoding() != enc::mono ) {
+    if(in->value.type() != CV_8UC1) {
         cv::cvtColor(in->value, tmp, CV_BGR2GRAY);
     } else {
         tmp = in->value;

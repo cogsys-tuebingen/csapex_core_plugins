@@ -29,8 +29,8 @@ void HoughLinesP::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
 
-    if(in->getEncoding() != enc::mono) {
-        throw std::runtime_error("image must be grayscale.");
+    if(in->hasChannels(1, CV_8U)) {
+        throw std::runtime_error("image must be one channel grayscale.");
     }
 
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr));

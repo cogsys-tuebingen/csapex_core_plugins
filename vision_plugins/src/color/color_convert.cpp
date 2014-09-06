@@ -85,9 +85,9 @@ void ColorConvert::process()
 
     CvMatMessage::Ptr out(new CvMatMessage(cs_to_encoding_[cspair.second]));
 
-    if(img->getEncoding().size() != cs_to_encoding_[cspair.first].size()) {
+    if(img->getEncoding().channelCount() != cs_to_encoding_[cspair.first].channelCount()) {
         std::stringstream error;
-        error << "Conversion not applicable! Input encoding #" << img->getEncoding().size() << ", target #"  <<  cs_to_encoding_[cspair.first].size();
+        error << "Conversion not applicable! Input encoding #" << img->getEncoding().channelCount() << ", target #"  <<  cs_to_encoding_[cspair.first].channelCount();
         throw std::runtime_error(error.str());
     }
 
@@ -96,7 +96,7 @@ void ColorConvert::process()
             int mode = cs_pair_to_operation_[cspair];
             cv::cvtColor(img->value, out->value, mode);
 
-            if((int) out->getEncoding().size() != out->value.channels()) {
+            if((int) out->getEncoding().channelCount() != out->value.channels()) {
                 throw std::runtime_error("Conversion didn't work!");
             }
         } else {

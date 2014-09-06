@@ -35,7 +35,7 @@ LKTracking::LKTracking()
 void LKTracking::process()
 {
     CvMatMessage::Ptr img = in_image_->getMessage<CvMatMessage>();
-    if(img->getEncoding() != enc::mono) {
+    if(img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("input image must be 1-channel");
     }
 

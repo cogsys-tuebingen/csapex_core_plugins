@@ -30,7 +30,7 @@ void SetOperation::process()
 {
     CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
 
-    if(img1->getEncoding() != enc::mono) {
+    if(img1->hasChannels(1)) {
         throw std::runtime_error("No Single Channel!");
     }
 
