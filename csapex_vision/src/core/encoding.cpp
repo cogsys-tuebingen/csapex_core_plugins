@@ -16,7 +16,7 @@ std::string Encoding::toString() const
 
     std::string separator = "";
     s << "[";
-    for(std::vector<Channel>::const_iterator it = begin(); it != end(); ++it) {
+    for(std::vector<Channel>::const_iterator it = channels_.begin(); it != channels_.end(); ++it) {
         const Channel& c = *it;
         s << separator << c.name;
         separator = ", ";
@@ -24,6 +24,42 @@ std::string Encoding::toString() const
     s << "]";
 
     return s.str();
+}
+
+Channel Encoding::getChannel(std::size_t index) const
+{
+    return channels_.at(index);
+}
+
+std::size_t Encoding::channelCount() const
+{
+    return channels_.size();
+}
+
+void Encoding::append(const Encoding &e)
+{
+    channels_.insert(channels_.end(), e.channels_.begin(), e.channels_.end());
+}
+
+void Encoding::push_back(const Channel &c)
+{
+    channels_.push_back(c);
+}
+
+bool Encoding::matches(const Encoding &rhs) const
+{
+    std::size_t n = channels_.size();
+    if(n != rhs.channels_.size()) {
+        return false;
+    }
+
+    for(unsigned i = 0; i < n; ++i) {
+        if(getChannel(i) != rhs.getChannel(i)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 namespace {

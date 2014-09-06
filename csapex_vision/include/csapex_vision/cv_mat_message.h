@@ -31,6 +31,9 @@ public:
     const Encoding &getEncoding() const;
     void setEncoding(const Encoding& e);
 
+    bool hasChannels(std::size_t count) const;
+    bool hasChannels(std::size_t count, int mat_type) const;
+
 private:
     Encoding encoding;
 

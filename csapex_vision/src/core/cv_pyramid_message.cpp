@@ -63,9 +63,8 @@ bool convert<csapex::connection_types::CvPyramidMessage>::decode(const Node& nod
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
-    // TODO: ENCODING !
-    // rhs.encoding = node["encoding"].as<>();
     rhs.value = node["value"].as<cv::Mat>();
+    rhs.setEncoding(Encoding::fromString(node["encoding"].as<std::string>()));
     return true;
 }
 }

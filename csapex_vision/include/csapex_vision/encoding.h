@@ -10,7 +10,7 @@ namespace csapex {
 
 struct Channel {
     friend bool operator == (const Channel& lhs, const Channel& rhs) {
-        return lhs.name == rhs.name;
+        return lhs.name == rhs.name && lhs.fp == rhs.fp;
     }
 
     friend bool operator != (const Channel& lhs, const Channel& rhs) {
@@ -19,48 +19,87 @@ struct Channel {
 
     Channel(const std::string& name, int min, int max,
             std::vector<Channel>& container)
-        : name(name), min(min), max(max)
+        : name(name), fp(false), min_i(min), max_i(max)
     {
         container.push_back(*this);
     }
 
+    Channel(const std::string& name, float min, float max,
+            std::vector<Channel>& container)
+        : name(name), fp(true), min_f(min), max_f(max)
+    {
+        container.push_back(*this);
+    }
+
+    Channel(const std::string& name, double min, double max,
+            std::vector<Channel>& container)
+        : name(name), fp(true), min_f(min), max_f(max)
+    {
+        container.push_back(*this);
+    }
+
+    Channel(const Channel& copy)
+        : name(copy.name), fp(copy.fp)
+    {
+        if(fp) {
+            min_f = copy.min_f;
+            max_f = copy.max_f;
+        } else {
+            min_i = copy.min_i;
+            max_i = copy.max_i;
+        }
+    }
+
+    Channel& operator = (const Channel& rhs)
+    {
+        name = rhs.name;
+        fp = rhs.fp;
+        if(fp) {
+            min_f = rhs.min_f;
+            max_f = rhs.max_f;
+        } else {
+            min_i = rhs.min_i;
+            max_i = rhs.max_i;
+        }
+        return *this;
+    }
+
     std::string name;
-    int min;
-    int max;
+    bool fp;
+
+    union {
+        int min_i;
+        float min_f;
+    };
+    union {
+        int max_i;
+        float max_f;
+    };
 };
 
-class Encoding : public std::vector<Channel>
+class Encoding
 {
-    typedef std::vector<Channel> Parent;
-
-    friend bool operator != (const Encoding& lhs, const Encoding& rhs) {
-        return ! operator == (lhs, rhs);
-    }
-
-    friend bool operator == (const Encoding& lhs, const Encoding& rhs) {
-        if(lhs.size() != rhs.size()) {
-            return false;
-        }
-
-        for(unsigned i = 0; i < lhs.size(); ++i) {
-            if(lhs[i] != rhs[i]) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
 public:
     template <typename Iterator>
     Encoding(Iterator begin, Iterator end)
-        : Parent(begin, end)
+        : channels_(begin, end)
     {}
 
     Encoding();
 
+    bool matches(const Encoding& encoding) const;
+
+    Channel getChannel(std::size_t index) const;
+    std::size_t channelCount() const;
+
+    void append(const Encoding& e);
+    void push_back(const Channel& c);
+
     std::string toString() const;
     static Encoding fromString(const std::string& str);
+
+private:
+    std::vector<Channel> channels_;
 };
 
 namespace enc {
@@ -80,7 +119,7 @@ static const Channel y("y",0,255,  g_channels);
 static const Channel u("u",0,255,  g_channels);
 static const Channel v("v",0,255,  g_channels);
 
-static const Channel depth("d",0,255,  g_channels);
+static const Channel depth("d", 0.0f, 255.0f, g_channels);
 static const Channel unknown("?",0,1,  g_channels);
 }
 

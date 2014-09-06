@@ -55,7 +55,7 @@ void HoughCircle::process()
     cv::HoughCircles(msg->value, circles, method, dp, minDist, param1, param2, minRadius, maxRadius);
 
     CvMatMessage::Ptr out(new CvMatMessage(msg->getEncoding()));
-    if(msg->getEncoding().size() < 3) {
+    if(msg->hasChannels(1, CV_8U)) {
         cv::cvtColor(msg->value, out->value, CV_GRAY2BGR);
     } else {
         msg->value.copyTo(out->value);

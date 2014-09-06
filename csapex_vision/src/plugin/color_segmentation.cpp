@@ -30,7 +30,7 @@ void ColorSegmentation::process()
 {
     CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
 
-    bool encoding_changed = img->getEncoding() != current_encoding;
+    bool encoding_changed = !img->getEncoding().matches(current_encoding);
     current_encoding = img->getEncoding();
 
     CvMatMessage::Ptr out_mask(new CvMatMessage(enc::mono));
@@ -78,8 +78,8 @@ void ColorSegmentation::update()
     min = cv::Scalar::all(0);
     max = cv::Scalar::all(0);
 
-    for(std::size_t i = 0; i < current_encoding.size(); ++i) {
-        std::pair<int,int> val = readParameter<std::pair<int, int> >(channelName(i, current_encoding[i]));
+    for(std::size_t i = 0; i < current_encoding.channelCount(); ++i) {
+        std::pair<int,int> val = readParameter<std::pair<int, int> >(channelName(i, current_encoding.getChannel(i)));
 
         min[i] = val.first;
         max[i] = val.second;
@@ -90,11 +90,16 @@ void ColorSegmentation::recompute()
 {
     setParameterSetSilence(true);
     removeTemporaryParameters();
-    for(std::size_t i = 0; i < current_encoding.size(); ++i) {
-        Channel c = current_encoding[i];
+    for(std::size_t i = 0; i < current_encoding.channelCount(); ++i) {
+        Channel c = current_encoding.getChannel(i);
 
         std::string name = channelName(i, c);
-        param::Parameter::Ptr p = param::ParameterFactory::declareInterval(name, c.min, c.max, c.min, c.max, 1);
+        param::Parameter::Ptr p;
+        if(c.fp) {
+            p = param::ParameterFactory::declareInterval<double>(name, c.min_f, c.max_f, c.min_f, c.max_f, 1.0);
+        } else {
+            p = param::ParameterFactory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
+        }
         addTemporaryParameter(p, boost::bind(&ColorSegmentation::update, this));
     }
 

@@ -40,6 +40,16 @@ void CvMatMessage::setEncoding(const Encoding &e)
     encoding = e;
 }
 
+bool CvMatMessage::hasChannels(std::size_t count) const
+{
+    return value.channels() == (int) count && encoding.channelCount() == count;
+}
+
+
+bool CvMatMessage::hasChannels(std::size_t count, int mat_type) const
+{
+    return value.channels() == (int) count && encoding.channelCount() == count && value.type() == mat_type;
+}
 
 
 /// YAML
@@ -58,8 +68,6 @@ bool convert<csapex::connection_types::CvMatMessage>::decode(const Node& node, c
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
-    // TODO: ENCODING! ALSO IN CvPyramidMessage
-    // rhs.encoding = node["encoding"].as<>();
     rhs.value = node["value"].as<cv::Mat>();
     rhs.setEncoding(Encoding::fromString(node["encoding"].as<std::string>()));
     return true;
