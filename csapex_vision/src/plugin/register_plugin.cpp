@@ -74,7 +74,7 @@ void RegisterPlugin::init(CsApexCore& core)
 
     ConnectionType::setDefaultConnectionType(connection_types::makeEmpty<connection_types::CvMatMessage>());
 
-    core.getNodeFactory().register_box_type(GenericNodeFactory::createConstructorFromFunction(testWrap,
+    core.getNodeFactory().registerNodeType(GenericNodeFactory::createConstructorFromFunction(testWrap,
                                                                                               "TestWrap", "Test direct wrapping",
                                                                                               core.getSettings()));
 }
