@@ -11,6 +11,7 @@
 #include <csapex/view/designer.h>
 #include <csapex/core/settings.h>
 #include <csapex/model/node_factory.h>
+#include <csapex/view/node_adapter_factory.h>
 #include <csapex/view/widget_controller.h>
 #include <csapex/view/designer_scene.h>
 
@@ -29,9 +30,10 @@ CsApex::CsApex()
     : graph_(new Graph),
       graph_worker_(new GraphWorker(&settings_, graph_.get())),
       node_factory_(new NodeFactory(settings_)),
-      widget_controller_(new csapex::WidgetController(settings_, graph_, node_factory_.get())),
+      node_adapter_factory_(new NodeAdapterFactory(settings_)),
+      widget_controller_(new csapex::WidgetController(settings_, graph_, node_factory_.get(), node_adapter_factory_.get())),
       dispatcher_(new CommandDispatcher(settings_, graph_worker_, widget_controller_)),
-      core_(settings_, graph_worker_, node_factory_.get(), dispatcher_.get()),
+      core_(settings_, graph_worker_, node_factory_.get(), node_adapter_factory_.get(), dispatcher_.get()),
       drag_io_(graph_.get(), dispatcher_.get(), widget_controller_),
       scene_(new DesignerScene(graph_, dispatcher_.get(), widget_controller_)),
       view_ (new DesignerView(scene_, graph_, dispatcher_.get(), widget_controller_, drag_io_)),
