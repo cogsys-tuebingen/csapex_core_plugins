@@ -2,29 +2,22 @@
 #define DECISION_TREE_TRAINER_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex_core_plugins/collection_node.h>
 #include <csapex_ml/features_message.h>
 
 namespace csapex {
 
 
-class DecisionTreeTrainer : public csapex::Node
+class DecisionTreeTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
     DecisionTreeTrainer();
 
     void setupParameters();
-    void setup();
-    void process();
 
 private:
-    void train();
+    void processCollection(std::vector<connection_types::FeaturesMessage> &collection);
 
-private:
-    Input* in_;
-    Output* out_;
-
-    std::vector<connection_types::FeaturesMessage> features_;
 };
 
 

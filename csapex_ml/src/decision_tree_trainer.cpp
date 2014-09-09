@@ -24,39 +24,28 @@ DecisionTreeTrainer::DecisionTreeTrainer()
 
 void DecisionTreeTrainer::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareTrigger("train"), boost::bind(&DecisionTreeTrainer::train, this));
+    CollectionNode<FeaturesMessage>::setupParameters();
 
     addParameter(param::ParameterFactory::declareFileOutputPath("file", "dtree.yaml"));
 }
 
-void DecisionTreeTrainer::setup()
+void DecisionTreeTrainer::processCollection(std::vector<connection_types::FeaturesMessage>& collection)
 {
-    in_  = modifier_->addInput<GenericVectorMessage, FeaturesMessage>("features");
-}
-
-void DecisionTreeTrainer::process()
-{
-    boost::shared_ptr<std::vector<FeaturesMessage> const> features = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
-    features_.insert(features_.end(), features->begin(), features->end());
-}
-
-void DecisionTreeTrainer::train()
-{
-    if(features_.empty()) {
+    if(collection.empty()) {
         aerr << "there are no features to train on" << std::endl;
         return;
     }
 
-    FeaturesMessage& first_feature = features_[0];
+    FeaturesMessage& first_feature = collection[0];
     std::size_t feature_length = first_feature.value.size();
 
-    cv::Mat train_data(features_.size(), feature_length, CV_32FC1);
-    cv::Mat responses(features_.size(), 1, CV_32SC1);
+    cv::Mat train_data(collection.size(), feature_length, CV_32FC1);
+    cv::Mat responses(collection.size(), 1, CV_32SC1);
     int tflag = CV_ROW_SAMPLE;
 
-    std::size_t n = features_.size();
+    std::size_t n = collection.size();
     for(std::size_t i = 0; i < n; ++i) {
-        FeaturesMessage& feature = features_[0];
+        FeaturesMessage& feature = collection[0];
         for(std::size_t j = 0; j < feature_length; ++j) {
             train_data.at<float>(i,j) = feature.value[j];
             responses.at<int>(i,0) = feature.classification;
