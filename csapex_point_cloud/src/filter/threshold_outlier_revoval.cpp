@@ -210,7 +210,7 @@ void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr c
         throw std::runtime_error("Height of pointcloud and threshold matrix not matching!");
     if(thresholds->value.cols != cloud->width)
         throw std::runtime_error("Width of pointcloud and threshold matrix not matching!");
-    if(thresholds->hasChannels(1, CV_8U))
+    if(!thresholds->hasChannels(1, CV_8U))
         throw std::runtime_error("Threshold matrix type must be 'mono'!");
 
     typename pcl::PointCloud<PointT>::Ptr cloud_filtered;
