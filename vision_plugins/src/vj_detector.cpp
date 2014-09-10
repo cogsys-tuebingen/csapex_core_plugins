@@ -73,7 +73,7 @@ void VJDetector::process()
 
     CvMatMessage::Ptr a = input_->getMessage<CvMatMessage>();
 
-    if(a->hasChannels(1, CV_8U)) {
+    if(!a->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
     }
 

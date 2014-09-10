@@ -25,7 +25,7 @@ void AdaptiveThreshold::process()
 {
     CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
 
-    if(img->hasChannels(1, CV_8U)) {
+    if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
     }
 

@@ -74,7 +74,7 @@ void HOGExtractor::process()
     CvMatMessage::Ptr  in = in_img_->getMessage<CvMatMessage>();
     VectorMessage::Ptr out(VectorMessage::make<FeaturesMessage>());
 
-    if(in->hasChannels(1, CV_8U))
+    if(!in->hasChannels(1, CV_8U))
         throw std::runtime_error("Image must be one channel grayscale!");
 
     cv::Mat &value = in->value;

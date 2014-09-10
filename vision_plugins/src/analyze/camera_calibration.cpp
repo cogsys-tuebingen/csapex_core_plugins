@@ -33,7 +33,7 @@ void vision_plugins::CameraCalibration::process()
     calibration_->analyze(buffer_frame_);
 
     /// OUTPUT
-    if(in->hasChannels(1, CV_8U)) {
+    if(!in->hasChannels(1, CV_8U)) {
         cv::cvtColor(in->value, out->value, CV_GRAY2BGR);
         out->setEncoding(enc::bgr);
     } else {
