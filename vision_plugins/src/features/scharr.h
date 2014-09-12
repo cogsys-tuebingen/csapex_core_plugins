@@ -14,7 +14,7 @@ public:
     virtual void setupParameters();
 
 protected:
-    enum Type {DX1, DY1};
+    enum Type {DX1, DY1, STRENGTH};
     Type type_;
 
     void update();

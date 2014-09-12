@@ -32,6 +32,17 @@ void Scharr::process()
     case DY1:
         cv::Scharr(in->value, out->value, depth,0, 1, ksize_, scale_,delta_);
         break;
+    case STRENGTH:
+    {
+        cv::Mat grad_x, grad_y (in->value.rows,in->value.cols,CV_32F);
+        cv::Mat abs_grad_x, abs_grad_y (in->value.rows,in->value.cols,CV_8U);
+        cv::Scharr(in->value, grad_x, depth,1, 0, ksize_, scale_,delta_);
+        cv::Scharr(in->value, grad_y, depth,0, 1, ksize_, scale_,delta_);
+        cv::convertScaleAbs( grad_x, abs_grad_x );
+        cv::convertScaleAbs( grad_y, abs_grad_y );
+        cv::addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, out->value);
+        break;
+    }
     default:
         throw std::runtime_error("Unknown derivation type!");
     }
@@ -43,7 +54,8 @@ void Scharr::setupParameters()
     Operator::setupParameters();
     std::map<std::string, int> types = boost::assign::map_list_of
             ("DX1", DX1)
-            ("DY1", DY1);
+            ("DY1", DY1)
+            ("Strength", STRENGTH);
 
     addParameter(param::ParameterFactory::declareParameterSet("derive", types, (int) DX1),
                  boost::bind(&Scharr::update, this));

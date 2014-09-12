@@ -28,6 +28,10 @@ using namespace cvb;
 
 BlobDetector::BlobDetector()
 {
+    addParameter(param::ParameterFactory::declareBool("RoiInformation",
+                                               param::ParameterDescription("Show the information of each RoI"),
+                                               false));
+
 }
 
 BlobDetector::~BlobDetector()
@@ -70,6 +74,8 @@ BlobDetector::~BlobDetector()
 
 void BlobDetector::process()
 {
+    bool roi_info = readParameter<bool>("RoiInformation");
+
     CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
 
     if(!img->hasChannels(1, CV_8U)) {
@@ -128,19 +134,20 @@ void BlobDetector::process()
             }
         }
 
-        for (CvBlobs::const_iterator it=blobs.begin(); it!=blobs.end(); ++it) {
-            const CvBlob& blob = *it->second;
-            std::stringstream ss;
-            ss << "Blob #" << blob.label << ": A=" << blob.area << ", C=(" << blob.centroid.x << ", " << blob.centroid.y << ")";
+        if (roi_info){
+            for (CvBlobs::const_iterator it=blobs.begin(); it!=blobs.end(); ++it) {
+                const CvBlob& blob = *it->second;
+                std::stringstream ss;
+                ss << "Blob #" << blob.label << ": A=" << blob.area << ", C=(" << blob.centroid.x << ", " << blob.centroid.y << ")";
 
-            double r, g, b;
-            _HSV2RGB_((double)((blob.label *77)%360), .5, 1., r, g, b);
-            cv::Scalar color(b,g,r);
+                double r, g, b;
+                _HSV2RGB_((double)((blob.label *77)%360), .5, 1., r, g, b);
+                cv::Scalar color(b,g,r);
 
-            cv::putText(debug->value, ss.str(), cv::Point(blob.centroid.x, blob.centroid.y), cv::FONT_HERSHEY_PLAIN, 1.0, color, 3);
-            cv::putText(debug->value, ss.str(), cv::Point(blob.centroid.x, blob.centroid.y), cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar::all(255), 1);
+                cv::putText(debug->value, ss.str(), cv::Point(blob.centroid.x, blob.centroid.y), cv::FONT_HERSHEY_PLAIN, 1.0, color, 3);
+                cv::putText(debug->value, ss.str(), cv::Point(blob.centroid.x, blob.centroid.y), cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar::all(255), 1);
+            }
         }
-
         output_debug_->publish(debug);
     }
 
