@@ -26,7 +26,25 @@ void Flip::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
-    cv::flip(in->value, out->value, mode_);
+
+    switch(mode_) {
+    case -1:
+    case 0:
+    case 1:
+        cv::flip(in->value, out->value, mode_);
+        break;
+
+    case 2: // +90
+        cv::transpose(in->value, out->value);
+        cv::flip(out->value, out->value, 0);
+        break;
+
+    case 3: // -90
+        cv::transpose(in->value, out->value);
+        cv::flip(out->value, out->value, 1);
+        break;
+
+    }
     output_->publish(out);
 }
 
@@ -41,6 +59,8 @@ void Flip::setupParameters()
     std::map<std::string, int> types = boost::assign::map_list_of
             ("v", 0)
             ("h", 1)
+            ("+90", 2)
+            ("-90", 3)
             ("v+h", -1);
     addParameter(param::ParameterFactory::declareParameterSet("type", types, -1),
                  boost::bind(&Flip::update, this));
