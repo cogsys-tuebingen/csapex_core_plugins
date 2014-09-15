@@ -41,7 +41,7 @@ void RenderROIs::process()
     int thickness = readParameter<int>("thickness");
     bool force_color = readParameter<bool>("force color");
 
-    if(!img->hasChannels(1, CV_8U)) {
+    if(img->hasChannels(1, CV_8U)) {
         cv::cvtColor(img->value, out->value, CV_GRAY2BGR);
         out->setEncoding(enc::bgr);
     } else {
