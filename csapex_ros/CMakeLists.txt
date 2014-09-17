@@ -41,7 +41,7 @@ add_library(csapex_ros
 )
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(csapex_ros
+target_link_libraries(csapex_ros csapex_ros_core
   ${catkin_LIBRARIES}
 )
 
