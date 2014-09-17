@@ -90,6 +90,10 @@ private:
         virtual bool canConnectTo(const ConnectionType* other_side) const
         {
             const Self* vec = dynamic_cast<const Self*> (other_side);
+            const VectorMessage* vec_deprecated =  dynamic_cast<const VectorMessage*> (other_side);
+            if(vec_deprecated) {
+                return false;
+            }
             if(vec != 0) {
                 return true;
             } else {
