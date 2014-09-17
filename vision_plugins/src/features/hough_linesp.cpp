@@ -7,6 +7,10 @@
 #include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex_core_plugins/vector_message.h>
+#include <csapex/model/node_modifier.h>
+
+
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -36,7 +40,8 @@ void HoughLinesP::process()
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr));
     cv::cvtColor(in->value, out->value, CV_GRAY2BGR);
 
-    std::vector<cv::Vec4i> lines;
+    boost::shared_ptr< std::vector<cv::Vec4i> > lines_ptr(new std::vector<cv::Vec4i>);
+    std::vector<cv::Vec4i>& lines = *lines_ptr;
     cv::HoughLinesP(in->value, lines, rho_, theta_/180, threshold_, min_line_length_, max_line_gap_);
 
     for( size_t i = 0; i < lines.size(); i++ ) {
@@ -44,12 +49,14 @@ void HoughLinesP::process()
                 cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0,0,255), 3, 8 );
     }
 
+    output_vector_->publishIntegral(lines_ptr);
     output_->publish(out);
 }
 
 void HoughLinesP::setup()
 {
     CornerLineDetection::setup();
+    output_vector_ = modifier_->addOutput<cv::Vec4i>  ("lines saved in vector");
     update();
 }
 

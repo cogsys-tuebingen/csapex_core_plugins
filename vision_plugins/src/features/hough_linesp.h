@@ -22,6 +22,9 @@ protected:
     int    threshold_;
     double min_line_length_;
     double max_line_gap_;
+
+private:
+    csapex::Output* output_vector_;
 };
 }
 #endif // HOUGH_LINESP_H
