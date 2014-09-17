@@ -38,8 +38,8 @@ struct ConvertScan
 
     static connection_types::ScanMessage::Ptr ros2apex(const sensor_msgs::LaserScan::ConstPtr &ros_msg) {
         connection_types::ScanMessage::Ptr out(new connection_types::ScanMessage);
-        copy(*ros_msg, out->value);
         out->value = lib_laser_processing::Scan(ros_msg->ranges, ros_msg->angle_min, ros_msg->angle_increment);
+        copy(*ros_msg, out->value);
         out->value.header.stamp_nsec = ros_msg->header.stamp.toNSec();
         return out;
     }
