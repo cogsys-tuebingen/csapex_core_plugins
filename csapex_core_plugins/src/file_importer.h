@@ -29,6 +29,7 @@ public:
 
 private:
     void changeMode();
+    void updateProvider();
 
 private:
     MessageProvider::Ptr provider_;

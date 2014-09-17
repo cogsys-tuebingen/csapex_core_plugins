@@ -17,6 +17,7 @@ bool RosMessageConversion::canHandle(const ros::master::TopicInfo &topic)
 
 void RosMessageConversion::doRegisterConversion(const std::string& apex_type, const std::string& ros_type, Convertor::Ptr c)
 {
+    ros_types_.push_back(ros_type);
     converters_[ros_type] = c;
     converters_inv_[apex_type] = c;
 }
@@ -44,7 +45,15 @@ void RosMessageConversion::publish(ros::Publisher &pub, ConnectionType::Ptr msg)
     it->second->publish(pub, msg);
 }
 
+connection_types::Message::Ptr RosMessageConversion::instantiate(const rosbag::MessageInstance &source)
+{
+    return converters_[source.getDataType()]->instantiate(source);
+}
 
+//std::vector<std::string> RosMessageConversion::getRegisteredRosTypes()
+//{
+//    return ros_types_;
+//}
 
 void Convertor::publish_apex(Output *output, ConnectionType::Ptr msg)
 {

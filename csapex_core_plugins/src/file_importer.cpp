@@ -93,7 +93,7 @@ bool FileImporter::doImport(const QString& _path)
     provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
     provider_->load(path.toStdString());
 
-    setTemporaryParameters(provider_->getParameters());
+    setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));
 
     return provider_.get();
 }
@@ -112,6 +112,11 @@ void FileImporter::setup()
 void FileImporter::process()
 {
 
+}
+
+void FileImporter::updateProvider()
+{
+    provider_->parameterChanged();
 }
 
 void FileImporter::import()

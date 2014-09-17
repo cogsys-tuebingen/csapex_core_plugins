@@ -15,6 +15,7 @@
 #include <ros/subscriber.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
+#include <rosbag/view.h>
 
 namespace csapex
 {
@@ -35,6 +36,7 @@ public:
     virtual ros::Publisher advertise(const std::string& topic,  int queue, bool latch = false) = 0;
 
     virtual void publish(ros::Publisher& pub, ConnectionType::Ptr msg) = 0;
+    virtual connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source) = 0;
 
     virtual std::string rosType() = 0;
     virtual std::string apexType() = 0;
@@ -89,6 +91,10 @@ public:
         apex_msg->value.reset(new T(*ros_msg));
         publish_apex(output, apex_msg);
     }
+
+    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance&) {
+        throw std::logic_error("cannot call 'instantiate' on an IdentityConverter");
+    }
 };
 
 template <typename ROS, typename APEX, typename Converter>
@@ -136,6 +142,10 @@ public:
         typename APEX::Ptr apex_msg = Converter::ros2apex(ros_msg);
         publish_apex(output, apex_msg);
     }
+
+    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source) {
+        return Converter::ros2apex(source.instantiate<ROS>());
+    }
 };
 
 class RosMessageConversion : public Singleton<RosMessageConversion>
@@ -161,6 +171,12 @@ public:
     ros::Publisher advertise(ConnectionType::Ptr, const std::string& topic,  int queue, bool latch = false);
     void publish(ros::Publisher& pub, ConnectionType::Ptr msg);
 
+    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source);
+
+    std::vector<std::string> getRegisteredRosTypes() {
+        return ros_types_;
+    }
+
 private:
     void doRegisterConversion(const std::string &apex_type, const std::string &ros_type, Convertor::Ptr c);
 
@@ -174,6 +190,7 @@ private:
     }
 
 private:
+    std::vector<std::string> ros_types_;
     std::map<std::string, Convertor::Ptr> converters_;
     std::map<std::string, Convertor::Ptr> converters_inv_;
 };

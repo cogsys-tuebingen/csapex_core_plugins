@@ -4,7 +4,7 @@ project(csapex_ros)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins REQUIRED)
+find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins rosbag REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -24,11 +24,9 @@ add_library(csapex_ros_core
     src/ros_handler.cpp
     src/ros_message_conversion.cpp
 )
-
-
-csapex_moc_all(QT_MOC src/*.h include/csapex_ros/*.h)
-
-set(QT ${QT_SOURCES} ${QT_MOC})
+target_link_libraries(csapex_ros_core
+  ${catkin_LIBRARIES}
+)
 
 ## Declare a cpp library
 add_library(csapex_ros
@@ -37,7 +35,6 @@ add_library(csapex_ros
     src/import_ros.cpp
 
     src/bag_provider.cpp
-    ${QT_MOC}
 )
 
 ## Specify libraries to link a library or executable target against
