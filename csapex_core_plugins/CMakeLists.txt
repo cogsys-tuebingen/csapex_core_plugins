@@ -33,6 +33,7 @@ include_directories(include
 
 add_library(csapex_core_lib
     src/vector_message.cpp
+    src/point_message.cpp
     src/interactive_node.cpp
     src/collection_node.cpp
     ${QT_RESOURCES}
@@ -48,6 +49,7 @@ add_library(csapex_core_plugins
     src/double_buffer.cpp
     src/relay.cpp
     src/delay.cpp
+    src/holdable_buffer.cpp
     src/export_cout.cpp
     src/export_file.cpp
     src/file_importer.cpp
