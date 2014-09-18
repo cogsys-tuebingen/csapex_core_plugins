@@ -71,4 +71,9 @@
   <description>[DEBUG] Delays a message</description>
   <icon>:/buffer.png</icon>
 </class>
+<class type="csapex::HoldableBuffer" base_class_type="csapex::Node">
+  <tags>General, Buffer</tags>
+  <description>Buffer up to 50 message and hold state to publish one of the currently buffered.</description>
+  <icon>:/buffer.png</icon>
+</class>
 </library>
