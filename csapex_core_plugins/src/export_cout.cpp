@@ -31,7 +31,7 @@ void ExportCout::process()
 
     ainfo << "writing to cout: ";
 
-    YAML::Node node = MessageFactory::serializeMessage(msg);
+    YAML::Node node = MessageFactory::serializeMessage(*msg);
     ainfo << node;
     ainfo << std::endl;
 

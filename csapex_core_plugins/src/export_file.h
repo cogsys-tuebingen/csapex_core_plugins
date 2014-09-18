@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex/model/connection_type.h>
+#include <csapex_core_plugins/vector_message.h>
 
 /// SYSTEM
 #include <QMutex>
@@ -21,6 +22,9 @@ public:
 
 protected:
     void setExportPath();
+
+    void exportVector(const connection_types::VectorMessage::Ptr& vector);
+    void exportSingle(const ConnectionType::Ptr& msg);
 
 private:
     Input* connector_;

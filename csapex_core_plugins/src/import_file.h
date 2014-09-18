@@ -23,6 +23,7 @@ public:
 protected:
     void setImportPath();
     void setImportPrefix();
+    void changeMode();
 
 private:
     std::string prefix_;

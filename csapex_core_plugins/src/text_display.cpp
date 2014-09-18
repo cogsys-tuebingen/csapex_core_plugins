@@ -26,7 +26,7 @@ void TextDisplay::process()
     connection_types::Message::Ptr msg = connector_->getMessage<connection_types::Message>();
 
     std::stringstream ss;
-    ss << MessageFactory::serializeMessage(msg);
+    ss << MessageFactory::serializeMessage(*msg);
 
     display_request(ss.str());
 }

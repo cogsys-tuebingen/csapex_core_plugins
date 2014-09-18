@@ -56,8 +56,24 @@ void ExportFile::process()
         return;
     }
 
-    ConnectionType::Ptr msg = connector_->getMessage<ConnectionType>();
+    connection_types::VectorMessage::Ptr vector = connector_->getMessage<connection_types::VectorMessage>();
+    if(vector) {
+        exportVector(vector);
+    } else {
+        ConnectionType::Ptr msg = connector_->getMessage<ConnectionType>();
+        exportSingle(msg);
+    }
+}
 
+void ExportFile::exportVector(const connection_types::VectorMessage::Ptr& vector)
+{
+    for(std::size_t i = 0, total = vector->value.size(); i < total; ++i) {
+        exportSingle(vector->value[i]);
+    }
+}
+
+void ExportFile::exportSingle(const ConnectionType::Ptr& msg)
+{
     QDir dir(path_.c_str());
     if(!dir.exists()) {
         QDir().mkdir(path_.c_str());
@@ -68,7 +84,7 @@ void ExportFile::process()
 
     if(readParameter<bool>("yaml")) {
         std::string file = path_ + "/" + base_ + ss.str().c_str() + Settings::message_extension;
-        MessageFactory::writeMessage(file, msg);
+        MessageFactory::writeMessage(file, *msg);
     } else {
         msg->writeRaw(path_, ss.str());
     }

@@ -26,7 +26,7 @@ ConnectionType::Ptr CvMatMessage::clone() {
 
 void CvMatMessage::writeRaw(const std::string &path, const std::string &suffix) const
 {
-    std::string file = path + "/img" + suffix + ".jpg";
+    std::string file = path + "/img" + suffix + ".png";
     cv::imwrite(file, value);
 }
 

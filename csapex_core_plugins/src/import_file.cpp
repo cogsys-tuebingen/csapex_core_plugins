@@ -9,6 +9,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/core/settings.h>
 #include <csapex/msg/message_factory.h>
+#include <csapex/model/node_worker.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportFile, csapex::Node)
 
@@ -34,6 +35,18 @@ void ImportFile::setupParameters()
     addParameter(param::ParameterFactory::declareBool("loop",
                                                       param::ParameterDescription("When reaching the end of the directory, do a loop?"),
                                                       true));
+    param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("immediate", false);
+    addParameter(immediate, boost::bind(&ImportFile::changeMode, this));
+}
+
+
+void ImportFile::changeMode()
+{
+    if(readParameter<bool>("immediate")) {
+        getNodeWorker()->setTickFrequency(1000.0);
+    } else {
+        getNodeWorker()->setTickFrequency(NodeWorker::DEFAULT_FREQUENCY);
+    }
 }
 
 void ImportFile::setImportPrefix()

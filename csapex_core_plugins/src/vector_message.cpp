@@ -5,23 +5,26 @@
 #include <csapex/msg/message_traits.h>
 #include <csapex/utility/register_msg.h>
 
-CSAPEX_REGISTER_MESSAGE(csapex::connection_types::GenericVectorMessage)
+CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::GenericVectorMessage, g_instance_generic_vector_)
+CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::VectorMessage, g_instance_vector_)
 
 using namespace csapex;
 using namespace connection_types;
 
-GenericVectorMessage::GenericVectorMessage(ConnectionType::Ptr impl, const std::string& frame_id)
+const GenericVectorMessage::EntryInterface::Ptr GenericVectorMessage::EntryInterface::NullPtr;
+
+GenericVectorMessage::GenericVectorMessage(EntryInterface::Ptr impl, const std::string& frame_id)
     : Message ("Vector<?>", frame_id), impl(impl)
 {
 }
 
 ConnectionType::Ptr GenericVectorMessage::clone() {
-    Ptr new_msg(new GenericVectorMessage(impl->clone(), frame_id));
+    Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id));
     return new_msg;
 }
 
 ConnectionType::Ptr GenericVectorMessage::toType() {
-    Ptr new_msg(new GenericVectorMessage(connection_types::makeEmpty<AnyMessage>(), frame_id));
+    Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id));
     return new_msg;
 }
 
@@ -43,8 +46,7 @@ namespace YAML {
 Node convert<csapex::connection_types::GenericVectorMessage>::encode(const csapex::connection_types::GenericVectorMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
-//    rhs.impl->
-//    node["values"].push_back();
+    rhs.encode(node);
     return node;
 }
 
@@ -54,6 +56,7 @@ bool convert<csapex::connection_types::GenericVectorMessage>::decode(const Node&
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
+    rhs.decode(node);
     return true;
 }
 }
@@ -110,4 +113,37 @@ bool VectorMessage::acceptsConnectionFrom(const ConnectionType *other_side) cons
     } else {
         return other_side->acceptsConnectionFrom(this);
     }
+}
+
+
+/// YAML
+namespace YAML {
+Node convert<csapex::connection_types::VectorMessage>::encode(const csapex::connection_types::VectorMessage& rhs)
+{
+    Node node = convert<csapex::connection_types::Message>::encode(rhs);
+    node["values"] = rhs.value;
+    return node;
+}
+
+bool convert<csapex::connection_types::VectorMessage>::decode(const Node& node, csapex::connection_types::VectorMessage& rhs)
+{
+    if(!node.IsMap()) {
+        return false;
+    }
+    convert<csapex::connection_types::Message>::decode(node, rhs);
+    return true;
+}
+}
+
+namespace YAML {
+Node convert<csapex::ConnectionType>::encode(const csapex::ConnectionType& rhs)
+{
+    return MessageFactory::serializeMessage(rhs);
+}
+
+bool convert<csapex::ConnectionType>::decode(const Node& node, csapex::ConnectionType& rhs)
+{
+    rhs = *MessageFactory::deserializeMessage(node);
+    return true;
+}
 }
