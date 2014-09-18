@@ -58,6 +58,9 @@ void BagProvider::parameterChanged()
 
 void BagProvider::setTopic()
 {
+    if(!topic_param_->is<std::string>()) {
+        return;
+    }
     std::string topic = topic_param_->as<std::string>();
 
     view_ = new rosbag::View(bag, rosbag::TopicQuery(topic));
@@ -89,6 +92,7 @@ connection_types::Message::Ptr BagProvider::next()
     connection_types::Message::Ptr r;
 
     if(!initiated) {
+        setTopic();
         return r;
     }
 
