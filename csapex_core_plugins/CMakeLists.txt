@@ -48,6 +48,7 @@ add_library(csapex_core_plugins
     src/double_buffer.cpp
     src/relay.cpp
     src/delay.cpp
+    src/holdable_buffer.cpp
     src/export_cout.cpp
     src/export_file.cpp
     src/file_importer.cpp
