@@ -33,6 +33,7 @@ include_directories(include
 
 add_library(csapex_core_lib
     src/vector_message.cpp
+    src/point_message.cpp
     src/interactive_node.cpp
     src/collection_node.cpp
     ${QT_RESOURCES}
