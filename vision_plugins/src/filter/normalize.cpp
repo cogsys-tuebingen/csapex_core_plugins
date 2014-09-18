@@ -37,7 +37,8 @@ void Normalize::process()
     double  lower = readParameter<double>("lower bound scale");
     double  upper = readParameter<double>("upper bound scale");
 
-    cv::normalize(in->value,out->value, lower, upper, norm, -1,
+    in->value.copyTo(out->value);
+    cv::normalize(in->value, out->value, lower, upper, norm, -1,
                   mask.get() == NULL ? cv::noArray() : mask->value);
 
     output_->publish(out);
