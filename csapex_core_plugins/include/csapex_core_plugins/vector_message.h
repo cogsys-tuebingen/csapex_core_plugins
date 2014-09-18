@@ -19,6 +19,12 @@ struct VectorMessage : public Message
 
     ConnectionType::Ptr getSubType() const;
 
+    template <typename T>
+    static void registerType()
+    {
+        // not used for this type
+    }
+
 
     template <typename T>
     static VectorMessage::Ptr make()
@@ -54,8 +60,30 @@ private:
 struct GenericVectorMessage : public Message
 {
 private:
+
+    struct EntryInterface : public Message
+    {
+        typedef boost::shared_ptr< EntryInterface > Ptr;
+        static const Ptr NullPtr;
+
+        EntryInterface(const std::string& name)
+            : Message(name, "/")
+        {
+        }
+
+        virtual ConnectionType::Ptr clone()
+        {
+            return cloneEntry();
+        }
+
+        virtual EntryInterface::Ptr cloneEntry() = 0;
+
+        virtual void encode(YAML::Node& node) const = 0;
+        virtual void decode(const YAML::Node& node) = 0;
+    };
+
     template <typename T>
-    struct Implementation : public Message
+    struct Implementation : public EntryInterface
     {
     private:
         typedef Implementation<T> Self;
@@ -70,11 +98,12 @@ private:
         }
 
         Implementation()
-            : Message(std::string("std::vector<") + type2nameWithoutNamespace(typeid(T)) + ">", "/")
+            : EntryInterface(std::string("std::vector<") + type2nameWithoutNamespace(typeid(T)) + ">")
         {
+            BOOST_STATIC_ASSERT(!boost::is_same<T, void*>::value);
         }
 
-        virtual ConnectionType::Ptr clone()
+        virtual EntryInterface::Ptr cloneEntry()
         {
             Self::Ptr r(new Self);
             r->value = value;
@@ -107,6 +136,18 @@ private:
             return vec != 0;
         }
 
+        void encode(YAML::Node& node) const
+        {
+            node["value_type"] = type2name(typeid(T));
+            node["values"] = *value;
+        }
+
+        void decode(const YAML::Node& node)
+        {
+            value.reset(new std::vector<T>);
+            *value = node["values"].as< std::vector<T> >();
+        }
+
     public:
         boost::shared_ptr< std::vector<T> > value;
     };
@@ -137,15 +178,47 @@ public:
         typedef boost::shared_ptr<type const> ConstPtr;
     };
 
+    struct SupportedTypes {
+        static SupportedTypes& instance() {
+            static SupportedTypes i;
+            return i;
+        }
+        static EntryInterface::Ptr make(const std::string& type) {
+            return instance().map_.at(type)->cloneEntry();
+        }
+
+        template <typename T>
+        static void registerType()
+        {
+            std::string type = type2name(typeid(T));
+            std::map<std::string, EntryInterface::Ptr>& map = instance().map_;
+            if(map.find(type) == map.end()) {
+                std::cerr << "register " << type << " at map of size " << map.size() << std::endl;
+                map[type].reset(new Implementation<T>());
+            }
+        }
+
+    private:
+        std::map<std::string, EntryInterface::Ptr> map_;
+    };
+
+    template <typename T>
+    static void registerType()
+    {
+        SupportedTypes::registerType<T>();
+    }
+
     template <typename T>
     static GenericVectorMessage::Ptr make(typename boost::enable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
     {
+        registerType<T>();
         return GenericVectorMessage::Ptr(new GenericVectorMessage(MessageImplementation<T>::make(), "/"));
     }
 
     template <typename T>
     static GenericVectorMessage::Ptr make(typename boost::disable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
     {
+        registerType<T>();
         return GenericVectorMessage::Ptr(new GenericVectorMessage(Implementation<T>::make(), "/"));
     }
 
@@ -161,6 +234,19 @@ public:
         boost::dynamic_pointer_cast< Implementation<T> > (impl)->value = v;
     }
 
+    void encode(YAML::Node& node) const
+    {
+        impl->encode(node);
+    }
+
+    void decode(const YAML::Node& node)
+    {
+        std::string type = node["value_type"].as<std::string>();
+        impl = SupportedTypes::make(type);
+        assert(impl);
+        impl->decode(node);
+    }
+
 
     virtual ConnectionType::Ptr clone();
     virtual ConnectionType::Ptr toType();
@@ -169,10 +255,10 @@ public:
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
 
 private:
-    GenericVectorMessage(ConnectionType::Ptr impl, const std::string &frame_id);
+    GenericVectorMessage(EntryInterface::Ptr impl, const std::string &frame_id);
 
 private:
-    ConnectionType::Ptr impl;
+    EntryInterface::Ptr impl;
 
 };
 
@@ -186,7 +272,7 @@ struct type<GenericVectorMessage> {
 template <>
 inline boost::shared_ptr<GenericVectorMessage> makeEmpty<GenericVectorMessage>()
 {
-    return GenericVectorMessage::make<void*>();
+    return GenericVectorMessage::make<int>();
 }
 
 }
@@ -197,8 +283,19 @@ inline boost::shared_ptr<GenericVectorMessage> makeEmpty<GenericVectorMessage>()
 namespace YAML {
 template<>
 struct convert<csapex::connection_types::GenericVectorMessage> {
-  static Node encode(const csapex::connection_types::GenericVectorMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::GenericVectorMessage& rhs);
+    static Node encode(const csapex::connection_types::GenericVectorMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::GenericVectorMessage& rhs);
+};
+template<>
+struct convert<csapex::connection_types::VectorMessage> {
+    static Node encode(const csapex::connection_types::VectorMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::VectorMessage& rhs);
+};
+
+template<>
+struct convert<csapex::ConnectionType> {
+    static Node encode(const csapex::ConnectionType& rhs);
+    static bool decode(const Node& node, csapex::ConnectionType& rhs);
 };
 }
 
