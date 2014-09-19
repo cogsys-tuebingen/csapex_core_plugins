@@ -23,17 +23,10 @@ RenderHistogram::RenderHistogram() :
     height_(480),
     width_(640)
 {
-    addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
-                 boost::bind(&RenderHistogram::update, this));
-    addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
-                 boost::bind(&RenderHistogram::update, this));
-    addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
 }
 
 void RenderHistogram::process()
 {
-
-#warning "FIX ENCODING"
 
     HistogramMessage::Ptr in    = input_->getMessage<HistogramMessage>();
     HistogramMaximaMessage::Ptr maxima;
@@ -103,6 +96,15 @@ void RenderHistogram::process()
     }
 
     output_->publish(out);
+}
+
+void RenderHistogram::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
+                 boost::bind(&RenderHistogram::update, this));
+    addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
+                 boost::bind(&RenderHistogram::update, this));
+    addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
 }
 
 void RenderHistogram::setup()

@@ -27,16 +27,6 @@ Histogram::Histogram() :
     min_max_value_(std::make_pair<float, float>(std::numeric_limits<float>::max(),
                                                 std::numeric_limits<float>::min()))
 {
-    addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
-                 boost::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
-                 boost::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
-                 boost::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("min max range", false),
-                 boost::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("global min max", false),
-                 boost::bind(&Histogram::update, this));
 }
 
 void Histogram::process()
@@ -51,7 +41,6 @@ void Histogram::process()
     }
 
     int type = in->value.type() & 7;
-    std::vector<utils_vision::histogram::Range> ranges;
     std::vector<int>                            bins;
 
     if(min_max_ && type != last_type_)
@@ -123,18 +112,18 @@ void Histogram::process()
     }
 
     for(int i = 0 ; i < in->value.channels() ; ++i) {
-        ranges.push_back(range);
+        out->value.ranges.push_back(range);
         bins.push_back(bins_);
     }
 
     std::vector<cv::Mat> histograms;
     utils_vision::histogram::histogram
-            (in->value, histograms, mask, bins, ranges, uniform_, accumulate_);
+            (in->value, out->value.histograms, mask, bins, out->value.ranges, uniform_, accumulate_);
+
     for(std::vector<cv::Mat>::iterator it = histograms.begin() ; it != histograms.end() ; ++it) {
         out->value.histograms.push_back(*it);
     }
-    out->value.range     = range;
-    out->value.bin_range = (range.second - range.first) / (float) bins_;
+
     output_->publish(out);
 }
 
@@ -144,6 +133,20 @@ void Histogram::setup()
     mask_   = modifier_->addOptionalInput<CvMatMessage>("mask");
     output_ = modifier_->addOutput<HistogramMessage>("histograms");
     update();
+}
+
+void Histogram::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
+                 boost::bind(&Histogram::update, this));
+    addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
+                 boost::bind(&Histogram::update, this));
+    addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
+                 boost::bind(&Histogram::update, this));
+    addParameter(param::ParameterFactory::declareBool("min max range", false),
+                 boost::bind(&Histogram::update, this));
+    addParameter(param::ParameterFactory::declareBool("global min max", false),
+                 boost::bind(&Histogram::update, this));
 }
 
 void Histogram::update()

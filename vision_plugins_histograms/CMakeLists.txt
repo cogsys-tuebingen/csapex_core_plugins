@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(vision_plugins_histograms)
 
-find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_features utils_cv utils_viola_jones utils_vision REQUIRED)
+find_package(catkin COMPONENTS
+                    roscpp
+                    csapex
+                    csapex_vision
+                    csapex_vision_features
+                    csapex_ml
+                    utils_vision
+                    utils_viola_jones  REQUIRED)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
@@ -39,6 +46,7 @@ add_library(vision_plugins_histograms_msgs
     src/msg/histogram_container.cpp
     src/msg/histogram_maxima_msg.cpp
     src/msg/histogram_maxima_container.cpp
+    src/msg/feature_to_histogram.cpp
 )
 
 target_link_libraries(vision_plugins_histograms_msgs

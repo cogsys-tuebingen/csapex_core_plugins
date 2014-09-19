@@ -104,6 +104,7 @@ add_library(vision_plugins
 
     src/object_detection/hog_detector.cpp
     src/object_detection/hog_extractor.cpp
+    src/object_detection/local_patterns.cpp
 )
 
 target_link_libraries(vision_plugins

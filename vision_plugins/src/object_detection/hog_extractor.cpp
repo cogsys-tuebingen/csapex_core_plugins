@@ -98,7 +98,7 @@ void HOGExtractor::process()
                         gauss == 0.0 ? -1 : gauss,
                         gamma);
 
-    if(!in_rois_->hasMessage() && !in_rois_->hasMessage()) {
+    if(!in_rois_->hasMessage()) {
         if(value.rows < block_size_px)
             throw std::runtime_error("Image must have at least block height in px.");
         if(value.cols < block_size_px)
@@ -142,9 +142,6 @@ void HOGExtractor::process()
 
 
     //    /// BLOCK STEPS X * BLOCK STEPS Y * BINS * CELLS (WITHIN BLOCK)
-
-
-    //    out->value = cv::Mat(desc, true);
 
     out_->publish(out);
 }
