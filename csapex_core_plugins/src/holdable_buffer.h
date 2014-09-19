@@ -15,6 +15,7 @@ public:
 
     virtual void setup();
     virtual void process();
+    virtual void setupParameters();
 
 private:
     Input  *in_;

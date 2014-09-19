@@ -43,7 +43,7 @@ void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node)
         std::sort(keys.begin(), keys.end());
 
         for(std::vector<std::string>::iterator key = keys.begin(); key != keys.end(); ++key) {
-            ss << *key << ":\t";
+            ss << *key << ": ";
             convert(ss, node[*key]);
             ss << "<br />";
         }

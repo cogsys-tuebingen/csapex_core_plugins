@@ -20,10 +20,6 @@ HoldableBuffer::HoldableBuffer() :
     out_(NULL),
     buffer_(1)
 {
-    addParameter(param::ParameterFactory::declareRange("buffer size",1, 50, 1, 1));
-    addParameter(param::ParameterFactory::declareBool("hold", false));
-    addParameter(param::ParameterFactory::declareRange("out idx", 0, (int) buffer_.size() - 1, 0 , 1));
-    setParameterEnabled("out idx", false);
 }
 
 void HoldableBuffer::setup()
@@ -66,4 +62,12 @@ void HoldableBuffer::process()
     }
 
     out_->publish(out);
+}
+
+void HoldableBuffer::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("buffer size",1, 50, 1, 1));
+    addParameter(param::ParameterFactory::declareBool("hold", false));
+    addParameter(param::ParameterFactory::declareRange("out idx", 0, (int) buffer_.size() - 1, 0 , 1));
+    setParameterEnabled("out idx", false);
 }
