@@ -100,6 +100,7 @@ add_library(csapex_vision_plugin
     src/plugin/blur.cpp
     src/plugin/gaussian_blur.cpp
     src/plugin/bilateral.cpp
+    src/plugin/mean_dev.cpp
 )
 target_link_libraries(csapex_vision_plugin csapex_vision
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
