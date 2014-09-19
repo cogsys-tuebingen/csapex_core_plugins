@@ -46,7 +46,6 @@ add_library(vision_plugins
     src/filter_perspective.cpp
 
     src/filter_debayer.cpp
-    src/filter_local_patterns.cpp
     src/morphological.cpp
     src/vj_detector.cpp
     src/lk_tracking.cpp

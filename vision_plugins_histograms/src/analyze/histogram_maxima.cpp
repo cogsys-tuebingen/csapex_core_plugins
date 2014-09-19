@@ -7,7 +7,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <utils_cv/histogram.hpp>
+#include <utils_vision/utils/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <vision_plugins_histograms/histogram_maxima_msg.h>
 
@@ -39,13 +39,13 @@ void HistogramMaxima::process()
         int type = src.type() & 7;
         switch(type) {
         case CV_32F:
-            utils_cv::histogram::find_maxima1D<float>(src,
+            utils_vision::histogram::find_maxima1D<float>(src,
                                                       k,
                                                       thresh,
                                                       output->value.maxima.at(i));
             break;
         case CV_32S:
-            utils_cv::histogram::find_maxima1D<int>(src,
+            utils_vision::histogram::find_maxima1D<int>(src,
                                                     k,
                                                     thresh,
                                                     output->value.maxima.at(i));

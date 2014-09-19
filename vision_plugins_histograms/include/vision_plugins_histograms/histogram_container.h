@@ -3,11 +3,11 @@
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
-#include <utils_cv/histogram.hpp>
+#include <utils_vision/utils/histogram.hpp>
 
 struct HistogramContainer
 {
-    utils_cv::histogram::Range      range;
+    utils_vision::histogram::Range  range;
     float                           bin_range;
     std::vector<cv::Mat>            histograms;
 };
