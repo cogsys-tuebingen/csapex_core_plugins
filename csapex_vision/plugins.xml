@@ -49,6 +49,13 @@
   </description>
   <tags>Vision</tags>
 </class>
+<class type="csapex::MeanStdDev" base_class_type="csapex::Node">
+  <description>
+    Calculate mean and std deviation of matrix. The result will be
+    of the same encoding and could be seen as a 1x1 matrix of the same type.
+  </description>
+  <tags>Vision</tags>
+</class>
 <class type="csapex::GaussianBlur" base_class_type="csapex::Node">
   <description>
     Blur an image or a matrix applying a gaussian function.
