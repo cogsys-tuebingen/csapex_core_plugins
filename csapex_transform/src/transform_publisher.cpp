@@ -34,7 +34,6 @@ TransformPublisher::~TransformPublisher()
 
 void TransformPublisher::setupROS()
 {
-
 }
 
 void TransformPublisher::processROS()

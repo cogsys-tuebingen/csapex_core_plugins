@@ -36,6 +36,8 @@ private:
     Input* frame_in_to_;
     Input* time_in_;
 
+    bool init_;
+
     param::SetParameter::Ptr from_p;
     param::SetParameter::Ptr to_p;
 };

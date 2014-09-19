@@ -21,13 +21,13 @@ CSAPEX_REGISTER_CLASS(csapex::DynamicTransform, csapex::Node)
 using namespace csapex;
 
 DynamicTransform::DynamicTransform()
+    : init_(false)
 {
 }
 
 void DynamicTransform::setupParameters()
 {
     std::vector<std::string> topics;
-    topics.push_back("/");
     addParameter(param::ParameterFactory::declareParameterStringSet("from", topics), boost::bind(&DynamicTransform::update, this));
     addParameter(param::ParameterFactory::declareParameterStringSet("to", topics), boost::bind(&DynamicTransform::update, this));
 
@@ -40,6 +40,11 @@ void DynamicTransform::setupParameters()
 
 void DynamicTransform::process()
 {
+    if(!init_) {
+        refresh();
+        return;
+    }
+
     setError(false);
     bool update = false;
 
@@ -86,6 +91,11 @@ void DynamicTransform::tick()
 
 void DynamicTransform::publishTransform(const ros::Time& time)
 {
+    if(!init_) {
+        refresh();
+        return;
+    }
+
     tf::StampedTransform t;
 
     try {
@@ -120,8 +130,6 @@ void DynamicTransform::setup()
 
     output_ = modifier_->addOutput<connection_types::TransformMessage>("Transform");
     output_frame_ = modifier_->addOutput<connection_types::GenericValueMessage<std::string> >("Target Frame");
-
-    refresh();
 }
 
 
@@ -152,6 +160,8 @@ void DynamicTransform::refresh()
 
     from_p->setSet(frames);
     to_p->setSet(frames);
+
+    init_ = true;
 }
 
 void DynamicTransform::update()
