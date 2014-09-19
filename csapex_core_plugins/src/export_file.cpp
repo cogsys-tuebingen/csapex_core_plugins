@@ -56,11 +56,11 @@ void ExportFile::process()
         return;
     }
 
-    connection_types::VectorMessage::Ptr vector = connector_->getMessage<connection_types::VectorMessage>();
+    ConnectionType::Ptr msg = connector_->getMessage<ConnectionType>();
+    connection_types::VectorMessage::Ptr vector = boost::dynamic_pointer_cast<connection_types::VectorMessage>(msg);
     if(vector) {
         exportVector(vector);
     } else {
-        ConnectionType::Ptr msg = connector_->getMessage<ConnectionType>();
         exportSingle(msg);
     }
 }
