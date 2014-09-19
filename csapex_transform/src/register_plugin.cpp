@@ -27,4 +27,5 @@ void RegisterTransformPlugin::init(CsApexCore& core)
     Tag::createIfNotExists("Time");
 
     ROSHandler::instance().registerConnectionCallback(boost::bind(&Listener::start));
+    ROSHandler::instance().registerShutdownCallback(boost::bind(&Listener::stop));
 }

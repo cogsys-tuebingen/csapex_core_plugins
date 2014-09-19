@@ -27,6 +27,12 @@ void Listener::start()
     i->retries = 10;
 }
 
+void Listener::stop()
+{
+    Listener* i = Listener::raw_instance();
+    i->tfl.reset();
+}
+
 bool Listener::ok()
 {
     return init && tfl;

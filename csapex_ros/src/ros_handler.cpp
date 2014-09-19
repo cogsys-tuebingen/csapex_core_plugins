@@ -18,18 +18,25 @@ ROSHandler::ROSHandler(Settings& settings)
 ROSHandler::~ROSHandler()
 {
     stop();
-    ros::shutdown();
 }
 
 void ROSHandler::stop()
 {
-    if(spinner_) {
-        spinner_->stop();
-        spinner_.reset(static_cast<ros::AsyncSpinner*>(NULL));
+    BOOST_FOREACH (const boost::function<void()>& f, shutdown_callbacks_) {
+        f();
     }
-    if(nh_) {
-        nh_->shutdown();
-        nh_.reset((static_cast<ros::NodeHandle*>(NULL)));
+
+    if(ros::isStarted()) {
+        if(nh_) {
+            nh_.reset();
+        }
+        ros::requestShutdown();
+        ros::waitForShutdown();
+
+        if(spinner_) {
+            spinner_->stop();
+            spinner_.reset();
+        }
     }
 }
 
@@ -38,7 +45,6 @@ boost::shared_ptr<ros::NodeHandle> ROSHandler::nh()
     refresh();
     return nh_;
 }
-
 
 void ROSHandler::initHandle(bool try_only)
 {
@@ -54,12 +60,12 @@ void ROSHandler::initHandle(bool try_only)
 
     if(has_connection.result() && !nh_) {
         nh_.reset(new ros::NodeHandle("~"));
-        spinner_.reset(new ros::AsyncSpinner(2));
+        spinner_.reset(new ros::AsyncSpinner(1));
         spinner_->start();
 
         lock.unlock();
 
-        BOOST_FOREACH (const boost::function<void()>& f, callbacks_) {
+        BOOST_FOREACH (const boost::function<void()>& f, connection_callbacks_) {
             f();
         }
     }
@@ -96,7 +102,13 @@ void ROSHandler::registerConnectionCallback(boost::function<void ()> f)
     if(isConnected()) {
         f();
     }
-    callbacks_.push_back(f);
+    connection_callbacks_.push_back(f);
+}
+
+void ROSHandler::registerShutdownCallback(boost::function<void ()> f)
+{
+
+    shutdown_callbacks_.push_back(f);
 }
 
 

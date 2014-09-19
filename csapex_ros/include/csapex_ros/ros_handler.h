@@ -40,6 +40,7 @@ public:
     void refresh();
 
     void registerConnectionCallback(boost::function<void()>);
+    void registerShutdownCallback(boost::function<void()>);
 
 private:
     ROSHandler(Settings& settings);
@@ -56,7 +57,8 @@ private:
     QMutex has_connection_mutex;
     QFuture<bool> has_connection;
 
-    std::vector<boost::function<void()> > callbacks_;
+    std::vector<boost::function<void()> > connection_callbacks_;
+    std::vector<boost::function<void()> > shutdown_callbacks_;
 };
 
 }
