@@ -8,6 +8,7 @@
 #include <csapex/msg/message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/utility/yaml_node_builder.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportCin, csapex::Node)
 
@@ -68,10 +69,11 @@ void ImportCin::tick()
     buffer << unused;
 
     try {
-        YAML::Node doc;
-
         YAML::Parser parser(docstream);
-        while(getNextDocument(parser, doc)) {
+        YAML::NodeBuilder builder;
+        while(parser.HandleNextDocument(builder)) {
+            YAML::Node doc = builder.Root();
+
             ConnectionType::Ptr msg;
             try {
                 msg = MessageFactory::readYaml(doc);

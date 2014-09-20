@@ -45,13 +45,13 @@ protected:
             : width(300), height(300)
         {}
 
-        virtual void writeYaml(YAML::Emitter& out) const {
-            out << YAML::Key << "width" << YAML::Value << width;
-            out << YAML::Key << "height" << YAML::Value << height;
+        virtual void writeYaml(YAML::Node& out) const {
+            out["width"] = width;
+            out["height"] = height;
         }
         virtual void readYaml(const YAML::Node& node) {
-            node["width"] >> width;
-            node["height"] >> height;
+            width = node["width"].as<int>();
+            height = node["height"].as<int>();
         }
     };
 

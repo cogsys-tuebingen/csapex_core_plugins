@@ -206,9 +206,9 @@ void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr c
     double            max_dist    = readParameter<double>("max. distance");
     bool              interpolate = readParameter<bool>("interpolate");
 
-    if(thresholds->value.rows != cloud->height)
+    if(thresholds->value.rows != (int) cloud->height)
         throw std::runtime_error("Height of pointcloud and threshold matrix not matching!");
-    if(thresholds->value.cols != cloud->width)
+    if(thresholds->value.cols != (int) cloud->width)
         throw std::runtime_error("Width of pointcloud and threshold matrix not matching!");
     if(!thresholds->hasChannels(1, CV_8U))
         throw std::runtime_error("Threshold matrix type must be 'mono'!");

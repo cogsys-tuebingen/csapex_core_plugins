@@ -48,9 +48,6 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
 
     switch(e->type()) {
     case QEvent::KeyPress: {
-        QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e);
-
-        int key = ke->key();
         break;
     }
     case QEvent::GraphicsSceneMousePress:

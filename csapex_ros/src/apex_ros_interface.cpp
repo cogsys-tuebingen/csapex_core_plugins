@@ -9,6 +9,7 @@
 #include <csapex/model/graph.h>
 #include <csapex/model/node_state.h>
 #include <csapex/command/add_node.h>
+#include <csapex/msg/message_factory.h>
 
 /// SYSTEM
 #include <boost/regex.hpp>

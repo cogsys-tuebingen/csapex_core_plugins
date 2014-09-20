@@ -70,8 +70,7 @@ struct Import  {
         std::ofstream tmp(file.c_str());
 
         for(std::size_t i = 0; i < data.size(); ++i) {
-            std::string line;
-            data[i] >> line;
+            std::string line = data[i].as<std::string>();
             tmp << line << '\n';
         }
         tmp.flush();
@@ -143,8 +142,7 @@ bool convert<csapex::connection_types::PointCloudMessage>::decode(const Node& no
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
 
-    std::string type;
-    node["point_type"] >> type;
+    std::string type = node["point_type"].as<std::string>();
 
     Import converter(node, rhs.value, type);
     boost::mpl::for_each<connection_types::PointCloudPointTypes>( converter );

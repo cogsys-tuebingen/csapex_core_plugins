@@ -7,6 +7,7 @@
 
 /// SYSTEM
 #include <string>
+#include <boost/static_assert.hpp>
 
 namespace csapex {
 namespace connection_types {
@@ -100,7 +101,7 @@ private:
         Implementation()
             : EntryInterface(std::string("std::vector<") + type2nameWithoutNamespace(typeid(T)) + ">")
         {
-            BOOST_STATIC_ASSERT(!boost::is_same<T, void*>::value);
+            BOOST_STATIC_ASSERT((!boost::is_same<T, void*>::value));
         }
 
         virtual EntryInterface::Ptr cloneEntry()

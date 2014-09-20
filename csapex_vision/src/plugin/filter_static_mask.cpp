@@ -23,31 +23,28 @@ FilterStaticMask::~FilterStaticMask()
 {
 }
 
-void FilterStaticMask::State::writeYaml(YAML::Emitter& out) const {
-    out << YAML::Key << "rows" << YAML::Value << mask_.rows;
-    out << YAML::Key << "cols" << YAML::Value << mask_.cols;
+void FilterStaticMask::State::writeYaml(YAML::Node& out) const {
+    out["rows"] = mask_.rows;
+    out["cols"] = mask_.cols;
 
     apex_assert_hard(mask_.type() == CV_8UC1);
 
     QByteArray raw = qCompress(mask_.data, mask_.rows * mask_.cols);
-    out << YAML::Key << "rawdata" << YAML::Value << raw.toBase64().data();
+    out["rawdata"] = raw.toBase64().data();
  }
 
 void FilterStaticMask::State::readYaml(const YAML::Node& node) {
-    if(exists(node, "rawdata")){
-        int rows, cols;
-        node["rows"] >> rows;
-        node["cols"] >> cols;
+    if(node["rawdata"].IsDefined()){
+        int rows = node["rows"].as<int>();
+        int cols = node["cols"].as<int>();
 
-        std::string data;
-        node["rawdata"] >> data;
+        std::string data = node["rawdata"].as<std::string>();
         QByteArray raw = qUncompress(QByteArray::fromBase64(data.data()));
 
         cv::Mat(rows, cols, CV_8UC1, raw.data()).copyTo(mask_);
 
-    } else  if(exists(node, "mask")) {
-        std::string file;
-        node["mask"] >> file;
+    } else if(node["mask"].IsDefined()) {
+        std::string file = node["mask"].as<std::string>();
         mask_ = cv::imread(file, 0);
     }
 }
