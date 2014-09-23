@@ -61,6 +61,7 @@ add_library(csapex_core_plugins
     src/text_display_adapter.cpp
 
     src/say_text.cpp
+    src/text_convert.cpp
     src/register_core_plugins.cpp
     ${QT_RESOURCES}
     ${MOC_PLUG}
