@@ -275,7 +275,13 @@
   </class>
   <class type="vision_plugins::HOGExtractor" base_class_type="csapex::Node">
     <description>
-        Detect objects via hog.
+        Extract hog descriptor.
+    </description>
+    <tags>Vision</tags>
+  </class>
+  <class type="vision_plugins::GLCM" base_class_type="csapex::Node">
+    <description>
+        Calculate the grey-level co-occurrence matrix of a mono image.
     </description>
     <tags>Vision</tags>
   </class>

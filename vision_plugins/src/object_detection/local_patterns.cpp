@@ -14,9 +14,10 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
+
 #include <utils_vision/utils/local_patterns.hpp>
 
-
+/// SYSTEM
 #include <boost/lambda/lambda.hpp>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatterns, csapex::Node)
@@ -24,7 +25,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatterns, csapex::Node)
 using namespace csapex;
 using namespace vision_plugins;
 using namespace connection_types;
-
 
 namespace {
 inline void lbp(const cv::Mat &src,

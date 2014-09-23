@@ -45,9 +45,9 @@ void Resize::setup()
 
 void Resize::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareRange("size width", 10, 10000, 640, 1),
+    addParameter(param::ParameterFactory::declareRange("size width", 1, 10000, 640, 1),
                  boost::bind(&Resize::update, this));
-    addParameter(param::ParameterFactory::declareRange("size height", 10, 10000, 480, 1),
+    addParameter(param::ParameterFactory::declareRange("size height", 1, 10000, 480, 1),
                  boost::bind(&Resize::update, this));
 
     std::map<std::string, int> modes = boost::assign::map_list_of
