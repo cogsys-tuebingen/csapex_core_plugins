@@ -10,9 +10,15 @@
 #include <csapex/model/node_state.h>
 #include <csapex/command/add_node.h>
 #include <csapex/msg/message_factory.h>
+#include <csapex_ros/ros_message_conversion.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 /// SYSTEM
 #include <boost/regex.hpp>
+#include <std_msgs/Int32.h>
+#include <std_msgs/Bool.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Float64.h>
 
 CSAPEX_REGISTER_CLASS(csapex::APEXRosInterface, csapex::CorePlugin)
 
@@ -86,6 +92,25 @@ class RosIoHandler
 const boost::regex RosIoHandler::fmt("[a-zA-Z0-9_\\-/]+");
 }
 
+
+template <typename RosType, typename ApexType>
+struct ConvertIntegral
+{
+    static typename connection_types::GenericValueMessage<ApexType>::Ptr ros2apex(const typename RosType::ConstPtr &ros_msg) {
+        typename connection_types::GenericValueMessage<ApexType>::Ptr out(new connection_types::GenericValueMessage<ApexType>);
+        out->value = ros_msg->data;
+        return out;
+    }
+    static typename RosType::Ptr apex2ros(const typename connection_types::GenericValueMessage<ApexType>::Ptr& apex_msg) {
+        typename RosType::Ptr out(new RosType);
+        out->data = apex_msg->value;
+        return out;
+    }
+};
+
+
+
+
 APEXRosInterface::APEXRosInterface()
     : core_(NULL)
 {
@@ -105,6 +130,11 @@ void APEXRosInterface::init(CsApexCore &core)
     core_ = &core;
 
     ROSHandler::instance().registerConnectionCallback(boost::bind(&APEXRosInterface::registerCommandListener, this));
+
+    RosMessageConversion::registerConversion<std_msgs::Bool, connection_types::GenericValueMessage<bool>, ConvertIntegral<std_msgs::Bool, bool> >();
+    RosMessageConversion::registerConversion<std_msgs::Int32, connection_types::GenericValueMessage<int>, ConvertIntegral<std_msgs::Int32, int> >();
+    RosMessageConversion::registerConversion<std_msgs::Float64, connection_types::GenericValueMessage<double>, ConvertIntegral<std_msgs::Float64, double> >();
+    RosMessageConversion::registerConversion<std_msgs::String, connection_types::GenericValueMessage<std::string>, ConvertIntegral<std_msgs::String, std::string> >();
 }
 
 void APEXRosInterface::registerCommandListener()

@@ -30,9 +30,8 @@ void TextConvert::process()
 
     if(!text_msg->value.empty()) {
         int_msg->value = std::atoi(text_msg->value.c_str());
-    } /*else {
-        std::string text("empty");
-        int_msg->value = text;
-    }*/
+    } else {
+        int_msg->value = -1;
+    }
     output_->publish(int_msg);
 }
