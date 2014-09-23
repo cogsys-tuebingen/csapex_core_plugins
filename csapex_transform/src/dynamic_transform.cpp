@@ -98,11 +98,14 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
     tf::StampedTransform t;
 
+    std::string to = readParameter<std::string>("to");
+    std::string from = readParameter<std::string>("from");
+
     try {
         LockedListener l = Listener::getLocked();
 
         if(l.l) {
-            l.l->tfl->lookupTransform(readParameter<std::string>("to"), readParameter<std::string>("from"), time, t);
+            l.l->tfl->lookupTransform(to, from, time, t);
             setError(false);
         } else {
             return;
@@ -115,6 +118,8 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
     msg->value = t;
+    msg->frame_id = from;
+    msg->child_frame = to;
     output_->publish(msg);
 
     connection_types::GenericValueMessage<std::string>::Ptr frame(new connection_types::GenericValueMessage<std::string>);
