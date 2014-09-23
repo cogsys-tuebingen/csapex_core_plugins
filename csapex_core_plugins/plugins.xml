@@ -36,6 +36,10 @@
   <description>Converts a text into an audio signal</description>
   <tags>General, Output</tags>
 </class>
+<class type="csapex::TextConvert" base_class_type="csapex::Node">
+  <description>Converts a text into int value</description>
+  <tags>General</tags>
+</class>
 <class type="csapex::ExportCout" base_class_type="csapex::Node">
   <description>Exports messages via std::cout</description>
   <icon>:/terminal.png</icon>
