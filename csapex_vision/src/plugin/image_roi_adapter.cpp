@@ -23,14 +23,13 @@ CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 ImageRoiAdapter::ImageRoiAdapter(ImageRoi *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(node, widget_ctrl),
       wrapped_(node),
-      last_size_(-1,-1),
-      last_roi_size_(-1,-1),
       pixmap_(NULL),
       view_(new QGraphicsView),
       empty(32, 32, QImage::Format_RGB16),
       painter(&empty),
       middle_button_down_(false),
-      left_button_down_(false)
+      left_button_down_(false),
+      loaded_(false)
 {
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
@@ -157,45 +156,49 @@ void ImageRoiAdapter::setParameterState(Memento::Ptr memento)
     state = *m;
 
     view_->setFixedSize(QSize(state.width, state.height));
+    rect_->setPos(state.scene_pos);
+    loaded_ = true;
 }
 
 void ImageRoiAdapter::display(QSharedPointer<QImage> img)
 {
     QPixmap pixmap = QPixmap::fromImage(*img);
-    roi_rect_.setWidth(wrapped_->readParameter<int>("roi width"));
-    roi_rect_.setHeight(wrapped_->readParameter<int>("roi height"));
+    state.roi_rect.setWidth(wrapped_->readParameter<int>("roi width"));
+    state.roi_rect.setHeight(wrapped_->readParameter<int>("roi height"));
 
-    QSize roi_size(roi_rect_.width(), roi_rect_.height());
-    bool change = last_size_ != img->size() || last_roi_size_ != roi_size;
-    if(change) {
+    QSize roi_size(state.roi_rect.width(), state.roi_rect.height());
+    bool change = state.last_size != img->size() ||
+                  state.last_roi_size != roi_size;
+
+    if(change || loaded_) {
         view_->scene()->setSceneRect(img->rect());
         view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
-        roi_rect_.setX(0);
-        roi_rect_.setY(0);
+        loaded_ = false;
     }
 
     if(pixmap_ != NULL)
         pixmap_->setPixmap(pixmap);
 
-    rect_->setRect(roi_rect_);
+    rect_->setRect(state.roi_rect);
     rect_->setZValue(pixmap_->zValue() + 0.1);
 
     if(change)
         submit();
 
     view_->scene()->update();
-    last_size_     = img->size();
-    last_roi_size_ = roi_size;
 
+    state.last_size     = img->size();
+    state.last_roi_size = roi_size;
+    state.scene_pos     = rect_->scenePos();
 }
 
 void ImageRoiAdapter::fitInView()
 {
-    if(last_size_.isNull()) {
+    if(state.last_size.isNull()) {
         return;
     }
-    state.width  = last_size_.width();
-    state.height = last_size_.height();
+    state.width  = state.last_size.width();
+    state.height = state.last_size.height();
     view_->setFixedSize(QSize(state.width, state.height));
     view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
 }

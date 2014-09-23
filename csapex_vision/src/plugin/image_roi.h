@@ -32,8 +32,8 @@ private:
     void drop();
 
 protected:
-    Input*  input_;
-    Output* output_;
+    Input*        input_;
+    Output*       output_;
     cv::Size      last_mat_size_;
 
     connection_types::RoiMessage::Ptr result_;
