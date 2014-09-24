@@ -106,6 +106,7 @@ add_library(vision_plugins
     src/object_detection/hog_extractor.cpp
     src/object_detection/local_patterns.cpp
     src/object_detection/glcm.cpp
+
 )
 
 target_link_libraries(vision_plugins
