@@ -1,0 +1,9 @@
+<library path="libvision_plugins_conversion">
+ <class type="vision_plugins::FeatureToHistogram" base_class_type="csapex::Node">
+  <description>
+      Convert a features message to a histogram. This will be useful for
+      features based on histograms other pattern recognition.
+  </description>
+  <tags>Vision, Histogram</tags>
+ </class>
+</library>

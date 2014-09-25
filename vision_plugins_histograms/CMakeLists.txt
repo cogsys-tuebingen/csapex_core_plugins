@@ -46,7 +46,6 @@ add_library(vision_plugins_histograms_msgs
     src/msg/histogram_container.cpp
     src/msg/histogram_maxima_msg.cpp
     src/msg/histogram_maxima_container.cpp
-    src/msg/feature_to_histogram.cpp
 )
 
 target_link_libraries(vision_plugins_histograms_msgs
@@ -68,11 +67,9 @@ target_link_libraries(vision_plugins_histograms
   ${catkin_LIBRARIES} 
 )
 
-
-
-#
-# INSTALL
-#
+#############
+## Install ##
+#############
 
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
