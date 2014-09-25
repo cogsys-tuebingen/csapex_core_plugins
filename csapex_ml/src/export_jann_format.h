@@ -26,7 +26,8 @@ protected:
     void doExport();
 
 private:
-    Input*                                              connector_;
+    Input*                                              in_;
+    Input*                                              in_vector_;
 
     bool                                                save_;
     bool                                                clear_;

@@ -5,8 +5,9 @@
 <class type="csapex::DecisionTreeTrainer" base_class_type="csapex::Node">
   <description>Train a decision tree</description>
 </class>
-</library>
 <class type="csapex::ExportJANNFormat" base_class_type="csapex::Node">
   <description>Exports messages as JANN format if possible.</description>
   <tags>General, Output</tags>
 </class>
+</library>
+

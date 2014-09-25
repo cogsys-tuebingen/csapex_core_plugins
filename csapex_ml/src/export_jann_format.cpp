@@ -35,19 +35,18 @@ void ExportJANNFormat::setupParameters()
                                                       param::ParameterDescription("Directory to write messages to"),
                                                       "", ""));
 
-    addParameter(param::ParameterFactory::declareBool("relabel", false));
-
     addParameter(param::ParameterFactory::declareTrigger("save",
                                                          param::ParameterDescription("Save the obtained data!")),
-                                                         boost::bind(&ExportJANNFormat::requestSave, this));
+                 boost::bind(&ExportJANNFormat::requestSave, this));
     addParameter(param::ParameterFactory::declareTrigger("clear",
                                                          param::ParameterDescription("Clear buffered data!")),
-                                                         boost::bind(&ExportJANNFormat::requestClear, this));
+                 boost::bind(&ExportJANNFormat::requestClear, this));
 }
 
 void ExportJANNFormat::setup()
 {
-    connector_ = modifier_->addInput<FeaturesMessage>("Feature");
+    in_        = modifier_->addOptionalInput<FeaturesMessage>("Feature");
+    in_vector_ = modifier_->addOptionalInput<GenericVectorMessage, FeaturesMessage>("Features");
 }
 
 void ExportJANNFormat::process()
@@ -63,8 +62,21 @@ void ExportJANNFormat::process()
         save_ = false;
     }
 
-    FeaturesMessage::Ptr msg = connector_->getMessage<FeaturesMessage>();
-    msgs_.push_back(msg);
+    if(in_->hasMessage()) {
+        FeaturesMessage::Ptr msg = in_->getMessage<FeaturesMessage>();
+        msgs_.push_back(msg);
+    }
+
+    if(in_vector_->hasMessage()) {
+        boost::shared_ptr<std::vector<FeaturesMessage::Ptr> const> msgs =
+                   in_vector_->getMessage<GenericVectorMessage, FeaturesMessage::Ptr>();
+        for(std::vector<FeaturesMessage::Ptr>::const_iterator
+            it = msgs->begin() ;
+            it != msgs->end();
+            ++it) {
+            msgs_.push_back(*it);
+        }
+    }
 }
 
 namespace {
@@ -103,6 +115,7 @@ inline void labelMap(const std::vector<FeaturesMessage::Ptr> &msgs,
         ++it ) {
         it->second.resize(class_count, 0);
         it->second.at(current_idx) = 1;
+        ++current_idx;
     }
 }
 }
@@ -110,8 +123,9 @@ inline void labelMap(const std::vector<FeaturesMessage::Ptr> &msgs,
 
 void ExportJANNFormat::doExport()
 {
-    std::string path = readParameter<std::string>("path");
-    std::ofstream out(path.c_str());
+    std::string     path = readParameter<std::string>("path");
+    std::ofstream   out_file(path.c_str());
+    std::ofstream   out_mapping((path + ".mapping").c_str());
 
     std::map<int, std::vector<int> > labels;
     labelMap(msgs_, labels);
@@ -120,11 +134,20 @@ void ExportJANNFormat::doExport()
         it  = msgs_.begin() ;
         it != msgs_.end() ;
         ++it) {
-        exportVector<float>((*it)->value, out);
-        exportVector<int>(labels.at((*it)->classification), out);
+        exportVector<float>((*it)->value, out_file);
+        exportVector<int>(labels.at((*it)->classification), out_file);
     }
 
-    out.close();
+    for(std::map<int, std::vector<int> >::iterator
+        it  = labels.begin() ;
+        it != labels.end() ;
+        ++it) {
+        out_mapping << it->first << " : ";
+        exportVector<int>(it->second, out_mapping);
+    }
+
+    out_mapping.close();
+    out_file.close();
 }
 
 void ExportJANNFormat::requestSave()
