@@ -150,6 +150,9 @@ void DynamicTransform::refresh()
 {
     std::vector<std::string> frames;
 
+    std::string to = to_p->as<std::string>();
+    std::string from = from_p->as<std::string>();
+
     LockedListener l = Listener::getLocked();
     if(l.l) {
         std::vector<std::string> f;
@@ -161,6 +164,13 @@ void DynamicTransform::refresh()
 
     } else {
         return;
+    }
+
+    if(std::find(frames.begin(), frames.end(), from) == frames.end()) {
+        frames.push_back(from);
+    }
+    if(std::find(frames.begin(), frames.end(), to) == frames.end()) {
+        frames.push_back(to);
     }
 
     from_p->setSet(frames);
