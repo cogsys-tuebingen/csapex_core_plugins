@@ -37,6 +37,7 @@ include_directories(
 
 add_library(vision_plugins_conversion
     src/feature_to_histogram.cpp
+    src/to_feature.cpp
 )
 
 target_link_libraries(vision_plugins_conversion
