@@ -23,31 +23,26 @@ using namespace csapex;
 using namespace connection_types;
 
 ExportJANNFormat::ExportJANNFormat() :
-    last_classes_(0),
-    last_id_(-1),
-    suffix_(0)
+    save_(false),
+    clear_(false)
 {
-    suffix_ = 0;
 }
 
 void ExportJANNFormat::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareRange("classes",
-                                                       param::ParameterDescription("Amount of classes that are available."),
-                                                       1, 255, 1, 1));
 
-    addParameter(param::ParameterFactory::declareRange("current id",
-                                                       param::ParameterDescription("Class of the amount of possible classes."),
-                                                       1, 255, 1, 1));
+    addParameter(param::ParameterFactory::declarePath("path",
+                                                      param::ParameterDescription("Directory to write messages to"),
+                                                      "", ""));
 
+    addParameter(param::ParameterFactory::declareBool("relabel", false));
 
-    addParameter(param::ParameterFactory::declareText("filename",
-                                                      param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
-                                                      "msg"), boost::bind(&ExportJANNFormat::setExportPath, this));
-
-    addParameter(param::ParameterFactory::declareDirectoryOutputPath("path",
-                                                                     param::ParameterDescription("Directory to write messages to"),
-                                                                     "", ""), boost::bind(&ExportJANNFormat::setExportPath, this));
+    addParameter(param::ParameterFactory::declareTrigger("save",
+                                                         param::ParameterDescription("Save the obtained data!")),
+                                                         boost::bind(&ExportJANNFormat::requestSave, this));
+    addParameter(param::ParameterFactory::declareTrigger("clear",
+                                                         param::ParameterDescription("Clear buffered data!")),
+                                                         boost::bind(&ExportJANNFormat::requestClear, this));
 }
 
 void ExportJANNFormat::setup()
@@ -55,37 +50,21 @@ void ExportJANNFormat::setup()
     connector_ = modifier_->addInput<FeaturesMessage>("Feature");
 }
 
-void ExportJANNFormat::setExportPath()
-{
-    path_ = readParameter<std::string>("path");
-    base_ = readParameter<std::string>("filename");
-}
-
 void ExportJANNFormat::process()
 {
-    int classes     = readParameter<int>("classes");
-    int current_id  = readParameter<int>("current id");
-
-    if(classes != last_classes_) {
-        id_label_.resize(classes, 0);
-        last_classes_ = classes;
-        param::RangeParameter::Ptr r =
-                boost::dynamic_pointer_cast<param::RangeParameter>(getParameter("current id"));
-        r->setMax(classes - 1);
+    if(clear_) {
+        msgs_.clear();
+        clear_ = false;
     }
 
-    if(current_id != last_id_) {
-        id_label_.at(last_id_)   = 0;
-        id_label_.at(current_id) = 1;
-        last_id_ = current_id;
-    }
-
-    if(path_.empty()) {
-        return;
+    if(save_) {
+        doExport();
+        msgs_.clear();
+        save_ = false;
     }
 
     FeaturesMessage::Ptr msg = connector_->getMessage<FeaturesMessage>();
-    doExport(msg);
+    msgs_.push_back(msg);
 }
 
 namespace {
@@ -102,36 +81,58 @@ inline void exportVector(const std::vector<T> &vector,
     out << std::endl;
 }
 
-inline void exportLabel(const std::vector<int> &label,
-                        std::ofstream &out)
+inline void labelMap(const std::vector<FeaturesMessage::Ptr> &msgs,
+                     std::map<int, std::vector<int> > &labels)
 {
-    for(std::vector<int>::const_iterator
-        it = label.begin() ;
-        it != label.end() ;
+    for(std::vector<FeaturesMessage::Ptr>::const_iterator
+        it = msgs.begin() ;
+        it != msgs.end() ;
         ++it) {
-        out << " " << *it;
+
+        int class_id = (*it)->classification;
+        if(labels.find(class_id) == labels.end()) {
+            labels.insert(std::make_pair(class_id, std::vector<int>()));
+        }
     }
-    out << std::endl;
+
+    int class_count = labels.size();
+    int current_idx = 0;
+    for(std::map<int, std::vector<int> >::iterator
+        it  = labels.begin() ;
+        it != labels.end() ;
+        ++it ) {
+        it->second.resize(class_count, 0);
+        it->second.at(current_idx) = 1;
+    }
 }
 }
 
 
-void ExportJANNFormat::doExport(const FeaturesMessage::Ptr& msg)
+void ExportJANNFormat::doExport()
 {
-    QDir dir(path_.c_str());
-    if(!dir.exists()) {
-        QDir().mkdir(path_.c_str());
+    std::string path = readParameter<std::string>("path");
+    std::ofstream out(path.c_str());
+
+    std::map<int, std::vector<int> > labels;
+    labelMap(msgs_, labels);
+
+    for(std::vector<FeaturesMessage::Ptr>::iterator
+        it  = msgs_.begin() ;
+        it != msgs_.end() ;
+        ++it) {
+        exportVector<float>((*it)->value, out);
+        exportVector<int>(labels.at((*it)->classification), out);
     }
 
-    std::stringstream ss;
-    ss << "_" << suffix_;
-
-    std::string file = path_ + "/" + base_ + ss.str().c_str() + Settings::message_extension;
-
-    std::ofstream out(file.c_str());
-      exportVector<float>(msg->value, out);
-      exportLabel(id_label_, out);
     out.close();
+}
 
-    ++suffix_;
+void ExportJANNFormat::requestSave()
+{
+    save_ = true;
+}
+
+void ExportJANNFormat::requestClear()
+{
+    clear_ = true;
 }
