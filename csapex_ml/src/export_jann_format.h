@@ -23,20 +23,20 @@ public:
 protected:
     void setExportPath();
 
-    void doExport(const connection_types::FeaturesMessage::Ptr& msg);
+    void doExport();
 
 private:
-    Input*              connector_;
+    Input*                                              in_;
+    Input*                                              in_vector_;
 
-    int                 last_classes_;
-    int                 last_id_;
-    std::vector<int>    id_label_;
+    bool                                                save_;
+    bool                                                clear_;
 
-    std::string path_;
-    std::string base_;
-    QMutex      mutex_;
+    std::vector<connection_types::FeaturesMessage::Ptr> msgs_;
 
-    int         suffix_;
+    void requestSave();
+    void requestClear();
+
 };
 }
 
