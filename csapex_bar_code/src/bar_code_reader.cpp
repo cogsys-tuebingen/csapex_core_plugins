@@ -116,8 +116,12 @@ void BarCodeReader::process()
         data_ = data;
     }
 
-    if(!published && republish) {
-        out_str->publishIntegral(data_);
+    if(!published) {
+        if(republish) {
+            out_str->publishIntegral(data_);
+        } else {
+            out_str->publishIntegral(std::string(""));
+        }
     }
 
     out_roi->publish(out);
