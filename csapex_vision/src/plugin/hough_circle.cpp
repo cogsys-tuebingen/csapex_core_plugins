@@ -18,19 +18,19 @@ using namespace csapex::connection_types;
 
 HoughCircle::HoughCircle()
 {
-    std::vector< std::pair<std::string, int> > methods;
-    methods.push_back(std::make_pair("CV_HOUGH_GRADIENT", (int) CV_HOUGH_GRADIENT));
-    methods.push_back(std::make_pair("CV_HOUGH_STANDARD", (int) CV_HOUGH_STANDARD));
-    methods.push_back(std::make_pair("CV_HOUGH_PROBABILISTIC", (int) CV_HOUGH_PROBABILISTIC));
-    methods.push_back(std::make_pair("CV_HOUGH_MULTI_SCALE", (int) CV_HOUGH_MULTI_SCALE));
-    addParameter(param::ParameterFactory::declareParameterSet("method", methods));
+    std::map<std::string, int> methods;
+    methods["CV_HOUGH_GRADIENT"] = (int) CV_HOUGH_GRADIENT;
+    methods["CV_HOUGH_STANDARD"] = (int) CV_HOUGH_STANDARD;
+    methods["CV_HOUGH_PROBABILISTIC"] = (int) CV_HOUGH_PROBABILISTIC;
+    methods["CV_HOUGH_MULTI_SCALE"] = (int) CV_HOUGH_MULTI_SCALE;
+    addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_HOUGH_STANDARD));
 
-    addParameter(param::ParameterFactory::declare<double>("dp", 0.01, 10.00, 1.0, 0.01));
-    addParameter(param::ParameterFactory::declare<double>("minDist", 0.0, 800.0, 100.0, 0.1));
-    addParameter(param::ParameterFactory::declare<double>("param1", 0.00, 500.0, 200.0, 0.1));
-    addParameter(param::ParameterFactory::declare<double>("param2", 0.00, 500.0, 100.0, 0.1));
-    addParameter(param::ParameterFactory::declare<int>("minRadius", 0, 100, 0, 1));
-    addParameter(param::ParameterFactory::declare<int>("maxRadius", 0, 100, 0, 1));
+    addParameter(param::ParameterFactory::declareRange<double>("dp", 0.01, 10.00, 1.0, 0.01));
+    addParameter(param::ParameterFactory::declareRange<double>("minDist", 0.0, 800.0, 100.0, 0.1));
+    addParameter(param::ParameterFactory::declareRange<double>("param1", 0.00, 500.0, 200.0, 0.1));
+    addParameter(param::ParameterFactory::declareRange<double>("param2", 0.00, 500.0, 100.0, 0.1));
+    addParameter(param::ParameterFactory::declareRange<int>("minRadius", 0, 100, 0, 1));
+    addParameter(param::ParameterFactory::declareRange<int>("maxRadius", 0, 100, 0, 1));
 }
 
 void HoughCircle::setup()

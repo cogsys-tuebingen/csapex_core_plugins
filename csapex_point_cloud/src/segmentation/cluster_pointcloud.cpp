@@ -39,9 +39,9 @@ using namespace std;
 ClusterPointcloud::ClusterPointcloud()
 {
 
-    addParameter(param::ParameterFactory::declare("ClusterTolerance", 0.001, 2.0, 0.02, 0.001));
-    addParameter(param::ParameterFactory::declare("MinClusterSize", 10, 20000, 100, 200));
-    addParameter(param::ParameterFactory::declare("MaxClusterSize", 10, 100000, 25000, 1000));
+    addParameter(param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001));
+    addParameter(param::ParameterFactory::declareRange("MinClusterSize", 10, 20000, 100, 200));
+    addParameter(param::ParameterFactory::declareRange("MaxClusterSize", 10, 100000, 25000, 1000));
 }
 
 void ClusterPointcloud::process()

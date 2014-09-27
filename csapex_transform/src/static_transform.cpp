@@ -23,12 +23,12 @@ StaticTransform::StaticTransform()
     double p = 3.2;
     double d = 5.0;
 
-    addParameter(param::ParameterFactory::declare("roll", -p, p, 0.0, 0.001));
-    addParameter(param::ParameterFactory::declare("pitch", -p, p, 0.0, 0.001));
-    addParameter(param::ParameterFactory::declare("yaw", -p, p, 0.0, 0.001));
-    addParameter(param::ParameterFactory::declare("dx", -d, d, 0.0, 0.01));
-    addParameter(param::ParameterFactory::declare("dy", -d, d, 0.0, 0.01));
-    addParameter(param::ParameterFactory::declare("dz", -d, d, 0.0, 0.01));
+    addParameter(param::ParameterFactory::declareRange("roll", -p, p, 0.0, 0.001));
+    addParameter(param::ParameterFactory::declareRange("pitch", -p, p, 0.0, 0.001));
+    addParameter(param::ParameterFactory::declareRange("yaw", -p, p, 0.0, 0.001));
+    addParameter(param::ParameterFactory::declareRange("dx", -d, d, 0.0, 0.01));
+    addParameter(param::ParameterFactory::declareRange("dy", -d, d, 0.0, 0.01));
+    addParameter(param::ParameterFactory::declareRange("dz", -d, d, 0.0, 0.01));
 }
 
 void StaticTransform::process()

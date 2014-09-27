@@ -38,7 +38,7 @@ void TransformFilter::setup()
     output_transform_ = modifier_->addOutput<connection_types::TransformMessage>("Filtered Transformation");
     output_text_ = modifier_->addOutput<GenericValueMessage<std::string> >("String"); // create a debug output
 
-    addParameter(param::ParameterFactory::declare("filter size", 1, 10000, 200, 100));
+    addParameter(param::ParameterFactory::declareRange("filter size", 1, 10000, 200, 100));
 }
 
 void TransformFilter::process()

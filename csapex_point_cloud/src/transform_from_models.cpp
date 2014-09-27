@@ -35,8 +35,8 @@ void TransformFromModels::setup()
     output_text_ = modifier_->addOutput<GenericValueMessage<std::string> >("String"); // create a debug output
 
 
-    addParameter(param::ParameterFactory::declare("Apex height", 0.0, 2.0, 0.5, 0.01));
-    addParameter(param::ParameterFactory::declare("Cone angle", 0.0001, 3.2, 0.5, 0.001));
+    addParameter(param::ParameterFactory::declareRange("Apex height", 0.0, 2.0, 0.5, 0.01));
+    addParameter(param::ParameterFactory::declareRange("Cone angle", 0.0001, 3.2, 0.5, 0.001));
 }
 
 void TransformFromModels::process()

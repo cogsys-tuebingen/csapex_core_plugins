@@ -194,7 +194,6 @@ public:
             std::string type = type2name(typeid(T));
             std::map<std::string, EntryInterface::Ptr>& map = instance().map_;
             if(map.find(type) == map.end()) {
-                std::cerr << "register " << type << " at map of size " << map.size() << std::endl;
                 map[type].reset(new Implementation<T>());
             }
         }

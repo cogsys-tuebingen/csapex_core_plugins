@@ -7,6 +7,7 @@
 #include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <utils_param/range_parameter.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

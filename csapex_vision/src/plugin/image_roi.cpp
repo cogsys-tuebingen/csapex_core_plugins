@@ -9,6 +9,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <utils_param/range_parameter.h>
 
 #include <csapex_vision/cv_mat_message.h>
 

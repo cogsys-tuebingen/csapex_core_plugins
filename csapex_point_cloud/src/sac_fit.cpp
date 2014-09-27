@@ -24,12 +24,12 @@ using namespace std;
 
 SacFit::SacFit()
 {
-    addParameter(param::ParameterFactory::declare("iterations", 1, 20000, 5000, 200));
-    addParameter(param::ParameterFactory::declare("min inliers", 5, 20000, 100, 100));
-    addParameter(param::ParameterFactory::declare("normal distance weight", 0.0, 2.0, 0.085, 0.001));
-    addParameter(param::ParameterFactory::declare("distance threshold", 0.0, 2.0, 0.009, 0.001));
-    addParameter(param::ParameterFactory::declare("sphere min radius", 0.0, 2.0, 0.02, 0.005));
-    addParameter(param::ParameterFactory::declare("sphere max radius", 0.0, 2.0, 0.8, 0.005));
+    addParameter(param::ParameterFactory::declareRange("iterations", 1, 20000, 5000, 200));
+    addParameter(param::ParameterFactory::declareRange("min inliers", 5, 20000, 100, 100));
+    addParameter(param::ParameterFactory::declareRange("normal distance weight", 0.0, 2.0, 0.085, 0.001));
+    addParameter(param::ParameterFactory::declareRange("distance threshold", 0.0, 2.0, 0.009, 0.001));
+    addParameter(param::ParameterFactory::declareRange("sphere min radius", 0.0, 2.0, 0.02, 0.005));
+    addParameter(param::ParameterFactory::declareRange("sphere max radius", 0.0, 2.0, 0.8, 0.005));
 
     std::map<std::string, int> models = boost::assign::map_list_of
             ("fit sphere", (int) pcl::SACMODEL_SPHERE)
