@@ -7,6 +7,7 @@
 
 /// SYSTEM
 #include <QImage>
+#include <QSharedPointer>
 
 namespace csapex
 {

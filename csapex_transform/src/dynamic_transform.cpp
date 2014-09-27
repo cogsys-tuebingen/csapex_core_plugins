@@ -54,7 +54,7 @@ void DynamicTransform::process()
         std::string from = frame_in_from_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;
 
         if(readParameter<std::string>("from") != from) {
-            parameter_state_["from"] = from;
+            setParameter("from", from);
             update = true;
         }
     }
@@ -66,7 +66,7 @@ void DynamicTransform::process()
         std::string to = frame_in_to_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;
 
         if(readParameter<std::string>("to") != to) {
-            parameter_state_["to"] = to;
+            setParameter("to", to);
             update = true;
         }
     }
