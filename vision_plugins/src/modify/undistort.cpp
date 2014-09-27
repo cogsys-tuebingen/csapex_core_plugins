@@ -47,13 +47,13 @@ void Undistort::setupParameters()
     addParameter(param::ParameterFactory::declareFileInputPath("file", ""), boost::bind(&Undistort::update, this));
     addParameter(param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), boost::bind(&Undistort::update, this));
 
-    std::vector< std::pair<std::string, int> > modes;
-    modes.push_back(std::make_pair("nearest", (int) CV_INTER_NN));
-    modes.push_back(std::make_pair("linear", (int) CV_INTER_LINEAR));
-    modes.push_back(std::make_pair("area", (int) CV_INTER_AREA));
-    modes.push_back(std::make_pair("cubic", (int) CV_INTER_CUBIC));
-    modes.push_back(std::make_pair("lanczos4", (int) CV_INTER_LANCZOS4));
-    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes), boost::bind(&Undistort::update, this));
+    std::map<std::string, int> modes;
+    modes["nearest"] = (int) CV_INTER_NN;
+    modes["linear"] = (int) CV_INTER_LINEAR;
+    modes["area"] = (int) CV_INTER_AREA;
+    modes["cubic"] = (int) CV_INTER_CUBIC;
+    modes["lanczos4"] = (int) CV_INTER_LANCZOS4;
+    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), boost::bind(&Undistort::update, this));
 }
 
 bool Undistort::read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs)

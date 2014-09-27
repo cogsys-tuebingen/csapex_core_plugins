@@ -21,7 +21,7 @@ using namespace connection_types;
 
 ExtractROI::ExtractROI()
 {
-    addParameter(param::ParameterFactory::declare<int>("thickness", 1, 20, 1, 1));
+    addParameter(param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
 }
 
 void ExtractROI::process()

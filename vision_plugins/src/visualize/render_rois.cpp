@@ -25,7 +25,7 @@ RenderROIs::RenderROIs()
 
 void RenderROIs::setupParameters()
 {
-    addParameter(param::ParameterFactory::declare<int>("thickness", 1, 20, 1, 1));
+    addParameter(param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
     addParameter(param::ParameterFactory::declareColorParameter("color", 0,0,0));
     addParameter(param::ParameterFactory::declareBool("force color", false));
     addParameter(param::ParameterFactory::declareBool("ignore unclassified", false));
