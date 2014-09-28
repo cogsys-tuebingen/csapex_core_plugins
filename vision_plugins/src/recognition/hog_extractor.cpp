@@ -43,7 +43,7 @@ void HOGExtractor::setupParameters()
 
     addParameter(param::ParameterFactory::declareRange("cell size",
                                                        param::ParameterDescription("Set the size of a cell"),
-                                                       8, 64, 8, 1));
+                                                       8, 80, 8, 1));
 
 
     param::Parameter::Ptr cells_per_block =
@@ -65,14 +65,14 @@ void HOGExtractor::setupParameters()
 void HOGExtractor::setup()
 {
     in_img_     = modifier_->addInput<CvMatMessage>("image");
-    in_rois_    = modifier_->addOptionalInput<VectorMessage, RoiMessage>("rois");
-    out_        = modifier_->addOutput<VectorMessage,FeaturesMessage>("descriptors");
+    in_rois_    = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
+    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("descriptors");
 }
 
 void HOGExtractor::process()
 {
     CvMatMessage::Ptr  in = in_img_->getMessage<CvMatMessage>();
-    VectorMessage::Ptr out(VectorMessage::make<FeaturesMessage>());
+    boost::shared_ptr<std::vector<FeaturesMessage::Ptr> > out(new std::vector<FeaturesMessage::Ptr>);
 
     if(!in->hasChannels(1, CV_8U))
         throw std::runtime_error("Image must be one channel grayscale!");
@@ -114,7 +114,7 @@ void HOGExtractor::process()
 
         feature_msg->classification = 0;
 
-        out->value.push_back(feature_msg);
+        out->push_back(feature_msg);
 
     } else {
         VectorMessage::Ptr in_rois = in_rois_->getMessage<VectorMessage>();
@@ -135,15 +135,13 @@ void HOGExtractor::process()
 
             feature_msg->classification = roi->value.classification();
 
-            out->value.push_back(feature_msg);
+            out->push_back(feature_msg);
         }
     }
 
-
-
     //    /// BLOCK STEPS X * BLOCK STEPS Y * BINS * CELLS (WITHIN BLOCK)
 
-    out_->publish(out);
+    out_->publish<GenericVectorMessage, FeaturesMessage::Ptr>(out);
 }
 
 void HOGExtractor::updateOverlap()
