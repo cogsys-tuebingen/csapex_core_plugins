@@ -21,11 +21,14 @@ private:
     csapex::Output*            output_;
     csapex::Input*             input_;
 
-    cv::Mat                          buffer_frame_;
+    cv::Mat                    buffer_frame_;
+
+    bool                       update_request_;
 
     void add();
     void calibrate();
     void updateCalibration();
+    void requestUpdateCalibration();
 };
 }
 #endif // CAMERA_CALIBRATION_PLUGIN_H
