@@ -69,11 +69,11 @@ void vision_plugins::CameraCalibration::setupParameters()
     addParameter(param::ParameterFactory::declareRange("squares scale", 0.05, 0.5, 0.1, 0.05), boost::bind(&CameraCalibration::updateCalibration, this));
 
     std::map<std::string, int> types = boost::assign::map_list_of
-            ("chessboard", (int) utils_cv::CameraCalibration::CHESSBOARD)
-            ("circles grid", (int) utils_cv::CameraCalibration::CIRCLES_GRID)
-            ("asym. circles grid", (int) utils_cv::CameraCalibration::ASYMMETRIC_CIRCLES_GRID);
+            ("chessboard", (int) utils_vision::CameraCalibration::CHESSBOARD)
+            ("circles grid", (int) utils_vision::CameraCalibration::CIRCLES_GRID)
+            ("asym. circles grid", (int) utils_vision::CameraCalibration::ASYMMETRIC_CIRCLES_GRID);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) utils_cv::CameraCalibration::CHESSBOARD),
+    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) utils_vision::CameraCalibration::CHESSBOARD),
                  boost::bind(&CameraCalibration::updateCalibration, this));
 
     std::map<std::string, std::pair<int, bool> > corner_flags = boost::assign::map_list_of
@@ -113,12 +113,13 @@ void vision_plugins::CameraCalibration::calibrate()
 void vision_plugins::CameraCalibration::updateCalibration()
 {
     cv::Size board_size;
-    utils_cv::CameraCalibration::Mode mode = (utils_cv::CameraCalibration::Mode) readParameter<int>("type");
+    utils_vision::CameraCalibration::Mode mode =
+            (utils_vision::CameraCalibration::Mode) readParameter<int>("type");
     board_size.width   = readParameter<int>("squares x");
     board_size.height  = readParameter<int>("squares y");
     double square_size = readParameter<double>("squares scale");
     int    kernel_size = readParameter<int>("kernel");
     int    flag_corner = readParameter<int>("corner flags");
     int    flag_calib  = readParameter<int>("calib flags");
-    calibration_.reset(new utils_cv::CameraCalibration(mode, board_size, square_size, kernel_size, flag_corner, flag_calib));
+    calibration_.reset(new utils_vision::CameraCalibration(mode, board_size, square_size, kernel_size, flag_corner, flag_calib));
 }
