@@ -23,6 +23,9 @@ StaticTransform::StaticTransform()
     double p = 3.2;
     double d = 5.0;
 
+    addParameter(param::ParameterFactory::declareText("frame", "/base_link"));
+    addParameter(param::ParameterFactory::declareText("child_frame", "/marlin"));
+
     addParameter(param::ParameterFactory::declare("roll", -p, p, 0.0, 0.001));
     addParameter(param::ParameterFactory::declare("pitch", -p, p, 0.0, 0.001));
     addParameter(param::ParameterFactory::declare("yaw", -p, p, 0.0, 0.001));
@@ -47,6 +50,8 @@ void StaticTransform::tick()
 
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
     msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
+    msg->frame_id = readParameter<std::string>("frame");
+    msg->child_frame = readParameter<std::string>("child_frame");
     output_->publish(msg);
 }
 
