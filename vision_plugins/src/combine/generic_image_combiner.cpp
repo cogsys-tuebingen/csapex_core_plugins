@@ -179,6 +179,8 @@ void GenericImageCombiner::process()
         }
 
         VariableExpression::get("2") = f2;
+    } else {
+        VariableExpression::get("2") = cv::Mat();
     }
 
     CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));

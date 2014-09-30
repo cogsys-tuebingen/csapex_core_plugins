@@ -273,7 +273,13 @@ struct VariableExpression : AbstractExpression {
         return _symbols[name];
     }
 
-    cv::Mat evaluate() const { return get(name_); }
+    cv::Mat evaluate() const {
+        cv::Mat mat = get(name_);
+        if(mat.empty()) {
+            throw std::runtime_error(std::string("variable $") + name_ + " is not set");
+        }
+        return mat;
+    }
 
     virtual std::ostream& print(std::ostream& os) const
     { return os << "VariableExpression('" << name_ << "')"; }
