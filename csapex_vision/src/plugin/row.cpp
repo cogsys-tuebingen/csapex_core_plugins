@@ -34,11 +34,13 @@ void Row::process()
     int max_idy = in->value.rows - 1;
     if(range->max<int>() != max_idy) {
         range->setMax(max_idy);
+
     }
 
     if(request_center_) {
         int center = max_idy / 2;
         range->set(center);
+        request_center_ = false;
     }
 
     int index = readParameter<int>("row");

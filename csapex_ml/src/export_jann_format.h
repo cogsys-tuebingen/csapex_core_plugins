@@ -23,7 +23,8 @@ public:
 protected:
     void setExportPath();
 
-    void doExport();
+    void save();
+    void clear();
 
 private:
     Input*                                              in_;
@@ -32,7 +33,9 @@ private:
     bool                                                save_;
     bool                                                clear_;
 
+    QMutex                                              mutex_;
     std::vector<connection_types::FeaturesMessage::Ptr> msgs_;
+
 
     void requestSave();
     void requestClear();

@@ -39,6 +39,7 @@ void Col::process()
     if(request_center_) {
         int center = max_idx / 2;
         range->set(center);
+        request_center_ = false;
     }
 
     int index = readParameter<int>("col");
