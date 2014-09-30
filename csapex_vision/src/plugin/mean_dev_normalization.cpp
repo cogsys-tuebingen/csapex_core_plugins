@@ -61,6 +61,7 @@ void MeanStdDevNormalization::process()
 
     unsigned int c = in_mat->value.channels();
 
+
     if(c != in_mean->size()) {
         throw std::runtime_error("Channels != Mean dimension!");
     }

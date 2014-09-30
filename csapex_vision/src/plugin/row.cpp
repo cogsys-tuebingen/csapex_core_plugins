@@ -35,6 +35,8 @@ void Row::process()
         range->setMax(max_idy);
     }
 
+    std::cout << range->max<int>() << std::endl;
+
     int index = readParameter<int>("row");
     out->value = in->value.row(index);
 
