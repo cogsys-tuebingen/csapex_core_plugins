@@ -10,9 +10,9 @@ class MeanStdDev : public Node
 public:
     MeanStdDev();
 
-    void setup();
-    void setupParameters();
-    void process();
+    virtual void setup();
+    virtual void setupParameters();
+    virtual void process();
 
 private:
 

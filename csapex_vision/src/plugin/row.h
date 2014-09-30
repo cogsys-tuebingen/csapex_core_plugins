@@ -1,0 +1,25 @@
+#ifndef ROW_H
+#define ROW_H
+
+/// PROJECT
+#include <csapex/model/node.h>
+
+namespace csapex
+{
+class Row : public Node
+{
+public:
+    Row();
+
+    virtual void process();
+    virtual void setup();
+    virtual void setupParameters();
+
+private:
+    Input  *input_;
+    Output *output_;
+
+};
+}
+
+#endif // ROW_H
