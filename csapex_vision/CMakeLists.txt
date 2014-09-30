@@ -95,6 +95,7 @@ add_library(csapex_vision_plugin
     src/plugin/image_roi.cpp
     src/plugin/image_roi_adapter.cpp
     src/plugin/row.cpp
+    src/plugin/col.cpp
     src/plugin/mean_dev_normalization.cpp
 
     ${QT_MOC_PLUG}

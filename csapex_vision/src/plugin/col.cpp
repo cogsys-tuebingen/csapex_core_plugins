@@ -1,5 +1,5 @@
 /// HEADER
-#include "row.h"
+#include "col.h"
 
 /// PROJECT
 #include <csapex/msg/input.h>
@@ -9,17 +9,17 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-CSAPEX_REGISTER_CLASS(csapex::Row, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::Col, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-Row::Row() :
+Col::Col() :
     request_center_(false)
 {
 }
 
-void Row::process()
+void Col::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding()));
@@ -29,41 +29,41 @@ void Row::process()
     }
 
     param::RangeParameter::Ptr range =
-            getParameter<param::RangeParameter>("row");
+            getParameter<param::RangeParameter>("col");
 
-    int max_idy = in->value.rows - 1;
-    if(range->max<int>() != max_idy) {
-        range->setMax(max_idy);
+    int max_idx = in->value.cols - 1;
+    if(range->max<int>() != max_idx) {
+        range->setMax(max_idx);
     }
 
     if(request_center_) {
-        int center = max_idy / 2;
+        int center = max_idx / 2;
         range->set(center);
     }
 
-    int index = readParameter<int>("row");
-    out->value = in->value.row(index);
+    int index = readParameter<int>("col");
+    out->value = in->value.col(index);
 
     output_->publish(out);
 }
 
-void Row::setup()
+void Col::setup()
 {
     input_  = modifier_->addInput<CvMatMessage>("Matrix");
-    output_ = modifier_->addOutput<CvMatMessage>("Row");
+    output_ = modifier_->addOutput<CvMatMessage>("Col");
 }
 
-void Row::setupParameters()
+void Col::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareRange("row",
-                                                       param::ParameterDescription("Row to extract."),
+    addParameter(param::ParameterFactory::declareRange("col",
+                                                       param::ParameterDescription("Col to extract."),
                                                        0, 1, 0, 1));
     addParameter(param::ParameterFactory::declareTrigger("center"),
-                 boost::bind(&Row::requestCenter, this));
+                 boost::bind(&Col::requestCenter, this));
 
 }
 
-void Row::requestCenter()
+void Col::requestCenter()
 {
     request_center_ = true;
 }

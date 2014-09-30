@@ -1,15 +1,15 @@
-#ifndef ROW_H
-#define ROW_H
+#ifndef COL_H
+#define COL_H
 
 /// PROJECT
 #include <csapex/model/node.h>
 
 namespace csapex
 {
-class Row : public Node
+class Col : public Node
 {
 public:
-    Row();
+    Col();
 
     virtual void process();
     virtual void setup();
@@ -24,4 +24,4 @@ private:
 };
 }
 
-#endif // ROW_H
+#endif // COL_H
