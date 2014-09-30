@@ -32,7 +32,9 @@ private:
     csapex::WidgetControllerPtr widget_controller_;
     csapex::CommandDispatcher::Ptr dispatcher_;
     csapex::CsApexCore core_;
+    csapex::ThreadPoolPtr thread_pool_;
     csapex::CsApexWindow* eva_;
+
 
     csapex::DragIO drag_io_;
     csapex::DesignerScene* scene_;

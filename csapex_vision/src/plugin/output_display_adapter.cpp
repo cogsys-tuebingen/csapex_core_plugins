@@ -81,11 +81,6 @@ void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 
     QHBoxLayout* sub = new QHBoxLayout;
 
-    QCheckBox* cb = new QCheckBox("async");
-    cb->setChecked(wrapped_->input_->isAsync());
-    sub->addWidget(cb, 0,  Qt::AlignLeft);
-    QObject::connect(cb, SIGNAL(stateChanged(int)), this, SLOT(setAsync(int)));
-
     QPushButton* fit = new QPushButton("fit size");
     sub->addWidget(fit, 0,  Qt::AlignLeft);
     QObject::connect(fit, SIGNAL(clicked()), this, SLOT(fitInView()));
@@ -108,11 +103,6 @@ void OutputDisplayAdapter::fitInView()
     state.width = last_size_.width();
     state.height = last_size_.height();
     view_->setFixedSize(QSize(state.width, state.height));
-}
-
-void OutputDisplayAdapter::setAsync(int a)
-{
-    wrapped_->input_->setAsync(a);
 }
 
 Memento::Ptr OutputDisplayAdapter::getState() const

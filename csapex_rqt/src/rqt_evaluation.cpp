@@ -14,6 +14,7 @@
 #include <csapex/view/node_adapter_factory.h>
 #include <csapex/view/widget_controller.h>
 #include <csapex/view/designer_scene.h>
+#include <csapex/core/thread_pool.h>
 
 /// SYSTEM
 #include <pluginlib/class_list_macros.h>
@@ -34,9 +35,10 @@ CsApex::CsApex()
       widget_controller_(new csapex::WidgetController(settings_, graph_, node_factory_.get(), node_adapter_factory_.get())),
       dispatcher_(new CommandDispatcher(settings_, graph_worker_, widget_controller_)),
       core_(settings_, graph_worker_, node_factory_.get(), node_adapter_factory_.get(), dispatcher_.get()),
+      thread_pool_(new ThreadPool(&core_, graph_.get(), true, false)),
       drag_io_(graph_.get(), dispatcher_.get(), widget_controller_),
       scene_(new DesignerScene(graph_, dispatcher_.get(), widget_controller_)),
-      view_ (new DesignerView(scene_, graph_, dispatcher_.get(), widget_controller_, drag_io_)),
+      view_ (new DesignerView(scene_, graph_, settings_, *thread_pool_, dispatcher_.get(), widget_controller_, drag_io_)),
       designer_(new Designer(settings_, graph_, dispatcher_.get(), widget_controller_, view_, scene_))
 {
     widget_controller_->setDesigner(designer_);

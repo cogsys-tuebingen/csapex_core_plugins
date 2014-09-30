@@ -26,7 +26,6 @@ void DoubleBuffer::setup()
 {
     input_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
     output_ = modifier_->addOutput<connection_types::AnyMessage>("Same as input");
-    output_->setAsync(true);
 }
 
 void DoubleBuffer::process()

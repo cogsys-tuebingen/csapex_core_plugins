@@ -54,7 +54,7 @@ void FileImporter::changeMode()
     }
 }
 
-void FileImporter::tick()
+void FileImporter::process()
 {
     if(provider_.get() && provider_->hasNext()) {
         Message::Ptr msg = provider_->next();
@@ -107,11 +107,6 @@ void FileImporter::setup()
     boost::function<void(param::Parameter*)> setf = boost::bind(&NodeWorker::setTickFrequency, getNodeWorker(), boost::bind(&param::Parameter::as<double>, _1));
     boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
     addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
-}
-
-void FileImporter::process()
-{
-
 }
 
 void FileImporter::updateProvider()

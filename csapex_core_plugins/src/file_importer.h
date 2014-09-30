@@ -23,8 +23,6 @@ public:
 
     void process();
 
-    void tick();
-
     bool doImport(const QString& path);
 
 private:

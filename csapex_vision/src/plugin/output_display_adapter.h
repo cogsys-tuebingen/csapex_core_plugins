@@ -26,7 +26,6 @@ public:
 
 public Q_SLOTS:
     void display(QSharedPointer<QImage> img);
-    void setAsync(int a);
     void fitInView();
 
 Q_SIGNALS:
