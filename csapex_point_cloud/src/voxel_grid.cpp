@@ -52,7 +52,7 @@ void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     voxel_f.setLeafSize(leaf);
     voxel_f.filter(*out);
 
-    PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     msg->value = out;
 
     output_->publish(msg);

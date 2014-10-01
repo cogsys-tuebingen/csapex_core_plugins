@@ -63,7 +63,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
         crop.filter(*out);
         out->header = cloud->header;
 
-        PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id));
+        PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         msg->value = out;
         output_pos_->publish(msg);
     }
@@ -74,7 +74,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
         crop.filter(*out);
         out->header = cloud->header;
 
-        PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id));
+        PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         msg->value = out;
         output_neg_->publish(msg);
     }

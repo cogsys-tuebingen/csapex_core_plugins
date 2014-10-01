@@ -23,7 +23,7 @@ struct CvMatMessage : public MessageTemplate<cv::Mat, CvMatMessage>
     template <typename,typename,typename> friend class csapex::ConverterTemplate;
 
 public:
-    CvMatMessage(const Encoding& encoding);
+    CvMatMessage(const Encoding& encoding, Stamp stamp);
     virtual ConnectionType::Ptr clone();
 
     virtual void writeRaw(const std::string &file, const std::string &suffix) const;
@@ -53,7 +53,7 @@ struct type<CvMatMessage> {
 template <>
 inline boost::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage>()
 {
-    return boost::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr));
+    return boost::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr, 0));
 }
 
 }

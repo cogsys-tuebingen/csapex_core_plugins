@@ -17,25 +17,25 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::PointCloudMessage)
 using namespace csapex;
 using namespace connection_types;
 
-PointCloudMessage::PointCloudMessage(const std::string& frame_id)
-    : Message (type<PointCloudMessage>::name(), frame_id)
+PointCloudMessage::PointCloudMessage(const std::string& frame_id, Message::Stamp stamp)
+    : Message (type<PointCloudMessage>::name(), frame_id, stamp)
 {
 }
 
 PointCloudMessage::PointCloudMessage()
-    : Message (type<PointCloudMessage>::name(), "/")
+    : Message (type<PointCloudMessage>::name(), "/", 0)
 {
 }
 
 
 ConnectionType::Ptr PointCloudMessage::clone() {
-    Ptr new_msg(new PointCloudMessage(frame_id));
+    Ptr new_msg(new PointCloudMessage(frame_id, stamp));
     new_msg->value = value;
     return new_msg;
 }
 
 ConnectionType::Ptr PointCloudMessage::toType() {
-    Ptr new_msg(new PointCloudMessage("/"));
+    Ptr new_msg(new PointCloudMessage("/", 0));
     return new_msg;
 }
 

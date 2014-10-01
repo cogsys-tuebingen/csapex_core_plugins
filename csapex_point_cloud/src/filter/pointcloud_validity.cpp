@@ -124,7 +124,7 @@ template <class PointT>
 void PointCloudValidity::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
     if(mask_->isConnected()) {
-        CvMatMessage::Ptr out(new CvMatMessage(enc::mono));
+        CvMatMessage::Ptr out(new CvMatMessage(enc::mono, cloud->header.stamp));
         Vadility<PointT>::mask(cloud, out->value);
         mask_->publish(out);
     }

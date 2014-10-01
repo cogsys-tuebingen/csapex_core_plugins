@@ -100,6 +100,7 @@ void ImportRos::doSetTopic()
     getRosHandler().refresh();
 
     if(!getRosHandler().isConnected()) {
+        setError(true, "no connection to ROS");
         return;
     }
 
@@ -141,8 +142,21 @@ void ImportRos::tickROS()
             next_retry_ = ros::WallTime::now() + ros::WallDuration(0.5);
         }
     }
+
+    if(!msg_) {
+        ros::Rate r(10);
+        while(!msg_) {
+            r.sleep();
+        }
+    }
+
+    connector_->publish(msg_);
 }
 
+void ImportRos::callback(ConnectionTypePtr message)
+{
+    msg_ = message;
+}
 
 void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 {
@@ -156,7 +170,7 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
         setError(false);
 
         current_topic_ = topic.name;
-        current_subscriber = RosMessageConversion::instance().subscribe(topic, 100, connector_);
+        current_subscriber = RosMessageConversion::instance().subscribe(topic, 100, boost::bind(&ImportRos::callback, this, _1));
 
     } else {
         setError(true, std::string("cannot import topic of type ") + topic.datatype);

@@ -9,6 +9,7 @@
 #include <csapex/msg/message.h>
 #include <csapex/msg/message_traits.h>
 #include <csapex/utility/singleton.hpp>
+#include <csapex/csapex_fwd.h>
 
 /// SYSTEM
 #include <ros/master.h>
@@ -20,9 +21,6 @@
 namespace csapex
 {
 
-class Output;
-
-
 template <typename T>
 class RosMessageConversionT;
 
@@ -30,9 +28,10 @@ class Convertor
 {
 public:
     typedef boost::shared_ptr<Convertor> Ptr;
+    typedef boost::function<void(ConnectionTypePtr)> Callback;
 
 public:
-    virtual ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Output* output) = 0;
+    virtual ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) = 0;
     virtual ros::Publisher advertise(const std::string& topic,  int queue, bool latch = false) = 0;
 
     virtual void publish(ros::Publisher& pub, ConnectionType::Ptr msg) = 0;
@@ -42,7 +41,7 @@ public:
     virtual std::string apexType() = 0;
 
 protected:
-    void publish_apex(Output* output, ConnectionType::Ptr msg);
+    void publish_apex(Callback callback, ConnectionType::Ptr msg);
 };
 
 
@@ -58,13 +57,13 @@ public:
         return ros::message_traits::DataType<T>::value();
     }
 
-    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Output* output) {
+    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) {
         boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
         }
 
-        return nh->subscribe<T>(topic.name, queue, boost::bind(&Self::callback, this, output, _1));
+        return nh->subscribe<T>(topic.name, queue, boost::bind(&Self::callback, this, callback, _1));
     }
     ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) {
         boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
@@ -83,13 +82,13 @@ public:
         return pub.publish(msg->value);
     }
 
-    void callback(Output* output, const typename T::ConstPtr& ros_msg) {
+    void callback(Callback callback, const typename T::ConstPtr& ros_msg) {
         if(!ros_msg) {
             throw std::runtime_error("received an empty ros message");
         }
         typename connection_types::GenericPointerMessage<T>::Ptr apex_msg(new connection_types::GenericPointerMessage<T>);
         apex_msg->value.reset(new T(*ros_msg));
-        publish_apex(output, apex_msg);
+        publish_apex(callback, apex_msg);
     }
 
     connection_types::Message::Ptr instantiate(const rosbag::MessageInstance&) {
@@ -110,13 +109,13 @@ public:
         return connection_types::type<APEX>::name();
     }
 
-    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Output* output) {
+    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) {
         boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
         }
 
-        return nh->subscribe<ROS>(topic.name, queue, boost::bind(&Self::callback, this, output, _1));
+        return nh->subscribe<ROS>(topic.name, queue, boost::bind(&Self::callback, this, callback, _1));
     }
     ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) {
         boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
@@ -135,12 +134,12 @@ public:
         return pub.publish(ros_msg);
     }
 
-    void callback(Output* output, const typename ROS::ConstPtr& ros_msg) {
+    void callback(Callback callback, const typename ROS::ConstPtr& ros_msg) {
         if(!ros_msg) {
             throw std::runtime_error("received an empty ros message");
         }
         typename APEX::Ptr apex_msg = Converter::ros2apex(ros_msg);
-        publish_apex(output, apex_msg);
+        publish_apex(callback, apex_msg);
     }
 
     connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source) {
@@ -155,6 +154,9 @@ class RosMessageConversion : public Singleton<RosMessageConversion>
     template <typename T>
     friend class RosMessageConversionT;
 
+public:
+    typedef boost::function<void(ConnectionTypePtr)> Callback;
+
 private:
     RosMessageConversion();
 
@@ -167,7 +169,7 @@ public:
 
     bool canHandle(const ros::master::TopicInfo &topic);
 
-    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Output *output);
+    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output);
     ros::Publisher advertise(ConnectionType::Ptr, const std::string& topic,  int queue, bool latch = false);
     void publish(ros::Publisher& pub, ConnectionType::Ptr msg);
 

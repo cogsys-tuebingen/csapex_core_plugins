@@ -128,7 +128,7 @@ struct Label<pcl::PointXY> {
 template <class PointT>
 void LabelClusteredPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
 
     implementation::Label<PointT>::apply(cloud, out, *cluster_indices);
     output_->publish(out);

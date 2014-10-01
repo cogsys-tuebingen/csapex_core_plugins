@@ -143,7 +143,7 @@ struct Label<pcl::PointXY> {
 template <class PointT>
 void LabelPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
 
     bool exclude_default_label = readParameter<bool>("exclude default label");
     implementation::Label<PointT>::apply(cloud, out, label_msg_->value, exclude_default_label);

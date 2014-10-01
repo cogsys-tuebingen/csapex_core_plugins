@@ -13,18 +13,18 @@ using namespace connection_types;
 
 const GenericVectorMessage::EntryInterface::Ptr GenericVectorMessage::EntryInterface::NullPtr;
 
-GenericVectorMessage::GenericVectorMessage(EntryInterface::Ptr impl, const std::string& frame_id)
-    : Message ("Vector<?>", frame_id), impl(impl)
+GenericVectorMessage::GenericVectorMessage(EntryInterface::Ptr impl, const std::string& frame_id, Message::Stamp stamp)
+    : Message ("Vector<?>", frame_id, stamp), impl(impl)
 {
 }
 
 ConnectionType::Ptr GenericVectorMessage::clone() {
-    Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id));
+    Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id, impl->stamp));
     return new_msg;
 }
 
 ConnectionType::Ptr GenericVectorMessage::toType() {
-    Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id));
+    Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id, 0));
     return new_msg;
 }
 
@@ -64,13 +64,13 @@ bool convert<csapex::connection_types::GenericVectorMessage>::decode(const Node&
 
 
 //// OLD
-VectorMessage::VectorMessage(const std::string& frame_id)
-    : Message ("std::vector<?>", frame_id)
+VectorMessage::VectorMessage(const std::string& frame_id, Message::Stamp stamp)
+    : Message ("std::vector<?>", frame_id, stamp)
 {
     type_ = connection_types::makeEmpty<AnyMessage>();
 }
-VectorMessage::VectorMessage(ConnectionType::Ptr type, const std::string& frame_id)
-    : Message (std::string("std::vector<") + type->rawName()  + "::Ptr>", frame_id)
+VectorMessage::VectorMessage(ConnectionType::Ptr type, const std::string& frame_id, Message::Stamp stamp)
+    : Message (std::string("std::vector<") + type->rawName()  + "::Ptr>", frame_id, stamp)
 {
     type_ = type;
 }

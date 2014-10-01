@@ -67,7 +67,7 @@ void ScanSegmentation2DRenderer::setup()
 
 void ScanSegmentation2DRenderer::render(const std::vector<Segment> &segments)
 {
-    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr));
+    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, 0));
 
     int w = readParameter<int>("width");
     int h = readParameter<int>("height");

@@ -39,7 +39,7 @@ void SetTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     connection_types::TimeStampMessage::Ptr time = input_time_->getMessage<connection_types::TimeStampMessage>();
     cloud->header.stamp = time->value.toNSec() / 1e3; // is this 1e6?
 
-    connection_types::PointCloudMessage::Ptr msg(new connection_types::PointCloudMessage(cloud->header.frame_id));
+    connection_types::PointCloudMessage::Ptr msg(new connection_types::PointCloudMessage(cloud->header.frame_id, time->value.toNSec()));
 
     if(input_frame_->hasMessage()) {
         cloud->header.frame_id = input_frame_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;

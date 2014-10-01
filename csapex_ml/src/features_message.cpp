@@ -10,8 +10,8 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::FeaturesMessage)
 using namespace csapex;
 using namespace connection_types;
 
-FeaturesMessage::FeaturesMessage()
-    : Message("FeatureMessage", "/"), classification(0)
+FeaturesMessage::FeaturesMessage(Message::Stamp stamp)
+    : Message("FeatureMessage", "/", stamp), classification(0)
 {}
 
 ConnectionType::Ptr FeaturesMessage::clone() {

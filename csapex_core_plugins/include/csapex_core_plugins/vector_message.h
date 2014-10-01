@@ -16,7 +16,7 @@ struct VectorMessage : public Message
 {
     typedef boost::shared_ptr<VectorMessage> Ptr;
 
-    VectorMessage(const std::string& frame_id = "/");
+    VectorMessage(const std::string& frame_id = "/", Stamp stamp = 0);
 
     ConnectionType::Ptr getSubType() const;
 
@@ -30,12 +30,12 @@ struct VectorMessage : public Message
     template <typename T>
     static VectorMessage::Ptr make()
     {
-        return VectorMessage::Ptr (new VectorMessage(connection_types::makeEmpty<T>(), "/"));
+        return VectorMessage::Ptr (new VectorMessage(connection_types::makeEmpty<T>(), "/", 0));
     }
 
     static VectorMessage::Ptr make(ConnectionType::Ptr type)
     {
-        return VectorMessage::Ptr (new VectorMessage(type->toType(), "/"));
+        return VectorMessage::Ptr (new VectorMessage(type->toType(), "/", 0));
     }
 
     static VectorMessage::Ptr make();
@@ -47,7 +47,7 @@ struct VectorMessage : public Message
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
 
 private:
-    VectorMessage(ConnectionType::Ptr type, const std::string& frame_id);
+    VectorMessage(ConnectionType::Ptr type, const std::string& frame_id, Stamp stamp);
 
 public:
     std::vector<ConnectionType::Ptr> value;
@@ -67,8 +67,8 @@ private:
         typedef boost::shared_ptr< EntryInterface > Ptr;
         static const Ptr NullPtr;
 
-        EntryInterface(const std::string& name)
-            : Message(name, "/")
+        EntryInterface(const std::string& name, Message::Stamp stamp = 0)
+            : Message(name, "/", stamp)
         {
         }
 
@@ -212,14 +212,14 @@ public:
     static GenericVectorMessage::Ptr make(typename boost::enable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
     {
         registerType<T>();
-        return GenericVectorMessage::Ptr(new GenericVectorMessage(MessageImplementation<T>::make(), "/"));
+        return GenericVectorMessage::Ptr(new GenericVectorMessage(MessageImplementation<T>::make(), "/", 0));
     }
 
     template <typename T>
     static GenericVectorMessage::Ptr make(typename boost::disable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
     {
         registerType<T>();
-        return GenericVectorMessage::Ptr(new GenericVectorMessage(Implementation<T>::make(), "/"));
+        return GenericVectorMessage::Ptr(new GenericVectorMessage(Implementation<T>::make(), "/", 0));
     }
 
     template <typename T>
@@ -255,7 +255,7 @@ public:
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
 
 private:
-    GenericVectorMessage(EntryInterface::Ptr impl, const std::string &frame_id);
+    GenericVectorMessage(EntryInterface::Ptr impl, const std::string &frame_id, Message::Stamp stamp);
 
 private:
     EntryInterface::Ptr impl;

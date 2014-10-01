@@ -36,7 +36,7 @@ void DisplayKeypoints::process()
     CvMatMessage::Ptr img_msg = in_img->getMessage<CvMatMessage>();
     KeypointMessage::Ptr key_msg = in_key->getMessage<KeypointMessage>();
 
-    CvMatMessage::Ptr out(new CvMatMessage(img_msg->getEncoding()));
+    CvMatMessage::Ptr out(new CvMatMessage(img_msg->getEncoding(), img_msg->stamp));
 
 
     cv::Scalar color(-1,-1,-1,-1);

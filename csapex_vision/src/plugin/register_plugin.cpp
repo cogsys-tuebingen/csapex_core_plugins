@@ -32,7 +32,8 @@ RegisterPlugin::RegisterPlugin()
 struct Image2CvMat
 {
     static connection_types::CvMatMessage::Ptr ros2apex(const sensor_msgs::Image::ConstPtr &ros_msg) {
-        connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr)); // TODO: use encoding from ROS!
+        u_int64_t stamp = ros_msg->header.stamp.toNSec();
+        connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr, stamp)); // TODO: use encoding from ROS!
         try {
             cv_bridge::toCvShare(ros_msg, sensor_msgs::image_encodings::BGR8)->image.copyTo(out->value);
             out->frame_id = ros_msg->header.frame_id;
@@ -56,7 +57,11 @@ struct Image2CvMat
         }
 
         cvb.header.frame_id = apex_msg->frame_id;
-        cvb.header.stamp = ros::Time::now();
+        if(apex_msg->stamp != 0) {
+            cvb.header.stamp = cvb.header.stamp.fromNSec(apex_msg->stamp);
+        } else {
+            cvb.header.stamp = ros::Time::now();
+        }
         return cvb.toImageMsg();
     }
 };
@@ -75,6 +80,6 @@ void RegisterPlugin::init(CsApexCore& core)
     ConnectionType::setDefaultConnectionType(connection_types::makeEmpty<connection_types::CvMatMessage>());
 
     core.getNodeFactory().registerNodeType(GenericNodeFactory::createConstructorFromFunction(testWrap,
-                                                                                              "TestWrap", "Test direct wrapping",
-                                                                                              core.getSettings()));
+                                                                                             "TestWrap", "Test direct wrapping",
+                                                                                             core.getSettings()));
 }

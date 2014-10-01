@@ -125,7 +125,8 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
         }
     }
 
-    PointCloudMessage::Ptr result(new PointCloudMessage(readParameter<std::string>("frame")));
+    // TODO: get stamp from depth image
+    PointCloudMessage::Ptr result(new PointCloudMessage(readParameter<std::string>("frame"), 0));
     result->value = cloud;
 
     return result;
@@ -135,7 +136,7 @@ void ImageToPointCloud::process()
 {
     CvMatMessage::Ptr depth_msg(input_depth_->getMessage<CvMatMessage>());
 
-    PointCloudMessage::Ptr result(new PointCloudMessage(readParameter<std::string>("frame")));
+    PointCloudMessage::Ptr result(new PointCloudMessage(readParameter<std::string>("frame"), depth_msg->stamp));
     if(input_intensity_->hasMessage()) {
         CvMatMessage::Ptr intensity_msg(input_intensity_->getMessage<CvMatMessage>());
         result = transform<pcl::PointXYZI>(depth_msg->value, intensity_msg->value);

@@ -108,7 +108,7 @@ struct Conversion<pcl::PointXYZRGBL>{
 template <class PointT>
 void LabeledCloudToIndices::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr out_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
     boost::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);

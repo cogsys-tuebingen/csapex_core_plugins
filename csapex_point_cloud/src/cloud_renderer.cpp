@@ -103,7 +103,7 @@ void CloudRenderer::refresh()
 
 void CloudRenderer::publishImage(const cv::Mat &img)
 {
-    CvMatMessage::Ptr msg(new CvMatMessage(enc::bgr));
+    CvMatMessage::Ptr msg(new CvMatMessage(enc::bgr, 0));
     img.copyTo(msg->value);
 
     result_ = msg;

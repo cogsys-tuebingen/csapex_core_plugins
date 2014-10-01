@@ -71,7 +71,7 @@ struct PointCloudMessage : public Message
     >::type
     >::type variant;
 
-    PointCloudMessage(const std::string& frame_id);
+    PointCloudMessage(const std::string& frame_id, Stamp stamp);
 
     virtual ConnectionType::Ptr clone();
 
@@ -99,7 +99,7 @@ struct type<PointCloudMessage> {
 template <>
 inline boost::shared_ptr<PointCloudMessage> makeEmpty<PointCloudMessage>()
 {
-    return boost::shared_ptr<PointCloudMessage>(new PointCloudMessage("/"));
+    return boost::shared_ptr<PointCloudMessage>(new PointCloudMessage("/", 0));
 }
 }
 }

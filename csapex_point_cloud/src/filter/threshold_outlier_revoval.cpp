@@ -222,7 +222,7 @@ void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr c
         ThresholdNoiseFilter<PointT>::filter
                 (cloud, thresholds->value, threshold, cloud_filtered);
 
-    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     out->value = cloud_filtered;
     output_->publish(out);
 }

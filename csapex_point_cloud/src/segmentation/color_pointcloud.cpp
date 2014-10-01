@@ -112,7 +112,7 @@ struct Conversion<pcl::PointXYZRGBL>{
 template <class PointT>
 void ColorPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
-    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr out_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
     ainfo << cloud->header.frame_id << "!" << std::endl;

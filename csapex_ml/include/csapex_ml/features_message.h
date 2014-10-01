@@ -15,7 +15,7 @@ struct FeaturesMessage : public Message
 {
     typedef boost::shared_ptr<FeaturesMessage> Ptr;
 
-    FeaturesMessage();
+    FeaturesMessage(Message::Stamp stamp = 0);
 
     virtual ConnectionType::Ptr clone();
     virtual ConnectionType::Ptr toType();

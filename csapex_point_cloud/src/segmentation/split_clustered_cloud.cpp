@@ -63,7 +63,7 @@ void SplitClusteredCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud
         cloud_cluster->is_dense = true;
         cloud_cluster->header = cloud->header;
 
-        PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
+        PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         out->value = cloud_cluster;
         out_msgs.push_back(out);
     }

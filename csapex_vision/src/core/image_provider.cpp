@@ -35,7 +35,7 @@ connection_types::Message::Ptr ImageProvider::next()
 {
     cv::Mat mask;
 
-    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::unknown));
+    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::unknown, 0));
 
     next(msg->value, mask);
 

@@ -14,8 +14,6 @@ public:
     void process();
     virtual void setup();
 
-    virtual void tick();
-
 private:
     Output* output_;
 };

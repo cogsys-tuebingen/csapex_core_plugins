@@ -20,7 +20,6 @@ public:
     Camera();
 
     void process();
-    virtual void tick();
     virtual void setup();
 
 protected:

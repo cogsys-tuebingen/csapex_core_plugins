@@ -43,7 +43,7 @@ void PointCloudToDepthImage::inputCloud(typename pcl::PointCloud<PointT>::Ptr cl
     int cols = cloud->width;
     int rows = n / cols;
 
-    CvMatMessage::Ptr output(new CvMatMessage(enc::depth));
+    CvMatMessage::Ptr output(new CvMatMessage(enc::depth, cloud->header.stamp));
     output->value.create(rows,cols, CV_32F);
 
     typename pcl::PointCloud<PointT>::const_iterator pt = cloud->points.begin();

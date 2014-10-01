@@ -1,9 +1,6 @@
 /// HEADER
 #include <csapex_ros/ros_message_conversion.h>
 
-/// PROJECT
-#include <csapex/msg/output.h>
-
 using namespace csapex;
 
 RosMessageConversion::RosMessageConversion()
@@ -22,7 +19,7 @@ void RosMessageConversion::doRegisterConversion(const std::string& apex_type, co
     converters_inv_[apex_type] = c;
 }
 
-ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &topic, int queue, Output* output)
+ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &topic, int queue, Callback output)
 {
     return converters_.at(topic.datatype)->subscribe(topic, queue, output);
 }
@@ -55,8 +52,7 @@ connection_types::Message::Ptr RosMessageConversion::instantiate(const rosbag::M
 //    return ros_types_;
 //}
 
-void Convertor::publish_apex(Output *output, ConnectionType::Ptr msg)
+void Convertor::publish_apex(Callback callback, ConnectionType::Ptr msg)
 {
-    output->setType(msg);
-    output->publish(msg);
+    callback(msg);
 }

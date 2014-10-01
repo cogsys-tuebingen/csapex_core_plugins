@@ -9,20 +9,13 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::PointMessage)
 using namespace csapex;
 using namespace connection_types;
 
-PointMessage::PointMessage()
-    : Message(type<PointMessage>::name(), "/")
+PointMessage::PointMessage(Message::Stamp stamp)
+    : Message(type<PointMessage>::name(), "/", stamp)
 {}
-
-
-ConnectionType::Ptr PointMessage::make()
-{
-    Ptr new_msg(new PointMessage);
-    return new_msg;
-}
 
 ConnectionType::Ptr PointMessage::clone()
 {
-    Ptr new_msg(new PointMessage);
+    Ptr new_msg(new PointMessage(stamp));
     new_msg->x = x;
     new_msg->y = y;
     return new_msg;
@@ -30,7 +23,7 @@ ConnectionType::Ptr PointMessage::clone()
 
 ConnectionType::Ptr PointMessage::toType()
 {
-    return make();
+    return makeEmptyMessage<PointMessage>();
 }
 
 

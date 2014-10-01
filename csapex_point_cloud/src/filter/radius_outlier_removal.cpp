@@ -70,7 +70,7 @@ void RadiusOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr clou
     if(cloud_out) {
         typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>);
         ror.filter(*cloud_filtered);
-        PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
+        PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         out->value = cloud_filtered;
         output_cloud_->publish(out);
     }

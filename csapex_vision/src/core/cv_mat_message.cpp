@@ -14,13 +14,14 @@ CvMatMessage::CvMatMessage()
     : MessageTemplate<cv::Mat, CvMatMessage> ("/camera"), encoding(enc::bgr)
 {}
 
-CvMatMessage::CvMatMessage(const Encoding& encoding)
-    : MessageTemplate<cv::Mat, CvMatMessage> ("/camera"), encoding(encoding)
+CvMatMessage::CvMatMessage(const Encoding& encoding, Message::Stamp stamp)
+    : MessageTemplate<cv::Mat, CvMatMessage> ("/camera", stamp), encoding(encoding)
 {}
 
 ConnectionType::Ptr CvMatMessage::clone() {
-    Ptr new_msg(new CvMatMessage(encoding));
+    Ptr new_msg(new CvMatMessage(encoding, stamp));
     value.copyTo(new_msg->value);
+    new_msg->frame_id = frame_id;
     return new_msg;
 }
 

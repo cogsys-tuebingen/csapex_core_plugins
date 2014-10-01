@@ -47,7 +47,7 @@ void Filter::process()
 
     if(img_msg.get() && !img_msg->value.empty()) {
         if(!mask_msg.get()) {
-            mask_msg.reset(new CvMatMessage(enc::mono));
+            mask_msg.reset(new CvMatMessage(enc::mono, img_msg->stamp));
         }
 
         filter(img_msg->value, mask_msg->value);

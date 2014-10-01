@@ -42,7 +42,6 @@ void DynamicTransform::process()
 {
     if(!init_) {
         refresh();
-        return;
     }
 
     setError(false);
@@ -76,24 +75,18 @@ void DynamicTransform::process()
     }
 
 
-    connection_types::TimeStampMessage::Ptr time_msg = time_in_->getMessage<connection_types::TimeStampMessage>();
-    publishTransform(time_msg->value);
-}
-
-void DynamicTransform::tick()
-{
     if(time_in_->hasMessage()) {
-        return;
+        connection_types::TimeStampMessage::Ptr time_msg = time_in_->getMessage<connection_types::TimeStampMessage>();
+        publishTransform(time_msg->value);
+    } else {
+        publishTransform(ros::Time(0));
     }
-
-    publishTransform(ros::Time(0));
 }
 
 void DynamicTransform::publishTransform(const ros::Time& time)
 {
     if(!init_) {
         refresh();
-        return;
     }
 
     tf::StampedTransform t;
@@ -154,6 +147,7 @@ void DynamicTransform::refresh()
     std::string from = from_p->as<std::string>();
 
     LockedListener l = Listener::getLocked();
+    l.l->tfl->waitForTransform(from, to, ros::Time(0), ros::Duration(1.0));
     if(l.l) {
         std::vector<std::string> f;
         l.l->tfl->getFrameStrings(f);
@@ -182,4 +176,3 @@ void DynamicTransform::refresh()
 void DynamicTransform::update()
 {
 }
-

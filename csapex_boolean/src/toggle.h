@@ -20,8 +20,6 @@ public:
     virtual void setup();
     void process();
 
-    void tick();
-
 private:
     void setSignal();
 

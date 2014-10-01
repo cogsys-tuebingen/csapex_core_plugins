@@ -46,7 +46,7 @@ void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
     typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
     pcl_ros::transformPointCloud(*cloud, *out, t);
 
-    PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     msg->value = out;
 
     output_->publish(msg);

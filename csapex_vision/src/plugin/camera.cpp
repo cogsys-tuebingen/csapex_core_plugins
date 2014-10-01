@@ -29,13 +29,8 @@ Camera::Camera()
 
 void Camera::process()
 {
-
-}
-
-void Camera::tick()
-{
     if(cap_.isOpened()) {
-        connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr));
+        connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
         cap_ >> msg->value;
         output_->publish(msg);
     }

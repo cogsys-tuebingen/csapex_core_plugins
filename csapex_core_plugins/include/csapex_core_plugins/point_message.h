@@ -13,9 +13,7 @@ struct PointMessage : public Message
 public:
     typedef boost::shared_ptr<PointMessage> Ptr;
 
-    PointMessage();
-
-    static ConnectionType::Ptr make();
+    PointMessage(Message::Stamp stamp);
 
     virtual ConnectionType::Ptr clone();
     virtual ConnectionType::Ptr toType();
@@ -33,6 +31,12 @@ struct type<PointMessage> {
         return "Point";
     }
 };
+
+template <>
+inline boost::shared_ptr<PointMessage> makeEmpty<PointMessage>()
+{
+    return boost::shared_ptr<PointMessage>(new PointMessage(0));
+}
 
 }
 }

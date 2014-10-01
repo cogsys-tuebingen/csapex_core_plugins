@@ -33,11 +33,6 @@ StaticTransform::StaticTransform()
 
 void StaticTransform::process()
 {
-
-}
-
-void StaticTransform::tick()
-{
     double roll = readParameter<double>("roll");
     double pitch = readParameter<double>("pitch");
     double yaw = readParameter<double>("yaw");

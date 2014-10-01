@@ -32,7 +32,7 @@ void VectorizePyramid::process()
         it = in->value.begin() ;
         it != in->value.end() ;
         ++it) {
-        CvMatMessage::Ptr msg(new CvMatMessage(enc));
+        CvMatMessage::Ptr msg(new CvMatMessage(enc, in->stamp));
         msg->value = it->clone();
         out->push_back(msg);
     }

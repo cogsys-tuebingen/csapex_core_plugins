@@ -104,7 +104,7 @@ void CoordinateSwapper::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 
     Swapper<PointT>::apply(cloud, cloud_swapped);
 
-    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     out->value = cloud_swapped;
     output_->publish(out);
 }

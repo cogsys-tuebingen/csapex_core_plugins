@@ -16,6 +16,8 @@ public:
     virtual void processROS();
     virtual void tickROS();
 
+    void callback(ConnectionTypePtr message);
+
 protected:
     void refresh();
     void update();
@@ -26,6 +28,7 @@ protected:
 
 private:
     Output* connector_;
+    ConnectionTypePtr msg_;
 
     ros::Subscriber current_subscriber;
 

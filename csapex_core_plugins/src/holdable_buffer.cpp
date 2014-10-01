@@ -62,7 +62,10 @@ void HoldableBuffer::process()
         out_->setType(msg->toType());
     }
 
-    out_->publish(out);
+    if(out) {
+        out_->publish(out);
+    }
+
 }
 
 void HoldableBuffer::setupParameters()

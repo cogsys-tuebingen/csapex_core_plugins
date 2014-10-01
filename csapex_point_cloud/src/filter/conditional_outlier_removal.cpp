@@ -113,7 +113,7 @@ void ConditionalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr
         cloud_filtered.reset(new pcl::PointCloud<PointT>(*cloud));
     }
 
-    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     out->value = cloud_filtered;
     output_->publish(out);
 }

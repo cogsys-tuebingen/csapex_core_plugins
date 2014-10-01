@@ -48,7 +48,7 @@ void IndexedPointCloud::process()
         }
     }
 
-    PointCloudMessage::Ptr output(new PointCloudMessage(cloud->header.frame_id));
+    PointCloudMessage::Ptr output(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     output->value = cloud;
     output_->publish(output);
 }
