@@ -34,7 +34,7 @@ void SVMTrainer::setupParameters()
     addParameter(param::ParameterFactory::declareFileOutputPath("path",
                                                                 param::ParameterDescription("File to write svm to."),
                                                                 "",
-                                                                "*.yaml|*.tar.gz"));
+                                                                "*.yaml *.tar.gz"));
 
     addParameter(param::ParameterFactory::declareTrigger("train",
                                                          param::ParameterDescription("Train using obtained data!")),
@@ -121,7 +121,7 @@ void SVMTrainer::process()
 
     if(in_vector_->hasMessage()) {
         boost::shared_ptr<std::vector<FeaturesMessage::Ptr> const> in =
-                in_->getMessage<GenericVectorMessage, FeaturesMessage::Ptr>();
+                in_vector_->getMessage<GenericVectorMessage, FeaturesMessage::Ptr>();
 
         m_.lock();
         for(unsigned int i = 0 ; i < in->size() ; ++i) {

@@ -31,7 +31,7 @@ void SVM::setupParameters()
                                                       param::ParameterDescription("Path to a saved svm."),
                                                       true,
                                                       "",
-                                                      ".yaml"),
+                                                      "*.yaml *.tar.gz"),
                  boost::bind(&SVM::load, this));
 
 }
@@ -60,6 +60,9 @@ void SVM::process()
 void SVM::load()
 {
     std::string path = readParameter<std::string>("svm path");
+    if(path == "")
+        return;
+
     m_.lock();
     svm_.load(path.c_str());
     loaded_ = true;
