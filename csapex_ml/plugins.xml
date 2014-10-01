@@ -7,7 +7,15 @@
 </class>
 <class type="csapex::ExportJANNFormat" base_class_type="csapex::Node">
   <description>Exports messages as JANN format if possible.</description>
-  <tags>General, Output</tags>
+  <tags>ML, Output</tags>
+</class>
+<class type="csapex::SVM" base_class_type="csapex::Node">
+  <description>SVM to classify data.</description>
+  <tags>ML</tags>
+</class>
+<class type="csapex::SVMTrainer" base_class_type="csapex::Node">
+  <description>Train SVM to classify data.</description>
+  <tags>ML</tags>
 </class>
 </library>
 
