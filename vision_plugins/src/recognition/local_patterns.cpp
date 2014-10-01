@@ -113,7 +113,7 @@ LocalPatterns::LocalPatterns()
 void LocalPatterns::process()
 {
     CvMatMessage::Ptr  in = in_img_->getMessage<CvMatMessage>();
-    VectorMessage::Ptr out(VectorMessage::make<FeaturesMessage>());
+    boost::shared_ptr< std::vector<FeaturesMessage::Ptr> > out(new std::vector<FeaturesMessage::Ptr>);
 
     if(in->value.channels() > 1)
         throw std::runtime_error("Matrix must be one channel!");
@@ -135,7 +135,7 @@ void LocalPatterns::process()
             ltp(value, k, feature_msg->value);
         }
 
-        out->value.push_back(feature_msg);
+        out->push_back(feature_msg);
 
     } else {
         VectorMessage::Ptr in_rois = in_rois_->getMessage<VectorMessage>();
@@ -159,18 +159,18 @@ void LocalPatterns::process()
 
             feature_msg->classification = roi->value.classification();
 
-            out->value.push_back(feature_msg);
+            out->push_back(feature_msg);
         }
     }
 
-    out_->publish(out);
+    out_->publish<GenericVectorMessage, FeaturesMessage::Ptr>(out);
 }
 
 void LocalPatterns::setup()
 {
     in_img_     = modifier_->addInput<CvMatMessage>("image");
     in_rois_    = modifier_->addOptionalInput<VectorMessage, RoiMessage>("rois");
-    out_        = modifier_->addOutput<VectorMessage,FeaturesMessage>("descriptors");
+    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage::Ptr>("descriptors");
 }
 
 void LocalPatterns::setupParameters()

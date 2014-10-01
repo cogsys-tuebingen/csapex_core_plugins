@@ -67,13 +67,13 @@ void HOGDetector::setupParameters()
 void HOGDetector::setup()
 {
     in_  = modifier_->addInput<CvMatMessage>("image");
-    out_ = modifier_->addOutput<VectorMessage, RoiMessage>("detections");
+    out_ = modifier_->addOutput<GenericVectorMessage, RoiMessage::Ptr>("detections");
 }
 
 void HOGDetector::process()
 {
     CvMatMessage::Ptr  in = in_->getMessage<CvMatMessage>();
-    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
+    boost::shared_ptr< std::vector<RoiMessage::Ptr > > out(new std::vector<RoiMessage::Ptr> );
 
     if(!in->hasChannels(1, CV_8U))
         throw std::runtime_error("Image must be one channel grayscale!");
@@ -106,6 +106,8 @@ void HOGDetector::process()
         throw std::runtime_error("Unkown SVM type!");
     }
 
+    std::cout << h.svmDetector.size() << std::endl;
+
     h.gammaCorrection = readParameter<bool>("gamma correction");
     h.nlevels         = readParameter<int>("window incrementations");
     h.winSigma        = readParameter<double>("gaussian sigma");
@@ -129,7 +131,7 @@ void HOGDetector::process()
         RoiMessage::Ptr roi(new RoiMessage);
         cv::Scalar color(utils_cv::color::bezierColor<cv::Scalar>(i / (float) loc_rects.size()));
         roi->value = Roi(loc_rects.at(i), color, 0);
-        out->value.push_back(roi);
+        out->push_back(roi);
     }
 
     for(unsigned int i = 0 ; i < loc_points.size() ; ++i) {
@@ -138,9 +140,9 @@ void HOGDetector::process()
         cv::Point &p = loc_points.at(i);
         cv::Rect r(p.x, p.y, svm_width_, svm_height_);
         roi->value = Roi(r, color, 0);
-        out->value.push_back(roi);
+        out->push_back(roi);
     }
-     out_->publish(out);
+    out_->publish<GenericVectorMessage, RoiMessage::Ptr>(out);
 }
 
 void HOGDetector::load()

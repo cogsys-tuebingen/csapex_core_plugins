@@ -65,8 +65,8 @@ void HOGExtractor::setupParameters()
 void HOGExtractor::setup()
 {
     in_img_     = modifier_->addInput<CvMatMessage>("image");
-    in_rois_    = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
-    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("descriptors");
+    in_rois_    = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage::Ptr>("rois");
+    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("features");
 }
 
 void HOGExtractor::process()
@@ -110,28 +110,32 @@ void HOGExtractor::process()
 
         FeaturesMessage::Ptr feature_msg(new FeaturesMessage);
 
-        d.compute(value, feature_msg->value);
+        if(!value.empty())
+            d.compute(value, feature_msg->value);
 
         feature_msg->classification = 0;
 
         out->push_back(feature_msg);
 
     } else {
-        VectorMessage::Ptr in_rois = in_rois_->getMessage<VectorMessage>();
-        for(std::vector<ConnectionType::Ptr>::iterator
-            it = in_rois->value.begin() ;
-            it != in_rois->value.end() ;
+        boost::shared_ptr<std::vector<RoiMessage::Ptr> const> in_rois =
+                in_rois_->getMessage<GenericVectorMessage, RoiMessage::Ptr>();
+
+        for(std::vector<RoiMessage::Ptr>::const_iterator
+            it = in_rois->begin() ;
+            it != in_rois->end() ;
             ++it) {
 
-            RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(*it);
-            FeaturesMessage::Ptr feature_msg(new FeaturesMessage);
-            cv::Rect const &rect = roi->value.rect();
+            RoiMessage::Ptr const &roi = *it;
+            FeaturesMessage::Ptr   feature_msg(new FeaturesMessage);
+            cv::Rect const        &rect = roi->value.rect();
 
             d.winSize = cv::Size(rect.width, rect.height);
 
             cv::Mat roi_mat = cv::Mat(value, rect);
 
-            d.compute(roi_mat, feature_msg->value);
+            if(!roi_mat.empty())
+                d.compute(roi_mat, feature_msg->value);
 
             feature_msg->classification = roi->value.classification();
 

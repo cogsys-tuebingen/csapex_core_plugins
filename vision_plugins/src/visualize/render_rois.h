@@ -18,6 +18,7 @@ public:
 private:
     Input* input_img_;
     Input* input_rois_;
+    Input* input_rois_gen_;
 
     Output* output_;
 };
