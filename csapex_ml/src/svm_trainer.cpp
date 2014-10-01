@@ -98,7 +98,7 @@ void SVMTrainer::setupParameters()
                             coeff0_cond);
     addConditionalParameter(param::ParameterFactory::declareRange<double>("C", -M_PI, M_PI, 1.0, 0.05),
                             cvalue_cond);
-    addConditionalParameter(param::ParameterFactory::declareRange<double>("nu", -M_PI, M_PI, 0.0, 0.05),
+    addConditionalParameter(param::ParameterFactory::declareRange<double>("nu", 0.0, 1.0, 0.0, 0.05),
                             nu_cond);
     addConditionalParameter(param::ParameterFactory::declareRange<double>("p", -M_PI, M_PI, 0.0, 0.05),
                             p_cond);
