@@ -183,7 +183,7 @@ void GenericImageCombiner::process()
         VariableExpression::get("2") = cv::Mat();
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));
+    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp));
 
     if(img1->value.channels() == 1) {
         e.evaluate().convertTo(out->value, CV_8UC1);

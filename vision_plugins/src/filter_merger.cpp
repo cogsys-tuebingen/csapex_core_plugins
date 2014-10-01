@@ -34,7 +34,7 @@ void Merger::process()
     cv::Mat out_img;
 
     cv::merge(msgs, out_img);
-    CvMatMessage::Ptr out_msg(new CvMatMessage(encoding));
+    CvMatMessage::Ptr out_msg(new CvMatMessage(encoding, stamp_));
     out_msg->value = out_img;
     output_->publish(out_msg);
 }
@@ -69,11 +69,16 @@ void Merger::updateInputs()
 
 void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
 {
+    bool first = true;
     std::vector<Input*> inputs = getNodeWorker()->getMessageInputs();
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
         Input *in = inputs[i];
         if(in->hasMessage()) {
             CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
+            if(first) {
+                stamp_ = msg->stamp;
+                first = false;
+            }
             in->setLabel(msg->getEncoding().toString());
             messages.push_back(msg->value);
             encoding.append(msg->getEncoding());

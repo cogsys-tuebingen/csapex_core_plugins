@@ -28,7 +28,7 @@ void MonoFilter::process()
         throw std::runtime_error("image must be one channel grayscale.");
     }
 
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
 
     out->value    = in->value.clone();
 

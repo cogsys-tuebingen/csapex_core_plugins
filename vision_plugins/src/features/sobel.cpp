@@ -24,7 +24,7 @@ Sobel::Sobel() :
 void Sobel::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
     int depth = in->value.type() & 7;
     cv::Sobel(in->value, out->value, depth, dx_, dy_, ksize_, scale_,delta_);
     output_->publish(out);

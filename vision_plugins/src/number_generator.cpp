@@ -22,14 +22,14 @@ NumberGenerator::NumberGenerator()
 
 void NumberGenerator::process()
 {
-    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr));
+    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
 
     msg->value = cv::Mat(400, 400, CV_8UC3);
 
     std::stringstream txt;
     txt << n;
     cv::rectangle(msg->value, cv::Rect(0,0, msg->value.cols, msg->value.rows), cv::Scalar::all(0), CV_FILLED);
-    cv::putText(msg->value, txt.str(), cv::Point(200, 200), CV_FONT_HERSHEY_PLAIN, 5.0, cv::Scalar::all(255), 2, CV_AA);
+    cv::putText(msg->value, txt.str(), cv::Point(20, 20), CV_FONT_HERSHEY_PLAIN, 5.0, cv::Scalar::all(255), 2, CV_AA);
 
     output_->publish(msg);
 

@@ -31,7 +31,7 @@ void CornerHarris::process()
         throw std::runtime_error("image must be one channel grayscale.");
     }
 
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
 
     cv::cornerHarris(in->value, out->value, block_size_, k_size_, k_, border_type_);
 

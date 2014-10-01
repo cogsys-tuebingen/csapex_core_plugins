@@ -25,7 +25,7 @@ vision_plugins::CameraCalibration::CameraCalibration()
 void vision_plugins::CameraCalibration::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
 
     /// BUFFER THE CURRENT FRAME
     buffer_frame_ = in->value.clone();

@@ -78,7 +78,7 @@ GLCM::GLCM()
 void GLCM::process()
 {
     CvMatMessage::Ptr in = in_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr out(new CvMatMessage(enc::mono));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::mono, in->stamp));
 
     if(in->value.type() != CV_8UC1)
         std::runtime_error("Only mono 8 supported!");

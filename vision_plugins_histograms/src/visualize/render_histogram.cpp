@@ -37,7 +37,7 @@ void RenderHistogram::process()
         }
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(enc::bgr));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::bgr, in->stamp));
     out->value = cv::Mat(height_, width_, CV_8UC3, cv::Scalar(0,0,0));
 
     int line_width = readParameter<int>("line width");

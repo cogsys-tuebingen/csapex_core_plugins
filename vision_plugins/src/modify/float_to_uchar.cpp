@@ -29,7 +29,7 @@ FloatToUchar::FloatToUchar() :
 void FloatToUchar::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
     out->value = in->value.clone();
 
 

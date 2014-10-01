@@ -23,7 +23,7 @@ Laplacian::Laplacian()
 void Laplacian::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
 
     int depth = in->value.type() & 7;
     cv::Laplacian(in->value, out->value, depth, ksize_, scale_, delta_);

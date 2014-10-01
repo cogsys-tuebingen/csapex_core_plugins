@@ -30,7 +30,7 @@ MatrixToHeatmap::MatrixToHeatmap() :
 void MatrixToHeatmap::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding()));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
 
 
     cv::Mat working = in->value.clone();

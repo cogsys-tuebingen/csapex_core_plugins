@@ -35,7 +35,7 @@ void SetOperation::process()
     }
 
 
-    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));
+    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp));
 
     int op = readParameter<int>("operation");
     if(op == COMPLEMENT) {

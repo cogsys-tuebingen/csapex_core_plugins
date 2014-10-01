@@ -25,7 +25,7 @@ void RenderLabels::process()
 {
 #warning "FIX ENCODING"
     CvMatMessage::Ptr labels = labels_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr));
+    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, labels->stamp));
 
     if(image_->hasMessage()) {
         CvMatMessage::Ptr image = image_->getMessage<connection_types::CvMatMessage>();
