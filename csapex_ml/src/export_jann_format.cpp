@@ -28,10 +28,9 @@ ExportJANNFormat::ExportJANNFormat()
 
 void ExportJANNFormat::setupParameters()
 {
-
-    addParameter(param::ParameterFactory::declarePath("path",
-                                                      param::ParameterDescription("Directory to write messages to"),
-                                                      "", ""));
+    addParameter(param::ParameterFactory::declareFileOutputPath("path",
+                                                                param::ParameterDescription("Directory to write messages to"),
+                                                                "", ".nn"));
 
     addParameter(param::ParameterFactory::declareTrigger("save",
                                                          param::ParameterDescription("Save the obtained data!")),
@@ -52,22 +51,22 @@ void ExportJANNFormat::process()
 {
     if(in_->hasMessage()) {
         FeaturesMessage::Ptr msg = in_->getMessage<FeaturesMessage>();
-        mutex_.lock();
+        m_.lock();
         msgs_.push_back(msg);
-        mutex_.unlock();
+        m_.unlock();
     }
 
     if(in_vector_->hasMessage()) {
         boost::shared_ptr<std::vector<FeaturesMessage::Ptr> const> msgs =
                    in_vector_->getMessage<GenericVectorMessage, FeaturesMessage::Ptr>();
-        mutex_.lock();
+        m_.lock();
         for(std::vector<FeaturesMessage::Ptr>::const_iterator
             it = msgs->begin() ;
             it != msgs->end();
             ++it) {
             msgs_.push_back(*it);
         }
-        mutex_.unlock();
+        m_.unlock();
     }
 }
 
@@ -116,9 +115,9 @@ inline void labelMap(const std::vector<FeaturesMessage::Ptr> &msgs,
 void ExportJANNFormat::save()
 {
     std::vector<FeaturesMessage::Ptr> msgs;
-    mutex_.lock();
+    m_.lock();
     msgs = msgs_;
-    mutex_.unlock();
+    m_.unlock();
 
     std::string     path = readParameter<std::string>("path");
     std::ofstream   out_file(path.c_str());
@@ -149,7 +148,7 @@ void ExportJANNFormat::save()
 
 void ExportJANNFormat::clear()
 {
-    mutex_.lock();
+    m_.lock();
     msgs_.clear();
-    mutex_.unlock();
+    m_.unlock();
 }
