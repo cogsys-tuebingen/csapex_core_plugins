@@ -1,4 +1,8 @@
 <library path="libcsapex_vision_plugin">
+<class type="csapex::StaticRoi" base_class_type="csapex::Node">
+  <description>Produce static roi matrix.</description>
+  <tags>Vision</tags>
+</class>
 <class type="csapex::RotateImage" base_class_type="csapex::Node">
   <description>Rotates an image</description>
 </class>
@@ -51,8 +55,26 @@
 </class>
 <class type="csapex::MeanStdDev" base_class_type="csapex::Node">
   <description>
-    Calculate mean and std deviation of matrix. The result will be
-    of the same encoding and could be seen as a 1x1 matrix of the same type.
+    Calculate mean and std deviation of matrix. The result vector
+    contains the mean or deviation for each channel.
+  </description>
+  <tags>Vision</tags>
+</class>
+<class type="csapex::MeanStdDevNormalization" base_class_type="csapex::Node">
+  <description>
+    Normalize a matrix given the mean and std deviation.
+  </description>
+  <tags>Vision</tags>
+</class>
+<class type="csapex::Row" base_class_type="csapex::Node">
+  <description>
+    Retrieve a row of a CV matrix.
+  </description>
+  <tags>Vision</tags>
+</class>
+<class type="csapex::Col" base_class_type="csapex::Node">
+  <description>
+    Retrieve a col of a CV matrix.
   </description>
   <tags>Vision</tags>
 </class>

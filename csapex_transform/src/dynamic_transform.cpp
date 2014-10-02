@@ -91,6 +91,13 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
     tf::StampedTransform t;
 
+    if(getParameter("from")->is<void>()) {
+        throw std::runtime_error("from is not a string");
+    }
+    if(getParameter("to")->is<void>()) {
+        throw std::runtime_error("to is not a string");
+    }
+
     std::string to = readParameter<std::string>("to");
     std::string from = readParameter<std::string>("from");
 
@@ -143,8 +150,15 @@ void DynamicTransform::refresh()
 {
     std::vector<std::string> frames;
 
-    std::string to = to_p->as<std::string>();
-    std::string from = from_p->as<std::string>();
+    std::string to, from;
+
+    if(getParameter("from")->is<std::string>()) {
+        to = to_p->as<std::string>();
+    }
+    if(getParameter("to")->is<std::string>()) {
+        from = from_p->as<std::string>();
+    }
+
 
     LockedListener l = Listener::getLocked();
     l.l->tfl->waitForTransform(from, to, ros::Time(0), ros::Duration(1.0));

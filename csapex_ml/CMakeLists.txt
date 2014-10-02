@@ -26,6 +26,8 @@ add_library(csapex_ml_plugin
     src/decision_tree.cpp
     src/decision_tree_trainer.cpp
     src/export_jann_format.cpp
+    src/svm_trainer.cpp
+    src/svm.cpp
 )
 
 target_link_libraries(csapex_ml_plugin

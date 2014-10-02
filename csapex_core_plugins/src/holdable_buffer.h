@@ -9,7 +9,8 @@
 #include <deque>
 
 namespace csapex {
-class HoldableBuffer : public Node {
+class HoldableBuffer : public Node
+{
 public:
     HoldableBuffer();
 

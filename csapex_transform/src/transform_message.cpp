@@ -37,6 +37,8 @@ Node convert<csapex::connection_types::TransformMessage>::encode(const csapex::c
     const tf::Vector3& t = rhs.value.getOrigin();
 
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
+    node["child_frame"] = rhs.child_frame;
+
     node["orientation"].push_back(q.x());
     node["orientation"].push_back(q.y());
     node["orientation"].push_back(q.z());
@@ -54,6 +56,10 @@ bool convert<csapex::connection_types::TransformMessage>::decode(const Node& nod
     }
 
     convert<csapex::connection_types::Message>::decode(node, rhs);
+
+    if(node["child_frame"].IsDefined()) {
+        rhs.child_frame = node["child_frame"].as<std::string>();
+    }
 
     std::vector<float> o = node["orientation"].as< std::vector<float> >();
     std::vector<float> t = node["orientation"].as< std::vector<float> >();

@@ -19,8 +19,7 @@ using namespace csapex;
 using namespace connection_types;
 
 ImageRoi::ImageRoi() :
-    last_mat_size_(-1, -1),
-    result_(new RoiMessage)
+    last_mat_size_(-1, -1)
 {
 }
 
@@ -53,7 +52,7 @@ void ImageRoi::setupParameters()
                                                        0, 480, 480, 1));
 
     addParameter(param::ParameterFactory::declareRange("class label",
-                                                        param::ParameterDescription("Assign a class label to roi."),
+                                                       param::ParameterDescription("Assign a class label to roi."),
                                                        -1, 255, -1, 1));
 }
 
@@ -85,7 +84,7 @@ void ImageRoi::process()
     int in_cols = in->value.cols;
 
     if(in_rows != last_mat_size_.height ||
-       in_cols != last_mat_size_.width) {
+            in_cols != last_mat_size_.width) {
         param::RangeParameter::Ptr width =
                 getParameter<param::RangeParameter>("roi width");
         width->setInterval<int>(1, in_cols);
@@ -110,9 +109,11 @@ void ImageRoi::process()
         waitForView();
 
     int class_label = readParameter<int>("class label");
-    result_->value.setClassification(class_label);
 
-    output_->publish(result_);
+    if(result_) {
+        result_->value.setClassification(class_label);
+        output_->publish(result_);
+    }
 }
 
 void ImageRoi::setResult(connection_types::RoiMessage::Ptr result)

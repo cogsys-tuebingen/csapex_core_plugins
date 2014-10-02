@@ -71,6 +71,7 @@ target_link_libraries(csapex_vision
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 add_library(csapex_vision_plugin
+    src/plugin/static_roi.cpp
     src/plugin/rotate_image.cpp
     src/plugin/grab_cut.cpp
     src/plugin/register_plugin.cpp
@@ -93,6 +94,9 @@ add_library(csapex_vision_plugin
     src/plugin/vectorize_pyramid.cpp
     src/plugin/image_roi.cpp
     src/plugin/image_roi_adapter.cpp
+    src/plugin/row.cpp
+    src/plugin/col.cpp
+    src/plugin/mean_dev_normalization.cpp
 
     ${QT_MOC_PLUG}
     ${QT_RESOURCES}
