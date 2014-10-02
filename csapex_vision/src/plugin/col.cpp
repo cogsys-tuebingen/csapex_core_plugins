@@ -6,6 +6,7 @@
 #include <csapex/msg/output.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
+#include <utils_param/range_parameter.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -22,7 +23,7 @@ Col::Col() :
 void Col::process()
 {
     CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding()));
+    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp));
 
     if(in->value.empty()) {
         throw std::runtime_error("Cannot extract row of empty matrix!");

@@ -13,7 +13,7 @@ struct PointMessage : public Message
 public:
     typedef boost::shared_ptr<PointMessage> Ptr;
 
-    PointMessage(Message::Stamp stamp);
+    PointMessage(Message::Stamp stamp = 0);
 
     virtual ConnectionType::Ptr clone();
     virtual ConnectionType::Ptr toType();
