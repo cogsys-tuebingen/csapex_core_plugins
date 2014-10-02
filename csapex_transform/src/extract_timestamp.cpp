@@ -30,6 +30,7 @@ void ExtractTimeStamp::process()
 
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
     time->value = time->value.fromNSec(msg->stamp);
+    time->stamp = msg->stamp;
     output_->publish(time);
 }
 

@@ -30,7 +30,8 @@ private:
     void command(const std_msgs::StringConstPtr &cmd);
 
 private:
-    ros::Subscriber command_sub_;
+    ros::Subscriber global_command_sub_;
+    ros::Subscriber private_command_sub_;
     CsApexCore* core_;
 };
 }

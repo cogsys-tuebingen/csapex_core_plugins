@@ -140,8 +140,10 @@ void APEXRosInterface::init(CsApexCore &core)
 void APEXRosInterface::registerCommandListener()
 {
     assert(ROSHandler::instance().isConnected());
-    command_sub_ = ROSHandler::instance().nh()->subscribe
+    global_command_sub_ = ROSHandler::instance().nh()->subscribe
             <std_msgs::String>("/syscommand", 10, boost::bind(&APEXRosInterface::command, this, _1));
+    private_command_sub_ = ROSHandler::instance().nh()->subscribe
+            <std_msgs::String>("command", 10, boost::bind(&APEXRosInterface::command, this, _1));
 
     ros::spinOnce();
 }
