@@ -54,7 +54,6 @@ void ROSHandler::initHandle(bool try_only)
 
     QMutexLocker lock(&has_connection_mutex);
     if(try_only && has_connection.isRunning()) {
-        std::cout << "init handle: still probing master" << std::endl;
         return;
     }
 

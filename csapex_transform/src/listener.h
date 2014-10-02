@@ -41,6 +41,7 @@ private:
     Listener();
 
     void cb(const tf::tfMessage::ConstPtr& msg);
+    bool tryFrameAsReference(const tf::tfMessage::ConstPtr &msg, const std::string& frame);
 
     int retries;
     std::string reference_frame;

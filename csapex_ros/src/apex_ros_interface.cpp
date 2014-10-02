@@ -140,7 +140,6 @@ void APEXRosInterface::init(CsApexCore &core)
 void APEXRosInterface::registerCommandListener()
 {
     assert(ROSHandler::instance().isConnected());
-    std::cerr << "subscribing to /syscommand" << std::endl;
     command_sub_ = ROSHandler::instance().nh()->subscribe
             <std_msgs::String>("/syscommand", 10, boost::bind(&APEXRosInterface::command, this, _1));
 

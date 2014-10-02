@@ -58,16 +58,12 @@ void Listener::cb(const tf::tfMessage::ConstPtr &msg)
     } else {
         // try to use /base_link as reference frame, if it exists
         reference_frame = "";
-        std::string preferred = "/base_link";
-        for(unsigned i = 0, n = msg->transforms.size(); i < n; ++i) {
-            if(msg->transforms[i].child_frame_id == preferred) {
-                reference_frame = preferred;
-                init = true;
-
-                last_ = msg->transforms[i].header.stamp;
-                return;
-            }
+        if(tryFrameAsReference(msg, "base_link")) {
+            return;
+        } else if(tryFrameAsReference(msg, "/base_link")) {
+            return;
         }
+
         // if /base_link doesn't exist, use the first random one
 
         if(--retries <= 0) {
@@ -76,11 +72,26 @@ void Listener::cb(const tf::tfMessage::ConstPtr &msg)
                 init = false;
             } else {
                 reference_frame = msg->transforms[0].child_frame_id;
-                std::cerr << "warning: " << preferred << " frame not available! using " << reference_frame << std::endl;
                 init = true;
 
                 last_ = msg->transforms[0].header.stamp;
             }
         }
     }
+}
+
+bool Listener::tryFrameAsReference(const tf::tfMessage::ConstPtr &msg, const std::string &frame)
+{
+
+    for(unsigned i = 0, n = msg->transforms.size(); i < n; ++i) {
+        if(msg->transforms[i].child_frame_id == frame) {
+            reference_frame = frame;
+            init = true;
+
+            last_ = msg->transforms[i].header.stamp;
+            return true;
+        }
+    }
+
+    return false;
 }
