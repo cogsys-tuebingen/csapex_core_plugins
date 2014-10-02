@@ -113,7 +113,7 @@ LocalPatterns::LocalPatterns()
 void LocalPatterns::process()
 {
     CvMatMessage::Ptr  in = in_img_->getMessage<CvMatMessage>();
-    boost::shared_ptr< std::vector<FeaturesMessage::Ptr> > out(new std::vector<FeaturesMessage::Ptr>);
+    boost::shared_ptr< std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(in->value.channels() > 1)
         throw std::runtime_error("Matrix must be one channel!");
@@ -125,52 +125,51 @@ void LocalPatterns::process()
     cv::Mat &value = in->value;
 
     if(!in_rois_->hasMessage()) {
-        FeaturesMessage::Ptr feature_msg(new FeaturesMessage);
+        FeaturesMessage feature_msg;
 
-        feature_msg->classification = 0;
+        feature_msg.classification = 0;
 
         if(t == LBP) {
-            lbp(value, feature_msg->value);
+            lbp(value, feature_msg.value);
         } else {
-            ltp(value, k, feature_msg->value);
+            ltp(value, k, feature_msg.value);
         }
 
         out->push_back(feature_msg);
 
     } else {
-        VectorMessage::Ptr in_rois = in_rois_->getMessage<VectorMessage>();
+        boost::shared_ptr< std::vector<RoiMessage> const> in_rois = in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
 
-        for(std::vector<ConnectionType::Ptr>::iterator
-            it = in_rois->value.begin() ;
-            it != in_rois->value.end() ;
+        for(std::vector<RoiMessage>::const_iterator
+            it  = in_rois->begin() ;
+            it != in_rois->end() ;
             ++it) {
 
-            RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(*it);
-            FeaturesMessage::Ptr feature_msg(new FeaturesMessage);
-            cv::Rect const &rect = roi->value.rect();
+            FeaturesMessage feature_msg;
+            cv::Rect const &rect = it->value.rect();
 
             cv::Mat roi_mat = cv::Mat(value, rect);
 
             if(t == LBP) {
-                lbp(value, feature_msg->value);
+                lbp(roi_mat, feature_msg.value);
             } else {
-                ltp(value, k, feature_msg->value);
+                ltp(roi_mat, k, feature_msg.value);
             }
 
-            feature_msg->classification = roi->value.classification();
+            feature_msg.classification = it->value.classification();
 
             out->push_back(feature_msg);
         }
     }
 
-    out_->publish<GenericVectorMessage, FeaturesMessage::Ptr>(out);
+    out_->publish<GenericVectorMessage, FeaturesMessage>(out);
 }
 
 void LocalPatterns::setup()
 {
     in_img_     = modifier_->addInput<CvMatMessage>("image");
-    in_rois_    = modifier_->addOptionalInput<VectorMessage, RoiMessage>("rois");
-    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage::Ptr>("descriptors");
+    in_rois_    = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
+    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("descriptors");
 }
 
 void LocalPatterns::setupParameters()

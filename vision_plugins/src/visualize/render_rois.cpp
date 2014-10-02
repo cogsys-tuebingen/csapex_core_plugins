@@ -76,22 +76,22 @@ void RenderROIs::process()
     }
 
     if(input_rois_gen_->hasMessage()) {
-        boost::shared_ptr< std::vector<RoiMessage::Ptr> const> rois =
-                input_rois_gen_->getMessage<GenericVectorMessage, RoiMessage::Ptr>();
+        boost::shared_ptr< std::vector<RoiMessage> const> rois =
+                input_rois_gen_->getMessage<GenericVectorMessage, RoiMessage>();
 
-        BOOST_FOREACH(const RoiMessage::Ptr& roi, *rois) {
-            if(ignore_uc && roi->value.classification() == -1) {
+        BOOST_FOREACH(const RoiMessage& roi, *rois) {
+            if(ignore_uc && roi.value.classification() == -1) {
                 continue;
             }
 
-            cv::rectangle(out->value, roi->value.rect(), force_color ? color : roi->value.color(), thickness);
+            cv::rectangle(out->value, roi.value.rect(), force_color ? color : roi.value.color(), thickness);
 
-            std::string text = roi->value.label();
+            std::string text = roi.value.label();
 
             if(!text.empty()) {
-                cv::Point pt = roi->value.rect().tl();
+                cv::Point pt = roi.value.rect().tl();
                 cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar::all(0), 4, CV_AA);
-                cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., roi->value.color(), 1, CV_AA);
+                cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., roi.value.color(), 1, CV_AA);
             }
         }
     }
@@ -103,7 +103,7 @@ void RenderROIs::setup()
 {
     input_img_      = modifier_->addInput<CvMatMessage>("image");
     input_rois_     = modifier_->addOptionalInput<VectorMessage, RoiMessage>("ROIs");
-    input_rois_gen_ = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage::Ptr>("ROIs");
+    input_rois_gen_ = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage>("ROIs");
 
     output_ = modifier_->addOutput<CvMatMessage>("Rendered Image");
 }

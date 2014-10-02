@@ -45,7 +45,7 @@ typedef boost::shared_ptr<std::vector<FeaturesMessage> > Features;
 
 template<typename T>
 inline void doProcessSingle(const T   &src,
-                            boost::shared_ptr< std::vector<FeaturesMessage::Ptr> >  &dst,
+                            boost::shared_ptr< std::vector<FeaturesMessage> >  &dst,
                             const int label = 0)
 {
     std::runtime_error("Unsupported message type!");
@@ -53,55 +53,55 @@ inline void doProcessSingle(const T   &src,
 
 template<>
 inline void doProcessSingle(const typename HistogramMessage::Ptr &src,
-                            boost::shared_ptr< std::vector<FeaturesMessage::Ptr> > &dst,
+                            boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
-    FeaturesMessage::Ptr features(new FeaturesMessage);
+    FeaturesMessage features;
     for(std::vector<cv::Mat>::const_iterator
         it  = src->value.histograms.begin() ;
         it != src->value.histograms.end() ;
         ++it) {
         std::vector<float> tmp;
         it->copyTo(tmp);
-        features->value.insert(features->value.end(),
+        features.value.insert(features.value.end(),
                               tmp.begin(),
                               tmp.end());
     }
-    features->classification = label;
+    features.classification = label;
     dst->push_back(features);
 }
 
 template<>
 inline void doProcessSingle(const typename CvMatMessage::Ptr &src,
-                            boost::shared_ptr< std::vector<FeaturesMessage::Ptr> > &dst,
+                            boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
-    FeaturesMessage::Ptr features(new FeaturesMessage);
+    FeaturesMessage features;
     cv::Mat tmp;
     src->value.copyTo(tmp);
     tmp.convertTo(tmp, CV_32F);
     tmp = tmp.reshape(1, 1);
-    tmp.copyTo(features->value);
+    tmp.copyTo(features.value);
 
-    features->classification = label;
+    features.classification = label;
     dst->push_back(features);
 }
 
 template<>
 inline void doProcessSingle(const typename DescriptorMessage::Ptr &src,
-                            boost::shared_ptr< std::vector<FeaturesMessage::Ptr> > &dst,
+                            boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
     for(int i = 0 ; i < src->value.rows ; ++i) {
-        FeaturesMessage::Ptr features(new FeaturesMessage);
-        src->value.row(i).copyTo(features->value);
-        features->classification = label;
+        FeaturesMessage features;
+        src->value.row(i).copyTo(features.value);
+        features.classification = label;
         dst->push_back(features);
     }
 }
 
 inline void processSingle(const ConnectionType::Ptr                         &src,
-                          boost::shared_ptr< std::vector<FeaturesMessage::Ptr> > &dst,
+                          boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
                           const int                                         label)
 {
     CvMatMessage::Ptr      cv =
@@ -121,7 +121,7 @@ inline void processSingle(const ConnectionType::Ptr                         &src
 }
 
 inline void processVector(const connection_types::VectorMessage::Ptr         &src,
-                          boost::shared_ptr< std::vector<FeaturesMessage::Ptr> >  &dst,
+                          boost::shared_ptr< std::vector<FeaturesMessage> >  &dst,
                           const int label)
 {
     for(std::size_t i = 0, total = src->value.size(); i < total; ++i) {
@@ -134,7 +134,7 @@ inline void processVector(const connection_types::VectorMessage::Ptr         &sr
 void ToFeature::process()
 {
     ConnectionType::Ptr msg = input_->getMessage<ConnectionType>();
-    boost::shared_ptr< std::vector<FeaturesMessage::Ptr> > out (new std::vector<FeaturesMessage::Ptr>);
+    boost::shared_ptr< std::vector<FeaturesMessage> > out (new std::vector<FeaturesMessage>);
 
 
     int class_id = readParameter<int>("class id");
@@ -147,6 +147,6 @@ void ToFeature::process()
         processSingle(msg, out, class_id);
     }
 
-    output_->publish<GenericVectorMessage, FeaturesMessage::Ptr>(out);
+    output_->publish<GenericVectorMessage, FeaturesMessage>(out);
 }
 
