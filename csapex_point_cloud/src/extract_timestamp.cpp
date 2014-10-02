@@ -8,16 +8,16 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-CSAPEX_REGISTER_CLASS(csapex::ExtractTimeStamp, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ExtractTimeStampCloud, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-ExtractTimeStamp::ExtractTimeStamp()
+ExtractTimeStampCloud::ExtractTimeStampCloud()
 {
 }
 
-void ExtractTimeStamp::setup()
+void ExtractTimeStampCloud::setup()
 {
     input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
 
@@ -25,15 +25,15 @@ void ExtractTimeStamp::setup()
     output_frame_ = modifier_->addOutput<GenericValueMessage<std::string> >("Target Frame");
 }
 
-void ExtractTimeStamp::process()
+void ExtractTimeStampCloud::process()
 {
     PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<ExtractTimeStamp>(this, msg), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ExtractTimeStampCloud>(this, msg), msg->value);
 }
 
 template <class PointT>
-void ExtractTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void ExtractTimeStampCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 {
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
     time->value = time->value.fromNSec(cloud->header.stamp * 1000);

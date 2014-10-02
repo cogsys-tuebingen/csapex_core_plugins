@@ -1,5 +1,5 @@
-#ifndef EXTRACT_TIMESTAMP_H_
-#define EXTRACT_TIMESTAMP_H_
+#ifndef EXTRACT_TIMESTAMP_CLOUD_H_
+#define EXTRACT_TIMESTAMP_CLOUD_H_
 
 /// PROJECT
 #include <csapex/model/node.h>
@@ -7,10 +7,10 @@
 
 namespace csapex {
 
-class ExtractTimeStamp : public Node
+class ExtractTimeStampCloud : public Node
 {
 public:
-    ExtractTimeStamp();
+    ExtractTimeStampCloud();
 
     virtual void setup();
     virtual void process();
@@ -26,4 +26,4 @@ private:
 
 }
 
-#endif // EXTRACT_TIMESTAMP_H_
+#endif // EXTRACT_TIMESTAMP_CLOUD_H_

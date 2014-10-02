@@ -35,4 +35,8 @@
   <description>Filters several transformation over a time</description>
   <tags>Transform, Filter</tags>
 </class>
+<class type="csapex::ExtractTimeStamp" base_class_type="csapex::Node">
+  <description>Extracts the timestamp and frame id from a message</description>
+  <tags>Time</tags>
+</class>
 </library>

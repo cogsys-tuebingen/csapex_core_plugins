@@ -36,7 +36,7 @@
   <description>Extracts all point from a point cloud that lie on one side of a plane</description>
   <tags>PointCloud</tags>
 </class>
-<class type="csapex::ExtractTimeStamp" base_class_type="csapex::Node">
+<class type="csapex::ExtractTimeStampCloud" base_class_type="csapex::Node">
   <description>Extracts the timestamp and frame id from a point cloud</description>
   <tags>PointCloud</tags>
 </class>
