@@ -27,7 +27,7 @@ private:
 
     boost::mutex                                        m_;
     unsigned int                                        step_;
-    std::vector<connection_types::FeaturesMessage::Ptr> msgs_;
+    std::vector<connection_types::FeaturesMessage>      msgs_;
 
     void train();
     void clear();
