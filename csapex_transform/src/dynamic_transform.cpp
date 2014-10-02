@@ -161,6 +161,9 @@ void DynamicTransform::refresh()
 
 
     LockedListener l = Listener::getLocked();
+    if(!l.l) {
+        return;
+    }
     l.l->tfl->waitForTransform(from, to, ros::Time(0), ros::Duration(1.0));
     if(l.l) {
         std::vector<std::string> f;
