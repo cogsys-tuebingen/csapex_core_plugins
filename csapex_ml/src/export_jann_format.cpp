@@ -52,15 +52,15 @@ void ExportJANNFormat::process()
     if(in_->hasMessage()) {
         FeaturesMessage::Ptr msg = in_->getMessage<FeaturesMessage>();
         m_.lock();
-        msgs_.push_back(msg);
+        msgs_.push_back(*msg);
         m_.unlock();
     }
 
     if(in_vector_->hasMessage()) {
-        boost::shared_ptr<std::vector<FeaturesMessage::Ptr> const> msgs =
-                   in_vector_->getMessage<GenericVectorMessage, FeaturesMessage::Ptr>();
+        boost::shared_ptr<std::vector<FeaturesMessage> const> msgs =
+                   in_vector_->getMessage<GenericVectorMessage, FeaturesMessage>();
         m_.lock();
-        for(std::vector<FeaturesMessage::Ptr>::const_iterator
+        for(std::vector<FeaturesMessage>::const_iterator
             it = msgs->begin() ;
             it != msgs->end();
             ++it) {
@@ -84,15 +84,14 @@ inline void exportVector(const std::vector<T> &vector,
     out << std::endl;
 }
 
-inline void labelMap(const std::vector<FeaturesMessage::Ptr> &msgs,
-                     std::map<int, std::vector<int> > &labels)
+inline void labelMap(const std::vector<FeaturesMessage> &msgs, std::map<int, std::vector<int> > &labels)
 {
-    for(std::vector<FeaturesMessage::Ptr>::const_iterator
+    for(std::vector<FeaturesMessage>::const_iterator
         it = msgs.begin() ;
         it != msgs.end() ;
         ++it) {
 
-        int class_id = (*it)->classification;
+        int class_id = it->classification;
         if(labels.find(class_id) == labels.end()) {
             labels.insert(std::make_pair(class_id, std::vector<int>()));
         }
@@ -114,7 +113,7 @@ inline void labelMap(const std::vector<FeaturesMessage::Ptr> &msgs,
 
 void ExportJANNFormat::save()
 {
-    std::vector<FeaturesMessage::Ptr> msgs;
+    std::vector<FeaturesMessage> msgs;
     m_.lock();
     msgs = msgs_;
     m_.unlock();
@@ -126,12 +125,12 @@ void ExportJANNFormat::save()
     std::map<int, std::vector<int> > labels;
     labelMap(msgs, labels);
 
-    for(std::vector<FeaturesMessage::Ptr>::iterator
+    for(std::vector<FeaturesMessage>::iterator
         it  = msgs.begin() ;
         it != msgs.end() ;
         ++it) {
-        exportVector<float>((*it)->value, out_file);
-        exportVector<int>(labels.at((*it)->classification), out_file);
+        exportVector<float>(it->value, out_file);
+        exportVector<int>(labels.at(it->classification), out_file);
     }
 
     for(std::map<int, std::vector<int> >::iterator

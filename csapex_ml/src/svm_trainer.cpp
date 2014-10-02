@@ -115,19 +115,19 @@ void SVMTrainer::process()
         if(step_ != msg->value.size())
             throw std::runtime_error("Inconsistent feature length!");
 
-        msgs_.push_back(msg);
+        msgs_.push_back(*msg);
         m_.unlock();
     }
 
     if(in_vector_->hasMessage()) {
-        boost::shared_ptr<std::vector<FeaturesMessage::Ptr> const> in =
-                in_vector_->getMessage<GenericVectorMessage, FeaturesMessage::Ptr>();
+        boost::shared_ptr<std::vector<FeaturesMessage> const> in =
+                in_vector_->getMessage<GenericVectorMessage, FeaturesMessage>();
 
         m_.lock();
         for(unsigned int i = 0 ; i < in->size() ; ++i) {
             if(step_ == 0)
-                step_ = in->at(i)->value.size();
-            if(step_ != in->at(i)->value.size())
+                step_ = in->at(i).value.size();
+            if(step_ != in->at(i).value.size())
                 throw std::runtime_error("Inconsistent feature length!");
         }
 
@@ -139,7 +139,7 @@ void SVMTrainer::process()
 void SVMTrainer::train()
 {
     m_.lock();
-    std::vector<FeaturesMessage::Ptr> data = msgs_;
+    std::vector<FeaturesMessage> data = msgs_;
     m_.unlock();
 
     cv::SVM         svm;
@@ -157,8 +157,8 @@ void SVMTrainer::train()
     cv::Mat labels (data.size(), 1, CV_32FC1, cv::Scalar::all(0));
     for(int i = 0 ; i < samples.rows ; ++i) {
         for(int j = 0 ; j < samples.cols ; ++j) {
-            samples.at<float>(i,j) = data.at(i)->value.at(j);
-            labels.at<float>(i)    = data.at(i)->classification;
+            samples.at<float>(i,j) = data.at(i).value.at(j);
+            labels.at<float>(i)    = data.at(i).classification;
         }
     }
 

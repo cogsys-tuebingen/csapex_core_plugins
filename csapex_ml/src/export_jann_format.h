@@ -31,7 +31,7 @@ private:
     Input*                                              in_vector_;
 
     boost::mutex                                        m_;
-    std::vector<connection_types::FeaturesMessage::Ptr> msgs_;
+    std::vector<connection_types::FeaturesMessage>      msgs_;
 
 };
 }
