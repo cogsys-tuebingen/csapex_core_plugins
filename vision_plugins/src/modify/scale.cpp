@@ -46,13 +46,13 @@ void Scale::setupParameters()
                  boost::bind(&Scale::update, this));
     addParameter(param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
                  boost::bind(&Scale::update, this));
-    std::map<std::string, int> modes;
-    modes["nearest"] = (int) CV_INTER_NN;
-    modes["linear"] = (int) CV_INTER_LINEAR;
-    modes["area"] = (int) CV_INTER_AREA;
-    modes["cubic"] = (int) CV_INTER_CUBIC;
-    modes["lanczos4"] = (int) CV_INTER_LANCZOS4;
-    addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) CV_INTER_NN), boost::bind(&Scale::update, this));
+    std::map<std::string, int> modes = boost::assign::map_list_of
+            ("nearest", (int) cv::INTER_NEAREST)
+            ("linear", (int) cv::INTER_LINEAR)
+            ("area", (int) cv::INTER_AREA)
+            ("cubic", (int) cv::INTER_CUBIC)
+            ("lanczos4", (int) cv::INTER_LANCZOS4);
+    addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST), boost::bind(&Scale::update, this));
 }
 
 void Scale::update()
