@@ -30,9 +30,9 @@ void Operator::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("kernel", 1, 31, ksize_, 2),
                  boost::bind(&Operator::update, this));
-    addParameter(param::ParameterFactory::declareRange("scale", 0.1, 10.0, scale_, 0.1),
+    addParameter(param::ParameterFactory::declareRange("scale", -10.0, 10.0, scale_, 0.01),
                  boost::bind(&Operator::update, this));
-    addParameter(param::ParameterFactory::declareRange("delta", 0.0, 10.0, delta_, 0.1),
+    addParameter(param::ParameterFactory::declareRange("delta", -100.0, 100.0, delta_, 0.01),
                  boost::bind(&Operator::update, this));
 }
 

@@ -1,4 +1,7 @@
 <library path="libvision_plugins">
+<class type="csapex::DistanceTransform" base_class_type="csapex::Node">
+  <description>OpenCV's distance transform</description>
+</class>
   <class type="vision_plugins::ColorConvert" base_class_type="csapex::Node">
     <description>Converts images between color spaces</description>
     <tags>Vision, Filter, Convert</tags>
