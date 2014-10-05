@@ -112,7 +112,7 @@ struct ConvertIntegral
 
 
 APEXRosInterface::APEXRosInterface()
-    : core_(NULL)
+    : core_(NULL), disabled_(false)
 {
 }
 
@@ -141,9 +141,9 @@ void APEXRosInterface::registerCommandListener()
 {
     assert(ROSHandler::instance().isConnected());
     global_command_sub_ = ROSHandler::instance().nh()->subscribe
-            <std_msgs::String>("/syscommand", 10, boost::bind(&APEXRosInterface::command, this, _1));
+            <std_msgs::String>("/syscommand", 10, boost::bind(&APEXRosInterface::command, this, _1, true));
     private_command_sub_ = ROSHandler::instance().nh()->subscribe
-            <std_msgs::String>("command", 10, boost::bind(&APEXRosInterface::command, this, _1));
+            <std_msgs::String>("command", 10, boost::bind(&APEXRosInterface::command, this, _1, false));
 
     ros::spinOnce();
 }
@@ -153,15 +153,40 @@ void APEXRosInterface::initUI(DragIO &dragio)
     dragio.registerHandler<RosIoHandler>();
 }
 
-void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd)
+void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd, bool global_cmd)
 {
     std::string command = cmd->data;
+    bool local_cmd = !global_cmd;
 
-    if(command == "pause") {
-        core_->setPause(true);
+    /*
+     * pause / unpause:
+     *   - temporary disable everything to conserve computational power
+     *   - globally accepted, if this node is not disabled
+     *
+     * stop / resume
+     *   - completely disable / enable this subsystem, when it is not needed
+     *   - only locally accepted
+     *   - overwrites pause -> a disabled instance cannot be unpaused
+     */
 
-    } else if(command == "unpause" || command == "continue" || command == "play"){
-        core_->setPause(false);
+    if(!disabled_) {
+        // disabled state is stronger than pause / unpause
+        if(command == "pause") {
+            core_->setPause(true);
+
+        } else if(command == "unpause"){
+            core_->setPause(false);
+        }
+    }
+
+    if(local_cmd) {
+        if(command == "stop") {
+            disabled_ = true;
+            core_->setPause(true);
+        } else if(command == "resume") {
+            disabled_ = false;
+            core_->setPause(false);
+        }
     }
 }
 
