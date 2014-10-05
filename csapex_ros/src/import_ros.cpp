@@ -29,7 +29,7 @@ CSAPEX_REGISTER_CLASS(csapex::ImportRos, csapex::Node)
 
 using namespace csapex;
 
-const std::string ImportRos::no_topic_("! Select a topic !");
+const std::string ImportRos::no_topic_("-----");
 
 ImportRos::ImportRos()
     : connector_(NULL), retries_(0)
@@ -61,9 +61,9 @@ void ImportRos::setupROS()
 
 void ImportRos::refresh()
 {
-    getRosHandler().refresh();
+    ROSHandler& rh = getRosHandler();
 
-    if(getRosHandler().nh()) {
+    if(rh.nh()) {
         std::string old_topic = readParameter<std::string>("topic");
 
         ros::master::V_TopicInfo topics;
@@ -109,7 +109,9 @@ void ImportRos::updateRate()
 
 void ImportRos::updateSubscriber()
 {
-    current_subscriber = RosMessageConversion::instance().subscribe(current_topic_, readParameter<int>("queue"), boost::bind(&ImportRos::callback, this, _1));
+    if(!current_topic_.name.empty()) {
+        current_subscriber = RosMessageConversion::instance().subscribe(current_topic_, readParameter<int>("queue"), boost::bind(&ImportRos::callback, this, _1));
+    }
 }
 
 void ImportRos::doSetTopic()
@@ -125,6 +127,10 @@ void ImportRos::doSetTopic()
     ros::master::getTopics(topics);
 
     std::string topic = readParameter<std::string>("topic");
+
+    if(topic == no_topic_) {
+        return;
+    }
 
     for(ros::master::V_TopicInfo::iterator it = topics.begin(); it != topics.end(); ++it) {
         if(it->name == topic) {
