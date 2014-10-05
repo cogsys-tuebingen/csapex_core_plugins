@@ -32,7 +32,7 @@ using namespace csapex;
 const std::string ImportRos::no_topic_("-----");
 
 ImportRos::ImportRos()
-    : connector_(NULL), retries_(0)
+    : connector_(NULL), retries_(0), running_(true)
 {
     std::vector<std::string> set;
     set.push_back(no_topic_);
@@ -168,7 +168,7 @@ void ImportRos::tickROS()
 
     if(!msg_) {
         ros::Rate r(10);
-        while(!msg_) {
+        while(!msg_ && running_) {
             r.sleep();
             ros::spinOnce();
         }
@@ -211,4 +211,9 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 void ImportRos::setParameterState(Memento::Ptr memento)
 {
     Node::setParameterState(memento);
+}
+
+void ImportRos::abort()
+{
+    running_ = false;
 }

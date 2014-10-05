@@ -15,6 +15,7 @@ public:
     virtual void setupROS();
     virtual void processROS();
     virtual void tickROS();
+    void abort();
 
     void callback(ConnectionTypePtr message);
 
@@ -39,6 +40,8 @@ private:
 
     int retries_;
     ros::WallTime next_retry_;
+
+    bool running_;
 };
 
 }
