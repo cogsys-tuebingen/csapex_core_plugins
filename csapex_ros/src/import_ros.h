@@ -21,6 +21,8 @@ public:
 protected:
     void refresh();
     void update();
+    void updateRate();
+    void updateSubscriber();
     void doSetTopic();
     void setTopic(const ros::master::TopicInfo& topic);
 
@@ -33,7 +35,7 @@ private:
     ros::Subscriber current_subscriber;
 
     static const std::string no_topic_;
-    std::string current_topic_;
+    ros::master::TopicInfo current_topic_;
 
     int retries_;
     ros::WallTime next_retry_;

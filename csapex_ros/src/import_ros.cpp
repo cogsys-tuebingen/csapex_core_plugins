@@ -15,6 +15,7 @@
 #include <utils_param/set_parameter.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_worker.h>
 
 /// SYSTEM
 #include <yaml-cpp/eventhandler.h>
@@ -40,6 +41,12 @@ ImportRos::ImportRos()
 
     addParameter(param::ParameterFactory::declareTrigger("refresh"),
                  boost::bind(&ImportRos::refresh, this));
+
+    addParameter(param::ParameterFactory::declareRange("rate", 0.1, 100.0, 60.0, 0.1),
+                 boost::bind(&ImportRos::updateRate, this));
+    addParameter(param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
+                 boost::bind(&ImportRos::updateSubscriber, this));
+    addParameter(param::ParameterFactory::declareBool("latch", false));
 }
 
 void ImportRos::setup()
@@ -95,6 +102,16 @@ void ImportRos::update()
     doSetTopic();
 }
 
+void ImportRos::updateRate()
+{
+    getNodeWorker()->setTickFrequency(readParameter<double>("rate"));
+}
+
+void ImportRos::updateSubscriber()
+{
+    current_subscriber = RosMessageConversion::instance().subscribe(current_topic_, readParameter<int>("queue"), boost::bind(&ImportRos::callback, this, _1));
+}
+
 void ImportRos::doSetTopic()
 {
     getRosHandler().refresh();
@@ -147,10 +164,15 @@ void ImportRos::tickROS()
         ros::Rate r(10);
         while(!msg_) {
             r.sleep();
+            ros::spinOnce();
         }
     }
 
     connector_->publish(msg_);
+
+    if(!readParameter<bool>("latch")) {
+        msg_.reset();
+    }
 }
 
 void ImportRos::callback(ConnectionTypePtr message)
@@ -160,7 +182,7 @@ void ImportRos::callback(ConnectionTypePtr message)
 
 void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 {
-    if(topic.name == current_topic_) {
+    if(topic.name == current_topic_.name) {
         return;
     }
 
@@ -169,8 +191,8 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
     if(RosMessageConversion::instance().canHandle(topic)) {
         setError(false);
 
-        current_topic_ = topic.name;
-        current_subscriber = RosMessageConversion::instance().subscribe(topic, 100, boost::bind(&ImportRos::callback, this, _1));
+        current_topic_ = topic;
+        updateSubscriber();
 
     } else {
         setError(true, std::string("cannot import topic of type ") + topic.datatype);
