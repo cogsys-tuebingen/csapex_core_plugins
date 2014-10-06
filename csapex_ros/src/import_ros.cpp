@@ -175,7 +175,13 @@ void ImportRos::doSetTopic()
 
 void ImportRos::processROS()
 {
+    // first check if connected -> if not connected, we only use tick
     if(!input_time_->isConnected()) {
+        return;
+    }
+
+    // now that we are connected, check that we have a valid message
+    if(!input_time_->hasMessage()) {
         return;
     }
 
@@ -287,6 +293,10 @@ void ImportRos::publishLatestMessage()
         while(msgs_.empty() && running_) {
             r.sleep();
             ros::spinOnce();
+        }
+
+        if(!running_) {
+            return;
         }
     }
 
