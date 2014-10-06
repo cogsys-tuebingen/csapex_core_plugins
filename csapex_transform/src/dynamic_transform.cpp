@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex_transform/transform_message.h>
-#include <csapex_transform/time_stamp_message.h>
+#include <csapex_ros/time_stamp_message.h>
 #include "listener.h"
 
 /// PROJECT

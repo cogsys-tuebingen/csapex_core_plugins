@@ -39,8 +39,6 @@ include_directories(
 
 add_library(csapex_transform
     src/transform_message.cpp
-    src/time_stamp_message.cpp
-    src/duration_message.cpp
     ${QT_CORE}
 )
 target_link_libraries(csapex_transform

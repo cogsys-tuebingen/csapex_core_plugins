@@ -4,6 +4,12 @@
 /// COMPONENT
 #include <csapex_ros/ros_node.h>
 
+/// PROJECT
+#include <csapex/msg/message.h>
+
+/// SYSTEM
+#include <deque>
+
 namespace csapex {
 
 class ImportRos : public RosNode
@@ -12,6 +18,7 @@ public:
     ImportRos();
 
     virtual void setup();
+    virtual void setupParameters();
     virtual void setupROS();
     virtual void processROS();
     virtual void tickROS();
@@ -29,9 +36,13 @@ protected:
 
     virtual void setParameterState(Memento::Ptr memento);
 
+    void publishLatestMessage();
+    bool isStampCovered(const ros::Time& stamp);
+
 private:
+    Input* input_time_;
     Output* connector_;
-    ConnectionTypePtr msg_;
+    std::deque<connection_types::Message::Ptr> msgs_;
 
     ros::Subscriber current_subscriber;
 

@@ -6,6 +6,7 @@
 #include <csapex_ros/ros_message_conversion.h>
 
 /// PROJECT
+#include <csapex/msg/input.h>
 #include <csapex/msg/output.h>
 #include <csapex/msg/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
@@ -16,6 +17,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_worker.h>
+#include <csapex_ros/time_stamp_message.h>
 
 /// SYSTEM
 #include <yaml-cpp/eventhandler.h>
@@ -31,8 +33,34 @@ using namespace csapex;
 
 const std::string ImportRos::no_topic_("-----");
 
+namespace {
+ros::Time rosTime(u_int64_t ns) {
+    ros::Time t;
+    t.fromNSec(ns);
+    return t;
+}
+}
+
 ImportRos::ImportRos()
     : connector_(NULL), retries_(0), running_(true)
+{
+}
+
+void ImportRos::setup()
+{
+    input_time_ = modifier_->addOptionalInput<connection_types::TimeStampMessage>("time");
+    connector_ = modifier_->addOutput<connection_types::AnyMessage>("Something");
+
+
+    boost::function<bool()> connected_condition = (boost::bind(&Input::isConnected, input_time_));
+
+    param::Parameter::Ptr buffer_p = param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
+    addConditionalParameter(buffer_p, connected_condition);
+    param::Parameter::Ptr max_wait_p = param::ParameterFactory::declareRange("buffer/max_wait", 0.0, 10.0, 1.0, 0.1);
+    addConditionalParameter(max_wait_p, connected_condition);
+}
+
+void ImportRos::setupParameters()
 {
     std::vector<std::string> set;
     set.push_back(no_topic_);
@@ -47,11 +75,6 @@ ImportRos::ImportRos()
     addParameter(param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
                  boost::bind(&ImportRos::updateSubscriber, this));
     addParameter(param::ParameterFactory::declareBool("latch", false));
-}
-
-void ImportRos::setup()
-{
-    connector_ = modifier_->addOutput<connection_types::AnyMessage>("Something");
 }
 
 void ImportRos::setupROS()
@@ -152,7 +175,86 @@ void ImportRos::doSetTopic()
 
 void ImportRos::processROS()
 {
-    // NO INPUT
+    if(!input_time_->isConnected()) {
+        return;
+    }
+
+    // INPUT CONNECTED
+    connection_types::TimeStampMessage::Ptr time = input_time_->getMessage<connection_types::TimeStampMessage>();
+
+    if(msgs_.empty()) {
+        return;
+    }
+
+    if(time->value == ros::Time(0)) {
+        setError(true, "incoming time is 0, using default behaviour", EL_WARNING);
+        publishLatestMessage();
+        return;
+    }
+
+    if(ros::Time(msgs_.back()->stamp) == ros::Time(0)) {
+        setError(true, "buffered time is 0, using default behaviour", EL_WARNING);
+        publishLatestMessage();
+        return;
+    }
+
+    // drop old messages
+    ros::Duration keep_duration(readParameter<double>("buffer/length"));
+    while(!msgs_.empty() && rosTime(msgs_.front()->stamp) + keep_duration < time->value) {
+        msgs_.pop_front();
+    }
+
+    if(!msgs_.empty()) {
+        if(rosTime(msgs_.front()->stamp) > time->value) {
+            aerr << "time stamp " << time->value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp) << std::endl;
+            return;
+        }
+
+        ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
+        if(rosTime(msgs_.back()->stamp) + max_wait_duration < time->value) {
+            aerr << "time stamp " << time->value << " is too new" << std::endl;
+            return;
+        }
+    }
+
+
+
+    // wait until we have a message
+    if(!isStampCovered(time->value)) {
+        ros::Rate r(10);
+        while(!isStampCovered(time->value) && running_) {
+            r.sleep();
+            ros::spinOnce();
+
+            if(!msgs_.empty()) {
+                ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
+                if(rosTime(msgs_.back()->stamp) + max_wait_duration < time->value) {
+                    aerr << "time stamp " << time->value << " is too new" << std::endl;
+                    return;
+                }
+            }
+        }
+    }
+
+    std::deque<connection_types::Message::Ptr>::iterator first_after = msgs_.begin();
+    while(rosTime((*first_after)->stamp) < time->value) {
+        ++first_after;
+    }
+    std::deque<connection_types::Message::Ptr>::iterator last_before = first_after - 1;
+
+    ros::Duration diff1 = rosTime((*first_after)->stamp) - time->value;
+    ros::Duration diff2 = rosTime((*last_before)->stamp) - time->value;
+
+    if(diff1 < diff2) {
+        connector_->publish(*first_after);
+    } else {
+        connector_->publish(*last_before);
+    }
+}
+
+bool ImportRos::isStampCovered(const ros::Time &stamp)
+{
+    return rosTime(msgs_.back()->stamp) >= stamp;
 }
 
 void ImportRos::tickROS()
@@ -166,24 +268,45 @@ void ImportRos::tickROS()
         }
     }
 
-    if(!msg_) {
+    if(input_time_->isConnected()) {
+        return;
+    }
+
+    // NO INPUT CONNECTED -> ONLY KEEP CURRENT MESSAGE
+    while(msgs_.size() > 1) {
+        msgs_.pop_front();
+    }
+
+    publishLatestMessage();
+}
+
+void ImportRos::publishLatestMessage()
+{
+    if(msgs_.empty()) {
         ros::Rate r(10);
-        while(!msg_ && running_) {
+        while(msgs_.empty() && running_) {
             r.sleep();
             ros::spinOnce();
         }
     }
 
-    connector_->publish(msg_);
+    connector_->publish(msgs_.back());
 
     if(!readParameter<bool>("latch")) {
-        msg_.reset();
+        msgs_.clear();
     }
 }
 
 void ImportRos::callback(ConnectionTypePtr message)
 {
-    msg_ = message;
+    connection_types::Message::Ptr msg = boost::dynamic_pointer_cast<connection_types::Message>(message);
+    if(msg) {
+        if(!msgs_.empty() && msg->stamp < msgs_.front()->stamp) {
+            awarn << "detected time anomaly -> reset";
+            msgs_.clear();
+        }
+        msgs_.push_back(msg);
+    }
 }
 
 void ImportRos::setTopic(const ros::master::TopicInfo &topic)

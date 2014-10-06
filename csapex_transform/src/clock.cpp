@@ -2,7 +2,7 @@
 #include "clock.h"
 
 /// COMPONENT
-#include <csapex_transform/time_stamp_message.h>
+#include <csapex_ros/time_stamp_message.h>
 
 /// PROJECT
 #include <csapex/msg/output.h>

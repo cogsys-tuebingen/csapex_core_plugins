@@ -1,5 +1,5 @@
 /// HEADER
-#include <csapex_transform/duration_message.h>
+#include <csapex_ros/duration_message.h>
 
 /// PROJECT
 #include <csapex/utility/register_msg.h>

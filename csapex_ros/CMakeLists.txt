@@ -23,6 +23,8 @@ add_library(csapex_ros_core
     src/ros_node.cpp
     src/ros_handler.cpp
     src/ros_message_conversion.cpp
+    src/time_stamp_message.cpp
+    src/duration_message.cpp
 )
 target_link_libraries(csapex_ros_core
   ${catkin_LIBRARIES}
