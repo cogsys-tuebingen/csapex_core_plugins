@@ -164,7 +164,7 @@ void BlobDetector::process()
         output_debug_->publish(debug);
     }
 
-
+    cvReleaseBlobs(blobs);
     cvReleaseImage(&labelImgPtr);
 }
 
