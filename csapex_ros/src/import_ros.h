@@ -31,11 +31,12 @@ protected:
     void update();
     void updateRate();
     void updateSubscriber();
-    void doSetTopic();
+    bool doSetTopic();
     void setTopic(const ros::master::TopicInfo& topic);
 
     virtual void setParameterState(Memento::Ptr memento);
 
+    void waitForTopic();
     void publishLatestMessage();
     bool isStampCovered(const ros::Time& stamp);
 
@@ -50,7 +51,6 @@ private:
     ros::master::TopicInfo current_topic_;
 
     int retries_;
-    ros::WallTime next_retry_;
 
     bool running_;
 };

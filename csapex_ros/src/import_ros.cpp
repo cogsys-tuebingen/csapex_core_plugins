@@ -122,8 +122,8 @@ void ImportRos::refresh()
 
 void ImportRos::update()
 {
-    retries_ = 5;
-    doSetTopic();
+    retries_ = 100;
+    waitForTopic();
 }
 
 void ImportRos::updateRate()
@@ -138,13 +138,13 @@ void ImportRos::updateSubscriber()
     }
 }
 
-void ImportRos::doSetTopic()
+bool ImportRos::doSetTopic()
 {
     getRosHandler().refresh();
 
     if(!getRosHandler().isConnected()) {
         setError(true, "no connection to ROS");
-        return;
+        return false;
     }
 
     ros::master::V_TopicInfo topics;
@@ -153,14 +153,14 @@ void ImportRos::doSetTopic()
     std::string topic = readParameter<std::string>("topic");
 
     if(topic == no_topic_) {
-        return;
+        return true;
     }
 
     for(ros::master::V_TopicInfo::iterator it = topics.begin(); it != topics.end(); ++it) {
         if(it->name == topic) {
             setTopic(*it);
             retries_ = 0;
-            return;
+            return true;
         }
     }
 
@@ -171,7 +171,8 @@ void ImportRos::doSetTopic()
     }
     ss << ".";
 
-    setError(true, ss.str());
+    setError(true, ss.str(), EL_WARNING);
+    return false;
 }
 
 void ImportRos::processROS()
@@ -281,15 +282,25 @@ bool ImportRos::isStampCovered(const ros::Time &stamp)
     return rosTime(msgs_.back()->stamp) >= stamp;
 }
 
+void ImportRos::waitForTopic()
+{
+    ros::WallDuration poll_wait(0.5);
+    while(retries_ --> 0) {
+        bool topic_exists = doSetTopic();
+
+        if(topic_exists) {
+            return;
+        } else {
+            ROS_WARN_STREAM_THROTTLE(1, "waiting for topic " << readParameter<std::string>("topic"));
+            poll_wait.sleep();
+        }
+    }
+}
+
 void ImportRos::tickROS()
 {
     if(retries_ > 0) {
-        if(ros::WallTime::now() > next_retry_) {
-            doSetTopic();
-            --retries_;
-
-            next_retry_ = ros::WallTime::now() + ros::WallDuration(0.5);
-        }
+        waitForTopic();
     }
 
     if(input_time_->isConnected()) {
