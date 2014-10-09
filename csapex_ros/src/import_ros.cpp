@@ -15,6 +15,7 @@
 #include <utils_param/parameter_factory.h>
 #include <utils_param/set_parameter.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/model/node_worker.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_worker.h>
 #include <csapex_ros/time_stamp_message.h>
@@ -212,14 +213,14 @@ void ImportRos::processROS()
 
     if(!msgs_.empty()) {
         if(rosTime(msgs_.front()->stamp) > time->value) {
-            aerr << "time stamp " << time->value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp) << std::endl;
-            return;
+            // aerr << "time stamp " << time->value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp) << std::endl;
+            // return;
         }
 
         ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
-        if(rosTime(msgs_.back()->stamp) + max_wait_duration < time->value) {
-            aerr << "time stamp " << time->value << " is too new" << std::endl;
-            return;
+        if(rosTime(msgs_.front()->stamp) + max_wait_duration < time->value) {
+            // aerr << "[1] time stamp " << time->value << " is too new" << std::endl;
+            // return;
         }
     }
 
@@ -234,27 +235,44 @@ void ImportRos::processROS()
 
             if(!msgs_.empty()) {
                 ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
-                if(rosTime(msgs_.back()->stamp) + max_wait_duration < time->value) {
-                    aerr << "time stamp " << time->value << " is too new" << std::endl;
+                if(rosTime(msgs_.front()->stamp) + max_wait_duration < time->value) {
+                    aerr << "[2] time stamp " << time->value << " is too new" << std::endl;
                     return;
                 }
             }
         }
     }
 
+    if(msgs_.empty()) {
+        setError(true, "No messages received", EL_WARNING);
+        return;
+    }
+
     std::deque<connection_types::Message::Ptr>::iterator first_after = msgs_.begin();
     while(rosTime((*first_after)->stamp) < time->value) {
         ++first_after;
     }
-    std::deque<connection_types::Message::Ptr>::iterator last_before = first_after - 1;
 
-    ros::Duration diff1 = rosTime((*first_after)->stamp) - time->value;
-    ros::Duration diff2 = rosTime((*last_before)->stamp) - time->value;
-
-    if(diff1 < diff2) {
+    if(first_after == msgs_.begin()) {
         connector_->publish(*first_after);
+        return;
+
+    } else if(first_after == msgs_.end()) {
+        assert(false);
+        setError(true, "Should not happen.....", EL_WARNING);
+        return;
+
     } else {
-        connector_->publish(*last_before);
+        std::deque<connection_types::Message::Ptr>::iterator last_before = first_after - 1;
+
+        ros::Duration diff1 = rosTime((*first_after)->stamp) - time->value;
+        ros::Duration diff2 = rosTime((*last_before)->stamp) - time->value;
+
+        if(diff1 < diff2) {
+            connector_->publish(*first_after);
+        } else {
+            connector_->publish(*last_before);
+        }
     }
 }
 
@@ -309,8 +327,14 @@ void ImportRos::publishLatestMessage()
 
 void ImportRos::callback(ConnectionTypePtr message)
 {
+    NodeWorker* nw = getNodeWorker();
+
+    if(!nw) {
+        return;
+    }
+
     connection_types::Message::Ptr msg = boost::dynamic_pointer_cast<connection_types::Message>(message);
-    if(msg) {
+    if(msg && !nw->isPaused()) {
         if(!msgs_.empty() && msg->stamp < msgs_.front()->stamp) {
             awarn << "detected time anomaly -> reset";
             msgs_.clear();
