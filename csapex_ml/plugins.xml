@@ -5,10 +5,6 @@
 <class type="csapex::DecisionTreeTrainer" base_class_type="csapex::Node">
   <description>Train a decision tree</description>
 </class>
-<class type="csapex::ExportJANNFormat" base_class_type="csapex::Node">
-  <description>Exports messages as JANN format if possible.</description>
-  <tags>ML, Output</tags>
-</class>
 <class type="csapex::SVM" base_class_type="csapex::Node">
   <description>SVM to classify data.</description>
   <tags>ML</tags>
