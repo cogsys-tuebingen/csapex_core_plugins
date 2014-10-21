@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_ml csapex_ml_plugin
+  CATKIN_DEPENDS csapex csapex_core_plugins
 )
 
 include_directories(
