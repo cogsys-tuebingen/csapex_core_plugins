@@ -7,11 +7,6 @@
 /// PROJECT
 #include <utils_vision/utils/extractor.h>
 
-/// SYSTEM
-#include <QCheckBox>
-#include <QComboBox>
-#include <QMutex>
-
 namespace csapex
 {
 
@@ -28,12 +23,13 @@ private:
     void update();
 
 private:
-    QMutex extractor_mutex;
     Extractor::Ptr extractor;
 
     Input* in_img;
     Input* in_key;
     Output* out_des;
+
+    bool refresh_;
 };
 
 }

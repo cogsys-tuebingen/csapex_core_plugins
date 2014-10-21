@@ -30,6 +30,7 @@ using namespace csapex;
 using namespace connection_types;
 
 ExtractKeypoints::ExtractKeypoints()
+    : refresh_(true)
 {
     ExtractorManager& manager = ExtractorManager::instance();
     std::vector<std::string> methods;
@@ -60,12 +61,19 @@ void ExtractKeypoints::setup()
     in_mask = modifier_->addOptionalInput<CvMatMessage>("Mask");
 
     out_key = modifier_->addOutput<csapex::connection_types::KeypointMessage>("Keypoints");
-
-    update();
 }
 
 void ExtractKeypoints::process()
 {
+    if(refresh_) {
+        refresh_ = false;
+
+        std::string method = readParameter<std::string>("method");
+        Extractor::Ptr next = ExtractorFactory::create(method, "", param::StaticParameterProvider(getParameters()));
+
+        extractor = next;
+    }
+
     if(!extractor) {
         setError(true, "no extractor set");
         return;
@@ -77,16 +85,13 @@ void ExtractKeypoints::process()
 
     KeypointMessage::Ptr key_msg(new KeypointMessage);
 
-    {
-        QMutexLocker lock(&extractor_mutex);
-        if(in_mask->hasMessage()) {
-            CvMatMessage::Ptr mask_msg = in_mask->getMessage<CvMatMessage>();
+    if(in_mask->hasMessage()) {
+        CvMatMessage::Ptr mask_msg = in_mask->getMessage<CvMatMessage>();
 
-            extractor->extractKeypoints(img_msg->value, mask_msg->value, key_msg->value);
+        extractor->extractKeypoints(img_msg->value, mask_msg->value, key_msg->value);
 
-        } else {
-            extractor->extractKeypoints(img_msg->value, cv::Mat(), key_msg->value);
-        }
+    } else {
+        extractor->extractKeypoints(img_msg->value, cv::Mat(), key_msg->value);
     }
 
     out_key->publish(key_msg);
@@ -95,10 +100,6 @@ void ExtractKeypoints::process()
 
 void ExtractKeypoints::update()
 {
-    std::string method = readParameter<std::string>("method");
-    Extractor::Ptr next = ExtractorFactory::create(method, "", param::StaticParameterProvider(getParameters()));
-
-    QMutexLocker lock(&extractor_mutex);
-    extractor = next;
+    refresh_ = true;
 }
 

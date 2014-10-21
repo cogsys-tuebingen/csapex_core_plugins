@@ -30,6 +30,7 @@ using namespace csapex;
 using namespace connection_types;
 
 ExtractDescriptors::ExtractDescriptors()
+    : refresh_(true)
 {
     ExtractorManager& manager = ExtractorManager::instance();
     std::vector<std::string> methods;
@@ -60,13 +61,20 @@ void ExtractDescriptors::setup()
     in_key = modifier_->addInput<KeypointMessage>("Keypoints");
 
     out_des = modifier_->addOutput<DescriptorMessage>("Descriptors");
-
-    update();
 }
 
 
 void ExtractDescriptors::process()
 {
+    if(refresh_) {
+        refresh_ = false;
+
+        std::string method = readParameter<std::string>("method");
+        Extractor::Ptr next = ExtractorFactory::create("", method, param::StaticParameterProvider(getParameters()));
+
+        extractor = next;
+    }
+
     if(!extractor) {
         setError(true, "no extractor set");
         return;
@@ -78,20 +86,14 @@ void ExtractDescriptors::process()
 
     DescriptorMessage::Ptr des_msg(new DescriptorMessage);
 
-    {
-        QMutexLocker lock(&extractor_mutex);
-        KeypointMessage::Ptr key_msg = in_key->getMessage<KeypointMessage>();
+    KeypointMessage::Ptr key_msg = in_key->getMessage<KeypointMessage>();
 
-        extractor->extractDescriptors(img_msg->value, key_msg->value, des_msg->value);
-    }
+    extractor->extractDescriptors(img_msg->value, key_msg->value, des_msg->value);
 
     out_des->publish(des_msg);
 }
+
 void ExtractDescriptors::update()
 {
-    std::string method = readParameter<std::string>("method");
-    Extractor::Ptr next = ExtractorFactory::create("", method, param::StaticParameterProvider(getParameters()));
-
-    QMutexLocker lock(&extractor_mutex);
-    extractor = next;
+    refresh_ = true;
 }
