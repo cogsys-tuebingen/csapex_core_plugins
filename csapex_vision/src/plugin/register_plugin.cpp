@@ -33,9 +33,25 @@ struct Image2CvMat
 {
     static connection_types::CvMatMessage::Ptr ros2apex(const sensor_msgs::Image::ConstPtr &ros_msg) {
         u_int64_t stamp = ros_msg->header.stamp.toNSec();
-        connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr, stamp)); // TODO: use encoding from ROS!
+
+        std::string source_encoding = ros_msg->encoding;
+        csapex::Encoding target_encoding;
+        if(source_encoding == sensor_msgs::image_encodings::BGR8 ||
+                source_encoding == sensor_msgs::image_encodings::BGR16) {
+            target_encoding = enc::bgr;
+        } else if(source_encoding == sensor_msgs::image_encodings::RGB8 ||
+                  source_encoding == sensor_msgs::image_encodings::RGB16) {
+            target_encoding = enc::rgb;
+        } else if(source_encoding == sensor_msgs::image_encodings::MONO8 ||
+                  source_encoding == sensor_msgs::image_encodings::MONO16) {
+            target_encoding = enc::mono;
+        } else {
+            std::cerr << "unsupported image encoding: " << source_encoding << std::endl;
+        }
+
+        connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(target_encoding, stamp));
         try {
-            cv_bridge::toCvShare(ros_msg, sensor_msgs::image_encodings::BGR8)->image.copyTo(out->value);
+            cv_bridge::toCvShare(ros_msg, ros_msg->encoding)->image.copyTo(out->value);
             out->frame_id = ros_msg->header.frame_id;
         } catch (cv_bridge::Exception& e) {
             std::cerr << "cv_bridge exception: " << e.what() << std::endl;
@@ -52,7 +68,13 @@ struct Image2CvMat
             break;
         default:
         case CV_8UC3:
-            cvb.encoding = sensor_msgs::image_encodings::BGR8;
+            if(apex_msg->getEncoding().matches(enc::bgr)) {
+                cvb.encoding = sensor_msgs::image_encodings::BGR8;
+            } else if(apex_msg->getEncoding().matches(enc::rgb)) {
+                cvb.encoding = sensor_msgs::image_encodings::RGB8;
+            } else if(apex_msg->getEncoding().matches(enc::yuv)) {
+                cvb.encoding = sensor_msgs::image_encodings::YUV422;
+            }
             break;
         }
 

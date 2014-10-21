@@ -122,7 +122,7 @@ void ImportRos::refresh()
 
 void ImportRos::update()
 {
-    retries_ = 100;
+    retries_ = 5;
     waitForTopic();
 }
 

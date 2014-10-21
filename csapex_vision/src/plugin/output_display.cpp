@@ -32,7 +32,21 @@ void OutputDisplay::process()
     CvMatMessage::Ptr mat_msg = input_->getMessage<CvMatMessage>();
 
     if(mat_msg.get() && !mat_msg->value.empty()) {
-        QSharedPointer<QImage> img = QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(mat_msg->value);
+
+        Encoding encoding = mat_msg->getEncoding();
+
+        QSharedPointer<QImage> img;
+        if(encoding.matches(enc::rgb)) {
+            cv::Mat mat = mat_msg->value;
+            img = QSharedPointer<QImage>(new QImage((uchar*) mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888));
+
+        } else if(encoding.matches(enc::bgr) || encoding.matches(enc::mono)) {
+            img = QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(mat_msg->value);
+
+        } else {
+            return;
+        }
+
         display_request(img);
     }
 }

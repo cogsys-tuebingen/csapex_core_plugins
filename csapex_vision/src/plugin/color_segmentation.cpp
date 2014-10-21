@@ -40,15 +40,12 @@ void ColorSegmentation::process()
 
         if(loaded_state_) {
             Node::setParameterState(loaded_state_);
-            loaded_state_.reset((GenericState*)NULL);
+            loaded_state_.reset();
             triggerParameterSetChanged();
             update();
         }
 
         triggerModelChanged();
-
-        output_mask_->publish(out_mask);
-        return;
     }
 
     cv::Mat bw;
