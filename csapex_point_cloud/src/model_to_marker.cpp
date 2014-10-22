@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_ros/yaml_io.hpp>
 
 /// SYSTEM
 #include <geometry_msgs/Point.h>
@@ -166,6 +167,6 @@ void ModelToMarker::publishText(const ModelMessage model_message)
     }
     stringstream << " Prob: " << model_message.probability;
     std::string text_msg = stringstream.str();
-    output_text_->publishIntegral(text_msg);
+    output_text_->publish(text_msg);
 }
 

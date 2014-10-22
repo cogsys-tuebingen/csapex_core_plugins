@@ -57,6 +57,13 @@ private:
 
 };
 
+template <>
+struct type<VectorMessage> {
+    static std::string name() {
+        return "MessageVector";
+    }
+};
+
 
 struct GenericVectorMessage : public Message
 {

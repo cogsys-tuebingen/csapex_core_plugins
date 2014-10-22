@@ -19,19 +19,17 @@ TextConvert::TextConvert()
 
 void TextConvert::setup()
 {
-    input_  = modifier_->addInput<connection_types::GenericValueMessage<std::string> >("Text");
-    output_ = modifier_->addOutput<connection_types::GenericValueMessage<int> >("Number");
+    input_  = modifier_->addInput<std::string>("Text");
+    output_ = modifier_->addOutput<int>("Number");
 }
 
 void TextConvert::process()
 {
-    connection_types::GenericValueMessage<std::string>::Ptr text_msg = input_->getMessage<connection_types::GenericValueMessage<std::string> >();
-    connection_types::GenericValueMessage<int>::Ptr int_msg(new connection_types::GenericValueMessage<int>);
+    std::string text = input_->getValue<std::string>();
 
-    if(!text_msg->value.empty()) {
-        int_msg->value = std::atoi(text_msg->value.c_str());
-    } else {
-        int_msg->value = -1;
+    int result = -1;
+    if(!text.empty()) {
+        result = std::atoi(text.c_str());
     }
-    output_->publish(int_msg);
+    output_->publish(result);
 }

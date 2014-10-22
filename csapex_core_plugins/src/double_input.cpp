@@ -35,7 +35,7 @@ template <typename T>
 void NumberInput<T>::process()
 {
     T val = readParameter<T>("value");
-    out_->publishIntegral(val);
+    out_->publish(val);
 }
 
 namespace csapex {

@@ -22,7 +22,7 @@ void ExtractTimeStampCloud::setup()
     input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
 
     output_ = modifier_->addOutput<TimeStampMessage>("Time");
-    output_frame_ = modifier_->addOutput<GenericValueMessage<std::string> >("Target Frame");
+    output_frame_ = modifier_->addOutput<std::string>("Target Frame");
 }
 
 void ExtractTimeStampCloud::process()
@@ -39,7 +39,5 @@ void ExtractTimeStampCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr clo
     time->value = time->value.fromNSec(cloud->header.stamp * 1000);
     output_->publish(time);
 
-    connection_types::GenericValueMessage<std::string>::Ptr frame(new connection_types::GenericValueMessage<std::string>);
-    frame->value = cloud->header.frame_id;
-    output_frame_->publish(frame);
+    output_frame_->publish(cloud->header.frame_id);
 }

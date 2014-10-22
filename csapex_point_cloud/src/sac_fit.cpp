@@ -65,7 +65,7 @@ void SacFit::process()
 void SacFit::setup()
 {
     input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    out_text_= modifier_->addOutput<GenericValueMessage<std::string> >("String");
+    out_text_= modifier_->addOutput<std::string>("String");
     in_indices_ = modifier_->addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Clusters"); // optional input
 
     out_model_ = modifier_->addOutput<GenericVectorMessage, ModelMessage >("Models");
@@ -170,9 +170,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
         out_cloud_residue_->publish(cloud_msg_residue);
     }
 
-    GenericValueMessage<std::string>::Ptr text_msg(new GenericValueMessage<std::string>);
-    text_msg->value = stringstream.str();
-    out_text_->publish(text_msg);
+    out_text_->publish(stringstream.str());
 
 
     // Description of Cone parameters: http://docs.pointclouds.org/1.6.0/classpcl_1_1_sample_consensus_model_cone.html

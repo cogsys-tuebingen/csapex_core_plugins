@@ -21,14 +21,12 @@ Toggle::Toggle()
 
 void Toggle::setup()
 {
-    out = modifier_->addOutput<connection_types::GenericValueMessage<bool> >("Signal");
+    out = modifier_->addOutput<bool>("Signal");
 }
 
 void Toggle::process()
 {
-    csapex::connection_types::GenericValueMessage<bool>::Ptr msg(new csapex::connection_types::GenericValueMessage<bool>);
-    msg->value = signal_;
-    out->publish(msg);
+    out->publish(signal_);
 }
 
 void Toggle::setSignal()

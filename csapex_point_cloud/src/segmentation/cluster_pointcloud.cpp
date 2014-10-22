@@ -88,7 +88,7 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
       std::stringstream stringstream;
       stringstream << "Found clusters: " << cluster_indices->size();
       std::string text_msg = stringstream.str();
-      out_debug_->publishIntegral(text_msg);
+      out_debug_->publish(text_msg);
       out_->publish<GenericVectorMessage, pcl::PointIndices >(cluster_indices);
 
 }

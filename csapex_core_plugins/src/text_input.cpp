@@ -28,12 +28,10 @@ void TextInput::process()
 
 void TextInput::setup()
 {
-    connector_ = modifier_->addOutput<connection_types::GenericValueMessage<std::string> >("Text");
+    connector_ = modifier_->addOutput<std::string>("Text");
 }
 
 void TextInput::publish()
 {
-    connection_types::GenericValueMessage<std::string>::Ptr msg(new connection_types::GenericValueMessage<std::string>);
-    msg->value = readParameter<std::string>("text");
-    connector_->publish(msg);
+    connector_->publish(readParameter<std::string>("text"));
 }

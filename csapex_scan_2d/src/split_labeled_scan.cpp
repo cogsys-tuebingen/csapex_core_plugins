@@ -31,7 +31,7 @@ void SplitLabeledScan::setup()
 {
     in_  = modifier_->addInput<LabeledScanMessage>("Labeled Scan");
     out_scan_ = modifier_->addOutput<ScanMessage>("Scan");
-    out_labels_ = modifier_->addOutput<GenericValueMessage< std::vector<int> > >("Labels");
+    out_labels_ = modifier_->addOutput<std::vector<int> >("Labels");
 }
 
 void SplitLabeledScan::process()
@@ -43,6 +43,8 @@ void SplitLabeledScan::process()
 
 
     out_scan_->publish(output_scan);
-    out_labels_->publishIntegral< std::vector<int> >(input->value.labels);
+    BOOST_STATIC_ASSERT(!connection_types::should_use_pointer_message<std::vector<int> >::value);
+    BOOST_STATIC_ASSERT(connection_types::should_use_value_message<std::vector<int> >::value);
+    out_labels_->publish(input->value.labels);
 }
 

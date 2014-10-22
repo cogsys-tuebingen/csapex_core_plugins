@@ -14,7 +14,7 @@ using namespace connection_types;
 const GenericVectorMessage::EntryInterface::Ptr GenericVectorMessage::EntryInterface::NullPtr;
 
 GenericVectorMessage::GenericVectorMessage(EntryInterface::Ptr impl, const std::string& frame_id, Message::Stamp stamp)
-    : Message ("Vector<?>", frame_id, stamp), impl(impl)
+    : Message (type<GenericVectorMessage>::name(), frame_id, stamp), impl(impl)
 {
 }
 
@@ -65,7 +65,7 @@ bool convert<csapex::connection_types::GenericVectorMessage>::decode(const Node&
 
 //// OLD
 VectorMessage::VectorMessage(const std::string& frame_id, Message::Stamp stamp)
-    : Message ("std::vector<?>", frame_id, stamp)
+    : Message (type<VectorMessage>::name(), frame_id, stamp)
 {
     type_ = connection_types::makeEmpty<AnyMessage>();
 }

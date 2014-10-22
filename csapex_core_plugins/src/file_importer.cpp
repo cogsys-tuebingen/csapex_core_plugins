@@ -61,6 +61,10 @@ void FileImporter::process()
         if(msg.get()) {
             output_->setType(provider_->getType());
             output_->setLabel(provider_->getType()->name());
+            BOOST_STATIC_ASSERT(has_ptr_member<Message>::value);
+            BOOST_STATIC_ASSERT(!has_elem_type_member<Message>::value);
+            BOOST_STATIC_ASSERT(has_elem_type_member<boost::shared_ptr<int> >::value);
+            BOOST_STATIC_ASSERT(has_elem_type_member<Message::Ptr>::value);
             output_->publish(msg);
         }
     }
