@@ -9,7 +9,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/model/node_modifier.h>
-
+#include <csapex_vision/yaml_io.hpp>
 
 
 using namespace csapex;
@@ -49,14 +49,14 @@ void HoughLinesP::process()
                 cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0,0,255), 3, 8 );
     }
 
-    output_vector_->publishIntegral(lines_ptr);
+    output_vector_->publish<GenericVectorMessage, cv::Vec4i>(lines_ptr);
     output_->publish(out);
 }
 
 void HoughLinesP::setup()
 {
     CornerLineDetection::setup();
-    output_vector_ = modifier_->addOutput<cv::Vec4i>  ("lines saved in vector");
+    output_vector_ = modifier_->addOutput<GenericVectorMessage, cv::Vec4i>  ("lines saved in vector");
     update();
 }
 
