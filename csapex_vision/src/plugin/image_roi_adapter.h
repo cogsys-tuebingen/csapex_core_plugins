@@ -17,7 +17,7 @@ class ImageRoiAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    ImageRoiAdapter(ImageRoi *node, WidgetController *widget_ctrl);
+    ImageRoiAdapter(NodeWorker *worker, ImageRoi *node, WidgetController *widget_ctrl);
 
     virtual Memento::Ptr getState() const;
     virtual void         setParameterState(Memento::Ptr memento);

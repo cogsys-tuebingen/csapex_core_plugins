@@ -21,8 +21,8 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
-ScanLabelerAdapter::ScanLabelerAdapter(ScanLabeler *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(node, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), label_(0), down_(false)
+ScanLabelerAdapter::ScanLabelerAdapter(NodeWorker* worker, ScanLabeler *node, WidgetController* widget_ctrl)
+    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), label_(0), down_(false)
 {
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
@@ -60,7 +60,7 @@ void ScanLabelerAdapter::labelSelected(int label)
 void ScanLabelerAdapter::setLabel(int label)
 {
     label_ = label;
-    node_->getParameter("label")->set(label_);
+    node_->getNode()->getParameter("label")->set(label_);
 }
 
 bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)

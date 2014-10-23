@@ -17,7 +17,7 @@ class PointCountAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    PointCountAdapter(PointCount *node, WidgetController *widget_ctrl);
+    PointCountAdapter(NodeWorker *worker, PointCount *node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 
