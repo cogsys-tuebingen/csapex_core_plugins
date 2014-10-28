@@ -17,6 +17,7 @@ public:
 private:
     Output* output_;
     Output* output_debug_;
+    Output* output_reduce_;
 
     Input* input_;
 };

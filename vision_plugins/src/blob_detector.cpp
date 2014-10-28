@@ -32,6 +32,19 @@ BlobDetector::BlobDetector()
                                                param::ParameterDescription("Show the information of each RoI"),
                                                false));
 
+    param::Parameter::Ptr reduce_parameter = param::ParameterFactory::declareBool("DeleteSmallRoi",
+                                               param::ParameterDescription("Deletes to small Roi"),
+                                               false);
+
+    addParameter(reduce_parameter);
+
+    boost::function<bool()> reducing_bool  = boost::bind(&param::Parameter::as<bool>, reduce_parameter.get());
+
+    addConditionalParameter(param::ParameterFactory::declareRange("ThresholdSizeRoi",
+                                                          param::ParameterDescription("Defining the treshold for deleting the Roi"),
+                                                          0,80,10,1), reducing_bool);
+
+
 }
 
 BlobDetector::~BlobDetector()
@@ -105,11 +118,39 @@ void BlobDetector::process()
         _HSV2RGB_((double)((blob.label *77)%360), .5, 1., r, g, b);
         cv::Scalar color(b,g,r);
         roi->value = Roi(blob.minx, blob.miny, (blob.maxx - blob.minx + 1), (blob.maxy - blob.miny + 1), color);
-
+       // aerr << roi->value << std::endl;
+       // aerr << blob.contour.startingPoint.x << std::endl;
+        //aerr << blob.contour.chainCode.
         out->value.push_back(roi);
     }
 
     output_->publish(out);
+
+    bool reducing_roi = readParameter<bool>("RoiInformation");
+    int min_threshold = readParameter<int>("ThresholdSizeRoi");
+
+    if(reducing_roi) {
+
+        CvBlobs::iterator it=blobs.begin();
+        while(it!=blobs.end())
+        {
+            CvBlob *blob=(*it).second;
+            if (blob->area<min_threshold)
+            {
+                cvReleaseBlob(blob);
+
+                CvBlobs::iterator tmp=it;
+                ++it;
+                blobs.erase(tmp);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+
+    }
+
 
 
     if(output_debug_->isConnected()) {
@@ -162,4 +203,6 @@ void BlobDetector::setup()
 
     output_debug_ = modifier_->addOutput<CvMatMessage>("OutputImage");
     output_ = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
+    output_reduce_ = modifier_->addOutput<CvMatMessage>("ReducedImage");
+
 }
