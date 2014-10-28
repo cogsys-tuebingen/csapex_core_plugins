@@ -28,7 +28,7 @@ private:
     class State : public Memento {
     public:
         void readYaml(const YAML::Node &node);
-        void writeYaml(YAML::Emitter &out) const;
+        void writeYaml(YAML::Node &out) const;
 
     public:
         Encoding encoding_;

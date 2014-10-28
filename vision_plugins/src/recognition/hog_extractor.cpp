@@ -43,7 +43,7 @@ void HOGExtractor::setupParameters()
 
     addParameter(param::ParameterFactory::declareRange("cell size",
                                                        param::ParameterDescription("Set the size of a cell"),
-                                                       8, 64, 8, 1));
+                                                       8, 80, 8, 1));
 
 
     param::Parameter::Ptr cells_per_block =
@@ -65,14 +65,14 @@ void HOGExtractor::setupParameters()
 void HOGExtractor::setup()
 {
     in_img_     = modifier_->addInput<CvMatMessage>("image");
-    in_rois_    = modifier_->addOptionalInput<VectorMessage, RoiMessage>("rois");
-    out_        = modifier_->addOutput<VectorMessage,FeaturesMessage>("descriptors");
+    in_rois_    = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
+    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("features");
 }
 
 void HOGExtractor::process()
 {
     CvMatMessage::Ptr  in = in_img_->getMessage<CvMatMessage>();
-    VectorMessage::Ptr out(VectorMessage::make<FeaturesMessage>());
+    boost::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(!in->hasChannels(1, CV_8U))
         throw std::runtime_error("Image must be one channel grayscale!");
@@ -98,7 +98,7 @@ void HOGExtractor::process()
                         gauss == 0.0 ? -1 : gauss,
                         gamma);
 
-    if(!in_rois_->hasMessage() && !in_rois_->hasMessage()) {
+    if(!in_rois_->hasMessage()) {
         if(value.rows < block_size_px)
             throw std::runtime_error("Image must have at least block height in px.");
         if(value.cols < block_size_px)
@@ -108,45 +108,43 @@ void HOGExtractor::process()
         if(value.cols % cell_size != 0)
             throw std::runtime_error("Images have width as multiple of cell size!");
 
-        FeaturesMessage::Ptr feature_msg(new FeaturesMessage);
+        FeaturesMessage feature_msg;
 
-        d.compute(value, feature_msg->value);
+        if(!value.empty())
+            d.compute(value, feature_msg.value);
 
-        feature_msg->classification = 0;
+        feature_msg.classification = 0;
 
-        out->value.push_back(feature_msg);
+        out->push_back(feature_msg);
 
     } else {
-        VectorMessage::Ptr in_rois = in_rois_->getMessage<VectorMessage>();
-        for(std::vector<ConnectionType::Ptr>::iterator
-            it = in_rois->value.begin() ;
-            it != in_rois->value.end() ;
+        boost::shared_ptr<std::vector<RoiMessage> const> in_rois =
+                in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
+
+        for(std::vector<RoiMessage>::const_iterator
+            it = in_rois->begin() ;
+            it != in_rois->end() ;
             ++it) {
 
-            RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(*it);
-            FeaturesMessage::Ptr feature_msg(new FeaturesMessage);
-            cv::Rect const &rect = roi->value.rect();
+            FeaturesMessage feature_msg;
+            cv::Rect const &rect = it->value.rect();
 
             d.winSize = cv::Size(rect.width, rect.height);
 
             cv::Mat roi_mat = cv::Mat(value, rect);
 
-            d.compute(roi_mat, feature_msg->value);
+            if(!roi_mat.empty())
+                d.compute(roi_mat, feature_msg.value);
 
-            feature_msg->classification = roi->value.classification();
+            feature_msg.classification = it->value.classification();
 
-            out->value.push_back(feature_msg);
+            out->push_back(feature_msg);
         }
     }
 
-
-
     //    /// BLOCK STEPS X * BLOCK STEPS Y * BINS * CELLS (WITHIN BLOCK)
 
-
-    //    out->value = cv::Mat(desc, true);
-
-    out_->publish(out);
+    out_->publish<GenericVectorMessage, FeaturesMessage>(out);
 }
 
 void HOGExtractor::updateOverlap()

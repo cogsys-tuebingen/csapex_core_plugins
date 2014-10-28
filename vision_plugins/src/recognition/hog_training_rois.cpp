@@ -37,14 +37,14 @@ void HOGTrainingRois::setup()
 {
     in_image_ = modifier_->addOptionalInput<CvMatMessage>("image");
     in_roi_   = modifier_->addInput<RoiMessage>("roi");
-    out_      = modifier_->addOutput<VectorMessage, RoiMessage>("rois");
+    out_      = modifier_->addOutput<GenericVectorMessage, RoiMessage>("rois");
 }
 
 void HOGTrainingRois::process()
 {
     RoiMessage::Ptr in_roi = in_roi_->getMessage<RoiMessage>();
     Roi &roi = in_roi->value;
-    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
+    boost::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage>);
 
     int limit_x = std::numeric_limits<int>::max();
     int limit_y = std::numeric_limits<int>::max();
@@ -62,13 +62,12 @@ void HOGTrainingRois::process()
 
     roi.setColor(cv::Scalar(0,255,0));
     roi.setClassification(0);
-    RoiMessage::Ptr msg(new RoiMessage);
+    RoiMessage msg;
 
     const static double xs[] = {0.0,0.0,1.0,-1.0};
     const static double ys[] = {1.0,-1.0,0.0,0.0};
 
     for(unsigned int i = 0 ; i < 4 ; ++i) {
-        msg.reset(new RoiMessage);
         int x = roi.x() + xs[i] * dx;
         int y = roi.y() + ys[i] * dy;
 
@@ -76,16 +75,15 @@ void HOGTrainingRois::process()
             if(x + roi.w() <= limit_x &&
                y + roi.h() <= limit_y) {
                 Roi r(x, y, roi.w(), roi.h(),cv::Scalar(0,0,255), 1);
-                msg->value = r;
-                out->value.push_back(msg);
+                msg.value = r;
+                out->push_back(msg);
             }
         }
     }
 
-    msg.reset(new RoiMessage);
-    msg->value = roi;
-    out->value.push_back(msg);
+    msg.value = roi;
+    out->push_back(msg);
 
-    out_->publish(out);
+    out_->publish<GenericVectorMessage, RoiMessage>(out);
 }
 

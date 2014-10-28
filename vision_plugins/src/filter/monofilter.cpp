@@ -7,7 +7,7 @@
 #include <csapex/msg/output.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <utils_cv/histogram.hpp>
+#include <utils_vision/utils/histogram.hpp>
 #include <csapex/model/node_modifier.h>
 
 using namespace csapex;
@@ -28,7 +28,7 @@ void MonoFilter::process()
         throw std::runtime_error("image must be one channel grayscale.");
     }
 
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
 
     out->value    = in->value.clone();
 

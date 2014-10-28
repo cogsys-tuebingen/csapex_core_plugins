@@ -15,12 +15,25 @@
 
 namespace vision_plugins {
 
+
+struct VariableMap {
+public:
+    cv::Mat& get(std::string const& name) {
+        return _symbols[name];
+    }
+
+private:
+    std::map<std::string, cv::Mat> _symbols;
+};
+
+
+
 struct AbstractExpression;
 typedef boost::shared_ptr<AbstractExpression> Ptr;
 
 struct AbstractExpression {
     virtual ~AbstractExpression() {}
-    virtual cv::Mat evaluate() const = 0;
+    virtual cv::Mat evaluate(VariableMap& vm) const = 0;
     virtual std::ostream& print(std::ostream& os) const = 0;
 
     friend std::ostream& operator<<(std::ostream& os, AbstractExpression const& e)
@@ -39,7 +52,7 @@ struct Expression : AbstractExpression
     Expression(E const& e) : e_(make_from(e)) { } // cloning the expression
 
     bool valid() const { return e_; }
-    cv::Mat evaluate() const { apex_assert_hard(e_); return e_->evaluate(); }
+    cv::Mat evaluate(VariableMap& vm) const { apex_assert_hard(e_); return e_->evaluate(vm); }
 
     // special purpose overload to avoid unnecessary wrapping
     friend Ptr make_from(Expression const& t) { return t.e_; }
@@ -71,18 +84,18 @@ struct FunctionExpression : AbstractExpression
         op_.insert(op_.begin(), op.begin(), op.end());
     }
 
-    cv::Mat evaluate() const {
+    cv::Mat evaluate(VariableMap& vm) const {
         if(op_ == "abs"){
-            return cv::abs(args_[0].evaluate());
+            return cv::abs(args_[0].evaluate(vm));
 
         } else if(op_ == "log"){
             cv::Mat r;
-            cv::log(args_[0].evaluate(), r);
+            cv::log(args_[0].evaluate(vm), r);
             return r;
 
         } else if(op_ == "exp"){
             cv::Mat r;
-            cv::exp(args_[0].evaluate(), r);
+            cv::exp(args_[0].evaluate(vm), r);
             return r;
 
         } else if(op_ == "pow") {
@@ -90,8 +103,8 @@ struct FunctionExpression : AbstractExpression
                 throw std::runtime_error(std::string("'pow'' needs 2 parameters"));
             }
 
-            cv::Mat first = args_[0].evaluate();
-            cv::Mat second = args_[1].evaluate();
+            cv::Mat first = args_[0].evaluate(vm);
+            cv::Mat second = args_[1].evaluate(vm);
             if(second.rows != 1 || second.cols != 1) {
                 throw std::runtime_error(std::string("'pow'' needs its second parameter to be a number"));
             }
@@ -108,29 +121,29 @@ struct FunctionExpression : AbstractExpression
             }
 
             cv::Mat r;
-            cv::sqrt(args_[0].evaluate(), r);
+            cv::sqrt(args_[0].evaluate(vm), r);
             return r;
 
         } else if(op_ == "min") {
             if(args_.size() == 1) {
-                return args_[0].evaluate();
+                return args_[0].evaluate(vm);
             }
-            cv::Mat res = cv::min(args_[0].evaluate(), args_[1].evaluate());
+            cv::Mat res = cv::min(args_[0].evaluate(vm), args_[1].evaluate(vm));
 
             for(std::size_t i = 2; i < args_.size(); ++i) {
-                cv::min(res, args_[i].evaluate(), res);
+                cv::min(res, args_[i].evaluate(vm), res);
             }
 
             return res;
 
         } else if(op_ == "max") {
             if(args_.size() == 1) {
-                return args_[0].evaluate();
+                return args_[0].evaluate(vm);
             }
-            cv::Mat res = cv::max(args_[0].evaluate(), args_[1].evaluate());
+            cv::Mat res = cv::max(args_[0].evaluate(vm), args_[1].evaluate(vm));
 
             for(std::size_t i = 2; i < args_.size(); ++i) {
-                cv::max(res, args_[i].evaluate(), res);
+                cv::max(res, args_[i].evaluate(vm), res);
             }
 
             return res;
@@ -156,9 +169,9 @@ struct BinaryExpression : AbstractExpression
         : op_(op), lhs_(make_from(l)), rhs_(make_from(r))
     {}
 
-    cv::Mat evaluate() const {
-        const cv::Mat &a = lhs_->evaluate();
-        const cv::Mat &b = rhs_->evaluate();
+    cv::Mat evaluate(VariableMap& vm) const {
+        const cv::Mat &a = lhs_->evaluate(vm);
+        const cv::Mat &b = rhs_->evaluate(vm);
 
         bool a_is_num = (a.rows== 1 && a.cols == 1);
         bool b_is_num = (b.rows== 1 && b.cols == 1);
@@ -225,8 +238,8 @@ struct UnaryExpression : AbstractExpression
         : op_(op), rhs_(make_from(r))
     {}
 
-    cv::Mat evaluate() const {
-        const cv::Mat &b = rhs_->evaluate();
+    cv::Mat evaluate(VariableMap& vm) const {
+        const cv::Mat &b = rhs_->evaluate(vm);
 
         bool b_is_num = (b.rows== 1 && b.cols == 1);
 
@@ -259,7 +272,7 @@ struct ConstantExpression : AbstractExpression {
         value.at<double>(0,0) = v;
     }
 
-    cv::Mat evaluate() const { return value; }
+    cv::Mat evaluate(VariableMap& vm) const { return value; }
 
     virtual std::ostream& print(std::ostream& os) const
     { return os << "ConstantExpression(" << value << ")"; }
@@ -268,12 +281,13 @@ struct ConstantExpression : AbstractExpression {
 struct VariableExpression : AbstractExpression {
     std::string name_;
 
-    static cv::Mat& get(std::string const& name) {
-        static std::map<std::string, cv::Mat> _symbols;
-        return _symbols[name];
+    cv::Mat evaluate(VariableMap& vm) const {
+        cv::Mat mat = vm.get(name_);
+        if(mat.empty()) {
+            throw std::runtime_error(std::string("variable $") + name_ + " is not set");
+        }
+        return mat;
     }
-
-    cv::Mat evaluate() const { return get(name_); }
 
     virtual std::ostream& print(std::ostream& os) const
     { return os << "VariableExpression('" << name_ << "')"; }

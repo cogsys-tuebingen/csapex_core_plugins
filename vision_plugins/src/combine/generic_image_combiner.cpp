@@ -144,49 +144,57 @@ void GenericImageCombiner::process()
         return;
     }
 
-    cv::Mat f1, f2;
 
     CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
 
-    if(img1->value.channels() == 1) {
-        img1->value.convertTo(f1, CV_32FC1);
-    } else if(img1->value.channels() == 3) {
-        img1->value.convertTo(f1, CV_32FC3);
+    cv::Mat f1;
+    img1->value.copyTo(f1);
+
+    if(f1.channels() == 1) {
+        f1.convertTo(f1, CV_32FC1);
+    } else if(f1.channels() == 3) {
+        f1.convertTo(f1, CV_32FC3);
     } else {
         std::stringstream msg;
-        msg << "Image 1: images with " << img1->value.channels() << " channels not yet supported";
+        msg << "Image 1: images with " << f1.channels() << " channels not yet supported";
         throw std::runtime_error(msg.str());
     }
 
-    VariableExpression::get("1") = f1;
+    VariableMap vm;
+    vm.get("1") = f1;
 
     // handle optional second image
     if(i2_->hasMessage()) {
+        cv::Mat f2;
         CvMatMessage::Ptr img2 = i2_->getMessage<CvMatMessage>();
+        img2->value.copyTo(f2);
 
-        if(img1->value.channels() != img2->value.channels()) {
+        if(f1.channels() != f2.channels()) {
             throw std::runtime_error("images have different number of channels.");
         }
 
-        if(img2->value.channels() == 1) {
-            img2->value.convertTo(f2, CV_32FC1);
-        } else if(img2->value.channels() == 3) {
-            img2->value.convertTo(f2, CV_32FC3);
+        if(f2.channels() == 1) {
+            f2.convertTo(f2, CV_32FC1);
+        } else if(f2.channels() == 3) {
+            f2.convertTo(f2, CV_32FC3);
         } else {
             std::stringstream msg;
-            msg << "Image 2: images with " << img2->value.channels() << " channels not yet supported";
+            msg << "Image 2: images with " << f2.channels() << " channels not yet supported";
             throw std::runtime_error(msg.str());
         }
 
-        VariableExpression::get("2") = f2;
+        vm.get("2") = f2;
+    } else {
+        vm.get("2") = cv::Mat();
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding()));
+    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp));
 
-    if(img1->value.channels() == 1) {
-        e.evaluate().convertTo(out->value, CV_8UC1);
-    } else if(img1->value.channels() == 3) {
-        e.evaluate().convertTo(out->value, CV_8UC3);
+    cv::Mat r = e.evaluate(vm);
+    if(f1.channels() == 1) {
+        r.convertTo(out->value, CV_8UC1);
+    } else if(f1.channels() == 3) {
+        r.convertTo(out->value, CV_8UC3);
     }
     out_->publish(out);
 }

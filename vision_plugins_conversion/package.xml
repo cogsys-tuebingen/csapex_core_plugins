@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package>
+  <name>vision_plugins_conversion</name>
+  <version>0.0.1</version>
+  <description>Conversion plugins for vision_plugins message types.</description>
+
+  <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>csapex</build_depend>
+  <build_depend>csapex_ml</build_depend>
+  <build_depend>csapex_vision</build_depend>
+  <build_depend>csapex_vision_features</build_depend>
+  <build_depend>vision_plugins_histograms</build_depend>
+  <run_depend>csapex</run_depend>
+  <run_depend>csapex_ml</run_depend>
+  <run_depend>csapex_vision</run_depend>
+  <run_depend>csapex_vision_features</run_depend>
+  <run_depend>vision_plugins_histograms</run_depend>
+
+  <export>
+    <csapex plugin="${prefix}/plugins.xml" />
+  </export>
+</package>

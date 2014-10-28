@@ -32,17 +32,8 @@ BlobDetector::BlobDetector()
                                                param::ParameterDescription("Show the information of each RoI"),
                                                false));
 
-    param::Parameter::Ptr reduce_parameter = param::ParameterFactory::declareBool("DeleteSmallRoi",
-                                               param::ParameterDescription("Deletes to small Roi"),
-                                               false);
-
-    addParameter(reduce_parameter);
-
-    boost::function<bool()> reducing_bool  = boost::bind(&param::Parameter::as<bool>, reduce_parameter.get());
-
-    addConditionalParameter(param::ParameterFactory::declareRange("ThresholdSizeRoi",
-                                                          param::ParameterDescription("Defining the treshold for deleting the Roi"),
-                                                          0,80,10,1), reducing_bool);
+    addParameter(param::ParameterFactory::declareRange("min_size/w", 1, 1024, 1, 1));
+    addParameter(param::ParameterFactory::declareRange("min_size/h", 1, 1024, 1, 1));
 
 
 }
@@ -97,7 +88,7 @@ void BlobDetector::process()
 
     cv::Mat& gray = img->value;
 
-    CvMatMessage::Ptr debug(new CvMatMessage(enc::bgr));
+    CvMatMessage::Ptr debug(new CvMatMessage(enc::bgr, img->stamp));
     cv::cvtColor(gray, debug->value, CV_GRAY2BGR);
 
     CvBlobs blobs;
@@ -110,17 +101,26 @@ void BlobDetector::process()
 
     VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
+    int minw = readParameter<int>("min_size/w");
+    int minh = readParameter<int>("min_size/h");
+
     for (CvBlobs::const_iterator it=blobs.begin(); it!=blobs.end(); ++it) {
         const CvBlob& blob = *it->second;
+
+        int w = (blob.maxx - blob.minx + 1);
+        int h = (blob.maxy - blob.miny + 1);
+
+        if(w < minw || h < minh) {
+            continue;
+        }
 
         RoiMessage::Ptr roi(new RoiMessage);
         double r, g, b;
         _HSV2RGB_((double)((blob.label *77)%360), .5, 1., r, g, b);
         cv::Scalar color(b,g,r);
-        roi->value = Roi(blob.minx, blob.miny, (blob.maxx - blob.minx + 1), (blob.maxy - blob.miny + 1), color);
-       // aerr << roi->value << std::endl;
-       // aerr << blob.contour.startingPoint.x << std::endl;
-        //aerr << blob.contour.chainCode.
+
+        roi->value = Roi(blob.minx, blob.miny, w, h, color);
+
         out->value.push_back(roi);
     }
 
@@ -192,7 +192,7 @@ void BlobDetector::process()
         output_debug_->publish(debug);
     }
 
-
+    cvReleaseBlobs(blobs);
     cvReleaseImage(&labelImgPtr);
 }
 

@@ -24,12 +24,12 @@ LKTracking::LKTracking()
 {
     boost::function<void(const param::Parameter*)> cb = boost::bind(&LKTracking::update, this, _1);
 
-    addParameter(param::ParameterFactory::declare<int>("winSize", 10, 80, 31, 1));
-    addParameter(param::ParameterFactory::declare<int>("subPixWinSize", 1, 40, 10, 1), cb);
+    addParameter(param::ParameterFactory::declareRange<int>("winSize", 10, 80, 31, 1));
+    addParameter(param::ParameterFactory::declareRange<int>("subPixWinSize", 1, 40, 10, 1), cb);
 
     addParameter(param::ParameterFactory::declareTrigger("reset"), cb);
 
-    addParameter(param::ParameterFactory::declare<int>("debug/circlesize", 1, 15, 2, 1));
+    addParameter(param::ParameterFactory::declareRange<int>("debug/circlesize", 1, 15, 2, 1));
 }
 
 void LKTracking::process()
@@ -79,7 +79,7 @@ void LKTracking::process()
 
         size_t k = 0;
 
-        CvMatMessage::Ptr out_dbg(new CvMatMessage(enc::bgr));
+        CvMatMessage::Ptr out_dbg(new CvMatMessage(enc::bgr, img->stamp));
 
         bool debug = out_debug_->isConnected();
         if(debug) {

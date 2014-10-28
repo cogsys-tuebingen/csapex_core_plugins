@@ -7,7 +7,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <utils_cv/histogram.hpp>
+#include <utils_vision/utils/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <vision_plugins_histograms/histogram_maxima_msg.h>
 
@@ -19,8 +19,6 @@ CSAPEX_REGISTER_CLASS(vision_plugins::HistogramMaxima, csapex::Node)
 
 HistogramMaxima::HistogramMaxima()
 {
-    addParameter(param::ParameterFactory::declareRange("k", 1, 128, 2, 1));
-    addParameter(param::ParameterFactory::declareRange("thresh", 0, 1000, 0, 1));
 }
 
 void HistogramMaxima::process()
@@ -30,7 +28,6 @@ void HistogramMaxima::process()
 
     unsigned int count = input->value.histograms.size();
     output->value.maxima.resize(count);
-    output->value.bin_range = input->value.bin_range;
 
     unsigned int k = readParameter<int>("k");
     float thresh   = readParameter<int>("thresh");
@@ -39,16 +36,16 @@ void HistogramMaxima::process()
         int type = src.type() & 7;
         switch(type) {
         case CV_32F:
-            utils_cv::histogram::find_maxima1D<float>(src,
-                                                      k,
-                                                      thresh,
-                                                      output->value.maxima.at(i));
+            utils_vision::histogram::find_maxima1D<float>(src,
+                                                          k,
+                                                          thresh,
+                                                          output->value.maxima.at(i));
             break;
         case CV_32S:
-            utils_cv::histogram::find_maxima1D<int>(src,
-                                                    k,
-                                                    thresh,
-                                                    output->value.maxima.at(i));
+            utils_vision::histogram::find_maxima1D<int>(src,
+                                                        k,
+                                                        thresh,
+                                                        output->value.maxima.at(i));
             break;
         default:
             throw std::runtime_error("Only 32bit float or 32bit integer histograms supported!");
@@ -61,4 +58,10 @@ void HistogramMaxima::setup()
 {
     histograms_ = modifier_->addInput<HistogramMessage>("histograms");
     maxima_     = modifier_->addOutput<HistogramMaximaMessage>("maxima");
+}
+
+void HistogramMaxima::setupParameters()
+{
+    addParameter(param::ParameterFactory::declareRange("k", 1, 128, 2, 1));
+    addParameter(param::ParameterFactory::declareRange("thresh", 0, 1000, 0, 1));
 }

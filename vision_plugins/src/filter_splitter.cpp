@@ -4,6 +4,7 @@
 #include <csapex/view/box.h>
 #include <csapex/command/meta.h>
 #include <csapex_vision/cv_mat_message.h>
+#include <csapex/model/node_worker.h>
 #include <csapex/msg/input.h>
 #include <csapex/msg/output.h>
 #include <csapex/model/node_modifier.h>
@@ -79,7 +80,7 @@ void Splitter::process()
 
     bool enforce_mono = readParameter<bool>("enforce mono");
 
-    std::vector<Output*> outputs = getMessageOutputs();
+    std::vector<Output*> outputs = getNodeWorker()->getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
         if(i < state_.encoding_.channelCount()) {
@@ -92,7 +93,7 @@ void Splitter::process()
             e.push_back(enc::channel::unknown);
         }
 
-        CvMatMessage::Ptr channel_out(new CvMatMessage(e));
+        CvMatMessage::Ptr channel_out(new CvMatMessage(e, m->stamp));
         channel_out->value = channels[i];
         outputs[i]->publish(channel_out);
     }
@@ -100,7 +101,7 @@ void Splitter::process()
 
 void Splitter::updateOutputs()
 {
-    std::vector<Output*> outputs = getMessageOutputs();
+    std::vector<Output*> outputs = getNodeWorker()->getMessageOutputs();
     int n = outputs.size();
 
     if(state_.channel_count_ > n) {
@@ -120,7 +121,7 @@ void Splitter::updateOutputs()
             }
 
             if(del) {
-                removeOutput(output->getUUID());
+                getNodeWorker()->removeOutput(output->getUUID());
             } else {
                 output->disable();
             }
@@ -128,7 +129,7 @@ void Splitter::updateOutputs()
     }
 
 
-    outputs = getMessageOutputs();
+    outputs = getNodeWorker()->getMessageOutputs();
     for(int i = 0, n = state_.channel_count_; i < n; ++i) {
         Output* output = outputs[i];
         if(i < (int) state_.encoding_.channelCount()) {
@@ -165,11 +166,11 @@ void Splitter::setParameterState(Memento::Ptr memento)
 /// MEMENTO
 void Splitter::State::readYaml(const YAML::Node &node)
 {
-    node["channel_count"] >> channel_count_;
+    channel_count_ = node["channel_count"].as<int>();
 }
 
 
-void Splitter::State::writeYaml(YAML::Emitter &out) const
+void Splitter::State::writeYaml(YAML::Node &out) const
 {
-    out << YAML::Key << "channel_count" << YAML::Value << channel_count_;
+    out["channel_count"] = channel_count_;
 }

@@ -38,7 +38,7 @@ include_directories(include
 add_subdirectory(src/cvBlob)
 
 add_library(vision_plugins
-    src/object_detection/hog_training_rois.cpp
+    src/filter/distance_transform.cpp
     src/filter/gamma_correction.cpp
     src/blob_detector.cpp
     src/filter_merger.cpp
@@ -46,7 +46,6 @@ add_library(vision_plugins
     src/filter_perspective.cpp
 
     src/filter_debayer.cpp
-    src/filter_local_patterns.cpp
     src/morphological.cpp
     src/vj_detector.cpp
     src/lk_tracking.cpp
@@ -103,8 +102,12 @@ add_library(vision_plugins
     src/analyze/camera_calibration.cpp
     src/analyze/label_regions.cpp
 
-    src/object_detection/hog_detector.cpp
-    src/object_detection/hog_extractor.cpp
+    src/recognition/hog_detector.cpp
+    src/recognition/hog_extractor.cpp
+    src/recognition/local_patterns.cpp
+    src/recognition/glcm.cpp
+    src/recognition/hog_training_rois.cpp
+
 )
 
 target_link_libraries(vision_plugins

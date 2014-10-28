@@ -45,7 +45,7 @@ void Morpholocial::process()
 {
     connection_types::CvMatMessage::Ptr a = input_->getMessage<connection_types::CvMatMessage>();
 
-    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(a->getEncoding()));
+    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(a->getEncoding(), a->stamp));
     int op = readParameter<int>("type");
     int morph_elem = readParameter<int>("elem");
     int morph_size = readParameter<int>("size");

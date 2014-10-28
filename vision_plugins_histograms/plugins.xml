@@ -18,10 +18,4 @@
     </description>
     <tags>Vision, Histogram</tags>
   </class>
-  <class type="vision_plugins::Slicing" base_class_type="csapex::Node">
-    <description>
-        Slice image and its channels given the histogram peaks.
-    </description>
-    <tags>Vision, Histogram</tags>
-  </class>
 </library>

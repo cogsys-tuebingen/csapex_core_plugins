@@ -37,7 +37,7 @@ void HoughLinesP::process()
         throw std::runtime_error("image must be one channel grayscale.");
     }
 
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr, in->stamp));
     cv::cvtColor(in->value, out->value, CV_GRAY2BGR);
 
     boost::shared_ptr< std::vector<cv::Vec4i> > lines_ptr(new std::vector<cv::Vec4i>);
