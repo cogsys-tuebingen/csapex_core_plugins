@@ -236,8 +236,8 @@ void ImportRos::processROS()
 
             if(!msgs_.empty()) {
                 ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
-                if(rosTime(msgs_.front()->stamp) + max_wait_duration < time->value) {
-                    aerr << "[2] time stamp " << time->value << " is too new" << std::endl;
+                if(rosTime(msgs_.back()->stamp) + max_wait_duration < time->value) {
+                    aerr << "[2] time stamp " << time->value << " is too new, latest stamp is " << rosTime(msgs_.back()->stamp) << std::endl;
                     return;
                 }
             }
