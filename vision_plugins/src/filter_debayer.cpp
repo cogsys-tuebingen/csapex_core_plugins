@@ -34,8 +34,11 @@ void Debayer::filter(cv::Mat &img, cv::Mat &mask)
 
     // assume 1 channel raw image comes in
     cv::Mat raw;
-    cv::cvtColor(img, raw, CV_RGB2GRAY);
-
+    if(img.channels() == 1) {
+        raw = img;
+    } else {
+        cv::cvtColor(img, raw, CV_RGB2GRAY);
+    }
     if (mode == 667) {
         this->debayerAndResize(raw, img);
         cv::cvtColor(img, img, CV_BGR2RGB);
