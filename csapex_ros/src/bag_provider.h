@@ -38,10 +38,13 @@ private:
 
 private:
     std::string file_;
+
+    int frame_;
     int frames_;
 
     param::SetParameter::Ptr topic_param_;
 
+    std::string main_topic_;
     rosbag::Bag bag;
     rosbag::View* view_;
     rosbag::View::iterator view_it;
