@@ -25,7 +25,8 @@ public:
 
     virtual void setupUi(QBoxLayout* layout);
 
-    void setLabel(int label);
+    void updateLabel(int label);
+
 public Q_SLOTS:
     void display(lib_laser_processing::Scan* img);
     void submit();
@@ -54,8 +55,10 @@ protected:
             out["height"] = height;
         }
         virtual void readYaml(const YAML::Node& node) {
-            width = node["width"].as<int>();
-            height = node["height"].as<int>();
+            if(node["width"].IsDefined())
+                width = node["width"].as<int>();
+            if(node["height"].IsDefined())
+                height = node["height"].as<int>();
         }
     };
 
@@ -73,8 +76,8 @@ private:
     QImage empty;
     QPainter painter;
 
-    int label_;
-    bool down_;
+    bool resize_down_;
+    bool move_down_;
     QPoint last_pos_;
 };
 
