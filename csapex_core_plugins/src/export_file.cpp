@@ -79,13 +79,24 @@ void ExportFile::exportSingle(const ConnectionType::Ptr& msg)
         QDir().mkdir(path_.c_str());
     }
 
-    std::stringstream ss;
-    ss << "_" << suffix_;
+
 
     if(readParameter<bool>("yaml")) {
-        std::string file = path_ + "/" + base_ + ss.str().c_str() + Settings::message_extension;
-        MessageFactory::writeMessage(file, *msg);
+        while(true) {
+            std::stringstream file_s;
+            file_s << path_ << "/" << base_ << "_" << suffix_ << Settings::message_extension;
+            std::string file = file_s.str();
+
+            if(!QFile(QString::fromStdString(file)).exists()) {
+                MessageFactory::writeMessage(file, *msg);
+                break;
+            } else {
+                ++suffix_;
+            }
+        }
     } else {
+        std::stringstream ss;
+        ss << "_" << suffix_;
         msg->writeRaw(path_, ss.str());
     }
 
