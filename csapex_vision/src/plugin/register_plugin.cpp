@@ -45,8 +45,10 @@ struct Image2CvMat
         } else if(source_encoding == sensor_msgs::image_encodings::MONO8 ||
                   source_encoding == sensor_msgs::image_encodings::MONO16) {
             target_encoding = enc::mono;
+        } else if(source_encoding.substr(6) == "bayer_") {
+            target_encoding = enc::mono;
         } else {
-            std::cerr << "unsupported image encoding: " << source_encoding << std::endl;
+            target_encoding = enc::unknown;
         }
 
         connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(target_encoding, stamp));
