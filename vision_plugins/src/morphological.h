@@ -12,6 +12,7 @@ public:
 
     virtual void process();
     virtual void setup();
+    virtual void setupParameters();
 
 private:
     Output* output_;

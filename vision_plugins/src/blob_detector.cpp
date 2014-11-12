@@ -28,6 +28,14 @@ using namespace cvb;
 
 BlobDetector::BlobDetector()
 {
+}
+
+BlobDetector::~BlobDetector()
+{
+}
+
+void BlobDetector::setupParameters()
+{
     addParameter(param::ParameterFactory::declareBool("RoiInformation",
                                                param::ParameterDescription("Show the information of each RoI"),
                                                false));
@@ -35,10 +43,6 @@ BlobDetector::BlobDetector()
     addParameter(param::ParameterFactory::declareRange("min_size/w", 1, 1024, 1, 1));
     addParameter(param::ParameterFactory::declareRange("min_size/h", 1, 1024, 1, 1));
 
-}
-
-BlobDetector::~BlobDetector()
-{
 }
 
 #define _HSV2RGB_(H, S, V, R, G, B) \
