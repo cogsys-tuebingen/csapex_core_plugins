@@ -24,6 +24,10 @@ using namespace csapex;
 ExportRos::ExportRos()
     : connector_(NULL), create_pub(false)
 {
+}
+
+void ExportRos::setupParameters()
+{
     addParameter(param::ParameterFactory::declareText("topic", "export"),
                  boost::bind(&ExportRos::updateTopic, this));
 }

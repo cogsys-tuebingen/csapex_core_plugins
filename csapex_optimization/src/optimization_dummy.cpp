@@ -57,7 +57,7 @@ void OptimizationDummy::process()
     ainfo << "params are a: " << a << ", b: " << b << ", c: " << c << std::endl;
 
 //    double fitness = a*a + b*b + c*c;
-    double fitness = (a - b) + c * d + e * (f - g) + i + j;
+    double fitness = (a - b) + c * d + e * (f - g) + i + j / h;
     ainfo << "dummy optimizer: fitness = " << fitness << std::endl;
 
     out_->publish(fitness);

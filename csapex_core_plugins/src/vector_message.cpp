@@ -38,6 +38,11 @@ bool GenericVectorMessage::acceptsConnectionFrom(const ConnectionType *other_sid
     return impl->acceptsConnectionFrom(other_side);
 }
 
+std::string GenericVectorMessage::name() const
+{
+    return impl->name();
+}
+
 
 
 
