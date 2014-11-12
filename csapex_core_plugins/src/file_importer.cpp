@@ -56,16 +56,17 @@ void FileImporter::changeMode()
 
 void FileImporter::process()
 {
-    if(provider_.get() && provider_->hasNext()) {
-        Message::Ptr msg = provider_->next();
-        if(msg.get()) {
-            output_->setType(provider_->getType());
-            output_->setLabel(provider_->getType()->name());
-            BOOST_STATIC_ASSERT(has_ptr_member<Message>::value);
-            BOOST_STATIC_ASSERT(!has_elem_type_member<Message>::value);
-            BOOST_STATIC_ASSERT(has_elem_type_member<boost::shared_ptr<int> >::value);
-            BOOST_STATIC_ASSERT(has_elem_type_member<Message::Ptr>::value);
-            output_->publish(msg);
+    if(provider_) {
+        if(provider_->hasNext()) {
+            for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
+                Message::Ptr msg = provider_->next(slot);
+                if(msg) {
+                    outputs_[slot]->setType(provider_->getType());
+                    outputs_[slot]->setLabel(provider_->getType()->name());
+
+                    outputs_[slot]->publish(msg);
+                }
+            }
         }
     }
 }
@@ -95,6 +96,8 @@ bool FileImporter::doImport(const QString& _path)
     setError(false);
 
     provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
+    provider_->slot_count_changed.connect(boost::bind(&FileImporter::updateOutputs, this));
+
     provider_->load(path.toStdString());
 
     setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));
@@ -104,7 +107,7 @@ bool FileImporter::doImport(const QString& _path)
 
 void FileImporter::setup()
 {
-    output_ = modifier_->addOutput<connection_types::AnyMessage>("Unknown");
+    outputs_.push_back(modifier_->addOutput<connection_types::AnyMessage>("Unknown"));
 
     param::Parameter::Ptr immediate = getParameter("playback/immediate");
 
@@ -116,6 +119,38 @@ void FileImporter::setup()
 void FileImporter::updateProvider()
 {
     provider_->parameterChanged();
+}
+
+void FileImporter::updateOutputs()
+{
+    std::size_t slot_count = provider_->slotCount();
+
+    std::size_t output_count = outputs_.size();
+    if(slot_count != outputs_.size()) {
+        ainfo << "updating to " << slot_count << " outputs (" << output_count << ")" << std::endl;
+    }
+
+
+    if(slot_count > output_count) {
+        for(std::size_t i = output_count ; i < slot_count ; ++i) {
+            outputs_.push_back(modifier_->addOutput<AnyMessage>("unknown"));
+        }
+    } else {
+        bool del = true;
+        for(int i = output_count-1 ; i >= (int) slot_count; --i) {
+            Output* output = outputs_[i];
+            if(output->isConnected()) {
+                del = false;
+            }
+
+            if(del) {
+                getNodeWorker()->removeOutput(output->getUUID());
+                outputs_.erase(outputs_.begin() + i);
+            } else {
+                output->disable();
+            }
+        }
+    }
 }
 
 void FileImporter::import()

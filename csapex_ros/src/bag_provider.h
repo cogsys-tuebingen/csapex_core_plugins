@@ -24,7 +24,7 @@ public:
 
 public:
     virtual bool hasNext();
-    virtual connection_types::Message::Ptr next();
+    virtual connection_types::Message::Ptr next(std::size_t slot);
 
     virtual std::vector<std::string> getExtensions() const;
 
@@ -44,10 +44,13 @@ private:
 
     param::SetParameter::Ptr topic_param_;
 
+    std::vector<std::string> topics_;
     std::string main_topic_;
     rosbag::Bag bag;
-    rosbag::View* view_;
-    rosbag::View::iterator view_it;
+
+    rosbag::View* view_all_;
+    rosbag::View::iterator view_it_;
+    std::map<std::string, rosbag::View::iterator> view_it_map_;
 
     bool initiated;
 };

@@ -34,14 +34,13 @@ public:
     virtual ~ImageProvider();
 
 public:
-    virtual connection_types::Message::Ptr next();
+    virtual connection_types::Message::Ptr next(std::size_t slot);
 
     std::vector<std::string> getExtensions() const;
 
 public:
     void init();
     virtual void doInit() {}
-    virtual bool hasNext() = 0;
     virtual void next(cv::Mat&, cv::Mat&) = 0;
     virtual int sleepTime();
 

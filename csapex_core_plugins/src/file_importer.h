@@ -28,12 +28,13 @@ public:
 private:
     void changeMode();
     void updateProvider();
+    void updateOutputs();
 
 private:
     MessageProvider::Ptr provider_;
 
     QString file_;
-    Output* output_;
+    std::vector<Output*> outputs_;
 };
 
 }
