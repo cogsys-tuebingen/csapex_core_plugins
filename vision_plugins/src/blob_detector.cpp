@@ -40,8 +40,9 @@ void BlobDetector::setupParameters()
                                                param::ParameterDescription("Show the information of each RoI"),
                                                false));
 
-    addParameter(param::ParameterFactory::declareRange("min_size/w", 1, 1024, 1, 1));
-    addParameter(param::ParameterFactory::declareRange("min_size/h", 1, 1024, 1, 1));
+    addParameter(param::ParameterFactory::declareInterval("Area",
+                                               param::ParameterDescription("Area for the reduced image"),
+                                               1, 800000, 1, 800000, 1));
 
 }
 
@@ -94,6 +95,9 @@ void BlobDetector::process()
     CvMatMessage::Ptr debug(new CvMatMessage(enc::bgr, img->stamp));
     cv::cvtColor(gray, debug->value, CV_GRAY2BGR);
 
+    CvMatMessage::Ptr reduced(new CvMatMessage(enc::mono, img->stamp));
+    reduced->value = cv::Mat::zeros(img->value.rows, img->value.cols, CV_8U);
+
     CvBlobs blobs;
 
     IplImage* grayPtr = new IplImage(gray);
@@ -104,30 +108,29 @@ void BlobDetector::process()
 
     VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
-    int minw = readParameter<int>("min_size/w");
-    int minh = readParameter<int>("min_size/h");
+    std::pair<unsigned int,unsigned int> range_area = readParameter<std::pair<int, int> >("Area");
 
     for (CvBlobs::const_iterator it=blobs.begin(); it!=blobs.end(); ++it) {
-        const CvBlob& blob = *it->second;
+         const CvBlob& blob = *it->second;
 
         int w = (blob.maxx - blob.minx + 1);
         int h = (blob.maxy - blob.miny + 1);
 
-        if(w < minw || h < minh) {
+        if((blob.area < range_area.first) || (blob.area > range_area.second)) {
             continue;
         }
 
-        RoiMessage::Ptr roi(new RoiMessage);
+         RoiMessage::Ptr roi(new RoiMessage);
         double r, g, b;
         _HSV2RGB_((double)((blob.label *77)%360), .5, 1., r, g, b);
         cv::Scalar color(b,g,r);
+
         roi->value = Roi(blob.minx, blob.miny, w, h, color);
 
         out->value.push_back(roi);
     }
 
     output_->publish(out);
-
 
     if(output_debug_->isConnected()) {
         IplImage* debugPtr = new IplImage(debug->value);
@@ -166,6 +169,19 @@ void BlobDetector::process()
             }
         }
         output_debug_->publish(debug);
+        delete(debugPtr);
+    }
+
+    if(output_reduce_->isConnected()) {
+
+        IplImage* reducedPtr = new IplImage(reduced->value);
+
+        cvFilterByArea(blobs, range_area.first, range_area.second);
+
+        cvFilterLabels(labelImgPtr, reducedPtr, blobs);
+
+        output_reduce_->publish(reduced);
+        delete(reducedPtr);
     }
 
     cvReleaseBlobs(blobs);
@@ -179,4 +195,6 @@ void BlobDetector::setup()
 
     output_debug_ = modifier_->addOutput<CvMatMessage>("OutputImage");
     output_ = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
+    output_reduce_ = modifier_->addOutput<CvMatMessage>("ReducedImage");
+
 }
