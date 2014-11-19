@@ -54,11 +54,8 @@ void OptimizationDummy::process()
     double i = readParameter<double>("i");
     double j = readParameter<double>("j");
 
-    ainfo << "params are a: " << a << ", b: " << b << ", c: " << c << std::endl;
 
-//    double fitness = a*a + b*b + c*c;
-    double fitness = (a - b) + c * d + e * (f - g) + i + j / h;
-    ainfo << "dummy optimizer: fitness = " << fitness << std::endl;
+    double fitness = (a - b) + c * d - e * (f - g) + i + j * h;
 
     out_->publish(fitness);
 }
