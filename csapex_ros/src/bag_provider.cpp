@@ -18,12 +18,13 @@ CSAPEX_REGISTER_CLASS(csapex::BagProvider, csapex::MessageProvider)
 using namespace csapex;
 
 BagProvider::BagProvider()
-    : view_all_(NULL), initiated(false)
+    : view_all_(NULL), initiated(false), end_signaled_(false)
 {
     std::vector<std::string> set;
 
     state.addParameter(param::ParameterFactory::declareBool("bag/play", true));
     state.addParameter(param::ParameterFactory::declareBool("bag/loop", true));
+    state.addParameter(param::ParameterFactory::declareBool("bag/latch", false));
     state.addParameter(param::ParameterFactory::declareRange("bag/frame", 0, 1, 0, 1));
 
     param::Parameter::Ptr topic_param = param::ParameterFactory::declareParameterStringSet("topic",
@@ -109,12 +110,28 @@ std::vector<std::string> BagProvider::getExtensions() const
 
 bool BagProvider::hasNext()
 {
-    if(!state.readParameter<bool>("bag/play")) {
-        if(state.readParameter<int>("bag/frame") == frame_) {
-            return false;
-        } else {
-            // frame was selected, ignore that play is false
+    // check if the users wants to scroll in time
+    if(state.readParameter<int>("bag/frame") != frame_) {
+        return initiated;
+    }
+
+    // check if we are at the end
+    if(frame_ == frames_) {
+        if(!end_signaled_) {
+            no_more_messages();
+            end_signaled_ = true;
         }
+
+        if(!state.readParameter<bool>("bag/loop")) {
+            return state.readParameter<bool>("bag/latch");
+        }
+    } else {
+        end_signaled_ = false;
+    }
+
+    // check if we are paused
+    if(!state.readParameter<bool>("bag/play")) {
+        return false;
     }
 
     return initiated;
@@ -133,16 +150,16 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
 
         bool reset = false;
         int skip = 0;
-        if(frame_ == frames_ || view_it_map_[main_topic_] == view_all_->end()) {
+        if(state.readParameter<int>("bag/frame") != frame_) {
+            // go to selected frame
+            reset = true;
+            skip = state.readParameter<int>("bag/frame");
+
+        } else if(frame_ == frames_ || view_it_map_[main_topic_] == view_all_->end()) {
             // loop around?
             if(state.readParameter<bool>("bag/loop")) {
                 reset = true;
             }
-
-        } else if(state.readParameter<int>("bag/frame") != frame_) {
-            // go to selected frame
-            reset = true;
-            skip = state.readParameter<int>("bag/frame");
 
         } else {
             // advance frame
@@ -155,6 +172,15 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
             for(std::size_t i = 0; i < topics_.size(); ++i) {
                 view_it_map_[topics_[i]] = view_all_->end();
             }
+        }
+
+
+        if(frames_ == frame_ && !state.readParameter<bool>("bag/loop")) {
+            state.getParameter("bag/play")->set(false);
+        }
+
+        if(frame_ == 0) {
+            begin();
         }
 
         bool done = false;

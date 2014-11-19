@@ -53,6 +53,7 @@ private:
     std::map<std::string, rosbag::View::iterator> view_it_map_;
 
     bool initiated;
+    bool end_signaled_;
 };
 
 } /// NAMESPACE

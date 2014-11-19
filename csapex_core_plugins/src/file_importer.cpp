@@ -6,10 +6,12 @@
 #include <csapex/msg/output.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <csapex/manager/message_provider_manager.h>
+#include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_worker.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/signal/trigger.h>
 
 /// SYSTEM
 #include <boost/foreach.hpp>
@@ -32,6 +34,11 @@ FileImporter::FileImporter()
 {
 }
 
+FileImporter::~FileImporter()
+{
+}
+
+
 void FileImporter::setupParameters()
 {
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
@@ -41,8 +48,18 @@ void FileImporter::setupParameters()
     addParameter(immediate, boost::bind(&FileImporter::changeMode, this));
 }
 
-FileImporter::~FileImporter()
+void FileImporter::setup()
 {
+    outputs_.push_back(modifier_->addOutput<connection_types::AnyMessage>("Unknown"));
+
+    param::Parameter::Ptr immediate = getParameter("playback/immediate");
+
+    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeWorker::setTickFrequency, getNodeWorker(), boost::bind(&param::Parameter::as<double>, _1));
+    boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
+    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
+
+    begin_ = modifier_->addTrigger("begin");
+    end_ = modifier_->addTrigger("end");
 }
 
 void FileImporter::changeMode()
@@ -55,6 +72,11 @@ void FileImporter::changeMode()
 }
 
 void FileImporter::process()
+{
+
+}
+
+void FileImporter::tick()
 {
     if(provider_) {
         if(provider_->hasNext()) {
@@ -98,22 +120,14 @@ bool FileImporter::doImport(const QString& _path)
     provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
     provider_->slot_count_changed.connect(boost::bind(&FileImporter::updateOutputs, this));
 
+    provider_->begin.connect(boost::bind(&Trigger::trigger, begin_));
+    provider_->no_more_messages.connect(boost::bind(&Trigger::trigger, end_));
+
     provider_->load(path.toStdString());
 
     setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));
 
     return provider_.get();
-}
-
-void FileImporter::setup()
-{
-    outputs_.push_back(modifier_->addOutput<connection_types::AnyMessage>("Unknown"));
-
-    param::Parameter::Ptr immediate = getParameter("playback/immediate");
-
-    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeWorker::setTickFrequency, getNodeWorker(), boost::bind(&param::Parameter::as<double>, _1));
-    boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
-    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
 }
 
 void FileImporter::updateProvider()

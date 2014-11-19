@@ -22,6 +22,7 @@ public:
     void import();
 
     void process();
+    void tick();
 
     bool doImport(const QString& path);
 
@@ -32,6 +33,9 @@ private:
 
 private:
     MessageProvider::Ptr provider_;
+
+    Trigger* begin_;
+    Trigger* end_;
 
     QString file_;
     std::vector<Output*> outputs_;
