@@ -325,7 +325,7 @@ void ImportRos::tickROS()
 void ImportRos::publishLatestMessage()
 {
     if(msgs_.empty()) {
-        ros::Rate r(10);
+        ros::WallRate r(10);
         while(msgs_.empty() && running_) {
             r.sleep();
             ros::spinOnce();

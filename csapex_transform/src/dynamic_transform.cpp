@@ -172,6 +172,7 @@ void DynamicTransform::refresh()
     if(!l.l) {
         return;
     }
+    // TODO: locks up when no clock is published...
     l.l->tfl->waitForTransform(from, to, ros::Time(0), ros::Duration(1.0));
     if(l.l) {
         std::vector<std::string> f;

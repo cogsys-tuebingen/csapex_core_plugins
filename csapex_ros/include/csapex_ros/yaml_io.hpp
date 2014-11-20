@@ -7,6 +7,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PoseStamped.h>
 
 /// YAML
 namespace YAML {
@@ -46,6 +47,19 @@ struct convert<geometry_msgs::Pose> {
     }
 
     static bool decode(const Node& node, geometry_msgs::Pose& rhs) {
+        return true;
+    }
+};
+
+// TODO: implement
+template<>
+struct convert<geometry_msgs::PoseStamped> {
+    static Node encode(const geometry_msgs::PoseStamped& rhs) {
+        Node node;
+        return node;
+    }
+
+    static bool decode(const Node& node, geometry_msgs::PoseStamped& rhs) {
         return true;
     }
 };
