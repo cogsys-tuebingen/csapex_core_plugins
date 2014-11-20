@@ -38,6 +38,16 @@ void DynamicTransform::setupParameters()
     to_p = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("to"));
 }
 
+bool DynamicTransform::canTick()
+{
+    return !frame_in_from_->isConnected() && !frame_in_to_->isConnected() && !time_in_->isConnected();
+}
+
+void DynamicTransform::tick()
+{
+    process();
+}
+
 void DynamicTransform::process()
 {
     if(!init_) {

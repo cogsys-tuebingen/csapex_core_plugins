@@ -19,6 +19,8 @@ public:
     virtual void setupParameters();
 
     virtual void process();
+    bool canTick();
+    virtual void tick();
     void update();
 
     void refresh();

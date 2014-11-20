@@ -91,8 +91,10 @@ public:
         publish_apex(callback, apex_msg);
     }
 
-    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance&) {
-        throw std::logic_error("cannot call 'instantiate' on an IdentityConverter");
+    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& i) {
+        typename connection_types::GenericPointerMessage<T>::Ptr res(new connection_types::GenericPointerMessage<T>);
+        res->value = i.instantiate<T>();
+        return res;
     }
 };
 

@@ -84,7 +84,6 @@ void FileImporter::tick()
                 Message::Ptr msg = provider_->next(slot);
                 if(msg) {
                     outputs_[slot]->setType(provider_->getType());
-                    outputs_[slot]->setLabel(provider_->getType()->name());
 
                     outputs_[slot]->publish(msg);
                 }
@@ -140,10 +139,6 @@ void FileImporter::updateOutputs()
     std::size_t slot_count = provider_->slotCount();
 
     std::size_t output_count = outputs_.size();
-    if(slot_count != outputs_.size()) {
-        ainfo << "updating to " << slot_count << " outputs (" << output_count << ")" << std::endl;
-    }
-
 
     if(slot_count > output_count) {
         for(std::size_t i = output_count ; i < slot_count ; ++i) {
@@ -164,6 +159,11 @@ void FileImporter::updateOutputs()
                 output->disable();
             }
         }
+    }
+
+    for(std::size_t i = 0; i < slot_count; ++i) {
+        Output* out = outputs_[i];
+        out->setLabel(provider_->getLabel(i));
     }
 }
 

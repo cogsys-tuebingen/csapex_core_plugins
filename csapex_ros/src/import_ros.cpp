@@ -297,6 +297,11 @@ void ImportRos::waitForTopic()
     }
 }
 
+bool ImportRos::canTick()
+{
+    return !input_time_->isConnected();
+}
+
 void ImportRos::tickROS()
 {
     if(retries_ > 0) {
@@ -312,7 +317,9 @@ void ImportRos::tickROS()
         msgs_.pop_front();
     }
 
-    publishLatestMessage();
+    if(!current_topic_.name.empty()) {
+        publishLatestMessage();
+    }
 }
 
 void ImportRos::publishLatestMessage()

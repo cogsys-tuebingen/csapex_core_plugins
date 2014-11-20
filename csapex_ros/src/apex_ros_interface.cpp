@@ -12,6 +12,7 @@
 #include <csapex/msg/message_factory.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex_ros/yaml_io.hpp>
 
 /// SYSTEM
 #include <boost/regex.hpp>
@@ -19,6 +20,7 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
+#include <nav_msgs/Odometry.h>
 
 CSAPEX_REGISTER_CLASS(csapex::APEXRosInterface, csapex::CorePlugin)
 
@@ -135,6 +137,8 @@ void APEXRosInterface::init(CsApexCore &core)
     RosMessageConversion::registerConversion<std_msgs::Int32, connection_types::GenericValueMessage<int>, ConvertIntegral<std_msgs::Int32, int> >();
     RosMessageConversion::registerConversion<std_msgs::Float64, connection_types::GenericValueMessage<double>, ConvertIntegral<std_msgs::Float64, double> >();
     RosMessageConversion::registerConversion<std_msgs::String, connection_types::GenericValueMessage<std::string>, ConvertIntegral<std_msgs::String, std::string> >();
+
+    RosMessageConversionT<nav_msgs::Odometry>::registerConversion();
 }
 
 void APEXRosInterface::registerCommandListener()

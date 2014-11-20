@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <csapex_ros/ros_message_conversion.h>
+#include <csapex_ros/ros_handler.h>
 
 /// PROJECT
 #include <utils_param/parameter_factory.h>
@@ -12,13 +13,15 @@
 #include <boost/assign.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 #include <sensor_msgs/Image.h>
+#include <tf2_msgs/TFMessage.h>
+#include <rosgraph_msgs/Clock.h>
 
 CSAPEX_REGISTER_CLASS(csapex::BagProvider, csapex::MessageProvider)
 
 using namespace csapex;
 
 BagProvider::BagProvider()
-    : view_all_(NULL), initiated(false), end_signaled_(false)
+    : pub_setup_(false), view_all_(NULL), initiated(false), end_signaled_(false)
 {
     std::vector<std::string> set;
 
@@ -26,6 +29,8 @@ BagProvider::BagProvider()
     state.addParameter(param::ParameterFactory::declareBool("bag/loop", true));
     state.addParameter(param::ParameterFactory::declareBool("bag/latch", false));
     state.addParameter(param::ParameterFactory::declareRange("bag/frame", 0, 1, 0, 1));
+    state.addParameter(param::ParameterFactory::declareBool("bag/publish tf", false));
+    state.addParameter(param::ParameterFactory::declareBool("bag/publish clock", false));
 
     param::Parameter::Ptr topic_param = param::ParameterFactory::declareParameterStringSet("topic",
                                                                                            param::ParameterDescription("topic to play <b>primarily</b>"), set, "");
@@ -33,10 +38,20 @@ BagProvider::BagProvider()
     assert(topic_param_);
     state.addParameter(topic_param_);
 
+    setupRosPublisher();
 }
 
 BagProvider::~BagProvider()
 {
+}
+
+void BagProvider::setupRosPublisher()
+{
+    if(pub_setup_ == false && ROSHandler::instance().isConnected()) {
+        pub_tf_ = ROSHandler::instance().nh()->advertise<tf2_msgs::TFMessage>("/tf", 500);
+        pub_clock_ = ROSHandler::instance().nh()->advertise<rosgraph_msgs::Clock>("/clock", 500);
+        pub_setup_ = true;
+    }
 }
 
 void BagProvider::load(const std::string& file)
@@ -50,7 +65,9 @@ void BagProvider::load(const std::string& file)
     std::set<std::string> topics;
     for(rosbag::View::iterator it = view_all_->begin(); it != view_all_->end(); ++it) {
         rosbag::MessageInstance i = *it;
-        topics.insert(i.getTopic());
+        if(i.getTopic() != "tf") {
+            topics.insert(i.getTopic());
+        }
     }
 
 
@@ -184,10 +201,21 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
         }
 
         bool done = false;
+        bool pub_tf = state.readParameter<bool>("bag/publish tf");
         for(; view_it_ != view_all_->end() && !done; ++view_it_) {
             rosbag::MessageInstance next = *view_it_;
 
             std::string topic = next.getTopic();
+
+            if(pub_tf && topic == "tf") {
+                if(!pub_setup_) {
+                    setupRosPublisher();
+                }
+                if(pub_setup_) {
+                    tf2_msgs::TFMessage::Ptr tfm = next.instantiate<tf2_msgs::TFMessage>();
+                    pub_tf_.publish(tfm);
+                }
+            }
 
             // copy the iterator
             view_it_map_[topic] = rosbag::View::iterator(view_it_);
@@ -210,11 +238,29 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
         RosMessageConversion& rmc = RosMessageConversion::instance();
         r = rmc.instantiate(instance);
         setType(r->toType());
+
+        if(topic == main_topic_) {
+            if(state.readParameter<bool>("bag/publish clock")) {
+                if(!pub_setup_) {
+                    setupRosPublisher();
+                }
+                if(pub_setup_) {
+                    rosgraph_msgs::Clock::Ptr clock(new rosgraph_msgs::Clock);
+                    clock->clock = instance.getTime();
+                    pub_clock_.publish(clock);
+                }
+            }
+        }
     }
 
     state["bag/frame"] = frame_;
 
     return r;
+}
+
+std::string BagProvider::getLabel(std::size_t slot) const
+{
+    return topics_[slot];
 }
 
 Memento::Ptr BagProvider::getState() const

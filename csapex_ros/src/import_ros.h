@@ -21,6 +21,7 @@ public:
     virtual void setupParameters();
     virtual void setupROS();
     virtual void processROS();
+    virtual bool canTick();
     virtual void tickROS();
     void abort();
 

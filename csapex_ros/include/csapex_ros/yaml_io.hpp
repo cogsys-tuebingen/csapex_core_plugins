@@ -5,6 +5,7 @@
 #include <yaml-cpp/yaml.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Pose.h>
 
 /// YAML
@@ -45,6 +46,19 @@ struct convert<geometry_msgs::Pose> {
     }
 
     static bool decode(const Node& node, geometry_msgs::Pose& rhs) {
+        return true;
+    }
+};
+
+// TODO: implement
+template<>
+struct convert<nav_msgs::Odometry> {
+    static Node encode(const nav_msgs::Odometry& rhs) {
+        Node node;
+        return node;
+    }
+
+    static bool decode(const Node& node, nav_msgs::Odometry& rhs) {
         return true;
     }
 };
