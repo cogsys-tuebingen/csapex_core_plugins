@@ -127,31 +127,38 @@ std::vector<std::string> BagProvider::getExtensions() const
 
 bool BagProvider::hasNext()
 {
+    bool has_next = false;
     // check if the users wants to scroll in time
     if(state.readParameter<int>("bag/frame") != frame_) {
-        return initiated;
+        has_next = initiated;
     }
-
     // check if we are at the end
-    if(frame_ == frames_) {
+    else if(frame_ == frames_) {
         if(!end_signaled_) {
             no_more_messages();
             end_signaled_ = true;
         }
 
         if(!state.readParameter<bool>("bag/loop")) {
-            return state.readParameter<bool>("bag/latch");
+            has_next = state.readParameter<bool>("bag/latch");
         }
-    } else {
+    }
+    // default
+    else {
         end_signaled_ = false;
     }
 
     // check if we are paused
     if(!state.readParameter<bool>("bag/play")) {
-        return false;
+        has_next = false;
+    } else {
+        has_next = initiated;
     }
 
-    return initiated;
+    if(has_next) {
+        advanceIterators();
+    }
+    return has_next;
 }
 
 connection_types::Message::Ptr BagProvider::next(std::size_t slot)
@@ -160,74 +167,6 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
 
     if(!initiated) {
         setTopic();
-    }
-
-    if(slot == 0) {
-        // advance all iterators
-
-        bool reset = false;
-        int skip = 0;
-        if(state.readParameter<int>("bag/frame") != frame_) {
-            // go to selected frame
-            reset = true;
-            skip = state.readParameter<int>("bag/frame");
-
-        } else if(frame_ == frames_ || view_it_map_[main_topic_] == view_all_->end()) {
-            // loop around?
-            if(state.readParameter<bool>("bag/loop")) {
-                reset = true;
-            }
-
-        } else {
-            // advance frame
-            ++frame_;
-        }
-
-        if(reset) {
-            frame_ = skip;
-            view_it_ = view_all_->begin();
-            for(std::size_t i = 0; i < topics_.size(); ++i) {
-                view_it_map_[topics_[i]] = view_all_->end();
-            }
-        }
-
-
-        if(frames_ == frame_ && !state.readParameter<bool>("bag/loop")) {
-            state.getParameter("bag/play")->set(false);
-        }
-
-        if(frame_ == 0) {
-            begin();
-        }
-
-        bool done = false;
-        bool pub_tf = state.readParameter<bool>("bag/publish tf");
-        for(; view_it_ != view_all_->end() && !done; ++view_it_) {
-            rosbag::MessageInstance next = *view_it_;
-
-            std::string topic = next.getTopic();
-
-            if(pub_tf && topic == "tf") {
-                if(!pub_setup_) {
-                    setupRosPublisher();
-                }
-                if(pub_setup_) {
-                    tf2_msgs::TFMessage::Ptr tfm = next.instantiate<tf2_msgs::TFMessage>();
-                    pub_tf_.publish(tfm);
-                }
-            }
-
-            // copy the iterator
-            view_it_map_[topic] = rosbag::View::iterator(view_it_);
-
-            if(topic == main_topic_) {
-                if(skip > 0) {
-                    --skip;
-                } else {
-                    done = true;
-                }
-            }
-        }
     }
 
     std::string topic = topics_[slot];
@@ -253,9 +192,78 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
         }
     }
 
-    state["bag/frame"] = frame_;
-
     return r;
+}
+
+
+void BagProvider::advanceIterators()
+{
+    bool reset = false;
+    int skip = 0;
+    if(state.readParameter<int>("bag/frame") != frame_) {
+        // go to selected frame
+        reset = true;
+        skip = state.readParameter<int>("bag/frame");
+        frame_ = skip;
+
+    } else if(frame_ == frames_ || view_it_map_[main_topic_] == view_all_->end()) {
+        // loop around?
+        if(state.readParameter<bool>("bag/loop")) {
+            reset = true;
+            frame_ = 0;
+            state["bag/frame"] = frame_;
+        }
+
+    } else {
+        // advance frame
+        ++frame_;
+        state["bag/frame"] = frame_;
+    }
+
+    if(reset) {
+        view_it_ = view_all_->begin();
+        for(std::size_t i = 0; i < topics_.size(); ++i) {
+            view_it_map_[topics_[i]] = view_all_->end();
+        }
+    }
+
+
+    if(frames_ == frame_ && !state.readParameter<bool>("bag/loop")) {
+        state.getParameter("bag/play")->set(false);
+    }
+
+    if(frame_ == 0) {
+        begin();
+    }
+
+    bool done = false;
+    bool pub_tf = state.readParameter<bool>("bag/publish tf");
+    for(; view_it_ != view_all_->end() && !done; ++view_it_) {
+        rosbag::MessageInstance next = *view_it_;
+
+        std::string topic = next.getTopic();
+
+        if(pub_tf && topic == "tf") {
+            if(!pub_setup_) {
+                setupRosPublisher();
+            }
+            if(pub_setup_) {
+                tf2_msgs::TFMessage::Ptr tfm = next.instantiate<tf2_msgs::TFMessage>();
+                pub_tf_.publish(tfm);
+            }
+        }
+
+        // copy the iterator
+        view_it_map_[topic] = rosbag::View::iterator(view_it_);
+
+        if(topic == main_topic_) {
+            if(skip > 0) {
+                --skip;
+            } else {
+                done = true;
+            }
+        }
+    }
 }
 
 std::string BagProvider::getLabel(std::size_t slot) const

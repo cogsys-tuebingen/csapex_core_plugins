@@ -39,6 +39,8 @@ private:
     void setupRosPublisher();
     void setTopic();
 
+    void advanceIterators();
+
 private:
     std::string file_;
 

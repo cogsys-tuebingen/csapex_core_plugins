@@ -81,11 +81,13 @@ void FileImporter::tick()
     if(provider_) {
         if(provider_->hasNext()) {
             for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
-                Message::Ptr msg = provider_->next(slot);
-                if(msg) {
-                    outputs_[slot]->setType(provider_->getType());
+                Output* output = outputs_[slot];
 
-                    outputs_[slot]->publish(msg);
+                if(output->isConnected()) {
+                    Message::Ptr msg = provider_->next(slot);
+                    if(msg) {
+                        output->publish(msg);
+                    }
                 }
             }
         }
