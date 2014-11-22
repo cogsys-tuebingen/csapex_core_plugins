@@ -291,7 +291,7 @@ void ImportRos::waitForTopic()
         if(topic_exists) {
             return;
         } else {
-            ROS_WARN_STREAM_THROTTLE(1, "waiting for topic " << readParameter<std::string>("topic"));
+            ROS_WARN_STREAM("waiting for topic " << readParameter<std::string>("topic"));
             poll_wait.sleep();
         }
     }
