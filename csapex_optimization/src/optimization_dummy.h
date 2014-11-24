@@ -20,9 +20,17 @@ public:
     void setup();
     void process();
 
+    bool canTick();
+
 private:
-    Input* in_;
+    void start();
+    void tick();
+
+private:
+    Slot* in_;
     Output* out_;
+
+    bool evaluate_;
 };
 
 
