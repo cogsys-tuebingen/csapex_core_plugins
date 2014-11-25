@@ -18,6 +18,7 @@ using namespace csapex::connection_types;
 
 
 OptimizationDummy::OptimizationDummy()
+    : can_tick_(false)
 {
 }
 
@@ -37,12 +38,28 @@ void OptimizationDummy::setupParameters()
 
 void OptimizationDummy::setup()
 {
-    in_  = modifier_->addInput<AnyMessage>("Trigger");
+    in_  = modifier_->addSlot("Trigger", boost::bind(&OptimizationDummy::trigger, this));
     out_ = modifier_->addOutput<double>("Fitness");
+}
+
+void OptimizationDummy::trigger()
+{
+    can_tick_ = true;
 }
 
 void OptimizationDummy::process()
 {
+}
+
+bool OptimizationDummy::canTick()
+{
+    return can_tick_;
+}
+
+void OptimizationDummy::tick()
+{
+    can_tick_ = false;
+
     double a = readParameter<double>("a");
     double b = readParameter<double>("b");
     double c = readParameter<double>("c");
@@ -55,7 +72,17 @@ void OptimizationDummy::process()
     double j = readParameter<double>("j");
 
 
-    double fitness = (a - b) + c * d - e * (f - g) + i + j * h;
+    double fitness = std::pow(0.0 - a, 2)
+            + std::pow(1.0 - b, 2)
+            + std::pow(2.0 - c, 2)
+            + std::pow(3.0 - d, 2)
+            + std::pow(4.0 - e, 2)
+            + std::pow(5.0 - f, 2)
+            + std::pow(6.0 - g, 2)
+            + std::pow(7.0 - h, 2)
+            + std::pow(8.0 - i, 2)
+            + std::pow(9.0 - j, 2)
+            ;
 
     out_->publish(fitness);
 }
