@@ -36,7 +36,7 @@ void TransformFilter::setup()
     input_transform_ = modifier_->addInput<connection_types::TransformMessage>("Raw Transformation");
 
     output_transform_ = modifier_->addOutput<connection_types::TransformMessage>("Filtered Transformation");
-    output_text_ = modifier_->addOutput<GenericValueMessage<std::string> >("String"); // create a debug output
+    output_text_ = modifier_->addOutput<std::string>("String"); // create a debug output
 
     addParameter(param::ParameterFactory::declareRange("filter size", 1, 10000, 200, 100));
 }
@@ -66,9 +66,7 @@ void TransformFilter::process()
     // Publish Output - Debug
     stringstream << "x = " << x << ",y = " << y << ",z = " << z
                  << ",r = " << RAD_TO_DEG(roll) << ",p = " << RAD_TO_DEG(pitch)<< ",y = " << RAD_TO_DEG(yaw);
-    GenericValueMessage<std::string>::Ptr text_msg(new GenericValueMessage<std::string>);
-    text_msg->value = stringstream.str();
-    output_text_->publish(text_msg);
+    output_text_->publish(stringstream.str());
 
     // Publish Output - Transformation
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);

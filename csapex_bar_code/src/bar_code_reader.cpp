@@ -110,7 +110,7 @@ void BarCodeReader::process()
 //            }
 //        }
 
-        out_str->publishIntegral(data);
+        out_str->publish(data);
         published = true;
 
         data_ = data;
@@ -118,9 +118,9 @@ void BarCodeReader::process()
 
     if(!published) {
         if(republish) {
-            out_str->publishIntegral(data_);
+            out_str->publish(data_);
         } else {
-            out_str->publishIntegral(std::string(""));
+            out_str->publish(std::string(""));
         }
     }
 
@@ -136,6 +136,6 @@ void BarCodeReader::setup()
 {
     in_img = modifier_->addInput<CvMatMessage>("Image");
 
-    out_str = modifier_->addOutput<GenericValueMessage<std::string> >("String");
+    out_str = modifier_->addOutput<std::string>("String");
     out_roi = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
 }

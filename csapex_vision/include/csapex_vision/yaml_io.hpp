@@ -66,6 +66,34 @@ struct convert<cv::Point_<T> > {
     }
 };
 
+template<typename T, int size>
+struct convert<cv::Vec<T, size> > {
+    typedef cv::Vec<T, size> Vec;
+
+    static Node encode(const Vec& rhs)
+    {
+        Node node;
+        for(std::size_t i = 0; i < size; ++i) {
+            node.push_back(rhs[i]);
+        }
+
+        return node;
+    }
+
+    static bool decode(const Node& node, Vec& rhs)
+    {
+        if(!node.IsSequence()) {
+            return false;
+        }
+
+        for(std::size_t i = 0; i < size; ++i) {
+            rhs[i] = node[i].as<T>();
+        }
+
+        return true;
+    }
+};
+
 
 template<>
 struct convert<cv::Mat> {

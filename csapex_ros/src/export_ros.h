@@ -14,6 +14,7 @@ public:
     void setup();
     virtual void setupROS();
     virtual void processROS();
+    virtual void setupParameters();
 
 protected:
     void updateTopic();

@@ -59,7 +59,7 @@ void HoldableBuffer::process()
         }
     }
 
-    if(out_->getType()->name() != msg->name()) {
+    if(out_->getType()->rawName() != msg->rawName()) {
         out_->setType(msg->toType());
     }
 

@@ -122,7 +122,7 @@ void ImportRos::refresh()
 
 void ImportRos::update()
 {
-    retries_ = 100;
+    retries_ = 5;
     waitForTopic();
 }
 
@@ -236,8 +236,8 @@ void ImportRos::processROS()
 
             if(!msgs_.empty()) {
                 ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
-                if(rosTime(msgs_.front()->stamp) + max_wait_duration < time->value) {
-                    aerr << "[2] time stamp " << time->value << " is too new" << std::endl;
+                if(rosTime(msgs_.back()->stamp) + max_wait_duration < time->value) {
+                    aerr << "[2] time stamp " << time->value << " is too new, latest stamp is " << rosTime(msgs_.back()->stamp) << std::endl;
                     return;
                 }
             }
@@ -297,6 +297,11 @@ void ImportRos::waitForTopic()
     }
 }
 
+bool ImportRos::canTick()
+{
+    return !input_time_->isConnected();
+}
+
 void ImportRos::tickROS()
 {
     if(retries_ > 0) {
@@ -312,13 +317,15 @@ void ImportRos::tickROS()
         msgs_.pop_front();
     }
 
-    publishLatestMessage();
+    if(!current_topic_.name.empty()) {
+        publishLatestMessage();
+    }
 }
 
 void ImportRos::publishLatestMessage()
 {
     if(msgs_.empty()) {
-        ros::Rate r(10);
+        ros::WallRate r(10);
         while(msgs_.empty() && running_) {
             r.sleep();
             ros::spinOnce();

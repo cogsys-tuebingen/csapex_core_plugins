@@ -57,6 +57,13 @@ private:
 
 };
 
+template <>
+struct type<VectorMessage> {
+    static std::string name() {
+        return "MessageVector";
+    }
+};
+
 
 struct GenericVectorMessage : public Message
 {
@@ -127,12 +134,16 @@ private:
             if(vec != 0) {
                 return true;
             } else {
-                return other_side->canConnectTo(this);
+                const GenericVectorMessage* vec = dynamic_cast<const GenericVectorMessage*> (other_side);
+                if(vec != 0) {
+                    return vec->canConnectTo(this);
+                } else {
+                    return dynamic_cast<const AnyMessage*> (other_side) != NULL;
+                }
             }
         }
         virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const
         {
-
             const Self* vec = dynamic_cast<const Self*> (other_side);
             return vec != 0;
         }
@@ -253,6 +264,8 @@ public:
 
     virtual bool canConnectTo(const ConnectionType* other_side) const;
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
+
+    virtual std::string name() const;
 
 private:
     GenericVectorMessage(EntryInterface::Ptr impl, const std::string &frame_id, Message::Stamp stamp);

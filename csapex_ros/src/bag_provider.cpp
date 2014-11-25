@@ -3,29 +3,55 @@
 
 /// COMPONENT
 #include <csapex_ros/ros_message_conversion.h>
+#include <csapex_ros/ros_handler.h>
 
 /// PROJECT
 #include <utils_param/parameter_factory.h>
+#include <utils_param/range_parameter.h>
 
 /// SYSTEM
 #include <boost/assign.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 #include <sensor_msgs/Image.h>
+#include <tf2_msgs/TFMessage.h>
+#include <rosgraph_msgs/Clock.h>
 
 CSAPEX_REGISTER_CLASS(csapex::BagProvider, csapex::MessageProvider)
 
 using namespace csapex;
 
 BagProvider::BagProvider()
-    : view_(NULL), initiated(false)
+    : pub_setup_(false), view_all_(NULL), initiated(false), end_signaled_(false)
 {
     std::vector<std::string> set;
 
+    state.addParameter(param::ParameterFactory::declareBool("bag/play", true));
+    state.addParameter(param::ParameterFactory::declareBool("bag/loop", true));
+    state.addParameter(param::ParameterFactory::declareBool("bag/latch", false));
+    state.addParameter(param::ParameterFactory::declareRange("bag/frame", 0, 1, 0, 1));
+    state.addParameter(param::ParameterFactory::declareBool("bag/publish tf", false));
+    state.addParameter(param::ParameterFactory::declareBool("bag/publish clock", false));
+
     param::Parameter::Ptr topic_param = param::ParameterFactory::declareParameterStringSet("topic",
-                                                                                           param::ParameterDescription("topic to play"), set, "");
+                                                                                           param::ParameterDescription("topic to play <b>primarily</b>"), set, "");
     topic_param_ = boost::dynamic_pointer_cast<param::SetParameter>(topic_param);
     assert(topic_param_);
     state.addParameter(topic_param_);
+
+    setupRosPublisher();
+}
+
+BagProvider::~BagProvider()
+{
+}
+
+void BagProvider::setupRosPublisher()
+{
+    if(pub_setup_ == false && ROSHandler::instance().isConnected()) {
+        pub_tf_ = ROSHandler::instance().nh()->advertise<tf2_msgs::TFMessage>("/tf", 500);
+        pub_clock_ = ROSHandler::instance().nh()->advertise<rosgraph_msgs::Clock>("/clock", 500);
+        pub_setup_ = true;
+    }
 }
 
 void BagProvider::load(const std::string& file)
@@ -34,21 +60,31 @@ void BagProvider::load(const std::string& file)
     bag.open(file_);
 
     RosMessageConversion& rmc = RosMessageConversion::instance();
-    view_ = new rosbag::View(bag, rosbag::TypeQuery(rmc.getRegisteredRosTypes()));
+    view_all_ = new rosbag::View(bag, rosbag::TypeQuery(rmc.getRegisteredRosTypes()));
 
     std::set<std::string> topics;
-    for(rosbag::View::iterator it = view_->begin(); it != view_->end(); ++it) {
+    for(rosbag::View::iterator it = view_all_->begin(); it != view_all_->end(); ++it) {
         rosbag::MessageInstance i = *it;
-        topics.insert(i.getTopic());
+        if(i.getTopic() != "tf") {
+            topics.insert(i.getTopic());
+        }
     }
 
 
     if(!topics.empty()) {
-        std::vector<std::string> topics_vector(topics.begin(), topics.end());
-        std::sort(topics_vector.begin(), topics_vector.end());
-        topic_param_->setSet(topics_vector);
-        topic_param_->set(topics_vector[0]);
+        topics_.clear();
+        topics_.assign(topics.begin(), topics.end());
+        std::sort(topics_.begin(), topics_.end());
+        topic_param_->setSet(topics_);
+        topic_param_->set(topics_[0]);
     }
+
+    view_it_ = view_all_->begin();
+    for(std::size_t i = 0; i < topics_.size(); ++i) {
+        view_it_map_[topics_[i]] = view_all_->end();
+    }
+
+    setSlotCount(topics.size());
 }
 
 void BagProvider::parameterChanged()
@@ -61,20 +97,27 @@ void BagProvider::setTopic()
     if(!topic_param_->is<std::string>()) {
         return;
     }
-    std::string topic = topic_param_->as<std::string>();
+    std::string main_topic = topic_param_->as<std::string>();
 
-    view_ = new rosbag::View(bag, rosbag::TopicQuery(topic));
-    for(rosbag::View::iterator it = view_->begin(); it != view_->end(); ++it) {
+    if(main_topic == main_topic_) {
+        return;
+    }
+
+    main_topic_ = main_topic;
+
+    frames_ = 0;
+    rosbag::View temp(bag, rosbag::TopicQuery(main_topic));
+    for(rosbag::View::iterator it = temp.begin(); it != temp.end(); ++it) {
         frames_++;
     }
-    view_it = view_->begin();
     frames_--;
 
-    initiated = true;
-}
+    param::RangeParameter::Ptr frame = boost::dynamic_pointer_cast<param::RangeParameter>(state.getParameter("bag/frame"));
+    frame->setMax(frames_);
 
-BagProvider::~BagProvider()
-{
+    frame_ = 0;
+
+    initiated = true;
 }
 
 std::vector<std::string> BagProvider::getExtensions() const
@@ -84,30 +127,140 @@ std::vector<std::string> BagProvider::getExtensions() const
 
 bool BagProvider::hasNext()
 {
+    // check if the users wants to scroll in time
+    if(state.readParameter<int>("bag/frame") != frame_) {
+        return initiated;
+    }
+
+    // check if we are at the end
+    if(frame_ == frames_) {
+        if(!end_signaled_) {
+            no_more_messages();
+            end_signaled_ = true;
+        }
+
+        if(!state.readParameter<bool>("bag/loop")) {
+            return state.readParameter<bool>("bag/latch");
+        }
+    } else {
+        end_signaled_ = false;
+    }
+
+    // check if we are paused
+    if(!state.readParameter<bool>("bag/play")) {
+        return false;
+    }
+
     return initiated;
 }
 
-connection_types::Message::Ptr BagProvider::next()
+connection_types::Message::Ptr BagProvider::next(std::size_t slot)
 {
     connection_types::Message::Ptr r;
 
     if(!initiated) {
         setTopic();
-        return r;
     }
 
-    RosMessageConversion& rmc = RosMessageConversion::instance();
+    if(slot == 0) {
+        // advance all iterators
 
-    if(view_it != view_->end()) {
-        rosbag::MessageInstance instance = *view_it;
+        bool reset = false;
+        int skip = 0;
+        if(state.readParameter<int>("bag/frame") != frame_) {
+            // go to selected frame
+            reset = true;
+            skip = state.readParameter<int>("bag/frame");
 
+        } else if(frame_ == frames_ || view_it_map_[main_topic_] == view_all_->end()) {
+            // loop around?
+            if(state.readParameter<bool>("bag/loop")) {
+                reset = true;
+            }
+
+        } else {
+            // advance frame
+            ++frame_;
+        }
+
+        if(reset) {
+            frame_ = skip;
+            view_it_ = view_all_->begin();
+            for(std::size_t i = 0; i < topics_.size(); ++i) {
+                view_it_map_[topics_[i]] = view_all_->end();
+            }
+        }
+
+
+        if(frames_ == frame_ && !state.readParameter<bool>("bag/loop")) {
+            state.getParameter("bag/play")->set(false);
+        }
+
+        if(frame_ == 0) {
+            begin();
+        }
+
+        bool done = false;
+        bool pub_tf = state.readParameter<bool>("bag/publish tf");
+        for(; view_it_ != view_all_->end() && !done; ++view_it_) {
+            rosbag::MessageInstance next = *view_it_;
+
+            std::string topic = next.getTopic();
+
+            if(pub_tf && topic == "tf") {
+                if(!pub_setup_) {
+                    setupRosPublisher();
+                }
+                if(pub_setup_) {
+                    tf2_msgs::TFMessage::Ptr tfm = next.instantiate<tf2_msgs::TFMessage>();
+                    pub_tf_.publish(tfm);
+                }
+            }
+
+            // copy the iterator
+            view_it_map_[topic] = rosbag::View::iterator(view_it_);
+
+            if(topic == main_topic_) {
+                if(skip > 0) {
+                    --skip;
+                } else {
+                    done = true;
+                }
+            }
+        }
+    }
+
+    std::string topic = topics_[slot];
+
+    if(view_it_map_.find(topic) != view_it_map_.end() && view_it_map_[topic] != view_all_->end()) {
+        rosbag::MessageInstance instance = *view_it_map_[topic];
+
+        RosMessageConversion& rmc = RosMessageConversion::instance();
         r = rmc.instantiate(instance);
         setType(r->toType());
 
-        view_it++;
+        if(topic == main_topic_) {
+            if(state.readParameter<bool>("bag/publish clock")) {
+                if(!pub_setup_) {
+                    setupRosPublisher();
+                }
+                if(pub_setup_) {
+                    rosgraph_msgs::Clock::Ptr clock(new rosgraph_msgs::Clock);
+                    clock->clock = instance.getTime();
+                    pub_clock_.publish(clock);
+                }
+            }
+        }
     }
 
+    state["bag/frame"] = frame_;
+
     return r;
+}
+
+std::string BagProvider::getLabel(std::size_t slot) const
+{
+    return topics_[slot];
 }
 
 Memento::Ptr BagProvider::getState() const

@@ -18,8 +18,8 @@ using namespace csapex::connection_types;
 
 CSAPEX_REGISTER_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
 
-CloudRendererAdapter::CloudRendererAdapter(CloudRenderer *node, WidgetController* widget_ctrl)
-    : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(node, widget_ctrl),
+CloudRendererAdapter::CloudRendererAdapter(NodeWorker* worker, CloudRenderer *node, WidgetController* widget_ctrl)
+    : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node), view_(NULL), pixmap_(NULL), fbo_(NULL), drag_(false), repaint_(true),
       w_view_(10), h_view_(10), point_size_(1),
       phi_(0), theta_(M_PI/2), r_(-10.0),

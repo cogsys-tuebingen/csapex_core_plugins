@@ -10,6 +10,7 @@
 /// SYSTEM
 #include <rosbag/bag.h>
 #include <rosbag/view.h>
+#include <ros/publisher.h>
 
 namespace csapex
 {
@@ -24,7 +25,8 @@ public:
 
 public:
     virtual bool hasNext();
-    virtual connection_types::Message::Ptr next();
+    virtual connection_types::Message::Ptr next(std::size_t slot);
+    virtual std::string getLabel(std::size_t slot) const;
 
     virtual std::vector<std::string> getExtensions() const;
 
@@ -34,19 +36,31 @@ public:
     void parameterChanged();
 
 private:
+    void setupRosPublisher();
     void setTopic();
 
 private:
     std::string file_;
+
+    int frame_;
     int frames_;
 
     param::SetParameter::Ptr topic_param_;
 
+    std::vector<std::string> topics_;
+    std::string main_topic_;
     rosbag::Bag bag;
-    rosbag::View* view_;
-    rosbag::View::iterator view_it;
+
+    ros::Publisher pub_tf_;
+    ros::Publisher pub_clock_;
+    bool pub_setup_;
+
+    rosbag::View* view_all_;
+    rosbag::View::iterator view_it_;
+    std::map<std::string, rosbag::View::iterator> view_it_map_;
 
     bool initiated;
+    bool end_signaled_;
 };
 
 } /// NAMESPACE

@@ -31,7 +31,7 @@ void ImageProvider::init()
     doInit();
 }
 
-connection_types::Message::Ptr ImageProvider::next()
+connection_types::Message::Ptr ImageProvider::next(std::size_t slot)
 {
     cv::Mat mask;
 

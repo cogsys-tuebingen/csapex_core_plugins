@@ -6,10 +6,12 @@
 #include <csapex/msg/output.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <csapex/manager/message_provider_manager.h>
+#include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_worker.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/signal/trigger.h>
 
 /// SYSTEM
 #include <boost/foreach.hpp>
@@ -32,6 +34,11 @@ FileImporter::FileImporter()
 {
 }
 
+FileImporter::~FileImporter()
+{
+}
+
+
 void FileImporter::setupParameters()
 {
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
@@ -41,8 +48,18 @@ void FileImporter::setupParameters()
     addParameter(immediate, boost::bind(&FileImporter::changeMode, this));
 }
 
-FileImporter::~FileImporter()
+void FileImporter::setup()
 {
+    outputs_.push_back(modifier_->addOutput<connection_types::AnyMessage>("Unknown"));
+
+    param::Parameter::Ptr immediate = getParameter("playback/immediate");
+
+    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeWorker::setTickFrequency, getNodeWorker(), boost::bind(&param::Parameter::as<double>, _1));
+    boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
+    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
+
+    begin_ = modifier_->addTrigger("begin");
+    end_ = modifier_->addTrigger("end");
 }
 
 void FileImporter::changeMode()
@@ -56,12 +73,21 @@ void FileImporter::changeMode()
 
 void FileImporter::process()
 {
-    if(provider_.get() && provider_->hasNext()) {
-        Message::Ptr msg = provider_->next();
-        if(msg.get()) {
-            output_->setType(provider_->getType());
-            output_->setLabel(provider_->getType()->name());
-            output_->publish(msg);
+
+}
+
+void FileImporter::tick()
+{
+    if(provider_) {
+        if(provider_->hasNext()) {
+            for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
+                Message::Ptr msg = provider_->next(slot);
+                if(msg) {
+                    outputs_[slot]->setType(provider_->getType());
+
+                    outputs_[slot]->publish(msg);
+                }
+            }
         }
     }
 }
@@ -91,6 +117,11 @@ bool FileImporter::doImport(const QString& _path)
     setError(false);
 
     provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
+    provider_->slot_count_changed.connect(boost::bind(&FileImporter::updateOutputs, this));
+
+    provider_->begin.connect(boost::bind(&Trigger::trigger, begin_));
+    provider_->no_more_messages.connect(boost::bind(&Trigger::trigger, end_));
+
     provider_->load(path.toStdString());
 
     setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));
@@ -98,20 +129,42 @@ bool FileImporter::doImport(const QString& _path)
     return provider_.get();
 }
 
-void FileImporter::setup()
-{
-    output_ = modifier_->addOutput<connection_types::AnyMessage>("Unknown");
-
-    param::Parameter::Ptr immediate = getParameter("playback/immediate");
-
-    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeWorker::setTickFrequency, getNodeWorker(), boost::bind(&param::Parameter::as<double>, _1));
-    boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
-    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
-}
-
 void FileImporter::updateProvider()
 {
     provider_->parameterChanged();
+}
+
+void FileImporter::updateOutputs()
+{
+    std::size_t slot_count = provider_->slotCount();
+
+    std::size_t output_count = outputs_.size();
+
+    if(slot_count > output_count) {
+        for(std::size_t i = output_count ; i < slot_count ; ++i) {
+            outputs_.push_back(modifier_->addOutput<AnyMessage>("unknown"));
+        }
+    } else {
+        bool del = true;
+        for(int i = output_count-1 ; i >= (int) slot_count; --i) {
+            Output* output = outputs_[i];
+            if(output->isConnected()) {
+                del = false;
+            }
+
+            if(del) {
+                getNodeWorker()->removeOutput(output->getUUID());
+                outputs_.erase(outputs_.begin() + i);
+            } else {
+                output->disable();
+            }
+        }
+    }
+
+    for(std::size_t i = 0; i < slot_count; ++i) {
+        Output* out = outputs_[i];
+        out->setLabel(provider_->getLabel(i));
+    }
 }
 
 void FileImporter::import()

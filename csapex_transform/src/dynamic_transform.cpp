@@ -38,6 +38,16 @@ void DynamicTransform::setupParameters()
     to_p = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("to"));
 }
 
+bool DynamicTransform::canTick()
+{
+    return !frame_in_from_->isConnected() && !frame_in_to_->isConnected() && !time_in_->isConnected();
+}
+
+void DynamicTransform::tick()
+{
+    process();
+}
+
 void DynamicTransform::process()
 {
     if(!init_) {
@@ -50,7 +60,7 @@ void DynamicTransform::process()
     bool use_in_frame = frame_in_from_->hasMessage();
     from_p->setEnabled(!use_in_frame);
     if(use_in_frame) {
-        std::string from = frame_in_from_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;
+        std::string from = frame_in_from_->getValue<std::string>();
 
         if(readParameter<std::string>("from") != from) {
             setParameter("from", from);
@@ -62,7 +72,7 @@ void DynamicTransform::process()
     bool use_to_frame = frame_in_to_->hasMessage();
     to_p->setEnabled(!use_to_frame);
     if(use_to_frame) {
-        std::string to = frame_in_to_->getMessage<connection_types::GenericValueMessage<std::string> >()->value;
+        std::string to = frame_in_to_->getValue<std::string>();
 
         if(readParameter<std::string>("to") != to) {
             setParameter("to", to);
@@ -122,19 +132,17 @@ void DynamicTransform::publishTransform(const ros::Time& time)
     msg->child_frame = to;
     output_->publish(msg);
 
-    connection_types::GenericValueMessage<std::string>::Ptr frame(new connection_types::GenericValueMessage<std::string>);
-    frame->value = readParameter<std::string>("to");
-    output_frame_->publish(frame);
+    output_frame_->publish(readParameter<std::string>("to"));
 }
 
 void DynamicTransform::setup()
 {
     time_in_ = modifier_->addOptionalInput<connection_types::TimeStampMessage>("Time");
-    frame_in_from_ = modifier_->addOptionalInput<connection_types::GenericValueMessage<std::string> >("Origin Frame");
-    frame_in_to_ = modifier_->addOptionalInput<connection_types::GenericValueMessage<std::string> >("Target Frame");
+    frame_in_from_ = modifier_->addOptionalInput<std::string>("Origin Frame");
+    frame_in_to_ = modifier_->addOptionalInput<std::string>("Target Frame");
 
     output_ = modifier_->addOutput<connection_types::TransformMessage>("Transform");
-    output_frame_ = modifier_->addOutput<connection_types::GenericValueMessage<std::string> >("Target Frame");
+    output_frame_ = modifier_->addOutput<std::string>("Target Frame");
 }
 
 
@@ -164,6 +172,7 @@ void DynamicTransform::refresh()
     if(!l.l) {
         return;
     }
+    // TODO: locks up when no clock is published...
     l.l->tfl->waitForTransform(from, to, ros::Time(0), ros::Duration(1.0));
     if(l.l) {
         std::vector<std::string> f;

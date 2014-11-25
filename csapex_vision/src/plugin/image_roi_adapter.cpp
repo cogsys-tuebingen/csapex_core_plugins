@@ -20,8 +20,8 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
-ImageRoiAdapter::ImageRoiAdapter(ImageRoi *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(node, widget_ctrl),
+ImageRoiAdapter::ImageRoiAdapter(NodeWorker* worker, ImageRoi *node, WidgetController* widget_ctrl)
+    : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       pixmap_(NULL),
       view_(new QGraphicsView),

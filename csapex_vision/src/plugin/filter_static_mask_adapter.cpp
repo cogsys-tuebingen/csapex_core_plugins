@@ -20,8 +20,8 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(FilterStaticMaskAdapter, csapex::FilterStaticMask)
 
 
-FilterStaticMaskAdapter::FilterStaticMaskAdapter(FilterStaticMask *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(node, widget_ctrl), wrapped_(node)
+FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeWorker* worker, FilterStaticMask *node, WidgetController* widget_ctrl)
+    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal
     wrapped_->show_painter.connect(boost::bind(&FilterStaticMaskAdapter::displayRequest, this));

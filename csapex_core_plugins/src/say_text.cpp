@@ -18,16 +18,16 @@ SayText::SayText()
 
 void SayText::setup()
 {
-    connector_ = modifier_->addInput<connection_types::GenericValueMessage<std::string> >("Text");
+    connector_ = modifier_->addInput<std::string>("Text");
 }
 
 void SayText::process()
 {
-    connection_types::GenericValueMessage<std::string>::Ptr msg = connector_->getMessage<connection_types::GenericValueMessage<std::string> >();
+    std::string msg = connector_->getValue<std::string>();
 
-    if(!msg->value.empty()) {
+    if(!msg.empty()) {
         std::stringstream cmd;
-        cmd << "espeak \"" << msg->value << "\" 2> /dev/null 1> /dev/null &";
+        cmd << "espeak \"" << msg << "\" 2> /dev/null 1> /dev/null &";
         system(cmd.str().c_str());
     }
 }

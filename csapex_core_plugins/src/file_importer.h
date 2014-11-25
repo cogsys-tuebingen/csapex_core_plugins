@@ -22,18 +22,23 @@ public:
     void import();
 
     void process();
+    void tick();
 
     bool doImport(const QString& path);
 
 private:
     void changeMode();
     void updateProvider();
+    void updateOutputs();
 
 private:
     MessageProvider::Ptr provider_;
 
+    Trigger* begin_;
+    Trigger* end_;
+
     QString file_;
-    Output* output_;
+    std::vector<Output*> outputs_;
 };
 
 }

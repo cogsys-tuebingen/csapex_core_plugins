@@ -18,7 +18,7 @@ class TextDisplayAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    TextDisplayAdapter(TextDisplay *node, WidgetController *widget_ctrl);
+    TextDisplayAdapter(NodeWorker* worker, TextDisplay *node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 

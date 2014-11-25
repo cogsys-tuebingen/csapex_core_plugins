@@ -15,14 +15,16 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QKeyEvent>
+#include <QScrollBar>
 
 using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
-ScanLabelerAdapter::ScanLabelerAdapter(ScanLabeler *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(node, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), label_(0), down_(false)
+ScanLabelerAdapter::ScanLabelerAdapter(NodeWorker* worker, ScanLabeler *node, WidgetController* widget_ctrl)
+    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty),
+      resize_down_(false), move_down_(false)
 {
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
@@ -36,7 +38,9 @@ ScanLabelerAdapter::ScanLabelerAdapter(ScanLabeler *node, WidgetController* widg
 
 void ScanLabelerAdapter::labelSelected()
 {
-    labelSelected(label_);
+    int label = wrapped_->readParameter<int>("label");
+
+    labelSelected(label);
     view_->scene()->clearSelection();
 }
 
@@ -57,14 +61,17 @@ void ScanLabelerAdapter::labelSelected(int label)
     view_->update();
 }
 
-void ScanLabelerAdapter::setLabel(int label)
+void ScanLabelerAdapter::updateLabel(int label)
 {
-    label_ = label;
-    node_->getParameter("label")->set(label_);
+    node_->getNode()->getParameter("label")->set(label);
 }
 
 bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
 {
+    if(view_->signalsBlocked()) {
+        return false;
+    }
+
     QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
 
     switch(e->type()) {
@@ -74,25 +81,28 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
         int key = ke->key();
 
         if(Qt::Key_0 <= key && key <= Qt::Key_9) {
-            setLabel(ke->key() - Qt::Key_0);
+            updateLabel(ke->key() - Qt::Key_0);
         } else if(key == Qt::Key_Space) {
             submit();
         } else if(key == Qt::Key_Escape) {
-            setLabel(0);
+            updateLabel(0);
         }
 
         break;
     }
     case QEvent::GraphicsSceneMousePress:
-        if(me->button() == Qt::MiddleButton) {
-            down_ = true;
+        if(me->button() == Qt::MiddleButton || me->button() == Qt::RightButton) {
+            resize_down_ = me->button() == Qt::MiddleButton;
+            move_down_ = me->button() == Qt::RightButton;
             last_pos_ = me->screenPos();
             e->accept();
+            return true;
         }
-        return true;
+        break;
     case QEvent::GraphicsSceneMouseRelease: {
-        if(me->button() == Qt::MiddleButton) {
-            down_ = false;
+        if(me->button() == Qt::MiddleButton || me->button() == Qt::RightButton) {
+            resize_down_ = false;
+            move_down_ = false;
             e->accept();
         }
 
@@ -100,23 +110,36 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
         return true;
     }
     case QEvent::GraphicsSceneMouseMove:
-        if(down_) {
-            QPoint delta = me->screenPos() - last_pos_;
+        if(resize_down_ || move_down_) {
+            QPoint delta = me->screenPos() - me->lastScreenPos();
 
             last_pos_ = me->screenPos();
 
-            state.width = std::max(32, view_->width() + delta.x());
-            state.height = std::max(32, view_->height() + delta.y());
+            if(resize_down_) {
+                state.width = std::max(32, view_->width() + delta.x());
+                state.height = std::max(32, view_->height() + delta.y());
+                view_->setFixedSize(QSize(state.width, state.height));
 
-            view_->setFixedSize(QSize(state.width, state.height));
+            } else if(move_down_) {
+                double f = 1.0;
+                view_->horizontalScrollBar()->setValue(view_->horizontalScrollBar()->value() + delta.x() * f);
+                view_->verticalScrollBar()->setValue(view_->verticalScrollBar()->value() + delta.y() * f);
+//                view_->translate(state.offset_x, state.offset_y);
+            }
+
+
+            e->accept();
+            return true;
         }
-        e->accept();
-        return true;
+        break;
+
     case QEvent::GraphicsSceneWheel: {
         e->accept();
 
         QGraphicsSceneWheelEvent* we = dynamic_cast<QGraphicsSceneWheelEvent*> (e);
         double scaleFactor = 1.1;
+
+        view_->setTransformationAnchor(QGraphicsView::AnchorViewCenter);
         if(we->delta() > 0) {
             // Zoom in
             view_->scale(scaleFactor, scaleFactor);
@@ -138,13 +161,16 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
     if(scene == NULL) {
         scene = new QGraphicsScene();
         view_->setScene(scene);
-        scene->installEventFilter(this);
     }
+    scene->installEventFilter(this);
 
     view_->setFixedSize(QSize(state.width, state.height));
     view_->setMouseTracking(true);
     view_->setAcceptDrops(false);
     view_->setDragMode(QGraphicsView::RubberBandDrag);
+    view_->setContextMenuPolicy(Qt::PreventContextMenu);
+    view_->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    view_->setInteractive(true);
 
     layout->addWidget(view_);
 
@@ -153,7 +179,10 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
 
     DefaultNodeAdapter::setupUi(layout);
 
-    setLabel(wrapped_->readParameter<int>("label"));
+
+    QRectF rect(-15.0, -15.0, 30.0, 30.0);
+    scene->setSceneRect(rect);
+    view_->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 Memento::Ptr ScanLabelerAdapter::getState() const
@@ -179,8 +208,6 @@ void ScanLabelerAdapter::display(lib_laser_processing::Scan* scan)
 
     scene->clear();
 
-    QRectF rect(-5.0, -5.0, 10.0, 10.0);
-
 
     float dim = 0.05f;
 
@@ -199,8 +226,6 @@ void ScanLabelerAdapter::display(lib_laser_processing::Scan* scan)
     }
 
 
-    scene->setSceneRect(rect);
-    view_->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
     scene->update();
 }
 
