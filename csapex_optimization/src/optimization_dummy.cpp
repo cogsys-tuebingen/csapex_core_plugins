@@ -18,7 +18,7 @@ using namespace csapex::connection_types;
 
 
 OptimizationDummy::OptimizationDummy()
-    : can_tick_(false)
+    : evaluate_(false)
 {
 }
 
@@ -38,27 +38,23 @@ void OptimizationDummy::setupParameters()
 
 void OptimizationDummy::setup()
 {
-    in_  = modifier_->addSlot("Trigger", boost::bind(&OptimizationDummy::trigger, this));
+    in_  = modifier_->addSlot("Evaluate", boost::bind(&OptimizationDummy::start, this));
     out_ = modifier_->addOutput<double>("Fitness");
 }
 
-void OptimizationDummy::trigger()
+void OptimizationDummy::start()
 {
-    can_tick_ = true;
-}
-
-void OptimizationDummy::process()
-{
+    evaluate_ = true;
 }
 
 bool OptimizationDummy::canTick()
 {
-    return can_tick_;
+    return evaluate_;
 }
 
 void OptimizationDummy::tick()
 {
-    can_tick_ = false;
+    evaluate_ = false;
 
     double a = readParameter<double>("a");
     double b = readParameter<double>("b");
@@ -87,3 +83,7 @@ void OptimizationDummy::tick()
     out_->publish(fitness);
 }
 
+void OptimizationDummy::process()
+{
+
+}

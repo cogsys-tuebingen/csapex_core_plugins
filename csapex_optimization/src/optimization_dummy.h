@@ -20,15 +20,17 @@ public:
     void setup();
     void process();
 
-    void trigger();
-    void tick();
     bool canTick();
+
+private:
+    void start();
+    void tick();
 
 private:
     Slot* in_;
     Output* out_;
 
-    bool can_tick_;
+    bool evaluate_;
 };
 
 
