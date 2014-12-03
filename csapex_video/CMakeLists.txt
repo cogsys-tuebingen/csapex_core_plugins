@@ -15,6 +15,7 @@ include_directories(
 )
 
 add_library(csapex_video_plugin
+    src/make_screenshot.cpp
     src/image_collage.cpp
 )
 
