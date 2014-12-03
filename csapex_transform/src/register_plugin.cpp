@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex_transform/transform_message.h>
-#include "listener.h"
+#include <csapex_ros/tf_listener.h>
 
 /// PROJECT
 #include <csapex/msg/message_factory.h>
@@ -55,8 +55,8 @@ void RegisterTransformPlugin::init(CsApexCore& core)
     Tag::createIfNotExists("Transform");
     Tag::createIfNotExists("Time");
 
-    ROSHandler::instance().registerConnectionCallback(boost::bind(&Listener::start));
-    ROSHandler::instance().registerShutdownCallback(boost::bind(&Listener::stop));
+    ROSHandler::instance().registerConnectionCallback(boost::bind(&TFListener::start));
+    ROSHandler::instance().registerShutdownCallback(boost::bind(&TFListener::stop));
 
     RosMessageConversion::registerConversion<tf2_msgs::TFMessage, connection_types::TransformMessage, ConvertTf>();
 }

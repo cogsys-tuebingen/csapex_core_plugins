@@ -4,7 +4,7 @@
 /// COMPONENT
 #include <csapex_transform/transform_message.h>
 #include <csapex_ros/time_stamp_message.h>
-#include "listener.h"
+#include <csapex_ros/tf_listener.h>
 
 /// PROJECT
 #include <csapex/msg/output.h>
@@ -40,7 +40,8 @@ void DynamicTransform::setupParameters()
 
 bool DynamicTransform::canTick()
 {
-    return !frame_in_from_->isConnected() && !frame_in_to_->isConnected() && !time_in_->isConnected();
+    return from_p->noParameters() != 0 && to_p->noParameters() != 0 &&
+            !frame_in_from_->isConnected() && !frame_in_to_->isConnected() && !time_in_->isConnected();
 }
 
 void DynamicTransform::tick()
@@ -57,7 +58,7 @@ void DynamicTransform::process()
     setError(false);
     bool update = false;
 
-    bool use_in_frame = frame_in_from_->hasMessage();
+    bool use_in_frame = frame_in_from_->isConnected() && frame_in_from_->hasMessage();
     from_p->setEnabled(!use_in_frame);
     if(use_in_frame) {
         std::string from = frame_in_from_->getValue<std::string>();
@@ -69,7 +70,7 @@ void DynamicTransform::process()
     }
 
 
-    bool use_to_frame = frame_in_to_->hasMessage();
+    bool use_to_frame = frame_in_to_->isConnected() && frame_in_to_->hasMessage();
     to_p->setEnabled(!use_to_frame);
     if(use_to_frame) {
         std::string to = frame_in_to_->getValue<std::string>();
@@ -85,7 +86,7 @@ void DynamicTransform::process()
     }
 
 
-    if(time_in_->hasMessage()) {
+    if(time_in_->isConnected() && time_in_->hasMessage()) {
         connection_types::TimeStampMessage::Ptr time_msg = time_in_->getMessage<connection_types::TimeStampMessage>();
         publishTransform(time_msg->value);
     } else {
@@ -95,7 +96,7 @@ void DynamicTransform::process()
 
 void DynamicTransform::publishTransform(const ros::Time& time)
 {
-    if(!init_) {
+    if(!init_ || from_p->noParameters() == 0 || to_p->noParameters() == 0) {
         refresh();
     }
 
@@ -112,7 +113,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
     std::string from = readParameter<std::string>("from");
 
     try {
-        LockedListener l = Listener::getLocked();
+        LockedTFListener l = TFListener::getLocked();
 
         if(l.l) {
             l.l->tfl->lookupTransform(to, from, time, t);
@@ -148,7 +149,7 @@ void DynamicTransform::setup()
 
 void DynamicTransform::resetTf()
 {
-    LockedListener l = Listener::getLocked();
+    LockedTFListener l = TFListener::getLocked();
     if(l.l) {
         l.l->reset();
     }
@@ -168,7 +169,7 @@ void DynamicTransform::refresh()
     }
 
 
-    LockedListener l = Listener::getLocked();
+    LockedTFListener l = TFListener::getLocked();
     if(!l.l) {
         return;
     }

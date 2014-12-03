@@ -1,44 +1,44 @@
 /// HEADER
-#include "listener.h"
+#include <csapex_ros/tf_listener.h>
 
 using namespace csapex;
 
-Listener::Listener()
+TFListener::TFListener()
 {
     init = false;
 }
 
-LockedListener Listener::getLocked()
+LockedTFListener TFListener::getLocked()
 {
-    Listener* l = raw_instance();
+    TFListener* l = raw_instance();
     if(l->tfl) {
-        return LockedListener(l);
+        return LockedTFListener(l);
     } else {
-        return LockedListener(NULL);
+        return LockedTFListener(NULL);
     }
 }
 
-void Listener::start()
+void TFListener::start()
 {
-    Listener* i = Listener::raw_instance();
+    TFListener* i = TFListener::raw_instance();
 
     i->tfl.reset(new tf::TransformListener);
-    i->tf_sub = ROSHandler::instance().nh()->subscribe<tf::tfMessage>("/tf", 1, boost::bind(&Listener::cb, i, _1));
+    i->tf_sub = ROSHandler::instance().nh()->subscribe<tf::tfMessage>("/tf", 1, boost::bind(&TFListener::cb, i, _1));
     i->retries = 10;
 }
 
-void Listener::stop()
+void TFListener::stop()
 {
-    Listener* i = Listener::raw_instance();
+    TFListener* i = TFListener::raw_instance();
     i->tfl.reset();
 }
 
-bool Listener::ok()
+bool TFListener::ok()
 {
     return init && tfl;
 }
 
-void Listener::cb(const tf::tfMessage::ConstPtr &msg)
+void TFListener::cb(const tf::tfMessage::ConstPtr &msg)
 {
     ros::Time now;
     if(init) {
@@ -46,7 +46,6 @@ void Listener::cb(const tf::tfMessage::ConstPtr &msg)
             if(msg->transforms[i].child_frame_id == reference_frame) {
                 now = msg->transforms[i].header.stamp;
                 if(last_ > now + ros::Duration(3.0)) {
-                    std::cout << "warning: reset tf listener, negative time change (" << last_ << " vs. " << now << ")" << std::endl;
                     reset();
                 }
 
@@ -80,7 +79,7 @@ void Listener::cb(const tf::tfMessage::ConstPtr &msg)
     }
 }
 
-bool Listener::tryFrameAsReference(const tf::tfMessage::ConstPtr &msg, const std::string &frame)
+bool TFListener::tryFrameAsReference(const tf::tfMessage::ConstPtr &msg, const std::string &frame)
 {
 
     for(unsigned i = 0, n = msg->transforms.size(); i < n; ++i) {

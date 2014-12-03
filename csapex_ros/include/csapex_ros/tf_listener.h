@@ -12,15 +12,15 @@
 namespace csapex
 {
 
-struct LockedListener;
+struct LockedTFListener;
 
-struct Listener {
-    friend class LockedListener;
+struct TFListener {
+    friend class LockedTFListener;
 
 public:
     boost::shared_ptr<tf::TransformListener> tfl;
 
-    static LockedListener getLocked();
+    static LockedTFListener getLocked();
 
     static void start();
     static void stop();
@@ -32,13 +32,13 @@ public:
     bool ok();
 
 private:
-    static Listener* raw_instance() {
-        static Listener l;
+    static TFListener* raw_instance() {
+        static TFListener l;
         apex_assert_hard(&l);
         return &l;
     }
 
-    Listener();
+    TFListener();
 
     void cb(const tf::tfMessage::ConstPtr& msg);
     bool tryFrameAsReference(const tf::tfMessage::ConstPtr &msg, const std::string& frame);
@@ -52,11 +52,11 @@ private:
     QMutex m;
 };
 
-struct LockedListener {
+struct LockedTFListener {
 public:
-    Listener* l;
+    TFListener* l;
 
-    LockedListener(Listener* ll)
+    LockedTFListener(TFListener* ll)
         : l(NULL)
     {
         if(ll) {
@@ -65,7 +65,7 @@ public:
         }
     }
 
-    ~LockedListener()
+    ~LockedTFListener()
     {
         if(l) {
             l->m.unlock();

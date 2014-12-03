@@ -57,6 +57,9 @@ private:
     ros::Publisher pub_clock_;
     bool pub_setup_;
 
+    bool has_last_tf_time_;
+    ros::Time last_tf_time_;
+
     rosbag::View* view_all_;
     rosbag::View::iterator view_it_;
     std::map<std::string, rosbag::View::iterator> view_it_map_;

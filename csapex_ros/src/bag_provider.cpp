@@ -4,6 +4,7 @@
 /// COMPONENT
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_ros/ros_handler.h>
+#include <csapex_ros/tf_listener.h>
 
 /// PROJECT
 #include <utils_param/parameter_factory.h>
@@ -21,7 +22,7 @@ CSAPEX_REGISTER_CLASS(csapex::BagProvider, csapex::MessageProvider)
 using namespace csapex;
 
 BagProvider::BagProvider()
-    : pub_setup_(false), view_all_(NULL), initiated(false), end_signaled_(false)
+    : pub_setup_(false), has_last_tf_time_(false), view_all_(NULL), initiated(false), end_signaled_(false)
 {
     std::vector<std::string> set;
 
@@ -243,12 +244,19 @@ void BagProvider::advanceIterators()
 
         std::string topic = next.getTopic();
 
-        if(pub_tf && topic == "tf") {
+        if(pub_tf && (topic == "tf" || topic == "/tf")) {
             if(!pub_setup_) {
                 setupRosPublisher();
             }
             if(pub_setup_) {
                 tf2_msgs::TFMessage::Ptr tfm = next.instantiate<tf2_msgs::TFMessage>();
+
+                if(has_last_tf_time_ && tfm->transforms.at(0).header.stamp < last_tf_time_ - ros::Duration(1.0)) {
+                    TFListener::getLocked().l->reset();
+                }
+                last_tf_time_ = tfm->transforms.at(0).header.stamp;
+                has_last_tf_time_ = true;
+
                 pub_tf_.publish(tfm);
             }
         }

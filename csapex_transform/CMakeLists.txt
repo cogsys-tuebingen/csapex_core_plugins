@@ -53,7 +53,6 @@ add_library(csapex_transform_plugin
     src/transform_combiner.cpp
     src/transform_inverter.cpp
     src/transform_publisher.cpp
-    src/listener.cpp
     src/transform_filter.cpp
     src/extract_timestamp.cpp
     ${QT_PLUG}
