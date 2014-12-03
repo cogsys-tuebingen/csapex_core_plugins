@@ -65,7 +65,7 @@ void FileImporter::setup()
 void FileImporter::changeMode()
 {
     if(readParameter<bool>("playback/immediate")) {
-        getNodeWorker()->setTickFrequency(1000.0);
+        getNodeWorker()->setTickFrequency(-1.0);
     } else {
         getNodeWorker()->setTickFrequency(readParameter<double>("playback/frequency"));
     }
