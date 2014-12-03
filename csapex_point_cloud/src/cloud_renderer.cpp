@@ -15,6 +15,11 @@ using namespace csapex::connection_types;
 
 CloudRenderer::CloudRenderer()
 {
+
+}
+
+void CloudRenderer::setupParameters()
+{
     boost::function<void(param::Parameter*)> refresh = boost::bind(&CloudRenderer::refresh, this);
 
     double d = 10.0;

@@ -20,6 +20,7 @@ public:
     CloudRenderer();
 
     virtual void setup();
+    virtual void setupParameters();
     virtual void process();
 
     void publishImage(const cv::Mat &img);

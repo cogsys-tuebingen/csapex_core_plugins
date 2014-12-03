@@ -4,7 +4,7 @@ project(csapex_ros)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins rosbag REQUIRED)
+find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins rosbag tf REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -25,6 +25,7 @@ add_library(csapex_ros_core
     src/ros_message_conversion.cpp
     src/time_stamp_message.cpp
     src/duration_message.cpp
+    src/tf_listener.cpp
 )
 target_link_libraries(csapex_ros_core
   ${catkin_LIBRARIES}
