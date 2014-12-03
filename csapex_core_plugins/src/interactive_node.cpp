@@ -27,9 +27,9 @@ bool InteractiveNode::waitForView()
     result_mutex_.lock();
     while(!view_done_ && !stopped_) {
         wait_for_view_.wait(&result_mutex_, 100);
-        if(!view_done_) {
-            getNodeWorker()->checkParameters();
-        }
+//        if(!view_done_) {
+//            getNodeWorker()->checkParameters();
+//        }
     }
     result_mutex_.unlock();
 
