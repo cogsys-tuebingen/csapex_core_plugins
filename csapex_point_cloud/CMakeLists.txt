@@ -17,13 +17,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_vision pcl_ros)
 
-
-find_package(Qt4 REQUIRED COMPONENTS QtCore QtGui QtOpenGl)
-include(${QT_USE_FILE})
-
-csapex_moc_all(QT_MOC src/*.h include/csapex_point_cloud/*.h)
-
-set(QT ${QT_SOURCES} ${QT_MOC})
+find_package(Qt5 COMPONENTS OpenGL REQUIRED)
 
 find_package(PCL 1.2 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
@@ -90,10 +84,10 @@ add_library(csapex_point_cloud_plugin
     src/sac_fit.cpp
     src/model_to_marker.cpp
     src/transform_from_models.cpp
-    ${QT}
 )
+
 target_link_libraries(csapex_point_cloud_plugin csapex_core_plugins
-    yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES}
+    yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
     csapex_point_cloud)
 
 

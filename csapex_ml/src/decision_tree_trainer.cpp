@@ -40,20 +40,31 @@ void DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
     std::size_t feature_length = first_feature.value.size();
 
     cv::Mat train_data(collection.size(), feature_length, CV_32FC1);
+    cv::Mat missing(collection.size(), feature_length, CV_8UC1, cv::Scalar(0));
+
     cv::Mat responses(collection.size(), 1, CV_32SC1);
     int tflag = CV_ROW_SAMPLE;
 
     std::size_t n = collection.size();
     for(std::size_t i = 0; i < n; ++i) {
-        FeaturesMessage& feature = collection[0];
+        FeaturesMessage& feature = collection[i];
         for(std::size_t j = 0; j < feature_length; ++j) {
-            train_data.at<float>(i,j) = feature.value[j];
-            responses.at<int>(i,0) = feature.classification;
+            const float& val = feature.value[j];
+
+            if(std::abs(val) >= FLT_MAX*0.5f) {
+                missing.at<uchar>(i,j) = 1;
+            } else {
+                train_data.at<float>(i,j) = val;
+            }
         }
+
+        responses.at<int>(i,0) = feature.classification;
     }
 
     float p_weight = 1.0;
     float priors[] = { 1, p_weight };
+    // TODO: make params
+    // TODO: optimize with eva
     CvDTreeParams params( 8, // max depth
                           10, // min sample count
                           0, // regression accuracy: N/A here
@@ -65,7 +76,6 @@ void DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
                           priors);
 
     cv::Mat var_type( train_data.cols + 1, 1, CV_8U, CV_VAR_NUMERICAL);
-    cv::Mat missing;
 
     cv::DecisionTree dtree;
     ainfo << "starting training with " << n << " features" << std::endl;

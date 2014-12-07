@@ -21,12 +21,6 @@ if(${ZBAR_FOUND})
 
     find_package(OpenCV REQUIRED)
 
-
-    csapex_moc_all(QT_MOC src/*.h)
-
-    set(QT ${QT_SOURCES} ${QT_MOC})
-
-
     ###################################
     ## catkin specific configuration ##
     ###################################
@@ -57,7 +51,6 @@ if(${ZBAR_FOUND})
 
     add_library(csapex_bar_code_plugin
         src/bar_code_reader.cpp
-        ${QT}
     )
     target_link_libraries(csapex_bar_code_plugin
         yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES} ${ZBAR_LIBRARIES})

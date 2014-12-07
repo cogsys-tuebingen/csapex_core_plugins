@@ -17,13 +17,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS csapex csapex_ros tf)
 
-csapex_moc_all(QT_MOC_CORE include/csapex_transform/*.h)
-csapex_moc_all(QT_MOC_PLUG src/*.h)
-
-
-set(QT_CORE ${QT_SOURCES}  ${QT_MOC_CORE})
-set(QT_PLUG ${QT_SOURCES} ${QT_MOC_PLUG})
-
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_transform
@@ -39,7 +32,6 @@ include_directories(
 
 add_library(csapex_transform
     src/transform_message.cpp
-    ${QT_CORE}
 )
 target_link_libraries(csapex_transform
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
@@ -55,7 +47,6 @@ add_library(csapex_transform_plugin
     src/transform_publisher.cpp
     src/transform_filter.cpp
     src/extract_timestamp.cpp
-    ${QT_PLUG}
 )
 target_link_libraries(csapex_transform_plugin csapex_transform
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})

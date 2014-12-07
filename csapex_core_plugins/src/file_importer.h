@@ -22,9 +22,11 @@ public:
     void import();
 
     void process();
+    bool canTick();
     void tick();
 
-    bool doImport(const QString& path);
+    bool doImport(const QString& file_path);
+    void doImportDir(const QString& dir);
 
 private:
     void changeMode();
@@ -37,7 +39,10 @@ private:
     Trigger* begin_;
     Trigger* end_;
 
+    bool directory_import_;
     QString file_;
+    std::vector<std::string> dir_files_;
+
     std::vector<Output*> outputs_;
 };
 

@@ -20,11 +20,6 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 
 find_package(OpenCV REQUIRED)
 
-csapex_moc_all(QT_CORE src/core/*.h include/csapex_vision/*.h)
-csapex_moc_all(QT_MOC_PLUG src/plugin/*.h)
-
-QT4_ADD_RESOURCES(QT_RESOURCES res/csapex_vision_resources.qrc)
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -64,7 +59,6 @@ add_library(csapex_vision
     src/core/cv_pyramid_message.cpp
     src/core/yaml_io.cpp
 
-    ${QT_CORE}
     ${QT_RESOURCES}
 )
 target_link_libraries(csapex_vision
@@ -98,13 +92,12 @@ add_library(csapex_vision_plugin
     src/plugin/col.cpp
     src/plugin/mean_dev_normalization.cpp
 
-    ${QT_MOC_PLUG}
-    ${QT_RESOURCES}
-
     src/plugin/blur.cpp
     src/plugin/gaussian_blur.cpp
     src/plugin/bilateral.cpp
     src/plugin/mean_dev.cpp
+
+    res/csapex_vision_resources.qrc
 )
 target_link_libraries(csapex_vision_plugin csapex_vision
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})

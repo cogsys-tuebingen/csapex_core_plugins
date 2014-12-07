@@ -6,8 +6,6 @@ project(csapex_rqt)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS class_loader roscpp rqt_gui rqt_gui_cpp csapex)
 
-csapex_moc_all(QT_MOC src/*.h)
-
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -38,7 +36,6 @@ include_directories(
 ## Declare a cpp library
 add_library(csapex_rqt
     src/rqt_evaluation.cpp
-    ${QT_MOC}
 )
 target_link_libraries(csapex_rqt ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 

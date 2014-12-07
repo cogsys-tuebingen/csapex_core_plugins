@@ -10,10 +10,6 @@ project(csapex_boolean)
 #set(ROS_BUILD_TYPE RelWithDebInfo)
 find_package(catkin REQUIRED COMPONENTS csapex csapex_core_plugins)
 
-csapex_moc_all(QT_MOC src/*.h)
-
-QT4_ADD_RESOURCES(QT_RESOURCES res/csapex_boolean_resources.qrc)
-
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -36,8 +32,7 @@ add_library(csapex_boolean_plugin
     src/toggle.cpp
     src/indicator.cpp
 
-    ${QT_MOC}
-    ${QT_RESOURCES}
+    res/csapex_boolean_resources.qrc
 )
 target_link_libraries(csapex_boolean_plugin
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES})

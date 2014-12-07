@@ -9,7 +9,7 @@
 #include "text_display.h"
 
 /// SYSTEM
-#include <QTextEdit>
+#include <QLabel>
 
 namespace csapex {
 
@@ -32,7 +32,7 @@ protected:
     TextDisplay* wrapped_;
 
 private:
-    QTextEdit* txt_;
+    QLabel* txt_;
 };
 
 }

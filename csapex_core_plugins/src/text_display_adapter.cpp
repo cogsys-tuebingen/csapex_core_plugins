@@ -20,7 +20,7 @@ TextDisplayAdapter::TextDisplayAdapter(NodeWorker *worker, TextDisplay *node, Wi
 
 void TextDisplayAdapter::setupUi(QBoxLayout* layout)
 {
-    txt_ = new QTextEdit;
+    txt_ = new QLabel;
     layout->addWidget(txt_);
 
     connect(this, SIGNAL(displayRequest(std::string)), this, SLOT(display(std::string)));
@@ -28,5 +28,6 @@ void TextDisplayAdapter::setupUi(QBoxLayout* layout)
 
 void TextDisplayAdapter::display(const std::string& txt)
 {
-    txt_->setHtml(QString::fromStdString(txt));
+    txt_->setMaximumWidth(txt_->parentWidget()->width());
+    txt_->setText(QString::fromStdString(txt));
 }

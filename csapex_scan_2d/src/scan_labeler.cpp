@@ -66,9 +66,9 @@ void ScanLabeler::process()
         throw std::runtime_error("invalid input type");
     }
 
-    waitForView();
-
-    output_->publish(result_);
+    if(waitForView()) {
+        output_->publish(result_);
+    }
 }
 
 

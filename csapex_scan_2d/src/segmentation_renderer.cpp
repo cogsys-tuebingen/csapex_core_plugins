@@ -97,7 +97,7 @@ void ScanSegmentation2DRenderer::render(const std::vector<Segment> &segments)
 
         cv::Scalar color;
         if(random_color) {
-            double r,g,b;
+            double r = 0, g = 0, b = 0;
             color::fromCount(i, r,g,b);
             color = cv::Scalar(b,g,r);
         } else {
@@ -143,7 +143,7 @@ void ScanSegmentation2DRenderer::publishMarkers(const std::vector<Segment> &segm
     marker.scale.x         = 0.1;
     marker.color.a = 1.0;
     int    h = 0.0;
-    double r,g,b;
+    double r = 0, g = 0, b = 0;
 
     for(std::vector<Segment>::const_iterator it_seg = segments.begin() ; it_seg != segments.end() ; ++it_seg) {
         marker.points.clear();

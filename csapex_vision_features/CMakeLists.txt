@@ -19,12 +19,6 @@ find_package(OpenCV REQUIRED)
 
 find_package(Boost COMPONENTS program_options REQUIRED)
 
-csapex_moc_all(QT_MOC_CORE include/csapex_vision_features/*.h)
-csapex_moc_all(QT_MOC_PLUGIN src/*.h)
-
-set(QT_CORE ${QT_SOURCES} ${QT_MOC_CORE})
-set(QT_PLUGIN ${QT_SOURCES} ${QT_MOC_PLUGIN})
-
 
 ###################################
 ## catkin specific configuration ##
@@ -56,7 +50,6 @@ include_directories(include
 add_library(csapex_vision_features
     src/keypoint_message.cpp
     src/descriptor_message.cpp
-    ${QT_CORE}
 )
 target_link_libraries(csapex_vision_features
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
@@ -67,7 +60,6 @@ add_library(csapex_vision_features_plugin
     src/extract_descriptors.cpp
     src/display_keypoints.cpp
     src/match_descriptors.cpp
-    ${QT_PLUGIN}
 )
 target_link_libraries(csapex_vision_features_plugin csapex_vision_features
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})

@@ -20,6 +20,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <QStringList>
 #include <QUrl>
+#include <QMimeData>
 
 CSAPEX_REGISTER_CLASS(csapex::RegisterCorePlugins, csapex::CorePlugin)
 

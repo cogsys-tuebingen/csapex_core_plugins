@@ -6,6 +6,8 @@ project(csapex_ros)
 ## is used, also find other catkin packages
 find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins rosbag tf REQUIRED)
 
+find_package(Qt5 COMPONENTS Concurrent REQUIRED)
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_ros_core
@@ -27,8 +29,9 @@ add_library(csapex_ros_core
     src/duration_message.cpp
     src/tf_listener.cpp
 )
+
 target_link_libraries(csapex_ros_core
-  ${catkin_LIBRARIES}
+  ${catkin_LIBRARIES} Qt5::Concurrent
 )
 
 ## Declare a cpp library

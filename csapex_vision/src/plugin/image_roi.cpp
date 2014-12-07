@@ -105,8 +105,12 @@ void ImageRoi::process()
     display_request(img);
 
     bool wait = readParameter<bool>("step");
-    if(wait)
-        waitForView();
+    if(wait) {
+        bool continue_p = waitForView();
+        if(!continue_p) {
+            return;
+        }
+    }
 
     int class_label = readParameter<int>("class label");
 

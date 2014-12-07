@@ -6,6 +6,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/message_factory.h>
+#include <csapex/utility/timer.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)
 
@@ -24,10 +25,17 @@ void TextDisplay::process()
 {
     connection_types::Message::Ptr msg = connector_->getMessage<connection_types::Message>();
 
-    std::stringstream ss;
-    YAML::Node node = MessageFactory::serializeMessage(*msg);
+    YAML::Node node;
+    {
+        INTERLUDE("serialize");
+        node = MessageFactory::serializeMessage(*msg);
+    }
 
-    convert(ss, node);
+    std::stringstream ss;
+    {
+        INTERLUDE("convert");
+        convert(ss, node);
+    }
 
     display_request(ss.str());
 }
@@ -49,7 +57,7 @@ void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node)
         }
 
     } else {
-        ss << node;
+        ss << node.as<std::string>().substr(0, 1000);
     }
 }
 

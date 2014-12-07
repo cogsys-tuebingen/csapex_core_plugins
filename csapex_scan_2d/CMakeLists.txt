@@ -17,8 +17,6 @@ find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_vision utils_la
 
 find_package(Boost REQUIRED)
 
-csapex_moc_all(QT_MOC src/*.h)
-
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -64,7 +62,6 @@ add_library(csapex_scan_2d_plugin
     src/scan_renderer.cpp
     src/scan_labeler.cpp
     src/scan_labeler_adapter.cpp
-    ${QT_MOC}
 )
 
 target_link_libraries(csapex_scan_2d_plugin

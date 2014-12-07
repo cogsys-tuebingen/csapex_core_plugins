@@ -14,13 +14,12 @@
 #include <csapex/signal/trigger.h>
 
 /// SYSTEM
-#include <boost/foreach.hpp>
+#include <boost/filesystem.hpp>
 #include <QLabel>
 #include <QFileDialog>
 #include <QTimer>
 #include <QtConcurrentRun>
 #include <QCheckBox>
-#include <QDirIterator>
 #include <QUrl>
 #include <boost/lambda/lambda.hpp>
 
@@ -31,6 +30,7 @@ using namespace connection_types;
 
 
 FileImporter::FileImporter()
+    : directory_import_(false)
 {
 }
 
@@ -41,8 +41,18 @@ FileImporter::~FileImporter()
 
 void FileImporter::setupParameters()
 {
+    param::Parameter::Ptr directory = param::ParameterFactory::declareBool("import directory", false);
+    addParameter(directory);
+
+    boost::function<bool()> cond_file = (!boost::bind(&param::Parameter::as<bool>, directory.get()));
+    boost::function<bool()> cond_dir = (boost::bind(&param::Parameter::as<bool>, directory.get()));
+
+
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
-    addParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), boost::bind(&FileImporter::import, this));
+    addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, boost::bind(&FileImporter::import, this));
+
+    addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, boost::bind(&FileImporter::import, this));
+    addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, boost::bind(&FileImporter::import, this));
 
     param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
     addParameter(immediate, boost::bind(&FileImporter::changeMode, this));
@@ -76,6 +86,15 @@ void FileImporter::process()
 
 }
 
+bool FileImporter::canTick()
+{
+    if(directory_import_) {
+        return readParameter<int>("directory/current") < (int) dir_files_.size();
+    } else {
+        return provider_;
+    }
+}
+
 void FileImporter::tick()
 {
     if(provider_) {
@@ -90,32 +109,57 @@ void FileImporter::tick()
                     }
                 }
             }
+        } else {
+            if(directory_import_) {
+                int current = readParameter<int>("directory/current");
+                ++current;
+
+                if(current >= (int) dir_files_.size()) {
+
+                }
+            }
         }
     }
 }
 
-bool FileImporter::doImport(const QString& _path)
+void FileImporter::doImportDir(const QString &dir_string)
 {
-    if(_path == file_) {
+    boost::filesystem::path directory(dir_string.toStdString());
+    boost::filesystem::directory_iterator dir(directory);
+    boost::filesystem::directory_iterator end;
+
+    dir_files_.clear();
+
+    for(; dir != end; ++dir) {
+        boost::filesystem::path path = dir->path();
+
+        dir_files_.push_back(path.string());
+    }
+}
+
+bool FileImporter::doImport(const QString& file_path)
+{
+    if(file_path == file_) {
         return false;
     }
 
     QString path;
     QFile file(path);
     if(file.exists()) {
-        path = _path;
+        path = file_path;
     } else {
-        QFile urlfile(QUrl(_path).toLocalFile());
+        QUrl url(file_path);
+        QFile urlfile(file_path);
 
         if(urlfile.exists()) {
             path = urlfile.fileName();
         } else {
-            setError(true, std::string("the file ") + _path.toStdString() + " couldn't be opened");
+            setError(true, std::string("the file ") + file_path.toStdString() + " couldn't be opened");
             return false;
         }
     }
 
-    file_ = _path;
+    file_ = file_path;
     setError(false);
 
     provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
@@ -171,5 +215,11 @@ void FileImporter::updateOutputs()
 
 void FileImporter::import()
 {
-    doImport(QString::fromStdString(readParameter<std::string>("path")));
+    directory_import_ = readParameter<bool>("import directory");
+
+    if(directory_import_) {
+        doImportDir(QString::fromStdString(readParameter<std::string>("directory")));
+    } else {
+        doImport(QString::fromStdString(readParameter<std::string>("path")));
+    }
 }

@@ -94,7 +94,7 @@ void CloudRendererAdapter::resizeGL(int width, int height)
     QMatrix4x4 projection;
     projection.setToIdentity();
     projection.perspective(45.0f,(GLfloat)width/(GLfloat)height,0.0001f,300.0f);
-    glLoadMatrixd(projection.data());
+    glLoadMatrixf(projection.data());
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -229,7 +229,7 @@ void CloudRendererAdapter::paintGL(bool request)
     QVector3D center(0,0,0);
     QVector3D up(0,0,1);
     lookat.lookAt(eye + offset_, center + offset_, up);
-    glLoadMatrixd(lookat.data());
+    glLoadMatrixf(lookat.data());
 
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     glCallList(list_cloud_);
@@ -613,7 +613,7 @@ struct Renderer<pcl::PointXYZRGB, Component>
         for(typename std::vector<pcl::PointXYZRGB, Eigen::aligned_allocator<pcl::PointXYZRGB> >::iterator it = cloud->points.begin(); it != cloud->points.end(); ++it) {
             pcl::PointXYZRGB& pt = *it;
 
-            glColor3d(pt.r, pt.g, pt.b);
+            glColor3d(pt.r / 255.0, pt.g / 255.0, pt.b / 255.0);
 
             glVertex3d(pt.x, pt.y, pt.z);
         }

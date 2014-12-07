@@ -97,6 +97,7 @@ struct convert<cv::Vec<T, size> > {
 
 template<>
 struct convert<cv::Mat> {
+    // TODO: implement more efficiently!
     static Node encode(const cv::Mat& rhs)
     {
         Node node;

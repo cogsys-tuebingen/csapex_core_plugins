@@ -3,10 +3,7 @@ project(csapex_core_plugins)
 
 find_package(catkin REQUIRED COMPONENTS csapex)
 
-QT4_ADD_RESOURCES(QT_RESOURCES res/csapex_core_resources.qrc)
-
-csapex_moc_all(MOC_CORE include/*.h)
-csapex_moc_all(MOC_PLUG src/*.h)
+find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -36,8 +33,8 @@ add_library(csapex_core_lib
     src/point_message.cpp
     src/interactive_node.cpp
     src/collection_node.cpp
-    ${QT_RESOURCES}
-    ${MOC_CORE}
+
+    res/csapex_core_resources.qrc
 )
 
 target_link_libraries(csapex_core_lib
@@ -63,12 +60,11 @@ add_library(csapex_core_plugins
     src/say_text.cpp
     src/text_convert.cpp
     src/register_core_plugins.cpp
-    ${QT_RESOURCES}
-    ${MOC_PLUG}
 )
 
+
 target_link_libraries(csapex_core_plugins csapex_core_lib
-    ${catkin_LIBRARIES}
+    ${catkin_LIBRARIES} Qt5::Concurrent
 )
 
 
