@@ -40,7 +40,7 @@ void RenderLabels::process()
             unsigned short label = labels->value.at<unsigned short>(y,x);
             if(label != 0) {
                 if(colors.find(label) == colors.end()) {
-                    double r,g,b;
+                    double r = 0,g = 0,b = 0;
                     color::fromCount(colors.size(), r,g,b);
                     colors.insert(std::make_pair(label, cv::Vec3b(b,g,r)));
                 }
