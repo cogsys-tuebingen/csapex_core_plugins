@@ -62,6 +62,8 @@ protected:
         }
     };
 
+private:
+    static const double SCALE = 100.0;
 
 private:
     connection_types::LabeledScanMessage::Ptr result_;
@@ -72,9 +74,6 @@ private:
     QGraphicsPixmapItem* pixmap_;
 
     QGraphicsView* view_;
-
-    QImage empty;
-    QPainter painter;
 
     bool resize_down_;
     bool move_down_;

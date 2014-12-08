@@ -23,14 +23,9 @@ CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
 ScanLabelerAdapter::ScanLabelerAdapter(NodeWorker* worker, ScanLabeler *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty),
+    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
-    painter.setPen(QPen(Qt::red));
-    painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
-    painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
-
-
     // translate to UI thread via Qt signal
     node->display_request.connect(boost::bind(&ScanLabelerAdapter::displayRequest, this, _1));
     node->submit_request.connect(boost::bind(&ScanLabelerAdapter::submitRequest, this));
@@ -52,10 +47,10 @@ void ScanLabelerAdapter::labelSelected(int label)
     Q_FOREACH(QGraphicsItem* item, view_->scene()->selectedItems()) {
         result_->value.labels[item->data(0).toUInt()] = label;
 
-        QGraphicsEllipseItem* ellipse = dynamic_cast<QGraphicsEllipseItem*> (item);
-        if(ellipse) {
-            ellipse->setPen(pen);
-            ellipse->setBrush(brush);
+        QGraphicsRectItem* rect = dynamic_cast<QGraphicsRectItem*> (item);
+        if(rect) {
+            rect->setPen(pen);
+            rect->setBrush(brush);
         }
     }
     view_->update();
@@ -180,7 +175,7 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
     DefaultNodeAdapter::setupUi(layout);
 
 
-    QRectF rect(-15.0, -15.0, 30.0, 30.0);
+    QRectF rect(-15.0 * SCALE, -15.0 * SCALE, 30.0 * SCALE, 30.0 * SCALE);
     scene->setSceneRect(rect);
     view_->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 }
@@ -209,15 +204,15 @@ void ScanLabelerAdapter::display(lib_laser_processing::Scan* scan)
     scene->clear();
 
 
-    float dim = 0.05f;
+    float dim = SCALE * 0.05f;
 
     result_->value.rays = scan->rays;
     result_->value.labels.resize(scan->rays.size(), 0);
 
     QBrush brush(color::fromCount(0), Qt::SolidPattern);
-    for(std::size_t i = 0, n = scan->rays.size(); i < n; ++i) {
+    for(std::size_t i = 0, n =  scan->rays.size(); i < n; ++i) {
         const lib_laser_processing::LaserBeam& beam = scan->rays[i];
-        QGraphicsEllipseItem* item = scene->addEllipse(beam.pos(0), beam.pos(1), dim, dim, QPen(brush.color()), brush);
+        QGraphicsItem* item = scene->addRect(SCALE * beam.pos(0), SCALE * beam.pos(1), dim, dim, QPen(brush.color()), brush);
 
         item->setData(0, QVariant::fromValue(i));
 
