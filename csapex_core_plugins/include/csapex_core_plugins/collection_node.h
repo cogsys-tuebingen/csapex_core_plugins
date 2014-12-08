@@ -7,6 +7,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/input.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/signal/trigger.h>
 
 /// SYSTEM
 namespace csapex {
@@ -20,13 +21,17 @@ public:
 
     void setupParameters()
     {
-        addParameter(param::ParameterFactory::declareTrigger("train"), boost::bind(&CollectionNode::processCollection, this, boost::ref(buffer_)));
+        addParameter(param::ParameterFactory::declareTrigger("process"), boost::bind(&CollectionNode<MessageType>::doProcessCollection, this, boost::ref(buffer_)));
+        addParameter(param::ParameterFactory::declareTrigger("clear"), boost::bind(&CollectionNode<MessageType>::clearCollection, this));
     }
 
     void setup()
     {
         in_vector  = modifier_->addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
         in_single  = modifier_->addOptionalInput<MessageType>("message to collect");
+
+        trigger_processed_ = modifier_->addTrigger("Processed");
+        trigger_processed_ = modifier_->addTrigger("Cleared");
     }
 
     void process()
@@ -42,11 +47,26 @@ public:
     }
 
 protected:
+    void doProcessCollection(std::vector<MessageType>& collection)
+    {
+        processCollection(collection);
+        trigger_processed_->trigger();
+    }
+
     virtual void processCollection(std::vector<MessageType>& collection) = 0;
+
+    void clearCollection()
+    {
+        buffer_.clear();
+        trigger_cleared_->trigger();
+    }
 
 protected:
     Input* in_vector;
     Input* in_single;
+
+    Trigger* trigger_processed_;
+    Trigger* trigger_cleared_;
 
 private:
     std::vector<MessageType> buffer_;

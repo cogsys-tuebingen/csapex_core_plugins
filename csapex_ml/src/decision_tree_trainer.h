@@ -13,6 +13,7 @@ class DecisionTreeTrainer : public CollectionNode<connection_types::FeaturesMess
 public:
     DecisionTreeTrainer();
 
+    void setup();
     void setupParameters();
 
 private:

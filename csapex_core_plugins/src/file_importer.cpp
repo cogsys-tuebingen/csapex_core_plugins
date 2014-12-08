@@ -162,17 +162,26 @@ bool FileImporter::doImport(const QString& file_path)
     file_ = file_path;
     setError(false);
 
-    provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
-    provider_->slot_count_changed.connect(boost::bind(&FileImporter::updateOutputs, this));
+    try {
+        provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
 
-    provider_->begin.connect(boost::bind(&Trigger::trigger, begin_));
-    provider_->no_more_messages.connect(boost::bind(&Trigger::trigger, end_));
+        provider_->slot_count_changed.connect(boost::bind(&FileImporter::updateOutputs, this));
 
-    provider_->load(path.toStdString());
+        provider_->begin.connect(boost::bind(&Trigger::trigger, begin_));
+        provider_->no_more_messages.connect(boost::bind(&Trigger::trigger, end_));
 
-    setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));
+        provider_->load(path.toStdString());
 
-    return provider_.get();
+        setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));
+
+        return provider_.get();
+
+    } catch(const std::exception& e) {
+        setError(true);
+        throw std::runtime_error(std::string("cannot load file ") + file_.toStdString() + ": " + e.what());
+    }
+
+    return NULL;
 }
 
 void FileImporter::updateProvider()

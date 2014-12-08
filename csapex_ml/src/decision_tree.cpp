@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_core_plugins/vector_message.h>
+#include <csapex/signal/slot.h>
 
 /// SYSTEM
 //#include <boost/assign.hpp>
@@ -32,6 +33,8 @@ void DecisionTree::setup()
 {
     in_  = modifier_->addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Unclassified feature");
     out_ = modifier_->addOutput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
+
+    reload_ = modifier_->addSlot("Reload", boost::bind(&DecisionTree::loadTree, this));
 }
 
 void DecisionTree::process()

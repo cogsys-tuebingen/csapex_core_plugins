@@ -30,6 +30,8 @@ private:
     Input* in_;
     Output* out_;
 
+    Slot* reload_;
+
     cv::DecisionTree dtree_;
     bool loaded_;
 };
