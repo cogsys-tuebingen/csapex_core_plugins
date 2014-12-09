@@ -12,6 +12,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/signal/trigger.h>
+#include <utils_param/range_parameter.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>
@@ -52,7 +53,8 @@ void FileImporter::setupParameters()
     addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, boost::bind(&FileImporter::import, this));
 
     addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, boost::bind(&FileImporter::import, this));
-    addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, boost::bind(&FileImporter::import, this));
+    addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, boost::bind(&FileImporter::changeDirIndex, this));
+    addConditionalParameter(param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
 
     param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
     addParameter(immediate, boost::bind(&FileImporter::changeMode, this));
@@ -89,7 +91,7 @@ void FileImporter::process()
 bool FileImporter::canTick()
 {
     if(directory_import_) {
-        return readParameter<int>("directory/current") < (int) dir_files_.size();
+        return readParameter<int>("directory/current") < (int) dir_files_.size() || readParameter<bool>("directory/loop");
     } else {
         return provider_;
     }
@@ -97,28 +99,28 @@ bool FileImporter::canTick()
 
 void FileImporter::tick()
 {
-    if(provider_) {
-        if(provider_->hasNext()) {
-            for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
-                Output* output = outputs_[slot];
+    if(provider_ && provider_->hasNext()) {
+        for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
+            Output* output = outputs_[slot];
 
-                if(output->isConnected()) {
-                    Message::Ptr msg = provider_->next(slot);
-                    if(msg) {
-                        output->publish(msg);
-                    }
-                }
-            }
-        } else {
-            if(directory_import_) {
-                int current = readParameter<int>("directory/current");
-                ++current;
-
-                if(current >= (int) dir_files_.size()) {
-
+            if(output->isConnected()) {
+                Message::Ptr msg = provider_->next(slot);
+                if(msg) {
+                    output->publish(msg);
                 }
             }
         }
+    } else  if(directory_import_) {
+        int current = readParameter<int>("directory/current");
+        ++current;
+
+        if(current > (int) dir_files_.size() && readParameter<bool>("directory/loop")) {
+            current = 0;
+        }
+        if(current < (int) dir_files_.size()) {
+            doImport(QString::fromStdString(dir_files_[current]));
+        }
+        setParameter("directory/current", current);
     }
 }
 
@@ -135,6 +137,10 @@ void FileImporter::doImportDir(const QString &dir_string)
 
         dir_files_.push_back(path.string());
     }
+
+    param::RangeParameter::Ptr current = getParameter<param::RangeParameter>("directory/current");
+    current->set(0);
+    current->setMax<int>(dir_files_.size());
 }
 
 bool FileImporter::doImport(const QString& file_path)
@@ -172,8 +178,9 @@ bool FileImporter::doImport(const QString& file_path)
 
         provider_->load(path.toStdString());
 
-        setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));
-
+        if(!directory_import_) {
+            setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));
+        }
         return provider_.get();
 
     } catch(const std::exception& e) {
@@ -222,12 +229,20 @@ void FileImporter::updateOutputs()
     }
 }
 
+void FileImporter::changeDirIndex()
+{
+    //    int set_to = readParameter<int>("directory/current");
+    //    setParameter("directory/current", set_to);
+}
+
 void FileImporter::import()
 {
     directory_import_ = readParameter<bool>("import directory");
+    provider_.reset();
 
     if(directory_import_) {
         doImportDir(QString::fromStdString(readParameter<std::string>("directory")));
+        removeTemporaryParameters();
     } else {
         doImport(QString::fromStdString(readParameter<std::string>("path")));
     }

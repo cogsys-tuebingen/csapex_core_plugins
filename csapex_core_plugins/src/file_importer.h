@@ -29,6 +29,8 @@ public:
     void doImportDir(const QString& dir);
 
 private:
+    void changeDirIndex();
+
     void changeMode();
     void updateProvider();
     void updateOutputs();
