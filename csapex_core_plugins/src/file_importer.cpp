@@ -114,10 +114,17 @@ void FileImporter::tick()
         int current = readParameter<int>("directory/current");
         ++current;
 
-        if(current > (int) dir_files_.size() && readParameter<bool>("directory/loop")) {
-            current = 0;
+        if(current > (int) dir_files_.size()) {
+            end_->trigger();
+            if(readParameter<bool>("directory/loop")) {
+                current = 0;
+            }
         }
         if(current < (int) dir_files_.size()) {
+            if(current == 0) {
+                begin_->trigger();
+            }
+
             doImport(QString::fromStdString(dir_files_[current]));
         }
         setParameter("directory/current", current);
@@ -137,6 +144,8 @@ void FileImporter::doImportDir(const QString &dir_string)
 
         dir_files_.push_back(path.string());
     }
+
+    std::sort(dir_files_.begin(), dir_files_.end());
 
     param::RangeParameter::Ptr current = getParameter<param::RangeParameter>("directory/current");
     current->set(0);
@@ -173,8 +182,10 @@ bool FileImporter::doImport(const QString& file_path)
 
         provider_->slot_count_changed.connect(boost::bind(&FileImporter::updateOutputs, this));
 
-        provider_->begin.connect(boost::bind(&Trigger::trigger, begin_));
-        provider_->no_more_messages.connect(boost::bind(&Trigger::trigger, end_));
+        if(!directory_import_) {
+            provider_->begin.connect(boost::bind(&Trigger::trigger, begin_));
+            provider_->no_more_messages.connect(boost::bind(&Trigger::trigger, end_));
+        }
 
         provider_->load(path.toStdString());
 
