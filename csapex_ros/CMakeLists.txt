@@ -49,6 +49,7 @@ target_link_libraries(csapex_ros_core
 
 ## plugins
 add_library(csapex_ros
+    src/ros_param.cpp
     src/apex_ros_interface.cpp
     src/export_ros.cpp
     src/import_ros.cpp

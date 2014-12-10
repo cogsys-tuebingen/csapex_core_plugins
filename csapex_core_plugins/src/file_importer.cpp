@@ -154,7 +154,7 @@ void FileImporter::doImportDir(const QString &dir_string)
 
 bool FileImporter::doImport(const QString& file_path)
 {
-    if(file_path == file_) {
+    if(file_path == file_ && provider_) {
         return false;
     }
 
@@ -204,7 +204,9 @@ bool FileImporter::doImport(const QString& file_path)
 
 void FileImporter::updateProvider()
 {
-    provider_->parameterChanged();
+    if(provider_) {
+        provider_->parameterChanged();
+    }
 }
 
 void FileImporter::updateOutputs()
