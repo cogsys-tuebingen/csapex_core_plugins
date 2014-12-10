@@ -29,9 +29,6 @@ public:
     {
         in_vector  = modifier_->addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
         in_single  = modifier_->addOptionalInput<MessageType>("message to collect");
-
-        trigger_processed_ = modifier_->addTrigger("Processed");
-        trigger_processed_ = modifier_->addTrigger("Cleared");
     }
 
     void process()
@@ -50,7 +47,6 @@ protected:
     void doProcessCollection(std::vector<MessageType>& collection)
     {
         processCollection(collection);
-        trigger_processed_->trigger();
     }
 
     virtual void processCollection(std::vector<MessageType>& collection) = 0;
@@ -58,15 +54,11 @@ protected:
     void clearCollection()
     {
         buffer_.clear();
-        trigger_cleared_->trigger();
     }
 
 protected:
     Input* in_vector;
     Input* in_single;
-
-    Trigger* trigger_processed_;
-    Trigger* trigger_cleared_;
 
 private:
     std::vector<MessageType> buffer_;
