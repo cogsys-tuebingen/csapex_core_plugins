@@ -68,7 +68,7 @@ void RosParam::update()
             XmlRpc::XmlRpcValue parameter_value;
             ros::param::getCached(parameter_name, parameter_value);
 
-            std::string label = std::string("parameter/") + parameter_name;
+            std::string label = std::string("parameter") + parameter_name;
 
             switch(parameter_value.getType()) {
             case XmlRpc::XmlRpcValue::TypeInt: {
