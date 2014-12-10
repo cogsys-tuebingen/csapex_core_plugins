@@ -14,6 +14,10 @@ ROSHandler& RosNode::getRosHandler()
     return ROSHandler::instance();
 }
 
+void RosNode::setup()
+{
+}
+
 void RosNode::tick()
 {
     ROSHandler& ros = getRosHandler();

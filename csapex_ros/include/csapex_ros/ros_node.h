@@ -20,6 +20,7 @@ protected:
 
     void process();
 
+    void setup();
     virtual void setupROS() = 0;
     virtual void processROS() = 0;
 
