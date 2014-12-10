@@ -1,4 +1,7 @@
 <library path="libcsapex_ros">
+<class type="csapex::RosParam" base_class_type="csapex::Node">
+  <description>Manage ros parameters</description>
+</class>
 
 <class type="csapex::APEXRosInterface" base_class_type="csapex::CorePlugin">
   <description></description>
