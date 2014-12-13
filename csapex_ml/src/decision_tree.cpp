@@ -39,19 +39,23 @@ void DecisionTree::setup()
 
 void DecisionTree::process()
 {
+    boost::shared_ptr<std::vector<FeaturesMessage> const> input = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
+    boost::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
+
+    std::size_t n = input->size();
+
     if(loaded_) {
-        boost::shared_ptr<std::vector<FeaturesMessage> const> input = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
-        boost::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
-
-        std::size_t n = input->size();
-
         output->resize(n);
         for(std::size_t i = 0; i < n; ++i) {
             output->at(i) = classify(input->at(i));
         }
 
-        out_->publish<GenericVectorMessage, FeaturesMessage>(output);
+    } else {
+        *output = *input;
+        setError(true, "cannot classfiy, no tree loaded", EL_WARNING);
     }
+
+    out_->publish<GenericVectorMessage, FeaturesMessage>(output);
 }
 
 connection_types::FeaturesMessage DecisionTree::classify(const FeaturesMessage &input)
@@ -70,5 +74,5 @@ void DecisionTree::loadTree()
     std::string file = readParameter<std::string>("file");
     dtree_.load(file.c_str());
 
-    loaded_ = true;
+    loaded_ = dtree_.get_root() != NULL;
 }
