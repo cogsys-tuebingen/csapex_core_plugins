@@ -1,0 +1,22 @@
+<library path="libcsapex_evaluation_plugin">
+<class type="csapex::EvaluateBinaryClassifier" base_class_type="csapex::Node">
+  <description>Calculates binary classification statistics</description>
+</class>
+<class type="csapex::EvaluateBinaryClassifierAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+
+<class type="csapex::MLEvaluator" base_class_type="csapex::Node">
+  <description>Evaluate a machine learing node</description>
+  <tags>ML, evaluation</tags>
+</class>
+
+<class type="csapex::ConfusionMatrixDisplay" base_class_type="csapex::Node">
+  <description>Displays the content of messages</description>
+  <tags>ML, evaluation, Output</tags>
+</class>
+<class type="csapex::ConfusionMatrixDisplayAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+</library>
+
