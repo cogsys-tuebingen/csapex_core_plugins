@@ -2,16 +2,17 @@
 #include "file_importer.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
-#include <csapex/utility/qt_helper.hpp>
 #include <csapex/manager/message_provider_manager.h>
-#include <csapex/msg/message.h>
-#include <utils_param/parameter_factory.h>
-#include <csapex/model/node_worker.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_worker.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/message.h>
+#include <csapex/msg/output.h>
 #include <csapex/signal/trigger.h>
+#include <csapex/utility/qt_helper.hpp>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/utility/timer.h>
+#include <utils_param/parameter_factory.h>
 #include <utils_param/range_parameter.h>
 
 /// SYSTEM
@@ -25,6 +26,7 @@
 #include <boost/lambda/lambda.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::FileImporter, csapex::Node)
+
 
 using namespace csapex;
 using namespace connection_types;
@@ -101,6 +103,8 @@ void FileImporter::tick()
 {
     if(provider_ && provider_->hasNext()) {
         for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
+            INTERLUDE("slot " << slot);
+
             Output* output = outputs_[slot];
 
             if(output->isConnected()) {
@@ -110,7 +114,10 @@ void FileImporter::tick()
                 }
             }
         }
-    } else  if(directory_import_) {
+    } else {
+        INTERLUDE("directory");
+        apex_assert_hard(directory_import_);
+
         int current = readParameter<int>("directory/current");
         ++current;
 
@@ -125,7 +132,9 @@ void FileImporter::tick()
                 begin_->trigger();
             }
 
-            doImport(QString::fromStdString(dir_files_[current]));
+            if(doImport(QString::fromStdString(dir_files_[current]))) {
+                tick();
+            }
         }
         setParameter("directory/current", current);
     }
@@ -154,6 +163,7 @@ void FileImporter::doImportDir(const QString &dir_string)
 
 bool FileImporter::doImport(const QString& file_path)
 {
+    INTERLUDE("doImport");
     if(file_path == file_ && provider_) {
         return false;
     }
@@ -178,8 +188,10 @@ bool FileImporter::doImport(const QString& file_path)
     setError(false);
 
     try {
-        provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
-
+        {
+            INTERLUDE("createMessageProvider");
+            provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
+        }
         provider_->slot_count_changed.connect(boost::bind(&FileImporter::updateOutputs, this));
 
         if(!directory_import_) {
@@ -187,7 +199,10 @@ bool FileImporter::doImport(const QString& file_path)
             provider_->no_more_messages.connect(boost::bind(&Trigger::trigger, end_));
         }
 
-        provider_->load(path.toStdString());
+        {
+            INTERLUDE("load");
+            provider_->load(path.toStdString());
+        }
 
         if(!directory_import_) {
             setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));

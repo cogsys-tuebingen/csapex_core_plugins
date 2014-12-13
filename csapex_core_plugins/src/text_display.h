@@ -18,7 +18,7 @@ public:
     boost::signals2::signal<void(const std::string&)> display_request;
 
 private:
-    void convert(std::stringstream& ss, const YAML::Node& node);
+    void convert(std::stringstream& ss, const YAML::Node& node, const std::string &prefix);
 
 private:
     Input* connector_;

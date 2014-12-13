@@ -17,10 +17,30 @@ TextDisplayAdapter::TextDisplayAdapter(NodeWorker *worker, TextDisplay *node, Wi
     node->display_request.connect(boost::bind(&TextDisplayAdapter::displayRequest, this, _1));
 }
 
+namespace {
+static bool isFixedPitch(const QFont & font) {
+    const QFontInfo fi(font);
+    return fi.fixedPitch();
+}
+
+static QFont getMonospaceFont(){
+    QFont font("monospace");
+    if (isFixedPitch(font)) return font;
+    font.setStyleHint(QFont::Monospace);
+    if (isFixedPitch(font)) return font;
+    font.setStyleHint(QFont::TypeWriter);
+    if (isFixedPitch(font)) return font;
+    font.setFamily("courier");
+    if (isFixedPitch(font)) return font;
+    return font;
+}
+}
 
 void TextDisplayAdapter::setupUi(QBoxLayout* layout)
 {
     txt_ = new QLabel;
+
+    txt_->setFont(getMonospaceFont());
     layout->addWidget(txt_);
 
     connect(this, SIGNAL(displayRequest(std::string)), this, SLOT(display(std::string)));

@@ -34,14 +34,16 @@ void TextDisplay::process()
     std::stringstream ss;
     {
         INTERLUDE("convert");
-        convert(ss, node);
+        convert(ss, node, "");
     }
 
     display_request(ss.str());
 }
 
-void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node)
+void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node, const std::string& prefix)
 {
+    static const std::string PREFIX = "   ";
+
     if(node.IsMap()) {
         std::vector<std::string> keys;
         for(YAML::Node::const_iterator it = node.begin(); it != node.end(); ++it) {
@@ -51,13 +53,20 @@ void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node)
         std::sort(keys.begin(), keys.end());
 
         for(std::vector<std::string>::iterator key = keys.begin(); key != keys.end(); ++key) {
-            ss << *key << ": ";
-            convert(ss, node[*key]);
-            ss << "<br />";
+            ss << prefix << *key << ": \n";
+            convert(ss, node[*key], prefix + PREFIX);
+            ss << "\n";
+        }
+
+    } else if(node.IsSequence()) {
+        for(std::size_t i = 0, n = node.size(); i < n; ++i) {
+//            ss << prefix + "-";
+            convert(ss, node[i], prefix + "|");
+            ss << "\n";
         }
 
     } else {
-        ss << node.as<std::string>().substr(0, 1000);
+        ss << prefix << node.as<std::string>().substr(0, 1000);
     }
 }
 
