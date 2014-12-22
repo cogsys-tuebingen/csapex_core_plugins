@@ -19,6 +19,7 @@ public:
 private:
     pluginlib::ClassLoader<CorePlugin> loader_core_;
     pluginlib::ClassLoader<MessageProvider> loader_msg_;
+    pluginlib::ClassLoader<MessageRenderer> loader_msg_renderer_;
     pluginlib::ClassLoader<Node> loader_node_;
     pluginlib::ClassLoader<NodeAdapterBuilder> loader_node_adapter_;
 };

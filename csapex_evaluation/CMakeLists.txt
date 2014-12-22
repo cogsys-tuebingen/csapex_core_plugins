@@ -11,7 +11,7 @@ catkin_package(
   LIBRARIES csapex_evaluation
   CATKIN_DEPENDS csapex_ml
 )
-message(${catkin_INCLUDE_DIRS})
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}

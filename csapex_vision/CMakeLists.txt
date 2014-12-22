@@ -55,7 +55,6 @@ add_library(csapex_vision
     src/core/cv_mat_message.cpp
     src/core/roi.cpp
     src/core/roi_message.cpp
-    src/core/image_provider.cpp
     src/core/cv_pyramid_message.cpp
     src/core/yaml_io.cpp
 
@@ -96,6 +95,11 @@ add_library(csapex_vision_plugin
     src/plugin/gaussian_blur.cpp
     src/plugin/bilateral.cpp
     src/plugin/mean_dev.cpp
+
+
+    src/core/image_renderer.cpp
+    src/core/image_provider.cpp
+
 
     res/csapex_vision_resources.qrc
 )

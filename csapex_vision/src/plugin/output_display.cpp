@@ -3,10 +3,9 @@
 
 /// PROJECT
 #include <csapex/msg/input.h>
-#include <utils_qt/QtCvImageConverter.h>
-#include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/manager/message_renderer_manager.h>
 
 CSAPEX_REGISTER_CLASS(csapex::OutputDisplay, csapex::Node)
 
@@ -24,29 +23,18 @@ OutputDisplay::~OutputDisplay()
 
 void OutputDisplay::setup()
 {
-    input_ = modifier_->addInput<CvMatMessage>("Image");
+    input_ = modifier_->addInput<AnyMessage>("Message");
 }
 
 void OutputDisplay::process()
 {
-    CvMatMessage::Ptr mat_msg = input_->getMessage<CvMatMessage>();
+    ConnectionType::Ptr msg = input_->getMessage<ConnectionType>();
 
-    if(mat_msg.get() && !mat_msg->value.empty()) {
+    MessageRenderer::Ptr renderer = MessageRendererManager::instance().createMessageRenderer(msg);
 
-        Encoding encoding = mat_msg->getEncoding();
+    QSharedPointer<QImage> img = renderer->render(msg);
 
-        QSharedPointer<QImage> img;
-        if(encoding.matches(enc::rgb)) {
-            cv::Mat mat = mat_msg->value;
-            img = QSharedPointer<QImage>(new QImage((uchar*) mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888));
-
-        } else if(encoding.matches(enc::bgr) || encoding.matches(enc::mono)) {
-            img = QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(mat_msg->value);
-
-        } else {
-            return;
-        }
-
+    if(!img.isNull()) {
         display_request(img);
     }
 }
