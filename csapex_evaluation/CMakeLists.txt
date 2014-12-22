@@ -2,15 +2,16 @@ cmake_minimum_required(VERSION 2.8.3)
 project(csapex_evaluation)
 
 find_package(catkin REQUIRED COMPONENTS
+  csapex
   csapex_ml
 )
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES csapex_evaluation csapex_evaluation_plugin
+  LIBRARIES csapex_evaluation
   CATKIN_DEPENDS csapex_ml
 )
-
+message(${catkin_INCLUDE_DIRS})
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}

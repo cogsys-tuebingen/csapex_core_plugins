@@ -1,5 +1,5 @@
-#ifndef CONFUSION_MATRIX_H_
-#define CONFUSION_MATRIX_H_
+#ifndef CONFUSION_MATRIX_DISPLAY_H
+#define CONFUSION_MATRIX_DISPLAY_H
 
 /// COMPONENT
 #include <csapex_evaluation/confusion_matrix_message.h>
@@ -30,4 +30,4 @@ private:
 
 }
 
-#endif // CONFUSION_MATRIX_H_
+#endif // CONFUSION_MATRIX_DISPLAY_H
