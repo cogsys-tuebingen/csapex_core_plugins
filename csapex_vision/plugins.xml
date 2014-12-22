@@ -22,15 +22,6 @@
   <tags>Vision, Input</tags>
 </class>
 
-<class type="csapex::OutputDisplay" base_class_type="csapex::Node">
-  <description>Displays an image message</description>
-  <icon>:/picture.png</icon>
-  <tags>Output, Vision, General</tags>
-</class>
-<class type="csapex::OutputDisplayAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
-  <description></description>
-</class>
-
 <class type="csapex::ImageRoi" base_class_type="csapex::Node">
   <description></description>
   <icon>:/picture.png</icon>

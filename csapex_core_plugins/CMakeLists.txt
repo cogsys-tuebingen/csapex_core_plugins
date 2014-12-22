@@ -54,6 +54,9 @@ add_library(csapex_core_plugins
     src/double_input.cpp
     src/text_input.cpp
 
+
+    src/output_display.cpp
+    src/output_display_adapter.cpp
     src/text_display.cpp
     src/text_display_adapter.cpp
 
