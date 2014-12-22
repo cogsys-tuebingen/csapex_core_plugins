@@ -128,4 +128,9 @@
 <class type="csapex::ImageProviderMov" base_class_type="csapex::MessageProvider">
   <description></description>
 </class>
+
+
+<class type="csapex::ImageRenderer" base_class_type="csapex::MessageRenderer">
+  <description></description>
+</class>
 </library>
