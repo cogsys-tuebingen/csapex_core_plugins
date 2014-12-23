@@ -19,10 +19,10 @@ using namespace lib_laser_processing;
 
 Renderer::Renderer()
 {
-    addParameter(param::ParameterFactory::declareRange("width", 100, 2000, 1000, 1));
-    addParameter(param::ParameterFactory::declareRange("height", 100, 2000, 1000, 1));
+    addParameter(param::ParameterFactory::declareRange("width", 100, 2000, 256, 1));
+    addParameter(param::ParameterFactory::declareRange("height", 100, 2000, 256, 1));
 
-    addParameter(param::ParameterFactory::declareRange("scale", 0.1, 50.0, 1.0, 0.1));
+    addParameter(param::ParameterFactory::declareRange("scale", 0.1, 50.0, 5.0, 0.1));
     addParameter(param::ParameterFactory::declareRange("radius", 1.0, 5.0, 1.0, 0.1));
     addParameter(param::ParameterFactory::declareRange("rotation", -M_PI, M_PI, 0.0, 0.01));
 

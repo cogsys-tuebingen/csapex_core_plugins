@@ -60,6 +60,7 @@ add_library(csapex_scan_2d_plugin
     src/renderer.cpp
     src/segmentation_renderer.cpp
     src/scan_renderer.cpp
+    src/scan_message_renderer.cpp
     src/scan_labeler.cpp
     src/scan_labeler_adapter.cpp
 )

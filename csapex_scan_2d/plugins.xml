@@ -28,4 +28,11 @@
 <class type="csapex::ScanLabelerAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
+
+<class type="csapex::ScanMessageRenderer" base_class_type="csapex::MessageRenderer">
+  <description></description>
+</class>
+<class type="csapex::LabeledScanMessageRenderer" base_class_type="csapex::MessageRenderer">
+  <description></description>
+</class>
 </library>
