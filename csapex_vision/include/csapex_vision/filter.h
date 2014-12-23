@@ -30,7 +30,7 @@ public:
     void process();
 
 protected:
-    Filter(const UUID &uuid = UUID::NONE);
+    Filter();
     virtual bool usesMask();
 
 protected:
