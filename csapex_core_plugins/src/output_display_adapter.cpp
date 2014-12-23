@@ -19,7 +19,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
 OutputDisplayAdapter::OutputDisplayAdapter(NodeWorker* worker, OutputDisplay *node, WidgetController* widget_ctrl)
-    : NodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), down_(false)
+    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), down_(false)
 {
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
@@ -89,9 +89,9 @@ void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 
     layout->addLayout(sub);
 
-//    disable();
-
     connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>)), this, SLOT(display(QSharedPointer<QImage>)));
+
+    DefaultNodeAdapter::setupUi(layout);
 }
 
 void OutputDisplayAdapter::fitInView()

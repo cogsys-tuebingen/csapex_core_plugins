@@ -32,6 +32,11 @@ void OutputDisplay::process()
 
     MessageRenderer::Ptr renderer = MessageRendererManager::instance().createMessageRenderer(msg);
 
+    if(renderer != renderer_) {
+        renderer_ = renderer;
+        setTemporaryParameters(renderer_->getParameters());
+    }
+
     QSharedPointer<QImage> img = renderer->render(msg);
 
     if(!img.isNull()) {

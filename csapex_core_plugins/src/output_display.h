@@ -29,6 +29,7 @@ protected:
 
 public:
     boost::signals2::signal<void(QSharedPointer<QImage>)> display_request;
+    MessageRendererPtr renderer_;
 };
 
 }

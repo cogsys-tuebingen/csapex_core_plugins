@@ -15,6 +15,7 @@ class ScanMessageRenderer : public MessageRendererImplementation<connection_type
 {
 public:
     virtual QSharedPointer<QImage> doRender(const connection_types::ScanMessage& msg);
+    virtual std::vector<param::ParameterPtr> getParameters() const;
 
 private:
     Renderer renderer;
@@ -24,6 +25,7 @@ class LabeledScanMessageRenderer : public MessageRendererImplementation<connecti
 {
 public:
     virtual QSharedPointer<QImage> doRender(const connection_types::LabeledScanMessage& msg);
+    virtual std::vector<param::ParameterPtr> getParameters() const;
 
 private:
     Renderer renderer;

@@ -18,9 +18,19 @@ QSharedPointer<QImage> ScanMessageRenderer::doRender(const connection_types::Sca
     return QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(mat);
 }
 
+std::vector<param::Parameter::Ptr> ScanMessageRenderer::getParameters() const
+{
+    return renderer.getParameters();
+}
+
 QSharedPointer<QImage> LabeledScanMessageRenderer::doRender(const connection_types::LabeledScanMessage &msg)
 {
     cv::Mat mat;
     renderer.render(msg.value, mat);
     return QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(mat);
+}
+
+std::vector<param::Parameter::Ptr> LabeledScanMessageRenderer::getParameters() const
+{
+    return renderer.getParameters();
 }
