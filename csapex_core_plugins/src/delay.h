@@ -15,12 +15,15 @@ class Delay : public Node
 public:
     Delay();
 
-    virtual void process();
     virtual void setup();
+    virtual void setupParameters();
+    virtual void process();
 
 private:
     Input* input_;
     Output* output_;
+
+    param::OutputProgressParameter* progress_;
 };
 
 }
