@@ -4,7 +4,6 @@
 #include <csapex/view/box.h>
 #include <csapex/command/meta.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/model/node_worker.h>
 #include <csapex/msg/input.h>
 #include <csapex/msg/output.h>
 #include <csapex/model/node_modifier.h>
@@ -80,7 +79,7 @@ void Splitter::process()
 
     bool enforce_mono = readParameter<bool>("enforce mono");
 
-    std::vector<Output*> outputs = getNodeWorker()->getMessageOutputs();
+    std::vector<Output*> outputs = modifier_->getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
         if(i < state_.encoding_.channelCount()) {
@@ -101,7 +100,7 @@ void Splitter::process()
 
 void Splitter::updateOutputs()
 {
-    std::vector<Output*> outputs = getNodeWorker()->getMessageOutputs();
+    std::vector<Output*> outputs = modifier_->getMessageOutputs();
     int n = outputs.size();
 
     if(state_.channel_count_ > n) {
@@ -121,7 +120,7 @@ void Splitter::updateOutputs()
             }
 
             if(del) {
-                getNodeWorker()->removeOutput(output->getUUID());
+                modifier_->removeOutput(output->getUUID());
             } else {
                 output->disable();
             }
@@ -129,7 +128,7 @@ void Splitter::updateOutputs()
     }
 
 
-    outputs = getNodeWorker()->getMessageOutputs();
+    outputs = modifier_->getMessageOutputs();
     for(int i = 0, n = state_.channel_count_; i < n; ++i) {
         Output* output = outputs[i];
         if(i < (int) state_.encoding_.channelCount()) {

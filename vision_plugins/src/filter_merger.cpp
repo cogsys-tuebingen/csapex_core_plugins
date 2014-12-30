@@ -7,7 +7,6 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/node_worker.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Merger, csapex::Node)
 
@@ -43,7 +42,7 @@ void Merger::updateInputs()
 {
     int input_count = readParameter<int>("input count");
 
-    std::vector<Input*> inputs = getNodeWorker()->getMessageInputs();
+    std::vector<Input*> inputs = modifier_->getMessageInputs();
     int current_amount = inputs.size();
 
     if(current_amount > input_count) {
@@ -52,7 +51,7 @@ void Merger::updateInputs()
             if(in->isConnected()) {
                 in->disable();
             } else {
-                getNodeWorker()->removeInput(in->getUUID());
+                modifier_->removeInput(in->getUUID());
             }
         }
     } else {
@@ -70,7 +69,7 @@ void Merger::updateInputs()
 void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
 {
     bool first = true;
-    std::vector<Input*> inputs = getNodeWorker()->getMessageInputs();
+    std::vector<Input*> inputs = modifier_->getMessageInputs();
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
         Input *in = inputs[i];
         if(in->hasMessage()) {
