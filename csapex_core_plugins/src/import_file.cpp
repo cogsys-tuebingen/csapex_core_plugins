@@ -9,7 +9,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/core/settings.h>
 #include <csapex/msg/message_factory.h>
-#include <csapex/model/node_worker.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportFile, csapex::Node)
 
@@ -43,9 +42,9 @@ void ImportFile::setupParameters()
 void ImportFile::changeMode()
 {
     if(readParameter<bool>("immediate")) {
-        getNodeWorker()->setTickFrequency(1000.0);
+        modifier_->setTickFrequency(-1.0);
     } else {
-        getNodeWorker()->setTickFrequency(NodeWorker::DEFAULT_FREQUENCY);
+        modifier_->setTickFrequency(30.0);
     }
 }
 

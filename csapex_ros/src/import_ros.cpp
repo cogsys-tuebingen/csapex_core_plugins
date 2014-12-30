@@ -128,7 +128,7 @@ void ImportRos::update()
 
 void ImportRos::updateRate()
 {
-    getNodeWorker()->setTickFrequency(readParameter<double>("rate"));
+    modifier_->setTickFrequency(readParameter<double>("rate"));
 }
 
 void ImportRos::updateSubscriber()

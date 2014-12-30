@@ -6,7 +6,6 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/model/node_worker.h>
 
 /// SYSTEM
 //#include <boost/assign.hpp>
@@ -32,8 +31,8 @@ void MakeScreenshot::setup()
 {
     in_ = modifier_->addSlot("Trigger", boost::bind(&MakeScreenshot::makeScreenshot, this));
 
-    getNodeWorker()->setIsSource(true);
-    getNodeWorker()->setIsSink(true);
+    modifier_->setIsSource(true);
+    modifier_->setIsSink(true);
 }
 
 void MakeScreenshot::process()

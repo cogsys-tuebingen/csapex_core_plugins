@@ -5,6 +5,10 @@ find_package(catkin REQUIRED COMPONENTS csapex)
 
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 
+qt5_add_resources(QT_RESOURCES
+    res/csapex_core_resources.qrc
+)
+
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -34,7 +38,7 @@ add_library(csapex_core_lib
     src/interactive_node.cpp
     src/collection_node.cpp
 
-    res/csapex_core_resources.qrc
+    ${QT_RESOURCES}
 )
 
 target_link_libraries(csapex_core_lib

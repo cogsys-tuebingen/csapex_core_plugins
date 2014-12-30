@@ -68,7 +68,7 @@ void FileImporter::setup()
 
     param::Parameter::Ptr immediate = getParameter("playback/immediate");
 
-    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeWorker::setTickFrequency, getNodeWorker(), boost::bind(&param::Parameter::as<double>, _1));
+    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeModifier::setTickFrequency, modifier_, boost::bind(&param::Parameter::as<double>, _1));
     boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
     addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
 
@@ -79,9 +79,9 @@ void FileImporter::setup()
 void FileImporter::changeMode()
 {
     if(readParameter<bool>("playback/immediate")) {
-        getNodeWorker()->setTickFrequency(-1.0);
+        modifier_->setTickFrequency(-1.0);
     } else {
-        getNodeWorker()->setTickFrequency(readParameter<double>("playback/frequency"));
+        modifier_->setTickFrequency(readParameter<double>("playback/frequency"));
     }
 }
 
@@ -243,7 +243,7 @@ void FileImporter::updateOutputs()
             }
 
             if(del) {
-                getNodeWorker()->removeOutput(output->getUUID());
+                modifier_->removeOutput(output->getUUID());
                 outputs_.erase(outputs_.begin() + i);
             } else {
                 output->disable();

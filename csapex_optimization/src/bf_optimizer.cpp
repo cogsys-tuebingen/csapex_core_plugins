@@ -7,7 +7,6 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/model/node_worker.h>
 #include <utils_param/range_parameter.h>
 
 /// SYSTEM
@@ -34,8 +33,8 @@ void BFOptimizer::setup()
     out_ = modifier_->addOutput<AnyMessage>("Trigger");
 
 
-    //    getNodeWorker()->setIsSource(true);
-    getNodeWorker()->setIsSink(true);
+    //    modifier_->setIsSource(true);
+    modifier_->setIsSink(true);
 }
 
 void BFOptimizer::tick()
@@ -126,8 +125,8 @@ void BFOptimizer::start()
 {
     ainfo << "starting optimization" << std::endl;
     init_ = false;
-    getNodeWorker()->setTickEnabled(true);
-    getNodeWorker()->setTickFrequency(100.);
+    modifier_->setTickEnabled(true);
+    modifier_->setTickFrequency(100.);
 }
 
 
@@ -135,5 +134,5 @@ void BFOptimizer::stop()
 {
     step(stepsNecessary());
     ainfo << "stopping optimization" << std::endl;
-    getNodeWorker()->setTickEnabled(false);
+    modifier_->setTickEnabled(false);
 }

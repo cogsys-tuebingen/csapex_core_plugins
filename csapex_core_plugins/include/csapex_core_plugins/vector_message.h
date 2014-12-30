@@ -8,6 +8,7 @@
 /// SYSTEM
 #include <string>
 #include <boost/static_assert.hpp>
+#include <vector>
 
 namespace csapex {
 namespace connection_types {
