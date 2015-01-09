@@ -47,6 +47,9 @@ QVariant EvaluateBinaryClassifierTableModel::data(const QModelIndex &index, int 
         return metrics_[index.row()].value;
     } else if(role == Qt::ToolTipRole) {
         return QString::fromStdString(metrics_[index.row()].description);
+    } else if(role == Qt::SizeHintRole) {
+        QSize s(78, 0);
+        return QVariant::fromValue(s);
     }
 
 
