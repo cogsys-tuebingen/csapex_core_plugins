@@ -1,5 +1,5 @@
-#ifndef DECISION_TREE_TRAINER_H
-#define DECISION_TREE_TRAINER_H
+#ifndef RANDOM_TREES_TRAINER_H
+#define RANDOM_TREES_TRAINER_H
 
 /// PROJECT
 #include <csapex_core_plugins/collection_node.h>
@@ -8,10 +8,10 @@
 namespace csapex {
 
 
-class DecisionTreeTrainer : public CollectionNode<connection_types::FeaturesMessage>
+class RandomTreesTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
-    DecisionTreeTrainer();
+    RandomTreesTrainer();
 
     void setup();
     void setupParameters();
@@ -26,10 +26,9 @@ private:
     int categories_;
     std::vector<param::ParameterPtr> priors_params_;
     std::vector<float> priors_;
-
 };
 
 
 }
 
-#endif // DECISION_TREE_TRAINER_H
+#endif // RANDOM_TREES_TRAINER_H

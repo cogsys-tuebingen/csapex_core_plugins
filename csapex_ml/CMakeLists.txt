@@ -26,6 +26,10 @@ target_link_libraries(csapex_ml
 add_library(csapex_ml_plugin
     src/decision_tree.cpp
     src/decision_tree_trainer.cpp
+
+    src/random_trees.cpp
+    src/random_trees_trainer.cpp
+
     src/svm_trainer.cpp
     src/svm.cpp
 )
