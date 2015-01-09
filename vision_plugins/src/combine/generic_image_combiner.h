@@ -51,7 +51,7 @@ struct Expression : AbstractExpression
     template <typename E>
     Expression(E const& e) : e_(make_from(e)) { } // cloning the expression
 
-    bool valid() const { return e_; }
+    bool valid() const { return (bool) e_; }
     cv::Mat evaluate(VariableMap& vm) const { apex_assert_hard(e_); return e_->evaluate(vm); }
 
     // special purpose overload to avoid unnecessary wrapping
