@@ -5,6 +5,14 @@
 <class type="csapex::DecisionTreeTrainer" base_class_type="csapex::Node">
   <description>Train a decision tree</description>
 </class>
+
+<class type="csapex::RandomTrees" base_class_type="csapex::Node">
+  <description>Apply a random forest to a feature vector</description>
+</class>
+<class type="csapex::RandomTreesTrainer" base_class_type="csapex::Node">
+  <description>Train a random forest</description>
+</class>
+
 <class type="csapex::SVM" base_class_type="csapex::Node">
   <description>SVM to classify data.</description>
   <tags>ML</tags>
