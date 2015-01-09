@@ -17,6 +17,8 @@ namespace csapex {
 class ConfusionMatrixTableModel : public QAbstractTableModel
 {
 public:
+    ConfusionMatrixTableModel();
+
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
