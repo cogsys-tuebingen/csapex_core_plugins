@@ -4,9 +4,6 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-/// SYSTEM
-#include <QPushButton>
-
 namespace csapex {
 
 namespace boolean {
@@ -18,7 +15,7 @@ public:
 
 public:
     virtual void setup();
-    void process();
+    virtual void process();
 
 private:
     void setSignal();

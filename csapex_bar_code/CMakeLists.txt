@@ -32,7 +32,7 @@ if(${ZBAR_FOUND})
     ## DEPENDS: system dependencies of this project that dependent projects also need
     catkin_package(
     #  INCLUDE_DIRS include
-      LIBRARIES csapex_vision_features
+    #  LIBRARIES csapex_vision_features
     #  CATKIN_DEPENDS csapex csapex_vision utils_vision
     #  DEPENDS system_lib
     )
@@ -53,7 +53,7 @@ if(${ZBAR_FOUND})
         src/bar_code_reader.cpp
     )
     target_link_libraries(csapex_bar_code_plugin
-        yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES} ${ZBAR_LIBRARIES})
+        yaml-cpp ${catkin_LIBRARIES} ${ZBAR_LIBRARIES})
 
     #
     # INSTALL

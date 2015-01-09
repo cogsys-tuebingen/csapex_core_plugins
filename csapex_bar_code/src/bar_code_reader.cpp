@@ -25,7 +25,11 @@ using namespace connection_types;
 BarCodeReader::BarCodeReader()
     : lost(false), forget(0)
 {
-    addParameter(param::ParameterFactory::declareBool("republish", false));
+    addParameter(param::ParameterFactory::declareBool("republish",
+                                                      param::ParameterDescription("publish the last detected code again, "
+                                                                                  "if no new code has been detected "),
+                                                      false));
+    std::cerr << 23 << std::endl;
 }
 
 void BarCodeReader::process()
