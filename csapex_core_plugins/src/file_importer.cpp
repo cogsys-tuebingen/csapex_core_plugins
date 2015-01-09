@@ -95,7 +95,7 @@ bool FileImporter::canTick()
     if(directory_import_) {
         return (readParameter<int>("directory/current") < (int) dir_files_.size()) || readParameter<bool>("directory/loop");
     } else {
-        return provider_;
+        return (bool) provider_;
     }
 }
 
@@ -121,13 +121,14 @@ void FileImporter::tick()
         int current = readParameter<int>("directory/current");
         ++current;
 
-        if(current >= (int) dir_files_.size()) {
+        int files = dir_files_.size();
+
+        if(current >= files) {
             end_->trigger();
             if(readParameter<bool>("directory/loop")) {
                 current = 0;
             }
-        }
-        if(current < (int) dir_files_.size()) {
+        } else if(current < files) {
             if(current == 0) {
                 begin_->trigger();
             }

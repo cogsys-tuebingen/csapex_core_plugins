@@ -81,7 +81,7 @@ void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 
     QHBoxLayout* sub = new QHBoxLayout;
 
-    QPushButton* fit = new QPushButton("fit size");
+    QPushButton* fit = new QPushButton("resize to content");
     sub->addWidget(fit, 0,  Qt::AlignLeft);
     QObject::connect(fit, SIGNAL(clicked()), this, SLOT(fitInView()));
 
