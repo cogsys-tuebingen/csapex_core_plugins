@@ -63,7 +63,7 @@ protected:
     };
 
 private:
-    static const double SCALE = 100.0;
+    constexpr static const double SCALE = 100.0;
 
 private:
     connection_types::LabeledScanMessage::Ptr result_;

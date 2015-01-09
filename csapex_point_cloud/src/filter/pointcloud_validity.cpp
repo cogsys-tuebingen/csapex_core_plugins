@@ -48,13 +48,13 @@ class PointTraits
         char dummy[2];
     };
 
-    template <typename Class> static Small testx(typeof(&Class::x)) ;
+    template <typename Class> static Small testx(__typeof__(&Class::x)) ;
     template <typename Class> static Big testx(...);
 
-    template <typename Class> static Small testy(typeof(&Class::y)) ;
+    template <typename Class> static Small testy(__typeof__(&Class::y)) ;
     template <typename Class> static Big testy(...);
 
-    template <typename Class> static Small testz(typeof(&Class::z)) ;
+    template <typename Class> static Small testz(__typeof__(&Class::z)) ;
     template <typename Class> static Big testz(...);
 
 public:
