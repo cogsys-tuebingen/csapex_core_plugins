@@ -22,7 +22,7 @@ Scharr::Scharr()  :
 
 void Scharr::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
     int depth = in->value.type() & 7;
     switch(type_) {

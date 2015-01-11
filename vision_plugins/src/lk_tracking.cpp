@@ -34,12 +34,12 @@ LKTracking::LKTracking()
 
 void LKTracking::process()
 {
-    CvMatMessage::Ptr img = in_image_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = in_image_->getMessage<CvMatMessage>();
     if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("input image must be 1-channel");
     }
 
-    KeypointMessage::Ptr keypoints = in_keypoints_->getMessage<KeypointMessage>();
+    KeypointMessage::ConstPtr keypoints = in_keypoints_->getMessage<KeypointMessage>();
 
     // TODO: parameterize
     cv::TermCriteria termcrit(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 20, 0.03);

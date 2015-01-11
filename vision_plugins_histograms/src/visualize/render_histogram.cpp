@@ -27,9 +27,8 @@ RenderHistogram::RenderHistogram() :
 
 void RenderHistogram::process()
 {
-
-    HistogramMessage::Ptr in    = input_->getMessage<HistogramMessage>();
-    HistogramMaximaMessage::Ptr maxima;
+    HistogramMessage::ConstPtr in = input_->getMessage<HistogramMessage>();
+    HistogramMaximaMessage::ConstPtr maxima;
     if(maxima_->hasMessage()) {
         maxima = maxima_->getMessage<HistogramMaximaMessage>();
         if(maxima->value.maxima.size() != in->value.histograms.size()) {
@@ -67,7 +66,7 @@ void RenderHistogram::process()
             }
         }
     } else {
-        std::vector<cv::Mat> &histograms = in->value.histograms;
+        const std::vector<cv::Mat> &histograms = in->value.histograms;
         for(unsigned int i = 0 ; i < histograms.size() ; ++i) {
             int type = histograms.at(i).type() & 7;
             switch(type) {

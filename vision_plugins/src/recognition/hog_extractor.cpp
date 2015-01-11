@@ -71,13 +71,13 @@ void HOGExtractor::setup()
 
 void HOGExtractor::process()
 {
-    CvMatMessage::Ptr  in = in_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr  in = in_img_->getMessage<CvMatMessage>();
     boost::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(!in->hasChannels(1, CV_8U))
         throw std::runtime_error("Image must be one channel grayscale!");
 
-    cv::Mat &value = in->value;
+    const cv::Mat &value = in->value;
 
     double gauss            = readParameter<double>("gaussian sigma");
     bool   gamma            = readParameter<bool>("gamma correction");

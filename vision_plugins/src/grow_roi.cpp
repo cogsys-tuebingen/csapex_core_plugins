@@ -30,7 +30,7 @@ GrowROI::GrowROI()
 
 void GrowROI::process()
 {
-    RoiMessage::Ptr roi = input_->getMessage<RoiMessage>();
+    RoiMessage::ConstPtr roi = input_->getMessage<RoiMessage>();
     RoiMessage::Ptr out(new RoiMessage);
 
     out->value = roi->value;

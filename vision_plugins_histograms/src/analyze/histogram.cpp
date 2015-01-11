@@ -31,12 +31,12 @@ Histogram::Histogram() :
 
 void Histogram::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<CvMatMessage>();
     HistogramMessage::Ptr out(new HistogramMessage);
 
     cv::Mat mask;
     if(mask_->hasMessage()) {
-        CvMatMessage::Ptr mask_ptr = mask_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr mask_ptr = mask_->getMessage<CvMatMessage>();
         mask = mask_ptr->value;
     }
 

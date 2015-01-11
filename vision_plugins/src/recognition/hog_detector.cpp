@@ -72,7 +72,7 @@ void HOGDetector::setup()
 
 void HOGDetector::process()
 {
-    CvMatMessage::Ptr  in = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr  in = in_->getMessage<CvMatMessage>();
     boost::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
 
     if(!in->hasChannels(1, CV_8U))

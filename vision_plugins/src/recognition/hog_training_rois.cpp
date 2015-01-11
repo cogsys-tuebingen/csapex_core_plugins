@@ -42,15 +42,15 @@ void HOGTrainingRois::setup()
 
 void HOGTrainingRois::process()
 {
-    RoiMessage::Ptr in_roi = in_roi_->getMessage<RoiMessage>();
-    Roi &roi = in_roi->value;
+    RoiMessage::ConstPtr in_roi = in_roi_->getMessage<RoiMessage>();
+    Roi roi = in_roi->value;
     boost::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage>);
 
     int limit_x = std::numeric_limits<int>::max();
     int limit_y = std::numeric_limits<int>::max();
 
     if(in_image_->hasMessage()) {
-        CvMatMessage::Ptr in_image = in_image_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr in_image = in_image_->getMessage<CvMatMessage>();
         limit_x = in_image->value.cols;
         limit_y = in_image->value.rows;
     }
@@ -81,7 +81,7 @@ void HOGTrainingRois::process()
         }
     }
 
-    msg.value = roi;
+    msg.value = std::move(roi);
     out->push_back(msg);
 
     out_->publish<GenericVectorMessage, RoiMessage>(out);

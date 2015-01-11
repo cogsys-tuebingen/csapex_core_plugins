@@ -32,7 +32,7 @@ void Debayer::setupParameters()
     addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
 }
 
-void Debayer::filter(cv::Mat &img, cv::Mat &mask)
+void Debayer::filter(cv::Mat &img, cv::Mat &/*mask*/)
 {
     int mode = readParameter<int>("method");
 

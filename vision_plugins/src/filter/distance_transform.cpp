@@ -58,7 +58,7 @@ void DistanceTransform::setup()
 
 void DistanceTransform::process()
 {
-    CvMatMessage::Ptr img = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = in_->getMessage<CvMatMessage>();
 
     if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");

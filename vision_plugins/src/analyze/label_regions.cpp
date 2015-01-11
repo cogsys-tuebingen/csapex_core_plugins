@@ -23,7 +23,7 @@ LabelRegions::LabelRegions()
 void LabelRegions::process()
 {
 #warning "FIX ENCODING"
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, in->stamp));
 
     if(in->value.type() != CV_8UC1) {

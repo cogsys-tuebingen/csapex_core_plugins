@@ -59,7 +59,7 @@ void ColorAdjustment::setParameterState(Memento::Ptr memento)
 
 void ColorAdjustment::process()
 {
-    CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = input_->getMessage<CvMatMessage>();
 
     bool encoding_changed = !img->getEncoding().matches(current_encoding);
     current_encoding = img->getEncoding();
@@ -96,10 +96,11 @@ void ColorAdjustment::process()
 
     }
 
-    cv::merge(channels, img->value);
-    addLightness(img->value);
+    CvMatMessage::Ptr result(new CvMatMessage(img->getEncoding(), img->stamp));
+    cv::merge(channels, result->value);
+    addLightness(result->value);
 
-    output_->publish(img);
+    output_->publish(result);
 }
 
 void ColorAdjustment::recompute()

@@ -70,8 +70,8 @@ MatrixStitcher::MatrixStitcher()
 
 void MatrixStitcher::process()
 {
-    CvMatMessage::Ptr mat_1  = matrix_1_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr mat_2  = matrix_2_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr mat_1  = matrix_1_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr mat_2  = matrix_2_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr out(new CvMatMessage(mat_1->getEncoding(), mat_1->stamp));
 
     if(!mat_1->getEncoding().matches(mat_2->getEncoding()))

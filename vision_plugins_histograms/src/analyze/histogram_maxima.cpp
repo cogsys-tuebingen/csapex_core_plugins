@@ -23,7 +23,7 @@ HistogramMaxima::HistogramMaxima()
 
 void HistogramMaxima::process()
 {
-    HistogramMessage::Ptr       input  = histograms_->getMessage<HistogramMessage>();
+    HistogramMessage::ConstPtr  input  = histograms_->getMessage<HistogramMessage>();
     HistogramMaximaMessage::Ptr output(new HistogramMaximaMessage);
 
     unsigned int count = input->value.histograms.size();
@@ -32,7 +32,7 @@ void HistogramMaxima::process()
     unsigned int k = readParameter<int>("k");
     float thresh   = readParameter<int>("thresh");
     for(unsigned int i = 0 ; i < count ; ++i) {
-        cv::Mat &src = input->value.histograms.at(i);
+        const cv::Mat &src = input->value.histograms.at(i);
         int type = src.type() & 7;
         switch(type) {
         case CV_32F:

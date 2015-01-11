@@ -112,7 +112,7 @@ LocalPatterns::LocalPatterns()
 
 void LocalPatterns::process()
 {
-    CvMatMessage::Ptr  in = in_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr  in = in_img_->getMessage<CvMatMessage>();
     boost::shared_ptr< std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(in->value.channels() > 1)
@@ -122,7 +122,7 @@ void LocalPatterns::process()
     Type   t = (Type) readParameter<int>("pattern");
 
 
-    cv::Mat &value = in->value;
+    const cv::Mat &value = in->value;
 
     if(!in_rois_->hasMessage()) {
         FeaturesMessage feature_msg;

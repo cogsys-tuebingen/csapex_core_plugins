@@ -26,7 +26,7 @@ MergeROIs::MergeROIs()
 
 void MergeROIs::process()
 {
-    VectorMessage::Ptr rois = input_->getMessage<VectorMessage>();
+    VectorMessage::ConstPtr rois = input_->getMessage<VectorMessage>();
 
     RectangleCluster cluster;
     for(std::vector<ConnectionType::Ptr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {

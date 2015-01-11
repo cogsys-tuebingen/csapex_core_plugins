@@ -77,7 +77,7 @@ void ColorConvert::setupParameters()
 
 void ColorConvert::process()
 {
-    CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
 
     csPair cspair;
     cspair.first  = static_cast<ColorSpace> (readParameter<int>("input"));
@@ -102,9 +102,9 @@ void ColorConvert::process()
         } else {
             throw std::runtime_error("Conversion not supported!");
         }
-    } else {
-        out = img;
-    }
+        output_img_->publish(out);
 
-    output_img_->publish(out);
+    } else {
+        output_img_->cloneAndPublish(img);
+    }
 }

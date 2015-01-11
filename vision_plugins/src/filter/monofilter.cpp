@@ -22,7 +22,7 @@ MonoFilter::MonoFilter()
 
 void MonoFilter::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
 
     if(!in->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");

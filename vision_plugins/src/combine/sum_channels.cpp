@@ -21,7 +21,7 @@ SumChannels::SumChannels()
 
 void SumChannels::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
 
     out->value = cv::Mat(in->value.rows, in->value.cols, CV_32F, 0.f);

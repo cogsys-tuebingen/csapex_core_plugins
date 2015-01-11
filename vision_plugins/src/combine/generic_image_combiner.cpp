@@ -145,7 +145,7 @@ void GenericImageCombiner::process()
     }
 
 
-    CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img1 = i1_->getMessage<CvMatMessage>();
 
     cv::Mat f1;
     img1->value.copyTo(f1);
@@ -166,7 +166,7 @@ void GenericImageCombiner::process()
     // handle optional second image
     if(i2_->hasMessage()) {
         cv::Mat f2;
-        CvMatMessage::Ptr img2 = i2_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr img2 = i2_->getMessage<CvMatMessage>();
         img2->value.copyTo(f2);
 
         if(f1.channels() != f2.channels()) {

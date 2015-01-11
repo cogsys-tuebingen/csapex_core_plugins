@@ -77,7 +77,7 @@ GLCM::GLCM()
 
 void GLCM::process()
 {
-    CvMatMessage::Ptr in = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = in_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr out(new CvMatMessage(enc::mono, in->stamp));
 
     if(in->value.type() != CV_8UC1)

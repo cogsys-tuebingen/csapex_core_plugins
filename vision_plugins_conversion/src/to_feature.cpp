@@ -52,7 +52,7 @@ inline void doProcessSingle(const T   &src,
 }
 
 template<>
-inline void doProcessSingle(const typename HistogramMessage::Ptr &src,
+inline void doProcessSingle(const typename HistogramMessage::ConstPtr &src,
                             boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
@@ -72,7 +72,7 @@ inline void doProcessSingle(const typename HistogramMessage::Ptr &src,
 }
 
 template<>
-inline void doProcessSingle(const typename CvMatMessage::Ptr &src,
+inline void doProcessSingle(const typename CvMatMessage::ConstPtr &src,
                             boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
@@ -88,7 +88,7 @@ inline void doProcessSingle(const typename CvMatMessage::Ptr &src,
 }
 
 template<>
-inline void doProcessSingle(const typename DescriptorMessage::Ptr &src,
+inline void doProcessSingle(const typename DescriptorMessage::ConstPtr &src,
                             boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
@@ -100,27 +100,27 @@ inline void doProcessSingle(const typename DescriptorMessage::Ptr &src,
     }
 }
 
-inline void processSingle(const ConnectionType::Ptr                         &src,
+inline void processSingle(const ConnectionType::ConstPtr                    &src,
                           boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
                           const int                                         label)
 {
-    CvMatMessage::Ptr      cv =
-            boost::dynamic_pointer_cast<CvMatMessage>(src);
+    CvMatMessage::ConstPtr      cv =
+            boost::dynamic_pointer_cast<CvMatMessage const>(src);
     if(cv)
-        doProcessSingle<CvMatMessage::Ptr>(cv, dst, label);
+        doProcessSingle(cv, dst, label);
 
-    DescriptorMessage::Ptr d  =
-            boost::dynamic_pointer_cast<DescriptorMessage>(src);
+    DescriptorMessage::ConstPtr d  =
+            boost::dynamic_pointer_cast<DescriptorMessage const>(src);
     if(d)
-        doProcessSingle<DescriptorMessage::Ptr>(d, dst, label);
+        doProcessSingle(d, dst, label);
 
-    HistogramMessage::Ptr  h  =
-            boost::dynamic_pointer_cast<HistogramMessage>(src);
+    HistogramMessage::ConstPtr  h  =
+            boost::dynamic_pointer_cast<HistogramMessage const>(src);
     if(h)
-        doProcessSingle<HistogramMessage::Ptr>(h, dst, label);
+        doProcessSingle(h, dst, label);
 }
 
-inline void processVector(const connection_types::VectorMessage::Ptr         &src,
+inline void processVector(const connection_types::VectorMessage::ConstPtr    &src,
                           boost::shared_ptr< std::vector<FeaturesMessage> >  &dst,
                           const int label)
 {
@@ -133,14 +133,14 @@ inline void processVector(const connection_types::VectorMessage::Ptr         &sr
 
 void ToFeature::process()
 {
-    ConnectionType::Ptr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
     boost::shared_ptr< std::vector<FeaturesMessage> > out (new std::vector<FeaturesMessage>);
 
 
     int class_id = readParameter<int>("class id");
 
-    connection_types::VectorMessage::Ptr vector =
-            boost::dynamic_pointer_cast<connection_types::VectorMessage>(msg);
+    connection_types::VectorMessage::ConstPtr vector =
+            boost::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
     if(vector) {
         processVector(vector, out, class_id);
     } else {

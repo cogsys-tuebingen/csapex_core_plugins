@@ -23,8 +23,8 @@ FeatureToHistogram::FeatureToHistogram()
 
 void FeatureToHistogram::process()
 {
-    FeaturesMessage::Ptr  in;
-    VectorMessage::Ptr    in_vector;
+    FeaturesMessage::ConstPtr  in;
+    VectorMessage::ConstPtr    in_vector;
     HistogramMessage::Ptr hist(new HistogramMessage);
 
     if(in_->hasMessage()) {
@@ -35,8 +35,7 @@ void FeatureToHistogram::process()
     if(in_vector_->hasMessage()) {
         in_vector = in_vector_->getMessage<VectorMessage>();
 
-        for(std::vector<ConnectionType::Ptr>::iterator
-            it = in_vector->value.begin() ;
+        for(auto it = in_vector->value.begin() ;
             it != in_vector->value.end() ;
             ++it) {
 

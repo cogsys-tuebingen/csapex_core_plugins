@@ -49,7 +49,7 @@ void ImageTextLabel::setupParameters()
 
 void ImageTextLabel::process()
 {
-    CvMatMessage::Ptr input  = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr input  = input_->getMessage<CvMatMessage>();
     if(input->value.type() != CV_8UC3 && input->value.type() != CV_8UC1)
         throw std::runtime_error("Must be mono or color image!");
 

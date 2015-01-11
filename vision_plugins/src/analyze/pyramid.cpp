@@ -24,7 +24,7 @@ Pyramid::Pyramid() :
 
 void Pyramid::process()
 {
-    CvMatMessage::Ptr       in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr  in = input_->getMessage<connection_types::CvMatMessage>();
     CvPyramidMessage::Ptr   out(new CvPyramidMessage(in->getEncoding()));
 
     cv::buildPyramid(in->value, out->value, out_levels_);

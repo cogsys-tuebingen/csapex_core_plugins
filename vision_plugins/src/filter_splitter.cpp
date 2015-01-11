@@ -44,7 +44,7 @@ void Splitter::setupParameters()
 
 void Splitter::process()
 {
-    CvMatMessage::Ptr m = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr m = input_->getMessage<CvMatMessage>();
 
     int esize = m->getEncoding().channelCount();
     if(esize != m->value.channels()) {

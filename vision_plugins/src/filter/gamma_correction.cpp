@@ -51,7 +51,7 @@ void GammaCorrection::setup()
 
 void GammaCorrection::process()
 {
-    CvMatMessage::Ptr input = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr input = in_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr output(new CvMatMessage(input->getEncoding(), input->stamp));
 
     const cv::Mat& in = input->value;

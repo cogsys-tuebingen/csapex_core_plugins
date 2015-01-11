@@ -73,7 +73,7 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
         Input *in = inputs[i];
         if(in->hasMessage()) {
-            CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
+            CvMatMessage::ConstPtr msg = in->getMessage<CvMatMessage>();
             if(first) {
                 stamp_ = msg->stamp;
                 first = false;

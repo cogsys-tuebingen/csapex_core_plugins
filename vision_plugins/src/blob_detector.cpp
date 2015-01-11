@@ -84,13 +84,13 @@ void BlobDetector::process()
 {
     bool roi_info = readParameter<bool>("RoiInformation");
 
-    CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = input_->getMessage<CvMatMessage>();
 
     if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
     }
 
-    cv::Mat& gray = img->value;
+    const cv::Mat& gray = img->value;
 
     CvMatMessage::Ptr debug(new CvMatMessage(enc::bgr, img->stamp));
     cv::cvtColor(gray, debug->value, CV_GRAY2BGR);

@@ -23,8 +23,8 @@ ThresholdNoiseFilter::ThresholdNoiseFilter()
 
 void ThresholdNoiseFilter::process()
 {
-    CvMatMessage::Ptr input     = input_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr threshold = threshold_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr input = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr threshold = threshold_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr output(new CvMatMessage(input->getEncoding(), input->stamp));
 
     if(!threshold->hasChannels(1, CV_8U)) {

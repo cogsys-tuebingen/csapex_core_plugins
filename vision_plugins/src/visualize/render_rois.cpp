@@ -33,7 +33,7 @@ void RenderROIs::setupParameters()
 
 void RenderROIs::process()
 {
-    CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
 
     CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp));
 
@@ -55,7 +55,7 @@ void RenderROIs::process()
 
     bool ignore_uc = readParameter<bool>("ignore unclassified");
     if(input_rois_->hasMessage()) {
-        VectorMessage::Ptr rois = input_rois_->getMessage<VectorMessage>();
+        VectorMessage::ConstPtr rois = input_rois_->getMessage<VectorMessage>();
         BOOST_FOREACH(const ConnectionType::Ptr& e, rois->value) {
             RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(e);
 

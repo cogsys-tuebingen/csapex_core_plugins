@@ -22,7 +22,7 @@ Equalize::Equalize()
 
 void Equalize::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
     out->value    = in->value.clone();
     utils_vision::histogram::full_channel_equalize(out->value, out->value);
