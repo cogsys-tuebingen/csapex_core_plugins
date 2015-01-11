@@ -56,8 +56,8 @@ void ExportFile::process()
         return;
     }
 
-    ConnectionType::Ptr msg = connector_->getMessage<ConnectionType>();
-    connection_types::VectorMessage::Ptr vector = boost::dynamic_pointer_cast<connection_types::VectorMessage>(msg);
+    ConnectionType::ConstPtr msg = connector_->getMessage<ConnectionType>();
+    connection_types::VectorMessage::ConstPtr vector = boost::dynamic_pointer_cast<const connection_types::VectorMessage>(msg);
     if(vector) {
         exportVector(vector);
     } else {
@@ -65,14 +65,14 @@ void ExportFile::process()
     }
 }
 
-void ExportFile::exportVector(const connection_types::VectorMessage::Ptr& vector)
+void ExportFile::exportVector(const connection_types::VectorMessage::ConstPtr& vector)
 {
     for(std::size_t i = 0, total = vector->value.size(); i < total; ++i) {
         exportSingle(vector->value[i]);
     }
 }
 
-void ExportFile::exportSingle(const ConnectionType::Ptr& msg)
+void ExportFile::exportSingle(const ConnectionType::ConstPtr& msg)
 {
     QDir dir(path_.c_str());
     if(!dir.exists()) {

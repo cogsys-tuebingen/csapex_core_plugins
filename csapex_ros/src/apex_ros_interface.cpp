@@ -104,7 +104,7 @@ struct ConvertIntegral
         out->value = ros_msg->data;
         return out;
     }
-    static typename RosType::Ptr apex2ros(const typename connection_types::GenericValueMessage<ApexType>::Ptr& apex_msg) {
+    static typename RosType::Ptr apex2ros(const typename connection_types::GenericValueMessage<ApexType>::ConstPtr& apex_msg) {
         typename RosType::Ptr out(new RosType);
         out->data = apex_msg->value;
         return out;

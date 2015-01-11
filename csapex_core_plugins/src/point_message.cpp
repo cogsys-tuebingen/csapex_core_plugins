@@ -13,7 +13,7 @@ PointMessage::PointMessage(Message::Stamp stamp)
     : Message(type<PointMessage>::name(), "/", stamp)
 {}
 
-ConnectionType::Ptr PointMessage::clone()
+ConnectionType::Ptr PointMessage::clone() const
 {
     Ptr new_msg(new PointMessage(stamp));
     new_msg->x = x;
@@ -21,7 +21,7 @@ ConnectionType::Ptr PointMessage::clone()
     return new_msg;
 }
 
-ConnectionType::Ptr PointMessage::toType()
+ConnectionType::Ptr PointMessage::toType() const
 {
     return makeEmptyMessage<PointMessage>();
 }

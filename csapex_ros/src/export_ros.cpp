@@ -48,9 +48,9 @@ void ExportRos::processROS()
         return;
     }
 
-    ConnectionType::Ptr msg = connector_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = connector_->getMessage<ConnectionType>();
 
-    connection_types::VectorMessage::Ptr vector = boost::dynamic_pointer_cast<connection_types::VectorMessage>(msg);
+    connection_types::VectorMessage::ConstPtr vector = boost::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
 
     ConnectionType::Ptr type;
     if(vector) {
@@ -68,7 +68,7 @@ void ExportRos::processROS()
     }
 
     if(vector) {
-        for(std::vector<ConnectionType::Ptr>::iterator it = vector->value.begin();
+        for(auto it = vector->value.begin();
             it != vector->value.end();
             ++it) {
             RosMessageConversion::instance().publish(pub, *it);

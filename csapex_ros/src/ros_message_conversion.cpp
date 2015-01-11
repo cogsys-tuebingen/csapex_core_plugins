@@ -24,7 +24,7 @@ ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &to
     return converters_.at(topic.datatype)->subscribe(topic, queue, output);
 }
 
-ros::Publisher RosMessageConversion::advertise(ConnectionType::Ptr type, const std::string &topic, int queue, bool latch)
+ros::Publisher RosMessageConversion::advertise(ConnectionType::ConstPtr type, const std::string &topic, int queue, bool latch)
 {
     std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(type->rawName());
     if(it == converters_inv_.end()) {
@@ -33,7 +33,7 @@ ros::Publisher RosMessageConversion::advertise(ConnectionType::Ptr type, const s
     return it->second->advertise(topic, queue, latch);
 }
 
-void RosMessageConversion::publish(ros::Publisher &pub, ConnectionType::Ptr msg)
+void RosMessageConversion::publish(ros::Publisher &pub, ConnectionType::ConstPtr msg)
 {
     std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(msg->rawName());
     if(it == converters_inv_.end()) {
@@ -52,7 +52,7 @@ connection_types::Message::Ptr RosMessageConversion::instantiate(const rosbag::M
 //    return ros_types_;
 //}
 
-void Convertor::publish_apex(Callback callback, ConnectionType::Ptr msg)
+void Convertor::publish_apex(Callback callback, ConnectionType::ConstPtr msg)
 {
     callback(msg);
 }

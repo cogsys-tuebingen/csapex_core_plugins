@@ -25,7 +25,7 @@ public:
     virtual void tickROS();
     void abort();
 
-    void callback(ConnectionTypePtr message);
+    void callback(ConnectionTypeConstPtr message);
 
 protected:
     void refresh();
@@ -44,7 +44,7 @@ protected:
 private:
     Input* input_time_;
     Output* connector_;
-    std::deque<connection_types::Message::Ptr> msgs_;
+    std::deque<connection_types::Message::ConstPtr> msgs_;
 
     ros::Subscriber current_subscriber;
 

@@ -105,7 +105,7 @@ struct Sensor2Cloud
 
         return out;
     }
-    static sensor_msgs::PointCloud2::Ptr apex2ros(const typename connection_types::PointCloudMessage::Ptr& apex_msg) {
+    static sensor_msgs::PointCloud2::Ptr apex2ros(const typename connection_types::PointCloudMessage::ConstPtr& apex_msg) {
         sensor_msgs::PointCloud2::Ptr out(new sensor_msgs::PointCloud2);
         boost::apply_visitor (Export(out), apex_msg->value);
         out->header.frame_id = apex_msg->frame_id;

@@ -81,12 +81,12 @@ void ExtractKeypoints::process()
 
     setError(false);
 
-    CvMatMessage::Ptr img_msg = in_img->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img_msg = in_img->getMessage<CvMatMessage>();
 
     KeypointMessage::Ptr key_msg(new KeypointMessage);
 
     if(in_mask->hasMessage()) {
-        CvMatMessage::Ptr mask_msg = in_mask->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr mask_msg = in_mask->getMessage<CvMatMessage>();
 
         extractor->extractKeypoints(img_msg->value, mask_msg->value, key_msg->value);
 

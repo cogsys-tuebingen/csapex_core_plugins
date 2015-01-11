@@ -28,7 +28,7 @@ void OutputDisplay::setup()
 
 void OutputDisplay::process()
 {
-    ConnectionType::Ptr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
 
     MessageRenderer::Ptr renderer = MessageRendererManager::instance().createMessageRenderer(msg);
 

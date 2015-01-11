@@ -16,7 +16,7 @@ struct TransformMessage : public MessageTemplate<tf::Transform, TransformMessage
     TransformMessage();
     TransformMessage(const std::string &from_frame, const std::string &to_frame);
 
-    virtual ConnectionType::Ptr clone();
+    virtual ConnectionType::Ptr clone() const override;
 
 public:
     std::string child_frame;

@@ -55,7 +55,7 @@ void SacFit::process()
     // Get indices from in_indices_
 
 
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
     boost::apply_visitor (PointCloudMessage::Dispatch<SacFit>(this, msg), msg->value);
 
 
@@ -75,7 +75,7 @@ void SacFit::setup()
 
 
 template <class PointT>
-void SacFit::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     std::stringstream stringstream;
     int inliers_size = 0;
@@ -187,7 +187,11 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
 
 
 template <class PointT>
-int SacFit::findModels(typename pcl::PointCloud<PointT>::Ptr  cloud_in, typename pcl::PointCloud<PointT>::Ptr cloud_extracted, std::vector<ModelMessage> &models, typename pcl::PointCloud<PointT>::Ptr cloud_resisdue, bool get_resisdue)
+int SacFit::findModels(typename pcl::PointCloud<PointT>::ConstPtr  cloud_in,
+                       typename pcl::PointCloud<PointT>::Ptr cloud_extracted,
+                       std::vector<ModelMessage> &models,
+                       typename pcl::PointCloud<PointT>::Ptr cloud_resisdue,
+                       bool get_resisdue)
 {
     // Create functional objects
     pcl::SACSegmentationFromNormals<PointT, pcl::Normal> segmenter;
@@ -258,7 +262,11 @@ int SacFit::findModels(typename pcl::PointCloud<PointT>::Ptr  cloud_in, typename
 
 
 template <class PointT>
-int SacFit::findSingleModel(typename pcl::PointCloud<PointT>::Ptr  cloud_in, typename pcl::PointCloud<PointT>::Ptr cloud_extracted, pcl::ModelCoefficients::Ptr coefficients_shape, typename pcl::PointCloud<PointT>::Ptr cloud_resisdue, bool get_resisdue)
+int SacFit::findSingleModel(typename pcl::PointCloud<PointT>::ConstPtr cloud_in,
+                            typename pcl::PointCloud<PointT>::Ptr cloud_extracted,
+                            pcl::ModelCoefficients::Ptr coefficients_shape,
+                            typename pcl::PointCloud<PointT>::Ptr cloud_resisdue,
+                            bool get_resisdue)
 {
     //pcl::ExtractIndices<pcl::Normal> extract_normals_;
     pcl::ExtractIndices<PointT> extract_points;
@@ -296,7 +304,8 @@ int SacFit::findSingleModel(typename pcl::PointCloud<PointT>::Ptr  cloud_in, typ
 
 
 template <class PointT>
-void SacFit::estimateNormals(typename pcl::PointCloud<PointT>::Ptr cloud, pcl::PointCloud<pcl::Normal>::Ptr normals)
+void SacFit::estimateNormals(typename pcl::PointCloud<PointT>::ConstPtr cloud,
+                             pcl::PointCloud<pcl::Normal>::Ptr normals)
 {
     typename pcl::NormalEstimation<PointT, pcl::Normal> normal_estimation;
     typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);

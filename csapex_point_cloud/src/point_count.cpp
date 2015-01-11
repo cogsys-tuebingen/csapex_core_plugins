@@ -25,13 +25,13 @@ void PointCount::setup()
 
 void PointCount::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg = input_->getMessage<PointCloudMessage>();
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCount>(this, msg), msg->value);
 }
 
 template <class PointT>
-void PointCount::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void PointCount::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     int c = cloud->points.size();
     display_request(c);

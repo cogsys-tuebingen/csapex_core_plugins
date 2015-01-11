@@ -44,8 +44,8 @@ void ImageCollage::setup()
 
 void ImageCollage::process()
 {
-    CvMatMessage::Ptr primary = in_main_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr secondary = in_secondary_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr primary = in_main_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr secondary = in_secondary_->getMessage<CvMatMessage>();
 
     CvMatMessage::Ptr output(new CvMatMessage(primary->getEncoding(), primary->stamp));
 

@@ -46,7 +46,7 @@ struct PointCloudMessage : public Message
     template <typename T>
     struct Dispatch : public boost::static_visitor<void>
     {
-        Dispatch(T* pc, PointCloudMessage::Ptr msg)
+        Dispatch(T* pc, PointCloudMessage::ConstPtr msg)
             : pc_(pc), msg_(msg)
         {}
 
@@ -60,10 +60,11 @@ struct PointCloudMessage : public Message
 
     private:
         T* pc_;
-        PointCloudMessage::Ptr msg_;
+        PointCloudMessage::ConstPtr msg_;
     };
 
     typedef boost::shared_ptr<PointCloudMessage> Ptr;
+    typedef boost::shared_ptr<PointCloudMessage const> ConstPtr;
 
     typedef typename boost::make_variant_over<
     typename boost::mpl::transform<
@@ -73,13 +74,13 @@ struct PointCloudMessage : public Message
 
     PointCloudMessage(const std::string& frame_id, Stamp stamp);
 
-    virtual ConnectionType::Ptr clone();
+    virtual ConnectionType::Ptr clone() const override;
 
-    virtual ConnectionType::Ptr toType();
+    virtual ConnectionType::Ptr toType() const override;
 
-    virtual std::string name() const;
+    virtual std::string name() const override;
 
-    bool acceptsConnectionFrom(const ConnectionType* other_side) const;
+    bool acceptsConnectionFrom(const ConnectionType* other_side) const override;
 
     variant value;
 

@@ -51,7 +51,7 @@ void TransformFilter::process()
     std::stringstream stringstream;
 
     // Get data from input
-    TransformMessage::Ptr trafo_msg = input_transform_->getMessage<TransformMessage>();
+    TransformMessage::ConstPtr trafo_msg = input_transform_->getMessage<TransformMessage>();
     tf::Transform tf_raw = trafo_msg->value;
     tf::Transform tf_filtered;
 

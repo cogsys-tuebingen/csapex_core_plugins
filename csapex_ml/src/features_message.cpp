@@ -14,14 +14,16 @@ FeaturesMessage::FeaturesMessage(Message::Stamp stamp)
     : Message("FeatureMessage", "/", stamp), classification(0)
 {}
 
-ConnectionType::Ptr FeaturesMessage::clone() {
+ConnectionType::Ptr FeaturesMessage::clone() const
+{
     Ptr new_msg(new FeaturesMessage);
     new_msg->value = value;
     new_msg->classification = classification;
     return new_msg;
 }
 
-ConnectionType::Ptr FeaturesMessage::toType() {
+ConnectionType::Ptr FeaturesMessage::toType() const
+{
     Ptr new_msg(new FeaturesMessage);
     return new_msg;
 }

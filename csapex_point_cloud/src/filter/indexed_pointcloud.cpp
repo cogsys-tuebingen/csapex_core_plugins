@@ -26,7 +26,7 @@ void IndexedPointCloud::setup()
 
 void IndexedPointCloud::process()
 {
-    CvMatMessage::Ptr input(input_->getMessage<CvMatMessage>());
+    CvMatMessage::ConstPtr input(input_->getMessage<CvMatMessage>());
     if(input->value.type() != CV_32FC1) {
         throw std::runtime_error("Unsupported depth image type!");
     }

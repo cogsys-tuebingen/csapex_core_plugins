@@ -41,7 +41,7 @@ void Delay::setup()
 
 void Delay::process()
 {
-    ConnectionType::Ptr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
 
     long wait_time = readParameter<double>("delay") * 1000;
     long t = wait_time;
@@ -54,6 +54,6 @@ void Delay::process()
     progress_->setProgress(wait_time, wait_time);
 
     output_->setType(input_->getType());
-    output_->publish(msg);
+    output_->cloneAndPublish(msg);
 }
 

@@ -41,7 +41,7 @@ void HoughCircle::setup()
 
 void HoughCircle::process()
 {
-    CvMatMessage::Ptr msg = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr msg = input_->getMessage<CvMatMessage>();
 
     int method = readParameter<int>("method");
     double dp = readParameter<double>("dp");

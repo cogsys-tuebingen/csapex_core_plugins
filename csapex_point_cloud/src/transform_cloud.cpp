@@ -32,15 +32,15 @@ void TransformCloud::setup()
 
 void TransformCloud::process()
 {
-    PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg = input_cloud_->getMessage<PointCloudMessage>();
 
     boost::apply_visitor (PointCloudMessage::Dispatch<TransformCloud>(this, msg), msg->value);
 }
 
 template <class PointT>
-void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    TransformMessage::Ptr transform = input_transform_->getMessage<TransformMessage>();
+    TransformMessage::ConstPtr transform = input_transform_->getMessage<TransformMessage>();
     const tf::Transform& t = transform->value;
 
     typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);

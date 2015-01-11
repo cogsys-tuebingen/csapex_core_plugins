@@ -14,11 +14,12 @@ namespace connection_types {
 struct FeaturesMessage : public Message
 {
     typedef boost::shared_ptr<FeaturesMessage> Ptr;
+    typedef boost::shared_ptr<FeaturesMessage const> ConstPtr;
 
     FeaturesMessage(Message::Stamp stamp = 0);
 
-    virtual ConnectionType::Ptr clone();
-    virtual ConnectionType::Ptr toType();
+    virtual ConnectionType::Ptr clone() const override;
+    virtual ConnectionType::Ptr toType() const override;
 
     std::vector<float> value;
     int classification;

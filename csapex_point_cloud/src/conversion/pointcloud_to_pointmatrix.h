@@ -15,7 +15,7 @@ public:
     virtual void setup();
 
     template <class PointT>
-    void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
+    void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 protected:
     Input*  input_;

@@ -60,7 +60,7 @@ struct Image2CvMat
         }
         return out;
     }
-    static sensor_msgs::Image::Ptr apex2ros(const connection_types::CvMatMessage::Ptr& apex_msg) {
+    static sensor_msgs::Image::Ptr apex2ros(const connection_types::CvMatMessage::ConstPtr& apex_msg) {
         cv_bridge::CvImage cvb;
         cvb.image = apex_msg->value;
 

@@ -26,9 +26,9 @@ void Relay::setup()
 
 void Relay::process()
 {
-    ConnectionType::Ptr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
 
     output_->setType(input_->getType());
-    output_->publish(msg);
+    output_->cloneAndPublish(msg);
 }
 

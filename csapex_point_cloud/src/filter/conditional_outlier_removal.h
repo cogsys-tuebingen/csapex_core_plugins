@@ -15,7 +15,7 @@ public:
     virtual void process();
 
     template <class PointT>
-    void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
+    void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
     enum ConditionType {AND, OR};

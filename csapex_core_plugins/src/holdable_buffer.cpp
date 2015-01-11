@@ -32,7 +32,7 @@ void HoldableBuffer::setup()
 
 void HoldableBuffer::process()
 {
-    ConnectionType::Ptr msg = in_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = in_->getMessage<ConnectionType>();
 
     unsigned int size = readParameter<int>("buffer size");
     bool hold = readParameter<bool>("hold");
@@ -40,7 +40,7 @@ void HoldableBuffer::process()
     range->setMax<int>(buffer_.size() - 1);
     setParameterEnabled("out idx", hold);
 
-    ConnectionType::Ptr out;
+    ConnectionType::ConstPtr out;
 
     if(hold && buffer_.size() > 0) {
         int idx = readParameter<int>("out idx");
@@ -64,7 +64,7 @@ void HoldableBuffer::process()
     }
 
     if(out) {
-        out_->publish(out);
+        out_->cloneAndPublish(out);
     }
 
 }

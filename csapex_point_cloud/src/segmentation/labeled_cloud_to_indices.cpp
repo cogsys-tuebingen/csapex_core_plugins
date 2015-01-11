@@ -30,7 +30,7 @@ LabeledCloudToIndices::LabeledCloudToIndices()
 
 void LabeledCloudToIndices::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<LabeledCloudToIndices>(this, msg), msg->value);
 }
@@ -46,7 +46,7 @@ namespace implementation {
 
 template<class PointT>
 struct Impl {
-    inline static void extract(const typename pcl::PointCloud<PointT>::Ptr src,
+    inline static void extract(const typename pcl::PointCloud<PointT>::ConstPtr src,
                                typename boost::shared_ptr<std::vector<pcl::PointIndices> > dst)
     {
         //for(typename pcl::PointCloud<PointT>::const_iterator it = src->begin() ; it != src->end() ; ++it) {
@@ -76,7 +76,7 @@ struct Impl {
 
 template<class PointT>
 struct Conversion {
-    static void apply(const typename pcl::PointCloud<PointT>::Ptr src,
+    static void apply(const typename pcl::PointCloud<PointT>::ConstPtr src,
                       typename boost::shared_ptr<std::vector<pcl::PointIndices> > dst)
     {
         throw std::runtime_error("Type of pointcloud must be labeled!");
@@ -85,7 +85,7 @@ struct Conversion {
 
 template<>
 struct Conversion<pcl::PointXYZL>{
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::Ptr src,
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::ConstPtr src,
                       typename boost::shared_ptr<std::vector<pcl::PointIndices> > dst)
     {
       Impl<pcl::PointXYZL>::extract(src, dst);
@@ -95,7 +95,7 @@ struct Conversion<pcl::PointXYZL>{
 
 template<>
 struct Conversion<pcl::PointXYZRGBL>{
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGBL>::Ptr src,
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGBL>::ConstPtr src,
                       typename boost::shared_ptr<std::vector<pcl::PointIndices> > dst)
     {
         Impl<pcl::PointXYZRGBL>::extract(src, dst);
@@ -106,7 +106,7 @@ struct Conversion<pcl::PointXYZRGBL>{
 
 
 template <class PointT>
-void LabeledCloudToIndices::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void LabeledCloudToIndices::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr out_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);

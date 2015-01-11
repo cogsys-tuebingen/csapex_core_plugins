@@ -28,23 +28,28 @@ void SetTimeStamp::setup()
 
 void SetTimeStamp::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<SetTimeStamp>(this, msg), msg->value);
 }
 
 template <class PointT>
-void SetTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void SetTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    connection_types::TimeStampMessage::Ptr time = input_time_->getMessage<connection_types::TimeStampMessage>();
-    cloud->header.stamp = time->value.toNSec() / 1e3; // is this 1e6?
+    connection_types::TimeStampMessage::ConstPtr time = input_time_->getMessage<connection_types::TimeStampMessage>();
 
     connection_types::PointCloudMessage::Ptr msg(new connection_types::PointCloudMessage(cloud->header.frame_id, time->value.toNSec()));
 
-    if(input_frame_->hasMessage()) {
-        cloud->header.frame_id = input_frame_->getValue<std::string>();
-    }
+    typename pcl::PointCloud<PointT>::Ptr cloud_copy(new pcl::PointCloud<PointT>);
+    *cloud_copy = *cloud;
+    msg->value = cloud_copy;
 
-    msg->value = cloud;
+    typename pcl::PointCloud<PointT>::Ptr out_cloud = boost::get<typename pcl::PointCloud<PointT>::Ptr>(msg->value);
+
+    if(input_frame_->hasMessage()) {
+        out_cloud->header.frame_id = input_frame_->getValue<std::string>();
+    }
+    out_cloud->header.stamp = time->value.toNSec() / 1e3; // microseconds
+
     output_->publish(msg);
 }

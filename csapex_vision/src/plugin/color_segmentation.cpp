@@ -28,7 +28,7 @@ void ColorSegmentation::setParameterState(Memento::Ptr memento)
 
 void ColorSegmentation::process()
 {
-    CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
 
     bool encoding_changed = !img->getEncoding().matches(current_encoding);
     current_encoding = img->getEncoding();
@@ -52,7 +52,7 @@ void ColorSegmentation::process()
     cv::inRange(img->value, min, max, bw);
 
     if(input_mask_->hasMessage()) {
-        CvMatMessage::Ptr mask = input_mask_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr mask = input_mask_->getMessage<CvMatMessage>();
         cv::min(mask->value, bw, out_mask->value);
     } else {
         out_mask->value = bw;

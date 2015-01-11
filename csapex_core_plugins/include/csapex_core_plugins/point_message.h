@@ -15,8 +15,8 @@ public:
 
     PointMessage(Message::Stamp stamp = 0);
 
-    virtual ConnectionType::Ptr clone();
-    virtual ConnectionType::Ptr toType();
+    virtual ConnectionType::Ptr clone() const override;
+    virtual ConnectionType::Ptr toType() const override;
 
 public:
     float x;

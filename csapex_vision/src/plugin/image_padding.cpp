@@ -40,7 +40,7 @@ void ImagePadding::process()
         return;
     }
 
-    CvMatMessage::Ptr img_msg = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img_msg = input_->getMessage<CvMatMessage>();
 
     int rows = img_msg->value.rows;
     int cols = img_msg->value.cols;

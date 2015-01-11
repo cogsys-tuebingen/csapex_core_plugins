@@ -31,7 +31,7 @@ void EvaluateBinaryClassifier::setup()
 
 void EvaluateBinaryClassifier::process()
 {
-    connection_types::ConfusionMatrixMessage::Ptr msg = in_->getMessage<connection_types::ConfusionMatrixMessage>();
+    connection_types::ConfusionMatrixMessage::ConstPtr msg = in_->getMessage<connection_types::ConfusionMatrixMessage>();
 
     const ConfusionMatrix& cm = msg->confusion;
 

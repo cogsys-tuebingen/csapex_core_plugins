@@ -27,13 +27,13 @@ void ExtractTimeStampCloud::setup()
 
 void ExtractTimeStampCloud::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<ExtractTimeStampCloud>(this, msg), msg->value);
 }
 
 template <class PointT>
-void ExtractTimeStampCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void ExtractTimeStampCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
     time->value = time->value.fromNSec(cloud->header.stamp * 1000);

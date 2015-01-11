@@ -61,9 +61,9 @@ void GrabCut::process()
 {
     INTERLUDE("process");
 
-    CvMatMessage::Ptr img_msg = in_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr fg_msg = in_fg_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr bg_msg = in_bg_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img_msg = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr fg_msg = in_fg_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr bg_msg = in_bg_->getMessage<CvMatMessage>();
 
     if(!fg_msg->hasChannels(1, CV_8U)) {
         throw std::runtime_error("foreground mask is not mono");

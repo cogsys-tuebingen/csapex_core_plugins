@@ -23,7 +23,7 @@ void TextDisplay::setup()
 }
 void TextDisplay::process()
 {
-    connection_types::Message::Ptr msg = connector_->getMessage<connection_types::Message>();
+    connection_types::Message::ConstPtr msg = connector_->getMessage<connection_types::Message>();
 
     YAML::Node node;
     {

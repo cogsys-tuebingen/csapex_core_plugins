@@ -23,8 +23,8 @@ public:
 protected:
     void setExportPath();
 
-    void exportVector(const connection_types::VectorMessage::Ptr& vector);
-    void exportSingle(const ConnectionType::Ptr& msg);
+    void exportVector(const connection_types::VectorMessage::ConstPtr& vector);
+    void exportSingle(const ConnectionType::ConstPtr& msg);
 
 private:
     Input* connector_;

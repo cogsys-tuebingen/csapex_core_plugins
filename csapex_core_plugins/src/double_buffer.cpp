@@ -30,7 +30,7 @@ void DoubleBuffer::setup()
 
 void DoubleBuffer::process()
 {
-    ConnectionType::Ptr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
 
     buffer_back_ = msg->clone();
 

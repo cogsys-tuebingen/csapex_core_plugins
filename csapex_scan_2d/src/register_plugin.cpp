@@ -44,7 +44,7 @@ struct ConvertScan
         out->stamp = ros_msg->header.stamp.toNSec();
         return out;
     }
-    static sensor_msgs::LaserScan::Ptr apex2ros(const connection_types::ScanMessage::Ptr& apex_msg) {
+    static sensor_msgs::LaserScan::Ptr apex2ros(const connection_types::ScanMessage::ConstPtr& apex_msg) {
         sensor_msgs::LaserScan::Ptr out(new sensor_msgs::LaserScan);
         copy(apex_msg->value, *out);
         apex_msg->value.getRanges(out->ranges);

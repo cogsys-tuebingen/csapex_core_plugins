@@ -33,8 +33,8 @@ DisplayKeypoints::DisplayKeypoints()
 
 void DisplayKeypoints::process()
 {
-    CvMatMessage::Ptr img_msg = in_img->getMessage<CvMatMessage>();
-    KeypointMessage::Ptr key_msg = in_key->getMessage<KeypointMessage>();
+    CvMatMessage::ConstPtr img_msg = in_img->getMessage<CvMatMessage>();
+    KeypointMessage::ConstPtr key_msg = in_key->getMessage<KeypointMessage>();
 
     CvMatMessage::Ptr out(new CvMatMessage(img_msg->getEncoding(), img_msg->stamp));
 

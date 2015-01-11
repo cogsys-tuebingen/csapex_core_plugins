@@ -37,12 +37,12 @@ void StatisticalOutlierRemoval::setup()
 
 void StatisticalOutlierRemoval::process()
 {
-    PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
     boost::apply_visitor (PointCloudMessage::Dispatch<StatisticalOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
-void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     bool indeces_out = output_indeces_->isConnected();
     bool cloud_out   = output_cloud_->isConnected();
@@ -62,7 +62,7 @@ void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr
     sor.setNegative(negative);
     sor.setStddevMulThresh(std_dev_mul_thresh);
     if(input_indeces_->hasMessage()) {
-        PointIndecesMessage::Ptr indeces(input_indeces_->getMessage<PointIndecesMessage>());
+        PointIndecesMessage::ConstPtr indeces(input_indeces_->getMessage<PointIndecesMessage>());
         sor.setIndices(indeces->value);
     }
     if(cloud_out) {

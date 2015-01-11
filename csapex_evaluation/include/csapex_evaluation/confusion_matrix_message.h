@@ -17,11 +17,12 @@ namespace connection_types {
 struct ConfusionMatrixMessage : public Message
 {
     typedef boost::shared_ptr<ConfusionMatrixMessage> Ptr;
+    typedef boost::shared_ptr<ConfusionMatrixMessage const> ConstPtr;
 
     ConfusionMatrixMessage(Message::Stamp stamp = 0);
 
-    virtual ConnectionType::Ptr clone();
-    virtual ConnectionType::Ptr toType();
+    virtual ConnectionType::Ptr clone() const override;
+    virtual ConnectionType::Ptr toType() const override;
 
     ConfusionMatrix confusion;
 };

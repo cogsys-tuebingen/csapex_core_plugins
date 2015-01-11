@@ -106,7 +106,7 @@ inline static T distance(const PointT &p1, const PointT &p2,
 
 template<typename PointT>
 struct ThresholdNoiseFilter {
-    inline static void interpolate(const typename pcl::PointCloud<PointT>::Ptr &src,
+    inline static void interpolate(const typename pcl::PointCloud<PointT>::ConstPtr &src,
                                    const cv::Mat &thresholds, const uchar threshold,
                                    const double max_distance,
                                    typename pcl::PointCloud<PointT>::Ptr &dst)
@@ -151,7 +151,7 @@ struct ThresholdNoiseFilter {
         }
     }
 
-    inline static void filter(const typename pcl::PointCloud<PointT>::Ptr &src,
+    inline static void filter(const typename pcl::PointCloud<PointT>::ConstPtr &src,
                               const cv::Mat &thresholds, const uchar threshold,
                               typename pcl::PointCloud<PointT>::Ptr &dst)
     {
@@ -194,17 +194,17 @@ void ThresholdOutlierRemoval::setup()
 
 void ThresholdOutlierRemoval::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
     boost::apply_visitor (PointCloudMessage::Dispatch<ThresholdOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
-void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    CvMatMessage::Ptr thresholds  = thresholds_->getMessage<CvMatMessage>();
-    uchar             threshold   = readParameter<int>("threshold");
-    double            max_dist    = readParameter<double>("max. distance");
-    bool              interpolate = readParameter<bool>("interpolate");
+    CvMatMessage::ConstPtr thresholds  = thresholds_->getMessage<CvMatMessage>();
+    uchar                  threshold   = readParameter<int>("threshold");
+    double                 max_dist    = readParameter<double>("max. distance");
+    bool                   interpolate = readParameter<bool>("interpolate");
 
     if(thresholds->value.rows != (int) cloud->height)
         throw std::runtime_error("Height of pointcloud and threshold matrix not matching!");

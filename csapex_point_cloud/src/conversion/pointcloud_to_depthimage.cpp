@@ -30,13 +30,13 @@ void PointCloudToDepthImage::setup()
 
 void PointCloudToDepthImage::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToDepthImage>(this, msg), msg->value);
 }
 
 template <class PointT>
-void PointCloudToDepthImage::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void PointCloudToDepthImage::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     unsigned n = cloud->points.size();
 

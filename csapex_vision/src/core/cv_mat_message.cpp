@@ -18,7 +18,8 @@ CvMatMessage::CvMatMessage(const Encoding& encoding, Message::Stamp stamp)
     : MessageTemplate<cv::Mat, CvMatMessage> ("/camera", stamp), encoding(encoding)
 {}
 
-ConnectionType::Ptr CvMatMessage::clone() {
+ConnectionType::Ptr CvMatMessage::clone() const
+{
     Ptr new_msg(new CvMatMessage(encoding, stamp));
     value.copyTo(new_msg->value);
     new_msg->frame_id = frame_id;

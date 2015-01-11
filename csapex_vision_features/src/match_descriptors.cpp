@@ -221,10 +221,10 @@ public:
     cv::Mat match(const cv::Mat& image1,
                   const cv::Mat& image2,
                   std::vector<cv::DMatch>& matches,
-                  std::vector<cv::KeyPoint>& keypoints1,
-                  std::vector<cv::KeyPoint>& keypoints2,
-                  cv::Mat& descriptors1,
-                  cv::Mat& descriptors2) {
+                  const std::vector<cv::KeyPoint>& keypoints1,
+                  const std::vector<cv::KeyPoint>& keypoints2,
+                  const cv::Mat& descriptors1,
+                  const cv::Mat& descriptors2) {
         // 2. Match the two image descriptors
         // Construction of the matcher
         //cv::BruteForceMatcher<cv::L2<float>> matcher;
@@ -314,14 +314,14 @@ void MatchDescriptors::update()
 
 void MatchDescriptors::process()
 {
-    CvMatMessage::Ptr image1 = in_img_1->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr image2 = in_img_2->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr image1 = in_img_1->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr image2 = in_img_2->getMessage<CvMatMessage>();
 
-    KeypointMessage::Ptr keypoints1 = in_key_1->getMessage<KeypointMessage>();
-    KeypointMessage::Ptr keypoints2 = in_key_2->getMessage<KeypointMessage>();
+    KeypointMessage::ConstPtr keypoints1 = in_key_1->getMessage<KeypointMessage>();
+    KeypointMessage::ConstPtr keypoints2 = in_key_2->getMessage<KeypointMessage>();
 
-    DescriptorMessage::Ptr descriptors1 = in_des_1->getMessage<DescriptorMessage>();
-    DescriptorMessage::Ptr descriptors2 = in_des_2->getMessage<DescriptorMessage>();
+    DescriptorMessage::ConstPtr descriptors1 = in_des_1->getMessage<DescriptorMessage>();
+    DescriptorMessage::ConstPtr descriptors2 = in_des_2->getMessage<DescriptorMessage>();
 
 
     if(descriptors1->value.type() != descriptors2->value.type()) {
@@ -351,12 +351,12 @@ void MatchDescriptors::process()
     out_img->publish(out);
 }
 
-void MatchDescriptors::match(CvMatMessage::Ptr image1,
-                             CvMatMessage::Ptr image2,
-                             KeypointMessage::Ptr keypoints1,
-                             KeypointMessage::Ptr keypoints2,
-                             DescriptorMessage::Ptr descriptors1,
-                             DescriptorMessage::Ptr descriptors2,
+void MatchDescriptors::match(CvMatMessage::ConstPtr image1,
+                             CvMatMessage::ConstPtr image2,
+                             KeypointMessage::ConstPtr keypoints1,
+                             KeypointMessage::ConstPtr keypoints2,
+                             DescriptorMessage::ConstPtr descriptors1,
+                             DescriptorMessage::ConstPtr descriptors2,
                              std::vector<std::vector<cv::DMatch> > &matches)
 {
     switch(current_method_) {
@@ -372,12 +372,12 @@ void MatchDescriptors::match(CvMatMessage::Ptr image1,
     }
 }
 
-void MatchDescriptors::matchRobust(CvMatMessage::Ptr image1,
-                                   CvMatMessage::Ptr image2,
-                                   KeypointMessage::Ptr keypoints1,
-                                   KeypointMessage::Ptr keypoints2,
-                                   DescriptorMessage::Ptr descriptors1,
-                                   DescriptorMessage::Ptr descriptors2,
+void MatchDescriptors::matchRobust(CvMatMessage::ConstPtr image1,
+                                   CvMatMessage::ConstPtr image2,
+                                   KeypointMessage::ConstPtr keypoints1,
+                                   KeypointMessage::ConstPtr keypoints2,
+                                   DescriptorMessage::ConstPtr descriptors1,
+                                   DescriptorMessage::ConstPtr descriptors2,
                                    std::vector<std::vector<cv::DMatch> > &matches)
 {
     cv::Ptr<cv::DescriptorMatcher > matcher;
@@ -400,12 +400,12 @@ void MatchDescriptors::matchRobust(CvMatMessage::Ptr image1,
 }
 
 
-void MatchDescriptors::matchSimple(CvMatMessage::Ptr image1,
-                                   CvMatMessage::Ptr image2,
-                                   KeypointMessage::Ptr keypoints1,
-                                   KeypointMessage::Ptr keypoints2,
-                                   DescriptorMessage::Ptr descriptors1,
-                                   DescriptorMessage::Ptr descriptors2,
+void MatchDescriptors::matchSimple(CvMatMessage::ConstPtr image1,
+                                   CvMatMessage::ConstPtr image2,
+                                   KeypointMessage::ConstPtr keypoints1,
+                                   KeypointMessage::ConstPtr keypoints2,
+                                   DescriptorMessage::ConstPtr descriptors1,
+                                   DescriptorMessage::ConstPtr descriptors2,
                                    std::vector<std::vector<cv::DMatch> > &matches)
 {
     MatchableImpl m1(keypoints1->value, descriptors1->value);
@@ -418,12 +418,12 @@ void MatchDescriptors::matchSimple(CvMatMessage::Ptr image1,
 
 
 
-void MatchDescriptors::matchPeak(CvMatMessage::Ptr,
-                                 CvMatMessage::Ptr,
-                                 KeypointMessage::Ptr keypoints1,
-                                 KeypointMessage::Ptr keypoints2,
-                                 DescriptorMessage::Ptr descriptors1,
-                                 DescriptorMessage::Ptr descriptors2,
+void MatchDescriptors::matchPeak(CvMatMessage::ConstPtr,
+                                 CvMatMessage::ConstPtr,
+                                 KeypointMessage::ConstPtr keypoints1,
+                                 KeypointMessage::ConstPtr keypoints2,
+                                 DescriptorMessage::ConstPtr descriptors1,
+                                 DescriptorMessage::ConstPtr descriptors2,
                                  std::vector<std::vector<cv::DMatch> > &matches)
 {
     MatchableImpl m1(keypoints1->value, descriptors1->value);

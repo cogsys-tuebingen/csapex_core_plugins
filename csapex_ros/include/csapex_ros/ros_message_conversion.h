@@ -28,20 +28,20 @@ class Convertor
 {
 public:
     typedef boost::shared_ptr<Convertor> Ptr;
-    typedef boost::function<void(ConnectionTypePtr)> Callback;
+    typedef boost::function<void(ConnectionTypeConstPtr)> Callback;
 
 public:
     virtual ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) = 0;
     virtual ros::Publisher advertise(const std::string& topic,  int queue, bool latch = false) = 0;
 
-    virtual void publish(ros::Publisher& pub, ConnectionType::Ptr msg) = 0;
+    virtual void publish(ros::Publisher& pub, ConnectionType::ConstPtr msg) = 0;
     virtual connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source) = 0;
 
     virtual std::string rosType() = 0;
     virtual std::string apexType() = 0;
 
 protected:
-    void publish_apex(Callback callback, ConnectionType::Ptr msg);
+    void publish_apex(Callback callback, ConnectionType::ConstPtr msg);
 };
 
 
@@ -73,9 +73,9 @@ public:
 
         return nh->advertise<T>(topic, queue, latch);
     }
-    void publish(ros::Publisher& pub, ConnectionType::Ptr apex_msg_raw) {
-        typename connection_types::GenericPointerMessage<T>::Ptr msg =
-                boost::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> > (apex_msg_raw);
+    void publish(ros::Publisher& pub, ConnectionType::ConstPtr apex_msg_raw) {
+        typename connection_types::GenericPointerMessage<T>::ConstPtr msg =
+                boost::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const> (apex_msg_raw);
         if(!msg) {
             throw std::runtime_error("trying to publish an empty message");
         }
@@ -127,8 +127,8 @@ public:
 
         return nh->advertise<ROS>(topic, queue, latch);
     }
-    void publish(ros::Publisher& pub, ConnectionType::Ptr apex_msg_raw) {
-        typename APEX::Ptr apex_msg = boost::dynamic_pointer_cast<APEX> (apex_msg_raw);
+    void publish(ros::Publisher& pub, ConnectionType::ConstPtr apex_msg_raw) {
+        typename APEX::ConstPtr apex_msg = boost::dynamic_pointer_cast<APEX const> (apex_msg_raw);
         if(!apex_msg->isValid()) {
             throw std::runtime_error("trying to publish an empty message");
         }
@@ -157,7 +157,7 @@ class RosMessageConversion : public Singleton<RosMessageConversion>
     friend class RosMessageConversionT;
 
 public:
-    typedef boost::function<void(ConnectionTypePtr)> Callback;
+    typedef boost::function<void(ConnectionTypeConstPtr)> Callback;
 
 private:
     RosMessageConversion();
@@ -172,8 +172,8 @@ public:
     bool canHandle(const ros::master::TopicInfo &topic);
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output);
-    ros::Publisher advertise(ConnectionType::Ptr, const std::string& topic,  int queue, bool latch = false);
-    void publish(ros::Publisher& pub, ConnectionType::Ptr msg);
+    ros::Publisher advertise(ConnectionType::ConstPtr, const std::string& topic,  int queue, bool latch = false);
+    void publish(ros::Publisher& pub, ConnectionType::ConstPtr msg);
 
     connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source);
 

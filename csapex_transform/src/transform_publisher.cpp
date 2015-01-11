@@ -44,13 +44,13 @@ void TransformPublisher::processROS()
 
     ros::Time time;
     if(input_time->hasMessage()) {
-        TimeStampMessage::Ptr time_msg = input_time->getMessage<TimeStampMessage>();
+        TimeStampMessage::ConstPtr time_msg = input_time->getMessage<TimeStampMessage>();
         time = time_msg->value;
     } else {
         time = ros::Time::now();
     }
 
-    TransformMessage::Ptr trafo_msg = input_transform->getMessage<TransformMessage>();
+    TransformMessage::ConstPtr trafo_msg = input_transform->getMessage<TransformMessage>();
 
     tfb_->sendTransform(tf::StampedTransform(trafo_msg->value, time, readParameter<std::string>("from"), readParameter<std::string>("to")));
 }

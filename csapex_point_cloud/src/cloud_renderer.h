@@ -37,7 +37,7 @@ public:
     boost::signals2::signal<void()> refresh_request;
 
 private:
-    connection_types::PointCloudMessage::Ptr message_;
+    connection_types::PointCloudMessage::ConstPtr message_;
 
     connection_types::CvMatMessage::Ptr result_;
 };

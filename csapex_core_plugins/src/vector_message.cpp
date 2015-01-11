@@ -18,12 +18,14 @@ GenericVectorMessage::GenericVectorMessage(EntryInterface::Ptr impl, const std::
 {
 }
 
-ConnectionType::Ptr GenericVectorMessage::clone() {
+ConnectionType::Ptr GenericVectorMessage::clone() const
+{
     Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id, impl->stamp));
     return new_msg;
 }
 
-ConnectionType::Ptr GenericVectorMessage::toType() {
+ConnectionType::Ptr GenericVectorMessage::toType() const
+{
     Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id, 0));
     return new_msg;
 }
@@ -90,13 +92,15 @@ VectorMessage::Ptr VectorMessage::make(){
     return new_msg;
 }
 
-ConnectionType::Ptr VectorMessage::clone() {
+ConnectionType::Ptr VectorMessage::clone() const
+{
     Ptr new_msg(new VectorMessage(frame_id));
     new_msg->value = value;
     return new_msg;
 }
 
-ConnectionType::Ptr VectorMessage::toType() {
+ConnectionType::Ptr VectorMessage::toType() const
+{
     return make();
 }
 

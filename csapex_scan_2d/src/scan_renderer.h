@@ -18,7 +18,7 @@ public:
     virtual void process();
 
     template <typename ScanType>
-    void doProcess(ScanType& s);
+    void doProcess(const ScanType& s);
 
 private:
     Input* input_;

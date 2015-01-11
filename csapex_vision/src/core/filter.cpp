@@ -39,21 +39,23 @@ void Filter::setup()
 
 void Filter::process()
 {
-    CvMatMessage::Ptr img_msg = input_img_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr mask_msg;
-    if(usesMask() && input_mask_->hasMessage()) {
-        mask_msg = input_mask_->getMessage<CvMatMessage>();
-    }
-
+    CvMatMessage::Ptr img_msg = input_img_->getClonedMessage<CvMatMessage>();
     if(img_msg.get() && !img_msg->value.empty()) {
-        if(!mask_msg.get()) {
-            mask_msg.reset(new CvMatMessage(enc::mono, img_msg->stamp));
+        CvMatMessage::Ptr mask_msg;
+        cv::Mat mask;
+        if(usesMask()) {
+            if(input_mask_->hasMessage()) {
+                mask_msg = input_mask_->getClonedMessage<CvMatMessage>();
+            } else {
+                mask_msg.reset(new CvMatMessage(enc::mono, img_msg->stamp));
+            }
+            mask = mask_msg->value;
         }
 
-        filter(img_msg->value, mask_msg->value);
+        filter(img_msg->value, mask);
 
         output_img_->publish(img_msg);
-        if(usesMask() && mask_msg.get()) {
+        if(usesMask() && mask_msg != nullptr) {
             output_mask_->publish(mask_msg);
         }
     }

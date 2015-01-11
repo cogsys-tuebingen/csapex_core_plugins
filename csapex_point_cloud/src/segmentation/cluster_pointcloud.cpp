@@ -46,7 +46,7 @@ ClusterPointcloud::ClusterPointcloud()
 
 void ClusterPointcloud::process()
 {
-    PointCloudMessage::Ptr msg(in_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(in_cloud_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointcloud>(this, msg), msg->value);
 
@@ -63,7 +63,7 @@ void ClusterPointcloud::setup()
 }
 
 template <class PointT>
-void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     // check for nans in cloud
     typename pcl::PointCloud<PointT>::Ptr cloud_clean (new pcl::PointCloud<PointT>);

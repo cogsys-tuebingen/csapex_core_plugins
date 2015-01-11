@@ -195,7 +195,7 @@ void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
     view_->setFixedSize(QSize(state.width, state.height));
 }
 
-void ScanLabelerAdapter::display(lib_laser_processing::Scan* scan)
+void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 {
     result_.reset(new connection_types::LabeledScanMessage);
 

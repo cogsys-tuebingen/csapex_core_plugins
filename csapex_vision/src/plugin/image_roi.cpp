@@ -76,7 +76,7 @@ void ImageRoi::process()
 {
     InteractiveNode::process();
 
-    CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<CvMatMessage>();
     if(in->value.empty())
         return;
 

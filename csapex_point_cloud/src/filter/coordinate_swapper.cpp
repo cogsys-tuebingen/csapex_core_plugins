@@ -60,12 +60,12 @@ inline static void swap(PointT &p1,
 
 template<typename PointT>
 struct Swapper {
-    inline static void apply(const typename pcl::PointCloud<PointT>::Ptr &src,
+    inline static void apply(const typename pcl::PointCloud<PointT>::ConstPtr &src,
                                    typename pcl::PointCloud<PointT>::Ptr &dst)
     {
         dst.reset(new pcl::PointCloud<PointT>(*src));
 
-        PointT       *dst_ptr = dst->points.data();
+        PointT *dst_ptr = dst->points.data();
         int cols = src->width;
         int rows = src->height;
         for(int y = 0 ; y < rows ; ++y) {
@@ -92,14 +92,13 @@ void CoordinateSwapper::setup()
 
 void CoordinateSwapper::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
     boost::apply_visitor (PointCloudMessage::Dispatch<CoordinateSwapper>(this, msg), msg->value);
 }
 
 template <class PointT>
-void CoordinateSwapper::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void CoordinateSwapper::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-
     typename pcl::PointCloud<PointT>::Ptr cloud_swapped;
 
     Swapper<PointT>::apply(cloud, cloud_swapped);

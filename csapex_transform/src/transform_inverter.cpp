@@ -20,7 +20,7 @@ TransformInverter::TransformInverter()
 
 void TransformInverter::process()
 {
-    connection_types::TransformMessage::Ptr trafo = input_->getMessage<connection_types::TransformMessage>();
+    connection_types::TransformMessage::ConstPtr trafo = input_->getMessage<connection_types::TransformMessage>();
 
     // inverter flips the frames
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage(trafo->child_frame, trafo->frame_id));

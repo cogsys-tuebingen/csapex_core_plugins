@@ -36,12 +36,12 @@ void RadiusOutlierRemoval::setup()
 
 void RadiusOutlierRemoval::process()
 {
-    PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
     boost::apply_visitor (PointCloudMessage::Dispatch<RadiusOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
-void RadiusOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void RadiusOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
 
     bool indeces_out = output_indeces_->isConnected();
@@ -62,7 +62,7 @@ void RadiusOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr clou
     ror.setRadiusSearch(search_radius_);
     ror.setMinNeighborsInRadius (min_neighbours_);
     if(indeces_input_->hasMessage()) {
-        PointIndecesMessage::Ptr indeces(indeces_input_->getMessage<PointIndecesMessage>());
+        PointIndecesMessage::ConstPtr indeces(indeces_input_->getMessage<PointIndecesMessage>());
         ror.setIndices(indeces->value);
         if(indeces->value->indices.size() == 0)
             std::cout << "got empty" << std::endl;

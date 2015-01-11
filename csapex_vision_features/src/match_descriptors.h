@@ -27,36 +27,36 @@ public:
 private:
     void update();
 
-    void match(connection_types::CvMatMessage::Ptr image1,
-               connection_types::CvMatMessage::Ptr image2,
-               connection_types::KeypointMessage::Ptr keypoints1,
-               connection_types::KeypointMessage::Ptr keypoints2,
-               connection_types::DescriptorMessage::Ptr descriptors1,
-               connection_types::DescriptorMessage::Ptr descriptors2,
+    void match(connection_types::CvMatMessage::ConstPtr image1,
+               connection_types::CvMatMessage::ConstPtr image2,
+               connection_types::KeypointMessage::ConstPtr keypoints1,
+               connection_types::KeypointMessage::ConstPtr keypoints2,
+               connection_types::DescriptorMessage::ConstPtr descriptors1,
+               connection_types::DescriptorMessage::ConstPtr descriptors2,
                std::vector<std::vector<cv::DMatch> > &matches);
 
-    void matchRobust(connection_types::CvMatMessage::Ptr image1,
-                     connection_types::CvMatMessage::Ptr image2,
-                     connection_types::KeypointMessage::Ptr keypoints1,
-                     connection_types::KeypointMessage::Ptr keypoints2,
-                     connection_types::DescriptorMessage::Ptr descriptors1,
-                     connection_types::DescriptorMessage::Ptr descriptors2,
+    void matchRobust(connection_types::CvMatMessage::ConstPtr image1,
+                     connection_types::CvMatMessage::ConstPtr image2,
+                     connection_types::KeypointMessage::ConstPtr keypoints1,
+                     connection_types::KeypointMessage::ConstPtr keypoints2,
+                     connection_types::DescriptorMessage::ConstPtr descriptors1,
+                     connection_types::DescriptorMessage::ConstPtr descriptors2,
                      std::vector<std::vector<cv::DMatch> > &matches);
 
-    void matchSimple(connection_types::CvMatMessage::Ptr image1,
-                     connection_types::CvMatMessage::Ptr image2,
-                     connection_types::KeypointMessage::Ptr keypoints1,
-                     connection_types::KeypointMessage::Ptr keypoints2,
-                     connection_types::DescriptorMessage::Ptr descriptors1,
-                     connection_types::DescriptorMessage::Ptr descriptors2,
+    void matchSimple(connection_types::CvMatMessage::ConstPtr image1,
+                     connection_types::CvMatMessage::ConstPtr image2,
+                     connection_types::KeypointMessage::ConstPtr keypoints1,
+                     connection_types::KeypointMessage::ConstPtr keypoints2,
+                     connection_types::DescriptorMessage::ConstPtr descriptors1,
+                     connection_types::DescriptorMessage::ConstPtr descriptors2,
                      std::vector<std::vector<cv::DMatch> > &matches);
 
-    void matchPeak(connection_types::CvMatMessage::Ptr image1,
-                   connection_types::CvMatMessage::Ptr image2,
-                   connection_types::KeypointMessage::Ptr keypoints1,
-                   connection_types::KeypointMessage::Ptr keypoints2,
-                   connection_types::DescriptorMessage::Ptr descriptors1,
-                   connection_types::DescriptorMessage::Ptr descriptors2,
+    void matchPeak(connection_types::CvMatMessage::ConstPtr image1,
+                   connection_types::CvMatMessage::ConstPtr image2,
+                   connection_types::KeypointMessage::ConstPtr keypoints1,
+                   connection_types::KeypointMessage::ConstPtr keypoints2,
+                   connection_types::DescriptorMessage::ConstPtr descriptors1,
+                   connection_types::DescriptorMessage::ConstPtr descriptors2,
                    std::vector<std::vector<cv::DMatch> > &matches);
 
 private:

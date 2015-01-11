@@ -22,7 +22,7 @@ Row::Row() :
 
 void Row::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp));
 
     if(in->value.empty()) {

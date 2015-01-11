@@ -71,13 +71,13 @@ void PassThrough::updateFields(const std::vector<std::string>& fields)
 
 void PassThrough::process()
 {
-    PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PassThrough>(this, msg), msg->value);
 }
 
 template <class PointT>
-void PassThrough::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void PassThrough::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     std::vector<pcl::PCLPointField> fields;
     std::vector<std::string> field_names;

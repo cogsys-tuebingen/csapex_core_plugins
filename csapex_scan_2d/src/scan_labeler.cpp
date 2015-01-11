@@ -55,11 +55,11 @@ void ScanLabeler::process()
     result_.reset();
 
     if(input_->isMessage<LabeledScanMessage>()) {
-        LabeledScanMessage::Ptr scan_msg = input_->getMessage<LabeledScanMessage>();
+        LabeledScanMessage::ConstPtr scan_msg = input_->getMessage<LabeledScanMessage>();
         display_request(&scan_msg->value);
 
     } else if(input_->isMessage<ScanMessage>()) {
-        ScanMessage::Ptr scan_msg = input_->getMessage<ScanMessage>();
+        ScanMessage::ConstPtr scan_msg = input_->getMessage<ScanMessage>();
         display_request(&scan_msg->value);
 
     } else {

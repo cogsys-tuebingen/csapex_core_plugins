@@ -46,7 +46,7 @@ protected:
 
 public:
     template <class PointT>
-    void inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud);
+    void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 public Q_SLOTS:
     void setTheta(double angle);

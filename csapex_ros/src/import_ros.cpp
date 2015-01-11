@@ -188,7 +188,7 @@ void ImportRos::processROS()
     }
 
     // INPUT CONNECTED
-    connection_types::TimeStampMessage::Ptr time = input_time_->getMessage<connection_types::TimeStampMessage>();
+    connection_types::TimeStampMessage::ConstPtr time = input_time_->getMessage<connection_types::TimeStampMessage>();
 
     if(msgs_.empty()) {
         return;
@@ -249,13 +249,13 @@ void ImportRos::processROS()
         return;
     }
 
-    std::deque<connection_types::Message::Ptr>::iterator first_after = msgs_.begin();
+    std::deque<connection_types::Message::ConstPtr>::iterator first_after = msgs_.begin();
     while(rosTime((*first_after)->stamp) < time->value) {
         ++first_after;
     }
 
     if(first_after == msgs_.begin()) {
-        connector_->publish(*first_after);
+        connector_->cloneAndPublish(*first_after);
         return;
 
     } else if(first_after == msgs_.end()) {
@@ -264,15 +264,15 @@ void ImportRos::processROS()
         return;
 
     } else {
-        std::deque<connection_types::Message::Ptr>::iterator last_before = first_after - 1;
+        std::deque<connection_types::Message::ConstPtr>::iterator last_before = first_after - 1;
 
         ros::Duration diff1 = rosTime((*first_after)->stamp) - time->value;
         ros::Duration diff2 = rosTime((*last_before)->stamp) - time->value;
 
         if(diff1 < diff2) {
-            connector_->publish(*first_after);
+            connector_->cloneAndPublish(*first_after);
         } else {
-            connector_->publish(*last_before);
+            connector_->cloneAndPublish(*last_before);
         }
     }
 }
@@ -336,14 +336,14 @@ void ImportRos::publishLatestMessage()
         }
     }
 
-    connector_->publish(msgs_.back());
+    connector_->cloneAndPublish(msgs_.back());
 
     if(!readParameter<bool>("latch")) {
         msgs_.clear();
     }
 }
 
-void ImportRos::callback(ConnectionTypePtr message)
+void ImportRos::callback(ConnectionTypeConstPtr message)
 {
     NodeWorker* nw = getNodeWorker();
 
@@ -351,7 +351,7 @@ void ImportRos::callback(ConnectionTypePtr message)
         return;
     }
 
-    connection_types::Message::Ptr msg = boost::dynamic_pointer_cast<connection_types::Message>(message);
+    connection_types::Message::ConstPtr msg = boost::dynamic_pointer_cast<connection_types::Message const>(message);
     if(msg && !nw->isPaused()) {
         if(!msgs_.empty() && msg->stamp < msgs_.front()->stamp) {
             awarn << "detected time anomaly -> reset";

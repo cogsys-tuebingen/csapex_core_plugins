@@ -34,7 +34,7 @@ BarCodeReader::BarCodeReader()
 
 void BarCodeReader::process()
 {
-    CvMatMessage::Ptr msg = in_img->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr msg = in_img->getMessage<CvMatMessage>();
 
     if(msg->value.channels() != 1) {
         throw std::runtime_error("Input must be 1-channel image!");

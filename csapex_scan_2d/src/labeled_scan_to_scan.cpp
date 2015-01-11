@@ -27,7 +27,7 @@ void LabeledScanToScan::setup()
 
 void LabeledScanToScan::process()
 {
-    LabeledScanMessage::Ptr lmsg = in_->getMessage<LabeledScanMessage>();
+    LabeledScanMessage::ConstPtr lmsg = in_->getMessage<LabeledScanMessage>();
 
     ScanMessage::Ptr msg(new ScanMessage);
     msg->value = lmsg->value;

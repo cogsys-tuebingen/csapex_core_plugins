@@ -82,7 +82,7 @@ void CloudRenderer::process()
         refresh_request();
     }
 
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg = input_->getMessage<PointCloudMessage>();
 
     message_ = msg;
     result_.reset();

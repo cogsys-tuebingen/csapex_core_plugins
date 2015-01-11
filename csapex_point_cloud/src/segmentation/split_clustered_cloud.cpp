@@ -27,7 +27,7 @@ SplitClusteredCloud::SplitClusteredCloud()
 
 void SplitClusteredCloud::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<SplitClusteredCloud>(this, msg), msg->value);
 }
@@ -44,7 +44,7 @@ void SplitClusteredCloud::setup()
 }
 
 template <class PointT>
-void SplitClusteredCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void SplitClusteredCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
 
     std::vector<PointCloudMessage::Ptr> out_msgs;

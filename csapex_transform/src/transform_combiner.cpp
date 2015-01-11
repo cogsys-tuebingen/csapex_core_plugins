@@ -20,8 +20,8 @@ TransformCombiner::TransformCombiner()
 
 void TransformCombiner::process()
 {
-    connection_types::TransformMessage::Ptr a = input_a_->getMessage<connection_types::TransformMessage>();
-    connection_types::TransformMessage::Ptr b = input_b_->getMessage<connection_types::TransformMessage>();
+    connection_types::TransformMessage::ConstPtr a = input_a_->getMessage<connection_types::TransformMessage>();
+    connection_types::TransformMessage::ConstPtr b = input_b_->getMessage<connection_types::TransformMessage>();
 
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
     msg->value = a->value * b->value;

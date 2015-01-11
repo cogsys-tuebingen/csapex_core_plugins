@@ -64,12 +64,12 @@ void ConditionalOutlierRemoval::setup()
 
 void ConditionalOutlierRemoval::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
     boost::apply_visitor (PointCloudMessage::Dispatch<ConditionalOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
-void ConditionalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void ConditionalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     typename pcl::PointCloud<PointT>::Ptr cloud_filtered;
     if(conditions_ != 0) {

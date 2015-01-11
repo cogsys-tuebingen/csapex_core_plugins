@@ -27,7 +27,7 @@ void ExportCout::setup()
 
 void ExportCout::process()
 {
-    ConnectionType::Ptr msg = connector_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = connector_->getMessage<ConnectionType>();
 
     ainfo << "writing to cout: ";
 

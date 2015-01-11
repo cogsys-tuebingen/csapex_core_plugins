@@ -22,7 +22,7 @@ VectorizePyramid::VectorizePyramid()
 
 void VectorizePyramid::process()
 {
-    CvPyramidMessage::Ptr in = input_->getMessage<CvPyramidMessage>();
+    CvPyramidMessage::ConstPtr in = input_->getMessage<CvPyramidMessage>();
     boost::shared_ptr<std::vector<CvMatMessage::Ptr> >
             out(new std::vector<CvMatMessage::Ptr>);
 

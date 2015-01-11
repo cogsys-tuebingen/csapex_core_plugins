@@ -25,7 +25,7 @@ PointCloudValidity::PointCloudValidity()
 
 void PointCloudValidity::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudValidity>(this, msg), msg->value);
 }
@@ -86,11 +86,11 @@ inline static bool invalid(const PointT &p,
 
 template<typename PointT>
 struct Vadility {
-    inline static void inceces(const typename pcl::PointCloud<PointT>::Ptr &src,
+    inline static void inceces(const typename pcl::PointCloud<PointT>::ConstPtr &src,
                                std::vector<int> &indeces)
     {
 
-        PointT  *src_ptr = src->points.data();
+        const PointT  *src_ptr = src->points.data();
         unsigned int size = src->size();
         for(unsigned int i(0) ; i < size ; ++i) {
             if(invalid(src_ptr[i]))
@@ -98,11 +98,11 @@ struct Vadility {
         }
     }
 
-    inline static void mask(const typename pcl::PointCloud<PointT>::Ptr &src,
+    inline static void mask(const typename pcl::PointCloud<PointT>::ConstPtr &src,
                               cv::Mat &mask)
     {
 
-        PointT *src_ptr = src->points.data();
+        const PointT *src_ptr = src->points.data();
         int cols = src->width;
         int rows = src->height;
         mask   = cv::Mat(rows, cols, CV_8UC1, 255);
@@ -121,7 +121,7 @@ struct Vadility {
 }
 
 template <class PointT>
-void PointCloudValidity::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void PointCloudValidity::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     if(mask_->isConnected()) {
         CvMatMessage::Ptr out(new CvMatMessage(enc::mono, cloud->header.stamp));

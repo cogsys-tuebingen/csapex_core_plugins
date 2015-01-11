@@ -28,12 +28,12 @@ public:
     void updateLabel(int label);
 
 public Q_SLOTS:
-    void display(lib_laser_processing::Scan* img);
+    void display(const lib_laser_processing::Scan* img);
     void submit();
     void labelSelected();
 
 Q_SIGNALS:
-    void displayRequest(lib_laser_processing::Scan* img);
+    void displayRequest(const lib_laser_processing::Scan* img);
     void submitRequest();
 
 protected:

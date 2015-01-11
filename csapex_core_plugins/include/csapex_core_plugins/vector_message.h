@@ -16,6 +16,7 @@ namespace connection_types {
 struct VectorMessage : public Message
 {
     typedef boost::shared_ptr<VectorMessage> Ptr;
+    typedef boost::shared_ptr<const VectorMessage> ConstPtr;
 
     VectorMessage(const std::string& frame_id = "/", Stamp stamp = 0);
 
@@ -41,11 +42,11 @@ struct VectorMessage : public Message
 
     static VectorMessage::Ptr make();
 
-    virtual ConnectionType::Ptr clone();
-    virtual ConnectionType::Ptr toType();
+    virtual ConnectionType::Ptr clone() const override;
+    virtual ConnectionType::Ptr toType() const override;
 
-    virtual bool canConnectTo(const ConnectionType* other_side) const;
-    virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
+    virtual bool canConnectTo(const ConnectionType* other_side) const override;
+    virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const override;
 
 private:
     VectorMessage(ConnectionType::Ptr type, const std::string& frame_id, Stamp stamp);
@@ -80,12 +81,12 @@ private:
         {
         }
 
-        virtual ConnectionType::Ptr clone()
+        virtual ConnectionType::Ptr clone() const override
         {
             return cloneEntry();
         }
 
-        virtual EntryInterface::Ptr cloneEntry() = 0;
+        virtual EntryInterface::Ptr cloneEntry() const = 0;
 
         virtual void encode(YAML::Node& node) const = 0;
         virtual void decode(const YAML::Node& node) = 0;
@@ -112,20 +113,20 @@ private:
             BOOST_STATIC_ASSERT((!boost::is_same<T, void*>::value));
         }
 
-        virtual EntryInterface::Ptr cloneEntry()
+        virtual EntryInterface::Ptr cloneEntry() const override
         {
             Self::Ptr r(new Self);
             r->value = value;
             return r;
         }
 
-        virtual ConnectionType::Ptr toType()
+        virtual ConnectionType::Ptr toType() const override
         {
             Self::Ptr r(new Self);
             return r;
         }
 
-        virtual bool canConnectTo(const ConnectionType* other_side) const
+        virtual bool canConnectTo(const ConnectionType* other_side) const override
         {
             const Self* vec = dynamic_cast<const Self*> (other_side);
             const VectorMessage* vec_deprecated =  dynamic_cast<const VectorMessage*> (other_side);
@@ -143,19 +144,19 @@ private:
                 }
             }
         }
-        virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const
+        virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const override
         {
             const Self* vec = dynamic_cast<const Self*> (other_side);
             return vec != 0;
         }
 
-        void encode(YAML::Node& node) const
+        void encode(YAML::Node& node) const override
         {
             node["value_type"] = type2name(typeid(T));
             node["values"] = *value;
         }
 
-        void decode(const YAML::Node& node)
+        void decode(const YAML::Node& node) override
         {
             value.reset(new std::vector<T>);
             *value = node["values"].as< std::vector<T> >();
@@ -183,6 +184,7 @@ private:
 
 public:
     typedef boost::shared_ptr<GenericVectorMessage> Ptr;
+    typedef boost::shared_ptr<const GenericVectorMessage> ConstPtr;
 
     template <typename T>
     struct TypeMap {
@@ -260,13 +262,13 @@ public:
     }
 
 
-    virtual ConnectionType::Ptr clone();
-    virtual ConnectionType::Ptr toType();
+    virtual ConnectionType::Ptr clone() const override;
+    virtual ConnectionType::Ptr toType() const override;
 
-    virtual bool canConnectTo(const ConnectionType* other_side) const;
-    virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const;
+    virtual bool canConnectTo(const ConnectionType* other_side) const override;
+    virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const override;
 
-    virtual std::string name() const;
+    virtual std::string name() const override;
 
 private:
     GenericVectorMessage(EntryInterface::Ptr impl, const std::string &frame_id, Message::Stamp stamp);

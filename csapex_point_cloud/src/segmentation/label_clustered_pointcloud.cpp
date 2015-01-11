@@ -28,7 +28,7 @@ LabelClusteredPointCloud::LabelClusteredPointCloud()
 
 void LabelClusteredPointCloud::process()
 {
-    PointCloudMessage::Ptr cloud(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr cloud(input_->getMessage<PointCloudMessage>());
 
     cluster_indices = in_indices_->getMessage<GenericVectorMessage, pcl::PointIndices>();
 
@@ -69,7 +69,7 @@ struct Copy<pcl::PointXYZRGBL, pcl::PointXYZRGB> {
 
 template<class PointT, class PointS>
 struct Impl {
-    inline static void label(const typename pcl::PointCloud<PointT>::Ptr src,
+    inline static void label(const typename pcl::PointCloud<PointT>::ConstPtr src,
                              typename pcl::PointCloud<PointS>::Ptr dst,
                              const LabelClusteredPointCloud::Indices &indices)
     {
@@ -92,7 +92,7 @@ struct Impl {
 
 template<class PointT>
 struct Label {
-    static void apply(const typename pcl::PointCloud<PointT>::Ptr src,
+    static void apply(const typename pcl::PointCloud<PointT>::ConstPtr src,
                       PointCloudMessage::Ptr &dst_msg,
                       const LabelClusteredPointCloud::Indices &indices)
     {
@@ -104,7 +104,7 @@ struct Label {
 
 template<>
 struct Label<pcl::PointXYZRGB> {
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr src,
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr src,
                       PointCloudMessage::Ptr &dst_msg,
                       const LabelClusteredPointCloud::Indices &indices)
     {
@@ -116,7 +116,7 @@ struct Label<pcl::PointXYZRGB> {
 
 template<>
 struct Label<pcl::PointXY> {
-    static void apply(const typename pcl::PointCloud<pcl::PointXY>::Ptr src,
+    static void apply(const typename pcl::PointCloud<pcl::PointXY>::ConstPtr src,
                       PointCloudMessage::Ptr &dst_msg,
                       const LabelClusteredPointCloud::Indices &indices)
     {
@@ -126,7 +126,7 @@ struct Label<pcl::PointXY> {
 }
 
 template <class PointT>
-void LabelClusteredPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void LabelClusteredPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
 

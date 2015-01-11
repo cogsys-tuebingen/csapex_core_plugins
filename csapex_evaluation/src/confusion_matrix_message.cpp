@@ -14,13 +14,15 @@ ConfusionMatrixMessage::ConfusionMatrixMessage(Message::Stamp stamp)
     : Message(type<ConfusionMatrixMessage>::name(), "/", stamp)
 {}
 
-ConnectionType::Ptr ConfusionMatrixMessage::clone() {
+ConnectionType::Ptr ConfusionMatrixMessage::clone() const
+{
     Ptr new_msg(new ConfusionMatrixMessage);
     new_msg->confusion = confusion;
     return new_msg;
 }
 
-ConnectionType::Ptr ConfusionMatrixMessage::toType() {
+ConnectionType::Ptr ConfusionMatrixMessage::toType() const
+{
     Ptr new_msg(new ConfusionMatrixMessage);
     return new_msg;
 }

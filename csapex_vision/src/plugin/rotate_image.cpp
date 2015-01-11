@@ -42,7 +42,7 @@ void RotateImage::setup()
 
 void RotateImage::process()
 {
-    CvMatMessage::Ptr src = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr src = in_->getMessage<CvMatMessage>();
     CvMatMessage::Ptr dst(new CvMatMessage(src->getEncoding(), src->stamp));
 
     double angle = readParameter<double>("angle");

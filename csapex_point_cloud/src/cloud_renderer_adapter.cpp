@@ -469,7 +469,7 @@ struct Access
 template <class PointT>
 struct Access<PointT, X>
 {
-    static double access(typename pcl::PointCloud<PointT>::iterator it)
+    static double access(typename pcl::PointCloud<PointT>::const_iterator it)
     {
         return it->x;
     }
@@ -478,7 +478,7 @@ struct Access<PointT, X>
 template <class PointT>
 struct Access<PointT, Y>
 {
-    static double access(typename pcl::PointCloud<PointT>::iterator it)
+    static double access(typename pcl::PointCloud<PointT>::const_iterator it)
     {
         return it->y;
     }
@@ -487,7 +487,7 @@ struct Access<PointT, Y>
 template <class PointT>
 struct Access<PointT, Z>
 {
-    static double access(typename pcl::PointCloud<PointT>::iterator it)
+    static double access(typename pcl::PointCloud<PointT>::const_iterator it)
     {
         return it->z;
     }
@@ -496,7 +496,7 @@ struct Access<PointT, Z>
 template <class PointT>
 struct Access<PointT, I>
 {
-    static double access(typename pcl::PointCloud<PointT>::iterator it)
+    static double access(typename pcl::PointCloud<PointT>::const_iterator it)
     {
         return 0;
     }
@@ -505,7 +505,7 @@ struct Access<PointT, I>
 template <>
 struct Access<pcl::PointXYZI, I>
 {
-    static double access(typename pcl::PointCloud<pcl::PointXYZI>::iterator it)
+    static double access(typename pcl::PointCloud<pcl::PointXYZI>::const_iterator it)
     {
         return it->intensity;
     }
@@ -514,11 +514,11 @@ struct Access<pcl::PointXYZI, I>
 template <class PointT, int Component>
 struct Util
 {
-    static void findExtrema(typename pcl::PointCloud<PointT>::Ptr cloud, double& min, double& max)
+    static void findExtrema(typename pcl::PointCloud<PointT>::ConstPtr cloud, double& min, double& max)
     {
         min = std::numeric_limits<double>::max();
         max = std::numeric_limits<double>::min();
-        for(typename std::vector<PointT, Eigen::aligned_allocator<PointT> >::iterator it = cloud->points.begin(); it != cloud->points.end(); ++it) {
+        for(auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
             if(Access<PointT, Component>::access(it) < min) {
                 min = Access<PointT, Component>::access(it);
             }
@@ -533,25 +533,25 @@ struct Util
 template <typename Color>
 void getRainbowColor(float value, Color& color)
 {
-  value = std::max(std::min(value, 1.0f), 0.0f);
+    value = std::max(std::min(value, 1.0f), 0.0f);
 
-  float h = value * 5.0f + 1.0f;
-  int i = floor(h);
-  float f = h - i;
-  if ( !(i&1) ) f = 1 - f; // if i is even
-  float n = 1 - f;
+    float h = value * 5.0f + 1.0f;
+    int i = floor(h);
+    float f = h - i;
+    if ( !(i&1) ) f = 1 - f; // if i is even
+    float n = 1 - f;
 
-  if (i <= 1) color.setX(n), color.setY(0), color.setZ(1);
-  else if (i == 2) color.setX(0), color.setY(n), color.setZ(1);
-  else if (i == 3) color.setX(0), color.setY(1), color.setZ(n);
-  else if (i == 4) color.setX(n), color.setY(1), color.setZ(0);
-  else if (i >= 5) color.setX(1), color.setY(n), color.setZ(0);
+    if (i <= 1) color.setX(n), color.setY(0), color.setZ(1);
+    else if (i == 2) color.setX(0), color.setY(n), color.setZ(1);
+    else if (i == 3) color.setX(0), color.setY(1), color.setZ(n);
+    else if (i == 4) color.setX(n), color.setY(1), color.setZ(0);
+    else if (i >= 5) color.setX(1), color.setY(n), color.setZ(0);
 }
 
 template <class PointT, int Component>
 struct RendererGradient
 {
-    static void render(typename pcl::PointCloud<PointT>::Ptr cloud, bool rainbow, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
+    static void render(typename pcl::PointCloud<PointT>::ConstPtr cloud, bool rainbow, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
     {
         if(rainbow) {
             renderRainbow(cloud);
@@ -559,13 +559,13 @@ struct RendererGradient
             renderGradient(cloud, color_grad_start, color_grad_end);
         }
     }
-    static void renderGradient(typename pcl::PointCloud<PointT>::Ptr cloud, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
+    static void renderGradient(typename pcl::PointCloud<PointT>::ConstPtr cloud, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
     {
         double min, max;
         Util<PointT, Component>::findExtrema(cloud, min, max);
 
-        for(typename std::vector<PointT, Eigen::aligned_allocator<PointT> >::iterator it = cloud->points.begin(); it != cloud->points.end(); ++it) {
-            PointT& pt = *it;
+        for(auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
+            const PointT& pt = *it;
 
             double v = Access<PointT, Component>::access(it);
             double f = (v - min) / (max - min);
@@ -576,13 +576,13 @@ struct RendererGradient
             glVertex3d(pt.x, pt.y, pt.z);
         }
     }
-    static void renderRainbow(typename pcl::PointCloud<PointT>::Ptr cloud)
+    static void renderRainbow(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     {
         double min, max;
         Util<PointT, Component>::findExtrema(cloud, min, max);
 
-        for(typename std::vector<PointT, Eigen::aligned_allocator<PointT> >::iterator it = cloud->points.begin(); it != cloud->points.end(); ++it) {
-            PointT& pt = *it;
+        for(auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
+            const PointT& pt = *it;
 
             double v = Access<PointT, Component>::access(it);
             double f = (v - min) / (max - min);
@@ -599,7 +599,7 @@ struct RendererGradient
 template <class PointT, int Component>
 struct Renderer
 {
-    static void render(typename pcl::PointCloud<PointT>::Ptr cloud, bool rainbow, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
+    static void render(typename pcl::PointCloud<PointT>::ConstPtr cloud, bool rainbow, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
     {
         RendererGradient<PointT, Component>::render(cloud, rainbow, color_grad_start, color_grad_end);
     }
@@ -608,10 +608,10 @@ struct Renderer
 template <int Component>
 struct Renderer<pcl::PointXYZRGB, Component>
 {
-    static void render(typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, bool, const QVector3D&, const QVector3D&)
+    static void render(typename pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud, bool, const QVector3D&, const QVector3D&)
     {
-        for(typename std::vector<pcl::PointXYZRGB, Eigen::aligned_allocator<pcl::PointXYZRGB> >::iterator it = cloud->points.begin(); it != cloud->points.end(); ++it) {
-            pcl::PointXYZRGB& pt = *it;
+        for(auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
+            const pcl::PointXYZRGB& pt = *it;
 
             glColor3d(pt.r / 255.0, pt.g / 255.0, pt.b / 255.0);
 
@@ -622,7 +622,7 @@ struct Renderer<pcl::PointXYZRGB, Component>
 }
 
 template <class PointT>
-void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     makeCurrent();
 

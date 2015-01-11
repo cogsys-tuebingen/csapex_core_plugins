@@ -34,13 +34,13 @@ void VoxelGrid::setup()
 
 void VoxelGrid::process()
 {
-    PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<VoxelGrid>(this, msg), msg->value);
 }
 
 template <class PointT>
-void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     double res = readParameter<double>("resolution");
     Eigen::Vector4f leaf(res, res, res, 0);

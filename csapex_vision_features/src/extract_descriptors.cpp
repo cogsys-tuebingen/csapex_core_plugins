@@ -82,11 +82,12 @@ void ExtractDescriptors::process()
 
     setError(false);
 
-    CvMatMessage::Ptr img_msg = in_img->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img_msg = in_img->getMessage<CvMatMessage>();
 
     DescriptorMessage::Ptr des_msg(new DescriptorMessage);
 
-    KeypointMessage::Ptr key_msg = in_key->getMessage<KeypointMessage>();
+    // need to clone keypoints, extractDescriptors will modify the vector
+    KeypointMessage::Ptr key_msg = in_key->getClonedMessage<KeypointMessage>();
 
     extractor->extractDescriptors(img_msg->value, key_msg->value, des_msg->value);
 

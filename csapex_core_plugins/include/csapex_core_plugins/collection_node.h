@@ -38,7 +38,7 @@ public:
             buffer_.insert(buffer_.end(), input->begin(), input->end());
         }
         if(in_single->hasMessage()) {
-            boost::shared_ptr<MessageType> input = in_single->getMessage<MessageType>();
+            boost::shared_ptr<MessageType const> input = in_single->getMessage<MessageType>();
             buffer_.push_back(*input);
         }
     }

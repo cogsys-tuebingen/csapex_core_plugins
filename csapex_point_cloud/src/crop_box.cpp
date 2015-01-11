@@ -38,13 +38,13 @@ void CropBox::setup()
 
 void CropBox::process()
 {
-    PointCloudMessage::Ptr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<CropBox>(this, msg), msg->value);
 }
 
 template <class PointT>
-void CropBox::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void CropBox::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     std::pair<double,double> dx = readParameter<std::pair<double, double> >("dx");
     std::pair<double,double> dy = readParameter<std::pair<double, double> >("dy");

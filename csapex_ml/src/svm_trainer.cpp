@@ -107,7 +107,7 @@ void SVMTrainer::setupParameters()
 void SVMTrainer::process()
 {
     if(in_->hasMessage()) {
-        FeaturesMessage::Ptr msg = in_->getMessage<FeaturesMessage>();
+        FeaturesMessage::ConstPtr msg = in_->getMessage<FeaturesMessage>();
         m_.lock();
 
         if(step_ == 0)

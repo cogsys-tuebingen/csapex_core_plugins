@@ -26,7 +26,7 @@ void ExtractTimeStamp::setup()
 
 void ExtractTimeStamp::process()
 {
-    Message::Ptr msg = input_->getMessage<Message>();
+    Message::ConstPtr msg = input_->getMessage<Message>();
 
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
     time->value = time->value.fromNSec(msg->stamp);

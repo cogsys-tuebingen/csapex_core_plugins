@@ -28,13 +28,15 @@ PointCloudMessage::PointCloudMessage()
 }
 
 
-ConnectionType::Ptr PointCloudMessage::clone() {
+ConnectionType::Ptr PointCloudMessage::clone() const
+{
     Ptr new_msg(new PointCloudMessage(frame_id, stamp));
     new_msg->value = value;
     return new_msg;
 }
 
-ConnectionType::Ptr PointCloudMessage::toType() {
+ConnectionType::Ptr PointCloudMessage::toType() const
+{
     Ptr new_msg(new PointCloudMessage("/", 0));
     return new_msg;
 }
@@ -44,7 +46,8 @@ std::string PointCloudMessage::name() const
     return Message::name();
 }
 
-bool PointCloudMessage::acceptsConnectionFrom(const ConnectionType* other_side) const {
+bool PointCloudMessage::acceptsConnectionFrom(const ConnectionType* other_side) const
+{
     return dynamic_cast<const PointCloudMessage*> (other_side);
 }
 

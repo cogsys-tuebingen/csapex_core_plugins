@@ -29,7 +29,7 @@ ColorPointCloud::ColorPointCloud()
 
 void ColorPointCloud::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<ColorPointCloud>(this, msg), msg->value);
 }
@@ -55,7 +55,7 @@ struct Color {
 
 template<class PointT>
 struct Impl {
-    inline static void convert(const typename pcl::PointCloud<PointT>::Ptr src,
+    inline static void convert(const typename pcl::PointCloud<PointT>::ConstPtr src,
                                typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr dst)
     {
         dst->height = src->height;
@@ -82,7 +82,7 @@ struct Impl {
 
 template<class PointT>
 struct Conversion {
-    static void apply(const typename pcl::PointCloud<PointT>::Ptr src,
+    static void apply(const typename pcl::PointCloud<PointT>::ConstPtr src,
                       typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr dst)
     {
         throw std::runtime_error("Type of pointcloud must be labeled!");
@@ -91,7 +91,7 @@ struct Conversion {
 
 template<>
 struct Conversion<pcl::PointXYZL>{
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::Ptr src,
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::ConstPtr src,
                       typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr dst)
     {
         Impl<pcl::PointXYZL>::convert(src, dst);
@@ -101,7 +101,7 @@ struct Conversion<pcl::PointXYZL>{
 
 template<>
 struct Conversion<pcl::PointXYZRGBL>{
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGBL>::Ptr src,
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGBL>::ConstPtr src,
                       typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr dst)
     {
         Impl<pcl::PointXYZRGBL>::convert(src, dst);
@@ -110,7 +110,7 @@ struct Conversion<pcl::PointXYZRGBL>{
 }
 
 template <class PointT>
-void ColorPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void ColorPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr out_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);

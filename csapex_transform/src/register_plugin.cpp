@@ -32,7 +32,7 @@ struct ConvertTf
 
         return out;
     }
-    static typename tf2_msgs::TFMessage::Ptr apex2ros(const typename connection_types::TransformMessage::Ptr& apex_msg) {
+    static typename tf2_msgs::TFMessage::Ptr apex2ros(const typename connection_types::TransformMessage::ConstPtr& apex_msg) {
         typename tf2_msgs::TFMessage::Ptr out(new tf2_msgs::TFMessage);
         geometry_msgs::TransformStamped tf;
 

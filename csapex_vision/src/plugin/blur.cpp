@@ -21,7 +21,7 @@ BoxBlur::BoxBlur()
 
 void BoxBlur::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
 
     int kernel = readParameter<int>("kernel");

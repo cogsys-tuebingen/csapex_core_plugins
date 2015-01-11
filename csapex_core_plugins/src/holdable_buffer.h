@@ -22,7 +22,7 @@ private:
     Input  *in_;
     Output *out_;
 
-    std::deque<ConnectionType::Ptr> buffer_;
+    std::deque<ConnectionType::ConstPtr> buffer_;
 };
 }
 

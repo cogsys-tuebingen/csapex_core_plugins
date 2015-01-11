@@ -24,7 +24,7 @@ PointCloudToPointMatrix::PointCloudToPointMatrix()
 
 void PointCloudToPointMatrix::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToPointMatrix>(this, msg), msg->value);
 }
@@ -39,7 +39,7 @@ void PointCloudToPointMatrix::setup()
 namespace implementation {
 template<class PointT>
 struct Impl {
-    static void convert(const typename pcl::PointCloud<PointT>::Ptr cloud, cv::Mat &matrix, cv::Mat &mask)
+    static void convert(const typename pcl::PointCloud<PointT>::ConstPtr cloud, cv::Mat &matrix, cv::Mat &mask)
     {
         int height = cloud->height;
         int width  = cloud->width;
@@ -61,7 +61,7 @@ struct Impl {
 };
 template <>
 struct Impl<pcl::PointXY> {
-    static void convert(const typename pcl::PointCloud<pcl::PointXY>::Ptr cloud, cv::Mat &matrix, cv::Mat &mask)
+    static void convert(const typename pcl::PointCloud<pcl::PointXY>::ConstPtr cloud, cv::Mat &matrix, cv::Mat &mask)
     {
         std::runtime_error("Conversion is not supported for pcl::PointXY!");
     }
@@ -69,7 +69,7 @@ struct Impl<pcl::PointXY> {
 
 template<>
 struct Impl<pcl::PointXYZI> {
-    static void convert(const typename pcl::PointCloud<pcl::PointXYZI>::Ptr cloud, cv::Mat &matrix, cv::Mat &mask)
+    static void convert(const typename pcl::PointCloud<pcl::PointXYZI>::ConstPtr cloud, cv::Mat &matrix, cv::Mat &mask)
     {
         int height = cloud->height;
         int width  = cloud->width;
@@ -95,7 +95,7 @@ struct Impl<pcl::PointXYZI> {
 
 
 template <class PointT>
-void PointCloudToPointMatrix::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void PointCloudToPointMatrix::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     #warning "FIX ENCODING"
     CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, cloud->header.stamp));

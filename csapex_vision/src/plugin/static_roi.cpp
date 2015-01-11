@@ -40,7 +40,7 @@ void StaticRoi::process()
     std::pair<int,int>  plane_size;
 
     if(in_->hasMessage()) {
-        CvMatMessage::Ptr in = in_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr in = in_->getMessage<CvMatMessage>();
 
         plane_size.first  = in->value.cols;
         plane_size.second = in->value.rows;

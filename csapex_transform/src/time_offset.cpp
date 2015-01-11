@@ -24,7 +24,7 @@ TimeOffset::TimeOffset()
 
 void TimeOffset::process()
 {
-    connection_types::TimeStampMessage::Ptr in = input_->getMessage<connection_types::TimeStampMessage>();
+    connection_types::TimeStampMessage::ConstPtr in = input_->getMessage<connection_types::TimeStampMessage>();
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
 
     double offset = readParameter<double>("offset");

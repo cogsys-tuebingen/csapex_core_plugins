@@ -23,7 +23,7 @@ void ConfusionMatrixDisplay::setup()
 }
 void ConfusionMatrixDisplay::process()
 {
-    connection_types::ConfusionMatrixMessage::Ptr msg = connector_->getMessage<connection_types::ConfusionMatrixMessage>();
+    connection_types::ConfusionMatrixMessage::ConstPtr msg = connector_->getMessage<connection_types::ConfusionMatrixMessage>();
 
     confusion_ = msg->confusion;
 

@@ -28,7 +28,7 @@ void PointCloudToIntensityImage::setup()
 
 void PointCloudToIntensityImage::process()
 {
-    PointCloudMessage::Ptr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToIntensityImage>(this, msg), msg->value);
 }
@@ -38,7 +38,7 @@ namespace impl {
 template <class PointT>
 struct Impl
 {
-    static void inputCloud(PointCloudToIntensityImage* instance, typename pcl::PointCloud<PointT>::Ptr cloud)
+    static void inputCloud(PointCloudToIntensityImage* instance, typename pcl::PointCloud<PointT>::ConstPtr cloud)
     {
         throw std::runtime_error(std::string("point type '") + type2name(typeid(PointT)) + "' not supported");
     }
@@ -47,7 +47,7 @@ struct Impl
 template <>
 struct Impl<pcl::PointXYZI>
 {
-    static void inputCloud(PointCloudToIntensityImage* instance, typename pcl::PointCloud<pcl::PointXYZI>::Ptr cloud)
+    static void inputCloud(PointCloudToIntensityImage* instance, typename pcl::PointCloud<pcl::PointXYZI>::ConstPtr cloud)
     {
         instance->inputCloudImpl(cloud);
     }
@@ -55,12 +55,12 @@ struct Impl<pcl::PointXYZI>
 }
 
 template <class PointT>
-void PointCloudToIntensityImage::inputCloud(typename pcl::PointCloud<PointT>::Ptr cloud)
+void PointCloudToIntensityImage::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     impl::Impl<PointT>::inputCloud(this, cloud);
 }
 
-void PointCloudToIntensityImage::inputCloudImpl(typename pcl::PointCloud<pcl::PointXYZI>::Ptr cloud)
+void PointCloudToIntensityImage::inputCloudImpl(typename pcl::PointCloud<pcl::PointXYZI>::ConstPtr cloud)
 {
     unsigned n = cloud->points.size();
 

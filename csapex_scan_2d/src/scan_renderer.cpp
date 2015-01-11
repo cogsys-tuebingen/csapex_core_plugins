@@ -37,11 +37,11 @@ void ScanRenderer::setup()
 void ScanRenderer::process()
 {
     if(input_->isMessage<LabeledScanMessage>()) {
-        LabeledScanMessage::Ptr scan_msg = input_->getMessage<LabeledScanMessage>();
+        LabeledScanMessage::ConstPtr scan_msg = input_->getMessage<LabeledScanMessage>();
         doProcess<LabeledScan>(scan_msg->value);
 
     } else if(input_->isMessage<ScanMessage>()) {
-        ScanMessage::Ptr scan_msg = input_->getMessage<ScanMessage>();
+        ScanMessage::ConstPtr scan_msg = input_->getMessage<ScanMessage>();
         doProcess<Scan>(scan_msg->value);
 
     } else {
@@ -50,7 +50,7 @@ void ScanRenderer::process()
 }
 
 template <typename ScanType>
-void ScanRenderer::doProcess(ScanType& scan)
+void ScanRenderer::doProcess(const ScanType& scan)
 {
     CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, 0));
 

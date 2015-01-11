@@ -37,7 +37,7 @@ void SplitLabeledScan::setup()
 
 void SplitLabeledScan::process()
 {
-    LabeledScanMessage::Ptr input = in_->getMessage<LabeledScanMessage>();
+    LabeledScanMessage::ConstPtr input = in_->getMessage<LabeledScanMessage>();
 
     ScanMessage::Ptr output_scan(new ScanMessage);
     output_scan->value = input->value;

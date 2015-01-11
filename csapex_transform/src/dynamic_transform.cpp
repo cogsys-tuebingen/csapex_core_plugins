@@ -87,7 +87,7 @@ void DynamicTransform::process()
 
 
     if(time_in_->isConnected() && time_in_->hasMessage()) {
-        connection_types::TimeStampMessage::Ptr time_msg = time_in_->getMessage<connection_types::TimeStampMessage>();
+        connection_types::TimeStampMessage::ConstPtr time_msg = time_in_->getMessage<connection_types::TimeStampMessage>();
         publishTransform(time_msg->value);
     } else {
         publishTransform(ros::Time(0));
