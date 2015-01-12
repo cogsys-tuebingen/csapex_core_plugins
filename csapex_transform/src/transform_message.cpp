@@ -13,8 +13,8 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::TransformMessage)
 using namespace csapex;
 using namespace connection_types;
 
-TransformMessage::TransformMessage(const std::string& from_frame, const std::string& to_frame)
-    : MessageTemplate<tf::Transform, TransformMessage> (from_frame), child_frame(to_frame)
+TransformMessage::TransformMessage(const std::string& frame_id, const std::string& child_frame_id)
+    : MessageTemplate<tf::Transform, TransformMessage> (frame_id), child_frame(child_frame_id)
 {}
 
 TransformMessage::TransformMessage()

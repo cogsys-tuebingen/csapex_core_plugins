@@ -48,7 +48,7 @@ BagProvider::~BagProvider()
 void BagProvider::setupRosPublisher()
 {
     if(pub_setup_ == false && ROSHandler::instance().isConnected()) {
-        pub_tf_ = ROSHandler::instance().nh()->advertise<tf2_msgs::TFMessage>("/tf", 500);
+        pub_tf_ = ROSHandler::instance().nh()->advertise<tf2_msgs::TFMessage>("/tf", 5000, false);
         pub_clock_ = ROSHandler::instance().nh()->advertise<rosgraph_msgs::Clock>("/clock", 500);
         pub_setup_ = true;
     }

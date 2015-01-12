@@ -45,6 +45,7 @@ target_link_libraries(csapex_transform
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
 
 add_library(csapex_transform_plugin
+    src/transform_to_odometry.cpp
     src/register_plugin.cpp
     src/clock.cpp
     src/time_offset.cpp

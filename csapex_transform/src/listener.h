@@ -26,7 +26,8 @@ public:
     static void stop();
 
     void reset() {
-        //tfl.clear();
+        tfl->clear();
+        std::cout << "reset tf listener" << std::endl;
         tfl.reset(new tf::TransformListener);
     }
     bool ok();

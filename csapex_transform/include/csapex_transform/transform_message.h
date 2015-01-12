@@ -14,7 +14,7 @@ namespace connection_types {
 struct TransformMessage : public MessageTemplate<tf::Transform, TransformMessage>
 {
     TransformMessage();
-    TransformMessage(const std::string &from_frame, const std::string &to_frame);
+    TransformMessage(const std::string &frame_id, const std::string &child_frame_id);
 
     virtual ConnectionType::Ptr clone();
 

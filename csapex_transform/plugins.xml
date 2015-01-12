@@ -1,4 +1,7 @@
 <library path="libcsapex_transform_plugin">
+<class type="csapex::TransformToOdometry" base_class_type="csapex::Node">
+  <description>Creates odometry information from a transform</description>
+</class>
 <class type="csapex::RegisterTransformPlugin" base_class_type="csapex::CorePlugin">
   <description></description>
 </class>
