@@ -25,7 +25,7 @@ void Undistort::process()
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
 
     out->value = in->value.clone();
-    if(undist_.get() != NULL) {
+    if(undist_.get() != nullptr) {
         int margin       = readParameter<int>("margin");
         cv::Size  margin_size(2 * margin + in->value.cols, 2 * margin + in->value.rows);
         undist_->reset_map(margin_size, margin, margin);

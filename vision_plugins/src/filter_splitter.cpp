@@ -17,7 +17,7 @@ using namespace csapex;
 using namespace connection_types;
 
 Splitter::Splitter() :
-    input_(NULL)
+    input_(nullptr)
 {
     state_.channel_count_ = 0;    
 }

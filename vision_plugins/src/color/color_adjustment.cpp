@@ -69,7 +69,7 @@ void ColorAdjustment::process()
 
         if(loaded_state_) {
             Node::setParameterState(loaded_state_);
-            loaded_state_.reset((GenericState*)NULL);
+            loaded_state_.reset((GenericState*)nullptr);
             triggerParameterSetChanged();
             update();
         }

@@ -39,7 +39,7 @@ void Normalize::process()
 
     in->value.copyTo(out->value);
     cv::normalize(in->value, out->value, lower, upper, norm, -1,
-                  mask.get() == NULL ? cv::noArray() : mask->value);
+                  mask.get() == nullptr ? cv::noArray() : mask->value);
 
     output_->publish(out);
 }

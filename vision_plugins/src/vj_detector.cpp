@@ -21,7 +21,7 @@ using namespace csapex;
 using namespace connection_types;
 
 VJDetector::VJDetector()
-    : vj_detector(NULL), image_scanner(NULL)
+    : vj_detector(nullptr), image_scanner(nullptr)
 {
     addParameter(param::ParameterFactory::declareFileInputPath("file", ""));
 }
@@ -45,9 +45,9 @@ void VJDetector::process()
 
         if(vj_detector) {
             delete vj_detector;
-            vj_detector = NULL;
+            vj_detector = nullptr;
             delete image_scanner;
-            image_scanner = NULL;
+            image_scanner = nullptr;
         }
 
         if(!file_.empty()) {

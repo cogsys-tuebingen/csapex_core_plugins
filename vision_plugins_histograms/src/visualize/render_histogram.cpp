@@ -41,7 +41,7 @@ void RenderHistogram::process()
 
     int line_width = readParameter<int>("line width");
 
-    if(maxima.get() == NULL) {
+    if(maxima.get() == nullptr) {
         int color_count = 0;
         for(std::vector<cv::Mat>::const_iterator it = in->value.histograms.begin() ;
             it != in->value.histograms.end() ;
