@@ -7,6 +7,7 @@
 #include <csapex_ros/time_stamp_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::SetTimeStamp, csapex::Node)
 

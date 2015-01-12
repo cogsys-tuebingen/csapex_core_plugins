@@ -64,7 +64,7 @@ void HoldableBuffer::process()
     }
 
     if(out) {
-        out_->cloneAndPublish(out);
+        out_->publish(out);
     }
 
 }

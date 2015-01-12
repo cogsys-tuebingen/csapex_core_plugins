@@ -5,6 +5,7 @@
 #include <csapex/msg/output.h>
 #include <csapex/msg/input.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

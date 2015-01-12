@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_point_cloud/indeces_message.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 /// SYSTEM
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING

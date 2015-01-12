@@ -54,6 +54,6 @@ void Delay::process()
     progress_->setProgress(wait_time, wait_time);
 
     output_->setType(input_->getType());
-    output_->cloneAndPublish(msg);
+    output_->publish(msg);
 }
 

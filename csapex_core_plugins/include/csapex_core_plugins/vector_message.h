@@ -237,7 +237,7 @@ public:
     }
 
     template <typename T>
-    boost::shared_ptr<std::vector<T> const>  makeShared()
+    boost::shared_ptr<std::vector<T> const>  makeShared() const
     {
         return boost::dynamic_pointer_cast< Implementation<T> > (impl)->value;
     }

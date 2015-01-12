@@ -9,6 +9,8 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ros/yaml_io.hpp>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/generic_pointer_message.hpp>
 
 /// SYSTEM
 #include <geometry_msgs/Point.h>

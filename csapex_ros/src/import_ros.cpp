@@ -255,7 +255,7 @@ void ImportRos::processROS()
     }
 
     if(first_after == msgs_.begin()) {
-        connector_->cloneAndPublish(*first_after);
+        connector_->publish(*first_after);
         return;
 
     } else if(first_after == msgs_.end()) {
@@ -270,9 +270,9 @@ void ImportRos::processROS()
         ros::Duration diff2 = rosTime((*last_before)->stamp) - time->value;
 
         if(diff1 < diff2) {
-            connector_->cloneAndPublish(*first_after);
+            connector_->publish(*first_after);
         } else {
-            connector_->cloneAndPublish(*last_before);
+            connector_->publish(*last_before);
         }
     }
 }
@@ -336,7 +336,7 @@ void ImportRos::publishLatestMessage()
         }
     }
 
-    connector_->cloneAndPublish(msgs_.back());
+    connector_->publish(msgs_.back());
 
     if(!readParameter<bool>("latch")) {
         msgs_.clear();

@@ -8,6 +8,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <utils_param/range_parameter.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 /// SYSTEM
 //#include <boost/assign.hpp>

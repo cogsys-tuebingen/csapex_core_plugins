@@ -10,6 +10,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 
 #define RAD_TO_DEG(x) ((x) )
