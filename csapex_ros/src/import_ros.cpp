@@ -43,7 +43,7 @@ ros::Time rosTime(u_int64_t ns) {
 }
 
 ImportRos::ImportRos()
-    : connector_(NULL), retries_(0), running_(true)
+    : connector_(nullptr), retries_(0), running_(true)
 {
 }
 

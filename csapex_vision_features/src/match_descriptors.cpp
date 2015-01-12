@@ -283,7 +283,7 @@ public:
 };
 
 MatchDescriptors::MatchDescriptors()
-    : in_img_1(NULL), current_method_(SIMPLE)
+    : in_img_1(nullptr), current_method_(SIMPLE)
 {
     boost::function<void(param::Parameter*)> update = boost::bind(&MatchDescriptors::update, this);
 

@@ -14,7 +14,7 @@ LockedTFListener TFListener::getLocked()
     if(l->tfl) {
         return LockedTFListener(l);
     } else {
-        return LockedTFListener(NULL);
+        return LockedTFListener(nullptr);
     }
 }
 

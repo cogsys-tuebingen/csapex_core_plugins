@@ -23,7 +23,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 ImageRoiAdapter::ImageRoiAdapter(NodeWorker* worker, ImageRoi *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
-      pixmap_(NULL),
+      pixmap_(nullptr),
       view_(new QGraphicsView),
       empty(32, 32, QImage::Format_RGB16),
       painter(&empty),
@@ -107,7 +107,7 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
 void ImageRoiAdapter::setupUi(QBoxLayout* layout)
 {
     QGraphicsScene* scene = view_->scene();
-    if(scene == NULL) {
+    if(scene == nullptr) {
         scene = new QGraphicsScene();
         view_->setScene(scene);
         scene->installEventFilter(this);
@@ -176,7 +176,7 @@ void ImageRoiAdapter::display(QSharedPointer<QImage> img)
         loaded_ = false;
     }
 
-    if(pixmap_ != NULL)
+    if(pixmap_ != nullptr)
         pixmap_->setPixmap(pixmap);
 
     rect_->setRect(state.roi_rect);
@@ -205,7 +205,7 @@ void ImageRoiAdapter::fitInView()
 
 void ImageRoiAdapter::submit()
 {
-    if(pixmap_ == NULL)
+    if(pixmap_ == nullptr)
         return;
 
 

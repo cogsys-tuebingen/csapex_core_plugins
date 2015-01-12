@@ -132,7 +132,7 @@ void BarCodeReader::process()
     out_roi->publish(out);
 
     // clean up
-    image.set_data(NULL, 0);
+    image.set_data(nullptr, 0);
 
 }
 

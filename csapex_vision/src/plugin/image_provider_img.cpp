@@ -31,7 +31,7 @@ std::vector<std::string> ImageProviderImg::getExtensions() const
 
 bool ImageProviderImg::checkIdentity(ImageProvider* other)
 {
-    return dynamic_cast<ImageProviderImg*>(other) != NULL;
+    return dynamic_cast<ImageProviderImg*>(other) != nullptr;
 }
 
 void ImageProviderImg::next(cv::Mat& img, cv::Mat& mask)

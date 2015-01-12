@@ -13,7 +13,7 @@ CSAPEX_REGISTER_CLASS(csapex::ConfusionMatrixDisplay, csapex::Node)
 using namespace csapex;
 
 ConfusionMatrixDisplay::ConfusionMatrixDisplay()
-    : connector_(NULL)
+    : connector_(nullptr)
 {
 }
 

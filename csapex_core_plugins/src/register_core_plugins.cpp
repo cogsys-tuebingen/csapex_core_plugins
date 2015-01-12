@@ -66,7 +66,7 @@ class FileHandler
             if(file.exists()) {
                 UUID uuid = UUID::make(dispatcher->getGraph()->makeUUIDPrefix("csapex::FileImporter"));
 
-                NodeState::Ptr state(new NodeState(NULL));
+                NodeState::Ptr state(new NodeState(nullptr));
                 GenericState::Ptr child_state(new GenericState);
                 child_state->addParameter(param::ParameterFactory::declareFileInputPath("path", files.first().toString().toStdString()));
                 state->setParameterState(child_state);

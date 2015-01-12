@@ -12,7 +12,7 @@ CSAPEX_REGISTER_CLASS(csapex::SayText, csapex::Node)
 using namespace csapex;
 
 SayText::SayText()
-    : connector_(NULL)
+    : connector_(nullptr)
 {
 }
 
@@ -27,7 +27,7 @@ void SayText::process()
 
     if(!msg.empty()) {
         std::stringstream cmd;
-        cmd << "espeak \"" << msg << "\" 2> /dev/null 1> /dev/null &";
+        cmd << "espeak \"" << msg << "\" 2> /dev/nullptr 1> /dev/nullptr &";
         system(cmd.str().c_str());
     }
 }

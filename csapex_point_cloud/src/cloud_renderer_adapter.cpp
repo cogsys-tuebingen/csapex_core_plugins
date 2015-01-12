@@ -20,7 +20,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
 
 CloudRendererAdapter::CloudRendererAdapter(NodeWorker* worker, CloudRenderer *node, WidgetController* widget_ctrl)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, widget_ctrl),
-      wrapped_(node), view_(NULL), pixmap_(NULL), fbo_(NULL), drag_(false), repaint_(true),
+      wrapped_(node), view_(nullptr), pixmap_(nullptr), fbo_(nullptr), drag_(false), repaint_(true),
       w_view_(10), h_view_(10), point_size_(1),
       phi_(0), theta_(M_PI/2), r_(-10.0),
       axes_(false), grid_size_(10), grid_resolution_(1.0), grid_xy_(true), grid_yz_(false), grid_xz_(false),
@@ -48,7 +48,7 @@ void CloudRendererAdapter::setupUi(QBoxLayout* layout)
 {
     view_ = new QGraphicsView;
     QGraphicsScene* scene = view_->scene();
-    if(scene == NULL) {
+    if(scene == nullptr) {
         scene = new QGraphicsScene();
         //scene->addWidget(this);
         view_->setScene(scene);
@@ -257,7 +257,7 @@ void CloudRendererAdapter::paintGL(bool request)
 
     fbo_->release();
 
-    if(pixmap_ == NULL) {
+    if(pixmap_ == nullptr) {
         pixmap_ = view_->scene()->addPixmap(QPixmap::fromImage(img));
     } else {
         pixmap_->setPixmap(QPixmap::fromImage(img));

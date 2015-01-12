@@ -13,7 +13,7 @@ CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)
 using namespace csapex;
 
 TextDisplay::TextDisplay()
-    : connector_(NULL)
+    : connector_(nullptr)
 {
 }
 

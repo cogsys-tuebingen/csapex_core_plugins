@@ -15,7 +15,7 @@ CSAPEX_REGISTER_CLASS(csapex::ImportCin, csapex::Node)
 using namespace csapex;
 
 ImportCin::ImportCin()
-    : connector_(NULL)
+    : connector_(nullptr)
 {
 }
 

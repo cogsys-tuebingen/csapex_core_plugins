@@ -11,8 +11,6 @@ CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::VectorMessage, g_ins
 using namespace csapex;
 using namespace connection_types;
 
-const GenericVectorMessage::EntryInterface::Ptr GenericVectorMessage::EntryInterface::NullPtr;
-
 GenericVectorMessage::GenericVectorMessage(EntryInterface::Ptr impl, const std::string& frame_id, Message::Stamp stamp)
     : Message (type<GenericVectorMessage>::name(), frame_id, stamp), impl(impl)
 {

@@ -17,7 +17,7 @@ CSAPEX_REGISTER_CLASS(csapex::DoubleBuffer, csapex::Node)
 using namespace csapex;
 
 DoubleBuffer::DoubleBuffer()
-    : input_(NULL), output_(NULL), dirty_(false)
+    : input_(nullptr), output_(nullptr), dirty_(false)
 {
     addParameter(param::ParameterFactory::declareBool("synchronized", true));
 }

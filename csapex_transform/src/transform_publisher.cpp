@@ -21,7 +21,7 @@ using namespace csapex;
 using namespace csapex::connection_types;
 
 TransformPublisher::TransformPublisher()
-    : tfb_(NULL)
+    : tfb_(nullptr)
 {
     addParameter(param::ParameterFactory::declareText("from", "/"));
     addParameter(param::ParameterFactory::declareText("to", "/"));

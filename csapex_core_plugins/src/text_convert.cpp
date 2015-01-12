@@ -13,7 +13,7 @@ CSAPEX_REGISTER_CLASS(csapex::TextConvert, csapex::Node)
 using namespace csapex;
 
 TextConvert::TextConvert()
-    : input_(NULL), output_(NULL)
+    : input_(nullptr), output_(nullptr)
 {
 }
 

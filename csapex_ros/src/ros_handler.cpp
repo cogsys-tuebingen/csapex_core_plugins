@@ -7,7 +7,7 @@
 
 using namespace csapex;
 
-ROSHandler* ROSHandler::g_instance_ = NULL;
+ROSHandler* ROSHandler::g_instance_ = nullptr;
 
 ROSHandler::ROSHandler(Settings& settings)
     : settings_(settings), initialized_(false)

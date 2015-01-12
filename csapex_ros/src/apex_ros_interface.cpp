@@ -76,7 +76,7 @@ class RosIoHandler
 
                     UUID uuid = UUID::make(dispatcher->getGraph()->makeUUIDPrefix("csapex::ImportRos"));
 
-                    NodeState::Ptr state(new NodeState(NULL));
+                    NodeState::Ptr state(new NodeState(nullptr));
                     ImportRos dummy;
                     dummy.getParameter("topic")->set(cmd);
                     state->setParameterState(dummy.getParameterState());
@@ -115,7 +115,7 @@ struct ConvertIntegral
 
 
 APEXRosInterface::APEXRosInterface()
-    : core_(NULL), disabled_(false)
+    : core_(nullptr), disabled_(false)
 {
 }
 

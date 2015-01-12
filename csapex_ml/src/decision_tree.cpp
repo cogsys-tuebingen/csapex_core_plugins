@@ -74,5 +74,5 @@ void DecisionTree::loadTree()
     std::string file = readParameter<std::string>("file");
     dtree_.load(file.c_str());
 
-    loaded_ = dtree_.get_root() != NULL;
+    loaded_ = dtree_.get_root() != nullptr;
 }

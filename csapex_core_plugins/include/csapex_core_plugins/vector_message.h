@@ -74,7 +74,6 @@ private:
     struct EntryInterface : public Message
     {
         typedef boost::shared_ptr< EntryInterface > Ptr;
-        static const Ptr NullPtr;
 
         EntryInterface(const std::string& name, Message::Stamp stamp = 0)
             : Message(name, "/", stamp)
@@ -140,7 +139,7 @@ private:
                 if(vec != 0) {
                     return vec->canConnectTo(this);
                 } else {
-                    return dynamic_cast<const AnyMessage*> (other_side) != NULL;
+                    return dynamic_cast<const AnyMessage*> (other_side) != nullptr;
                 }
             }
         }

@@ -23,7 +23,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
 ScanLabelerAdapter::ScanLabelerAdapter(NodeWorker* worker, ScanLabeler *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView),
+    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(nullptr), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
     // translate to UI thread via Qt signal
@@ -153,7 +153,7 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
 void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
 {
     QGraphicsScene* scene = view_->scene();
-    if(scene == NULL) {
+    if(scene == nullptr) {
         scene = new QGraphicsScene();
         view_->setScene(scene);
     }

@@ -18,8 +18,8 @@ CSAPEX_REGISTER_CLASS(csapex::HoldableBuffer, csapex::Node)
 using namespace csapex;
 
 HoldableBuffer::HoldableBuffer() :
-    in_(NULL),
-    out_(NULL),
+    in_(nullptr),
+    out_(nullptr),
     buffer_(1)
 {
 }

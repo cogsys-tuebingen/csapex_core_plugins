@@ -57,7 +57,7 @@ public:
     TFListener* l;
 
     LockedTFListener(TFListener* ll)
-        : l(NULL)
+        : l(nullptr)
     {
         if(ll) {
             ll->m.lock();

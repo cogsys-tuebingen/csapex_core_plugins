@@ -215,7 +215,7 @@ bool FileImporter::doImport(const QString& file_path)
         throw std::runtime_error(std::string("cannot load file ") + file_.toStdString() + ": " + e.what());
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void FileImporter::updateProvider()

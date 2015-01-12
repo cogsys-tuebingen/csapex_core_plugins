@@ -16,7 +16,7 @@ CSAPEX_REGISTER_CLASS(csapex::ExportCout, csapex::Node)
 using namespace csapex;
 
 ExportCout::ExportCout()
-    : connector_(NULL)
+    : connector_(nullptr)
 {
 }
 

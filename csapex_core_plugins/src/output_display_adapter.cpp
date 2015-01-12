@@ -19,7 +19,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
 OutputDisplayAdapter::OutputDisplayAdapter(NodeWorker* worker, OutputDisplay *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(NULL), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), down_(false)
+    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(nullptr), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), down_(false)
 {
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
@@ -71,7 +71,7 @@ void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
     view_->setMouseTracking(true);
     view_->setAcceptDrops(false);
     QGraphicsScene* scene = view_->scene();
-    if(scene == NULL) {
+    if(scene == nullptr) {
         scene = new QGraphicsScene();
         view_->setScene(scene);
         scene->installEventFilter(this);
@@ -122,7 +122,7 @@ void OutputDisplayAdapter::setParameterState(Memento::Ptr memento)
 
 void OutputDisplayAdapter::display(QSharedPointer<QImage> img)
 {
-    if(pixmap_ == NULL) {
+    if(pixmap_ == nullptr) {
         if(view_->scene()) {
             delete view_->scene();
         }

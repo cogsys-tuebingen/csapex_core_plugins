@@ -22,7 +22,7 @@ CSAPEX_REGISTER_CLASS(csapex::BagProvider, csapex::MessageProvider)
 using namespace csapex;
 
 BagProvider::BagProvider()
-    : pub_setup_(false), has_last_tf_time_(false), view_all_(NULL), initiated(false), end_signaled_(false)
+    : pub_setup_(false), has_last_tf_time_(false), view_all_(nullptr), initiated(false), end_signaled_(false)
 {
     std::vector<std::string> set;
 

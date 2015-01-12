@@ -17,7 +17,7 @@ using namespace connection_types;
 
 
 Filter::Filter()
-    : input_img_(NULL), input_mask_(NULL), output_img_(NULL), output_mask_(NULL)
+    : input_img_(nullptr), input_mask_(nullptr), output_img_(nullptr), output_mask_(nullptr)
 {
 }
 

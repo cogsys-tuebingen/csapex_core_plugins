@@ -17,7 +17,7 @@ CSAPEX_REGISTER_CLASS(csapex::Delay, csapex::Node)
 using namespace csapex;
 
 Delay::Delay()
-    : input_(NULL), output_(NULL)
+    : input_(nullptr), output_(nullptr)
 {
 }
 

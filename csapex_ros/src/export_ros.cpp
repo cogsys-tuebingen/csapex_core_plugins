@@ -22,7 +22,7 @@ CSAPEX_REGISTER_CLASS(csapex::ExportRos, csapex::Node)
 using namespace csapex;
 
 ExportRos::ExportRos()
-    : connector_(NULL), create_pub(false)
+    : connector_(nullptr), create_pub(false)
 {
 }
 

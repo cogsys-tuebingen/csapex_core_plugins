@@ -14,7 +14,7 @@ CSAPEX_REGISTER_CLASS(csapex::Relay, csapex::Node)
 using namespace csapex;
 
 Relay::Relay()
-    : input_(NULL), output_(NULL)
+    : input_(nullptr), output_(nullptr)
 {
 }
 
