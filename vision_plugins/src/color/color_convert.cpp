@@ -105,6 +105,6 @@ void ColorConvert::process()
         output_img_->publish(out);
 
     } else {
-        output_img_->cloneAndPublish(img);
+        output_img_->publish(img);
     }
 }
