@@ -23,8 +23,10 @@ void TransformCombiner::process()
     connection_types::TransformMessage::ConstPtr a = input_a_->getMessage<connection_types::TransformMessage>();
     connection_types::TransformMessage::ConstPtr b = input_b_->getMessage<connection_types::TransformMessage>();
 
-    connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
+    connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage(*a));
     msg->value = a->value * b->value;
+    msg->frame_id = a->frame_id;
+    msg->child_frame = b->child_frame;
     output_->publish(msg);
 }
 

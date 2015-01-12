@@ -33,14 +33,17 @@ private:
     Output* output_;
     Output* output_frame_;
 
-    Input* frame_in_from_;
-    Input* frame_in_to_;
+    Input* frame_in_source_;
+    Input* frame_in_target_;
     Input* time_in_;
 
-    bool init_;
+    Trigger* reset_;
 
-    param::SetParameter::Ptr from_p;
-    param::SetParameter::Ptr to_p;
+    bool init_;
+    int initial_retries_;
+
+    param::SetParameter::Ptr source_p;
+    param::SetParameter::Ptr target_p;
 };
 
 }
