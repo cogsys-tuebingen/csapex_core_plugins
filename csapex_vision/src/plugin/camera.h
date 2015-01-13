@@ -19,8 +19,11 @@ class Camera : public Node
 public:
     Camera();
 
-    void process();
-    virtual void setup();
+    void process() override;
+    void tick() override;
+    void setup() override;
+
+    bool canTick() override;
 
 protected:
     void update();

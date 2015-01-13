@@ -29,11 +29,19 @@ Camera::Camera()
 
 void Camera::process()
 {
-    if(cap_.isOpened()) {
-        connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
-        cap_ >> msg->value;
-        output_->publish(msg);
-    }
+
+}
+
+void Camera::tick()
+{
+    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
+    cap_ >> msg->value;
+    output_->publish(msg);
+}
+
+bool Camera::canTick()
+{
+    return cap_.isOpened();
 }
 
 void Camera::setup()
@@ -58,24 +66,27 @@ void Camera::update()
         // no change, no update
         return;
     }
-    std::cerr << "update " << dev << " " << w << " " << h << std::endl;
+    ainfo << "update " << dev << " " << w << " " << h << std::endl;
 
     current_dev_= dev;
     w_ = w;
     h_ = h;
 
     if(cap_.isOpened()) {
+        ainfo << "release" << std::endl;
         cap_.release();
     }
 
     if(!cap_.open(dev)) {
         cap_.release();
         throw std::runtime_error("cannot open camera with the given id");
+    } else {
+        ainfo << "opened camera " << dev << std::endl;
     }
 
-//    ainfo << "camera settings" << std::endl;
-//    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
-//    cap_.set(CV_CAP_PROP_FRAME_WIDTH, w);
-//    cap_.set(CV_CAP_PROP_FRAME_HEIGHT, h);
-//    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+    //    ainfo << "camera settings" << std::endl;
+    //    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+    //    cap_.set(CV_CAP_PROP_FRAME_WIDTH, w);
+    //    cap_.set(CV_CAP_PROP_FRAME_HEIGHT, h);
+    //    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " << cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
 }
