@@ -7,6 +7,7 @@
 /// SYSTEM
 #include <ros/ros.h>
 #include <QFuture>
+#include <mutex>
 
 namespace csapex
 {
@@ -54,7 +55,7 @@ private:
     std::shared_ptr<ros::AsyncSpinner> spinner_;
 
     bool initialized_;
-    QMutex has_connection_mutex;
+    std::mutex has_connection_mutex;
     QFuture<bool> has_connection;
 
     std::vector<boost::function<void()> > connection_callbacks_;

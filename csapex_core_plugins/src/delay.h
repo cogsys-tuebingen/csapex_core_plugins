@@ -5,9 +5,6 @@
 #include <csapex/model/node.h>
 #include <csapex/model/connection_type.h>
 
-/// SYSTEM
-#include <QMutex>
-
 namespace csapex {
 
 class Delay : public Node

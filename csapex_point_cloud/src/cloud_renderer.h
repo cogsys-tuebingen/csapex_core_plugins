@@ -6,10 +6,6 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex_vision/cv_mat_message.h>
 
-/// SYSTEM
-#include <QMutex>
-#include <QWaitCondition>
-
 namespace csapex {
 
 class CloudRenderer : public InteractiveNode

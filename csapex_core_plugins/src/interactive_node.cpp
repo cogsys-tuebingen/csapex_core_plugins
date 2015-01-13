@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_core_plugins/interactive_node.h>
 
+/// SYSTEM
+#include <chrono>
+
 using namespace csapex;
 
 InteractiveNode::InteractiveNode()
@@ -16,16 +19,17 @@ void InteractiveNode::process()
 void InteractiveNode::done()
 {
     view_done_ = true;
-    wait_for_view_.wakeAll();
+    wait_for_view_.notify_all();
 }
 
 bool InteractiveNode::waitForView()
 {
-    result_mutex_.lock();
+    std::chrono::microseconds poll_time(100);
+
+    std::unique_lock<std::mutex> lock(result_mutex_);
     while(!view_done_ && !stopped_) {
-        wait_for_view_.wait(&result_mutex_, 100);
+        wait_for_view_.wait_for(lock, poll_time);
     }
-    result_mutex_.unlock();
 
     return !stopped_;
 }
@@ -33,5 +37,5 @@ bool InteractiveNode::waitForView()
 void InteractiveNode::abort()
 {
     stopped_ = true;
-    wait_for_view_.wakeAll();
+    wait_for_view_.notify_all();
 }

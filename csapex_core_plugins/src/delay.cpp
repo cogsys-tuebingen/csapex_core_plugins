@@ -12,6 +12,9 @@
 #include <csapex/model/node_modifier.h>
 #include <utils_param/output_progress_parameter.h>
 
+/// SYSTEM
+#include <thread>
+
 CSAPEX_REGISTER_CLASS(csapex::Delay, csapex::Node)
 
 using namespace csapex;
@@ -48,7 +51,8 @@ void Delay::process()
 
     while(t > 0) {
         progress_->setProgress(wait_time - t, wait_time);
-        qt_helper::QSleepThread::msleep(std::min(10l, t));
+        std::chrono::milliseconds dura(std::min(10l, t));
+        std::this_thread::sleep_for(dura);
         t -= 10;
     }
     progress_->setProgress(wait_time, wait_time);

@@ -6,9 +6,6 @@
 #include <csapex/model/connection_type.h>
 #include <csapex_core_plugins/vector_message.h>
 
-/// SYSTEM
-#include <QMutex>
-
 namespace csapex {
 
 class ExportFile : public Node
@@ -31,7 +28,6 @@ private:
 
     std::string path_;
     std::string base_;
-    QMutex mutex_;
 
     int suffix_;
 };

@@ -5,9 +5,6 @@
 #include <csapex/model/node.h>
 #include <csapex/model/connection_type.h>
 
-/// SYSTEM
-#include <QMutex>
-
 namespace csapex {
 
 class DoubleBuffer : public Node
@@ -25,8 +22,6 @@ private:
 private:
     Input* input_;
     Output* output_;
-
-    QMutex mutex_;
 
     bool dirty_;
 

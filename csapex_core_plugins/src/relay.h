@@ -5,9 +5,6 @@
 #include <csapex/model/node.h>
 #include <csapex/model/connection_type.h>
 
-/// SYSTEM
-#include <QMutex>
-
 namespace csapex {
 
 class Relay : public Node
@@ -21,8 +18,6 @@ public:
 private:
     Input* input_;
     Output* output_;
-
-    QMutex mutex_;
 };
 
 }

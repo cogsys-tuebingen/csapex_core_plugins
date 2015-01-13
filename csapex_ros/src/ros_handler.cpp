@@ -52,19 +52,23 @@ void ROSHandler::initHandle(bool try_only)
         checkMasterConnection();
     }
 
-    QMutexLocker lock(&has_connection_mutex);
-    if(try_only && has_connection.isRunning()) {
-        return;
+    bool make_spinner = false;
+    {
+        std::lock_guard<std::mutex> lock(has_connection_mutex);
+        if(try_only && has_connection.isRunning()) {
+            return;
+        }
+
+        make_spinner = has_connection.result() && !nh_;
+
+        if(make_spinner) {
+            nh_.reset(new ros::NodeHandle("~"));
+            spinner_.reset(new ros::AsyncSpinner(1));
+            spinner_->start();
+        }
     }
-
-    if(has_connection.result() && !nh_) {
-        nh_.reset(new ros::NodeHandle("~"));
-        spinner_.reset(new ros::AsyncSpinner(1));
-        spinner_->start();
-
-        lock.unlock();
-
-        BOOST_FOREACH (const boost::function<void()>& f, connection_callbacks_) {
+    if(make_spinner) {
+        for (const auto& f : connection_callbacks_) {
             f();
         }
     }
@@ -72,7 +76,7 @@ void ROSHandler::initHandle(bool try_only)
 
 bool ROSHandler::isConnected()
 {
-    QMutexLocker lock(&has_connection_mutex);
+    std::lock_guard<std::mutex> lock(has_connection_mutex);
     if(has_connection.isRunning()) {
         return false;
     } else {
@@ -113,7 +117,7 @@ void ROSHandler::registerShutdownCallback(boost::function<void ()> f)
 
 void ROSHandler::checkMasterConnection()
 {
-    QMutexLocker lock(&has_connection_mutex);
+    std::lock_guard<std::mutex> lock(has_connection_mutex);
 
     if(!ros::isInitialized()) {
         std::vector<std::string> additional_args;
@@ -137,7 +141,7 @@ void ROSHandler::waitForConnection()
     while(true) {
         checkMasterConnection();
 
-        QMutexLocker lock(&has_connection_mutex);
+        std::lock_guard<std::mutex> lock(has_connection_mutex);
         has_connection.waitForFinished();
 
         if(isConnected()) {
@@ -159,7 +163,7 @@ void ROSHandler::refresh()
     }
 
     if(nh_) {
-        QMutexLocker lock(&has_connection_mutex);
+        std::lock_guard<std::mutex> lock(has_connection_mutex);
         // connection was there
         has_connection.waitForFinished();
         if(!has_connection.result()) {

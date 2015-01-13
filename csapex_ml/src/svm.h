@@ -9,7 +9,7 @@
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
-#include <boost/thread/mutex.hpp>
+#include <mutex>
 
 namespace csapex {
 class SVM : public Node
@@ -25,7 +25,7 @@ private:
     Input  *in_;
     Output *out_;
 
-    boost::mutex m_;
+    std::mutex m_;
     bool         loaded_;
     cv::SVM      svm_;
 

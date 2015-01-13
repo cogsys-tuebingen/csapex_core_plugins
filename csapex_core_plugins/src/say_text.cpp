@@ -28,6 +28,8 @@ void SayText::process()
     if(!msg.empty()) {
         std::stringstream cmd;
         cmd << "espeak \"" << msg << "\" 2> /dev/nullptr 1> /dev/nullptr &";
-        system(cmd.str().c_str());
+        if(system(cmd.str().c_str())) {
+            aerr << "command failed: " << cmd << std::endl;
+        }
     }
 }

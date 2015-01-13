@@ -5,8 +5,8 @@
 #include <csapex/model/node.h>
 
 /// SYSTEM
-#include <QMutex>
-#include <QWaitCondition>
+#include <mutex>
+#include <condition_variable>
 
 namespace csapex {
 
@@ -26,8 +26,8 @@ protected:
     bool waitForView();
 
 protected:
-    QMutex result_mutex_;
-    QWaitCondition wait_for_view_;
+    std::mutex result_mutex_;
+    std::condition_variable wait_for_view_;
 
     bool view_done_;
     bool stopped_;

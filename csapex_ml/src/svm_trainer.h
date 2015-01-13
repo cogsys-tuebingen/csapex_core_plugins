@@ -9,7 +9,7 @@
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
-#include <boost/thread/mutex.hpp>
+#include <mutex>
 
 namespace csapex {
 class SVMTrainer : public Node
@@ -25,7 +25,7 @@ private:
     Input*                                              in_;
     Input*                                              in_vector_;
 
-    boost::mutex                                        m_;
+    std::mutex                                        m_;
     unsigned int                                        step_;
     std::vector<connection_types::FeaturesMessage>      msgs_;
 

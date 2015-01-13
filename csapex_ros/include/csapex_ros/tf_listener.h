@@ -50,7 +50,7 @@ private:
     ros::Time last_;
     ros::Subscriber tf_sub;
 
-    QMutex m;
+    std::mutex m;
 };
 
 struct LockedTFListener {

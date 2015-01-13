@@ -45,8 +45,6 @@ void DoubleBuffer::process()
 
 void DoubleBuffer::swapBuffers()
 {
-    QMutexLocker lock(&mutex_);
-
     buffer_front_ = buffer_back_;
     buffer_back_.reset();
 }
@@ -62,10 +60,7 @@ void DoubleBuffer::tick()
     }
 
     ConnectionType::Ptr msg;
-    {
-        QMutexLocker lock(&mutex_);
-        msg = buffer_front_;
-    }
+    msg = buffer_front_;
 
     output_->publish(msg);
     dirty_ = false;

@@ -49,7 +49,10 @@ void MakeScreenshot::makeScreenshot()
     ss << '\'' << readParameter<std::string>("format") << '\'';
     ss << " -q " << readParameter<int>("quality");
 
-    system(ss.str().c_str());
+    if(system(ss.str().c_str())) {
+        aerr << "call to " << ss.str() << " failed" << std::endl;
+    }
+
 
     done_->trigger();
 }
