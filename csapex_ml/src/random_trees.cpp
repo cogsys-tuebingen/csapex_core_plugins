@@ -39,8 +39,8 @@ void RandomTrees::setup()
 
 void RandomTrees::process()
 {
-    boost::shared_ptr<std::vector<FeaturesMessage> const> input = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
-    boost::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
+    std::shared_ptr<std::vector<FeaturesMessage> const> input = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
+    std::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
 
     std::size_t n = input->size();
 

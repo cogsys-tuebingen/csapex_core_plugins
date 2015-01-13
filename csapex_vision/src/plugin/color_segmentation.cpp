@@ -23,7 +23,7 @@ ColorSegmentation::ColorSegmentation()
 void ColorSegmentation::setParameterState(Memento::Ptr memento)
 {
     Node::setParameterState(memento);
-    loaded_state_ = boost::dynamic_pointer_cast<GenericState>(memento);
+    loaded_state_ = std::dynamic_pointer_cast<GenericState>(memento);
 }
 
 void ColorSegmentation::process()

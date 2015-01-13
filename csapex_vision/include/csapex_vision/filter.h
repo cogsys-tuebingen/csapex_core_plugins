@@ -5,7 +5,7 @@
 #include <csapex/model/node.h>
 
 /// SYSTEM
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <opencv2/opencv.hpp>
 
 namespace csapex
@@ -17,7 +17,7 @@ class Output;
 class Filter : public Node
 {
 public:
-    typedef boost::shared_ptr<Filter> Ptr;
+    typedef std::shared_ptr<Filter> Ptr;
 
 public:
     virtual ~Filter();

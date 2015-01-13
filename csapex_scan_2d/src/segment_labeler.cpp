@@ -40,8 +40,8 @@ void SegmentLabeler::setup()
 
 void SegmentLabeler::process()
 {
-    boost::shared_ptr< std::vector<Segment> const > segments_in = in_segments_->getMessage<GenericVectorMessage, Segment>();
-    boost::shared_ptr< std::vector<Segment> > segments_out (new std::vector<Segment>);
+    std::shared_ptr< std::vector<Segment> const > segments_in = in_segments_->getMessage<GenericVectorMessage, Segment>();
+    std::shared_ptr< std::vector<Segment> > segments_out (new std::vector<Segment>);
 
     LabeledScanMessage::ConstPtr scan = in_labeled_scan_->getMessage<LabeledScanMessage>();
     std::vector<int>::const_iterator labeled_ray = scan->value.labels.begin();

@@ -58,8 +58,8 @@ void MLEvaluator::setup()
 
 void MLEvaluator::process()
 {
-    boost::shared_ptr<std::vector<FeaturesMessage> const> truth_msg = in_truth_->getMessage<GenericVectorMessage, FeaturesMessage>();
-    boost::shared_ptr<std::vector<FeaturesMessage> const> classified_msg = in_classified_->getMessage<GenericVectorMessage, FeaturesMessage>();
+    std::shared_ptr<std::vector<FeaturesMessage> const> truth_msg = in_truth_->getMessage<GenericVectorMessage, FeaturesMessage>();
+    std::shared_ptr<std::vector<FeaturesMessage> const> classified_msg = in_classified_->getMessage<GenericVectorMessage, FeaturesMessage>();
 
     std::size_t n = truth_msg->size();
 

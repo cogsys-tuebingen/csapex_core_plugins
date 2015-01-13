@@ -63,8 +63,8 @@ struct PointCloudMessage : public Message
         PointCloudMessage::ConstPtr msg_;
     };
 
-    typedef boost::shared_ptr<PointCloudMessage> Ptr;
-    typedef boost::shared_ptr<PointCloudMessage const> ConstPtr;
+    typedef std::shared_ptr<PointCloudMessage> Ptr;
+    typedef std::shared_ptr<PointCloudMessage const> ConstPtr;
 
     typedef typename boost::make_variant_over<
     typename boost::mpl::transform<
@@ -98,9 +98,9 @@ struct type<PointCloudMessage> {
 };
 
 template <>
-inline boost::shared_ptr<PointCloudMessage> makeEmpty<PointCloudMessage>()
+inline std::shared_ptr<PointCloudMessage> makeEmpty<PointCloudMessage>()
 {
-    return boost::shared_ptr<PointCloudMessage>(new PointCloudMessage("/", 0));
+    return std::shared_ptr<PointCloudMessage>(new PointCloudMessage("/", 0));
 }
 }
 }

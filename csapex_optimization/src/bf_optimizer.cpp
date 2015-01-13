@@ -44,7 +44,7 @@ void BFOptimizer::tick()
     if(!init_) {
         current_index_.clear();
         foreach(param::Parameter::Ptr p, getParameters()) {
-            param::RangeParameter::Ptr dbl_range = boost::dynamic_pointer_cast<param::RangeParameter>(p);
+            param::RangeParameter::Ptr dbl_range = std::dynamic_pointer_cast<param::RangeParameter>(p);
             if(!dbl_range || !dbl_range->is<double>()) {
                 continue;
             }
@@ -71,7 +71,7 @@ int BFOptimizer::stepsNecessary()
 {
     int steps = 1;
     foreach(param::Parameter::Ptr p, getParameters()) {
-        param::RangeParameter::Ptr dbl_range = boost::dynamic_pointer_cast<param::RangeParameter>(p);
+        param::RangeParameter::Ptr dbl_range = std::dynamic_pointer_cast<param::RangeParameter>(p);
         if(!dbl_range || !dbl_range->is<double>()) {
             continue;
         }
@@ -95,7 +95,7 @@ bool BFOptimizer::increaseParameter(std::size_t i)
         return false;
     }
 
-    param::RangeParameter::Ptr dbl_range = boost::dynamic_pointer_cast<param::RangeParameter>(params[i]);
+    param::RangeParameter::Ptr dbl_range = std::dynamic_pointer_cast<param::RangeParameter>(params[i]);
     if(!dbl_range || !dbl_range->is<double>()) {
         return false;
     }

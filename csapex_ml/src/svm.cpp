@@ -38,8 +38,8 @@ void SVM::setupParameters()
 
 void SVM::process()
 {
-    boost::shared_ptr<std::vector<FeaturesMessage> const> in = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
-    boost::shared_ptr<std::vector<FeaturesMessage> >      out(new std::vector<FeaturesMessage>(in->size()));
+    std::shared_ptr<std::vector<FeaturesMessage> const> in = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
+    std::shared_ptr<std::vector<FeaturesMessage> >      out(new std::vector<FeaturesMessage>(in->size()));
     m_.lock();
 
     if(!loaded_) {

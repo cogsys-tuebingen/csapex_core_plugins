@@ -29,7 +29,7 @@ public:
     ~ROSHandler();
     void stop();
 
-    boost::shared_ptr<ros::NodeHandle> nh();
+    std::shared_ptr<ros::NodeHandle> nh();
     void initHandle(bool try_only = false);
 
     bool isConnected();
@@ -50,8 +50,8 @@ private:
 
     Settings& settings_;
 
-    boost::shared_ptr<ros::NodeHandle> nh_;
-    boost::shared_ptr<ros::AsyncSpinner> spinner_;
+    std::shared_ptr<ros::NodeHandle> nh_;
+    std::shared_ptr<ros::AsyncSpinner> spinner_;
 
     bool initialized_;
     QMutex has_connection_mutex;

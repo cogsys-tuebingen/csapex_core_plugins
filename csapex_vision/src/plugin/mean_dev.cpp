@@ -36,8 +36,8 @@ void MeanStdDev::setupParameters()
 void MeanStdDev::process()
 {
     CvMatMessage::ConstPtr in = in_mat_->getMessage<CvMatMessage>();
-    boost::shared_ptr<std::vector<double> > out_mean(new std::vector<double>);
-    boost::shared_ptr<std::vector<double> > out_stddev(new std::vector<double>);
+    std::shared_ptr<std::vector<double> > out_mean(new std::vector<double>);
+    std::shared_ptr<std::vector<double> > out_stddev(new std::vector<double>);
 
     if(in_mask_->hasMessage()) {
         CvMatMessage::ConstPtr mask = in_mask_->getMessage<CvMatMessage>();

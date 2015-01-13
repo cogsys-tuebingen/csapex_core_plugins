@@ -47,7 +47,7 @@ namespace implementation {
 template<class PointT>
 struct Impl {
     inline static void extract(const typename pcl::PointCloud<PointT>::ConstPtr src,
-                               typename boost::shared_ptr<std::vector<pcl::PointIndices> > dst)
+                               typename std::shared_ptr<std::vector<pcl::PointIndices> > dst)
     {
         //for(typename pcl::PointCloud<PointT>::const_iterator it = src->begin() ; it != src->end() ; ++it) {
         std::map<unsigned int, std::vector<int> > clusters;
@@ -77,7 +77,7 @@ struct Impl {
 template<class PointT>
 struct Conversion {
     static void apply(const typename pcl::PointCloud<PointT>::ConstPtr src,
-                      typename boost::shared_ptr<std::vector<pcl::PointIndices> > dst)
+                      typename std::shared_ptr<std::vector<pcl::PointIndices> > dst)
     {
         throw std::runtime_error("Type of pointcloud must be labeled!");
     }
@@ -86,7 +86,7 @@ struct Conversion {
 template<>
 struct Conversion<pcl::PointXYZL>{
     static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::ConstPtr src,
-                      typename boost::shared_ptr<std::vector<pcl::PointIndices> > dst)
+                      typename std::shared_ptr<std::vector<pcl::PointIndices> > dst)
     {
       Impl<pcl::PointXYZL>::extract(src, dst);
     }
@@ -96,7 +96,7 @@ struct Conversion<pcl::PointXYZL>{
 template<>
 struct Conversion<pcl::PointXYZRGBL>{
     static void apply(const typename pcl::PointCloud<pcl::PointXYZRGBL>::ConstPtr src,
-                      typename boost::shared_ptr<std::vector<pcl::PointIndices> > dst)
+                      typename std::shared_ptr<std::vector<pcl::PointIndices> > dst)
     {
         Impl<pcl::PointXYZRGBL>::extract(src, dst);
     }
@@ -111,7 +111,7 @@ void LabeledCloudToIndices::inputCloud(typename pcl::PointCloud<PointT>::ConstPt
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr out_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-    boost::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
+    std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
 
     implementation::Conversion<PointT>::apply(cloud, cluster_indices);
 

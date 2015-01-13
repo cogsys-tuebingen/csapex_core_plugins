@@ -51,9 +51,9 @@ struct type<CvMatMessage> {
 };
 
 template <>
-inline boost::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage>()
+inline std::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage>()
 {
-    return boost::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr, 0));
+    return std::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr, 0));
 }
 
 }

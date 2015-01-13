@@ -48,9 +48,9 @@ struct type<CvPyramidMessage> {
 };
 
 template <>
-inline boost::shared_ptr<CvPyramidMessage> makeEmpty<CvPyramidMessage>()
+inline std::shared_ptr<CvPyramidMessage> makeEmpty<CvPyramidMessage>()
 {
-    return boost::shared_ptr<CvPyramidMessage>(new CvPyramidMessage(enc::bgr));
+    return std::shared_ptr<CvPyramidMessage>(new CvPyramidMessage(enc::bgr));
 }
 
 }

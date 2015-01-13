@@ -49,7 +49,7 @@ ScanSegmentation2DRenderer::ScanSegmentation2DRenderer() :
 
 void ScanSegmentation2DRenderer::process()
 {
-    boost::shared_ptr<std::vector<Segment> const> segments = input_->getMessage<GenericVectorMessage, Segment>();
+    std::shared_ptr<std::vector<Segment> const> segments = input_->getMessage<GenericVectorMessage, Segment>();
     if(readParameter<bool>("publish marker")) {
         publishMarkers(*segments);
     }

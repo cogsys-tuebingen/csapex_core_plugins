@@ -93,7 +93,7 @@ void ImportRos::refresh()
         ros::master::V_TopicInfo topics;
         ros::master::getTopics(topics);
 
-        param::SetParameter::Ptr setp = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
+        param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
         if(setp) {
             setError(false);
             bool found = false;
@@ -351,7 +351,7 @@ void ImportRos::callback(ConnectionTypeConstPtr message)
         return;
     }
 
-    connection_types::Message::ConstPtr msg = boost::dynamic_pointer_cast<connection_types::Message const>(message);
+    connection_types::Message::ConstPtr msg = std::dynamic_pointer_cast<connection_types::Message const>(message);
     if(msg && !nw->isPaused()) {
         if(!msgs_.empty() && msg->stamp < msgs_.front()->stamp) {
             awarn << "detected time anomaly -> reset";

@@ -40,7 +40,7 @@ void ROSHandler::stop()
     }
 }
 
-boost::shared_ptr<ros::NodeHandle> ROSHandler::nh()
+std::shared_ptr<ros::NodeHandle> ROSHandler::nh()
 {
     refresh();
     return nh_;

@@ -26,7 +26,7 @@ ModelToMarker::ModelToMarker()
 
 void ModelToMarker::process()
 {
-    boost::shared_ptr<std::vector<ModelMessage> const> models = input_->getMessage<GenericVectorMessage, ModelMessage>();
+    std::shared_ptr<std::vector<ModelMessage> const> models = input_->getMessage<GenericVectorMessage, ModelMessage>();
 
     const std::vector<int>& color = readParameter<std::vector<int> >("color/marker");
 

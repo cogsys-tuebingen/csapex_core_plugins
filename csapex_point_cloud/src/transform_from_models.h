@@ -30,7 +30,7 @@ private:
      * @param[in] models a vector with all the models of the segmentation
      * @return a vector with the cordinates of the interresting points
       */
-    std::vector<Eigen::Vector3d> getInterestingPointsFromModels(boost::shared_ptr<std::vector<ModelMessage> const> models);
+    std::vector<Eigen::Vector3d> getInterestingPointsFromModels(std::shared_ptr<std::vector<ModelMessage> const> models);
 
     /** Match sides of triangle
      * @brief compares the sides of a triangle defined by 3 points

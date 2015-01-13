@@ -11,7 +11,7 @@ namespace connection_types {
 struct PointMessage : public Message
 {
 public:
-    typedef boost::shared_ptr<PointMessage> Ptr;
+    typedef std::shared_ptr<PointMessage> Ptr;
 
     PointMessage(Message::Stamp stamp = 0);
 
@@ -33,9 +33,9 @@ struct type<PointMessage> {
 };
 
 template <>
-inline boost::shared_ptr<PointMessage> makeEmpty<PointMessage>()
+inline std::shared_ptr<PointMessage> makeEmpty<PointMessage>()
 {
-    return boost::shared_ptr<PointMessage>(new PointMessage(0));
+    return std::shared_ptr<PointMessage>(new PointMessage(0));
 }
 
 }

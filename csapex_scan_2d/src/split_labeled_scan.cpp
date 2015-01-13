@@ -45,7 +45,7 @@ void SplitLabeledScan::process()
 
     out_scan_->publish(output_scan);
 
-    boost::shared_ptr<std::vector<int> > labels(new std::vector<int>);
+    std::shared_ptr<std::vector<int> > labels(new std::vector<int>);
     *labels = input->value.labels;
     out_labels_->publish<GenericVectorMessage, int>(labels);
 }

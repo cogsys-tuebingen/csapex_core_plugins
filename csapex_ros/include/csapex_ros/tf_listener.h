@@ -18,7 +18,7 @@ struct TFListener {
     friend class LockedTFListener;
 
 public:
-    boost::shared_ptr<tf::TransformListener> tfl;
+    std::shared_ptr<tf::TransformListener> tfl;
 
     static LockedTFListener getLocked();
 

@@ -13,7 +13,7 @@ class LabelClusteredPointCloud : public csapex::Node
 {
 public:
     typedef std::vector<pcl::PointIndices> Indices;
-    typedef boost::shared_ptr<Indices const> IndicesPtr;
+    typedef std::shared_ptr<Indices const> IndicesPtr;
 
 public:
     LabelClusteredPointCloud();

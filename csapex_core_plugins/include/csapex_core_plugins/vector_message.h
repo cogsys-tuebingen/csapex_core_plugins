@@ -15,8 +15,8 @@ namespace connection_types {
 
 struct VectorMessage : public Message
 {
-    typedef boost::shared_ptr<VectorMessage> Ptr;
-    typedef boost::shared_ptr<const VectorMessage> ConstPtr;
+    typedef std::shared_ptr<VectorMessage> Ptr;
+    typedef std::shared_ptr<const VectorMessage> ConstPtr;
 
     VectorMessage(const std::string& frame_id = "/", Stamp stamp = 0);
 
@@ -73,7 +73,7 @@ private:
 
     struct EntryInterface : public Message
     {
-        typedef boost::shared_ptr< EntryInterface > Ptr;
+        typedef std::shared_ptr< EntryInterface > Ptr;
 
         EntryInterface(const std::string& name, Message::Stamp stamp = 0)
             : Message(name, "/", stamp)
@@ -98,7 +98,7 @@ private:
         typedef Implementation<T> Self;
 
     public:
-        typedef boost::shared_ptr< Self > Ptr;
+        typedef std::shared_ptr< Self > Ptr;
 
 
     public:
@@ -162,7 +162,7 @@ private:
         }
 
     public:
-        boost::shared_ptr< std::vector<T> > value;
+        std::shared_ptr< std::vector<T> > value;
     };
 
     template <typename T>
@@ -174,7 +174,7 @@ private:
         using Parent::value;
 
     public:
-        typedef boost::shared_ptr< Self > Ptr;
+        typedef std::shared_ptr< Self > Ptr;
 
         static Self::Ptr make() {
             return Self::Ptr (new Self);
@@ -182,14 +182,14 @@ private:
     };
 
 public:
-    typedef boost::shared_ptr<GenericVectorMessage> Ptr;
-    typedef boost::shared_ptr<const GenericVectorMessage> ConstPtr;
+    typedef std::shared_ptr<GenericVectorMessage> Ptr;
+    typedef std::shared_ptr<const GenericVectorMessage> ConstPtr;
 
     template <typename T>
     struct TypeMap {
         typedef std::vector<T> type;
-        typedef boost::shared_ptr<type> Ptr;
-        typedef boost::shared_ptr<type const> ConstPtr;
+        typedef std::shared_ptr<type> Ptr;
+        typedef std::shared_ptr<type const> ConstPtr;
     };
 
     struct SupportedTypes {
@@ -236,15 +236,15 @@ public:
     }
 
     template <typename T>
-    boost::shared_ptr<std::vector<T> const>  makeShared() const
+    std::shared_ptr<std::vector<T> const>  makeShared() const
     {
-        return boost::dynamic_pointer_cast< Implementation<T> > (impl)->value;
+        return std::dynamic_pointer_cast< Implementation<T> > (impl)->value;
     }
 
 
     template <typename T>
-    void set(const boost::shared_ptr< std::vector<T> > & v) {
-        boost::dynamic_pointer_cast< Implementation<T> > (impl)->value = v;
+    void set(const std::shared_ptr< std::vector<T> > & v) {
+        std::dynamic_pointer_cast< Implementation<T> > (impl)->value = v;
     }
 
     void encode(YAML::Node& node) const
@@ -285,7 +285,7 @@ struct type<GenericVectorMessage> {
 };
 
 template <>
-inline boost::shared_ptr<GenericVectorMessage> makeEmpty<GenericVectorMessage>()
+inline std::shared_ptr<GenericVectorMessage> makeEmpty<GenericVectorMessage>()
 {
     return GenericVectorMessage::make<int>();
 }

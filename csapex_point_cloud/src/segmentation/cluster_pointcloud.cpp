@@ -77,7 +77,7 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
       typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
       tree->setInputCloud (cloud_clean);
 
-      boost::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
+      std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
       typename pcl::EuclideanClusterExtraction<PointT> ec;
       ec.setClusterTolerance (param_clusterTolerance_); // 2cm
       ec.setMinClusterSize (param_clusterMinSize_);

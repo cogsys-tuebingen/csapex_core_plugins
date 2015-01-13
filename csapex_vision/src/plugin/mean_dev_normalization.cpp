@@ -49,7 +49,7 @@ inline void normalizeC(const cv::Mat             &src,
     cv::merge(channels, dst);
 }
 
-typedef boost::shared_ptr< std::vector<double > const> VectorPtr;
+typedef std::shared_ptr< std::vector<double > const> VectorPtr;
 }
 
 void MeanStdDevNormalization::process()

@@ -120,7 +120,7 @@ void SVMTrainer::process()
     }
 
     if(in_vector_->hasMessage()) {
-        boost::shared_ptr<std::vector<FeaturesMessage> const> in =
+        std::shared_ptr<std::vector<FeaturesMessage> const> in =
                 in_vector_->getMessage<GenericVectorMessage, FeaturesMessage>();
 
         m_.lock();

@@ -23,7 +23,7 @@ void ImageProviderMov::load(const std::string& movie_file)
     frames_ = capture_.get(CV_CAP_PROP_FRAME_COUNT);
 
     param::Parameter::Ptr p = state.getParameter("set/current_frame");
-    param::RangeParameter::Ptr range_p = boost::dynamic_pointer_cast<param::RangeParameter>(p);
+    param::RangeParameter::Ptr range_p = std::dynamic_pointer_cast<param::RangeParameter>(p);
 
     if(range_p) {
         range_p->setMax(frames_ - 1);

@@ -46,8 +46,8 @@ void TransformFromModels::process()
     param_cone_angle_ = readParameter<double>("Cone angle");
 
     // Read Inputs
-    boost::shared_ptr<std::vector<ModelMessage> const> models_ref = input_models_ref_->getMessage<GenericVectorMessage, ModelMessage>();
-    boost::shared_ptr<std::vector<ModelMessage> const> models_new = input_models_new_->getMessage<GenericVectorMessage, ModelMessage>();
+    std::shared_ptr<std::vector<ModelMessage> const> models_ref = input_models_ref_->getMessage<GenericVectorMessage, ModelMessage>();
+    std::shared_ptr<std::vector<ModelMessage> const> models_new = input_models_new_->getMessage<GenericVectorMessage, ModelMessage>();
 
 
     // Process data
@@ -151,7 +151,7 @@ void TransformFromModels::eulerAnglesFromRotationMatrix( Eigen::Matrix3d R, doub
 
 }
 
-std::vector<Eigen::Vector3d> TransformFromModels::getInterestingPointsFromModels(boost::shared_ptr<std::vector<ModelMessage> const> models)
+std::vector<Eigen::Vector3d> TransformFromModels::getInterestingPointsFromModels(std::shared_ptr<std::vector<ModelMessage> const> models)
 {
     std::vector<Eigen::Vector3d> points;
 

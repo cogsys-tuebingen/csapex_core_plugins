@@ -16,8 +16,8 @@ namespace connection_types {
 
 struct ConfusionMatrixMessage : public Message
 {
-    typedef boost::shared_ptr<ConfusionMatrixMessage> Ptr;
-    typedef boost::shared_ptr<ConfusionMatrixMessage const> ConstPtr;
+    typedef std::shared_ptr<ConfusionMatrixMessage> Ptr;
+    typedef std::shared_ptr<ConfusionMatrixMessage const> ConstPtr;
 
     ConfusionMatrixMessage(Message::Stamp stamp = 0);
 

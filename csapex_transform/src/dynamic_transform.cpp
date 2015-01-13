@@ -36,8 +36,8 @@ void DynamicTransform::setupParameters()
     addParameter(param::ParameterFactory::declareTrigger("refresh"), boost::bind(&DynamicTransform::refresh, this));
     addParameter(param::ParameterFactory::declareTrigger("reset tf"), boost::bind(&DynamicTransform::resetTf, this));
 
-    source_p = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("source"));
-    target_p = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("target"));
+    source_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("source"));
+    target_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("target"));
 }
 
 bool DynamicTransform::canTick()

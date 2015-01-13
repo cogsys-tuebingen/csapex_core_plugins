@@ -13,8 +13,8 @@ namespace connection_types {
 
 struct FeaturesMessage : public Message
 {
-    typedef boost::shared_ptr<FeaturesMessage> Ptr;
-    typedef boost::shared_ptr<FeaturesMessage const> ConstPtr;
+    typedef std::shared_ptr<FeaturesMessage> Ptr;
+    typedef std::shared_ptr<FeaturesMessage const> ConstPtr;
 
     FeaturesMessage(Message::Stamp stamp = 0);
 

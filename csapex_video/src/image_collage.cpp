@@ -21,11 +21,11 @@ ImageCollage::ImageCollage()
 
 void ImageCollage::setupParameters()
 {
-    p_x_ = boost::dynamic_pointer_cast<param::RangeParameter>
+    p_x_ = std::dynamic_pointer_cast<param::RangeParameter>
             (param::ParameterFactory::declareRange("x",
                                                  param::ParameterDescription("x position of the overlay"),
                                                  0, 800, 0, 1));
-    p_y_ = boost::dynamic_pointer_cast<param::RangeParameter>
+    p_y_ = std::dynamic_pointer_cast<param::RangeParameter>
             (param::ParameterFactory::declareRange("y",
                                                    param::ParameterDescription("y position of the overlay"),
                                                    0, 600, 0, 1));

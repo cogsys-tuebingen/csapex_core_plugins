@@ -48,7 +48,7 @@ void SplitClusteredCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 {
 
     std::vector<PointCloudMessage::Ptr> out_msgs;
-    boost::shared_ptr<std::vector<pcl::PointIndices> const> cluster_indices;
+    std::shared_ptr<std::vector<pcl::PointIndices> const> cluster_indices;
     cluster_indices = in_indices_->getMessage<GenericVectorMessage, pcl::PointIndices>();
 
     for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices->begin(); it != cluster_indices->end (); ++it)

@@ -57,7 +57,7 @@ void ExportFile::process()
     }
 
     ConnectionType::ConstPtr msg = connector_->getMessage<ConnectionType>();
-    connection_types::VectorMessage::ConstPtr vector = boost::dynamic_pointer_cast<const connection_types::VectorMessage>(msg);
+    connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<const connection_types::VectorMessage>(msg);
     if(vector) {
         exportVector(vector);
     } else {

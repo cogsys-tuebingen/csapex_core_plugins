@@ -86,7 +86,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     typename pcl::PointCloud<PointT>::Ptr point_cloud_out(new pcl::PointCloud<PointT>);
     typename pcl::PointCloud<PointT>::Ptr cloud_residue(new pcl::PointCloud<PointT>);
 
-    boost::shared_ptr<std::vector<ModelMessage> >  models(new std::vector<ModelMessage>);
+    std::shared_ptr<std::vector<ModelMessage> >  models(new std::vector<ModelMessage>);
     //inliers_size = findModels<PointT>(cloud, cloud_extracted, *models, cloud_residue, out_cloud_residue_->isConnected());
 
 

@@ -24,7 +24,7 @@ namespace csapex
 class ImageProvider : public MessageProvider
 {
 public:
-    typedef boost::shared_ptr<ImageProvider> Ptr;
+    typedef std::shared_ptr<ImageProvider> Ptr;
 
 protected:
     typedef boost::function<ImageProvider*(const std::string&)> ProviderConstructor;

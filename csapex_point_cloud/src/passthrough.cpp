@@ -60,7 +60,7 @@ void PassThrough::updateFields(const std::vector<std::string>& fields)
 
     fields_ = fields;
 
-    param::SetParameter::Ptr setp = boost::dynamic_pointer_cast<param::SetParameter>(getParameter("field"));
+    param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("field"));
     if(setp) {
         setError(false);
         std::string old_field = readParameter<std::string>("field");

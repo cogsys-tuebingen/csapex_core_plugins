@@ -34,11 +34,11 @@ public:
     void process()
     {
         if(in_vector->hasMessage()) {
-            boost::shared_ptr<std::vector<MessageType> const> input = in_vector->getMessage<connection_types::GenericVectorMessage, MessageType>();
+            std::shared_ptr<std::vector<MessageType> const> input = in_vector->getMessage<connection_types::GenericVectorMessage, MessageType>();
             buffer_.insert(buffer_.end(), input->begin(), input->end());
         }
         if(in_single->hasMessage()) {
-            boost::shared_ptr<MessageType const> input = in_single->getMessage<MessageType>();
+            std::shared_ptr<MessageType const> input = in_single->getMessage<MessageType>();
             buffer_.push_back(*input);
         }
     }

@@ -10,11 +10,12 @@
 #include <csapex/msg/message_traits.h>
 #include <csapex/utility/singleton.hpp>
 #include <csapex/csapex_fwd.h>
+#include <csapex/utility/shared_ptr_tools.hpp>
 
 /// SYSTEM
 #include <ros/master.h>
 #include <ros/subscriber.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/bind.hpp>
 #include <rosbag/view.h>
 
@@ -27,7 +28,7 @@ class RosMessageConversionT;
 class Convertor
 {
 public:
-    typedef boost::shared_ptr<Convertor> Ptr;
+    typedef std::shared_ptr<Convertor> Ptr;
     typedef boost::function<void(ConnectionTypeConstPtr)> Callback;
 
 public:
@@ -58,7 +59,7 @@ public:
     }
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) {
-        boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
+        std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
         }
@@ -66,7 +67,7 @@ public:
         return nh->subscribe<T>(topic.name, queue, boost::bind(&Self::callback, this, callback, _1));
     }
     ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) {
-        boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
+        std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
         }
@@ -75,11 +76,12 @@ public:
     }
     void publish(ros::Publisher& pub, ConnectionType::ConstPtr apex_msg_raw) {
         typename connection_types::GenericPointerMessage<T>::ConstPtr msg =
-                boost::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const> (apex_msg_raw);
+                std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const> (apex_msg_raw);
         if(!msg) {
             throw std::runtime_error("trying to publish an empty message");
         }
-        return pub.publish(msg->value);
+        auto boost_ptr = shared_ptr_tools::to_boost_shared(msg->value);
+        return pub.publish(boost_ptr);
     }
 
     void callback(Callback callback, const typename T::ConstPtr& ros_msg) {
@@ -93,7 +95,8 @@ public:
 
     connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& i) {
         typename connection_types::GenericPointerMessage<T>::Ptr res(new connection_types::GenericPointerMessage<T>);
-        res->value = i.instantiate<T>();
+        auto boost_ptr = i.instantiate<T>();
+        res->value = shared_ptr_tools::to_std_shared(boost_ptr);
         return res;
     }
 };
@@ -112,7 +115,7 @@ public:
     }
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) {
-        boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
+        std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
         }
@@ -120,7 +123,7 @@ public:
         return nh->subscribe<ROS>(topic.name, queue, boost::bind(&Self::callback, this, callback, _1));
     }
     ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) {
-        boost::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
+        std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
         }
@@ -128,7 +131,7 @@ public:
         return nh->advertise<ROS>(topic, queue, latch);
     }
     void publish(ros::Publisher& pub, ConnectionType::ConstPtr apex_msg_raw) {
-        typename APEX::ConstPtr apex_msg = boost::dynamic_pointer_cast<APEX const> (apex_msg_raw);
+        typename APEX::ConstPtr apex_msg = std::dynamic_pointer_cast<APEX const> (apex_msg_raw);
         if(!apex_msg->isValid()) {
             throw std::runtime_error("trying to publish an empty message");
         }

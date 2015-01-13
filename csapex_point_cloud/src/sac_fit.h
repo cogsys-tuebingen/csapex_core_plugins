@@ -46,7 +46,7 @@ private:
     double sphere_r_max_;
     pcl::SacModel model_;
 
-    boost::shared_ptr<std::vector<pcl::PointIndices> const> cluster_indices_;
+    std::shared_ptr<std::vector<pcl::PointIndices> const> cluster_indices_;
 
     template <class PointT>
     int findModels(typename pcl::PointCloud<PointT>::ConstPtr cloud_in,

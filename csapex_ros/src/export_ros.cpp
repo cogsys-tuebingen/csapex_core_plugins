@@ -50,7 +50,7 @@ void ExportRos::processROS()
 
     ConnectionType::ConstPtr msg = connector_->getMessage<ConnectionType>();
 
-    connection_types::VectorMessage::ConstPtr vector = boost::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
+    connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
 
     ConnectionType::Ptr type;
     if(vector) {

@@ -35,7 +35,7 @@ BagProvider::BagProvider()
 
     param::Parameter::Ptr topic_param = param::ParameterFactory::declareParameterStringSet("topic",
                                                                                            param::ParameterDescription("topic to play <b>primarily</b>"), set, "");
-    topic_param_ = boost::dynamic_pointer_cast<param::SetParameter>(topic_param);
+    topic_param_ = std::dynamic_pointer_cast<param::SetParameter>(topic_param);
     assert(topic_param_);
     state.addParameter(topic_param_);
 
@@ -113,7 +113,7 @@ void BagProvider::setTopic()
     }
     frames_--;
 
-    param::RangeParameter::Ptr frame = boost::dynamic_pointer_cast<param::RangeParameter>(state.getParameter("bag/frame"));
+    param::RangeParameter::Ptr frame = std::dynamic_pointer_cast<param::RangeParameter>(state.getParameter("bag/frame"));
     frame->setMax(frames_);
 
     frame_ = 0;
