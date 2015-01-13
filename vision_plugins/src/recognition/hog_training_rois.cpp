@@ -44,7 +44,7 @@ void HOGTrainingRois::process()
 {
     RoiMessage::ConstPtr in_roi = in_roi_->getMessage<RoiMessage>();
     Roi roi = in_roi->value;
-    boost::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage>);
+    std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage>);
 
     int limit_x = std::numeric_limits<int>::max();
     int limit_y = std::numeric_limits<int>::max();

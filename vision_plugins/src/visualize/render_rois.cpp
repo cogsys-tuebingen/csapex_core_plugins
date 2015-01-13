@@ -57,7 +57,7 @@ void RenderROIs::process()
     if(input_rois_->hasMessage()) {
         VectorMessage::ConstPtr rois = input_rois_->getMessage<VectorMessage>();
         BOOST_FOREACH(const ConnectionType::Ptr& e, rois->value) {
-            RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(e);
+            RoiMessage::Ptr roi = std::dynamic_pointer_cast<RoiMessage>(e);
 
             if(ignore_uc && roi->value.classification() == -1) {
                 continue;
@@ -76,7 +76,7 @@ void RenderROIs::process()
     }
 
     if(input_rois_gen_->hasMessage()) {
-        boost::shared_ptr< std::vector<RoiMessage> const> rois =
+        std::shared_ptr< std::vector<RoiMessage> const> rois =
                 input_rois_gen_->getMessage<GenericVectorMessage, RoiMessage>();
 
         BOOST_FOREACH(const RoiMessage& roi, *rois) {

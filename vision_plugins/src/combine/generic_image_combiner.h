@@ -29,7 +29,7 @@ private:
 
 
 struct AbstractExpression;
-typedef boost::shared_ptr<AbstractExpression> Ptr;
+typedef std::shared_ptr<AbstractExpression> Ptr;
 
 struct AbstractExpression {
     virtual ~AbstractExpression() {}
@@ -64,7 +64,7 @@ private:
 };
 
 template <typename Expr> // general purpose, static Expression cloner
-static Ptr make_from(Expr const& t) { return boost::make_shared<Expr>(t); }
+static Ptr make_from(Expr const& t) { return std::make_shared<Expr>(t); }
 
 struct FunctionExpression : AbstractExpression
 {

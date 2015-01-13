@@ -113,7 +113,7 @@ LocalPatterns::LocalPatterns()
 void LocalPatterns::process()
 {
     CvMatMessage::ConstPtr  in = in_img_->getMessage<CvMatMessage>();
-    boost::shared_ptr< std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
+    std::shared_ptr< std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(in->value.channels() > 1)
         throw std::runtime_error("Matrix must be one channel!");
@@ -138,7 +138,7 @@ void LocalPatterns::process()
         out->push_back(feature_msg);
 
     } else {
-        boost::shared_ptr< std::vector<RoiMessage> const> in_rois = in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
+        std::shared_ptr< std::vector<RoiMessage> const> in_rois = in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
 
         for(std::vector<RoiMessage>::const_iterator
             it  = in_rois->begin() ;

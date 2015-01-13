@@ -54,7 +54,7 @@ void HOGExtractor::setupParameters()
     addParameter(cells_per_block, boost::bind(&HOGExtractor::updateOverlap, this));
 
     boost::function<bool()> k_cond = (boost::bind(&param::Parameter::as<int>, cells_per_block.get()) > 2);
-    overlap_ = boost::dynamic_pointer_cast<param::RangeParameter>(
+    overlap_ = std::dynamic_pointer_cast<param::RangeParameter>(
                 param::ParameterFactory::declareRange("overlap",
                                                       param::ParameterDescription("Block overlap given in cells."),
                                                       1, 7, 1, 1));
@@ -72,7 +72,7 @@ void HOGExtractor::setup()
 void HOGExtractor::process()
 {
     CvMatMessage::ConstPtr  in = in_img_->getMessage<CvMatMessage>();
-    boost::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
+    std::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(!in->hasChannels(1, CV_8U))
         throw std::runtime_error("Image must be one channel grayscale!");
@@ -118,7 +118,7 @@ void HOGExtractor::process()
         out->push_back(feature_msg);
 
     } else {
-        boost::shared_ptr<std::vector<RoiMessage> const> in_rois =
+        std::shared_ptr<std::vector<RoiMessage> const> in_rois =
                 in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
 
         for(std::vector<RoiMessage>::const_iterator

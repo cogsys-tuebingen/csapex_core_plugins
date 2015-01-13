@@ -41,11 +41,11 @@ void ToFeature::setupParameters()
 }
 
 namespace {
-typedef boost::shared_ptr<std::vector<FeaturesMessage> > Features;
+typedef std::shared_ptr<std::vector<FeaturesMessage> > Features;
 
 template<typename T>
 inline void doProcessSingle(const T   &src,
-                            boost::shared_ptr< std::vector<FeaturesMessage> >  &dst,
+                            std::shared_ptr< std::vector<FeaturesMessage> >  &dst,
                             const int label = 0)
 {
     std::runtime_error("Unsupported message type!");
@@ -53,7 +53,7 @@ inline void doProcessSingle(const T   &src,
 
 template<>
 inline void doProcessSingle(const typename HistogramMessage::ConstPtr &src,
-                            boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
+                            std::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
     FeaturesMessage features;
@@ -73,7 +73,7 @@ inline void doProcessSingle(const typename HistogramMessage::ConstPtr &src,
 
 template<>
 inline void doProcessSingle(const typename CvMatMessage::ConstPtr &src,
-                            boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
+                            std::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
     FeaturesMessage features;
@@ -89,7 +89,7 @@ inline void doProcessSingle(const typename CvMatMessage::ConstPtr &src,
 
 template<>
 inline void doProcessSingle(const typename DescriptorMessage::ConstPtr &src,
-                            boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
+                            std::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
     for(int i = 0 ; i < src->value.rows ; ++i) {
@@ -101,27 +101,27 @@ inline void doProcessSingle(const typename DescriptorMessage::ConstPtr &src,
 }
 
 inline void processSingle(const ConnectionType::ConstPtr                    &src,
-                          boost::shared_ptr< std::vector<FeaturesMessage> > &dst,
+                          std::shared_ptr< std::vector<FeaturesMessage> > &dst,
                           const int                                         label)
 {
     CvMatMessage::ConstPtr      cv =
-            boost::dynamic_pointer_cast<CvMatMessage const>(src);
+            std::dynamic_pointer_cast<CvMatMessage const>(src);
     if(cv)
         doProcessSingle(cv, dst, label);
 
     DescriptorMessage::ConstPtr d  =
-            boost::dynamic_pointer_cast<DescriptorMessage const>(src);
+            std::dynamic_pointer_cast<DescriptorMessage const>(src);
     if(d)
         doProcessSingle(d, dst, label);
 
     HistogramMessage::ConstPtr  h  =
-            boost::dynamic_pointer_cast<HistogramMessage const>(src);
+            std::dynamic_pointer_cast<HistogramMessage const>(src);
     if(h)
         doProcessSingle(h, dst, label);
 }
 
 inline void processVector(const connection_types::VectorMessage::ConstPtr    &src,
-                          boost::shared_ptr< std::vector<FeaturesMessage> >  &dst,
+                          std::shared_ptr< std::vector<FeaturesMessage> >  &dst,
                           const int label)
 {
     for(std::size_t i = 0, total = src->value.size(); i < total; ++i) {
@@ -134,13 +134,13 @@ inline void processVector(const connection_types::VectorMessage::ConstPtr    &sr
 void ToFeature::process()
 {
     ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
-    boost::shared_ptr< std::vector<FeaturesMessage> > out (new std::vector<FeaturesMessage>);
+    std::shared_ptr< std::vector<FeaturesMessage> > out (new std::vector<FeaturesMessage>);
 
 
     int class_id = readParameter<int>("class id");
 
     connection_types::VectorMessage::ConstPtr vector =
-            boost::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
+            std::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
     if(vector) {
         processVector(vector, out, class_id);
     } else {

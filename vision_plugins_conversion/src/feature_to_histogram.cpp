@@ -39,7 +39,7 @@ void FeatureToHistogram::process()
             it != in_vector->value.end() ;
             ++it) {
 
-            FeaturesMessage::Ptr feature_msg = boost::dynamic_pointer_cast<FeaturesMessage>(*it);
+            FeaturesMessage::Ptr feature_msg = std::dynamic_pointer_cast<FeaturesMessage>(*it);
             hist->value.ranges.push_back(utils_vision::histogram::Range(0, feature_msg->value.size()));
             hist->value.histograms.push_back(cv::Mat(feature_msg->value, true));
         }

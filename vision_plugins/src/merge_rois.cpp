@@ -30,7 +30,7 @@ void MergeROIs::process()
 
     RectangleCluster cluster;
     for(std::vector<ConnectionType::Ptr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
-        RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(*it);
+        RoiMessage::Ptr roi = std::dynamic_pointer_cast<RoiMessage>(*it);
         const Roi& r = roi->value;
         cluster.integrate(r.rect());
     }

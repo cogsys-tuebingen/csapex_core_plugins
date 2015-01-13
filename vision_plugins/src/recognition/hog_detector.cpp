@@ -73,7 +73,7 @@ void HOGDetector::setup()
 void HOGDetector::process()
 {
     CvMatMessage::ConstPtr  in = in_->getMessage<CvMatMessage>();
-    boost::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
+    std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
 
     if(!in->hasChannels(1, CV_8U))
         throw std::runtime_error("Image must be one channel grayscale!");

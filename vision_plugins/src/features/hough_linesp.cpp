@@ -40,7 +40,7 @@ void HoughLinesP::process()
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr, in->stamp));
     cv::cvtColor(in->value, out->value, CV_GRAY2BGR);
 
-    boost::shared_ptr< std::vector<cv::Vec4i> > lines_ptr(new std::vector<cv::Vec4i>);
+    std::shared_ptr< std::vector<cv::Vec4i> > lines_ptr(new std::vector<cv::Vec4i>);
     std::vector<cv::Vec4i>& lines = *lines_ptr;
     cv::HoughLinesP(in->value, lines, rho_, theta_/180, threshold_, min_line_length_, max_line_gap_);
 

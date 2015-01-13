@@ -144,12 +144,12 @@ void Splitter::updateOutputs()
 /// MEMENTO ------------------------------------------------------------------------------------
 Memento::Ptr Splitter::getParameterState() const
 {
-    return boost::shared_ptr<State>(new State(state_));
+    return std::shared_ptr<State>(new State(state_));
 }
 
 void Splitter::setParameterState(Memento::Ptr memento)
 {
-    boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
+    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
     apex_assert_hard(m.get());
 
     state_ = *m;
