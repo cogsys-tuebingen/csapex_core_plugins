@@ -12,7 +12,7 @@ using namespace csapex;
 
 
 std::function<bool(ImageProvider*)> ImageProviderImg::Identity
-= boost::bind(&ImageProviderImg::checkIdentity, _1);
+= std::bind(&ImageProviderImg::checkIdentity, std::placeholders::_1);
 
 ImageProviderImg::ImageProviderImg()
     : border_(false), displayed(false)

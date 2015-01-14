@@ -132,7 +132,7 @@ void APEXRosInterface::init(CsApexCore &core)
 {
     core_ = &core;
 
-    ROSHandler::instance().registerConnectionCallback(boost::bind(&APEXRosInterface::registerCommandListener, this));
+    ROSHandler::instance().registerConnectionCallback(std::bind(&APEXRosInterface::registerCommandListener, this));
 
     RosMessageConversion::registerConversion<std_msgs::Bool, connection_types::GenericValueMessage<bool>, ConvertIntegral<std_msgs::Bool, bool> >();
     RosMessageConversion::registerConversion<std_msgs::Int32, connection_types::GenericValueMessage<int>, ConvertIntegral<std_msgs::Int32, int> >();
@@ -148,9 +148,9 @@ void APEXRosInterface::registerCommandListener()
 {
     assert(ROSHandler::instance().isConnected());
     global_command_sub_ = ROSHandler::instance().nh()->subscribe
-            <std_msgs::String>("/syscommand", 10, boost::bind(&APEXRosInterface::command, this, _1, true));
+            <std_msgs::String>("/syscommand", 10, std::bind(&APEXRosInterface::command, this, std::placeholders::_1, true));
     private_command_sub_ = ROSHandler::instance().nh()->subscribe
-            <std_msgs::String>("command", 10, boost::bind(&APEXRosInterface::command, this, _1, false));
+            <std_msgs::String>("command", 10, std::bind(&APEXRosInterface::command, this, std::placeholders::_1, false));
 
     ros::spinOnce();
 }

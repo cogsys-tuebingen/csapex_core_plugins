@@ -30,7 +30,7 @@ ScanLabeler::~ScanLabeler()
 void ScanLabeler::setupParameters()
 {
     addParameter(param::ParameterFactory::declareTrigger("submit", param::ParameterDescription("Continue with the current labeling")),
-                                                         boost::bind(&ScanLabeler::submit, this));
+                                                         std::bind(&ScanLabeler::submit, this));
 
     addParameter(param::ParameterFactory::declareRange("label",
                                                        param::ParameterDescription("The label to be assigned to the selected points"),

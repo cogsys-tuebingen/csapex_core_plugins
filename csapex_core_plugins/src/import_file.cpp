@@ -26,16 +26,16 @@ void ImportFile::setupParameters()
 {
     addParameter(param::ParameterFactory::declareDirectoryInputPath("path",
                                                                     param::ParameterDescription("Directory to read messages from"),
-                                                                    "", ""), boost::bind(&ImportFile::setImportPath, this));
+                                                                    "", ""), std::bind(&ImportFile::setImportPath, this));
 
     addParameter(param::ParameterFactory::declareText("filename",
                                                       param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
-                                                      "msg"), boost::bind(&ImportFile::setImportPrefix, this));
+                                                      "msg"), std::bind(&ImportFile::setImportPrefix, this));
     addParameter(param::ParameterFactory::declareBool("loop",
                                                       param::ParameterDescription("When reaching the end of the directory, do a loop?"),
                                                       true));
     param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("immediate", false);
-    addParameter(immediate, boost::bind(&ImportFile::changeMode, this));
+    addParameter(immediate, std::bind(&ImportFile::changeMode, this));
 }
 
 

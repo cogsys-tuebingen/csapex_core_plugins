@@ -26,7 +26,7 @@ RandomTrees::RandomTrees()
 
 void RandomTrees::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareFileInputPath("file", "rforest.yaml"), boost::bind(&RandomTrees::loadTree, this));
+    addParameter(param::ParameterFactory::declareFileInputPath("file", "rforest.yaml"), std::bind(&RandomTrees::loadTree, this));
 }
 
 void RandomTrees::setup()
@@ -34,7 +34,7 @@ void RandomTrees::setup()
     in_  = modifier_->addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Unclassified feature");
     out_ = modifier_->addOutput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
 
-    reload_ = modifier_->addSlot("Reload", boost::bind(&RandomTrees::loadTree, this));
+    reload_ = modifier_->addSlot("Reload", std::bind(&RandomTrees::loadTree, this));
 }
 
 void RandomTrees::process()

@@ -30,11 +30,11 @@ DynamicTransform::DynamicTransform()
 void DynamicTransform::setupParameters()
 {
     std::vector<std::string> topics;
-    addParameter(param::ParameterFactory::declareParameterStringSet("source", topics), boost::bind(&DynamicTransform::update, this));
-    addParameter(param::ParameterFactory::declareParameterStringSet("target", topics), boost::bind(&DynamicTransform::update, this));
+    addParameter(param::ParameterFactory::declareParameterStringSet("source", topics), std::bind(&DynamicTransform::update, this));
+    addParameter(param::ParameterFactory::declareParameterStringSet("target", topics), std::bind(&DynamicTransform::update, this));
 
-    addParameter(param::ParameterFactory::declareTrigger("refresh"), boost::bind(&DynamicTransform::refresh, this));
-    addParameter(param::ParameterFactory::declareTrigger("reset tf"), boost::bind(&DynamicTransform::resetTf, this));
+    addParameter(param::ParameterFactory::declareTrigger("refresh"), std::bind(&DynamicTransform::refresh, this));
+    addParameter(param::ParameterFactory::declareTrigger("reset tf"), std::bind(&DynamicTransform::resetTf, this));
 
     source_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("source"));
     target_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("target"));
@@ -154,7 +154,7 @@ void DynamicTransform::setup()
     output_ = modifier_->addOutput<connection_types::TransformMessage>("Transform");
     output_frame_ = modifier_->addOutput<std::string>("Target Frame");
 
-    modifier_->addSlot("reset", boost::bind(&DynamicTransform::resetTf, this));
+    modifier_->addSlot("reset", std::bind(&DynamicTransform::resetTf, this));
     reset_ = modifier_->addTrigger("reset");
 }
 

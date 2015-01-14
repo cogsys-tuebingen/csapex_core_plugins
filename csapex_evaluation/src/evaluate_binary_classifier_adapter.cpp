@@ -133,7 +133,7 @@ EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeWorker *wor
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal
-    node->display_request.connect(boost::bind(&EvaluateBinaryClassifierAdapter::displayRequest, this));
+    node->display_request.connect(std::bind(&EvaluateBinaryClassifierAdapter::displayRequest, this));
 }
 
 void EvaluateBinaryClassifierAdapter::setupUi(QBoxLayout* layout)

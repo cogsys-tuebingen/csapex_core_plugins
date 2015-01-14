@@ -21,8 +21,8 @@ public:
 
     void setupParameters()
     {
-        addParameter(param::ParameterFactory::declareTrigger("process"), boost::bind(&CollectionNode<MessageType>::doProcessCollection, this, boost::ref(buffer_)));
-        addParameter(param::ParameterFactory::declareTrigger("clear"), boost::bind(&CollectionNode<MessageType>::clearCollection, this));
+        addParameter(param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType>::doProcessCollection, this, boost::ref(buffer_)));
+        addParameter(param::ParameterFactory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType>::clearCollection, this));
     }
 
     void setup()

@@ -36,9 +36,9 @@ ImageRoiAdapter::ImageRoiAdapter(NodeWorker* worker, ImageRoi *node, WidgetContr
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    node->display_request.connect(boost::bind(&ImageRoiAdapter::displayRequest, this, _1));
-    node->submit_request.connect(boost::bind(&ImageRoiAdapter::submitRequest, this));
-    node->drop_request.connect(boost::bind(&ImageRoiAdapter::dropRequest, this));
+    node->display_request.connect(std::bind(&ImageRoiAdapter::displayRequest, this, std::placeholders::_1));
+    node->submit_request.connect(std::bind(&ImageRoiAdapter::submitRequest, this));
+    node->drop_request.connect(std::bind(&ImageRoiAdapter::dropRequest, this));
 }
 
 bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)

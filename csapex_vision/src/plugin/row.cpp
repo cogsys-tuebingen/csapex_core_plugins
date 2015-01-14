@@ -62,7 +62,7 @@ void Row::setupParameters()
                                                        param::ParameterDescription("Row to extract."),
                                                        0, 1, 0, 1));
     addParameter(param::ParameterFactory::declareTrigger("center"),
-                 boost::bind(&Row::requestCenter, this));
+                 std::bind(&Row::requestCenter, this));
 
 }
 

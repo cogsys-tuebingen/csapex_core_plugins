@@ -42,15 +42,15 @@ ExtractKeypoints::ExtractKeypoints()
     }
 
     param::Parameter::Ptr method = param::ParameterFactory::declareParameterStringSet("method", methods);
-    addParameter(method, boost::bind(&ExtractKeypoints::update, this));
+    addParameter(method, std::bind(&ExtractKeypoints::update, this));
 
     Q_FOREACH(Pair fc, manager.featureDetectors()) {
         std::string key = fc.second.getType();
-        std::function<bool()> condition = (boost::bind(&param::Parameter::as<std::string>, method.get()) == key);
+        std::function<bool()> condition = [method, key]() { return method->as<std::string>() == key; };
 
         Q_FOREACH(param::Parameter::Ptr param, manager.featureDetectorParameters(key)) {
             param::Parameter::Ptr param_clone = param::ParameterFactory::clone(param);
-            addConditionalParameter(param_clone, condition, boost::bind(&ExtractKeypoints::update, this));
+            addConditionalParameter(param_clone, condition, std::bind(&ExtractKeypoints::update, this));
         }
     }
 }

@@ -14,7 +14,6 @@
 #include <csapex/model/node_factory.h>
 
 /// SYSTEM
-#include <boost/bind.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 #include <QMetaType>
 #include <sensor_msgs/Image.h>

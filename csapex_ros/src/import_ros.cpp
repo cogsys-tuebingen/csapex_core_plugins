@@ -53,7 +53,7 @@ void ImportRos::setup()
     connector_ = modifier_->addOutput<connection_types::AnyMessage>("Something");
 
 
-    std::function<bool()> connected_condition = (boost::bind(&Input::isConnected, input_time_));
+    std::function<bool()> connected_condition = (std::bind(&Input::isConnected, input_time_));
 
     param::Parameter::Ptr buffer_p = param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
     addConditionalParameter(buffer_p, connected_condition);
@@ -66,15 +66,15 @@ void ImportRos::setupParameters()
     std::vector<std::string> set;
     set.push_back(no_topic_);
     addParameter(param::ParameterFactory::declareParameterStringSet("topic", set),
-                 boost::bind(&ImportRos::update, this));
+                 std::bind(&ImportRos::update, this));
 
     addParameter(param::ParameterFactory::declareTrigger("refresh"),
-                 boost::bind(&ImportRos::refresh, this));
+                 std::bind(&ImportRos::refresh, this));
 
     addParameter(param::ParameterFactory::declareRange("rate", 0.1, 100.0, 60.0, 0.1),
-                 boost::bind(&ImportRos::updateRate, this));
+                 std::bind(&ImportRos::updateRate, this));
     addParameter(param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
-                 boost::bind(&ImportRos::updateSubscriber, this));
+                 std::bind(&ImportRos::updateSubscriber, this));
     addParameter(param::ParameterFactory::declareBool("latch", false));
 }
 
@@ -134,7 +134,7 @@ void ImportRos::updateRate()
 void ImportRos::updateSubscriber()
 {
     if(!current_topic_.name.empty()) {
-        current_subscriber = RosMessageConversion::instance().subscribe(current_topic_, readParameter<int>("queue"), boost::bind(&ImportRos::callback, this, _1));
+        current_subscriber = RosMessageConversion::instance().subscribe(current_topic_, readParameter<int>("queue"), std::bind(&ImportRos::callback, this, std::placeholders::_1));
     }
 }
 

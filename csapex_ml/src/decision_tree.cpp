@@ -26,7 +26,7 @@ DecisionTree::DecisionTree()
 
 void DecisionTree::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareFileInputPath("file", "dtree.yaml"), boost::bind(&DecisionTree::loadTree, this));
+    addParameter(param::ParameterFactory::declareFileInputPath("file", "dtree.yaml"), std::bind(&DecisionTree::loadTree, this));
 }
 
 void DecisionTree::setup()
@@ -34,7 +34,7 @@ void DecisionTree::setup()
     in_  = modifier_->addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Unclassified feature");
     out_ = modifier_->addOutput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
 
-    reload_ = modifier_->addSlot("Reload", boost::bind(&DecisionTree::loadTree, this));
+    reload_ = modifier_->addSlot("Reload", std::bind(&DecisionTree::loadTree, this));
 }
 
 void DecisionTree::process()

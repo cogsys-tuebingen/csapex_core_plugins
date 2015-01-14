@@ -38,7 +38,7 @@ void RandomTreesTrainer::setupParameters()
                  ("classes",
                   param::ParameterDescription("Number of classes to learn."),
                   0, 100, 2, 1),
-                 boost::bind(&RandomTreesTrainer::updatePriors, this));;
+                 std::bind(&RandomTreesTrainer::updatePriors, this));;
 
     addParameter(param::ParameterFactory::declareFileOutputPath
                  ("file", "rforest.yaml"));
@@ -126,7 +126,7 @@ void RandomTreesTrainer::updatePriors()
                 name << "~priors/" << c;
                 param::Parameter::Ptr p = param::ParameterFactory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
                 priors_params_.push_back(p);
-                addTemporaryParameter(p, boost::bind(&RandomTreesTrainer::udpatePriorValues, this));
+                addTemporaryParameter(p, std::bind(&RandomTreesTrainer::udpatePriorValues, this));
             }
         } else {
             for(int c = categories_-1; c >= categories; --c) {

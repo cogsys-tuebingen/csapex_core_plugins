@@ -27,8 +27,8 @@ ScanLabelerAdapter::ScanLabelerAdapter(NodeWorker* worker, ScanLabeler *node, Wi
       resize_down_(false), move_down_(false)
 {
     // translate to UI thread via Qt signal
-    node->display_request.connect(boost::bind(&ScanLabelerAdapter::displayRequest, this, _1));
-    node->submit_request.connect(boost::bind(&ScanLabelerAdapter::submitRequest, this));
+    node->display_request.connect(std::bind(&ScanLabelerAdapter::displayRequest, this, std::placeholders::_1));
+    node->submit_request.connect(std::bind(&ScanLabelerAdapter::submitRequest, this));
 }
 
 void ScanLabelerAdapter::labelSelected()

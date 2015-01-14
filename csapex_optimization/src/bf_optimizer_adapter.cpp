@@ -24,7 +24,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(BFOptimizerAdapter, csapex::BFOptimizer)
 BFOptimizerAdapter::BFOptimizerAdapter(NodeWorker* worker, BFOptimizer *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
-    wrapped_->step.connect(boost::bind(&BFOptimizerAdapter::triggerStep, this, _1));
+    wrapped_->step.connect(std::bind(&BFOptimizerAdapter::triggerStep, this, std::placeholders::_1));
 }
 
 

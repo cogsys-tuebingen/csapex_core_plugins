@@ -29,7 +29,7 @@ ExportRos::ExportRos()
 void ExportRos::setupParameters()
 {
     addParameter(param::ParameterFactory::declareText("topic", "export"),
-                 boost::bind(&ExportRos::updateTopic, this));
+                 std::bind(&ExportRos::updateTopic, this));
 }
 
 void ExportRos::setup()

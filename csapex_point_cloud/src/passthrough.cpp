@@ -29,7 +29,7 @@ PassThrough::PassThrough()
 
     std::vector<std::string> field;
     field.push_back("x");
-    addParameter(param::ParameterFactory::declareParameterStringSet("field", field), boost::bind(&PassThrough::updateBorders, this));
+    addParameter(param::ParameterFactory::declareParameterStringSet("field", field), std::bind(&PassThrough::updateBorders, this));
 }
 
 void PassThrough::setup()

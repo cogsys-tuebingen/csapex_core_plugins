@@ -26,7 +26,7 @@ RosParam::RosParam()
 
 void RosParam::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareText("prefix", ""), boost::bind(&RosParam::update, this));
+    addParameter(param::ParameterFactory::declareText("prefix", ""), std::bind(&RosParam::update, this));
 }
 
 void RosParam::setupROS()
@@ -73,26 +73,26 @@ void RosParam::update()
             switch(parameter_value.getType()) {
             case XmlRpc::XmlRpcValue::TypeInt: {
                 param::Parameter::Ptr p = param::ParameterFactory::declareValue<int>(label, parameter_value);
-                addTemporaryParameter(p, boost::bind(static_cast<void(*)(const std::string&,int)> (&ros::param::set), parameter_name,
-                                                     boost::bind(&param::Parameter::as<int>, p.get())));
+                addTemporaryParameter(p, std::bind(static_cast<void(*)(const std::string&,int)> (&ros::param::set), parameter_name,
+                                                     std::bind(&param::Parameter::as<int>, p.get())));
             }
                 break;
             case XmlRpc::XmlRpcValue::TypeDouble: {
                 param::Parameter::Ptr p = param::ParameterFactory::declareValue<double>(label, parameter_value);
-                addTemporaryParameter(p, boost::bind(static_cast<void(*)(const std::string&,double)> (&ros::param::set), parameter_name,
-                                                     boost::bind(&param::Parameter::as<double>, p.get())));
+                addTemporaryParameter(p, std::bind(static_cast<void(*)(const std::string&,double)> (&ros::param::set), parameter_name,
+                                                     std::bind(&param::Parameter::as<double>, p.get())));
             }
                 break;
             case XmlRpc::XmlRpcValue::TypeBoolean: {
                 param::Parameter::Ptr p = param::ParameterFactory::declareBool(label, parameter_value);
-                addTemporaryParameter(p, boost::bind(static_cast<void(*)(const std::string&,bool)> (&ros::param::set), parameter_name,
-                                                     boost::bind(&param::Parameter::as<bool>, p.get())));
+                addTemporaryParameter(p, std::bind(static_cast<void(*)(const std::string&,bool)> (&ros::param::set), parameter_name,
+                                                     std::bind(&param::Parameter::as<bool>, p.get())));
             }
                 break;
             case XmlRpc::XmlRpcValue::TypeString: {
                 param::Parameter::Ptr p = param::ParameterFactory::declareText(label, parameter_value);
-                addTemporaryParameter(p, boost::bind(static_cast<void(*)(const std::string&,const std::string&)> (&ros::param::set), parameter_name,
-                                                     boost::bind(&param::Parameter::as<std::string>, p.get())));
+                addTemporaryParameter(p, std::bind(static_cast<void(*)(const std::string&,const std::string&)> (&ros::param::set), parameter_name,
+                                                     std::bind(&param::Parameter::as<std::string>, p.get())));
             }
                 break;
 

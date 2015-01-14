@@ -98,7 +98,7 @@ void ColorSegmentation::recompute()
         } else {
             p = param::ParameterFactory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
         }
-        addTemporaryParameter(p, boost::bind(&ColorSegmentation::update, this));
+        addTemporaryParameter(p, std::bind(&ColorSegmentation::update, this));
     }
 
     setParameterSetSilence(false);

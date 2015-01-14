@@ -39,7 +39,7 @@ void OptimizationDummy::setupParameters()
 
 void OptimizationDummy::setup()
 {
-    in_  = modifier_->addSlot("Evaluate", boost::bind(&OptimizationDummy::start, this));
+    in_  = modifier_->addSlot("Evaluate", std::bind(&OptimizationDummy::start, this));
     out_ = modifier_->addOutput<double>("Fitness");
 }
 

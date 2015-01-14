@@ -96,7 +96,7 @@ ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeWorker *worker,
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal
-    node->display_request.connect(boost::bind(&ConfusionMatrixDisplayAdapter::displayRequest, this));
+    node->display_request.connect(std::bind(&ConfusionMatrixDisplayAdapter::displayRequest, this));
 }
 
 void ConfusionMatrixDisplayAdapter::setupUi(QBoxLayout* layout)

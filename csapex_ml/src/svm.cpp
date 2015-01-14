@@ -32,7 +32,7 @@ void SVM::setupParameters()
                                                       true,
                                                       "",
                                                       "*.yaml *.tar.gz"),
-                 boost::bind(&SVM::load, this));
+                 std::bind(&SVM::load, this));
 
 }
 

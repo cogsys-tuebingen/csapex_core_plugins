@@ -33,16 +33,16 @@ void ImageRoi::setupParameters()
                                                                         param::ParameterDescription("Step by step submission."),
                                                                         true);
     addParameter(method,
-                 boost::bind(&ImageRoi::submit, this));
+                 std::bind(&ImageRoi::submit, this));
 
-    std::function<bool()> k_cond = (boost::bind(&param::Parameter::as<bool>, method.get()));
+    std::function<bool()> k_cond = (std::bind(&param::Parameter::as<bool>, method.get()));
     addConditionalParameter(param::ParameterFactory::declareTrigger("submit"),
                             k_cond,
-                            boost::bind(&ImageRoi::submit, this));
+                            std::bind(&ImageRoi::submit, this));
 
     addConditionalParameter(param::ParameterFactory::declareTrigger("drop"),
                             k_cond,
-                            boost::bind(&ImageRoi::drop, this));
+                            std::bind(&ImageRoi::drop, this));
 
     addParameter(param::ParameterFactory::declareRange("roi width",
                                                        param::ParameterDescription("Set the width of the roi."),

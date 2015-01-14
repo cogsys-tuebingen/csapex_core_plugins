@@ -30,7 +30,7 @@ void MakeScreenshot::setupParameters()
 
 void MakeScreenshot::setup()
 {
-    in_ = modifier_->addSlot("Trigger", boost::bind(&MakeScreenshot::makeScreenshot, this));
+    in_ = modifier_->addSlot("Trigger", std::bind(&MakeScreenshot::makeScreenshot, this));
     done_ = modifier_->addTrigger("Done");
 
     modifier_->setIsSource(true);

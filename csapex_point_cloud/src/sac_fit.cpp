@@ -40,7 +40,7 @@ SacFit::SacFit()
 
 
     addParameter(param::ParameterFactory::declareParameterSet<int>("models", models, (int) pcl::SACMODEL_PLANE),
-                 boost::bind(&SacFit::setParameters, this));
+                 std::bind(&SacFit::setParameters, this));
 
     cluster_indices_.reset(new std::vector<pcl::PointIndices>);
 

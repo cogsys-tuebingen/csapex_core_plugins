@@ -61,7 +61,7 @@ void Col::setupParameters()
                                                        param::ParameterDescription("Col to extract."),
                                                        0, 1, 0, 1));
     addParameter(param::ParameterFactory::declareTrigger("center"),
-                 boost::bind(&Col::requestCenter, this));
+                 std::bind(&Col::requestCenter, this));
 
 }
 

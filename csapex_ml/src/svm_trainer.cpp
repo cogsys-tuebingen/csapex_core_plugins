@@ -38,11 +38,11 @@ void SVMTrainer::setupParameters()
 
     addParameter(param::ParameterFactory::declareTrigger("train",
                                                          param::ParameterDescription("Train using obtained data!")),
-                 boost::bind(&SVMTrainer::train, this));
+                 std::bind(&SVMTrainer::train, this));
 
     addParameter(param::ParameterFactory::declareTrigger("clear",
                                                          param::ParameterDescription("Clear buffered data!")),
-                 boost::bind(&SVMTrainer::clear, this));
+                 std::bind(&SVMTrainer::clear, this));
 
 
     std::map<std::string, int> kernel_types =
@@ -75,19 +75,31 @@ void SVMTrainer::setupParameters()
 
     addParameter(svm_param);
 
-    std::function<bool()> deg_cond    = (boost::bind(&param::Parameter::as<int>, kernel_param.get()) == cv::SVM::POLY);
-    std::function<bool()> gamma_cond  = (boost::bind(&param::Parameter::as<int>, kernel_param.get()) == cv::SVM::POLY  ||
-                                           boost::bind(&param::Parameter::as<int>, kernel_param.get()) == cv::SVM::RBF   ||
-                                           boost::bind(&param::Parameter::as<int>, kernel_param.get()) == cv::SVM::SIGMOID);
-    std::function<bool()> coeff0_cond = (boost::bind(&param::Parameter::as<int>, kernel_param.get()) == cv::SVM::POLY  ||
-                                           boost::bind(&param::Parameter::as<int>, kernel_param.get()) == cv::SVM::SIGMOID);
-    std::function<bool()> cvalue_cond = (boost::bind(&param::Parameter::as<int>, svm_param.get()) == cv::SVM::C_SVC    ||
-                                           boost::bind(&param::Parameter::as<int>, svm_param.get()) == cv::SVM::EPS_SVR  ||
-                                           boost::bind(&param::Parameter::as<int>, svm_param.get()) == cv::SVM::NU_SVR);
-    std::function<bool()> nu_cond     = (boost::bind(&param::Parameter::as<int>, svm_param.get()) == cv::SVM::NU_SVC    ||
-                                           boost::bind(&param::Parameter::as<int>, svm_param.get()) == cv::SVM::ONE_CLASS ||
-                                           boost::bind(&param::Parameter::as<int>, svm_param.get()) == cv::SVM::NU_SVR);
-    std::function<bool()> p_cond      = (boost::bind(&param::Parameter::as<int>, svm_param.get()) == cv::SVM::EPS_SVR);
+    std::function<bool()> deg_cond    = [kernel_param]() -> bool {
+            auto t = kernel_param->as<int>();
+            return t == cv::SVM::POLY;
+    };
+    std::function<bool()> gamma_cond  = [kernel_param]() -> bool {
+            auto t = kernel_param->as<int>();
+            return t == cv::SVM::POLY || t == cv::SVM::RBF || cv::SVM::SIGMOID;
+    };
+
+    std::function<bool()> coeff0_cond = [kernel_param]() -> bool {
+            auto t = kernel_param->as<int>();
+            return t == cv::SVM::POLY || t == cv::SVM::SIGMOID;
+    };
+    std::function<bool()> cvalue_cond = [kernel_param]() -> bool {
+            auto t = kernel_param->as<int>();
+            return t == cv::SVM::C_SVC || t == cv::SVM::EPS_SVR || cv::SVM::NU_SVR;
+    };
+    std::function<bool()> nu_cond     = [kernel_param]() -> bool {
+            auto t = kernel_param->as<int>();
+            return t == cv::SVM::ONE_CLASS || t == cv::SVM::NU_SVR || cv::SVM::EPS_SVR;
+    };
+    std::function<bool()> p_cond      = [kernel_param]() -> bool {
+            auto t = kernel_param->as<int>();
+            return t == cv::SVM::EPS_SVR;
+    };
 
 
     addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, M_PI * 2, 0.0, 0.05),

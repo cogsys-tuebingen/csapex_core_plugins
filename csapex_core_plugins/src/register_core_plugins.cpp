@@ -16,7 +16,6 @@
 #include <utils_param/parameter_factory.h>
 
 /// SYSTEM
-#include <boost/bind.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 #include <QStringList>
 #include <QUrl>

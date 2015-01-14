@@ -7,7 +7,6 @@
 
 /// SYSTEM
 #include <boost/algorithm/string.hpp>
-#include <boost/bind.hpp>
 #include <functional>
 #include <boost/signals2.hpp>
 #include <map>

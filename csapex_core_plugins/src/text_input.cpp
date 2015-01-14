@@ -19,7 +19,7 @@ using namespace csapex;
 
 TextInput::TextInput()
 {
-    addParameter(param::ParameterFactory::declareText("text", ""), boost::bind(&TextInput::publish, this));
+    addParameter(param::ParameterFactory::declareText("text", ""), std::bind(&TextInput::publish, this));
 }
 
 void TextInput::process()

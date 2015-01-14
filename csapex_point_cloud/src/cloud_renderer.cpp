@@ -20,7 +20,7 @@ CloudRenderer::CloudRenderer()
 
 void CloudRenderer::setupParameters()
 {
-    std::function<void(param::Parameter*)> refresh = boost::bind(&CloudRenderer::refresh, this);
+    std::function<void(param::Parameter*)> refresh = std::bind(&CloudRenderer::refresh, this);
 
     double d = 10.0;
 
@@ -36,7 +36,7 @@ void CloudRenderer::setupParameters()
 
     param::Parameter::Ptr sync = param::ParameterFactory::declareBool("~size/out/sync", true);
     addParameter(sync, refresh);
-    std::function<bool()> notsync = (!boost::bind(&param::Parameter::as<bool>, sync.get()));
+    std::function<bool()> notsync = [sync]() { return !sync->as<bool>(); };
     addConditionalParameter(param::ParameterFactory::declareRange("~size/out/width", 10, 1024, 400, 1), notsync, refresh);
     addConditionalParameter(param::ParameterFactory::declareRange("~size/out/height", 10, 1024, 400, 1), notsync, refresh);
 

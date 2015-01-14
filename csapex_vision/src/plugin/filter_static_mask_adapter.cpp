@@ -24,8 +24,8 @@ FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeWorker* worker, FilterStati
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal
-    wrapped_->show_painter.connect(boost::bind(&FilterStaticMaskAdapter::displayRequest, this));
-    wrapped_->input.connect(boost::bind(&FilterStaticMaskAdapter::inputRequest, this, _1));
+    wrapped_->show_painter.connect(std::bind(&FilterStaticMaskAdapter::displayRequest, this));
+    wrapped_->input.connect(std::bind(&FilterStaticMaskAdapter::inputRequest, this, std::placeholders::_1));
 
     QObject::connect(this, SIGNAL(displayRequest()), this, SLOT(display()));
 }

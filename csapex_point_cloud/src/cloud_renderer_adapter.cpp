@@ -26,8 +26,8 @@ CloudRendererAdapter::CloudRendererAdapter(NodeWorker* worker, CloudRenderer *no
       axes_(false), grid_size_(10), grid_resolution_(1.0), grid_xy_(true), grid_yz_(false), grid_xz_(false),
       list_cloud_(0), list_augmentation_(0)
 {
-    node->display_request.connect(boost::bind(&CloudRendererAdapter::display, this));
-    node->refresh_request.connect(boost::bind(&CloudRendererAdapter::refresh, this));
+    node->display_request.connect(std::bind(&CloudRendererAdapter::display, this));
+    node->refresh_request.connect(std::bind(&CloudRendererAdapter::refresh, this));
 
     QObject::connect(this, SIGNAL(repaintRequest()), this, SLOT(paintGL()), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(resizeRequest()), this, SLOT(resize()), Qt::QueuedConnection);

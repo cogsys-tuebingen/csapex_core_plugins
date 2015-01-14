@@ -35,19 +35,19 @@ void get_plugin_xml_paths(ClassLoader<PluginType>* loader, std::vector<std::stri
 
 void RosBoot::boot(csapex::PluginLocator* locator)
 {
-    locator->registerLocator<CorePlugin>(boost::bind(
+    locator->registerLocator<CorePlugin>(std::bind(
                                              &get_plugin_xml_paths<CorePlugin>,
-                                             &loader_core_, _1));
-    locator->registerLocator<MessageProvider>(boost::bind(
+                                             &loader_core_, std::placeholders::_1));
+    locator->registerLocator<MessageProvider>(std::bind(
                                                   &get_plugin_xml_paths<MessageProvider>,
-                                                  &loader_msg_, _1));
-    locator->registerLocator<MessageRenderer>(boost::bind(
+                                                  &loader_msg_, std::placeholders::_1));
+    locator->registerLocator<MessageRenderer>(std::bind(
                                                   &get_plugin_xml_paths<MessageRenderer>,
-                                                  &loader_msg_renderer_, _1));
-    locator->registerLocator<NodeAdapterBuilder>(boost::bind(
+                                                  &loader_msg_renderer_, std::placeholders::_1));
+    locator->registerLocator<NodeAdapterBuilder>(std::bind(
                                                      &get_plugin_xml_paths<NodeAdapterBuilder>,
-                                                     &loader_node_adapter_, _1));
-    locator->registerLocator<Node>(boost::bind(
+                                                     &loader_node_adapter_, std::placeholders::_1));
+    locator->registerLocator<Node>(std::bind(
                                        &get_plugin_xml_paths<Node>,
-                                       &loader_node_, _1));
+                                       &loader_node_, std::placeholders::_1));
 }

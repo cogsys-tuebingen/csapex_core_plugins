@@ -47,19 +47,19 @@ void FileImporter::setupParameters()
     param::Parameter::Ptr directory = param::ParameterFactory::declareBool("import directory", false);
     addParameter(directory);
 
-    std::function<bool()> cond_file = (!boost::bind(&param::Parameter::as<bool>, directory.get()));
-    std::function<bool()> cond_dir = (boost::bind(&param::Parameter::as<bool>, directory.get()));
+    std::function<bool()> cond_file = [directory]() { return !directory->as<bool>(); };
+    std::function<bool()> cond_dir = [directory]() { return directory->as<bool>(); };
 
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
-    addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, boost::bind(&FileImporter::import, this));
+    addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
 
-    addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, boost::bind(&FileImporter::import, this));
-    addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, boost::bind(&FileImporter::changeDirIndex, this));
+    addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
+    addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
     addConditionalParameter(param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
 
     param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
-    addParameter(immediate, boost::bind(&FileImporter::changeMode, this));
+    addParameter(immediate, std::bind(&FileImporter::changeMode, this));
 }
 
 void FileImporter::setup()
@@ -68,8 +68,8 @@ void FileImporter::setup()
 
     param::Parameter::Ptr immediate = getParameter("playback/immediate");
 
-    std::function<void(param::Parameter*)> setf = boost::bind(&NodeModifier::setTickFrequency, modifier_, boost::bind(&param::Parameter::as<double>, _1));
-    std::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
+    std::function<void(param::Parameter*)> setf = std::bind(&NodeModifier::setTickFrequency, modifier_, std::bind(&param::Parameter::as<double>, std::placeholders::_1));
+    std::function<bool()> conditionf = [immediate]() { return !immediate->as<bool>(); };
     addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
 
     begin_ = modifier_->addTrigger("begin");
@@ -193,11 +193,11 @@ bool FileImporter::doImport(const QString& file_path)
             INTERLUDE("createMessageProvider");
             provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
         }
-        provider_->slot_count_changed.connect(boost::bind(&FileImporter::updateOutputs, this));
+        provider_->slot_count_changed.connect(std::bind(&FileImporter::updateOutputs, this));
 
         if(!directory_import_) {
-            provider_->begin.connect(boost::bind(&Trigger::trigger, begin_));
-            provider_->no_more_messages.connect(boost::bind(&Trigger::trigger, end_));
+            provider_->begin.connect(std::bind(&Trigger::trigger, begin_));
+            provider_->no_more_messages.connect(std::bind(&Trigger::trigger, end_));
         }
 
         {
@@ -206,7 +206,7 @@ bool FileImporter::doImport(const QString& file_path)
         }
 
         if(!directory_import_) {
-            setTemporaryParameters(provider_->getParameters(), boost::bind(&FileImporter::updateProvider, this));
+            setTemporaryParameters(provider_->getParameters(), std::bind(&FileImporter::updateProvider, this));
         }
         return provider_.get();
 

@@ -14,7 +14,7 @@ template <typename T>
 NumberInput<T>::NumberInput()
 {
     addParameter(param::ParameterFactory::declareValue<T>("value", (T) 0.0));
-    addParameter(param::ParameterFactory::declareTrigger("publish"), boost::bind(&NumberInput::process, this));
+    addParameter(param::ParameterFactory::declareTrigger("publish"), std::bind(&NumberInput::process, this));
     addParameter(param::ParameterFactory::declareBool("tick", false));
 }
 

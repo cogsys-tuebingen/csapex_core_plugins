@@ -33,10 +33,10 @@ void ExportFile::setupParameters()
                                                       false));
     addParameter(param::ParameterFactory::declareText("filename",
                                                       param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
-                                                      "msg"), boost::bind(&ExportFile::setExportPath, this));
+                                                      "msg"), std::bind(&ExportFile::setExportPath, this));
     addParameter(param::ParameterFactory::declareDirectoryOutputPath("path",
                                                                      param::ParameterDescription("Directory to write messages to"),
-                                                                     "", ""), boost::bind(&ExportFile::setExportPath, this));
+                                                                     "", ""), std::bind(&ExportFile::setExportPath, this));
 }
 
 void ExportFile::setup()

@@ -21,11 +21,11 @@ GaussianBlur::GaussianBlur() :
     sigma_y_(0.0)
 {
     addParameter(param::ParameterFactory::declareRange("kernel", 1, 255, kernel_, 2),
-                 boost::bind(&GaussianBlur::update, this));
+                 std::bind(&GaussianBlur::update, this));
     addParameter(param::ParameterFactory::declareRange("sigma x", 0.1, 128.0, sigma_x_, 0.1),
-                 boost::bind(&GaussianBlur::update, this));
+                 std::bind(&GaussianBlur::update, this));
     addParameter(param::ParameterFactory::declareRange("sigma y", 0.0, 128.0, sigma_y_, 0.1),
-                 boost::bind(&GaussianBlur::update, this));
+                 std::bind(&GaussianBlur::update, this));
 
 
 }

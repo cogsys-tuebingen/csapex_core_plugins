@@ -37,7 +37,7 @@ void DecisionTreeTrainer::setupParameters()
                  ("classes",
                   param::ParameterDescription("Number of classes to learn."),
                   0, 100, 2, 1),
-                 boost::bind(&DecisionTreeTrainer::updatePriors, this));;
+                 std::bind(&DecisionTreeTrainer::updatePriors, this));;
 
     addParameter(param::ParameterFactory::declareFileOutputPath
                  ("file", "dtree.yaml"));
@@ -106,7 +106,7 @@ void DecisionTreeTrainer::updatePriors()
                 name << "~priors/" << c;
                 param::Parameter::Ptr p = param::ParameterFactory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
                 priors_params_.push_back(p);
-                addTemporaryParameter(p, boost::bind(&DecisionTreeTrainer::udpatePriorValues, this));
+                addTemporaryParameter(p, std::bind(&DecisionTreeTrainer::udpatePriorValues, this));
             }
         } else {
             for(int c = categories_-1; c >= categories; --c) {

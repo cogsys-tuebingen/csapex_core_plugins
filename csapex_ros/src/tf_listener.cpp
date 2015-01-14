@@ -23,7 +23,7 @@ void TFListener::start()
     TFListener* i = TFListener::raw_instance();
 
     i->tfl.reset(new tf::TransformListener);
-    i->tf_sub = ROSHandler::instance().nh()->subscribe<tf::tfMessage>("/tf", 0, boost::bind(&TFListener::cb, i, _1));
+    i->tf_sub = ROSHandler::instance().nh()->subscribe<tf::tfMessage>("/tf", 0, std::bind(&TFListener::cb, i, std::placeholders::_1));
     i->retries = 10;
 }
 

@@ -26,7 +26,7 @@ OutputDisplayAdapter::OutputDisplayAdapter(NodeWorker* worker, OutputDisplay *no
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    node->display_request.connect(boost::bind(&OutputDisplayAdapter::displayRequest, this, _1));
+    node->display_request.connect(std::bind(&OutputDisplayAdapter::displayRequest, this, std::placeholders::_1));
 }
 
 

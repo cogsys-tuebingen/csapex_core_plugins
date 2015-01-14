@@ -17,7 +17,7 @@ using namespace csapex;
 FilterStaticMask::FilterStaticMask()
     : state(this)
 {
-    addParameter(param::ParameterFactory::declareTrigger("create mask"), boost::bind(&FilterStaticMask::showPainter, this));
+    addParameter(param::ParameterFactory::declareTrigger("create mask"), std::bind(&FilterStaticMask::showPainter, this));
 }
 
 FilterStaticMask::~FilterStaticMask()

@@ -16,7 +16,6 @@
 #include <ros/master.h>
 #include <ros/subscriber.h>
 #include <memory>
-#include <boost/bind.hpp>
 #include <rosbag/view.h>
 
 namespace csapex
@@ -64,7 +63,7 @@ public:
             throw std::runtime_error("no ros connection");
         }
 
-        return nh->subscribe<T>(topic.name, queue, boost::bind(&Self::callback, this, callback, _1));
+        return nh->subscribe<T>(topic.name, queue, std::bind(&Self::callback, this, callback, std::placeholders::_1));
     }
     ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) {
         std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
@@ -120,7 +119,7 @@ public:
             throw std::runtime_error("no ros connection");
         }
 
-        return nh->subscribe<ROS>(topic.name, queue, boost::bind(&Self::callback, this, callback, _1));
+        return nh->subscribe<ROS>(topic.name, queue, std::bind(&Self::callback, this, callback, std::placeholders::_1));
     }
     ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) {
         std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
