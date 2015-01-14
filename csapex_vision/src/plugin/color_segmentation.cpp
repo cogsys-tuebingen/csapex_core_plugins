@@ -9,7 +9,7 @@
 #include <csapex/model/node_modifier.h>
 
 /// SYSTEM
-#include <boost/foreach.hpp>
+
 
 CSAPEX_REGISTER_CLASS(csapex::ColorSegmentation, csapex::Node)
 

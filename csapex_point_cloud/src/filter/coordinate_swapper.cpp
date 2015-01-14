@@ -49,7 +49,7 @@ public:
 
 template<typename PointT>
 inline static void swap(PointT &p1,
-                       typename boost::enable_if_c<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
+                       typename std::enable_if<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
 {
     PointT tmp = p1;
 

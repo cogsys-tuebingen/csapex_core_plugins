@@ -46,7 +46,7 @@ ExtractDescriptors::ExtractDescriptors()
 
     Q_FOREACH(Pair fc, manager.descriptorExtractors()) {
         std::string key = fc.second.getType();
-        boost::function<bool()> condition = (boost::bind(&param::Parameter::as<std::string>, method.get()) == key);
+        std::function<bool()> condition = (boost::bind(&param::Parameter::as<std::string>, method.get()) == key);
 
         Q_FOREACH(param::Parameter::Ptr param, manager.featureDescriptorParameters(key)) {
             param::Parameter::Ptr param_clone = param::ParameterFactory::clone(param);

@@ -11,7 +11,7 @@ CSAPEX_REGISTER_CLASS(csapex::ImageProviderImg, csapex::MessageProvider)
 using namespace csapex;
 
 
-boost::function<bool(ImageProvider*)> ImageProviderImg::Identity
+std::function<bool(ImageProvider*)> ImageProviderImg::Identity
 = boost::bind(&ImageProviderImg::checkIdentity, _1);
 
 ImageProviderImg::ImageProviderImg()

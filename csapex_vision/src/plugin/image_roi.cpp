@@ -35,7 +35,7 @@ void ImageRoi::setupParameters()
     addParameter(method,
                  boost::bind(&ImageRoi::submit, this));
 
-    boost::function<bool()> k_cond = (boost::bind(&param::Parameter::as<bool>, method.get()));
+    std::function<bool()> k_cond = (boost::bind(&param::Parameter::as<bool>, method.get()));
     addConditionalParameter(param::ParameterFactory::declareTrigger("submit"),
                             k_cond,
                             boost::bind(&ImageRoi::submit, this));

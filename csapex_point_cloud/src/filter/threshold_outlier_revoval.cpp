@@ -50,7 +50,7 @@ public:
 
 template<typename PointT>
 inline static void add(const PointT &p1, PointT &p2,
-                       typename boost::enable_if_c<PointTraits<PointT>::HasXY, PointT>::type* dummy = 0)
+                       typename std::enable_if<PointTraits<PointT>::HasXY, PointT>::type* dummy = 0)
 {
     p2.x += p1.x;
     p2.y += p1.y;
@@ -58,7 +58,7 @@ inline static void add(const PointT &p1, PointT &p2,
 
 template<typename PointT>
 inline static void add(const PointT &p1, PointT &p2,
-                       typename boost::enable_if_c<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
+                       typename std::enable_if<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
 {
     p2.x += p1.x;
     p2.y += p1.y;
@@ -67,7 +67,7 @@ inline static void add(const PointT &p1, PointT &p2,
 
 template<typename PointT, typename T>
 inline static void divide(const T scalar, PointT &p1,
-                          typename boost::enable_if_c<PointTraits<PointT>::HasXY, PointT>::type* dummy = 0)
+                          typename std::enable_if<PointTraits<PointT>::HasXY, PointT>::type* dummy = 0)
 {
     p1.x /= scalar;
     p1.y /= scalar;
@@ -75,7 +75,7 @@ inline static void divide(const T scalar, PointT &p1,
 
 template<typename PointT, typename T>
 inline static void divide(const T scalar, PointT &p1,
-                          typename boost::enable_if_c<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
+                          typename std::enable_if<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
 {
     p1.x /= scalar;
     p1.y /= scalar;
@@ -84,7 +84,7 @@ inline static void divide(const T scalar, PointT &p1,
 
 template<typename PointT, typename T>
 inline static T distance(const PointT &p1, const PointT &p2,
-                         typename boost::enable_if_c<PointTraits<PointT>::HasXY, PointT>::type* dummy = 0)
+                         typename std::enable_if<PointTraits<PointT>::HasXY, PointT>::type* dummy = 0)
 {
     T diffx = p1.x - p2.x;
     T diffy = p1.y - p2.y;
@@ -93,7 +93,7 @@ inline static T distance(const PointT &p1, const PointT &p2,
 
 template<typename PointT, typename T>
 inline static T distance(const PointT &p1, const PointT &p2,
-                         typename boost::enable_if_c<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
+                         typename std::enable_if<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
 {
     T diffx = p1.x - p2.x;
     T diffy = p1.y - p2.y;

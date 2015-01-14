@@ -29,7 +29,7 @@ class Convertor
 {
 public:
     typedef std::shared_ptr<Convertor> Ptr;
-    typedef boost::function<void(ConnectionTypeConstPtr)> Callback;
+    typedef std::function<void(ConnectionTypeConstPtr)> Callback;
 
 public:
     virtual ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) = 0;
@@ -160,7 +160,7 @@ class RosMessageConversion : public Singleton<RosMessageConversion>
     friend class RosMessageConversionT;
 
 public:
-    typedef boost::function<void(ConnectionTypeConstPtr)> Callback;
+    typedef std::function<void(ConnectionTypeConstPtr)> Callback;
 
 private:
     RosMessageConversion();
@@ -188,11 +188,11 @@ private:
     void doRegisterConversion(const std::string &apex_type, const std::string &ros_type, Convertor::Ptr c);
 
     template <typename T>
-    bool doCanConvert(typename boost::enable_if<ros::message_traits::IsMessage<T> >::type* dummy = 0) {
+    bool doCanConvert(typename std::enable_if<ros::message_traits::IsMessage<T>::value >::type* dummy = 0) {
         return converters_inv_.find(ros::message_traits::DataType<T>::value()) != converters_inv_.end();
     }
     template <typename T>
-    bool doCanConvert(typename boost::disable_if<ros::message_traits::IsMessage<T> >::type* dummy = 0) {
+    bool doCanConvert(typename std::enable_if<!ros::message_traits::IsMessage<T>::value >::type* dummy = 0) {
         return false;
     }
 
@@ -208,7 +208,7 @@ class RosMessageConversionT
 {
 public:
     template <typename U>
-    static void registerConversionImpl(const std::string& name, typename boost::enable_if<ros::message_traits::IsMessage<U> >::type* dummy = 0) {
+    static void registerConversionImpl(const std::string& name, typename std::enable_if<ros::message_traits::IsMessage<U>::value >::type* dummy = 0) {
         if(!canConvert()) {
             Convertor::Ptr converter(new IdentityConvertor<T>);
             RosMessageConversion::instance().doRegisterConversion(converter->apexType(), converter->rosType(), converter);
@@ -218,7 +218,7 @@ public:
         }
     }
     template <typename U>
-    static void registerConversionImpl(const std::string& name, typename boost::disable_if<ros::message_traits::IsMessage<U> >::type* dummy = 0) {
+    static void registerConversionImpl(const std::string& name, typename std::enable_if<!ros::message_traits::IsMessage<U>::value >::type* dummy = 0) {
     }
 
     static void registerConversion() {

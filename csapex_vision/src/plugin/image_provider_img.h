@@ -18,7 +18,7 @@ public:
 
 
 public:
-    static boost::function<bool(ImageProvider*)> Identity;
+    static std::function<bool(ImageProvider*)> Identity;
 private:
     static bool checkIdentity(ImageProvider*);
 

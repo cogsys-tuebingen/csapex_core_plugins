@@ -53,7 +53,7 @@ void ImportRos::setup()
     connector_ = modifier_->addOutput<connection_types::AnyMessage>("Something");
 
 
-    boost::function<bool()> connected_condition = (boost::bind(&Input::isConnected, input_time_));
+    std::function<bool()> connected_condition = (boost::bind(&Input::isConnected, input_time_));
 
     param::Parameter::Ptr buffer_p = param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
     addConditionalParameter(buffer_p, connected_condition);

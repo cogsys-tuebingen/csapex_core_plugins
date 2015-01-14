@@ -285,7 +285,7 @@ public:
 MatchDescriptors::MatchDescriptors()
     : in_img_1(nullptr), current_method_(SIMPLE)
 {
-    boost::function<void(param::Parameter*)> update = boost::bind(&MatchDescriptors::update, this);
+    std::function<void(param::Parameter*)> update = boost::bind(&MatchDescriptors::update, this);
 
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("Simple", (int) SIMPLE)
@@ -299,7 +299,7 @@ MatchDescriptors::MatchDescriptors()
     addParameter(param::ParameterFactory::declareColorParameter("color/single", 128,128,255));
 
     // peak
-    boost::function<bool()> cond_peak = (boost::bind(&param::Parameter::as<int>, method.get()) == PEAK);
+    std::function<bool()> cond_peak = (boost::bind(&param::Parameter::as<int>, method.get()) == PEAK);
 
     addConditionalParameter(param::ParameterFactory::declareRange("peak/cluster_count", 1, 32, 1, 1), cond_peak);
     addConditionalParameter(param::ParameterFactory::declareRange("peak/scaling", 1, 8, 1, 1), cond_peak);

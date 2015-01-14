@@ -3,7 +3,7 @@
 
 /// SYSTEM
 #include <QtConcurrentRun>
-#include <boost/foreach.hpp>
+
 
 using namespace csapex;
 
@@ -22,7 +22,7 @@ ROSHandler::~ROSHandler()
 
 void ROSHandler::stop()
 {
-    BOOST_FOREACH (const boost::function<void()>& f, shutdown_callbacks_) {
+    for (const std::function<void()>& f : shutdown_callbacks_) {
         f();
     }
 
@@ -100,7 +100,7 @@ bool ROSHandler::topicExists(const std::string &topic)
     return false;
 }
 
-void ROSHandler::registerConnectionCallback(boost::function<void ()> f)
+void ROSHandler::registerConnectionCallback(std::function<void ()> f)
 {
     if(isConnected()) {
         f();
@@ -108,7 +108,7 @@ void ROSHandler::registerConnectionCallback(boost::function<void ()> f)
     connection_callbacks_.push_back(f);
 }
 
-void ROSHandler::registerShutdownCallback(boost::function<void ()> f)
+void ROSHandler::registerShutdownCallback(std::function<void ()> f)
 {
 
     shutdown_callbacks_.push_back(f);

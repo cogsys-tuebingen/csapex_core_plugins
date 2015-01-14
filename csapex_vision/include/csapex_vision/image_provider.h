@@ -8,7 +8,7 @@
 /// SYSTEM
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
-#include <boost/function.hpp>
+#include <functional>
 #include <boost/signals2.hpp>
 #include <map>
 #include <opencv2/opencv.hpp>
@@ -27,7 +27,7 @@ public:
     typedef std::shared_ptr<ImageProvider> Ptr;
 
 protected:
-    typedef boost::function<ImageProvider*(const std::string&)> ProviderConstructor;
+    typedef std::function<ImageProvider*(const std::string&)> ProviderConstructor;
 
 public:
     ImageProvider();

@@ -66,7 +66,7 @@ struct Impl {
         colors.insert(std::make_pair(FLOOD_DEFAULT_LABEL, Color()));
         for(typename pcl::PointCloud<PointT>::const_iterator it = src->begin() ; it != src->end() ; ++it) {
             if(colors.find(it->label) == colors.end()) {
-                double r,g,b;
+                double r = 0.0, g = 0.0, b = 0.0;
                 color::fromCount(colors.size(), r,g,b);
                 colors.insert(std::make_pair(it->label,Color(r,g,b)));
             }

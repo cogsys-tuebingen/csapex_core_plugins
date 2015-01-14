@@ -67,7 +67,7 @@ public:
 
 template<typename PointT>
 inline static bool invalid(const PointT &p,
-                           typename boost::enable_if_c<PointTraits<PointT>::HasXY, PointT>::type* dummy = 0)
+                           typename std::enable_if<PointTraits<PointT>::HasXY, PointT>::type* dummy = 0)
 {
     bool nan  = p.x != p.x || p.y != p.y;
     bool zero = p.x == 0 && p.y == 0;
@@ -76,7 +76,7 @@ inline static bool invalid(const PointT &p,
 
 template<typename PointT>
 inline static bool invalid(const PointT &p,
-                           typename boost::enable_if_c<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
+                           typename std::enable_if<PointTraits<PointT>::HasXYZ, PointT>::type* dummy = 0)
 {
     bool nan  = p.x != p.x || p.y != p.y || p.z != p.z;
     bool zero = p.x == 0 && p.y == 0 && p.z == 0;

@@ -47,8 +47,8 @@ void FileImporter::setupParameters()
     param::Parameter::Ptr directory = param::ParameterFactory::declareBool("import directory", false);
     addParameter(directory);
 
-    boost::function<bool()> cond_file = (!boost::bind(&param::Parameter::as<bool>, directory.get()));
-    boost::function<bool()> cond_dir = (boost::bind(&param::Parameter::as<bool>, directory.get()));
+    std::function<bool()> cond_file = (!boost::bind(&param::Parameter::as<bool>, directory.get()));
+    std::function<bool()> cond_dir = (boost::bind(&param::Parameter::as<bool>, directory.get()));
 
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
@@ -68,8 +68,8 @@ void FileImporter::setup()
 
     param::Parameter::Ptr immediate = getParameter("playback/immediate");
 
-    boost::function<void(param::Parameter*)> setf = boost::bind(&NodeModifier::setTickFrequency, modifier_, boost::bind(&param::Parameter::as<double>, _1));
-    boost::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
+    std::function<void(param::Parameter*)> setf = boost::bind(&NodeModifier::setTickFrequency, modifier_, boost::bind(&param::Parameter::as<double>, _1));
+    std::function<bool()> conditionf = (!boost::bind(&param::Parameter::as<bool>, immediate.get()));
     addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
 
     begin_ = modifier_->addTrigger("begin");

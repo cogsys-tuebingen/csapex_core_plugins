@@ -222,14 +222,14 @@ public:
     }
 
     template <typename T>
-    static GenericVectorMessage::Ptr make(typename boost::enable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
+    static GenericVectorMessage::Ptr make(typename std::enable_if<std::is_base_of<ConnectionType, T>::value >::type* dummy = 0)
     {
         registerType<T>();
         return GenericVectorMessage::Ptr(new GenericVectorMessage(MessageImplementation<T>::make(), "/", 0));
     }
 
     template <typename T>
-    static GenericVectorMessage::Ptr make(typename boost::disable_if<boost::is_base_of<ConnectionType, T> >::type* dummy = 0)
+    static GenericVectorMessage::Ptr make(typename std::enable_if<!std::is_base_of<ConnectionType, T>::value >::type* dummy = 0)
     {
         registerType<T>();
         return GenericVectorMessage::Ptr(new GenericVectorMessage(Implementation<T>::make(), "/", 0));
