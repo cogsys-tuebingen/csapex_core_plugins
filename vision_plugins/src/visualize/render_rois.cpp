@@ -12,7 +12,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <boost/foreach.hpp>
+
 
 CSAPEX_REGISTER_CLASS(csapex::RenderROIs, csapex::Node)
 
@@ -56,7 +56,7 @@ void RenderROIs::process()
     bool ignore_uc = readParameter<bool>("ignore unclassified");
     if(input_rois_->hasMessage()) {
         VectorMessage::ConstPtr rois = input_rois_->getMessage<VectorMessage>();
-        BOOST_FOREACH(const ConnectionType::Ptr& e, rois->value) {
+        for(const ConnectionType::Ptr& e : rois->value) {
             RoiMessage::Ptr roi = std::dynamic_pointer_cast<RoiMessage>(e);
 
             if(ignore_uc && roi->value.classification() == -1) {
@@ -79,7 +79,7 @@ void RenderROIs::process()
         std::shared_ptr< std::vector<RoiMessage> const> rois =
                 input_rois_gen_->getMessage<GenericVectorMessage, RoiMessage>();
 
-        BOOST_FOREACH(const RoiMessage& roi, *rois) {
+        for(const RoiMessage& roi : *rois) {
             if(ignore_uc && roi.value.classification() == -1) {
                 continue;
             }

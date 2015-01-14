@@ -14,7 +14,7 @@
 
 /// SYSTEM
 #include <boost/assign/list_of.hpp>
-#include <boost/function.hpp>
+#include <functional>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::MatrixToHeatmap, csapex::Node)
 

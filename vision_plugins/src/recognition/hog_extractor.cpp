@@ -53,7 +53,7 @@ void HOGExtractor::setupParameters()
 
     addParameter(cells_per_block, boost::bind(&HOGExtractor::updateOverlap, this));
 
-    boost::function<bool()> k_cond = (boost::bind(&param::Parameter::as<int>, cells_per_block.get()) > 2);
+    std::function<bool()> k_cond = (boost::bind(&param::Parameter::as<int>, cells_per_block.get()) > 2);
 
     param::ParameterPtr o = param::ParameterFactory::declareRange(
                 "overlap",

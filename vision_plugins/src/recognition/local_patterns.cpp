@@ -182,7 +182,7 @@ void LocalPatterns::setupParameters()
             param::ParameterFactory::declareParameterSet("pattern",
                                                          types,
                                                          (int) LBP);
-    boost::function<bool()> condition =
+    std::function<bool()> condition =
             (boost::bind(&param::Parameter::as<int>, type.get()) == LTP);
 
     addParameter(type);

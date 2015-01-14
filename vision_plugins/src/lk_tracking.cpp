@@ -12,7 +12,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <boost/foreach.hpp>
+
 
 CSAPEX_REGISTER_CLASS(csapex::LKTracking, csapex::Node)
 
@@ -22,7 +22,7 @@ using namespace connection_types;
 LKTracking::LKTracking()
     : init_(true)
 {
-    boost::function<void(const param::Parameter*)> cb = boost::bind(&LKTracking::update, this, _1);
+    std::function<void(const param::Parameter*)> cb = boost::bind(&LKTracking::update, this, _1);
 
     addParameter(param::ParameterFactory::declareRange<int>("winSize", 10, 80, 31, 1));
     addParameter(param::ParameterFactory::declareRange<int>("subPixWinSize", 1, 40, 10, 1), cb);
