@@ -41,7 +41,7 @@ void MedianFilter::setup()
 void MedianFilter::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("kernel", 3, 31, kernel_size_, 2),
-                 boost::bind(&MedianFilter::update, this));
+                 std::bind(&MedianFilter::update, this));
 }
 
 void MedianFilter::update()

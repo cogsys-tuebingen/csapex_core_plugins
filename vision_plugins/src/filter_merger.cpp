@@ -15,7 +15,7 @@ using namespace connection_types;
 
 Merger::Merger()
 {
-    addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), boost::bind(&Merger::updateInputs, this));
+    addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), std::bind(&Merger::updateInputs, this));
 }
 
 void Merger::setup()

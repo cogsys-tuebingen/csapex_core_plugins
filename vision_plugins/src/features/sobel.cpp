@@ -34,9 +34,9 @@ void Sobel::setupParameters()
 {
     Operator::setupParameters();
     addParameter(param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
-                 boost::bind(&Sobel::update, this));
+                 std::bind(&Sobel::update, this));
     addParameter(param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
-                 boost::bind(&Sobel::update, this));
+                 std::bind(&Sobel::update, this));
 }
 
 void  Sobel::update()

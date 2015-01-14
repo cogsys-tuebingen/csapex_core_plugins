@@ -138,15 +138,15 @@ void Histogram::setup()
 void Histogram::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("min max range", false),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("global min max", false),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
 }
 
 void Histogram::update()

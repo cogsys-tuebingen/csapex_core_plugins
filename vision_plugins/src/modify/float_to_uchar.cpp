@@ -72,7 +72,7 @@ void FloatToUchar::setupParameters()
             ("SCALE",    SCALE);
 
     addParameter(param::ParameterFactory::declareParameterSet("type", types, (int) RELATIVE),
-                 boost::bind(&FloatToUchar::update, this));
+                 std::bind(&FloatToUchar::update, this));
 }
 
 void FloatToUchar::update()

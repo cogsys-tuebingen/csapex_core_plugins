@@ -63,7 +63,7 @@ void Flip::setupParameters()
             ("-90", 3)
             ("v+h", -1);
     addParameter(param::ParameterFactory::declareParameterSet("type", types, -1),
-                 boost::bind(&Flip::update, this));
+                 std::bind(&Flip::update, this));
 }
 
 void Flip::update()

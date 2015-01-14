@@ -40,7 +40,7 @@ void GammaCorrection::setupParameters()
     addConditionalParameter(param::ParameterFactory::declareRange("gamma",
                                                                   param::ParameterDescription("Constant factor in  dst = c * (src ^ gamma)"),
                                                                   0.001, 10.0, 1.0, 0.001),
-                            (boost::bind(&param::Parameter::as<int>, type.get()) == POWER_LAW));
+                            [type]() { return type->as<int>() == POWER_LAW; });
 }
 
 void GammaCorrection::setup()

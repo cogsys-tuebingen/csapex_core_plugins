@@ -48,9 +48,9 @@ void Pyramid::setupParameters()
 {
 
     addParameter(param::ParameterFactory::declareRange("levels", 1, 10, out_levels_, 1),
-                 boost::bind(&Pyramid::update, this));
+                 std::bind(&Pyramid::update, this));
     addParameter(param::ParameterFactory::declareRange("preview",0, 9, out_level_idx_, 1),
-                 boost::bind(&Pyramid::update, this));
+                 std::bind(&Pyramid::update, this));
 }
 
 void Pyramid::update()

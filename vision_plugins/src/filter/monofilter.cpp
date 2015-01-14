@@ -56,13 +56,13 @@ void MonoFilter::setup()
 void MonoFilter::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
-                 boost::bind(&MonoFilter::update, this));
+                 std::bind(&MonoFilter::update, this));
     addParameter(param::ParameterFactory::declareRange("max", 0, 255, 255, 1),
-                 boost::bind(&MonoFilter::update, this));
+                 std::bind(&MonoFilter::update, this));
     addParameter(param::ParameterFactory::declareRange("def", 0, 255, 255, 1),
-                 boost::bind(&MonoFilter::update, this));
+                 std::bind(&MonoFilter::update, this));
     addParameter(param::ParameterFactory::declareBool("invert", false),
-                 boost::bind(&MonoFilter::update, this));
+                 std::bind(&MonoFilter::update, this));
 }
 
 void MonoFilter::update()

@@ -89,7 +89,7 @@ void MatrixToHeatmap::setupParameters()
             ("PARABOLA", (int) PARABOLA);
 
     addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types, (int) BEZIER),
-                 boost::bind(&MatrixToHeatmap::update, this));
+                 std::bind(&MatrixToHeatmap::update, this));
 }
 
 void MatrixToHeatmap::update()

@@ -44,10 +44,10 @@ void HOGDetector::setupParameters()
     addParameter(svm_param);
 
 
-    std::function<bool()> condition = (boost::bind(&param::Parameter::as<int>, svm_param.get()) == CUSTOM);
+    std::function<bool()> condition = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
 
     addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm path","", "*.yml *.yaml *.tar.gz"),
-                            condition, boost::bind(&HOGDetector::load, this));
+                            condition, std::bind(&HOGDetector::load, this));
 
     setParameterEnabled("svm path", false);
 

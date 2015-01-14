@@ -66,7 +66,7 @@ void SequenceMean::setup()
 void SequenceMean::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
-                 boost::bind(&SequenceMean::update, this));
+                 std::bind(&SequenceMean::update, this));
 }
 
 void SequenceMean::update()

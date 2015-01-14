@@ -51,13 +51,13 @@ void Canny::setup()
 void Canny::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("aperture", 3, 7, 3, 2),
-                 boost::bind(&Canny::update, this));
+                 std::bind(&Canny::update, this));
     addParameter(param::ParameterFactory::declareRange("threshold 1", 0.0, 500.0, 0.0, 1.0),
-                 boost::bind(&Canny::update, this));
+                 std::bind(&Canny::update, this));
     addParameter(param::ParameterFactory::declareRange("threshold 2", 0.0, 500.0, 255.0, 1.0),
-                 boost::bind(&Canny::update, this));
+                 std::bind(&Canny::update, this));
     addParameter(param::ParameterFactory::declareBool("L2 gradient", false),
-                 boost::bind(&Canny::update, this));
+                 std::bind(&Canny::update, this));
 }
 
 void Canny::update()

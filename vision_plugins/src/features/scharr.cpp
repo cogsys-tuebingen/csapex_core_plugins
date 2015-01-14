@@ -58,7 +58,7 @@ void Scharr::setupParameters()
             ("Strength", STRENGTH);
 
     addParameter(param::ParameterFactory::declareParameterSet("derive", types, (int) DX1),
-                 boost::bind(&Scharr::update, this));
+                 std::bind(&Scharr::update, this));
 }
 
 void Scharr::update()

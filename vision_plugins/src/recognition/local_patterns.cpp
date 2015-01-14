@@ -182,8 +182,7 @@ void LocalPatterns::setupParameters()
             param::ParameterFactory::declareParameterSet("pattern",
                                                          types,
                                                          (int) LBP);
-    std::function<bool()> condition =
-            (boost::bind(&param::Parameter::as<int>, type.get()) == LTP);
+    std::function<bool()> condition = [type]() { return type->as<int>() == LTP; };
 
     addParameter(type);
     addConditionalParameter(param::ParameterFactory::declareRange("k1", -100.0, 100.0, 0.0, 0.1),

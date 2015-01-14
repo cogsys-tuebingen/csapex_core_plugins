@@ -100,9 +100,9 @@ void RenderHistogram::process()
 void RenderHistogram::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
-                 boost::bind(&RenderHistogram::update, this));
+                 std::bind(&RenderHistogram::update, this));
     addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
-                 boost::bind(&RenderHistogram::update, this));
+                 std::bind(&RenderHistogram::update, this));
     addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
 }
 

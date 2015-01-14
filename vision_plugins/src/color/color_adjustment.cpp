@@ -38,7 +38,7 @@ void ColorAdjustment::setupParameters()
     addParameter(param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
 
     addParameter(param::ParameterFactory::declareParameterSet("preset", presets, (int) HSV),
-                 boost::bind(&ColorAdjustment::setPreset, this));
+                 std::bind(&ColorAdjustment::setPreset, this));
 }
 
 namespace {
@@ -117,7 +117,7 @@ void ColorAdjustment::recompute()
         } else {
             p = param::ParameterFactory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
         }
-        addTemporaryParameter(p, boost::bind(&ColorAdjustment::update, this));
+        addTemporaryParameter(p, std::bind(&ColorAdjustment::update, this));
     }
 
     setParameterSetSilence(false);

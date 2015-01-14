@@ -63,15 +63,15 @@ void HoughLinesP::setup()
 void HoughLinesP::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("rho", 1.0, 100.0, 1.0, 1.0),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("theta", 1.0, 2 * CV_PI, CV_PI, 0.1),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("threshold", 1, 500, 80, 1),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("min length", 0.0, 1000.0, 30.0, 1.0),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("max gap", 0.0, 400.0, 10.0, 1.0),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
 
 }
 

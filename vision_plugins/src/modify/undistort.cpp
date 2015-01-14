@@ -44,8 +44,8 @@ void Undistort::setup()
 
 void Undistort::setupParameters()
 {
-    addParameter(param::ParameterFactory::declareFileInputPath("file", ""), boost::bind(&Undistort::update, this));
-    addParameter(param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), boost::bind(&Undistort::update, this));
+    addParameter(param::ParameterFactory::declareFileInputPath("file", ""), std::bind(&Undistort::update, this));
+    addParameter(param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), std::bind(&Undistort::update, this));
 
     std::map<std::string, int> modes;
     modes["nearest"] = (int) CV_INTER_NN;
@@ -53,7 +53,7 @@ void Undistort::setupParameters()
     modes["area"] = (int) CV_INTER_AREA;
     modes["cubic"] = (int) CV_INTER_CUBIC;
     modes["lanczos4"] = (int) CV_INTER_LANCZOS4;
-    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), boost::bind(&Undistort::update, this));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), std::bind(&Undistort::update, this));
 }
 
 bool Undistort::read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs)

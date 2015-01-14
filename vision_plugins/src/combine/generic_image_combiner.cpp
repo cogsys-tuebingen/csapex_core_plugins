@@ -209,5 +209,5 @@ void GenericImageCombiner::setup()
 void GenericImageCombiner::setupParameters()
 {
     addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
-                 boost::bind(&GenericImageCombiner::updateFormula, this));
+                 std::bind(&GenericImageCombiner::updateFormula, this));
 }
