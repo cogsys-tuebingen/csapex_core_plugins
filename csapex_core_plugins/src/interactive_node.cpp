@@ -27,15 +27,20 @@ bool InteractiveNode::waitForView()
     std::chrono::microseconds poll_time(100);
 
     std::unique_lock<std::mutex> lock(result_mutex_);
-    while(!view_done_ && !stopped_) {
+    while(!view_done_) {
         wait_for_view_.wait_for(lock, poll_time);
+
+        if(stopped_) {
+            return false;
+        }
     }
 
-    return !stopped_;
+    return true;
 }
 
 void InteractiveNode::abort()
 {
+    std::unique_lock<std::mutex> lock(result_mutex_);
     stopped_ = true;
     wait_for_view_.notify_all();
 }

@@ -169,7 +169,7 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
 
     layout->addWidget(view_);
 
-    connect(this, SIGNAL(displayRequest(lib_laser_processing::Scan* )), this, SLOT(display(lib_laser_processing::Scan* )));
+    connect(this, SIGNAL(displayRequest(const lib_laser_processing::Scan* )), this, SLOT(display(const lib_laser_processing::Scan* )));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
 
     DefaultNodeAdapter::setupUi(layout);
