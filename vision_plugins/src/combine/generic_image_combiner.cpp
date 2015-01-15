@@ -188,7 +188,7 @@ void GenericImageCombiner::process()
         vm.get("2") = cv::Mat();
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp_micro_seconds));
 
     cv::Mat r = e.evaluate(vm);
     if(f1.channels() == 1) {

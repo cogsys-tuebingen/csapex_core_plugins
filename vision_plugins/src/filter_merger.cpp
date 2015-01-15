@@ -75,7 +75,7 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
         if(in->hasMessage()) {
             CvMatMessage::ConstPtr msg = in->getMessage<CvMatMessage>();
             if(first) {
-                stamp_ = msg->stamp;
+                stamp_ = msg->stamp_micro_seconds;
                 first = false;
             }
             in->setLabel(msg->getEncoding().toString());

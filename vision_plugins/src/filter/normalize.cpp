@@ -27,7 +27,7 @@ void Normalize::process()
 {
     CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
     CvMatMessage::ConstPtr mask;
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(mask_->hasMessage()) {
         mask = mask_->getMessage<CvMatMessage>();

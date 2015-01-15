@@ -24,7 +24,7 @@ RenderLabels::RenderLabels()
 void RenderLabels::process()
 {
     CvMatMessage::ConstPtr labels = labels_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, labels->stamp));
+    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, labels->stamp_micro_seconds));
 
     if(image_->hasMessage()) {
         CvMatMessage::ConstPtr image = image_->getMessage<connection_types::CvMatMessage>();

@@ -92,7 +92,7 @@ void Splitter::process()
             e.push_back(enc::channel::unknown);
         }
 
-        CvMatMessage::Ptr channel_out(new CvMatMessage(e, m->stamp));
+        CvMatMessage::Ptr channel_out(new CvMatMessage(e, m->stamp_micro_seconds));
         channel_out->value = channels[i];
         outputs[i]->publish(channel_out);
     }

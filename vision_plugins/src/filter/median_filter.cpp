@@ -22,7 +22,7 @@ MedianFilter::MedianFilter() :
 void MedianFilter::process()
 {
     CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(in->value.channels() > 4)
         throw std::runtime_error("To many channels!");

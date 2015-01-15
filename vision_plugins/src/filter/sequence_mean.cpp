@@ -27,7 +27,7 @@ SequenceMean::SequenceMean() :
 void SequenceMean::process()
 {
     CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
     cv::Mat tmp = in->value.clone();
 
     /// CLEAR ACCUMULATED SEQUENCE, IF type_ or size_ CHANGE

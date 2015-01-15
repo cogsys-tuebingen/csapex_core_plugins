@@ -39,7 +39,7 @@ void AdaptiveThreshold::process()
         --blockSize;
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(enc::mono, img->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::mono, img->stamp_micro_seconds));
 
     cv::adaptiveThreshold(img->value, out->value, maxValue, adaptiveMethod, thresholdType, blockSize, C);
 

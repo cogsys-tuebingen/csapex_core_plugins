@@ -25,7 +25,7 @@ Resize::Resize()
 void Resize::process()
 {
     CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(!in->value.empty()) {
         cv::resize(in->value, out->value, size_, 0.0, 0.0, mode_);

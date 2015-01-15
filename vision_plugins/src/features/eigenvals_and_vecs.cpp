@@ -25,7 +25,7 @@ EigenValsAndVecs::EigenValsAndVecs() :
 void EigenValsAndVecs::process()
 {
     CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     cv::Mat tmp;
     if(in->value.type() != CV_8UC1) {

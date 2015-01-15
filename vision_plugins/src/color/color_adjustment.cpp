@@ -96,7 +96,7 @@ void ColorAdjustment::process()
 
     }
 
-    CvMatMessage::Ptr result(new CvMatMessage(img->getEncoding(), img->stamp));
+    CvMatMessage::Ptr result(new CvMatMessage(img->getEncoding(), img->stamp_micro_seconds));
     cv::merge(channels, result->value);
     addLightness(result->value);
 

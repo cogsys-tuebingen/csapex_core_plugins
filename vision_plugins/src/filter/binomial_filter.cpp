@@ -23,7 +23,7 @@ BinomialFilter::BinomialFilter()
 void BinomialFilter::process()
 {
     CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     int kernel_size = readParameter<int>("kernel");
     if(kernel_size != kernel_size_) {

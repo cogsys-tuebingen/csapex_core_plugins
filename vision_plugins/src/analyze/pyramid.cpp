@@ -30,7 +30,7 @@ void Pyramid::process()
     cv::buildPyramid(in->value, out->value, out_levels_);
 
     if(out_level_->isConnected()) {
-        CvMatMessage::Ptr out_level(new CvMatMessage(in->getEncoding(), in->stamp));
+        CvMatMessage::Ptr out_level(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
         out_level->value = out->value.at(out_level_idx_).clone();
         out_level_->publish(out_level);
     }

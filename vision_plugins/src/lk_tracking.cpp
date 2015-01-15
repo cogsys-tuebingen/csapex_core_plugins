@@ -79,7 +79,7 @@ void LKTracking::process()
 
         size_t k = 0;
 
-        CvMatMessage::Ptr out_dbg(new CvMatMessage(enc::bgr, img->stamp));
+        CvMatMessage::Ptr out_dbg(new CvMatMessage(enc::bgr, img->stamp_micro_seconds));
 
         bool debug = out_debug_->isConnected();
         if(debug) {
