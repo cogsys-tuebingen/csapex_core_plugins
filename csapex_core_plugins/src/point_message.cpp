@@ -15,7 +15,7 @@ PointMessage::PointMessage(Message::Stamp stamp)
 
 ConnectionType::Ptr PointMessage::clone() const
 {
-    Ptr new_msg(new PointMessage(stamp));
+    Ptr new_msg(new PointMessage(stamp_micro_seconds));
     new_msg->x = x;
     new_msg->y = y;
     return new_msg;

@@ -33,7 +33,7 @@ void ColorSegmentation::process()
     bool encoding_changed = !img->getEncoding().matches(current_encoding);
     current_encoding = img->getEncoding();
 
-    CvMatMessage::Ptr out_mask(new CvMatMessage(enc::mono, img->stamp));
+    CvMatMessage::Ptr out_mask(new CvMatMessage(enc::mono, img->stamp_micro_seconds));
 
     if(encoding_changed) {
         recompute();

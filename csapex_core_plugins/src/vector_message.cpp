@@ -18,7 +18,7 @@ GenericVectorMessage::GenericVectorMessage(EntryInterface::Ptr impl, const std::
 
 ConnectionType::Ptr GenericVectorMessage::clone() const
 {
-    Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id, impl->stamp));
+    Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id, impl->stamp_micro_seconds));
     return new_msg;
 }
 

@@ -80,8 +80,8 @@ struct Image2CvMat
         }
 
         cvb.header.frame_id = apex_msg->frame_id;
-        if(apex_msg->stamp != 0) {
-            cvb.header.stamp = cvb.header.stamp.fromNSec(apex_msg->stamp);
+        if(apex_msg->stamp_micro_seconds != 0) {
+            cvb.header.stamp = cvb.header.stamp.fromNSec(apex_msg->stamp_micro_seconds);
         } else {
             cvb.header.stamp = ros::Time::now();
         }

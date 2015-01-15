@@ -47,7 +47,7 @@ void Filter::process()
             if(input_mask_->hasMessage()) {
                 mask_msg = input_mask_->getClonedMessage<CvMatMessage>();
             } else {
-                mask_msg.reset(new CvMatMessage(enc::mono, img_msg->stamp));
+                mask_msg.reset(new CvMatMessage(enc::mono, img_msg->stamp_micro_seconds));
             }
             mask = mask_msg->value;
         }

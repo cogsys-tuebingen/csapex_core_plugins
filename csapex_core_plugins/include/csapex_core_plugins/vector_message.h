@@ -18,7 +18,7 @@ struct VectorMessage : public Message
     typedef std::shared_ptr<VectorMessage> Ptr;
     typedef std::shared_ptr<const VectorMessage> ConstPtr;
 
-    VectorMessage(const std::string& frame_id = "/", Stamp stamp = 0);
+    VectorMessage(const std::string& frame_id = "/", Stamp stamp_micro_seconds = 0);
 
     ConnectionType::Ptr getSubType() const;
 
@@ -49,7 +49,7 @@ struct VectorMessage : public Message
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const override;
 
 private:
-    VectorMessage(ConnectionType::Ptr type, const std::string& frame_id, Stamp stamp);
+    VectorMessage(ConnectionType::Ptr type, const std::string& frame_id, Stamp stamp_micro_seconds);
 
 public:
     std::vector<ConnectionType::Ptr> value;
@@ -270,7 +270,7 @@ public:
     virtual std::string name() const override;
 
 private:
-    GenericVectorMessage(EntryInterface::Ptr impl, const std::string &frame_id, Message::Stamp stamp);
+    GenericVectorMessage(EntryInterface::Ptr impl, const std::string &frame_id, Message::Stamp stamp_micro_seconds);
 
 private:
     EntryInterface::Ptr impl;

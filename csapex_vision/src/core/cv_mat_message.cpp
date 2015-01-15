@@ -20,7 +20,7 @@ CvMatMessage::CvMatMessage(const Encoding& encoding, Message::Stamp stamp)
 
 ConnectionType::Ptr CvMatMessage::clone() const
 {
-    Ptr new_msg(new CvMatMessage(encoding, stamp));
+    Ptr new_msg(new CvMatMessage(encoding, stamp_micro_seconds));
     value.copyTo(new_msg->value);
     new_msg->frame_id = frame_id;
     return new_msg;

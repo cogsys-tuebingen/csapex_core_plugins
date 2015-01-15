@@ -11,6 +11,7 @@ class StaticTransform : public csapex::Node
 public:
     StaticTransform();
 
+    void tick();
     void process();
     virtual void setup();
 

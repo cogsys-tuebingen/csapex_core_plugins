@@ -23,7 +23,7 @@ Col::Col() :
 void Col::process()
 {
     CvMatMessage::ConstPtr in = input_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(in->value.empty()) {
         throw std::runtime_error("Cannot extract row of empty matrix!");

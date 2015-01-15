@@ -121,11 +121,16 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
         if(l.l) {
             tf::TransformListener& tfl = *l.l->tfl;
-            if(tfl.canTransform(target, source, time)) {
+            if(tfl.waitForTransform(target, source, time, ros::Duration(0.1))) {
                 tfl.lookupTransform(target, source, time, t);
             } else {
-                setError(true, "cannot transform...", EL_WARNING);
-                return;
+                if(tfl.canTransform(target, source, ros::Time(0))) {
+                    setError(true, "cannot transform, using latest transform", EL_WARNING);
+                    tfl.lookupTransform(target, source, ros::Time(0), t);
+                } else {
+                    setError(true, "cannot transform at all...", EL_WARNING);
+                    return;
+                }
             }
             setError(false);
         } else {
@@ -194,8 +199,8 @@ void DynamicTransform::refresh()
         std::vector<std::string> f;
         l.l->tfl->getFrameStrings(f);
 
-        bool has_from = false;
-        bool has_to = false;
+        bool has_from = (from == "");
+        bool has_to = (to == "");
         for(std::size_t i = 0; i < f.size(); ++i) {
             std::string frame = std::string("/") + f[i];
             frames.push_back(frame);

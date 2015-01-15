@@ -23,7 +23,7 @@ struct CvMatMessage : public MessageTemplate<cv::Mat, CvMatMessage>
     template <typename,typename,typename> friend class csapex::ConverterTemplate;
 
 public:
-    CvMatMessage(const Encoding& encoding, Stamp stamp);
+    CvMatMessage(const Encoding& encoding, Stamp stamp_micro_seconds);
     virtual ConnectionType::Ptr clone() const override;
 
     virtual void writeRaw(const std::string &file, const std::string &suffix) const override;

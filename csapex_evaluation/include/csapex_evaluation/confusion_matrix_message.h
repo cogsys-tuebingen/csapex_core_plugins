@@ -19,7 +19,7 @@ struct ConfusionMatrixMessage : public Message
     typedef std::shared_ptr<ConfusionMatrixMessage> Ptr;
     typedef std::shared_ptr<ConfusionMatrixMessage const> ConstPtr;
 
-    ConfusionMatrixMessage(Message::Stamp stamp = 0);
+    ConfusionMatrixMessage(Message::Stamp stamp_micro_seconds = 0);
 
     virtual ConnectionType::Ptr clone() const override;
     virtual ConnectionType::Ptr toType() const override;

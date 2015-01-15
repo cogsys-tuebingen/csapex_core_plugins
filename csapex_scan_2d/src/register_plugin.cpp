@@ -41,7 +41,7 @@ struct ConvertScan
         out->value = lib_laser_processing::Scan(ros_msg->ranges, ros_msg->angle_min, ros_msg->angle_increment);
         copy(*ros_msg, out->value);
         out->value.header.stamp_nsec = ros_msg->header.stamp.toNSec();
-        out->stamp = ros_msg->header.stamp.toNSec();
+        out->stamp_micro_seconds = ros_msg->header.stamp.toNSec();
         return out;
     }
     static sensor_msgs::LaserScan::Ptr apex2ros(const connection_types::ScanMessage::ConstPtr& apex_msg) {

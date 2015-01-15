@@ -43,7 +43,7 @@ void RotateImage::setup()
 void RotateImage::process()
 {
     CvMatMessage::ConstPtr src = in_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr dst(new CvMatMessage(src->getEncoding(), src->stamp));
+    CvMatMessage::Ptr dst(new CvMatMessage(src->getEncoding(), src->stamp_micro_seconds));
 
     double angle = readParameter<double>("angle");
     int dim = std::max(src->value.cols, src->value.rows);

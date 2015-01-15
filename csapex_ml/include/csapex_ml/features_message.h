@@ -16,7 +16,7 @@ struct FeaturesMessage : public Message
     typedef std::shared_ptr<FeaturesMessage> Ptr;
     typedef std::shared_ptr<FeaturesMessage const> ConstPtr;
 
-    FeaturesMessage(Message::Stamp stamp = 0);
+    FeaturesMessage(Message::Stamp stamp_micro_seconds = 0);
 
     virtual ConnectionType::Ptr clone() const override;
     virtual ConnectionType::Ptr toType() const override;

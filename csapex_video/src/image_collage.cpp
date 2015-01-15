@@ -48,7 +48,7 @@ void ImageCollage::process()
     CvMatMessage::ConstPtr primary = in_main_->getMessage<CvMatMessage>();
     CvMatMessage::ConstPtr secondary = in_secondary_->getMessage<CvMatMessage>();
 
-    CvMatMessage::Ptr output(new CvMatMessage(primary->getEncoding(), primary->stamp));
+    CvMatMessage::Ptr output(new CvMatMessage(primary->getEncoding(), primary->stamp_micro_seconds));
 
     primary->value.copyTo(output->value);
 

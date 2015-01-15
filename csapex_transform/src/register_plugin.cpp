@@ -28,7 +28,7 @@ struct ConvertTf
         tf::transformMsgToTF(tf.transform, out->value);
         out->child_frame = tf.child_frame_id;
         out->frame_id = tf.header.frame_id;
-        out->stamp = tf.header.stamp.toNSec();
+        out->stamp_micro_seconds = tf.header.stamp.toNSec();
 
         return out;
     }
@@ -39,7 +39,7 @@ struct ConvertTf
         tf::transformTFToMsg(apex_msg->value, tf.transform);
         tf.child_frame_id = apex_msg->child_frame;
         tf.header.frame_id = apex_msg->frame_id;
-        tf.header.stamp = tf.header.stamp.fromNSec(apex_msg->stamp);
+        tf.header.stamp = tf.header.stamp.fromNSec(apex_msg->stamp_micro_seconds);
 
         out->transforms.push_back(tf);
         return out;

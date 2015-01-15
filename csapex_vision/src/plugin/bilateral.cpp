@@ -67,7 +67,7 @@ BilateralFilter::BilateralFilter() :
 void BilateralFilter::process()
 {
     CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     d_           = readParameter<int>("d");
     sigma_color_ = readParameter<double>("sigma color");

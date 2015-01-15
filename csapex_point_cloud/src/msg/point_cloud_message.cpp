@@ -30,7 +30,7 @@ PointCloudMessage::PointCloudMessage()
 
 ConnectionType::Ptr PointCloudMessage::clone() const
 {
-    Ptr new_msg(new PointCloudMessage(frame_id, stamp));
+    Ptr new_msg(new PointCloudMessage(frame_id, stamp_micro_seconds));
     new_msg->value = value;
     return new_msg;
 }

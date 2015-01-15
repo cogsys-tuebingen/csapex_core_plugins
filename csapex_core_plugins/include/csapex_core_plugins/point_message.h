@@ -13,7 +13,7 @@ struct PointMessage : public Message
 public:
     typedef std::shared_ptr<PointMessage> Ptr;
 
-    PointMessage(Message::Stamp stamp = 0);
+    PointMessage(Message::Stamp stamp_micro_seconds = 0);
 
     virtual ConnectionType::Ptr clone() const override;
     virtual ConnectionType::Ptr toType() const override;

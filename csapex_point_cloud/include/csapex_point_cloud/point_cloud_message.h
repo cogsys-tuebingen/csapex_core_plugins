@@ -72,7 +72,7 @@ struct PointCloudMessage : public Message
     >::type
     >::type variant;
 
-    PointCloudMessage(const std::string& frame_id, Stamp stamp);
+    PointCloudMessage(const std::string& frame_id, Stamp stamp_micro_seconds);
 
     virtual ConnectionType::Ptr clone() const override;
 

@@ -35,9 +35,9 @@ using namespace csapex;
 const std::string ImportRos::no_topic_("-----");
 
 namespace {
-ros::Time rosTime(u_int64_t ns) {
+ros::Time rosTime(u_int64_t stamp_micro_seconds) {
     ros::Time t;
-    t.fromNSec(ns);
+    t.fromNSec(stamp_micro_seconds / 1e3);
     return t;
 }
 }
@@ -200,7 +200,7 @@ void ImportRos::processROS()
         return;
     }
 
-    if(ros::Time(msgs_.back()->stamp) == ros::Time(0)) {
+    if(ros::Time(msgs_.back()->stamp_micro_seconds) == ros::Time(0)) {
         setError(true, "buffered time is 0, using default behaviour", EL_WARNING);
         publishLatestMessage();
         return;
@@ -208,18 +208,18 @@ void ImportRos::processROS()
 
     // drop old messages
     ros::Duration keep_duration(readParameter<double>("buffer/length"));
-    while(!msgs_.empty() && rosTime(msgs_.front()->stamp) + keep_duration < time->value) {
+    while(!msgs_.empty() && rosTime(msgs_.front()->stamp_micro_seconds) + keep_duration < time->value) {
         msgs_.pop_front();
     }
 
     if(!msgs_.empty()) {
-        if(rosTime(msgs_.front()->stamp) > time->value) {
-            // aerr << "time stamp " << time->value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp) << std::endl;
+        if(rosTime(msgs_.front()->stamp_micro_seconds) > time->value) {
+            // aerr << "time stamp " << time->value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp_micro_seconds) << std::endl;
             // return;
         }
 
         ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
-        if(rosTime(msgs_.front()->stamp) + max_wait_duration < time->value) {
+        if(rosTime(msgs_.front()->stamp_micro_seconds) + max_wait_duration < time->value) {
             // aerr << "[1] time stamp " << time->value << " is too new" << std::endl;
             // return;
         }
@@ -236,8 +236,8 @@ void ImportRos::processROS()
 
             if(!msgs_.empty()) {
                 ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
-                if(rosTime(msgs_.back()->stamp) + max_wait_duration < time->value) {
-                    aerr << "[2] time stamp " << time->value << " is too new, latest stamp is " << rosTime(msgs_.back()->stamp) << std::endl;
+                if(rosTime(msgs_.back()->stamp_micro_seconds) + max_wait_duration < time->value) {
+                    aerr << "[2] time stamp " << time->value << " is too new, latest stamp is " << rosTime(msgs_.back()->stamp_micro_seconds) << std::endl;
                     return;
                 }
             }
@@ -250,7 +250,7 @@ void ImportRos::processROS()
     }
 
     std::deque<connection_types::Message::ConstPtr>::iterator first_after = msgs_.begin();
-    while(rosTime((*first_after)->stamp) < time->value) {
+    while(rosTime((*first_after)->stamp_micro_seconds) < time->value) {
         ++first_after;
     }
 
@@ -266,8 +266,8 @@ void ImportRos::processROS()
     } else {
         std::deque<connection_types::Message::ConstPtr>::iterator last_before = first_after - 1;
 
-        ros::Duration diff1 = rosTime((*first_after)->stamp) - time->value;
-        ros::Duration diff2 = rosTime((*last_before)->stamp) - time->value;
+        ros::Duration diff1 = rosTime((*first_after)->stamp_micro_seconds) - time->value;
+        ros::Duration diff2 = rosTime((*last_before)->stamp_micro_seconds) - time->value;
 
         if(diff1 < diff2) {
             connector_->publish(*first_after);
@@ -279,7 +279,7 @@ void ImportRos::processROS()
 
 bool ImportRos::isStampCovered(const ros::Time &stamp)
 {
-    return rosTime(msgs_.back()->stamp) >= stamp;
+    return rosTime(msgs_.back()->stamp_micro_seconds) >= stamp;
 }
 
 void ImportRos::waitForTopic()
@@ -353,7 +353,7 @@ void ImportRos::callback(ConnectionTypeConstPtr message)
 
     connection_types::Message::ConstPtr msg = std::dynamic_pointer_cast<connection_types::Message const>(message);
     if(msg && !nw->isPaused()) {
-        if(!msgs_.empty() && msg->stamp < msgs_.front()->stamp) {
+        if(!msgs_.empty() && msg->stamp_micro_seconds < msgs_.front()->stamp_micro_seconds) {
             awarn << "detected time anomaly -> reset";
             msgs_.clear();
         }

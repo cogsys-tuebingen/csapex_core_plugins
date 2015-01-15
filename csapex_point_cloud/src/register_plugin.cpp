@@ -82,7 +82,7 @@ struct Sensor2Cloud
             pcl::fromROSMsg(*ros_msg_, *cloud);
             out_->value = cloud;
             out_->frame_id = ros_msg_->header.frame_id;
-            out_->stamp = ros_msg_->header.stamp.toNSec();
+            out_->stamp_micro_seconds = ros_msg_->header.stamp.toNSec() / 1e3;
         }
 
         const sensor_msgs::PointCloud2::ConstPtr &ros_msg_;
@@ -92,7 +92,7 @@ struct Sensor2Cloud
     };
 
     static connection_types::PointCloudMessage::Ptr ros2apex(const sensor_msgs::PointCloud2::ConstPtr &ros_msg) {
-        u_int64_t stamp = ros_msg->header.stamp.toNSec();
+        u_int64_t stamp = ros_msg->header.stamp.toNSec() / 1e3;
         connection_types::PointCloudMessage::Ptr out(new connection_types::PointCloudMessage(ros_msg->header.frame_id, stamp));
 
         bool success;
@@ -109,7 +109,7 @@ struct Sensor2Cloud
         sensor_msgs::PointCloud2::Ptr out(new sensor_msgs::PointCloud2);
         boost::apply_visitor (Export(out), apex_msg->value);
         out->header.frame_id = apex_msg->frame_id;
-        out->header.stamp = out->header.stamp.fromNSec(apex_msg->stamp);
+        out->header.stamp = out->header.stamp.fromNSec(apex_msg->stamp_micro_seconds * 1e3);
         return out;
     }
 };
