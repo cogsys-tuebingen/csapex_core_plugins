@@ -4,7 +4,7 @@ project(csapex_ros)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin COMPONENTS roscpp rosapi csapex csapex_core_plugins rosbag tf pluginlib REQUIRED)
+find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins rosbag tf pluginlib REQUIRED)
 
 find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 
