@@ -84,6 +84,7 @@ add_library(vision_plugins
     src/features/laplacian.cpp
     src/features/sobel.cpp
     src/features/scharr.cpp
+    src/features/lsd.cpp
 
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
