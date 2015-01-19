@@ -26,8 +26,8 @@ SequenceMean::SequenceMean() :
 
 void SequenceMean::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
     cv::Mat tmp = in->value.clone();
 
     /// CLEAR ACCUMULATED SEQUENCE, IF type_ or size_ CHANGE
@@ -66,7 +66,7 @@ void SequenceMean::setup()
 void SequenceMean::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
-                 boost::bind(&SequenceMean::update, this));
+                 std::bind(&SequenceMean::update, this));
 }
 
 void SequenceMean::update()

@@ -24,8 +24,8 @@ EigenValsAndVecs::EigenValsAndVecs() :
 
 void EigenValsAndVecs::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     cv::Mat tmp;
     if(in->value.type() != CV_8UC1) {
@@ -51,11 +51,11 @@ void EigenValsAndVecs::setup()
 void EigenValsAndVecs::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
-                 boost::bind(&EigenValsAndVecs::update, this));
+                 std::bind(&EigenValsAndVecs::update, this));
     addParameter(param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
-                 boost::bind(&EigenValsAndVecs::update, this));
+                 std::bind(&EigenValsAndVecs::update, this));
     addParameter(param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
-                 boost::bind(&EigenValsAndVecs::update, this));
+                 std::bind(&EigenValsAndVecs::update, this));
 
     std::map<std::string, int> border_types = boost::assign::map_list_of
             ("BORDER_DEFAULT", (int) cv::BORDER_DEFAULT)
@@ -66,14 +66,14 @@ void EigenValsAndVecs::setupParameters()
             ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
 
     addParameter(param::ParameterFactory::declareParameterSet<int>("border type", border_types, (int) cv::BORDER_DEFAULT),
-                 boost::bind(&EigenValsAndVecs::update, this));
+                 std::bind(&EigenValsAndVecs::update, this));
 
     std::map<std::string, int> types = boost::assign::map_list_of
             ("MIN_EIGEN_VAL", (int) MIN_EIGEN_VAL)
             ("EIGEN_VALS_AND_VECS", (int) EIGEN_VALS_AND_VECS);
 
     addParameter(param::ParameterFactory::declareParameterSet<int>("eigen type", types, (int) MIN_EIGEN_VAL),
-                 boost::bind(&EigenValsAndVecs::update, this));
+                 std::bind(&EigenValsAndVecs::update, this));
 }
 
 void EigenValsAndVecs::update()

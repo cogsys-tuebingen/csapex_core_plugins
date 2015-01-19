@@ -28,8 +28,8 @@ FloatToUchar::FloatToUchar() :
 
 void FloatToUchar::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
     out->value = in->value.clone();
 
 
@@ -72,7 +72,7 @@ void FloatToUchar::setupParameters()
             ("SCALE",    SCALE);
 
     addParameter(param::ParameterFactory::declareParameterSet("type", types, (int) RELATIVE),
-                 boost::bind(&FloatToUchar::update, this));
+                 std::bind(&FloatToUchar::update, this));
 }
 
 void FloatToUchar::update()

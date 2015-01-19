@@ -38,7 +38,7 @@ void ColorAdjustment::setupParameters()
     addParameter(param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
 
     addParameter(param::ParameterFactory::declareParameterSet("preset", presets, (int) HSV),
-                 boost::bind(&ColorAdjustment::setPreset, this));
+                 std::bind(&ColorAdjustment::setPreset, this));
 }
 
 namespace {
@@ -53,13 +53,13 @@ std::string channelName(int idx, const Channel& c)
 void ColorAdjustment::setParameterState(Memento::Ptr memento)
 {
     Node::setParameterState(memento);
-    loaded_state_ = boost::dynamic_pointer_cast<GenericState>(memento);
+    loaded_state_ = std::dynamic_pointer_cast<GenericState>(memento);
 }
 
 
 void ColorAdjustment::process()
 {
-    CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = input_->getMessage<CvMatMessage>();
 
     bool encoding_changed = !img->getEncoding().matches(current_encoding);
     current_encoding = img->getEncoding();
@@ -69,7 +69,7 @@ void ColorAdjustment::process()
 
         if(loaded_state_) {
             Node::setParameterState(loaded_state_);
-            loaded_state_.reset((GenericState*)NULL);
+            loaded_state_.reset((GenericState*)nullptr);
             triggerParameterSetChanged();
             update();
         }
@@ -96,10 +96,11 @@ void ColorAdjustment::process()
 
     }
 
-    cv::merge(channels, img->value);
-    addLightness(img->value);
+    CvMatMessage::Ptr result(new CvMatMessage(img->getEncoding(), img->stamp_micro_seconds));
+    cv::merge(channels, result->value);
+    addLightness(result->value);
 
-    output_->publish(img);
+    output_->publish(result);
 }
 
 void ColorAdjustment::recompute()
@@ -116,7 +117,7 @@ void ColorAdjustment::recompute()
         } else {
             p = param::ParameterFactory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
         }
-        addTemporaryParameter(p, boost::bind(&ColorAdjustment::update, this));
+        addTemporaryParameter(p, std::bind(&ColorAdjustment::update, this));
     }
 
     setParameterSetSilence(false);

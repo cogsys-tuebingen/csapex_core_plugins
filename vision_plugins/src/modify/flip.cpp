@@ -24,8 +24,8 @@ Flip::Flip()
 
 void Flip::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     switch(mode_) {
     case -1:
@@ -63,7 +63,7 @@ void Flip::setupParameters()
             ("-90", 3)
             ("v+h", -1);
     addParameter(param::ParameterFactory::declareParameterSet("type", types, -1),
-                 boost::bind(&Flip::update, this));
+                 std::bind(&Flip::update, this));
 }
 
 void Flip::update()

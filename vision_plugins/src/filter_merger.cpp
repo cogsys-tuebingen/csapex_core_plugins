@@ -7,7 +7,6 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/node_worker.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Merger, csapex::Node)
 
@@ -16,7 +15,7 @@ using namespace connection_types;
 
 Merger::Merger()
 {
-    addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), boost::bind(&Merger::updateInputs, this));
+    addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), std::bind(&Merger::updateInputs, this));
 }
 
 void Merger::setup()
@@ -43,7 +42,7 @@ void Merger::updateInputs()
 {
     int input_count = readParameter<int>("input count");
 
-    std::vector<Input*> inputs = getNodeWorker()->getMessageInputs();
+    std::vector<Input*> inputs = modifier_->getMessageInputs();
     int current_amount = inputs.size();
 
     if(current_amount > input_count) {
@@ -52,7 +51,7 @@ void Merger::updateInputs()
             if(in->isConnected()) {
                 in->disable();
             } else {
-                getNodeWorker()->removeInput(in->getUUID());
+                modifier_->removeInput(in->getUUID());
             }
         }
     } else {
@@ -70,13 +69,13 @@ void Merger::updateInputs()
 void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
 {
     bool first = true;
-    std::vector<Input*> inputs = getNodeWorker()->getMessageInputs();
+    std::vector<Input*> inputs = modifier_->getMessageInputs();
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
         Input *in = inputs[i];
         if(in->hasMessage()) {
-            CvMatMessage::Ptr msg = in->getMessage<CvMatMessage>();
+            CvMatMessage::ConstPtr msg = in->getMessage<CvMatMessage>();
             if(first) {
-                stamp_ = msg->stamp;
+                stamp_ = msg->stamp_micro_seconds;
                 first = false;
             }
             in->setLabel(msg->getEncoding().toString());

@@ -22,8 +22,8 @@ Scharr::Scharr()  :
 
 void Scharr::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
     int depth = in->value.type() & 7;
     switch(type_) {
     case DX1:
@@ -58,7 +58,7 @@ void Scharr::setupParameters()
             ("Strength", STRENGTH);
 
     addParameter(param::ParameterFactory::declareParameterSet("derive", types, (int) DX1),
-                 boost::bind(&Scharr::update, this));
+                 std::bind(&Scharr::update, this));
 }
 
 void Scharr::update()

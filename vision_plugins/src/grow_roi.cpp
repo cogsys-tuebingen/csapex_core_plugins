@@ -15,7 +15,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <boost/foreach.hpp>
+
 
 CSAPEX_REGISTER_CLASS(csapex::GrowROI, csapex::Node)
 
@@ -30,7 +30,7 @@ GrowROI::GrowROI()
 
 void GrowROI::process()
 {
-    RoiMessage::Ptr roi = input_->getMessage<RoiMessage>();
+    RoiMessage::ConstPtr roi = input_->getMessage<RoiMessage>();
     RoiMessage::Ptr out(new RoiMessage);
 
     out->value = roi->value;

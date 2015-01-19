@@ -23,9 +23,9 @@ ThresholdNoiseFilter::ThresholdNoiseFilter()
 
 void ThresholdNoiseFilter::process()
 {
-    CvMatMessage::Ptr input     = input_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr threshold = threshold_->getMessage<CvMatMessage>();
-    CvMatMessage::Ptr output(new CvMatMessage(input->getEncoding(), input->stamp));
+    CvMatMessage::ConstPtr input = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr threshold = threshold_->getMessage<CvMatMessage>();
+    CvMatMessage::Ptr output(new CvMatMessage(input->getEncoding(), input->stamp_micro_seconds));
 
     if(!threshold->hasChannels(1, CV_8U)) {
         throw std::runtime_error("Threshold needs to be one channel grayscale!");

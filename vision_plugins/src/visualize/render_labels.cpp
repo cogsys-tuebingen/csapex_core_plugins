@@ -23,11 +23,11 @@ RenderLabels::RenderLabels()
 
 void RenderLabels::process()
 {
-    CvMatMessage::Ptr labels = labels_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, labels->stamp));
+    CvMatMessage::ConstPtr labels = labels_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, labels->stamp_micro_seconds));
 
     if(image_->hasMessage()) {
-        CvMatMessage::Ptr image = image_->getMessage<connection_types::CvMatMessage>();
+        CvMatMessage::ConstPtr image = image_->getMessage<connection_types::CvMatMessage>();
         if(!image->hasChannels(3, CV_8U))
             throw std::runtime_error("Image encoding must be 8UC3!");
         output->value = image->value.clone();
@@ -40,7 +40,7 @@ void RenderLabels::process()
             unsigned short label = labels->value.at<unsigned short>(y,x);
             if(label != 0) {
                 if(colors.find(label) == colors.end()) {
-                    double r,g,b;
+                    double r = 0,g = 0,b = 0;
                     color::fromCount(colors.size(), r,g,b);
                     colors.insert(std::make_pair(label, cv::Vec3b(b,g,r)));
                 }

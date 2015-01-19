@@ -23,7 +23,7 @@ AdaptiveThreshold::AdaptiveThreshold()
 
 void AdaptiveThreshold::process()
 {
-    CvMatMessage::Ptr img = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = input_->getMessage<CvMatMessage>();
 
     if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
@@ -39,7 +39,7 @@ void AdaptiveThreshold::process()
         --blockSize;
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(enc::mono, img->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::mono, img->stamp_micro_seconds));
 
     cv::adaptiveThreshold(img->value, out->value, maxValue, adaptiveMethod, thresholdType, blockSize, C);
 

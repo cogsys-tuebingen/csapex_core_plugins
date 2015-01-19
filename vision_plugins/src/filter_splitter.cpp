@@ -4,7 +4,6 @@
 #include <csapex/view/box.h>
 #include <csapex/command/meta.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/model/node_worker.h>
 #include <csapex/msg/input.h>
 #include <csapex/msg/output.h>
 #include <csapex/model/node_modifier.h>
@@ -18,7 +17,7 @@ using namespace csapex;
 using namespace connection_types;
 
 Splitter::Splitter() :
-    input_(NULL)
+    input_(nullptr)
 {
     state_.channel_count_ = 0;    
 }
@@ -45,7 +44,7 @@ void Splitter::setupParameters()
 
 void Splitter::process()
 {
-    CvMatMessage::Ptr m = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr m = input_->getMessage<CvMatMessage>();
 
     int esize = m->getEncoding().channelCount();
     if(esize != m->value.channels()) {
@@ -80,7 +79,7 @@ void Splitter::process()
 
     bool enforce_mono = readParameter<bool>("enforce mono");
 
-    std::vector<Output*> outputs = getNodeWorker()->getMessageOutputs();
+    std::vector<Output*> outputs = modifier_->getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
         if(i < state_.encoding_.channelCount()) {
@@ -93,7 +92,7 @@ void Splitter::process()
             e.push_back(enc::channel::unknown);
         }
 
-        CvMatMessage::Ptr channel_out(new CvMatMessage(e, m->stamp));
+        CvMatMessage::Ptr channel_out(new CvMatMessage(e, m->stamp_micro_seconds));
         channel_out->value = channels[i];
         outputs[i]->publish(channel_out);
     }
@@ -101,7 +100,7 @@ void Splitter::process()
 
 void Splitter::updateOutputs()
 {
-    std::vector<Output*> outputs = getNodeWorker()->getMessageOutputs();
+    std::vector<Output*> outputs = modifier_->getMessageOutputs();
     int n = outputs.size();
 
     if(state_.channel_count_ > n) {
@@ -121,7 +120,7 @@ void Splitter::updateOutputs()
             }
 
             if(del) {
-                getNodeWorker()->removeOutput(output->getUUID());
+                modifier_->removeOutput(output->getUUID());
             } else {
                 output->disable();
             }
@@ -129,7 +128,7 @@ void Splitter::updateOutputs()
     }
 
 
-    outputs = getNodeWorker()->getMessageOutputs();
+    outputs = modifier_->getMessageOutputs();
     for(int i = 0, n = state_.channel_count_; i < n; ++i) {
         Output* output = outputs[i];
         if(i < (int) state_.encoding_.channelCount()) {
@@ -145,12 +144,12 @@ void Splitter::updateOutputs()
 /// MEMENTO ------------------------------------------------------------------------------------
 Memento::Ptr Splitter::getParameterState() const
 {
-    return boost::shared_ptr<State>(new State(state_));
+    return std::shared_ptr<State>(new State(state_));
 }
 
 void Splitter::setParameterState(Memento::Ptr memento)
 {
-    boost::shared_ptr<State> m = boost::dynamic_pointer_cast<State> (memento);
+    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
     apex_assert_hard(m.get());
 
     state_ = *m;

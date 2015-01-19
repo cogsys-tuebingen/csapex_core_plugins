@@ -145,7 +145,7 @@ void GenericImageCombiner::process()
     }
 
 
-    CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img1 = i1_->getMessage<CvMatMessage>();
 
     cv::Mat f1;
     img1->value.copyTo(f1);
@@ -166,7 +166,7 @@ void GenericImageCombiner::process()
     // handle optional second image
     if(i2_->hasMessage()) {
         cv::Mat f2;
-        CvMatMessage::Ptr img2 = i2_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr img2 = i2_->getMessage<CvMatMessage>();
         img2->value.copyTo(f2);
 
         if(f1.channels() != f2.channels()) {
@@ -188,7 +188,7 @@ void GenericImageCombiner::process()
         vm.get("2") = cv::Mat();
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp_micro_seconds));
 
     cv::Mat r = e.evaluate(vm);
     if(f1.channels() == 1) {
@@ -209,5 +209,5 @@ void GenericImageCombiner::setup()
 void GenericImageCombiner::setupParameters()
 {
     addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
-                 boost::bind(&GenericImageCombiner::updateFormula, this));
+                 std::bind(&GenericImageCombiner::updateFormula, this));
 }

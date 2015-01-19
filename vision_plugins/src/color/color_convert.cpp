@@ -77,13 +77,13 @@ void ColorConvert::setupParameters()
 
 void ColorConvert::process()
 {
-    CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
 
     csPair cspair;
     cspair.first  = static_cast<ColorSpace> (readParameter<int>("input"));
     cspair.second = static_cast<ColorSpace> (readParameter<int>("output"));
 
-    CvMatMessage::Ptr out(new CvMatMessage(cs_to_encoding_[cspair.second], img->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(cs_to_encoding_[cspair.second], img->stamp_micro_seconds));
 
     if(img->getEncoding().channelCount() != cs_to_encoding_[cspair.first].channelCount()) {
         std::stringstream error;
@@ -102,9 +102,9 @@ void ColorConvert::process()
         } else {
             throw std::runtime_error("Conversion not supported!");
         }
-    } else {
-        out = img;
-    }
+        output_img_->publish(out);
 
-    output_img_->publish(out);
+    } else {
+        output_img_->publish(img);
+    }
 }

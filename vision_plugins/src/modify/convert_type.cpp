@@ -40,8 +40,8 @@ ConvertType::ConvertType() :
 void ConvertType::process()
 {
 #warning "Change to csapex type encoding!"
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
     out->value = in->value.clone();
 
     switch (mode_) {
@@ -107,10 +107,10 @@ void ConvertType::setupParameters()
             ("64 Bit floating", CV_64F);
 
     addParameter(param::ParameterFactory::declareParameterSet("convert to", types, CV_8U),
-                 boost::bind(&ConvertType::update, this));
+                 std::bind(&ConvertType::update, this));
 
     addParameter(param::ParameterFactory::declareBool("normalize", false),
-                 boost::bind(&ConvertType::update, this));
+                 std::bind(&ConvertType::update, this));
 }
 
 void ConvertType::update()

@@ -29,7 +29,7 @@ private:
 
 
 struct AbstractExpression;
-typedef boost::shared_ptr<AbstractExpression> Ptr;
+typedef std::shared_ptr<AbstractExpression> Ptr;
 
 struct AbstractExpression {
     virtual ~AbstractExpression() {}
@@ -51,7 +51,7 @@ struct Expression : AbstractExpression
     template <typename E>
     Expression(E const& e) : e_(make_from(e)) { } // cloning the expression
 
-    bool valid() const { return e_; }
+    bool valid() const { return (bool) e_; }
     cv::Mat evaluate(VariableMap& vm) const { apex_assert_hard(e_); return e_->evaluate(vm); }
 
     // special purpose overload to avoid unnecessary wrapping
@@ -64,7 +64,7 @@ private:
 };
 
 template <typename Expr> // general purpose, static Expression cloner
-static Ptr make_from(Expr const& t) { return boost::make_shared<Expr>(t); }
+static Ptr make_from(Expr const& t) { return std::make_shared<Expr>(t); }
 
 struct FunctionExpression : AbstractExpression
 {

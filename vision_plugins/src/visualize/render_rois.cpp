@@ -12,7 +12,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <boost/foreach.hpp>
+
 
 CSAPEX_REGISTER_CLASS(csapex::RenderROIs, csapex::Node)
 
@@ -33,9 +33,9 @@ void RenderROIs::setupParameters()
 
 void RenderROIs::process()
 {
-    CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
 
-    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp_micro_seconds));
 
     int thickness = readParameter<int>("thickness");
     bool force_color = readParameter<bool>("force color");
@@ -55,9 +55,9 @@ void RenderROIs::process()
 
     bool ignore_uc = readParameter<bool>("ignore unclassified");
     if(input_rois_->hasMessage()) {
-        VectorMessage::Ptr rois = input_rois_->getMessage<VectorMessage>();
-        BOOST_FOREACH(const ConnectionType::Ptr& e, rois->value) {
-            RoiMessage::Ptr roi = boost::dynamic_pointer_cast<RoiMessage>(e);
+        VectorMessage::ConstPtr rois = input_rois_->getMessage<VectorMessage>();
+        for(const ConnectionType::Ptr& e : rois->value) {
+            RoiMessage::Ptr roi = std::dynamic_pointer_cast<RoiMessage>(e);
 
             if(ignore_uc && roi->value.classification() == -1) {
                 continue;
@@ -76,10 +76,10 @@ void RenderROIs::process()
     }
 
     if(input_rois_gen_->hasMessage()) {
-        boost::shared_ptr< std::vector<RoiMessage> const> rois =
+        std::shared_ptr< std::vector<RoiMessage> const> rois =
                 input_rois_gen_->getMessage<GenericVectorMessage, RoiMessage>();
 
-        BOOST_FOREACH(const RoiMessage& roi, *rois) {
+        for(const RoiMessage& roi : *rois) {
             if(ignore_uc && roi.value.classification() == -1) {
                 continue;
             }

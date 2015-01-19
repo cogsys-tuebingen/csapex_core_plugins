@@ -28,14 +28,14 @@ SetOperation::SetOperation()
 
 void SetOperation::process()
 {
-    CvMatMessage::Ptr img1 = i1_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img1 = i1_->getMessage<CvMatMessage>();
 
     if(!img1->hasChannels(1)) {
         throw std::runtime_error("No Single Channel!");
     }
 
 
-    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp_micro_seconds));
 
     int op = readParameter<int>("operation");
     if(op == COMPLEMENT) {
@@ -46,7 +46,7 @@ void SetOperation::process()
             return;
         }
 
-        CvMatMessage::Ptr img2 = i2_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr img2 = i2_->getMessage<CvMatMessage>();
 
         if(img1->value.rows != img2->value.rows || img1->value.cols != img2->value.cols) {
             throw std::runtime_error("Dimension is not matching!");

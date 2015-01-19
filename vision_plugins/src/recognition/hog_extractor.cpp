@@ -51,13 +51,15 @@ void HOGExtractor::setupParameters()
                                                   param::ParameterDescription("Set the amount of cells in each direction of block."),
                                                   2, 8, 2, 1);
 
-    addParameter(cells_per_block, boost::bind(&HOGExtractor::updateOverlap, this));
+    addParameter(cells_per_block, std::bind(&HOGExtractor::updateOverlap, this));
 
-    boost::function<bool()> k_cond = (boost::bind(&param::Parameter::as<int>, cells_per_block.get()) > 2);
-    overlap_ = boost::dynamic_pointer_cast<param::RangeParameter>(
-                param::ParameterFactory::declareRange("overlap",
-                                                      param::ParameterDescription("Block overlap given in cells."),
-                                                      1, 7, 1, 1));
+    std::function<bool()> k_cond = [cells_per_block]() { return cells_per_block->as<int>() > 2; };
+
+    param::ParameterPtr o = param::ParameterFactory::declareRange(
+                "overlap",
+                param::ParameterDescription("Block overlap given in cells."),
+                1, 7, 1, 1);
+    overlap_ = std::dynamic_pointer_cast<param::RangeParameter>(o);
 
     addConditionalParameter(overlap_, k_cond);
 }
@@ -71,13 +73,13 @@ void HOGExtractor::setup()
 
 void HOGExtractor::process()
 {
-    CvMatMessage::Ptr  in = in_img_->getMessage<CvMatMessage>();
-    boost::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
+    CvMatMessage::ConstPtr  in = in_img_->getMessage<CvMatMessage>();
+    std::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(!in->hasChannels(1, CV_8U))
         throw std::runtime_error("Image must be one channel grayscale!");
 
-    cv::Mat &value = in->value;
+    const cv::Mat &value = in->value;
 
     double gauss            = readParameter<double>("gaussian sigma");
     bool   gamma            = readParameter<bool>("gamma correction");
@@ -118,7 +120,7 @@ void HOGExtractor::process()
         out->push_back(feature_msg);
 
     } else {
-        boost::shared_ptr<std::vector<RoiMessage> const> in_rois =
+        std::shared_ptr<std::vector<RoiMessage> const> in_rois =
                 in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
 
         for(std::vector<RoiMessage>::const_iterator

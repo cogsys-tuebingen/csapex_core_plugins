@@ -1,16 +1,14 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.11)
 project(vision_plugins)
 
-find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_features csapex_ml utils_cv utils_viola_jones utils_vision REQUIRED)
+find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_features csapex_ml utils_cv utils_vision REQUIRED)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
-set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 
 #set(CMAKE_CXX_FLAGS "-O3")
-
-csapex_moc_all(MOC src/*.h)
 
 ###################################
 ## catkin specific configuration ##
@@ -47,14 +45,13 @@ add_library(vision_plugins
 
     src/filter_debayer.cpp
     src/morphological.cpp
-    src/vj_detector.cpp
+#    src/vj_detector.cpp
     src/lk_tracking.cpp
     src/visualize/render_rois.cpp
     src/merge_rois.cpp
     src/grow_roi.cpp
     src/extract_roi.cpp
     src/number_generator.cpp
-   ${MOC}
 
     ###  NEW API ###
 

@@ -18,6 +18,10 @@ using namespace csapex;
 
 Debayer::Debayer()
 {
+}
+
+void Debayer::setupParameters()
+{
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("BayerBG2RGB", (int) CV_BayerBG2RGB)
             ("BayerGB2RGB", (int) CV_BayerGB2RGB)
@@ -28,7 +32,7 @@ Debayer::Debayer()
     addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
 }
 
-void Debayer::filter(cv::Mat &img, cv::Mat &mask)
+void Debayer::filter(cv::Mat &img, cv::Mat &/*mask*/)
 {
     int mode = readParameter<int>("method");
 

@@ -21,8 +21,8 @@ MedianFilter::MedianFilter() :
 
 void MedianFilter::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(in->value.channels() > 4)
         throw std::runtime_error("To many channels!");
@@ -41,7 +41,7 @@ void MedianFilter::setup()
 void MedianFilter::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("kernel", 3, 31, kernel_size_, 2),
-                 boost::bind(&MedianFilter::update, this));
+                 std::bind(&MedianFilter::update, this));
 }
 
 void MedianFilter::update()

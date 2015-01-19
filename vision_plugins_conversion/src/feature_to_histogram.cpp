@@ -23,8 +23,8 @@ FeatureToHistogram::FeatureToHistogram()
 
 void FeatureToHistogram::process()
 {
-    FeaturesMessage::Ptr  in;
-    VectorMessage::Ptr    in_vector;
+    FeaturesMessage::ConstPtr  in;
+    VectorMessage::ConstPtr    in_vector;
     HistogramMessage::Ptr hist(new HistogramMessage);
 
     if(in_->hasMessage()) {
@@ -35,12 +35,11 @@ void FeatureToHistogram::process()
     if(in_vector_->hasMessage()) {
         in_vector = in_vector_->getMessage<VectorMessage>();
 
-        for(std::vector<ConnectionType::Ptr>::iterator
-            it = in_vector->value.begin() ;
+        for(auto it = in_vector->value.begin() ;
             it != in_vector->value.end() ;
             ++it) {
 
-            FeaturesMessage::Ptr feature_msg = boost::dynamic_pointer_cast<FeaturesMessage>(*it);
+            FeaturesMessage::Ptr feature_msg = std::dynamic_pointer_cast<FeaturesMessage>(*it);
             hist->value.ranges.push_back(utils_vision::histogram::Range(0, feature_msg->value.size()));
             hist->value.histograms.push_back(cv::Mat(feature_msg->value, true));
         }

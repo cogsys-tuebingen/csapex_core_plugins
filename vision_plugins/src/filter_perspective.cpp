@@ -14,11 +14,11 @@ using namespace csapex;
 
 PerspectiveTransform::PerspectiveTransform()
 {
-    addParameter(param::ParameterFactory::declareRange("Rotation x", -90.0, 90.0, 0.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
-    addParameter(param::ParameterFactory::declareRange("Rotation y",  -90.0, 90.0, 0.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
-    addParameter(param::ParameterFactory::declareRange("Rotation z",  -90.0, 90.0, 0.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
-    addParameter(param::ParameterFactory::declareRange("Virt. Distance", 0.0, 2000.0, 500.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
-    addParameter(param::ParameterFactory::declareRange("Virt. Focal Length", 0.0, 2000.0, 500.0, 0.1), boost::bind(&PerspectiveTransform::update, this));
+    addParameter(param::ParameterFactory::declareRange("Rotation x", -90.0, 90.0, 0.0, 0.1), std::bind(&PerspectiveTransform::update, this));
+    addParameter(param::ParameterFactory::declareRange("Rotation y",  -90.0, 90.0, 0.0, 0.1), std::bind(&PerspectiveTransform::update, this));
+    addParameter(param::ParameterFactory::declareRange("Rotation z",  -90.0, 90.0, 0.0, 0.1), std::bind(&PerspectiveTransform::update, this));
+    addParameter(param::ParameterFactory::declareRange("Virt. Distance", 0.0, 2000.0, 500.0, 0.1), std::bind(&PerspectiveTransform::update, this));
+    addParameter(param::ParameterFactory::declareRange("Virt. Focal Length", 0.0, 2000.0, 500.0, 0.1), std::bind(&PerspectiveTransform::update, this));
 }
 
 void PerspectiveTransform::filter(cv::Mat &img, cv::Mat &mask)

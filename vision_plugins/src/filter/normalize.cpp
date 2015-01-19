@@ -25,9 +25,9 @@ Normalize::Normalize()
 
 void Normalize::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr mask;
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr mask;
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(mask_->hasMessage()) {
         mask = mask_->getMessage<CvMatMessage>();
@@ -39,7 +39,7 @@ void Normalize::process()
 
     in->value.copyTo(out->value);
     cv::normalize(in->value, out->value, lower, upper, norm, -1,
-                  mask.get() == NULL ? cv::noArray() : mask->value);
+                  mask.get() == nullptr ? cv::noArray() : mask->value);
 
     output_->publish(out);
 }

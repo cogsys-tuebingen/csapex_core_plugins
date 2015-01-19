@@ -112,8 +112,8 @@ LocalPatterns::LocalPatterns()
 
 void LocalPatterns::process()
 {
-    CvMatMessage::Ptr  in = in_img_->getMessage<CvMatMessage>();
-    boost::shared_ptr< std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
+    CvMatMessage::ConstPtr  in = in_img_->getMessage<CvMatMessage>();
+    std::shared_ptr< std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(in->value.channels() > 1)
         throw std::runtime_error("Matrix must be one channel!");
@@ -122,7 +122,7 @@ void LocalPatterns::process()
     Type   t = (Type) readParameter<int>("pattern");
 
 
-    cv::Mat &value = in->value;
+    const cv::Mat &value = in->value;
 
     if(!in_rois_->hasMessage()) {
         FeaturesMessage feature_msg;
@@ -138,7 +138,7 @@ void LocalPatterns::process()
         out->push_back(feature_msg);
 
     } else {
-        boost::shared_ptr< std::vector<RoiMessage> const> in_rois = in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
+        std::shared_ptr< std::vector<RoiMessage> const> in_rois = in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
 
         for(std::vector<RoiMessage>::const_iterator
             it  = in_rois->begin() ;
@@ -182,8 +182,7 @@ void LocalPatterns::setupParameters()
             param::ParameterFactory::declareParameterSet("pattern",
                                                          types,
                                                          (int) LBP);
-    boost::function<bool()> condition =
-            (boost::bind(&param::Parameter::as<int>, type.get()) == LTP);
+    std::function<bool()> condition = [type]() { return type->as<int>() == LTP; };
 
     addParameter(type);
     addConditionalParameter(param::ParameterFactory::declareRange("k1", -100.0, 100.0, 0.0, 0.1),

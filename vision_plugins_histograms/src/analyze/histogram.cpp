@@ -31,12 +31,12 @@ Histogram::Histogram() :
 
 void Histogram::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<CvMatMessage>();
     HistogramMessage::Ptr out(new HistogramMessage);
 
     cv::Mat mask;
     if(mask_->hasMessage()) {
-        CvMatMessage::Ptr mask_ptr = mask_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr mask_ptr = mask_->getMessage<CvMatMessage>();
         mask = mask_ptr->value;
     }
 
@@ -138,15 +138,15 @@ void Histogram::setup()
 void Histogram::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("min max range", false),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
     addParameter(param::ParameterFactory::declareBool("global min max", false),
-                 boost::bind(&Histogram::update, this));
+                 std::bind(&Histogram::update, this));
 }
 
 void Histogram::update()

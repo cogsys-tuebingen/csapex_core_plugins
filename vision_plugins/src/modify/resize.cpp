@@ -24,8 +24,8 @@ Resize::Resize()
 
 void Resize::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(!in->value.empty()) {
         cv::resize(in->value, out->value, size_, 0.0, 0.0, mode_);
@@ -46,9 +46,9 @@ void Resize::setup()
 void Resize::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("size width", 1, 10000, 640, 1),
-                 boost::bind(&Resize::update, this));
+                 std::bind(&Resize::update, this));
     addParameter(param::ParameterFactory::declareRange("size height", 1, 10000, 480, 1),
-                 boost::bind(&Resize::update, this));
+                 std::bind(&Resize::update, this));
 
     std::map<std::string, int> modes = boost::assign::map_list_of
             ("nearest", (int) CV_INTER_NN)
@@ -56,7 +56,7 @@ void Resize::setupParameters()
             ("area", (int) CV_INTER_AREA)
             ("cubic", (int) CV_INTER_CUBIC)
             ("lanczos4", (int) CV_INTER_LANCZOS4);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) cv::INTER_NEAREST), boost::bind(&Resize::update, this));
+    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) cv::INTER_NEAREST), std::bind(&Resize::update, this));
 }
 
 void Resize::update()

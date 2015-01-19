@@ -23,8 +23,8 @@ Sobel::Sobel() :
 
 void Sobel::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
     int depth = in->value.type() & 7;
     cv::Sobel(in->value, out->value, depth, dx_, dy_, ksize_, scale_,delta_);
     output_->publish(out);
@@ -34,9 +34,9 @@ void Sobel::setupParameters()
 {
     Operator::setupParameters();
     addParameter(param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
-                 boost::bind(&Sobel::update, this));
+                 std::bind(&Sobel::update, this));
     addParameter(param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
-                 boost::bind(&Sobel::update, this));
+                 std::bind(&Sobel::update, this));
 }
 
 void  Sobel::update()

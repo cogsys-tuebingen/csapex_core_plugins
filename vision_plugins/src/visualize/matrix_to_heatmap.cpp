@@ -14,7 +14,7 @@
 
 /// SYSTEM
 #include <boost/assign/list_of.hpp>
-#include <boost/function.hpp>
+#include <functional>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::MatrixToHeatmap, csapex::Node)
 
@@ -29,8 +29,8 @@ MatrixToHeatmap::MatrixToHeatmap() :
 
 void MatrixToHeatmap::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
 
     cv::Mat working = in->value.clone();
@@ -38,7 +38,7 @@ void MatrixToHeatmap::process()
     cv::Mat mean    (working.rows, working.cols, CV_32FC1, cv::Scalar::all(0));
     cv::Mat mask;
     if(mask_->hasMessage()) {
-        CvMatMessage::Ptr mask_msg = mask_->getMessage<connection_types::CvMatMessage>();
+        CvMatMessage::ConstPtr mask_msg = mask_->getMessage<connection_types::CvMatMessage>();
         mask = mask_msg->value;
     } else {
         mask = cv::Mat(working.rows, working.cols, CV_8UC1, 255);
@@ -89,7 +89,7 @@ void MatrixToHeatmap::setupParameters()
             ("PARABOLA", (int) PARABOLA);
 
     addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types, (int) BEZIER),
-                 boost::bind(&MatrixToHeatmap::update, this));
+                 std::bind(&MatrixToHeatmap::update, this));
 }
 
 void MatrixToHeatmap::update()

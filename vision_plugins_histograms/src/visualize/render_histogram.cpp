@@ -27,9 +27,8 @@ RenderHistogram::RenderHistogram() :
 
 void RenderHistogram::process()
 {
-
-    HistogramMessage::Ptr in    = input_->getMessage<HistogramMessage>();
-    HistogramMaximaMessage::Ptr maxima;
+    HistogramMessage::ConstPtr in = input_->getMessage<HistogramMessage>();
+    HistogramMaximaMessage::ConstPtr maxima;
     if(maxima_->hasMessage()) {
         maxima = maxima_->getMessage<HistogramMaximaMessage>();
         if(maxima->value.maxima.size() != in->value.histograms.size()) {
@@ -37,12 +36,12 @@ void RenderHistogram::process()
         }
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(enc::bgr, in->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::bgr, in->stamp_micro_seconds));
     out->value = cv::Mat(height_, width_, CV_8UC3, cv::Scalar(0,0,0));
 
     int line_width = readParameter<int>("line width");
 
-    if(maxima.get() == NULL) {
+    if(maxima.get() == nullptr) {
         int color_count = 0;
         for(std::vector<cv::Mat>::const_iterator it = in->value.histograms.begin() ;
             it != in->value.histograms.end() ;
@@ -67,7 +66,7 @@ void RenderHistogram::process()
             }
         }
     } else {
-        std::vector<cv::Mat> &histograms = in->value.histograms;
+        const std::vector<cv::Mat> &histograms = in->value.histograms;
         for(unsigned int i = 0 ; i < histograms.size() ; ++i) {
             int type = histograms.at(i).type() & 7;
             switch(type) {
@@ -101,9 +100,9 @@ void RenderHistogram::process()
 void RenderHistogram::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
-                 boost::bind(&RenderHistogram::update, this));
+                 std::bind(&RenderHistogram::update, this));
     addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
-                 boost::bind(&RenderHistogram::update, this));
+                 std::bind(&RenderHistogram::update, this));
     addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
 }
 

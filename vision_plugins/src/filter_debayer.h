@@ -16,6 +16,8 @@ class Debayer : public csapex::Filter
 public:
     Debayer();
 
+    void setupParameters();
+
     /**
      * @brief See base class definition.
      */

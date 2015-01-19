@@ -44,10 +44,10 @@ void HOGDetector::setupParameters()
     addParameter(svm_param);
 
 
-    boost::function<bool()> condition = (boost::bind(&param::Parameter::as<int>, svm_param.get()) == CUSTOM);
+    std::function<bool()> condition = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
 
     addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm path","", "*.yml *.yaml *.tar.gz"),
-                            condition, boost::bind(&HOGDetector::load, this));
+                            condition, std::bind(&HOGDetector::load, this));
 
     setParameterEnabled("svm path", false);
 
@@ -72,8 +72,8 @@ void HOGDetector::setup()
 
 void HOGDetector::process()
 {
-    CvMatMessage::Ptr  in = in_->getMessage<CvMatMessage>();
-    boost::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
+    CvMatMessage::ConstPtr  in = in_->getMessage<CvMatMessage>();
+    std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
 
     if(!in->hasChannels(1, CV_8U))
         throw std::runtime_error("Image must be one channel grayscale!");

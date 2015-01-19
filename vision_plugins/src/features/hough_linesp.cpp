@@ -31,16 +31,16 @@ HoughLinesP::HoughLinesP() :
 
 void HoughLinesP::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
 
     if(!in->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
     }
 
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr, in->stamp));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr, in->stamp_micro_seconds));
     cv::cvtColor(in->value, out->value, CV_GRAY2BGR);
 
-    boost::shared_ptr< std::vector<cv::Vec4i> > lines_ptr(new std::vector<cv::Vec4i>);
+    std::shared_ptr< std::vector<cv::Vec4i> > lines_ptr(new std::vector<cv::Vec4i>);
     std::vector<cv::Vec4i>& lines = *lines_ptr;
     cv::HoughLinesP(in->value, lines, rho_, theta_/180, threshold_, min_line_length_, max_line_gap_);
 
@@ -63,15 +63,15 @@ void HoughLinesP::setup()
 void HoughLinesP::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("rho", 1.0, 100.0, 1.0, 1.0),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("theta", 1.0, 2 * CV_PI, CV_PI, 0.1),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("threshold", 1, 500, 80, 1),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("min length", 0.0, 1000.0, 30.0, 1.0),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
     addParameter(param::ParameterFactory::declareRange("max gap", 0.0, 400.0, 10.0, 1.0),
-                 boost::bind(&HoughLinesP::update, this));
+                 std::bind(&HoughLinesP::update, this));
 
 }
 

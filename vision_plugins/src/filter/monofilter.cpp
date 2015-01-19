@@ -22,13 +22,13 @@ MonoFilter::MonoFilter()
 
 void MonoFilter::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
 
     if(!in->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
     }
 
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
 
     out->value    = in->value.clone();
 
@@ -56,13 +56,13 @@ void MonoFilter::setup()
 void MonoFilter::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
-                 boost::bind(&MonoFilter::update, this));
+                 std::bind(&MonoFilter::update, this));
     addParameter(param::ParameterFactory::declareRange("max", 0, 255, 255, 1),
-                 boost::bind(&MonoFilter::update, this));
+                 std::bind(&MonoFilter::update, this));
     addParameter(param::ParameterFactory::declareRange("def", 0, 255, 255, 1),
-                 boost::bind(&MonoFilter::update, this));
+                 std::bind(&MonoFilter::update, this));
     addParameter(param::ParameterFactory::declareBool("invert", false),
-                 boost::bind(&MonoFilter::update, this));
+                 std::bind(&MonoFilter::update, this));
 }
 
 void MonoFilter::update()

@@ -12,7 +12,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <boost/foreach.hpp>
+
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractROI, csapex::Node)
 
@@ -26,10 +26,10 @@ ExtractROI::ExtractROI()
 
 void ExtractROI::process()
 {
-    CvMatMessage::Ptr img = input_img_->getMessage<CvMatMessage>();
-    RoiMessage::Ptr roi = input_roi_->getMessage<RoiMessage>();
+    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
+    RoiMessage::ConstPtr roi = input_roi_->getMessage<RoiMessage>();
 
-    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp_micro_seconds));
 
     cv::Mat(img->value, roi->value.rect()).copyTo(out->value);
 

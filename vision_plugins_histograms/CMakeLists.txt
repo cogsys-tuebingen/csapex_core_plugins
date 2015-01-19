@@ -16,8 +16,6 @@ set(CMAKE_BUILD_TYPE Debug)
 
 #set(CMAKE_CXX_FLAGS "-O3")
 
-csapex_moc_all(MOC src/*.h)
-
 ###################################
 ## catkin specific configuration ##
 ###################################

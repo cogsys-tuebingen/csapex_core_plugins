@@ -24,13 +24,13 @@ Pyramid::Pyramid() :
 
 void Pyramid::process()
 {
-    CvMatMessage::Ptr       in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr  in = input_->getMessage<connection_types::CvMatMessage>();
     CvPyramidMessage::Ptr   out(new CvPyramidMessage(in->getEncoding()));
 
     cv::buildPyramid(in->value, out->value, out_levels_);
 
     if(out_level_->isConnected()) {
-        CvMatMessage::Ptr out_level(new CvMatMessage(in->getEncoding(), in->stamp));
+        CvMatMessage::Ptr out_level(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
         out_level->value = out->value.at(out_level_idx_).clone();
         out_level_->publish(out_level);
     }
@@ -48,9 +48,9 @@ void Pyramid::setupParameters()
 {
 
     addParameter(param::ParameterFactory::declareRange("levels", 1, 10, out_levels_, 1),
-                 boost::bind(&Pyramid::update, this));
+                 std::bind(&Pyramid::update, this));
     addParameter(param::ParameterFactory::declareRange("preview",0, 9, out_level_idx_, 1),
-                 boost::bind(&Pyramid::update, this));
+                 std::bind(&Pyramid::update, this));
 }
 
 void Pyramid::update()

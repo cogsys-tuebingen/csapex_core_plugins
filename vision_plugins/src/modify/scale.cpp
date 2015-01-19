@@ -21,8 +21,8 @@ Scale::Scale()
 
 void Scale::process()
 {
-    CvMatMessage::Ptr in = input_->getMessage<connection_types::CvMatMessage>();
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp));
+    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(!in->value.empty()) {
         cv::resize(in->value, out->value, cv::Size(), scales_[0] / 100.0, scales_[1] / 100.0, mode_);
@@ -43,16 +43,16 @@ void Scale::setup()
 void Scale::setupParameters()
 {
     addParameter(param::ParameterFactory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
-                 boost::bind(&Scale::update, this));
+                 std::bind(&Scale::update, this));
     addParameter(param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
-                 boost::bind(&Scale::update, this));
+                 std::bind(&Scale::update, this));
     std::map<std::string, int> modes = boost::assign::map_list_of
             ("nearest", (int) cv::INTER_NEAREST)
             ("linear", (int) cv::INTER_LINEAR)
             ("area", (int) cv::INTER_AREA)
             ("cubic", (int) cv::INTER_CUBIC)
             ("lanczos4", (int) cv::INTER_LANCZOS4);
-    addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST), boost::bind(&Scale::update, this));
+    addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST), std::bind(&Scale::update, this));
 }
 
 void Scale::update()

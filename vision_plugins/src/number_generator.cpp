@@ -29,7 +29,7 @@ void NumberGenerator::process()
     std::stringstream txt;
     txt << n;
     cv::rectangle(msg->value, cv::Rect(0,0, msg->value.cols, msg->value.rows), cv::Scalar::all(0), CV_FILLED);
-    cv::putText(msg->value, txt.str(), cv::Point(20, 20), CV_FONT_HERSHEY_PLAIN, 5.0, cv::Scalar::all(255), 2, CV_AA);
+    cv::putText(msg->value, txt.str(), cv::Point(100, 200), CV_FONT_HERSHEY_PLAIN, 5.0, cv::Scalar::all(255), 2, CV_AA);
 
     output_->publish(msg);
 
