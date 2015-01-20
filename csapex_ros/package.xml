@@ -10,7 +10,6 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>roscpp</build_depend>
-  <build_depend>rosapi</build_depend>
   <build_depend>csapex</build_depend>
   <build_depend>csapex_core_plugins</build_depend>
   <build_depend>rosbag</build_depend>
@@ -18,7 +17,6 @@
   <build_depend>pluginlib</build_depend>
 
   <run_depend>roscpp</run_depend>
-  <run_depend>rosapi</run_depend>
   <run_depend>csapex</run_depend>
   <run_depend>csapex_core_plugins</run_depend>
   <run_depend>rosbag</run_depend>
