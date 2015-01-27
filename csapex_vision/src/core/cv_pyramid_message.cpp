@@ -19,7 +19,8 @@ CvPyramidMessage::CvPyramidMessage(const Encoding& encoding)
     : encoding(encoding)
 {}
 
-ConnectionType::Ptr CvPyramidMessage::clone() {
+ConnectionType::Ptr CvPyramidMessage::clone() const
+{
     Ptr new_msg(new CvPyramidMessage(encoding));
     new_msg->value.assign(value.begin(), value.end());
     return new_msg;

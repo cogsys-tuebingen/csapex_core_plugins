@@ -146,3 +146,5 @@ void StaticMaskPainter::input(cv::Mat img)
 
     view->fitInView(scene->itemsBoundingRect() ,Qt::KeepAspectRatio);
 }
+/// MOC
+#include "moc_filter_static_mask_painter.cpp"

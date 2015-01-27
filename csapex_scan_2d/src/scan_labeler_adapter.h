@@ -71,8 +71,6 @@ private:
     QSize last_size_;
     State state;
 
-    QGraphicsPixmapItem* pixmap_;
-
     QGraphicsView* view_;
 
     bool resize_down_;

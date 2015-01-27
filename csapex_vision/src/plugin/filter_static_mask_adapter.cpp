@@ -48,3 +48,5 @@ void FilterStaticMaskAdapter::display()
 
     painter.run();
 }
+/// MOC
+#include "moc_filter_static_mask_adapter.cpp"

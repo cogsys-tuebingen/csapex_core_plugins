@@ -80,9 +80,9 @@ void ImportCin::tick()
 
             } catch(const MessageFactory::DeserializationError& e) {
                 ainfo << "could not deserialize message: \n";
-                YAML::Emitter e;
-                e << doc;
-                ainfo << e.c_str() << std::endl;
+                YAML::Emitter emitter;
+                emitter << doc;
+                ainfo << emitter.c_str() << std::endl;
                 continue;
             }
 

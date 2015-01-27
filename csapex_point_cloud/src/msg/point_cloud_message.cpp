@@ -7,9 +7,9 @@
 
 /// SYSTEM
 #include <pcl/PCLPointField.h>
-#include <pcl/io/boost.h>
+//#include <pcl/io/boost.h>
 #include <pcl/console/print.h>
-#include <pcl/io/pcd_io.h>
+//#include <pcl/io/pcd_io.h>
 #include <boost/mpl/for_each.hpp>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::PointCloudMessage)
@@ -69,22 +69,22 @@ struct Import  {
         const YAML::Node& data = node["data"];
         apex_assert(data.Type() == YAML::NodeType::Sequence);
 
-        std::string file = "import_cloud.tmp";
-        std::ofstream tmp(file.c_str());
+//        std::string file = "import_cloud.tmp";
+//        std::ofstream tmp(file.c_str());
 
-        for(std::size_t i = 0; i < data.size(); ++i) {
-            std::string line = data[i].as<std::string>();
-            tmp << line << '\n';
-        }
-        tmp.flush();
-        tmp.close();
+//        for(std::size_t i = 0; i < data.size(); ++i) {
+//            std::string line = data[i].as<std::string>();
+//            tmp << line << '\n';
+//        }
+//        tmp.flush();
+//        tmp.close();
 
-        typename pcl::PointCloud<PointT>::Ptr cloud(new pcl::PointCloud<PointT>);
+//        typename pcl::PointCloud<PointT>::Ptr cloud(new pcl::PointCloud<PointT>);
 
-        pcl::PCDReader reader;
-        reader.read(file, *cloud);
+//        pcl::PCDReader reader;
+//        reader.read(file, *cloud);
 
-        value = cloud;
+//        value = cloud;
     }
 
     const YAML::Node& node;
@@ -104,16 +104,16 @@ struct Export : public boost::static_visitor<void> {
 
         node["point_type"] = traits::name<PointT>();
 
-        pcl::PCDWriter writer;
-        std::string file = "export_cloud.tmp";
-        writer.writeASCII(file, *cloud_ptr);
+//        pcl::PCDWriter writer;
+//        std::string file = "export_cloud.tmp";
+//        writer.writeASCII(file, *cloud_ptr);
 
-        std::ifstream fi(file.c_str());
-        std::string line;
+//        std::ifstream fi(file.c_str());
+//        std::string line;
 
-        while(std::getline(fi, line)) {
-            node["data"].push_back(line);
-        }
+//        while(std::getline(fi, line)) {
+//            node["data"].push_back(line);
+//        }
     }
 
     YAML::Node& node;

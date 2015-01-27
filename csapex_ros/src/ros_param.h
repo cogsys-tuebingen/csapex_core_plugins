@@ -23,10 +23,6 @@ public:
 
 private:
     void update();
-
-private:
-    Input* in_;
-    Output* out_;
 };
 
 

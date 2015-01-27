@@ -141,3 +141,7 @@ void OutputDisplayAdapter::display(QSharedPointer<QImage> img)
     view_->fitInView(view_->scene()->sceneRect(), Qt::KeepAspectRatio);
     view_->scene()->update();
 }
+
+/// MOC
+#include "moc_output_display_adapter.cpp"
+
