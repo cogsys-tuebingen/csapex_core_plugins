@@ -29,6 +29,7 @@ add_library(csapex_evaluation_plugin
     src/confusion_matrix_display_adapter.cpp
     src/evaluate_binary_classifier.cpp
     src/evaluate_binary_classifier_adapter.cpp
+    src/empty_labeled_feature_message.cpp
     src/ml_evaluator.cpp
 )
 

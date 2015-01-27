@@ -24,7 +24,7 @@ struct CvPyramidMessage : public MessageTemplate<std::vector<cv::Mat>, CvPyramid
 
 public:
     CvPyramidMessage(const Encoding& encoding);
-    virtual ConnectionType::Ptr clone();
+    virtual ConnectionType::Ptr clone() const override;
 
     virtual void writeRaw(const std::string &file, const std::string &base, const std::string &suffix) const;
 

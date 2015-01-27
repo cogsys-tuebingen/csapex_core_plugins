@@ -42,7 +42,7 @@ void RosParam::update()
     XmlRpc::XmlRpcValue params, result, payload;
     params[0] = ros::this_node::getName();
     if (ros::master::execute("getParamNames", params, result, payload, true)) {
-        if(!result.getType() == XmlRpc::XmlRpcValue::TypeArray) {
+        if(result.getType() != XmlRpc::XmlRpcValue::TypeArray) {
             aerr << "XmlRpc: Wrong type" << std::endl;
             return;
         }

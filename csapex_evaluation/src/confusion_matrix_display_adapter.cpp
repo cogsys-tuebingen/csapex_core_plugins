@@ -124,3 +124,5 @@ void ConfusionMatrixDisplayAdapter::display()
     table_->resizeRowsToContents();
     table_->viewport()->update();
 }
+/// MOC
+#include "moc_confusion_matrix_display_adapter.cpp"

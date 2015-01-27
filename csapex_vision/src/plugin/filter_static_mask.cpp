@@ -88,18 +88,3 @@ void FilterStaticMask::filter(cv::Mat& img, cv::Mat& mask)
         }
     }
 }
-
-Memento::Ptr FilterStaticMask::getParameterState() const
-{
-    return std::shared_ptr<State>(new State(state));
-}
-
-void FilterStaticMask::setParameterState(Memento::Ptr memento)
-{
-    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
-    apex_assert_hard(m.get());
-
-    state = *m;
-
-    triggerModelChanged();
-}

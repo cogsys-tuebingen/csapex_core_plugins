@@ -95,7 +95,7 @@ bool FileImporter::canTick()
     if(directory_import_) {
         return (readParameter<int>("directory/current") < (int) dir_files_.size()) || readParameter<bool>("directory/loop");
     } else {
-        return (bool) provider_;
+        return provider_ != nullptr;
     }
 }
 
@@ -103,7 +103,7 @@ void FileImporter::tick()
 {
     if(provider_ && provider_->hasNext()) {
         for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
-            INTERLUDE("slot " << slot);
+            INTERLUDE_STREAM("slot " << slot);
 
             Output* output = outputs_[slot];
 

@@ -120,3 +120,5 @@ void BFOptimizerAdapter::triggerStep(int s)
     progress_->setValue(s);
     progress_->setMaximum(wrapped_->stepsNecessary());
 }
+/// MOC
+#include "moc_bf_optimizer_adapter.cpp"

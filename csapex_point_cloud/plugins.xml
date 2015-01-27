@@ -1,4 +1,7 @@
 <library path="libcsapex_point_cloud_plugin">
+<class type="csapex::MergeClouds" base_class_type="csapex::Node">
+  <description>Merge two clouds into one</description>
+</class>
 <class type="csapex::RegisterPointCloudPlugin" base_class_type="csapex::CorePlugin">
   <description></description>
 </class>

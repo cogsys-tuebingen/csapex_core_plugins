@@ -29,3 +29,5 @@ void PointCountAdapter::display(int img)
 {
     Q_EMIT displayRequest(img);
 }
+/// MOC
+#include "moc_point_count_adapter.cpp"

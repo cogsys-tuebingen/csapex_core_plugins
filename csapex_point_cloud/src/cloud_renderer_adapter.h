@@ -37,10 +37,10 @@ public:
 protected:
     void initializeGL();
     void resizeGL(int width, int height);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void wheelEvent(QGraphicsSceneWheelEvent *event);
+    void mousePressEventImpl(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEventImpl(QGraphicsSceneMouseEvent *event);
+    void wheelEventImpl(QGraphicsSceneWheelEvent *event);
 
     bool eventFilter(QObject *, QEvent *);
 
@@ -53,7 +53,7 @@ public Q_SLOTS:
     void setPhi(double angle);
 
     void displayCloud();
-    void paintGL(bool request = true);
+    void paintGLImpl(bool request = true);
     void paintAugmentation();
     void resize();
 
