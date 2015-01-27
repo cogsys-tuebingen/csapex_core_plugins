@@ -142,25 +142,25 @@ void Splitter::updateOutputs()
 }
 
 /// MEMENTO ------------------------------------------------------------------------------------
-Memento::Ptr Splitter::getParameterState() const
-{
-    return std::shared_ptr<State>(new State(state_));
-}
+//Memento::Ptr Splitter::getParameterState() const
+//{
+//    return std::shared_ptr<State>(new State(state_));
+//}
 
-void Splitter::setParameterState(Memento::Ptr memento)
-{
-    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
-    apex_assert_hard(m.get());
+//void Splitter::setParameterState(Memento::Ptr memento)
+//{
+//    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
+//    apex_assert_hard(m.get());
 
-    state_ = *m;
+//    state_ = *m;
 
-//    while((int) state_.encoding_.size() < state_.channel_count_) {
-//        state_.encoding_.push_back(Channel("Channel", 0, 255));
-//    }
+////    while((int) state_.encoding_.size() < state_.channel_count_) {
+////        state_.encoding_.push_back(Channel("Channel", 0, 255));
+////    }
 
-    updateOutputs();
-    triggerModelChanged();
-}
+//    updateOutputs();
+//    triggerModelChanged();
+//}
 
 /// MEMENTO
 void Splitter::State::readYaml(const YAML::Node &node)
