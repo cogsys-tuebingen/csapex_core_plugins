@@ -94,7 +94,7 @@ private:
     QPainter             painter;
 
     bool                 middle_button_down_;
-    bool                 left_button_down_;
+//    bool                 left_button_down_;
     bool                 loaded_;
     QPoint               middle_last_pos_;
     QPoint               left_last_pos_;

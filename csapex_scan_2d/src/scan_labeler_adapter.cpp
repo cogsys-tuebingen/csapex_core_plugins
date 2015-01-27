@@ -23,7 +23,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
 ScanLabelerAdapter::ScanLabelerAdapter(NodeWorker* worker, ScanLabeler *node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(nullptr), view_(new QGraphicsView),
+    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
     // translate to UI thread via Qt signal
@@ -228,3 +228,6 @@ void ScanLabelerAdapter::submit()
 {
     wrapped_->setResult(result_);
 }
+/// MOC
+#include "moc_scan_labeler_adapter.cpp"
+

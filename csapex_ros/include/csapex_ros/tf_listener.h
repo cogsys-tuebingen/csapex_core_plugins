@@ -12,9 +12,10 @@
 namespace csapex
 {
 
-struct LockedTFListener;
+class LockedTFListener;
 
-struct TFListener {
+class TFListener
+{
     friend class LockedTFListener;
 
 public:
@@ -53,7 +54,8 @@ private:
     std::mutex m;
 };
 
-struct LockedTFListener {
+class LockedTFListener
+{
 public:
     TFListener* l;
 

@@ -161,3 +161,5 @@ void EvaluateBinaryClassifierAdapter::display()
     table_->resizeRowsToContents();
     table_->viewport()->update();
 }
+/// MOC
+#include "moc_evaluate_binary_classifier_adapter.cpp"

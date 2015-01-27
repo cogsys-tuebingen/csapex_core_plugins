@@ -29,7 +29,7 @@ CloudRendererAdapter::CloudRendererAdapter(NodeWorker* worker, CloudRenderer *no
     node->display_request.connect(std::bind(&CloudRendererAdapter::display, this));
     node->refresh_request.connect(std::bind(&CloudRendererAdapter::refresh, this));
 
-    QObject::connect(this, SIGNAL(repaintRequest()), this, SLOT(paintGL()), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(repaintRequest()), this, SLOT(paintGLImpl()), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(resizeRequest()), this, SLOT(resize()), Qt::QueuedConnection);
 }
 
@@ -198,7 +198,7 @@ void CloudRendererAdapter::paintAugmentation()
     glPopAttrib();
 }
 
-void CloudRendererAdapter::paintGL(bool request)
+void CloudRendererAdapter::paintGLImpl(bool request)
 {
     // initialization
     makeCurrent();
@@ -285,16 +285,16 @@ bool CloudRendererAdapter::eventFilter(QObject * o, QEvent * e)
 
     switch(e->type()) {
     case QEvent::GraphicsSceneMousePress:
-        mousePressEvent(me);
+        mousePressEventImpl(me);
         return true;
     case QEvent::GraphicsSceneMouseRelease:
-        mouseReleaseEvent(me);
+        mouseReleaseEventImpl(me);
         return true;
     case QEvent::GraphicsSceneMouseMove:
-        mouseMoveEvent(me);
+        mouseMoveEventImpl(me);
         return true;
     case QEvent::GraphicsSceneWheel:
-        wheelEvent(dynamic_cast<QGraphicsSceneWheelEvent*>(e));
+        wheelEventImpl(dynamic_cast<QGraphicsSceneWheelEvent*>(e));
         return true;
 
     default:
@@ -304,14 +304,14 @@ bool CloudRendererAdapter::eventFilter(QObject * o, QEvent * e)
     return false;
 }
 
-void CloudRendererAdapter::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void CloudRendererAdapter::mousePressEventImpl(QGraphicsSceneMouseEvent *event)
 {
     last_pos_ = event->screenPos();
     drag_ = true;
     event->accept();
 }
 
-void CloudRendererAdapter::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void CloudRendererAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event)
 {
     drag_ = false;
 
@@ -327,7 +327,7 @@ void CloudRendererAdapter::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     event->accept();
 }
 
-void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void CloudRendererAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
 {
     if(!drag_) {
         return;
@@ -370,16 +370,16 @@ void CloudRendererAdapter::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     }
     last_pos_ = pos;
-    paintGL(false);
+    paintGLImpl(false);
 }
 
-void CloudRendererAdapter::wheelEvent(QGraphicsSceneWheelEvent *event)
+void CloudRendererAdapter::wheelEventImpl(QGraphicsSceneWheelEvent *event)
 {
     event->accept();
 
     r_ += event->delta() * -0.0025;
     wrapped_->getParameter("~view/r")->set<double>(r_);
-    paintGL(false);
+    paintGLImpl(false);
 
 }
 
@@ -667,7 +667,7 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
 
     glEndList();
 
-    paintGL();
+    paintGLImpl();
 }
 
 
@@ -719,3 +719,5 @@ void CloudRendererAdapter::setPhi(double angle)
         wrapped_->getParameter("~view/phi")->set<double>(phi_);
     }
 }
+/// MOC
+#include "moc_cloud_renderer_adapter.cpp"

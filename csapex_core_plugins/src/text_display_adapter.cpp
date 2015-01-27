@@ -51,3 +51,6 @@ void TextDisplayAdapter::display(const std::string& txt)
     txt_->setMaximumWidth(txt_->parentWidget()->width());
     txt_->setText(QString::fromStdString(txt));
 }
+/// MOC
+#include "moc_text_display_adapter.cpp"
+

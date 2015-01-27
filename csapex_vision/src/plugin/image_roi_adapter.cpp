@@ -28,7 +28,6 @@ ImageRoiAdapter::ImageRoiAdapter(NodeWorker* worker, ImageRoi *node, WidgetContr
       empty(32, 32, QImage::Format_RGB16),
       painter(&empty),
       middle_button_down_(false),
-      left_button_down_(false),
       loaded_(false)
 {
     painter.setPen(QPen(Qt::red));
@@ -237,3 +236,5 @@ void ImageRoiAdapter::drop()
     connection_types::RoiMessage::Ptr result_msg(new connection_types::RoiMessage);
     wrapped_->setResult(result_msg);
 }
+/// MOC
+#include "moc_image_roi_adapter.cpp"
