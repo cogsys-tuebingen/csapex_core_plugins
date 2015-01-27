@@ -26,7 +26,7 @@ public:
     CvMatMessage(const Encoding& encoding, Stamp stamp_micro_seconds);
     virtual ConnectionType::Ptr clone() const override;
 
-    virtual void writeRaw(const std::string &file, const std::string &suffix) const override;
+    virtual void writeRaw(const std::string &file, const std::string &base, const std::string &suffix) const override;
 
     const Encoding &getEncoding() const;
     void setEncoding(const Encoding& e);

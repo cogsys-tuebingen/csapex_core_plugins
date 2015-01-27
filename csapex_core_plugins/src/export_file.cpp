@@ -97,7 +97,7 @@ void ExportFile::exportSingle(const ConnectionType::ConstPtr& msg)
     } else {
         std::stringstream ss;
         ss << "_" << suffix_;
-        msg->writeRaw(path_, ss.str());
+        msg->writeRaw(path_, base_, ss.str());
     }
 
     ++suffix_;

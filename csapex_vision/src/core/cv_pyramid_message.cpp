@@ -25,12 +25,12 @@ ConnectionType::Ptr CvPyramidMessage::clone() {
     return new_msg;
 }
 
-void CvPyramidMessage::writeRaw(const std::string &path, const std::string &suffix) const
+void CvPyramidMessage::writeRaw(const std::string &path, const std::string &base, const std::string &suffix) const
 {
     for(unsigned int i = 0 ; i < value.size() ; ++i) {
         std::stringstream ss;
         ss << "_" << i;
-        std::string file = path + "/img" + suffix + ss.str() + ".jpg";
+        std::string file = path + "/" + base + "_" + suffix + ss.str() + ".jpg";
         cv::imwrite(file, value.at(i));
     }
 }
