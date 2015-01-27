@@ -130,7 +130,7 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
 
     pixmap_ = new QGraphicsPixmapItem;
     rect_ = new QGraphicsRectItem(0, 0, 0, 0);
-    rect_->setPen(QPen(Qt::red));
+    rect_->setPen(QPen(Qt::red, 10.0 / view_->transform().m11()));
     rect_->setFlags(QGraphicsItem::ItemIsMovable);
     view_->scene()->addItem(pixmap_);
     view_->scene()->addItem(rect_);

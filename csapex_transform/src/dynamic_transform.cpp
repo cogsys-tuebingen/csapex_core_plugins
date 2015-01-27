@@ -38,12 +38,16 @@ void DynamicTransform::setupParameters()
 
     source_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("source"));
     target_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("target"));
+
+    refresh();
 }
 
 bool DynamicTransform::canTick()
 {
-    return source_p->noParameters() != 0 && target_p->noParameters() != 0 &&
-            !frame_in_source_->isConnected() && !frame_in_target_->isConnected() && !time_in_->isConnected();
+    return !init_
+            ||
+            (source_p->noParameters() != 0 && target_p->noParameters() != 0 &&
+            !frame_in_source_->isConnected() && !frame_in_target_->isConnected() && !time_in_->isConnected());
 }
 
 void DynamicTransform::tick()
@@ -102,6 +106,10 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 {
     if(!init_ || source_p->noParameters() == 0 || target_p->noParameters() == 0) {
         refresh();
+    }
+
+    if(!init_) {
+        return;
     }
 
     tf::StampedTransform t;
@@ -188,7 +196,7 @@ void DynamicTransform::refresh()
     if(getParameter("target")->is<std::string>()) {
         from = source_p->as<std::string>();
     }
-
+    ainfo << "from: " << from << ", to: " << to << std::endl;
 
     LockedTFListener l = TFListener::getLocked();
     if(!l.l) {
@@ -199,8 +207,8 @@ void DynamicTransform::refresh()
         std::vector<std::string> f;
         l.l->tfl->getFrameStrings(f);
 
-        bool has_from = (from == "");
-        bool has_to = (to == "");
+        bool has_from = false;
+        bool has_to = false;
         for(std::size_t i = 0; i < f.size(); ++i) {
             std::string frame = std::string("/") + f[i];
             frames.push_back(frame);
@@ -215,6 +223,7 @@ void DynamicTransform::refresh()
 
         if(!has_from || !has_to) {
             if(initial_retries_ --> 0) {
+                ainfo << "retry" << std::endl;
                 return;
             }
         }
@@ -224,11 +233,15 @@ void DynamicTransform::refresh()
         return;
     }
 
-    if(std::find(frames.begin(), frames.end(), from) == frames.end()) {
-        frames.push_back(from);
+    if(!from.empty()) {
+        if(std::find(frames.begin(), frames.end(), from) == frames.end()) {
+            frames.push_back(from);
+        }
     }
-    if(std::find(frames.begin(), frames.end(), to) == frames.end()) {
-        frames.push_back(to);
+    if(!to.empty()) {
+        if(std::find(frames.begin(), frames.end(), to) == frames.end()) {
+            frames.push_back(to);
+        }
     }
 
     source_p->setSet(frames);

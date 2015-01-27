@@ -43,7 +43,7 @@ inline void normalizeC(const cv::Mat             &src,
     std::vector<cv::Mat> channels;
     cv::split(src, channels);
     for(unsigned int i = 0 ; i < channels.size() ; ++i) {
-        cv::subtract(channels.at(i),mean, channels.at(i), cv::Mat(), CV_32F);
+        cv::subtract(channels.at(i),mean.at(i), channels.at(i), cv::Mat(), CV_32F);
         channels.at(i) /= dev.at(i);
     }
     cv::merge(channels, dst);

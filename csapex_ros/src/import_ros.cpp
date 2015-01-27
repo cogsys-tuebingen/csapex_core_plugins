@@ -19,6 +19,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_worker.h>
 #include <csapex_ros/time_stamp_message.h>
+#include <csapex/utility/timer.h>
 
 /// SYSTEM
 #include <yaml-cpp/eventhandler.h>
@@ -177,6 +178,8 @@ bool ImportRos::doSetTopic()
 
 void ImportRos::processROS()
 {
+    INTERLUDE("process");
+
     // first check if connected -> if not connected, we only use tick
     if(!input_time_->isConnected()) {
         return;
@@ -284,6 +287,7 @@ bool ImportRos::isStampCovered(const ros::Time &stamp)
 
 void ImportRos::waitForTopic()
 {
+    INTERLUDE("wait");
     ros::WallDuration poll_wait(0.5);
     while(retries_ --> 0) {
         bool topic_exists = doSetTopic();
@@ -299,11 +303,13 @@ void ImportRos::waitForTopic()
 
 bool ImportRos::canTick()
 {
-    return !input_time_->isConnected();
+    return !input_time_->isConnected() && !msgs_.empty();
 }
 
 void ImportRos::tickROS()
 {
+    INTERLUDE("tick");
+
     if(retries_ > 0) {
         waitForTopic();
     }
@@ -313,8 +319,11 @@ void ImportRos::tickROS()
     }
 
     // NO INPUT CONNECTED -> ONLY KEEP CURRENT MESSAGE
-    while(msgs_.size() > 1) {
-        msgs_.pop_front();
+    {
+        INTERLUDE("pop");
+        while(msgs_.size() > 1) {
+            msgs_.pop_front();
+        }
     }
 
     if(!current_topic_.name.empty()) {
@@ -324,7 +333,10 @@ void ImportRos::tickROS()
 
 void ImportRos::publishLatestMessage()
 {
+    INTERLUDE("publish");
+
     if(msgs_.empty()) {
+        INTERLUDE("wait for message");
         ros::WallRate r(10);
         while(msgs_.empty() && running_) {
             r.sleep();

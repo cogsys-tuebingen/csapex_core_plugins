@@ -3,6 +3,7 @@
 
 /// SYSTEM
 #include <chrono>
+#include <QApplication>
 
 using namespace csapex;
 
@@ -29,6 +30,8 @@ bool InteractiveNode::waitForView()
     std::unique_lock<std::mutex> lock(result_mutex_);
     while(!view_done_) {
         wait_for_view_.wait_for(lock, poll_time);
+
+        QApplication::processEvents();
 
         if(stopped_) {
             return false;

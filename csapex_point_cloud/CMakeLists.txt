@@ -46,6 +46,7 @@ target_link_libraries(csapex_point_cloud
     yaml-cpp ${catkin_LIBRARIES})
 
 add_library(csapex_point_cloud_plugin
+    src/merge_clouds.cpp
     src/register_plugin.cpp
     src/point_count.cpp
     src/point_count_adapter.cpp
