@@ -110,14 +110,16 @@ void BlobDetector::process()
 
     std::pair<unsigned int,unsigned int> range_area = readParameter<std::pair<int, int> >("Area");
 
-    for (CvBlobs::const_iterator it=blobs.begin(); it!=blobs.end(); ++it) {
-         const CvBlob& blob = *it->second;
+    for (CvBlobs::iterator it=blobs.begin(); it!=blobs.end();) {
+        const CvBlob& blob = *it->second;
 
         int w = (blob.maxx - blob.minx + 1);
         int h = (blob.maxy - blob.miny + 1);
 
         if((blob.area < range_area.first) || (blob.area > range_area.second)) {
-            continue;
+            it = blobs.erase(it);
+        } else {
+            ++it;
         }
 
          RoiMessage::Ptr roi(new RoiMessage);
