@@ -28,7 +28,7 @@ find_package(Boost REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES csapex_scan_2d csapex_scan_2d_plugin
+  LIBRARIES csapex_scan_2d
   CATKIN_DEPENDS utils_laser_processing
 #  DEPENDS system_lib
 )
@@ -53,9 +53,10 @@ target_link_libraries(csapex_scan_2d
 
 
 add_library(csapex_scan_2d_plugin
+    src/register_plugin.cpp
+
     src/segment_labeler.cpp
     src/split_labeled_scan.cpp
-    src/register_plugin.cpp
     src/labeled_scan_to_scan.cpp
     src/renderer.cpp
     src/segmentation_renderer.cpp
@@ -67,6 +68,10 @@ add_library(csapex_scan_2d_plugin
 
 target_link_libraries(csapex_scan_2d_plugin
     yaml-cpp csapex_scan_2d ${catkin_LIBRARIES})
+
+add_executable(scan_test src/test.cpp)
+
+target_link_libraries(scan_test csapex_scan_2d_plugin csapex_scan_2d)
 
 #
 # INSTALL

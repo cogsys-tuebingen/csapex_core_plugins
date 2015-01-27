@@ -6,8 +6,6 @@
 #include <csapex_scan_2d/labeled_scan_message.h>
 
 /// PROJECT
-#include <csapex/msg/message_factory.h>
-#include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_laser_processing/data/segment.h>
@@ -62,7 +60,10 @@ void RegisterScan2DPlugin::init(CsApexCore& core)
     qRegisterMetaType < lib_laser_processing::Scan::Ptr > ("lib_laser_processing::Scan::Ptr");
     qRegisterMetaType < lib_laser_processing::LabeledScan::Ptr > ("lib_laser_processing::LabeledScan::Ptr");
 
-    Tag::createIfNotExists("Features");
-
     RosMessageConversion::registerConversion<sensor_msgs::LaserScan, connection_types::ScanMessage, ConvertScan>();
+}
+
+void RegisterScan2DPlugin::shutdown()
+{
+
 }

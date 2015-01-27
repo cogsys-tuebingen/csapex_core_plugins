@@ -12,6 +12,7 @@ public:
     RegisterScan2DPlugin();
 
     void init(CsApexCore& core);
+    void shutdown();
 };
 
 }

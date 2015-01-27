@@ -32,8 +32,6 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_vision_features
-#  CATKIN_DEPENDS csapex csapex_vision utils_vision
-#  DEPENDS system_lib
 )
 
 ###########

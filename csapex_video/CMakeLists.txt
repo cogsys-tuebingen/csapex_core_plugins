@@ -6,7 +6,6 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
-  LIBRARIES csapex_video_plugin
 )
 
 include_directories(
