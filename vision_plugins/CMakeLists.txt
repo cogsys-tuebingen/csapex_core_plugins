@@ -20,9 +20,6 @@ ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES cvblob
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
 )
 
 ###########
