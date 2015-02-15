@@ -5,7 +5,7 @@
 #include <csapex_ros/time_stamp_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_ros/ros_handler.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -37,7 +37,7 @@ void Clock::tick()
     } else {
         time->value = ros::Time(0);
     }
-    output_->publish(time);
+    msg::publish(output_, time);
 }
 
 void Clock::setupROS()

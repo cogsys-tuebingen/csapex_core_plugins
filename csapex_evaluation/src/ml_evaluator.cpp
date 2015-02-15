@@ -2,8 +2,7 @@
 #include "ml_evaluator.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -44,6 +43,7 @@ MLEvaluator::MLEvaluator()
 
 void MLEvaluator::setupParameters()
 {
+    addParameter(param::ParameterFactory::declareTrigger("reset"), [&](param::Parameter*) { confusion_.reset(); });
 }
 
 void MLEvaluator::setup()
@@ -58,8 +58,8 @@ void MLEvaluator::setup()
 
 void MLEvaluator::process()
 {
-    std::shared_ptr<std::vector<FeaturesMessage> const> truth_msg = in_truth_->getMessage<GenericVectorMessage, FeaturesMessage>();
-    std::shared_ptr<std::vector<FeaturesMessage> const> classified_msg = in_classified_->getMessage<GenericVectorMessage, FeaturesMessage>();
+    std::shared_ptr<std::vector<FeaturesMessage> const> truth_msg = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_truth_);
+    std::shared_ptr<std::vector<FeaturesMessage> const> classified_msg = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_classified_);
 
     std::size_t n = truth_msg->size();
 
@@ -77,5 +77,5 @@ void MLEvaluator::process()
 
     ConfusionMatrixMessage::Ptr result(new ConfusionMatrixMessage);
     result->confusion = confusion_;
-    out_->publish(result);
+    msg::publish(out_, result);
 }

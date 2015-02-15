@@ -5,11 +5,11 @@
 #include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
 
 /// SYSTEM
 #include <tf/transform_datatypes.h>
@@ -53,7 +53,7 @@ void StaticTransform::tick()
     msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
     msg->frame_id = readParameter<std::string>("frame");
     msg->child_frame = readParameter<std::string>("child_frame");
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }
 
 

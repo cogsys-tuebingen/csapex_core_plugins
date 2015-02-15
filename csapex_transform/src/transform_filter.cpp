@@ -5,8 +5,7 @@
 #include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -52,7 +51,7 @@ void TransformFilter::process()
     std::stringstream stringstream;
 
     // Get data from input
-    TransformMessage::ConstPtr trafo_msg = input_transform_->getMessage<TransformMessage>();
+    TransformMessage::ConstPtr trafo_msg = msg::getMessage<TransformMessage>(input_transform_);
     tf::Transform tf_raw = trafo_msg->value;
     tf::Transform tf_filtered;
 
@@ -67,12 +66,12 @@ void TransformFilter::process()
     // Publish Output - Debug
     stringstream << "x = " << x << ",y = " << y << ",z = " << z
                  << ",r = " << RAD_TO_DEG(roll) << ",p = " << RAD_TO_DEG(pitch)<< ",y = " << RAD_TO_DEG(yaw);
-    output_text_->publish(stringstream.str());
+    msg::publish(output_text_, stringstream.str());
 
     // Publish Output - Transformation
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
     msg->value = tf_filtered;
-    output_transform_->publish(msg);
+    msg::publish(output_transform_, msg);
 }
 
 void TransformFilter::tfToXYZrpy(tf::Transform& in, double& x, double& y, double& z, double& roll, double& pitch, double& yaw)

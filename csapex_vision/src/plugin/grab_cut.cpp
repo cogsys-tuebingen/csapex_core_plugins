@@ -2,8 +2,7 @@
 #include "grab_cut.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -61,9 +60,9 @@ void GrabCut::process()
 {
     INTERLUDE("process");
 
-    CvMatMessage::ConstPtr img_msg = in_->getMessage<CvMatMessage>();
-    CvMatMessage::ConstPtr fg_msg = in_fg_->getMessage<CvMatMessage>();
-    CvMatMessage::ConstPtr bg_msg = in_bg_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img_msg = msg::getMessage<CvMatMessage>(in_);
+    CvMatMessage::ConstPtr fg_msg = msg::getMessage<CvMatMessage>(in_fg_);
+    CvMatMessage::ConstPtr bg_msg = msg::getMessage<CvMatMessage>(in_bg_);
 
     if(!fg_msg->hasChannels(1, CV_8U)) {
         throw std::runtime_error("foreground mask is not mono");
@@ -101,8 +100,8 @@ void GrabCut::process()
             CvMatMessage::Ptr fg_out(new CvMatMessage(enc::mono, img_msg->stamp_micro_seconds));
             bg_out->value = cv::Mat(img.rows, img.cols, CV_8UC1, cv::Scalar::all(255));
             fg_out->value = cv::Mat(img.rows, img.cols, CV_8UC1, cv::Scalar::all(0));
-            out_fg_->publish(fg_out);
-            out_bg_->publish(bg_out);
+            msg::publish(out_fg_, fg_out);
+            msg::publish(out_bg_, bg_out);
             return;
         }
 
@@ -110,8 +109,8 @@ void GrabCut::process()
     }
 
     cv::Rect roi;
-    if(in_roi_->hasMessage()) {
-        roi = in_roi_->getMessage<RoiMessage>()->value.rect();
+    if(msg::hasMessage(in_roi_)) {
+        roi = msg::getMessage<RoiMessage>(in_roi_)->value.rect();
     } else {
         roi = cv::Rect(0, 0, img.cols, img.rows);
     }
@@ -132,7 +131,7 @@ void GrabCut::process()
     bg_out->value = 255 - (mask & 1);
     fg_out->value = mask & 1;
 
-    out_fg_->publish(fg_out);
-    out_bg_->publish(bg_out);
+    msg::publish(out_fg_, fg_out);
+    msg::publish(out_bg_, bg_out);
 }
 

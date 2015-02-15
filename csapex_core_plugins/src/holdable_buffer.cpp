@@ -2,8 +2,7 @@
 #include "holdable_buffer.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/connection_type.h>
 #include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
@@ -32,7 +31,7 @@ void HoldableBuffer::setup()
 
 void HoldableBuffer::process()
 {
-    ConnectionType::ConstPtr msg = in_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(in_);
 
     unsigned int size = readParameter<int>("buffer size");
     bool hold = readParameter<bool>("hold");
@@ -59,12 +58,8 @@ void HoldableBuffer::process()
         }
     }
 
-    if(out_->getType()->rawName() != msg->rawName()) {
-        out_->setType(msg->toType());
-    }
-
     if(out) {
-        out_->publish(out);
+        msg::publish(out_, out);
     }
 
 }

@@ -8,8 +8,7 @@
 #include <opencv2/opencv.hpp>
 
 /// HEADER
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 
 namespace csapex
 {

@@ -2,8 +2,7 @@
 #include "double_buffer.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/connection_type.h>
 #include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
@@ -30,15 +29,11 @@ void DoubleBuffer::setup()
 
 void DoubleBuffer::process()
 {
-    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
 
     buffer_back_ = msg->clone();
 
     swapBuffers();
-
-    if(output_->getType()->name() != msg->name()) {
-        output_->setType(msg->toType());
-    }
 
     dirty_ = true;
 }
@@ -62,6 +57,6 @@ void DoubleBuffer::tick()
     ConnectionType::Ptr msg;
     msg = buffer_front_;
 
-    output_->publish(msg);
+    msg::publish(output_, msg);
     dirty_ = false;
 }

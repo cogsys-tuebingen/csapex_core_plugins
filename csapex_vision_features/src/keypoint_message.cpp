@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex_vision/yaml_io.hpp>
 #include <csapex/utility/register_msg.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::KeypointMessage)
 
@@ -15,6 +16,27 @@ using namespace connection_types;
 KeypointMessage::KeypointMessage()
     : MessageTemplate<std::vector<cv::KeyPoint>, KeypointMessage> ("/")
 {}
+
+bool KeypointMessage::isContainer() const
+{
+    return true;
+}
+
+ConnectionType::Ptr KeypointMessage::nestedType() const
+{
+    return makeEmpty<GenericValueMessage<cv::KeyPoint>>();
+}
+
+ConnectionType::ConstPtr KeypointMessage::nestedValue(std::size_t i) const
+{
+    GenericValueMessage<cv::KeyPoint>::Ptr v(new GenericValueMessage<cv::KeyPoint>);
+    v->value = value.at(i);
+    return v;
+}
+std::size_t KeypointMessage::nestedValueCount() const
+{
+    throw value.size();
+}
 
 
 

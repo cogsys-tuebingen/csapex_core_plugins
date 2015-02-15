@@ -58,6 +58,8 @@ add_library(csapex_core_plugins
     src/double_input.cpp
     src/text_input.cpp
 
+    src/demultiplexer.cpp
+
 
     src/output_display.cpp
     src/output_display_adapter.cpp

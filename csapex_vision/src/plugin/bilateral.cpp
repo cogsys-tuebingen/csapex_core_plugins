@@ -2,8 +2,7 @@
 #include "bilateral.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -66,7 +65,7 @@ BilateralFilter::BilateralFilter() :
 
 void BilateralFilter::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     d_           = readParameter<int>("d");
@@ -75,7 +74,7 @@ void BilateralFilter::process()
 
     /// WORKAROUND
     bilateralFilter(in->value, out->value, d_, sigma_color_, sigma_space_);
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void BilateralFilter::setup()

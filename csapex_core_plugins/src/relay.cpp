@@ -2,8 +2,7 @@
 #include "relay.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/connection_type.h>
 #include <csapex/msg/message.h>
 #include <csapex/model/node_modifier.h>
@@ -26,9 +25,8 @@ void Relay::setup()
 
 void Relay::process()
 {
-    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
 
-    output_->setType(input_->getType());
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }
 

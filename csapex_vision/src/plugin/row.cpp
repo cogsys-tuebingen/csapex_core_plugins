@@ -2,8 +2,7 @@
 #include "row.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/range_parameter.h>
@@ -22,7 +21,7 @@ Row::Row() :
 
 void Row::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
     CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(in->value.empty()) {
@@ -47,7 +46,7 @@ void Row::process()
     int index = readParameter<int>("row");
     out->value = in->value.row(index);
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void Row::setup()

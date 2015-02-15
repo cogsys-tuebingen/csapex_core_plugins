@@ -2,8 +2,7 @@
 #include "label_pointcloud.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_point_cloud/point_cloud_message.h>
@@ -28,8 +27,8 @@ LabelPointCloud::LabelPointCloud()
 
 void LabelPointCloud::process()
 {
-    PointCloudMessage::ConstPtr cloud(input_->getMessage<PointCloudMessage>());
-    label_msg_ = labels_->getMessage<CvMatMessage>();
+    PointCloudMessage::ConstPtr cloud(msg::getMessage<PointCloudMessage>(input_));
+    label_msg_ = msg::getMessage<CvMatMessage>(labels_);
 
     if((label_msg_->value.type() & 7) != CV_16U) {
         throw std::runtime_error("Label matrix must be of type CV_16UC1");
@@ -147,5 +146,5 @@ void LabelPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr clou
 
     bool exclude_default_label = readParameter<bool>("exclude default label");
     implementation::Label<PointT>::apply(cloud, out, label_msg_->value, exclude_default_label);
-    output_->publish(out);
+    msg::publish(output_, out);
 }

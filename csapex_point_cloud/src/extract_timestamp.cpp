@@ -2,8 +2,7 @@
 #include "extract_timestamp.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -28,7 +27,7 @@ void ExtractTimeStampCloud::setup()
 
 void ExtractTimeStampCloud::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<ExtractTimeStampCloud>(this, msg), msg->value);
 }
@@ -38,7 +37,7 @@ void ExtractTimeStampCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPt
 {
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
     time->value = time->value.fromNSec(cloud->header.stamp * 1000);
-    output_->publish(time);
+    msg::publish(output_, time);
 
-    output_frame_->publish(cloud->header.frame_id);
+    msg::publish(output_frame_, cloud->header.frame_id);
 }

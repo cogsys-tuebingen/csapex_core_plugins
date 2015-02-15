@@ -2,7 +2,7 @@
 #include "text_display.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/message_factory.h>
@@ -23,7 +23,7 @@ void TextDisplay::setup()
 }
 void TextDisplay::process()
 {
-    connection_types::Message::ConstPtr msg = connector_->getMessage<connection_types::Message>();
+    connection_types::Message::ConstPtr msg = msg::getMessage<connection_types::Message>(connector_);
 
     YAML::Node node;
     {

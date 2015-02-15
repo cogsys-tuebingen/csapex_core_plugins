@@ -1,8 +1,7 @@
 #include "labeled_cloud_to_indices.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_core_plugins/vector_message.h>
@@ -30,7 +29,7 @@ LabeledCloudToIndices::LabeledCloudToIndices()
 
 void LabeledCloudToIndices::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<LabeledCloudToIndices>(this, msg), msg->value);
 }
@@ -116,5 +115,5 @@ void LabeledCloudToIndices::inputCloud(typename pcl::PointCloud<PointT>::ConstPt
     implementation::Conversion<PointT>::apply(cloud, cluster_indices);
 
 
-    output_->publish<GenericVectorMessage, pcl::PointIndices >(cluster_indices);
+    msg::publish<GenericVectorMessage, pcl::PointIndices >(output_, cluster_indices);
 }

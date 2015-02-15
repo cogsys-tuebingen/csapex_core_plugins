@@ -8,9 +8,7 @@
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_laser_processing/data/segment.h>
@@ -49,12 +47,12 @@ ScanSegmentation2DRenderer::ScanSegmentation2DRenderer() :
 
 void ScanSegmentation2DRenderer::process()
 {
-    std::shared_ptr<std::vector<Segment> const> segments = input_->getMessage<GenericVectorMessage, Segment>();
+    std::shared_ptr<std::vector<Segment> const> segments = msg::getMessage<GenericVectorMessage, Segment>(input_);
     if(readParameter<bool>("publish marker")) {
         publishMarkers(*segments);
     }
 
-    if(output_->isConnected()) {
+    if(msg::isConnected(output_)) {
         render(*segments);
     }
 }
@@ -128,7 +126,7 @@ void ScanSegmentation2DRenderer::render(const std::vector<Segment> &segments)
         }
     }
 
-    output_->publish(output);
+    msg::publish(output_, output);
 }
 
 void ScanSegmentation2DRenderer::publishMarkers(const std::vector<Segment> &segments)
@@ -173,7 +171,7 @@ void ScanSegmentation2DRenderer::publishMarkers(const std::vector<Segment> &segm
         marker_array->markers.push_back(marker);
     }
 
-    output_marker_->publish<visualization_msgs::MarkerArray>(marker_array);
+    msg::publish<visualization_msgs::MarkerArray>(output_marker_, marker_array);
 
 }
 

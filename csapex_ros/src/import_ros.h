@@ -53,6 +53,7 @@ private:
 
     int retries_;
 
+    int buffer_size_;
     bool running_;
 };
 

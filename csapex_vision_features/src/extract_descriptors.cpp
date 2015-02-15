@@ -11,8 +11,7 @@
 #include <utils_vision/utils/extractor_manager.h>
 #include <utils_param/range_parameter.h>
 #include <utils_param/io.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <csapex/utility/q_signal_relay.h>
@@ -76,22 +75,22 @@ void ExtractDescriptors::process()
     }
 
     if(!extractor) {
-        setError(true, "no extractor set");
+        modifier_->setError("no extractor set");
         return;
     }
 
-    setError(false);
+    modifier_->setNoError();
 
-    CvMatMessage::ConstPtr img_msg = in_img->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img_msg = msg::getMessage<CvMatMessage>(in_img);
 
     DescriptorMessage::Ptr des_msg(new DescriptorMessage);
 
     // need to clone keypoints, extractDescriptors will modify the vector
-    KeypointMessage::Ptr key_msg = in_key->getClonedMessage<KeypointMessage>();
+    KeypointMessage::Ptr key_msg = msg::getClonedMessage<KeypointMessage>(in_key);
 
     extractor->extractDescriptors(img_msg->value, key_msg->value, des_msg->value);
 
-    out_des->publish(des_msg);
+    msg::publish(out_des, des_msg);
 }
 
 void ExtractDescriptors::update()

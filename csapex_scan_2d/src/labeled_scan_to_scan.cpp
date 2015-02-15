@@ -2,8 +2,7 @@
 #include "labeled_scan_to_scan.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -27,10 +26,10 @@ void LabeledScanToScan::setup()
 
 void LabeledScanToScan::process()
 {
-    LabeledScanMessage::ConstPtr lmsg = in_->getMessage<LabeledScanMessage>();
+    LabeledScanMessage::ConstPtr lmsg = msg::getMessage<LabeledScanMessage>(in_);
 
     ScanMessage::Ptr msg(new ScanMessage);
     msg->value = lmsg->value;
 
-    out_->publish(msg);
+    msg::publish(out_, msg);
 }

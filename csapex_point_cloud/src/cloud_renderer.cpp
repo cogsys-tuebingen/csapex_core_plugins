@@ -2,8 +2,7 @@
 #include "cloud_renderer.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -82,7 +81,7 @@ void CloudRenderer::process()
         refresh_request();
     }
 
-    PointCloudMessage::ConstPtr msg = input_->getMessage<PointCloudMessage>();
+    PointCloudMessage::ConstPtr msg = msg::getMessage<PointCloudMessage>(input_);
 
     message_ = msg;
     result_.reset();
@@ -91,10 +90,10 @@ void CloudRenderer::process()
 
     // todo wait only in !headless
 
-    if(output_->isConnected()) {
+    if(msg::isConnected(output_)) {
         if(waitForView()) {
             if(result_) {
-                output_->publish(result_);
+                msg::publish(output_, result_);
             }
         }
     }

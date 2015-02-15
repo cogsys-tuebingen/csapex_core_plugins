@@ -2,8 +2,7 @@
 #include "static_roi.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -39,8 +38,8 @@ void StaticRoi::process()
     RoiMessage::Ptr     roi(new RoiMessage);
     std::pair<int,int>  plane_size;
 
-    if(in_->hasMessage()) {
-        CvMatMessage::ConstPtr in = in_->getMessage<CvMatMessage>();
+    if(msg::hasMessage(in_)) {
+        CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(in_);
 
         plane_size.first  = in->value.cols;
         plane_size.second = in->value.rows;
@@ -78,5 +77,5 @@ void StaticRoi::process()
     roi->value.setH(h->as<int>());
     roi->value.setW(w->as<int>());
 
-    out_->publish(roi);
+    msg::publish(out_, roi);
 }

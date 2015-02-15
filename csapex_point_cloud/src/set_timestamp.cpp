@@ -2,8 +2,7 @@
 #include "set_timestamp.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -29,7 +28,7 @@ void SetTimeStamp::setup()
 
 void SetTimeStamp::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<SetTimeStamp>(this, msg), msg->value);
 }
@@ -37,7 +36,7 @@ void SetTimeStamp::process()
 template <class PointT>
 void SetTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    connection_types::TimeStampMessage::ConstPtr time = input_time_->getMessage<connection_types::TimeStampMessage>();
+    connection_types::TimeStampMessage::ConstPtr time = msg::getMessage<connection_types::TimeStampMessage>(input_time_);
 
     connection_types::PointCloudMessage::Ptr msg(new connection_types::PointCloudMessage(cloud->header.frame_id, time->value.toNSec()));
 
@@ -47,10 +46,10 @@ void SetTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
     typename pcl::PointCloud<PointT>::Ptr out_cloud = boost::get<typename pcl::PointCloud<PointT>::Ptr>(msg->value);
 
-    if(input_frame_->hasMessage()) {
-        out_cloud->header.frame_id = input_frame_->getValue<std::string>();
+    if(msg::hasMessage(input_frame_)) {
+        out_cloud->header.frame_id = msg::getValue<std::string>(input_frame_);
     }
     out_cloud->header.stamp = time->value.toNSec() / 1e3; // microseconds
 
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }

@@ -2,8 +2,7 @@
 #include "color_pointcloud.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/color.hpp>
@@ -29,7 +28,7 @@ ColorPointCloud::ColorPointCloud()
 
 void ColorPointCloud::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<ColorPointCloud>(this, msg), msg->value);
 }
@@ -118,5 +117,5 @@ void ColorPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr clou
     implementation::Conversion<PointT>::apply(cloud, out_cloud);
 
     out->value = out_cloud;
-    output_->publish(out);
+    msg::publish(output_, out);
 }

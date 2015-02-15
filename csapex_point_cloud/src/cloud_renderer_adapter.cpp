@@ -2,10 +2,10 @@
 #include "cloud_renderer_adapter.h"
 
 /// PROJECT
-#include <csapex/msg/output.h>
 #include <csapex/utility/register_node_adapter.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/q_signal_relay.h>
+#include <csapex/msg/io.h>
 
 /// SYSTEM
 #include <QtOpenGL>
@@ -269,7 +269,7 @@ void CloudRendererAdapter::paintGLImpl(bool request)
     view_->blockSignals(false);
     //    view_->scene()->update();
 
-    if(wrapped_->output_->isConnected() && request){
+    if(msg::isConnected(wrapped_->output_) && request){
         cv::Mat mat = QtCvImageConverter::Converter<QImage, QSharedPointer>::QImage2Mat(img);
         wrapped_->publishImage(mat);
     }

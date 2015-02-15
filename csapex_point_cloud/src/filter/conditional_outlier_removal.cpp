@@ -2,8 +2,7 @@
 #include "conditional_outlier_removal.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -64,7 +63,7 @@ void ConditionalOutlierRemoval::setup()
 
 void ConditionalOutlierRemoval::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
     boost::apply_visitor (PointCloudMessage::Dispatch<ConditionalOutlierRemoval>(this, msg), msg->value);
 }
 
@@ -115,7 +114,7 @@ void ConditionalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Con
 
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     out->value = cloud_filtered;
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void ConditionalOutlierRemoval::update()

@@ -2,8 +2,7 @@
 #include "nand.h"
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_value_message.hpp>
 
@@ -30,8 +29,8 @@ void NAND::setup()
 
 void NAND::process()
 {
-    bool a = in_a->getValue<bool>();
-    bool b = in_b->getValue<bool>();
+    bool a = msg::getValue<bool>(in_a);
+    bool b = msg::getValue<bool>(in_b);
 
-    out->publish(!(a && b));
+    msg::publish(out, !(a && b));
 }

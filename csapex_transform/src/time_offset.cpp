@@ -5,8 +5,7 @@
 #include <csapex_ros/time_stamp_message.h>
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -24,7 +23,7 @@ TimeOffset::TimeOffset()
 
 void TimeOffset::process()
 {
-    connection_types::TimeStampMessage::ConstPtr in = input_->getMessage<connection_types::TimeStampMessage>();
+    connection_types::TimeStampMessage::ConstPtr in = msg::getMessage<connection_types::TimeStampMessage>(input_);
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
 
     double offset = readParameter<double>("offset");
@@ -32,13 +31,13 @@ void TimeOffset::process()
     if(in->value.toNSec() != 0) {
         aerr << in->value.toNSec() << " + " << offset << " * " << 1e6 << " = " << (in->value.toNSec() + offset * 1e6) << std::endl,
                 time->value = time->value.fromNSec((in->value.toNSec() + offset * 1000000));
-        setError(false);
+        modifier_->setNoError();
     } else {
-        setError(true, "Time is 0, using current time as base", EL_WARNING);
+        modifier_->setWarning("Time is 0, using current time as base");
         ros::Time now = ros::Time::now();
         time->value = now - ros::Duration(0, offset * 1000000);
     }
-    output_->publish(time);
+    msg::publish(output_, time);
 }
 
 void TimeOffset::setup()

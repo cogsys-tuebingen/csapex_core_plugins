@@ -4,8 +4,7 @@
 #include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -46,8 +45,8 @@ void TransformFromModels::process()
     param_cone_angle_ = readParameter<double>("Cone angle");
 
     // Read Inputs
-    std::shared_ptr<std::vector<ModelMessage> const> models_ref = input_models_ref_->getMessage<GenericVectorMessage, ModelMessage>();
-    std::shared_ptr<std::vector<ModelMessage> const> models_new = input_models_new_->getMessage<GenericVectorMessage, ModelMessage>();
+    std::shared_ptr<std::vector<ModelMessage> const> models_ref = msg::getMessage<GenericVectorMessage, ModelMessage>(input_models_ref_);
+    std::shared_ptr<std::vector<ModelMessage> const> models_new = msg::getMessage<GenericVectorMessage, ModelMessage>(input_models_new_);
 
 
     // Process data
@@ -96,12 +95,12 @@ void TransformFromModels::process()
         // Publish Output - Debug
         stringstream << "x = " << x << ",y = " << y << ",z = " << z
                      << ",r = " << RAD_TO_DEG(roll) << ",p = " << RAD_TO_DEG(pitch)<< ",y = " << RAD_TO_DEG(yaw);
-        output_text_->publish(stringstream.str());
+        msg::publish(output_text_, stringstream.str());
 
         // Publish Output - Transformation
         connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
         msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
-        output_->publish(msg);
+        msg::publish(output_, msg);
 
 
     } else {

@@ -2,7 +2,7 @@
 #include "say_text.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_value_message.hpp>
@@ -23,7 +23,7 @@ void SayText::setup()
 
 void SayText::process()
 {
-    std::string msg = connector_->getValue<std::string>();
+    std::string msg = msg::getValue<std::string>(connector_);
 
     if(!msg.empty()) {
         std::stringstream cmd;

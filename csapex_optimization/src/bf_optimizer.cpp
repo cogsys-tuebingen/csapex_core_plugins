@@ -2,8 +2,7 @@
 #include "bf_optimizer.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -43,7 +42,7 @@ void BFOptimizer::tick()
     // initilization?
     if(!init_) {
         current_index_.clear();
-        foreach(param::Parameter::Ptr p, getParameters()) {
+        for(param::Parameter::Ptr p : getParameters()) {
             param::RangeParameter::Ptr dbl_range = std::dynamic_pointer_cast<param::RangeParameter>(p);
             if(!dbl_range || !dbl_range->is<double>()) {
                 continue;
@@ -61,7 +60,7 @@ void BFOptimizer::tick()
         running_ = true;
 
         AnyMessage::Ptr trigger(new AnyMessage);
-        out_->publish(trigger);
+        msg::publish(out_, trigger);
     } else {
         stop();
     }
@@ -70,7 +69,7 @@ void BFOptimizer::tick()
 int BFOptimizer::stepsNecessary()
 {
     int steps = 1;
-    foreach(param::Parameter::Ptr p, getParameters()) {
+    for(param::Parameter::Ptr p : getParameters()) {
         param::RangeParameter::Ptr dbl_range = std::dynamic_pointer_cast<param::RangeParameter>(p);
         if(!dbl_range || !dbl_range->is<double>()) {
             continue;
@@ -118,7 +117,7 @@ void BFOptimizer::process()
     apex_assert_hard(running_);
     running_ = false;
 
-    double fitness = in_->getValue<double>();
+    double fitness = msg::getValue<double>(in_);
     ainfo << "got fitness: " << fitness << std::endl;
 }
 

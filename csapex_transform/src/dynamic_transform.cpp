@@ -7,8 +7,7 @@
 #include <csapex_ros/tf_listener.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/signal/trigger.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -47,7 +46,7 @@ bool DynamicTransform::canTick()
     return !init_
             ||
             (source_p->noParameters() != 0 && target_p->noParameters() != 0 &&
-            !frame_in_source_->isConnected() && !frame_in_target_->isConnected() && !time_in_->isConnected());
+            !msg::isConnected(frame_in_source_) && !msg::isConnected(frame_in_target_) && !msg::isConnected(time_in_));
 }
 
 void DynamicTransform::tick()
@@ -61,14 +60,14 @@ void DynamicTransform::process()
         refresh();
     }
 
-    setError(false);
+    modifier_->setNoError();
     bool update = false;
 
-    bool use_in_frame = frame_in_source_->hasMessage();
+    bool use_in_frame = msg::hasMessage(frame_in_source_);
     source_p->setEnabled(!use_in_frame);
 
     if(use_in_frame) {
-        std::string from = frame_in_source_->getValue<std::string>();
+        std::string from = msg::getValue<std::string>(frame_in_source_);
 
         if(readParameter<std::string>("source") != from) {
             setParameter("source", from);
@@ -77,11 +76,11 @@ void DynamicTransform::process()
     }
 
 
-    bool use_to_frame = frame_in_target_->hasMessage();
+    bool use_to_frame = msg::hasMessage(frame_in_target_);
     target_p->setEnabled(!use_to_frame);
 
     if(use_to_frame) {
-        std::string target = frame_in_target_->getValue<std::string>();
+        std::string target = msg::getValue<std::string>(frame_in_target_);
 
         if(readParameter<std::string>("target") != target) {
             setParameter("target", target);
@@ -94,8 +93,8 @@ void DynamicTransform::process()
     }
 
 
-    if(time_in_->isConnected() && time_in_->hasMessage()) {
-        connection_types::TimeStampMessage::ConstPtr time_msg = time_in_->getMessage<connection_types::TimeStampMessage>();
+    if(msg::isConnected(time_in_) && msg::hasMessage(time_in_)) {
+        connection_types::TimeStampMessage::ConstPtr time_msg = msg::getMessage<connection_types::TimeStampMessage>(time_in_);
         publishTransform(time_msg->value);
     } else {
         publishTransform(ros::Time(0));
@@ -133,19 +132,19 @@ void DynamicTransform::publishTransform(const ros::Time& time)
                 tfl.lookupTransform(target, source, time, t);
             } else {
                 if(tfl.canTransform(target, source, ros::Time(0))) {
-                    setError(true, "cannot transform, using latest transform", EL_WARNING);
+                    modifier_->setWarning("cannot transform, using latest transform");
                     tfl.lookupTransform(target, source, ros::Time(0), t);
                 } else {
-                    setError(true, "cannot transform at all...", EL_WARNING);
+                    modifier_->setWarning("cannot transform at all...");
                     return;
                 }
             }
-            setError(false);
+            modifier_->setNoError();
         } else {
             return;
         }
     } catch(const tf2::TransformException& e) {
-        setError(true, e.what(), EL_WARNING);
+        modifier_->setWarning(e.what());
         return;
     }
 
@@ -153,9 +152,9 @@ void DynamicTransform::publishTransform(const ros::Time& time)
     msg->value = t;
     msg->frame_id = target;
     msg->child_frame = source;
-    output_->publish(msg);
+    msg::publish(output_, msg);
 
-    output_frame_->publish(readParameter<std::string>("target"));
+    msg::publish(output_frame_, readParameter<std::string>("target"));
 }
 
 void DynamicTransform::setup()

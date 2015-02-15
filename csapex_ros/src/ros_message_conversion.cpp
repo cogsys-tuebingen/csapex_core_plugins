@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_ros/ros_message_conversion.h>
 
+/// PROJECT
+#include <csapex/msg/io.h>
+
 using namespace csapex;
 
 RosMessageConversion::RosMessageConversion()

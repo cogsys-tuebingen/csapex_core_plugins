@@ -24,14 +24,25 @@ void ConfusionMatrix::reportClassification(int actual, int prediction)
     ++histogram[std::make_pair(actual, prediction)];
 }
 
+void ConfusionMatrix::resetClass(int _class)
+{
+    for(std::vector<int>::const_iterator it = classes.begin(); it != classes.end(); ++it) {
+        histogram[std::make_pair(*it, _class)] = 0;
+        histogram[std::make_pair(_class, *it)] = 0;
+    }
+}
+
 void ConfusionMatrix::initializeClass(int _class)
 {
     classes.push_back(_class);
     classes_set.insert(_class);
 
-    for(std::vector<int>::const_iterator it = classes.begin(); it != classes.end(); ++it) {
+    resetClass(_class);
+}
 
-        histogram[std::make_pair(*it, _class)] = 0;
-        histogram[std::make_pair(_class, *it)] = 0;
+void ConfusionMatrix::reset()
+{
+    for(auto c: classes) {
+        resetClass(c);
     }
 }

@@ -2,7 +2,7 @@
 #include "export_cout.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
 #include <csapex/model/node_modifier.h>
@@ -27,7 +27,7 @@ void ExportCout::setup()
 
 void ExportCout::process()
 {
-    ConnectionType::ConstPtr msg = connector_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(connector_);
 
     ainfo << "writing to cout: ";
 

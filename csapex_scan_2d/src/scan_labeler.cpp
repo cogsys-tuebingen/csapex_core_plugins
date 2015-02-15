@@ -2,8 +2,7 @@
 #include "scan_labeler.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
@@ -54,12 +53,12 @@ void ScanLabeler::process()
 
     result_.reset();
 
-    if(input_->isMessage<LabeledScanMessage>()) {
-        LabeledScanMessage::ConstPtr scan_msg = input_->getMessage<LabeledScanMessage>();
+    if(msg::isMessage<LabeledScanMessage>(input_)) {
+        LabeledScanMessage::ConstPtr scan_msg = msg::getMessage<LabeledScanMessage>(input_);
         display_request(&scan_msg->value);
 
-    } else if(input_->isMessage<ScanMessage>()) {
-        ScanMessage::ConstPtr scan_msg = input_->getMessage<ScanMessage>();
+    } else if(msg::isMessage<ScanMessage>(input_)) {
+        ScanMessage::ConstPtr scan_msg = msg::getMessage<ScanMessage>(input_);
         display_request(&scan_msg->value);
 
     } else {
@@ -67,7 +66,7 @@ void ScanLabeler::process()
     }
 
     if(waitForView()) {
-        output_->publish(result_);
+        msg::publish(output_, result_);
     }
 }
 

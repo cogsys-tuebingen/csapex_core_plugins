@@ -2,8 +2,7 @@
 #include "crop_box.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
@@ -38,7 +37,7 @@ void CropBox::setup()
 
 void CropBox::process()
 {
-    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<CropBox>(this, msg), msg->value);
 }
@@ -58,17 +57,17 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     crop.setMax(max_pt_);
     crop.setInputCloud(cloud);
 
-    if(output_pos_->isConnected()) {
+    if(msg::isConnected(output_pos_)) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
         crop.filter(*out);
         out->header = cloud->header;
 
         PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         msg->value = out;
-        output_pos_->publish(msg);
+        msg::publish(output_pos_, msg);
     }
 
-    if(output_neg_->isConnected()) {
+    if(msg::isConnected(output_neg_)) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
         crop.setNegative(true);
         crop.filter(*out);
@@ -76,7 +75,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
         PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         msg->value = out;
-        output_neg_->publish(msg);
+        msg::publish(output_neg_, msg);
     }
 
 }

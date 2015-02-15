@@ -2,8 +2,7 @@
 #include "match_descriptors.h"
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_vision/utils/matcher.h>
 #include <utils_vision/data/matchable.h>
 #include <utils_vision/utils/hough_peak.h>
@@ -314,18 +313,18 @@ void MatchDescriptors::update()
 
 void MatchDescriptors::process()
 {
-    CvMatMessage::ConstPtr image1 = in_img_1->getMessage<CvMatMessage>();
-    CvMatMessage::ConstPtr image2 = in_img_2->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr image1 = msg::getMessage<CvMatMessage>(in_img_1);
+    CvMatMessage::ConstPtr image2 = msg::getMessage<CvMatMessage>(in_img_2);
 
-    KeypointMessage::ConstPtr keypoints1 = in_key_1->getMessage<KeypointMessage>();
-    KeypointMessage::ConstPtr keypoints2 = in_key_2->getMessage<KeypointMessage>();
+    KeypointMessage::ConstPtr keypoints1 = msg::getMessage<KeypointMessage>(in_key_1);
+    KeypointMessage::ConstPtr keypoints2 = msg::getMessage<KeypointMessage>(in_key_2);
 
-    DescriptorMessage::ConstPtr descriptors1 = in_des_1->getMessage<DescriptorMessage>();
-    DescriptorMessage::ConstPtr descriptors2 = in_des_2->getMessage<DescriptorMessage>();
+    DescriptorMessage::ConstPtr descriptors1 = msg::getMessage<DescriptorMessage>(in_des_1);
+    DescriptorMessage::ConstPtr descriptors2 = msg::getMessage<DescriptorMessage>(in_des_2);
 
 
     if(descriptors1->value.type() != descriptors2->value.type()) {
-        setError(true, "#types don't match");
+        modifier_->setError("#types don't match");
         return;
     }
 
@@ -348,7 +347,7 @@ void MatchDescriptors::process()
 
     cv::drawMatches(image1->value, keypoints1->value, image2->value, keypoints2->value, matches, out->value, matchColor, singlePointColor, mask, flag);
 
-    out_img->publish(out);
+    msg::publish(out_img, out);
 }
 
 void MatchDescriptors::match(CvMatMessage::ConstPtr image1,

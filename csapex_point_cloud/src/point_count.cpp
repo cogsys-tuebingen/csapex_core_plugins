@@ -2,7 +2,7 @@
 #include "point_count.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 
@@ -25,7 +25,7 @@ void PointCount::setup()
 
 void PointCount::process()
 {
-    PointCloudMessage::ConstPtr msg = input_->getMessage<PointCloudMessage>();
+    PointCloudMessage::ConstPtr msg = msg::getMessage<PointCloudMessage>(input_);
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCount>(this, msg), msg->value);
 }

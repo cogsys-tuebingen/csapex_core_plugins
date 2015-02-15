@@ -6,8 +6,7 @@
 #include <csapex_ros/ros_message_conversion.h>
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/msg/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
@@ -15,9 +14,7 @@
 #include <utils_param/parameter_factory.h>
 #include <utils_param/set_parameter.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/model/node_worker.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/node_worker.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <csapex/utility/timer.h>
 
@@ -44,7 +41,7 @@ ros::Time rosTime(u_int64_t stamp_micro_seconds) {
 }
 
 ImportRos::ImportRos()
-    : connector_(nullptr), retries_(0), running_(true)
+    : connector_(nullptr), retries_(0), buffer_size_(1024), running_(true)
 {
 }
 
@@ -54,7 +51,7 @@ void ImportRos::setup()
     connector_ = modifier_->addOutput<connection_types::AnyMessage>("Something");
 
 
-    std::function<bool()> connected_condition = (std::bind(&Input::isConnected, input_time_));
+    std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
 
     param::Parameter::Ptr buffer_p = param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
     addConditionalParameter(buffer_p, connected_condition);
@@ -96,7 +93,7 @@ void ImportRos::refresh()
 
         param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
         if(setp) {
-            setError(false);
+            modifier_->setNoError();
             bool found = false;
             std::vector<std::string> topics_str;
             topics_str.push_back(no_topic_);
@@ -118,7 +115,7 @@ void ImportRos::refresh()
         }
     }
 
-    setError(true, "no ROS connection", EL_WARNING);
+    modifier_->setWarning("no ROS connection");
 }
 
 void ImportRos::update()
@@ -144,7 +141,7 @@ bool ImportRos::doSetTopic()
     getRosHandler().refresh();
 
     if(!getRosHandler().isConnected()) {
-        setError(true, "no connection to ROS");
+        modifier_->setError("no connection to ROS");
         return false;
     }
 
@@ -172,7 +169,7 @@ bool ImportRos::doSetTopic()
     }
     ss << ".";
 
-    setError(true, ss.str(), EL_WARNING);
+    modifier_->setWarning(ss.str());
     return false;
 }
 
@@ -181,30 +178,30 @@ void ImportRos::processROS()
     INTERLUDE("process");
 
     // first check if connected -> if not connected, we only use tick
-    if(!input_time_->isConnected()) {
+    if(!msg::isConnected(input_time_)) {
         return;
     }
 
     // now that we are connected, check that we have a valid message
-    if(!input_time_->hasMessage()) {
+    if(!msg::hasMessage(input_time_)) {
         return;
     }
 
     // INPUT CONNECTED
-    connection_types::TimeStampMessage::ConstPtr time = input_time_->getMessage<connection_types::TimeStampMessage>();
+    connection_types::TimeStampMessage::ConstPtr time = msg::getMessage<connection_types::TimeStampMessage>(input_time_);
 
     if(msgs_.empty()) {
         return;
     }
 
     if(time->value == ros::Time(0)) {
-        setError(true, "incoming time is 0, using default behaviour", EL_WARNING);
+        modifier_->setWarning("incoming time is 0, using default behaviour");
         publishLatestMessage();
         return;
     }
 
     if(ros::Time(msgs_.back()->stamp_micro_seconds) == ros::Time(0)) {
-        setError(true, "buffered time is 0, using default behaviour", EL_WARNING);
+        modifier_->setWarning("buffered time is 0, using default behaviour");
         publishLatestMessage();
         return;
     }
@@ -248,7 +245,7 @@ void ImportRos::processROS()
     }
 
     if(msgs_.empty()) {
-        setError(true, "No messages received", EL_WARNING);
+        modifier_->setWarning("No messages received");
         return;
     }
 
@@ -258,12 +255,12 @@ void ImportRos::processROS()
     }
 
     if(first_after == msgs_.begin()) {
-        connector_->publish(*first_after);
+        msg::publish(connector_, *first_after);
         return;
 
     } else if(first_after == msgs_.end()) {
         assert(false);
-        setError(true, "Should not happen.....", EL_WARNING);
+        modifier_->setWarning("Should not happen.....");
         return;
 
     } else {
@@ -273,9 +270,9 @@ void ImportRos::processROS()
         ros::Duration diff2 = rosTime((*last_before)->stamp_micro_seconds) - time->value;
 
         if(diff1 < diff2) {
-            connector_->publish(*first_after);
+            msg::publish(connector_, *first_after);
         } else {
-            connector_->publish(*last_before);
+            msg::publish(connector_, *last_before);
         }
     }
 }
@@ -303,7 +300,7 @@ void ImportRos::waitForTopic()
 
 bool ImportRos::canTick()
 {
-    return !input_time_->isConnected() && !msgs_.empty();
+    return !msg::isConnected(input_time_) && !msgs_.empty();
 }
 
 void ImportRos::tickROS()
@@ -314,7 +311,7 @@ void ImportRos::tickROS()
         waitForTopic();
     }
 
-    if(input_time_->isConnected()) {
+    if(msg::isConnected(input_time_)) {
         return;
     }
 
@@ -348,7 +345,7 @@ void ImportRos::publishLatestMessage()
         }
     }
 
-    connector_->publish(msgs_.back());
+    msg::publish(connector_, msgs_.back());
 
     if(!readParameter<bool>("latch")) {
         msgs_.clear();
@@ -357,19 +354,17 @@ void ImportRos::publishLatestMessage()
 
 void ImportRos::callback(ConnectionTypeConstPtr message)
 {
-    NodeWorker* nw = getNodeWorker();
-
-    if(!nw) {
-        return;
-    }
-
     connection_types::Message::ConstPtr msg = std::dynamic_pointer_cast<connection_types::Message const>(message);
-    if(msg && !nw->isPaused()) {
+    if(msg) {
         if(!msgs_.empty() && msg->stamp_micro_seconds < msgs_.front()->stamp_micro_seconds) {
             awarn << "detected time anomaly -> reset";
             msgs_.clear();
         }
         msgs_.push_back(msg);
+
+        while((int) msgs_.size() > buffer_size_) {
+            msgs_.pop_front();
+        }
     }
 }
 
@@ -382,13 +377,13 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
     current_subscriber.shutdown();
 
     if(RosMessageConversion::instance().canHandle(topic)) {
-        setError(false);
+        modifier_->setNoError();
 
         current_topic_ = topic;
         updateSubscriber();
 
     } else {
-        setError(true, std::string("cannot import topic of type ") + topic.datatype);
+        modifier_->setError(std::string("cannot import topic of type ") + topic.datatype);
         return;
     }
 

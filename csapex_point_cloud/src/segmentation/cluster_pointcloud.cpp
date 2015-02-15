@@ -1,8 +1,7 @@
 #include "cluster_pointcloud.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
@@ -47,7 +46,7 @@ ClusterPointcloud::ClusterPointcloud()
 
 void ClusterPointcloud::process()
 {
-    PointCloudMessage::ConstPtr msg(in_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_cloud_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointcloud>(this, msg), msg->value);
 
@@ -89,7 +88,7 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
       std::stringstream stringstream;
       stringstream << "Found clusters: " << cluster_indices->size();
       std::string text_msg = stringstream.str();
-      out_debug_->publish(text_msg);
-      out_->publish<GenericVectorMessage, pcl::PointIndices >(cluster_indices);
+      msg::publish(out_debug_, text_msg);
+      msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, cluster_indices);
 
 }

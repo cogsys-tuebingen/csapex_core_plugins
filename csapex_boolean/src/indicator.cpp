@@ -2,8 +2,7 @@
 #include "indicator.h"
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -27,6 +26,6 @@ void Indicator::setup()
 
 void Indicator::process()
 {
-    bool a = in->getValue<bool>();
+    bool a = msg::getValue<bool>(in);
     getParameter("signal")->set<bool>(a);
 }

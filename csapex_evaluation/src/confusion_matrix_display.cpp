@@ -2,7 +2,7 @@
 #include "confusion_matrix_display.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/message_factory.h>
@@ -23,7 +23,7 @@ void ConfusionMatrixDisplay::setup()
 }
 void ConfusionMatrixDisplay::process()
 {
-    connection_types::ConfusionMatrixMessage::ConstPtr msg = connector_->getMessage<connection_types::ConfusionMatrixMessage>();
+    connection_types::ConfusionMatrixMessage::ConstPtr msg = msg::getMessage<connection_types::ConfusionMatrixMessage>(connector_);
 
     confusion_ = msg->confusion;
 

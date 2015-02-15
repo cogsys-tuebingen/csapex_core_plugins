@@ -15,11 +15,14 @@ public:
     ConfusionMatrix();
     void reportClassification(int truth, int estimation);
 
+    void reset();
+
 public:
     std::vector<int> classes;
     std::map<std::pair<int, int>, int> histogram;
 
 private:
+    void resetClass(int _class);
     void initializeClass(int _class);
 
 private:

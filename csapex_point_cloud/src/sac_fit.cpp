@@ -1,8 +1,7 @@
 #include "sac_fit.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
@@ -49,14 +48,14 @@ SacFit::SacFit()
 
 void SacFit::process()
 {
-//    if (in_indices_->isConnected()) {
+//    if (msg::isConnected(in_indices_)) {
 //    } else {
 //        setSynchronizedInputs(false);
 //    }
     // Get indices from in_indices_
 
 
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
     boost::apply_visitor (PointCloudMessage::Dispatch<SacFit>(this, msg), msg->value);
 
 
@@ -87,16 +86,16 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     typename pcl::PointCloud<PointT>::Ptr cloud_residue(new pcl::PointCloud<PointT>);
 
     std::shared_ptr<std::vector<ModelMessage> >  models(new std::vector<ModelMessage>);
-    //inliers_size = findModels<PointT>(cloud, cloud_extracted, *models, cloud_residue, out_cloud_residue_->isConnected());
+    //inliers_size = findModels<PointT>(cloud, cloud_extracted, *models, cloud_residue, msg::isConnected(out_cloud_residue_));
 
 
 
     point_cloud_out->header = cloud->header;
 
     // If inlices are connected search for models in the clusters
-    if (in_indices_->hasMessage()) {
+    if (msg::hasMessage(in_indices_)) {
 
-        cluster_indices_ = in_indices_->getMessage<GenericVectorMessage, pcl::PointIndices>();
+        cluster_indices_ = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(in_indices_);
         // search for clusters
         //int j = 0;
         for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices_->begin(); it != cluster_indices_->end (); ++it)
@@ -115,7 +114,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
             // find a model for the points
             typename pcl::PointCloud<PointT>::Ptr cloud_extracted(new pcl::PointCloud<PointT>);
             pcl::ModelCoefficients::Ptr coefficients_shape (new pcl::ModelCoefficients);
-            inliers_size = findSingleModel<PointT>(cloud_cluster, cloud_extracted, coefficients_shape, cloud_residue, out_cloud_residue_->isConnected());
+            inliers_size = findSingleModel<PointT>(cloud_cluster, cloud_extracted, coefficients_shape, cloud_residue, msg::isConnected(out_cloud_residue_));
 
             if (inliers_size > min_inliers_) {
                 // Save Model
@@ -133,7 +132,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
         // find a model in the whole cloud
         typename pcl::PointCloud<PointT>::Ptr cloud_extracted(new pcl::PointCloud<PointT>);
         pcl::ModelCoefficients::Ptr coefficients_shape (new pcl::ModelCoefficients);
-        inliers_size = findSingleModel<PointT>(cloud, cloud_extracted, coefficients_shape, cloud_residue, out_cloud_residue_->isConnected());
+        inliers_size = findSingleModel<PointT>(cloud, cloud_extracted, coefficients_shape, cloud_residue, msg::isConnected(out_cloud_residue_));
 
         if (inliers_size > min_inliers_) {
             // Save Model
@@ -149,29 +148,29 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
     // Publish the found modelcoefficients as a vector
     if (models->size() > 0) {
-        out_model_->publish<GenericVectorMessage, ModelMessage>(models);
+        msg::publish<GenericVectorMessage, ModelMessage>(out_model_, models);
         stringstream << "found " << models->size() << " models and " << point_cloud_out->size() <<  "points total";
     } else {
         stringstream << "Zero inliers found";
     }
 
     // Publish all points that belong to some models
-    if (out_cloud_->isConnected()) {
+    if (msg::isConnected(out_cloud_)) {
         if (inliers_size > 0 ) {
             PointCloudMessage::Ptr cloud_msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
             cloud_msg->value = point_cloud_out;
-            out_cloud_->publish(cloud_msg);
+            msg::publish(out_cloud_, cloud_msg);
         }
     }
 
     // Publish everything that doesent belong to a model
-    if (out_cloud_residue_->isConnected()) {
+    if (msg::isConnected(out_cloud_residue_)) {
         PointCloudMessage::Ptr cloud_msg_residue(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         cloud_msg_residue->value = cloud_residue;
-        out_cloud_residue_->publish(cloud_msg_residue);
+        msg::publish(out_cloud_residue_, cloud_msg_residue);
     }
 
-    out_text_->publish(stringstream.str());
+    msg::publish(out_text_, stringstream.str());
 
 
     // Description of Cone parameters: http://docs.pointclouds.org/1.6.0/classpcl_1_1_sample_consensus_model_cone.html

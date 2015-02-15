@@ -2,8 +2,7 @@
 #include "image_collage.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -45,8 +44,8 @@ void ImageCollage::setup()
 
 void ImageCollage::process()
 {
-    CvMatMessage::ConstPtr primary = in_main_->getMessage<CvMatMessage>();
-    CvMatMessage::ConstPtr secondary = in_secondary_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr primary = msg::getMessage<CvMatMessage>(in_main_);
+    CvMatMessage::ConstPtr secondary = msg::getMessage<CvMatMessage>(in_secondary_);
 
     CvMatMessage::Ptr output(new CvMatMessage(primary->getEncoding(), primary->stamp_micro_seconds));
 
@@ -80,6 +79,6 @@ void ImageCollage::process()
 
     source.copyTo(target);
 
-    out_->publish(output);
+    msg::publish(out_, output);
 }
 

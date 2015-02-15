@@ -2,8 +2,7 @@
 #include "color_segmentation.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -28,7 +27,7 @@ void ColorSegmentation::setParameterState(Memento::Ptr memento)
 
 void ColorSegmentation::process()
 {
-    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_img_);
 
     bool encoding_changed = !img->getEncoding().matches(current_encoding);
     current_encoding = img->getEncoding();
@@ -44,22 +43,20 @@ void ColorSegmentation::process()
             triggerParameterSetChanged();
             update();
         }
-
-        triggerModelChanged();
     }
 
     cv::Mat bw;
     cv::inRange(img->value, min, max, bw);
 
-    if(input_mask_->hasMessage()) {
-        CvMatMessage::ConstPtr mask = input_mask_->getMessage<CvMatMessage>();
+    if(msg::hasMessage(input_mask_)) {
+        CvMatMessage::ConstPtr mask = msg::getMessage<CvMatMessage>(input_mask_);
         cv::min(mask->value, bw, out_mask->value);
     } else {
         out_mask->value = bw;
     }
 
     apex_assert_hard(!out_mask->value.empty());
-    output_mask_->publish(out_mask);
+    msg::publish(output_mask_, out_mask);
 }
 
 namespace {

@@ -2,7 +2,7 @@
 #include "empty_labeled_feature_message.h"
 
 /// PROJECT
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
 #include <csapex/msg/message_factory.h>
 #include <csapex/model/connection_type.h>
@@ -42,5 +42,5 @@ void EmptyLabeledFeaturesMessage::tick()
 {
     FeaturesMessage::Ptr static_feature(new FeaturesMessage);
     static_feature->classification = readParameter<int>("class id");
-    output_->publish(static_feature);
+    msg::publish(output_, static_feature);
 }

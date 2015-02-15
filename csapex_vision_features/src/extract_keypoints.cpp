@@ -11,8 +11,7 @@
 #include <utils_param/range_parameter.h>
 #include <utils_param/value_parameter.h>
 #include <utils_param/io.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <csapex/utility/q_signal_relay.h>
@@ -75,18 +74,18 @@ void ExtractKeypoints::process()
     }
 
     if(!extractor) {
-        setError(true, "no extractor set");
+        modifier_->setError("no extractor set");
         return;
     }
 
-    setError(false);
+    modifier_->setNoError();
 
-    CvMatMessage::ConstPtr img_msg = in_img->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img_msg = msg::getMessage<CvMatMessage>(in_img);
 
     KeypointMessage::Ptr key_msg(new KeypointMessage);
 
-    if(in_mask->hasMessage()) {
-        CvMatMessage::ConstPtr mask_msg = in_mask->getMessage<CvMatMessage>();
+    if(msg::hasMessage(in_mask)) {
+        CvMatMessage::ConstPtr mask_msg = msg::getMessage<CvMatMessage>(in_mask);
 
         extractor->extractKeypoints(img_msg->value, mask_msg->value, key_msg->value);
 
@@ -94,7 +93,7 @@ void ExtractKeypoints::process()
         extractor->extractKeypoints(img_msg->value, cv::Mat(), key_msg->value);
     }
 
-    out_key->publish(key_msg);
+    msg::publish(out_key, key_msg);
 }
 
 

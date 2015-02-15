@@ -2,8 +2,7 @@
 #include "blur.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -21,14 +20,14 @@ BoxBlur::BoxBlur()
 
 void BoxBlur::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     int kernel = readParameter<int>("kernel");
 
     cv::blur(in->value,out->value, cv::Size(kernel, kernel));
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void BoxBlur::setup()

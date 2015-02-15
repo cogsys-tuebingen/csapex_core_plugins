@@ -2,8 +2,7 @@
 #include "split_labeled_scan.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -37,16 +36,16 @@ void SplitLabeledScan::setup()
 
 void SplitLabeledScan::process()
 {
-    LabeledScanMessage::ConstPtr input = in_->getMessage<LabeledScanMessage>();
+    LabeledScanMessage::ConstPtr input = msg::getMessage<LabeledScanMessage>(in_);
 
     ScanMessage::Ptr output_scan(new ScanMessage);
     output_scan->value = input->value;
 
 
-    out_scan_->publish(output_scan);
+    msg::publish(out_scan_, output_scan);
 
     std::shared_ptr<std::vector<int> > labels(new std::vector<int>);
     *labels = input->value.labels;
-    out_labels_->publish<GenericVectorMessage, int>(labels);
+    msg::publish<GenericVectorMessage, int>(out_labels_, labels);
 }
 

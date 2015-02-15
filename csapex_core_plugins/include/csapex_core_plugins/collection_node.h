@@ -5,7 +5,7 @@
 #include <csapex/model/node.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/signal/trigger.h>
 
@@ -33,12 +33,12 @@ public:
 
     void process()
     {
-        if(in_vector->hasMessage()) {
-            std::shared_ptr<std::vector<MessageType> const> input = in_vector->getMessage<connection_types::GenericVectorMessage, MessageType>();
+        if(msg::hasMessage(in_vector)) {
+            std::shared_ptr<std::vector<MessageType> const> input = msg::getMessage<connection_types::GenericVectorMessage, MessageType>(in_vector);
             buffer_.insert(buffer_.end(), input->begin(), input->end());
         }
-        if(in_single->hasMessage()) {
-            std::shared_ptr<MessageType const> input = in_single->getMessage<MessageType>();
+        if(msg::hasMessage(in_single)) {
+            std::shared_ptr<MessageType const> input = msg::getMessage<MessageType>(in_single);
             buffer_.push_back(*input);
         }
     }

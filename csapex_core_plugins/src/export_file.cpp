@@ -2,8 +2,7 @@
 #include "export_file.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/connection_type.h>
 #include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
@@ -56,7 +55,7 @@ void ExportFile::process()
         return;
     }
 
-    ConnectionType::ConstPtr msg = connector_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(connector_);
     connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<const connection_types::VectorMessage>(msg);
     if(vector) {
         exportVector(vector);

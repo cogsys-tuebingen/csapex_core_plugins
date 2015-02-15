@@ -2,8 +2,7 @@
 #include "segment_labeler.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_core_plugins/vector_message.h>
@@ -40,10 +39,10 @@ void SegmentLabeler::setup()
 
 void SegmentLabeler::process()
 {
-    std::shared_ptr< std::vector<Segment> const > segments_in = in_segments_->getMessage<GenericVectorMessage, Segment>();
+    std::shared_ptr< std::vector<Segment> const > segments_in = msg::getMessage<GenericVectorMessage, Segment>(in_segments_);
     std::shared_ptr< std::vector<Segment> > segments_out (new std::vector<Segment>);
 
-    LabeledScanMessage::ConstPtr scan = in_labeled_scan_->getMessage<LabeledScanMessage>();
+    LabeledScanMessage::ConstPtr scan = msg::getMessage<LabeledScanMessage>(in_labeled_scan_);
     std::vector<int>::const_iterator labeled_ray = scan->value.labels.begin();
 
     segments_out->resize(segments_in->size());
@@ -72,7 +71,6 @@ void SegmentLabeler::process()
         segment.classification = classification;
     }
 
-    out_->publish<GenericVectorMessage, Segment>(segments_out);
-
+    msg::publish<GenericVectorMessage, Segment>(out_, segments_out);
 }
 

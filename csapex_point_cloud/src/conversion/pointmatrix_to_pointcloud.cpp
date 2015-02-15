@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_point_cloud/point_cloud_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -51,13 +50,13 @@ PointmatrixToPointcloud::PointmatrixToPointcloud()
 
 void PointmatrixToPointcloud::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     PointCloudMessage::Ptr out(new PointCloudMessage(readParameter<std::string>("frame"), in->stamp_micro_seconds));
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
 
     implementation::convert(in->value, cloud);
     out->value = cloud;
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void PointmatrixToPointcloud::setup()

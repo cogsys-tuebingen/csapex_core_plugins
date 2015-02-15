@@ -2,8 +2,7 @@
 #include "image_roi.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -76,7 +75,7 @@ void ImageRoi::process()
 {
     InteractiveNode::process();
 
-    CvMatMessage::ConstPtr in = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
     if(in->value.empty())
         return;
 
@@ -116,7 +115,7 @@ void ImageRoi::process()
 
     if(result_) {
         result_->value.setClassification(class_label);
-        output_->publish(result_);
+        msg::publish(output_, result_);
     }
 }
 

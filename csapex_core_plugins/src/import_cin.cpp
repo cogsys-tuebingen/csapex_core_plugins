@@ -2,10 +2,10 @@
 #include "import_cin.h"
 
 /// PROJECT
-#include <csapex/msg/output.h>
 #include <csapex/msg/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/yaml_node_builder.h>
@@ -86,8 +86,7 @@ void ImportCin::tick()
                 continue;
             }
 
-            connector_->setType(msg->toType());
-            connector_->publish(msg);
+            msg::publish(connector_, msg);
         }
     } catch(YAML::ParserException& e) {
         ainfo << "YAML::ParserException: " << e.what() << "\n";

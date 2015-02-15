@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_ros/ros_node.h>
 
+/// PROJECT
+#include <csapex/model/node_modifier.h>
+
 using namespace csapex;
 
 RosNode::RosNode()
@@ -31,7 +34,7 @@ void RosNode::tick()
 
     } else {
         ros_init_ = false;
-        setError(true, "[tick] no ROS connection", EL_WARNING);
+        modifier_->setWarning("[tick] no ROS connection");
     }
 }
 
@@ -53,6 +56,6 @@ void RosNode::process()
 
     } else {
         ros_init_ = false;
-        setError(true, "[process] no ROS connection", EL_WARNING);
+        modifier_->setWarning("[process] no ROS connection");
     }
 }

@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <utils_vision/utils/extractor.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision_features/keypoint_message.h>
 #include <utils_param/parameter_factory.h>
@@ -33,8 +32,8 @@ DisplayKeypoints::DisplayKeypoints()
 
 void DisplayKeypoints::process()
 {
-    CvMatMessage::ConstPtr img_msg = in_img->getMessage<CvMatMessage>();
-    KeypointMessage::ConstPtr key_msg = in_key->getMessage<KeypointMessage>();
+    CvMatMessage::ConstPtr img_msg = msg::getMessage<CvMatMessage>(in_img);
+    KeypointMessage::ConstPtr key_msg = msg::getMessage<KeypointMessage>(in_key);
 
     CvMatMessage::Ptr out(new CvMatMessage(img_msg->getEncoding(), img_msg->stamp_micro_seconds));
 
@@ -49,7 +48,7 @@ void DisplayKeypoints::process()
 
     cv::drawKeypoints(img_msg->value, key_msg->value, out->value, color, flags);
 
-    out_img->publish(out);
+    msg::publish(out_img, out);
 }
 
 void DisplayKeypoints::setup()

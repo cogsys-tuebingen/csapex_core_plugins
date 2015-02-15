@@ -2,8 +2,7 @@
 #include "decision_tree.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -39,7 +38,7 @@ void DecisionTree::setup()
 
 void DecisionTree::process()
 {
-    std::shared_ptr<std::vector<FeaturesMessage> const> input = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
+    std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
     std::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
 
     std::size_t n = input->size();
@@ -52,10 +51,10 @@ void DecisionTree::process()
 
     } else {
         *output = *input;
-        setError(true, "cannot classfiy, no tree loaded", EL_WARNING);
+        modifier_->setWarning("cannot classfiy, no tree loaded");
     }
 
-    out_->publish<GenericVectorMessage, FeaturesMessage>(output);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);
 }
 
 connection_types::FeaturesMessage DecisionTree::classify(const FeaturesMessage &input)

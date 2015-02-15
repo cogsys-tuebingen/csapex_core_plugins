@@ -1,8 +1,7 @@
 #include "split_clustered_cloud.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_core_plugins/vector_message.h>
@@ -27,7 +26,7 @@ SplitClusteredCloud::SplitClusteredCloud()
 
 void SplitClusteredCloud::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<SplitClusteredCloud>(this, msg), msg->value);
 }
@@ -49,7 +48,7 @@ void SplitClusteredCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
     std::vector<PointCloudMessage::Ptr> out_msgs;
     std::shared_ptr<std::vector<pcl::PointIndices> const> cluster_indices;
-    cluster_indices = in_indices_->getMessage<GenericVectorMessage, pcl::PointIndices>();
+    cluster_indices = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(in_indices_);
 
     for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices->begin(); it != cluster_indices->end (); ++it)
     {
@@ -69,8 +68,8 @@ void SplitClusteredCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     }
 
 
-    if (out_msgs.size() >= 1) output1_->publish(out_msgs.at(0));
-    if (out_msgs.size() >= 2) output2_->publish(out_msgs.at(1));
-    if (out_msgs.size() >= 3) output3_->publish(out_msgs.at(2));
-    if (out_msgs.size() >= 4) output4_->publish(out_msgs.at(3));
+    if (out_msgs.size() >= 1) msg::publish(output1_, out_msgs.at(0));
+    if (out_msgs.size() >= 2) msg::publish(output2_, out_msgs.at(1));
+    if (out_msgs.size() >= 3) msg::publish(output3_, out_msgs.at(2));
+    if (out_msgs.size() >= 4) msg::publish(output4_, out_msgs.at(3));
 }

@@ -2,8 +2,7 @@
 #include "svm_trainer.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -118,8 +117,8 @@ void SVMTrainer::setupParameters()
 
 void SVMTrainer::process()
 {
-    if(in_->hasMessage()) {
-        FeaturesMessage::ConstPtr msg = in_->getMessage<FeaturesMessage>();
+    if(msg::hasMessage(in_)) {
+        FeaturesMessage::ConstPtr msg = msg::getMessage<FeaturesMessage>(in_);
         m_.lock();
 
         if(step_ == 0)
@@ -131,9 +130,9 @@ void SVMTrainer::process()
         m_.unlock();
     }
 
-    if(in_vector_->hasMessage()) {
+    if(msg::hasMessage(in_vector_)) {
         std::shared_ptr<std::vector<FeaturesMessage> const> in =
-                in_vector_->getMessage<GenericVectorMessage, FeaturesMessage>();
+                msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_vector_);
 
         m_.lock();
         for(unsigned int i = 0 ; i < in->size() ; ++i) {

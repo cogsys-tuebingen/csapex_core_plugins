@@ -2,8 +2,7 @@
 #include "pointcloud_to_pointmatrix.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -24,7 +23,7 @@ PointCloudToPointMatrix::PointCloudToPointMatrix()
 
 void PointCloudToPointMatrix::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToPointMatrix>(this, msg), msg->value);
 }
@@ -101,6 +100,6 @@ void PointCloudToPointMatrix::inputCloud(typename pcl::PointCloud<PointT>::Const
     CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, cloud->header.stamp));
     CvMatMessage::Ptr mask(new CvMatMessage(enc::mono, cloud->header.stamp));
     implementation::Impl<PointT>::convert(cloud, out->value, mask->value);
-    output_->publish(out);
-    mask_->publish(mask);
+    msg::publish(output_, out);
+    msg::publish(mask_, mask);
 }

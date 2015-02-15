@@ -2,7 +2,7 @@
 #include "output_display.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/manager/message_renderer_manager.h>
@@ -28,7 +28,7 @@ void OutputDisplay::setup()
 
 void OutputDisplay::process()
 {
-    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
 
     MessageRenderer::Ptr renderer = MessageRendererManager::instance().createMessageRenderer(msg);
 

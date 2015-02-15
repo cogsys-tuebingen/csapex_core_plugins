@@ -4,10 +4,8 @@
 /// PROJECT
 #include <csapex/manager/message_provider_manager.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/model/node_worker.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
-#include <csapex/msg/output.h>
 #include <csapex/signal/trigger.h>
 #include <csapex/utility/qt_helper.hpp>
 #include <csapex/utility/register_apex_plugin.h>
@@ -50,6 +48,7 @@ void FileImporter::setupParameters()
     std::function<bool()> cond_file = [directory]() { return !directory->as<bool>(); };
     std::function<bool()> cond_dir = [directory]() { return directory->as<bool>(); };
 
+    addConditionalParameter(param::ParameterFactory::declareBool("recursive import", false), cond_dir);
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
     addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
@@ -107,10 +106,10 @@ void FileImporter::tick()
 
             Output* output = outputs_[slot];
 
-            if(output->isConnected()) {
+            if(msg::isConnected(output)) {
                 Message::Ptr msg = provider_->next(slot);
                 if(msg) {
-                    output->publish(msg);
+                    msg::publish(output, msg);
                 }
             }
         }
@@ -119,7 +118,6 @@ void FileImporter::tick()
         apex_assert_hard(directory_import_);
 
         int current = readParameter<int>("directory/current");
-        ++current;
 
         int files = dir_files_.size();
 
@@ -136,6 +134,8 @@ void FileImporter::tick()
             if(doImport(QString::fromStdString(dir_files_[current]))) {
                 tick();
             }
+
+            ++current;
         }
         setParameter("directory/current", current);
     }
@@ -143,17 +143,29 @@ void FileImporter::tick()
 
 void FileImporter::doImportDir(const QString &dir_string)
 {
-    boost::filesystem::path directory(dir_string.toStdString());
-    boost::filesystem::directory_iterator dir(directory);
-    boost::filesystem::directory_iterator end;
 
     dir_files_.clear();
 
-    for(; dir != end; ++dir) {
-        boost::filesystem::path path = dir->path();
+    bool recursive = readParameter<bool>("recursive import");
 
-        dir_files_.push_back(path.string());
-    }
+    std::function<void(const boost::filesystem::path&)> crawl_dir = [&](const boost::filesystem::path& directory) {
+        boost::filesystem::directory_iterator dir(directory);
+        boost::filesystem::directory_iterator end;
+        for(; dir != end; ++dir) {
+            boost::filesystem::path path = dir->path();
+
+            if(boost::filesystem::is_directory(path)) {
+                if(recursive) {
+                    crawl_dir(path);
+                }
+            } else {
+                dir_files_.push_back(path.string());
+            }
+
+        }
+    };
+    boost::filesystem::path directory(dir_string.toStdString());
+    crawl_dir(directory);
 
     std::sort(dir_files_.begin(), dir_files_.end());
 
@@ -180,13 +192,13 @@ bool FileImporter::doImport(const QString& file_path)
         if(urlfile.exists()) {
             path = urlfile.fileName();
         } else {
-            setError(true, std::string("the file ") + file_path.toStdString() + " couldn't be opened");
+            modifier_->setError(std::string("the file ") + file_path.toStdString() + " couldn't be opened");
             return false;
         }
     }
 
     file_ = file_path;
-    setError(false);
+    modifier_->setNoError();
 
     try {
         {
@@ -211,7 +223,7 @@ bool FileImporter::doImport(const QString& file_path)
         return provider_.get();
 
     } catch(const std::exception& e) {
-        setError(true);
+        modifier_->setNoError();
         throw std::runtime_error(std::string("cannot load file ") + file_.toStdString() + ": " + e.what());
     }
 
@@ -239,22 +251,22 @@ void FileImporter::updateOutputs()
         bool del = true;
         for(int i = output_count-1 ; i >= (int) slot_count; --i) {
             Output* output = outputs_[i];
-            if(output->isConnected()) {
+            if(msg::isConnected(output)) {
                 del = false;
             }
 
             if(del) {
-                modifier_->removeOutput(output->getUUID());
+                modifier_->removeOutput(msg::getUUID(output));
                 outputs_.erase(outputs_.begin() + i);
             } else {
-                output->disable();
+                msg::disable(output);
             }
         }
     }
 
     for(std::size_t i = 0; i < slot_count; ++i) {
         Output* out = outputs_[i];
-        out->setLabel(provider_->getLabel(i));
+        msg::setLabel(out, provider_->getLabel(i));
     }
 }
 

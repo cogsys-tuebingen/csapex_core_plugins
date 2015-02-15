@@ -2,7 +2,7 @@
 #include "text_input.h"
 
 /// PROJECT
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -34,5 +34,5 @@ void TextInput::setup()
 
 void TextInput::publish()
 {
-    connector_->publish(readParameter<std::string>("text"));
+    msg::publish(connector_, readParameter<std::string>("text"));
 }

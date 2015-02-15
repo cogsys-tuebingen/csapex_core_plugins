@@ -6,8 +6,7 @@
 
 /// PROJECT
 #include <csapex/model/node_modifier.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TransformInverter, csapex::Node)
@@ -20,13 +19,13 @@ TransformInverter::TransformInverter()
 
 void TransformInverter::process()
 {
-    connection_types::TransformMessage::ConstPtr trafo = input_->getMessage<connection_types::TransformMessage>();
+    connection_types::TransformMessage::ConstPtr trafo = msg::getMessage<connection_types::TransformMessage>(input_);
 
     // inverter flips the frames
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage(trafo->child_frame, trafo->frame_id));
     msg->value = trafo->value.inverse();
 
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }
 
 

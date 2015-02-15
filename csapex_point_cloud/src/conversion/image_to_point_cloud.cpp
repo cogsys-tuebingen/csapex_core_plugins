@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -134,11 +133,11 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
 
 void ImageToPointCloud::process()
 {
-    CvMatMessage::ConstPtr depth_msg(input_depth_->getMessage<CvMatMessage>());
+    CvMatMessage::ConstPtr depth_msg(msg::getMessage<CvMatMessage>(input_depth_));
 
     PointCloudMessage::Ptr result(new PointCloudMessage(readParameter<std::string>("frame"), depth_msg->stamp_micro_seconds));
-    if(input_intensity_->hasMessage()) {
-        CvMatMessage::ConstPtr intensity_msg(input_intensity_->getMessage<CvMatMessage>());
+    if(msg::hasMessage(input_intensity_)) {
+        CvMatMessage::ConstPtr intensity_msg(msg::getMessage<CvMatMessage>(input_intensity_));
         result = transform<pcl::PointXYZI>(depth_msg->value, intensity_msg->value);
 
     } else {
@@ -146,5 +145,5 @@ void ImageToPointCloud::process()
     }
 
 
-    output_->publish(result);
+    msg::publish(output_, result);
 }

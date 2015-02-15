@@ -2,8 +2,7 @@
 #include "random_trees.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -39,7 +38,7 @@ void RandomTrees::setup()
 
 void RandomTrees::process()
 {
-    std::shared_ptr<std::vector<FeaturesMessage> const> input = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
+    std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
     std::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
 
     std::size_t n = input->size();
@@ -52,10 +51,10 @@ void RandomTrees::process()
 
     } else {
         *output = *input;
-        setError(true, "cannot classfiy, no forest loaded", EL_WARNING);
+        modifier_->setWarning("cannot classfiy, no forest loaded");
     }
 
-    out_->publish<GenericVectorMessage, FeaturesMessage>(output);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);
 }
 
 connection_types::FeaturesMessage RandomTrees::classify(const FeaturesMessage &input)

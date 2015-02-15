@@ -2,8 +2,7 @@
 #include "merge_clouds.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -38,15 +37,15 @@ void MergeClouds::process()
 {
     result_.reset(new pcl::PointCloud<pcl::PointXYZL>);
 
-    PointCloudMessage::ConstPtr msg_a(in_a_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg_a(msg::getMessage<PointCloudMessage>(in_a_));
     boost::apply_visitor (PointCloudMessage::Dispatch<MergeClouds>(this, msg_a), msg_a->value);
 
-    PointCloudMessage::ConstPtr msg_b(in_b_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg_b(msg::getMessage<PointCloudMessage>(in_b_));
     boost::apply_visitor (PointCloudMessage::Dispatch<MergeClouds>(this, msg_a), msg_b->value);
 
     PointCloudMessage::Ptr output(new PointCloudMessage(msg_a->frame_id, msg_a->stamp_micro_seconds));
     output->value = result_;
-    out_->publish(output);
+    msg::publish(out_, output);
 }
 
 namespace

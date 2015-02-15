@@ -2,8 +2,7 @@
 #include "extract_timestamp.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -26,11 +25,11 @@ void ExtractTimeStamp::setup()
 
 void ExtractTimeStamp::process()
 {
-    Message::ConstPtr msg = input_->getMessage<Message>();
+    Message::ConstPtr msg = msg::getMessage<Message>(input_);
 
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
     time->value = time->value.fromNSec(msg->stamp_micro_seconds * 1e3);
     time->stamp_micro_seconds = msg->stamp_micro_seconds;
-    output_->publish(time);
+    msg::publish(output_, time);
 }
 

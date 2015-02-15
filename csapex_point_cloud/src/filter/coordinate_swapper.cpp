@@ -2,8 +2,7 @@
 #include "coordinate_swapper.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
@@ -92,7 +91,7 @@ void CoordinateSwapper::setup()
 
 void CoordinateSwapper::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
     boost::apply_visitor (PointCloudMessage::Dispatch<CoordinateSwapper>(this, msg), msg->value);
 }
 
@@ -105,5 +104,5 @@ void CoordinateSwapper::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
 
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     out->value = cloud_swapped;
-    output_->publish(out);
+    msg::publish(output_, out);
 }

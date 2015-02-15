@@ -2,8 +2,7 @@
 #include "statistical_outlier_removal.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -37,15 +36,15 @@ void StatisticalOutlierRemoval::setup()
 
 void StatisticalOutlierRemoval::process()
 {
-    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
     boost::apply_visitor (PointCloudMessage::Dispatch<StatisticalOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
 void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    bool indeces_out = output_indeces_->isConnected();
-    bool cloud_out   = output_cloud_->isConnected();
+    bool indeces_out = msg::isConnected(output_indeces_);
+    bool cloud_out   = msg::isConnected(output_cloud_);
 
     if(!indeces_out && !cloud_out)
         return;
@@ -61,8 +60,8 @@ void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Con
     sor.setMeanK(mean_k);
     sor.setNegative(negative);
     sor.setStddevMulThresh(std_dev_mul_thresh);
-    if(input_indeces_->hasMessage()) {
-        PointIndecesMessage::ConstPtr indeces(input_indeces_->getMessage<PointIndecesMessage>());
+    if(msg::hasMessage(input_indeces_)) {
+        PointIndecesMessage::ConstPtr indeces(msg::getMessage<PointIndecesMessage>(input_indeces_));
         sor.setIndices(indeces->value);
     }
     if(cloud_out) {
@@ -70,12 +69,12 @@ void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Con
         sor.filter(*cloud_filtered);
         PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         out->value = cloud_filtered;
-        output_cloud_->publish(out);
+        msg::publish(output_cloud_, out);
     }
     if(indeces_out) {
         PointIndecesMessage::Ptr indeces_filtered(new PointIndecesMessage);
         indeces_filtered->value->header = cloud->header;
         sor.filter(indeces_filtered->value->indices);
-        output_indeces_->publish(indeces_filtered);
+        msg::publish(output_indeces_, indeces_filtered);
     }
 }

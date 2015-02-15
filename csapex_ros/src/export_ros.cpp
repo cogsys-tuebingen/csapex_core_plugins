@@ -6,7 +6,7 @@
 #include <csapex_ros/ros_handler.h>
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
@@ -48,7 +48,7 @@ void ExportRos::processROS()
         return;
     }
 
-    ConnectionType::ConstPtr msg = connector_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(connector_);
 
     connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
 
@@ -63,8 +63,7 @@ void ExportRos::processROS()
         pub = RosMessageConversion::instance().advertise(type, topic_, 1, true);
         create_pub = false;
 
-        connector_->setLabel(pub.getTopic());
-        connector_->setType(type);
+        msg::setLabel(connector_, pub.getTopic());
     }
 
     if(vector) {

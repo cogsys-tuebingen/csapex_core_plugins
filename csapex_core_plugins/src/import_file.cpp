@@ -2,8 +2,7 @@
 #include "import_file.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -104,8 +103,7 @@ void ImportFile::tick()
                 if(path.filename().string().substr(0, prefix_.size()) == prefix_) {
                     if(path.extension() == Settings::message_extension) {
                         ConnectionType::Ptr msg = MessageFactory::readMessage(path.string());
-                        out_->setType(msg->toType());
-                        out_->publish(msg);
+                        msg::publish(out_, msg);
                         continue_searching = false;
                     } else {
                         aerr << "cannot handle type of file " << path << std::endl;

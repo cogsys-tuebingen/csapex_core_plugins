@@ -2,7 +2,7 @@
 #include "evaluate_binary_classifier.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -31,7 +31,7 @@ void EvaluateBinaryClassifier::setup()
 
 void EvaluateBinaryClassifier::process()
 {
-    connection_types::ConfusionMatrixMessage::ConstPtr msg = in_->getMessage<connection_types::ConfusionMatrixMessage>();
+    connection_types::ConfusionMatrixMessage::ConstPtr msg = msg::getMessage<connection_types::ConfusionMatrixMessage>(in_);
 
     const ConfusionMatrix& cm = msg->confusion;
 

@@ -2,8 +2,7 @@
 #include "model_to_marker.h"
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -26,7 +25,7 @@ ModelToMarker::ModelToMarker()
 
 void ModelToMarker::process()
 {
-    std::shared_ptr<std::vector<ModelMessage> const> models = input_->getMessage<GenericVectorMessage, ModelMessage>();
+    std::shared_ptr<std::vector<ModelMessage> const> models = msg::getMessage<GenericVectorMessage, ModelMessage>(input_);
 
     const std::vector<int>& color = readParameter<std::vector<int> >("color/marker");
 
@@ -43,7 +42,7 @@ void ModelToMarker::process()
 
             publishText(*(it)); // publish the model as text for debuging
         }
-        output_->publish<visualization_msgs::MarkerArray>(marker_array);
+        msg::publish<visualization_msgs::MarkerArray>(output_, marker_array);
     }
 
 
@@ -169,6 +168,6 @@ void ModelToMarker::publishText(const ModelMessage model_message)
     }
     stringstream << " Prob: " << model_message.probability;
     std::string text_msg = stringstream.str();
-    output_text_->publish(text_msg);
+    msg::publish(output_text_, text_msg);
 }
 

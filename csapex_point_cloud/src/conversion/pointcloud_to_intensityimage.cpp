@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -28,7 +27,7 @@ void PointCloudToIntensityImage::setup()
 
 void PointCloudToIntensityImage::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToIntensityImage>(this, msg), msg->value);
 }
@@ -81,5 +80,5 @@ void PointCloudToIntensityImage::inputCloudImpl(typename pcl::PointCloud<pcl::Po
         ++pt;
     }
 
-    output_->publish(output);
+    msg::publish(output_, output);
 }

@@ -5,8 +5,7 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 
 /// SYSTEM
@@ -39,13 +38,13 @@ void Filter::setup()
 
 void Filter::process()
 {
-    CvMatMessage::Ptr img_msg = input_img_->getClonedMessage<CvMatMessage>();
+    CvMatMessage::Ptr img_msg = msg::getClonedMessage<CvMatMessage>(input_img_);
     if(img_msg.get() && !img_msg->value.empty()) {
         CvMatMessage::Ptr mask_msg;
         cv::Mat mask;
         if(usesMask()) {
-            if(input_mask_->hasMessage()) {
-                mask_msg = input_mask_->getClonedMessage<CvMatMessage>();
+            if(msg::hasMessage(input_mask_)) {
+                mask_msg = msg::getClonedMessage<CvMatMessage>(input_mask_);
             } else {
                 mask_msg.reset(new CvMatMessage(enc::mono, img_msg->stamp_micro_seconds));
             }
@@ -54,9 +53,9 @@ void Filter::process()
 
         filter(img_msg->value, mask);
 
-        output_img_->publish(img_msg);
+        msg::publish(output_img_, img_msg);
         if(usesMask() && mask_msg != nullptr) {
-            output_mask_->publish(mask_msg);
+            msg::publish(output_mask_, mask_msg);
         }
     }
 }

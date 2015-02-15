@@ -2,8 +2,7 @@
 #include "gaussian_blur.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -32,11 +31,11 @@ GaussianBlur::GaussianBlur() :
 
 void GaussianBlur::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     cv::GaussianBlur(in->value, out->value, cv::Size(kernel_, kernel_), sigma_x_, sigma_y_);
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void GaussianBlur::setup()

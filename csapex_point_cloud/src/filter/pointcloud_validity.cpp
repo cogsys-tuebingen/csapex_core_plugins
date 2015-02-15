@@ -2,8 +2,7 @@
 #include "pointcloud_validity.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_point_cloud/indeces_message.h>
@@ -25,7 +24,7 @@ PointCloudValidity::PointCloudValidity()
 
 void PointCloudValidity::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudValidity>(this, msg), msg->value);
 }
@@ -123,15 +122,15 @@ struct Vadility {
 template <class PointT>
 void PointCloudValidity::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    if(mask_->isConnected()) {
+    if(msg::isConnected(mask_)) {
         CvMatMessage::Ptr out(new CvMatMessage(enc::mono, cloud->header.stamp));
         Vadility<PointT>::mask(cloud, out->value);
-        mask_->publish(out);
+        msg::publish(mask_, out);
     }
-    if(index_->isConnected()) {
+    if(msg::isConnected(index_)) {
         PointIndecesMessage::Ptr out(new PointIndecesMessage);
         out->value->header = cloud->header;
         Vadility<PointT>::inceces(cloud, out->value->indices);
-        index_->publish(out);
+        msg::publish(index_, out);
     }
 }

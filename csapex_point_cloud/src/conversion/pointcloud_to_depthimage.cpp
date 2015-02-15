@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -30,7 +29,7 @@ void PointCloudToDepthImage::setup()
 
 void PointCloudToDepthImage::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToDepthImage>(this, msg), msg->value);
 }
@@ -80,5 +79,5 @@ void PointCloudToDepthImage::inputCloud(typename pcl::PointCloud<PointT>::ConstP
 
     output->value = (fit ? (output->value - min_dist) : output->value) * s;
 
-    output_->publish(output);
+    msg::publish(output_, output);
 }

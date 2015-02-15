@@ -4,6 +4,7 @@
 /// PROJECT
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/assert.h>
+#include <csapex/model/node_modifier.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -58,7 +59,7 @@ void FilterStaticMask::showPainter()
 void FilterStaticMask::setMask(const cv::Mat &mask)
 {
     mask.copyTo(state.mask_);
-    setError(false);
+    modifier_->setNoError();
 }
 
 cv::Mat FilterStaticMask::getMask() const
@@ -71,12 +72,12 @@ void FilterStaticMask::filter(cv::Mat& img, cv::Mat& mask)
     input(img);
 
     if(state.mask_.empty()) {
-        setError(true, "No mask existing", EL_WARNING);
+        modifier_->setWarning("No mask existing");
         return;
     }
 
     if(state.mask_.size != img.size) {
-        setError(true, "The mask has not the same size as the image size", EL_WARNING);
+        modifier_->setWarning("The mask has not the same size as the image size");
         return;
     }
 

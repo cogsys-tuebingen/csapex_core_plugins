@@ -5,8 +5,7 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -41,7 +40,7 @@ void HoughCircle::setup()
 
 void HoughCircle::process()
 {
-    CvMatMessage::ConstPtr msg = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr msg = msg::getMessage<CvMatMessage>(input_);
 
     int method = readParameter<int>("method");
     double dp = readParameter<double>("dp");
@@ -68,6 +67,6 @@ void HoughCircle::process()
         cv::circle(out->value, center, radius, cv::Scalar(0,0,255), 3, 8, 0 );
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 

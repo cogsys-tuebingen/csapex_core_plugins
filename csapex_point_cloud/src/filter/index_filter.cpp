@@ -1,8 +1,7 @@
 #include "index_filter.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -29,17 +28,17 @@ void IndexFilter::setup()
 
 void IndexFilter::process()
 {
-    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
     boost::apply_visitor (PointCloudMessage::Dispatch<IndexFilter>(this, msg), msg->value);
 }
 
 template <class PointT>
 void IndexFilter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    PointIndecesMessage::ConstPtr indeces(indeces_input_->getMessage<PointIndecesMessage>());
+    PointIndecesMessage::ConstPtr indeces(msg::getMessage<PointIndecesMessage>(indeces_input_));
     typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>(*cloud, indeces->value->indices));
 
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     out->value = cloud_filtered;
-    output_cloud_->publish(out);
+    msg::publish(output_cloud_, out);
 }

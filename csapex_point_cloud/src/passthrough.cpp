@@ -2,8 +2,7 @@
 #include "passthrough.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/interval_parameter.h>
@@ -62,7 +61,7 @@ void PassThrough::updateFields(const std::vector<std::string>& fields)
 
     param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("field"));
     if(setp) {
-        setError(false);
+        modifier_->setNoError();
         std::string old_field = readParameter<std::string>("field");
         setp->setSet(fields);
         setp->set(old_field);
@@ -71,7 +70,7 @@ void PassThrough::updateFields(const std::vector<std::string>& fields)
 
 void PassThrough::process()
 {
-    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<PassThrough>(this, msg), msg->value);
 }
@@ -99,17 +98,17 @@ void PassThrough::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     pass.setInputCloud(cloud);
     pass.setKeepOrganized(readParameter<bool>("keep organized"));
 
-    if(output_pos_->isConnected()) {
+    if(msg::isConnected(output_pos_)) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
         pass.filter(*out);
         out->header = cloud->header;
 
         PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         msg->value = out;
-        output_pos_->publish(msg);
+        msg::publish(output_pos_, msg);
     }
 
-    if(output_neg_->isConnected()) {
+    if(msg::isConnected(output_neg_)) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
         pass.setNegative(true);
         pass.filter(*out);
@@ -117,7 +116,7 @@ void PassThrough::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
         PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         msg->value = out;
-        output_neg_->publish(msg);
+        msg::publish(output_neg_, msg);
     }
 
 }

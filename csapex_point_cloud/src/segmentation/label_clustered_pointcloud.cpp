@@ -2,8 +2,7 @@
 #include "label_clustered_pointcloud.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/model/node_modifier.h>
@@ -28,9 +27,9 @@ LabelClusteredPointCloud::LabelClusteredPointCloud()
 
 void LabelClusteredPointCloud::process()
 {
-    PointCloudMessage::ConstPtr cloud(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr cloud(msg::getMessage<PointCloudMessage>(input_));
 
-    cluster_indices = in_indices_->getMessage<GenericVectorMessage, pcl::PointIndices>();
+    cluster_indices = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(in_indices_);
 
     boost::apply_visitor (PointCloudMessage::Dispatch<LabelClusteredPointCloud>(this, cloud), cloud->value);
 }
@@ -131,5 +130,5 @@ void LabelClusteredPointCloud::inputCloud(typename pcl::PointCloud<PointT>::Cons
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
 
     implementation::Label<PointT>::apply(cloud, out, *cluster_indices);
-    output_->publish(out);
+    msg::publish(output_, out);
 }

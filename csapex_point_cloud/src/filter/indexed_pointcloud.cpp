@@ -2,8 +2,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/model/node_modifier.h>
@@ -26,7 +25,7 @@ void IndexedPointCloud::setup()
 
 void IndexedPointCloud::process()
 {
-    CvMatMessage::ConstPtr input(input_->getMessage<CvMatMessage>());
+    CvMatMessage::ConstPtr input(msg::getMessage<CvMatMessage>(input_));
     if(input->value.type() != CV_32FC1) {
         throw std::runtime_error("Unsupported depth image type!");
     }
@@ -50,5 +49,5 @@ void IndexedPointCloud::process()
 
     PointCloudMessage::Ptr output(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     output->value = cloud;
-    output_->publish(output);
+    msg::publish(output_, output);
 }

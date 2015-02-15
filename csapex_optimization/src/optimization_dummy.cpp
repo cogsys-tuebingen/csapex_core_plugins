@@ -2,8 +2,7 @@
 #include "optimization_dummy.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -81,7 +80,7 @@ void OptimizationDummy::tick()
             + std::pow(9.0 - j, 2)
             ;
 
-    out_->publish(fitness);
+    msg::publish(out_, fitness);
 }
 
 void OptimizationDummy::process()

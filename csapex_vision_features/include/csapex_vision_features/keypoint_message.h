@@ -14,6 +14,11 @@ namespace connection_types {
 struct KeypointMessage : public MessageTemplate<std::vector<cv::KeyPoint>, KeypointMessage>
 {
     KeypointMessage();
+
+    bool isContainer() const;
+    ConnectionType::Ptr nestedType() const;
+    virtual ConnectionType::ConstPtr nestedValue(std::size_t i) const;
+    virtual std::size_t nestedValueCount() const;
 };
 
 

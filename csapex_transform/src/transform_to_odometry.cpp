@@ -5,8 +5,7 @@
 #include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -39,13 +38,13 @@ void TransformToOdometry::setup()
 
 void TransformToOdometry::process()
 {
-    connection_types::TransformMessage::ConstPtr a = in_->getMessage<connection_types::TransformMessage>();
+    connection_types::TransformMessage::ConstPtr a = msg::getMessage<connection_types::TransformMessage>(in_);
 
     nav_msgs::Odometry::Ptr msg(new nav_msgs::Odometry);
     msg->header.frame_id = a->frame_id;
     msg->header.stamp = msg->header.stamp.fromNSec(a->stamp_micro_seconds);
     tf::poseTFToMsg(a->value, msg->pose.pose);
 
-    out_->publish<nav_msgs::Odometry>(msg);
+    msg::publish<nav_msgs::Odometry>(out_, msg);
 }
 

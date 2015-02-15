@@ -2,8 +2,7 @@
 #include "mean_dev.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -35,18 +34,18 @@ void MeanStdDev::setupParameters()
 
 void MeanStdDev::process()
 {
-    CvMatMessage::ConstPtr in = in_mat_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(in_mat_);
     std::shared_ptr<std::vector<double> > out_mean(new std::vector<double>);
     std::shared_ptr<std::vector<double> > out_stddev(new std::vector<double>);
 
-    if(in_mask_->hasMessage()) {
-        CvMatMessage::ConstPtr mask = in_mask_->getMessage<CvMatMessage>();
+    if(msg::hasMessage(in_mask_)) {
+        CvMatMessage::ConstPtr mask = msg::getMessage<CvMatMessage>(in_mask_);
         cv::meanStdDev(in->value, *out_mean, *out_stddev,
                        mask->value);
     } else {
         cv::meanStdDev(in->value, *out_mean, *out_stddev);
     }
 
-    out_mean_->publish<GenericVectorMessage, double>(out_mean);
-    out_stddev_->publish<GenericVectorMessage, double>(out_stddev);
+    msg::publish<GenericVectorMessage, double>(out_mean_, out_mean);
+    msg::publish<GenericVectorMessage, double>(out_stddev_, out_stddev);
 }

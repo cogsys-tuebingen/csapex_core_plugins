@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_ros/ros_message_conversion.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_scan_2d/scan_message.h>
@@ -36,12 +35,12 @@ void ScanRenderer::setup()
 
 void ScanRenderer::process()
 {
-    if(input_->isMessage<LabeledScanMessage>()) {
-        LabeledScanMessage::ConstPtr scan_msg = input_->getMessage<LabeledScanMessage>();
+    if(msg::isMessage<LabeledScanMessage>(input_)) {
+        LabeledScanMessage::ConstPtr scan_msg = msg::getMessage<LabeledScanMessage>(input_);
         doProcess<LabeledScan>(scan_msg->value);
 
-    } else if(input_->isMessage<ScanMessage>()) {
-        ScanMessage::ConstPtr scan_msg = input_->getMessage<ScanMessage>();
+    } else if(msg::isMessage<ScanMessage>(input_)) {
+        ScanMessage::ConstPtr scan_msg = msg::getMessage<ScanMessage>(input_);
         doProcess<Scan>(scan_msg->value);
 
     } else {
@@ -56,5 +55,5 @@ void ScanRenderer::doProcess(const ScanType& scan)
 
     renderer.render(scan, output->value);
 
-    output_->publish(output);
+    msg::publish(output_, output);
 }

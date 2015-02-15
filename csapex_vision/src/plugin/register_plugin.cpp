@@ -9,7 +9,6 @@
 #include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_ros/ros_handler.h>
-#include <csapex/msg/output.h>
 #include <csapex/factory/generic_node_factory.hpp>
 #include <csapex/model/node_factory.h>
 

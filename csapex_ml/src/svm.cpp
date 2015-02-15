@@ -2,8 +2,7 @@
 #include "svm.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -38,7 +37,7 @@ void SVM::setupParameters()
 
 void SVM::process()
 {
-    std::shared_ptr<std::vector<FeaturesMessage> const> in = in_->getMessage<GenericVectorMessage, FeaturesMessage>();
+    std::shared_ptr<std::vector<FeaturesMessage> const> in = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
     std::shared_ptr<std::vector<FeaturesMessage> >      out(new std::vector<FeaturesMessage>(in->size()));
     m_.lock();
 
@@ -54,7 +53,7 @@ void SVM::process()
 
     m_.unlock();
 
-    out_->publish<GenericVectorMessage, FeaturesMessage>(out);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
 void SVM::load()

@@ -2,8 +2,7 @@
 #include "mean_dev_normalization.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -54,9 +53,9 @@ typedef std::shared_ptr< std::vector<double > const> VectorPtr;
 
 void MeanStdDevNormalization::process()
 {
-    CvMatMessage::ConstPtr in_mat  = in_mat_->getMessage<CvMatMessage>();
-    VectorPtr              in_mean = in_mean_->getMessage<GenericVectorMessage, double>();
-    VectorPtr              in_dev  = in_dev_->getMessage<GenericVectorMessage, double>();
+    CvMatMessage::ConstPtr in_mat  = msg::getMessage<CvMatMessage>(in_mat_);
+    VectorPtr              in_mean = msg::getMessage<GenericVectorMessage, double>(in_mean_);
+    VectorPtr              in_dev  = msg::getMessage<GenericVectorMessage, double>(in_dev_);
     CvMatMessage::Ptr      out(new CvMatMessage(in_mat->getEncoding(), in_mat->stamp_micro_seconds));
 
     unsigned int c = in_mat->value.channels();
@@ -77,7 +76,7 @@ void MeanStdDevNormalization::process()
         normalizeC(in_mat->value, *in_mean, *in_dev,
                    out->value);
 
-    out_->publish(out);
+    msg::publish(out_, out);
 }
 
 void MeanStdDevNormalization::setup()

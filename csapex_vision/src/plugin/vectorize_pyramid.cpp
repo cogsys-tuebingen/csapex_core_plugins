@@ -2,8 +2,7 @@
 #include "vectorize_pyramid.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/cv_pyramid_message.h>
 #include <csapex_core_plugins/vector_message.h>
@@ -22,7 +21,7 @@ VectorizePyramid::VectorizePyramid()
 
 void VectorizePyramid::process()
 {
-    CvPyramidMessage::ConstPtr in = input_->getMessage<CvPyramidMessage>();
+    CvPyramidMessage::ConstPtr in = msg::getMessage<CvPyramidMessage>(input_);
     std::shared_ptr<std::vector<CvMatMessage::Ptr> >
             out(new std::vector<CvMatMessage::Ptr>);
 
@@ -37,7 +36,7 @@ void VectorizePyramid::process()
         out->push_back(msg);
     }
 
-    output_->publish<GenericVectorMessage, CvMatMessage::Ptr>(out);
+    msg::publish<GenericVectorMessage, CvMatMessage::Ptr>(output_, out);
 }
 
 void VectorizePyramid::setup()

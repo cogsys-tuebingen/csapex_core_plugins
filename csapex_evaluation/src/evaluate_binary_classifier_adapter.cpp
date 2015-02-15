@@ -2,7 +2,7 @@
 #include "evaluate_binary_classifier_adapter.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_node_adapter.h>
 
 /// SYSTEM

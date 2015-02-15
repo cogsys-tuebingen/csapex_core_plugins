@@ -2,8 +2,7 @@
 #include "transform_cloud.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_transform/transform_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -32,7 +31,7 @@ void TransformCloud::setup()
 
 void TransformCloud::process()
 {
-    PointCloudMessage::ConstPtr msg = input_cloud_->getMessage<PointCloudMessage>();
+    PointCloudMessage::ConstPtr msg = msg::getMessage<PointCloudMessage>(input_cloud_);
 
     boost::apply_visitor (PointCloudMessage::Dispatch<TransformCloud>(this, msg), msg->value);
 }
@@ -40,7 +39,7 @@ void TransformCloud::process()
 template <class PointT>
 void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    TransformMessage::ConstPtr transform = input_transform_->getMessage<TransformMessage>();
+    TransformMessage::ConstPtr transform = msg::getMessage<TransformMessage>(input_transform_);
     const tf::Transform& t = transform->value;
 
     typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
@@ -55,5 +54,5 @@ void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud
     PointCloudMessage::Ptr msg(new PointCloudMessage(frame, cloud->header.stamp));
     msg->value = out;
 
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }

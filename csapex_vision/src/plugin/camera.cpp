@@ -5,8 +5,7 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -36,7 +35,7 @@ void Camera::tick()
 {
     connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
     cap_ >> msg->value;
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }
 
 bool Camera::canTick()
@@ -54,7 +53,7 @@ void Camera::setup()
 
 void Camera::update()
 {
-    setError(false);
+    modifier_->setNoError();
 
 
     int dev = readParameter<int>("device");

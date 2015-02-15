@@ -2,7 +2,7 @@
 #include "scan_labeler_adapter.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_node_adapter.h>
 #include <utils_qt/QtCvImageConverter.h>
 #include <csapex/utility/color.hpp>
@@ -125,6 +125,13 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
 
             e->accept();
             return true;
+
+        } else {
+            std::stringstream ss;
+            double dx = me->scenePos().x();
+            double dy = me->scenePos().y();
+            ss << "distance: " <<  std::hypot(dx, dy) / SCALE;
+            view_->setToolTip(QString::fromStdString(ss.str()));
         }
         break;
 
@@ -175,7 +182,7 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
     DefaultNodeAdapter::setupUi(layout);
 
 
-    QRectF rect(-15.0 * SCALE, -15.0 * SCALE, 30.0 * SCALE, 30.0 * SCALE);
+    QRectF rect(-10.0 * SCALE, -15.0 * SCALE, 30.0 * SCALE, 30.0 * SCALE);
     scene->setSceneRect(rect);
     view_->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 }

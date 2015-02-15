@@ -6,8 +6,7 @@
 #include <csapex_ros/time_stamp_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_ros/ros_handler.h>
 #include <csapex/model/node_modifier.h>
@@ -43,14 +42,14 @@ void TransformPublisher::processROS()
     }
 
     ros::Time time;
-    if(input_time->hasMessage()) {
-        TimeStampMessage::ConstPtr time_msg = input_time->getMessage<TimeStampMessage>();
+    if(msg::hasMessage(input_time)) {
+        TimeStampMessage::ConstPtr time_msg = msg::getMessage<TimeStampMessage>(input_time);
         time = time_msg->value;
     } else {
         time = ros::Time::now();
     }
 
-    TransformMessage::ConstPtr trafo_msg = input_transform->getMessage<TransformMessage>();
+    TransformMessage::ConstPtr trafo_msg = msg::getMessage<TransformMessage>(input_transform);
 
     tfb_->sendTransform(tf::StampedTransform(trafo_msg->value, time, readParameter<std::string>("from"), readParameter<std::string>("to")));
 }

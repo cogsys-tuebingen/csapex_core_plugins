@@ -2,8 +2,7 @@
 #include "delay.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/connection_type.h>
 #include <csapex/msg/message.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -44,7 +43,7 @@ void Delay::setup()
 
 void Delay::process()
 {
-    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
 
     long wait_time = readParameter<double>("delay") * 1000;
     long t = wait_time;
@@ -57,7 +56,6 @@ void Delay::process()
     }
     progress_->setProgress(wait_time, wait_time);
 
-    output_->setType(input_->getType());
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }
 

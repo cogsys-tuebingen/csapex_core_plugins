@@ -7,8 +7,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -35,7 +34,7 @@ BarCodeReader::BarCodeReader()
 
 void BarCodeReader::process()
 {
-    CvMatMessage::ConstPtr msg = in_img->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr msg = msg::getMessage<CvMatMessage>(in_img);
 
     if(msg->value.channels() != 1) {
         throw std::runtime_error("Input must be 1-channel image!");
@@ -115,7 +114,7 @@ void BarCodeReader::process()
 //            }
 //        }
 
-        out_str->publish(data);
+        msg::publish(out_str, data);
         published = true;
 
         data_ = data;
@@ -123,13 +122,13 @@ void BarCodeReader::process()
 
     if(!published) {
         if(republish) {
-            out_str->publish(data_);
+            msg::publish(out_str, data_);
         } else {
-            out_str->publish(std::string(""));
+            msg::publish(out_str, std::string(""));
         }
     }
 
-    out_roi->publish(out);
+    msg::publish(out_roi, out);
 
     // clean up
     image.set_data(nullptr, 0);

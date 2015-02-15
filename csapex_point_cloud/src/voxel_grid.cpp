@@ -2,8 +2,7 @@
 #include "voxel_grid.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -34,7 +33,7 @@ void VoxelGrid::setup()
 
 void VoxelGrid::process()
 {
-    PointCloudMessage::ConstPtr msg(input_cloud_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
 
     boost::apply_visitor (PointCloudMessage::Dispatch<VoxelGrid>(this, msg), msg->value);
 }
@@ -55,5 +54,5 @@ void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     msg->value = out;
 
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }

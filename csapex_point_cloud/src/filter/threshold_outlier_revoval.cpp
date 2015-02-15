@@ -2,8 +2,7 @@
 #include "threshold_outlier_revoval.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <utils_param/parameter_factory.h>
@@ -194,14 +193,14 @@ void ThresholdOutlierRemoval::setup()
 
 void ThresholdOutlierRemoval::process()
 {
-    PointCloudMessage::ConstPtr msg(input_->getMessage<PointCloudMessage>());
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
     boost::apply_visitor (PointCloudMessage::Dispatch<ThresholdOutlierRemoval>(this, msg), msg->value);
 }
 
 template <class PointT>
 void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    CvMatMessage::ConstPtr thresholds  = thresholds_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr thresholds  = msg::getMessage<CvMatMessage>(thresholds_);
     uchar                  threshold   = readParameter<int>("threshold");
     double                 max_dist    = readParameter<double>("max. distance");
     bool                   interpolate = readParameter<bool>("interpolate");
@@ -224,5 +223,5 @@ void ThresholdOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Const
 
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     out->value = cloud_filtered;
-    output_->publish(out);
+    msg::publish(output_, out);
 }
