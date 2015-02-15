@@ -2,8 +2,7 @@
 #include "feature_to_histogram.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
@@ -27,13 +26,13 @@ void FeatureToHistogram::process()
     VectorMessage::ConstPtr    in_vector;
     HistogramMessage::Ptr hist(new HistogramMessage);
 
-    if(in_->hasMessage()) {
-        in = in_->getMessage<FeaturesMessage>();
+    if(msg::hasMessage(in_)) {
+        in = msg::getMessage<FeaturesMessage>(in_);
         hist->value.ranges.push_back(utils_vision::histogram::Range(0, in->value.size()));
         hist->value.histograms.push_back(cv::Mat(in->value, true));
     }
-    if(in_vector_->hasMessage()) {
-        in_vector = in_vector_->getMessage<VectorMessage>();
+    if(msg::hasMessage(in_vector_)) {
+        in_vector = msg::getMessage<VectorMessage>(in_vector_);
 
         for(auto it = in_vector->value.begin() ;
             it != in_vector->value.end() ;
@@ -45,7 +44,7 @@ void FeatureToHistogram::process()
         }
     }
 
-    out_->publish(hist);
+    msg::publish(out_, hist);
 }
 
 void FeatureToHistogram::setup()

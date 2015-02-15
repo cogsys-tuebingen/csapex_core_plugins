@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -23,8 +22,8 @@ ThresholdNoiseFilter::ThresholdNoiseFilter()
 
 void ThresholdNoiseFilter::process()
 {
-    CvMatMessage::ConstPtr input = input_->getMessage<CvMatMessage>();
-    CvMatMessage::ConstPtr threshold = threshold_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr input = msg::getMessage<CvMatMessage>(input_);
+    CvMatMessage::ConstPtr threshold = msg::getMessage<CvMatMessage>(threshold_);
     CvMatMessage::Ptr output(new CvMatMessage(input->getEncoding(), input->stamp_micro_seconds));
 
     if(!threshold->hasChannels(1, CV_8U)) {
@@ -93,7 +92,7 @@ void ThresholdNoiseFilter::process()
         break;
     }
 
-    output_->publish(output);
+    msg::publish(output_, output);
 }
 
 void ThresholdNoiseFilter::setup()

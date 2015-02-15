@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/cv_pyramid_message.h>
@@ -24,18 +23,18 @@ Pyramid::Pyramid() :
 
 void Pyramid::process()
 {
-    CvMatMessage::ConstPtr  in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr  in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvPyramidMessage::Ptr   out(new CvPyramidMessage(in->getEncoding()));
 
     cv::buildPyramid(in->value, out->value, out_levels_);
 
-    if(out_level_->isConnected()) {
+    if(msg::isConnected(out_level_)) {
         CvMatMessage::Ptr out_level(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
         out_level->value = out->value.at(out_level_idx_).clone();
-        out_level_->publish(out_level);
+        msg::publish(out_level_, out_level);
     }
 
-    out_pyr_->publish(out);
+    msg::publish(out_pyr_, out);
 }
 void Pyramid::setup()
 {
@@ -60,9 +59,9 @@ void Pyramid::update()
 
     if(out_level_idx_ >= out_levels_) {
         out_level_idx_ = out_levels_ - 1;
-        setError(true, "Not enough levels!", EL_WARNING);
-    } else if(isError()) {
-        setError(false);
+        modifier_->setWarning("Not enough levels!");
+    } else if(modifier_->isError()) {
+        modifier_->setNoError();
     }
 
 

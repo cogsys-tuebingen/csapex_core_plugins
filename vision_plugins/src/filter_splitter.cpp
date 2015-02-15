@@ -4,8 +4,7 @@
 #include <csapex/view/box.h>
 #include <csapex/command/meta.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/assert.h>
@@ -44,13 +43,13 @@ void Splitter::setupParameters()
 
 void Splitter::process()
 {
-    CvMatMessage::ConstPtr m = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr m = msg::getMessage<CvMatMessage>(input_);
 
     int esize = m->getEncoding().channelCount();
     if(esize != m->value.channels()) {
         std::stringstream error;
         error << "encoding size (" << m->getEncoding().channelCount() << ") != " << " image channels (" << m->value.channels() << ")";
-        setError(true, error.str(), EL_WARNING);
+        modifier_->setWarning(error.str());
     }
 
     std::vector<cv::Mat> channels;
@@ -71,9 +70,8 @@ void Splitter::process()
         state_.encoding_ = m->getEncoding();
         state_.channel_count_ = channels.size();
 
-        input_->setLabel(m->getEncoding().toString());
+        msg::setLabel(input_, m->getEncoding().toString());
         updateOutputs();
-        triggerModelChanged();
         return;
     }
 
@@ -94,7 +92,7 @@ void Splitter::process()
 
         CvMatMessage::Ptr channel_out(new CvMatMessage(e, m->stamp_micro_seconds));
         channel_out->value = channels[i];
-        outputs[i]->publish(channel_out);
+        msg::publish(outputs[i], channel_out);
     }
 }
 
@@ -115,14 +113,14 @@ void Splitter::updateOutputs()
         bool del = true;
         for(int i = n-1 ; i >= (int) state_.channel_count_; --i) {
             Output* output = outputs[i];
-            if(output->isConnected()) {
+            if(msg::isConnected(output)) {
                 del = false;
             }
 
             if(del) {
-                modifier_->removeOutput(output->getUUID());
+                modifier_->removeOutput(msg::getUUID(output));
             } else {
-                output->disable();
+                msg::disable(output);
             }
         }
     }
@@ -132,11 +130,11 @@ void Splitter::updateOutputs()
     for(int i = 0, n = state_.channel_count_; i < n; ++i) {
         Output* output = outputs[i];
         if(i < (int) state_.encoding_.channelCount()) {
-            output->setLabel(state_.encoding_.getChannel(i).name);
+            msg::setLabel(output, state_.encoding_.getChannel(i).name);
         } else {
-            output->setLabel("unknown");
+            msg::setLabel(output, "unknown");
         }
-        output->enable();
+        msg::enable(output);
     }
 
 }
@@ -159,8 +157,8 @@ void Splitter::updateOutputs()
 ////    }
 
 //    updateOutputs();
-//    triggerModelChanged();
 //}
+
 
 /// MEMENTO
 void Splitter::State::readYaml(const YAML::Node &node)

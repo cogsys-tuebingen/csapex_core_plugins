@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <boost/assign/std.hpp>
@@ -55,7 +54,7 @@ DifferenceMaximum::DifferenceMaximum()
 
 void DifferenceMaximum::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
     int  depth = in->value.type() & 7;
     bool abs_diff = readParameter<bool>("abs difference");
@@ -85,7 +84,7 @@ void DifferenceMaximum::process()
     default:
         break;
     }
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void DifferenceMaximum::setupParameters()

@@ -2,8 +2,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -21,14 +20,14 @@ MedianFilter::MedianFilter() :
 
 void MedianFilter::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(in->value.channels() > 4)
         throw std::runtime_error("To many channels!");
 
     cv::medianBlur(in->value, out->value, kernel_size_);
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void MedianFilter::setup()

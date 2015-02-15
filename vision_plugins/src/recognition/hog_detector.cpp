@@ -2,8 +2,7 @@
 #include "hog_detector.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -72,7 +71,7 @@ void HOGDetector::setup()
 
 void HOGDetector::process()
 {
-    CvMatMessage::ConstPtr  in = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_);
     std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
 
     if(!in->hasChannels(1, CV_8U))
@@ -142,7 +141,7 @@ void HOGDetector::process()
         roi.value = Roi(r, color, 0);
         out->push_back(roi);
     }
-    out_->publish<GenericVectorMessage, RoiMessage>(out);
+    msg::publish<GenericVectorMessage, RoiMessage>(out_, out);
 }
 
 void HOGDetector::load()

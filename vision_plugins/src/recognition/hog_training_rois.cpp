@@ -2,8 +2,7 @@
 #include "hog_training_rois.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -42,15 +41,15 @@ void HOGTrainingRois::setup()
 
 void HOGTrainingRois::process()
 {
-    RoiMessage::ConstPtr in_roi = in_roi_->getMessage<RoiMessage>();
+    RoiMessage::ConstPtr in_roi = msg::getMessage<RoiMessage>(in_roi_);
     Roi roi = in_roi->value;
     std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage>);
 
     int limit_x = std::numeric_limits<int>::max();
     int limit_y = std::numeric_limits<int>::max();
 
-    if(in_image_->hasMessage()) {
-        CvMatMessage::ConstPtr in_image = in_image_->getMessage<CvMatMessage>();
+    if(msg::hasMessage(in_image_)) {
+        CvMatMessage::ConstPtr in_image = msg::getMessage<CvMatMessage>(in_image_);
         limit_x = in_image->value.cols;
         limit_y = in_image->value.rows;
     }
@@ -84,6 +83,6 @@ void HOGTrainingRois::process()
     msg.value = std::move(roi);
     out->push_back(msg);
 
-    out_->publish<GenericVectorMessage, RoiMessage>(out);
+    msg::publish<GenericVectorMessage, RoiMessage>(out_, out);
 }
 

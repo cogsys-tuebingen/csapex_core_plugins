@@ -5,8 +5,7 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -47,7 +46,7 @@ void Morpholocial::setupParameters()
 
 void Morpholocial::process()
 {
-    connection_types::CvMatMessage::ConstPtr a = input_->getMessage<connection_types::CvMatMessage>();
+    connection_types::CvMatMessage::ConstPtr a = msg::getMessage<connection_types::CvMatMessage>(input_);
 
     connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(a->getEncoding(), a->stamp_micro_seconds));
     int op = readParameter<int>("type");
@@ -63,7 +62,7 @@ void Morpholocial::process()
         cv::morphologyEx(a->value, msg->value, op, kernel, anchor, iterations, border_type, border_value);
     }
 
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }
 
 

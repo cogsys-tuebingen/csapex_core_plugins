@@ -11,8 +11,7 @@
 #include <csapex_vision_features/keypoint_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -84,7 +83,7 @@ void BlobDetector::process()
 {
     bool roi_info = readParameter<bool>("RoiInformation");
 
-    CvMatMessage::ConstPtr img = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_);
 
     if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
@@ -132,9 +131,9 @@ void BlobDetector::process()
         out->value.push_back(roi);
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 
-    if(output_debug_->isConnected()) {
+    if(msg::isConnected(output_debug_)) {
         IplImage* debugPtr = new IplImage(debug->value);
         cvRenderBlobs(labelImgPtr, blobs, debugPtr, debugPtr);
 
@@ -170,11 +169,11 @@ void BlobDetector::process()
                 cv::putText(debug->value, ss.str(), cv::Point(blob.centroid.x, blob.centroid.y), cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar::all(255), 1);
             }
         }
-        output_debug_->publish(debug);
+        msg::publish(output_debug_, debug);
         delete(debugPtr);
     }
 
-    if(output_reduce_->isConnected()) {
+    if(msg::isConnected(output_reduce_)) {
 
         IplImage* reducedPtr = new IplImage(reduced->value);
 
@@ -182,7 +181,7 @@ void BlobDetector::process()
 
         cvFilterLabels(labelImgPtr, reducedPtr, blobs);
 
-        output_reduce_->publish(reduced);
+        msg::publish(output_reduce_, reduced);
         delete(reducedPtr);
     }
 

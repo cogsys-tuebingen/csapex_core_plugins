@@ -2,8 +2,7 @@
 #include "to_feature.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
 #include <csapex/msg/message_factory.h>
 #include <csapex/model/connection_type.h>
@@ -133,7 +132,7 @@ inline void processVector(const connection_types::VectorMessage::ConstPtr    &sr
 
 void ToFeature::process()
 {
-    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
     std::shared_ptr< std::vector<FeaturesMessage> > out (new std::vector<FeaturesMessage>);
 
 
@@ -147,6 +146,6 @@ void ToFeature::process()
         processSingle(msg, out, class_id);
     }
 
-    output_->publish<GenericVectorMessage, FeaturesMessage>(out);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(output_, out);
 }
 

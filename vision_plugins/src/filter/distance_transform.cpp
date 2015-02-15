@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -58,7 +57,7 @@ void DistanceTransform::setup()
 
 void DistanceTransform::process()
 {
-    CvMatMessage::ConstPtr img = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(in_);
 
     if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
@@ -72,7 +71,7 @@ void DistanceTransform::process()
                           readParameter<int>("maskSize"),
                           readParameter<int>("labelType"));
 
-    out_->publish(out);
-    out_label_->publish(labels);
+    msg::publish(out_, out);
+    msg::publish(out_label_, labels);
 }
 

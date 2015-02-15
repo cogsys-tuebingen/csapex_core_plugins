@@ -2,8 +2,7 @@
 #include "render_labels.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
@@ -23,11 +22,11 @@ RenderLabels::RenderLabels()
 
 void RenderLabels::process()
 {
-    CvMatMessage::ConstPtr labels = labels_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr labels = msg::getMessage<connection_types::CvMatMessage>(labels_);
     CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, labels->stamp_micro_seconds));
 
-    if(image_->hasMessage()) {
-        CvMatMessage::ConstPtr image = image_->getMessage<connection_types::CvMatMessage>();
+    if(msg::hasMessage(image_)) {
+        CvMatMessage::ConstPtr image = msg::getMessage<connection_types::CvMatMessage>(image_);
         if(!image->hasChannels(3, CV_8U))
             throw std::runtime_error("Image encoding must be 8UC3!");
         output->value = image->value.clone();
@@ -55,7 +54,7 @@ void RenderLabels::process()
         double occ = readParameter<double>("color occupancy");
         cv::addWeighted(output->value, 1.0 - occ, label_colors, occ, 0.0, output->value);
     }
-    output_->publish(output);
+    msg::publish(output_, output);
 }
 
 void RenderLabels::setup()

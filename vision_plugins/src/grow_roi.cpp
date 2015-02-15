@@ -7,8 +7,7 @@
 #include <csapex_vision/roi_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_vision/utils/rectangle_cluster.h>
 #include <csapex/model/node_modifier.h>
@@ -30,12 +29,12 @@ GrowROI::GrowROI()
 
 void GrowROI::process()
 {
-    RoiMessage::ConstPtr roi = input_->getMessage<RoiMessage>();
+    RoiMessage::ConstPtr roi = msg::getMessage<RoiMessage>(input_);
     RoiMessage::Ptr out(new RoiMessage);
 
     out->value = roi->value;
     out->value.grow(readParameter<int>("x"), readParameter<int>("y"));
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void GrowROI::setup()

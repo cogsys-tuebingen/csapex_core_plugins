@@ -5,8 +5,7 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -26,14 +25,14 @@ ExtractROI::ExtractROI()
 
 void ExtractROI::process()
 {
-    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
-    RoiMessage::ConstPtr roi = input_roi_->getMessage<RoiMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_img_);
+    RoiMessage::ConstPtr roi = msg::getMessage<RoiMessage>(input_roi_);
 
     CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp_micro_seconds));
 
     cv::Mat(img->value, roi->value.rect()).copyTo(out->value);
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void ExtractROI::setup()

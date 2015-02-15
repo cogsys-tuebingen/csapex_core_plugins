@@ -2,8 +2,7 @@
 #include "histogram.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
@@ -31,12 +30,12 @@ Histogram::Histogram() :
 
 void Histogram::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
     HistogramMessage::Ptr out(new HistogramMessage);
 
     cv::Mat mask;
-    if(mask_->hasMessage()) {
-        CvMatMessage::ConstPtr mask_ptr = mask_->getMessage<CvMatMessage>();
+    if(msg::hasMessage(mask_)) {
+        CvMatMessage::ConstPtr mask_ptr = msg::getMessage<CvMatMessage>(mask_);
         mask = mask_ptr->value;
     }
 
@@ -124,7 +123,7 @@ void Histogram::process()
         out->value.histograms.push_back(*it);
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void Histogram::setup()

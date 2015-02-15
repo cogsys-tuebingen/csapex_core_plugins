@@ -3,8 +3,7 @@
 
 /// COMPONENT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_vision/utils/histogram.hpp>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -59,7 +58,7 @@ void ColorAdjustment::setParameterState(Memento::Ptr memento)
 
 void ColorAdjustment::process()
 {
-    CvMatMessage::ConstPtr img = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_);
 
     bool encoding_changed = !img->getEncoding().matches(current_encoding);
     current_encoding = img->getEncoding();
@@ -74,7 +73,6 @@ void ColorAdjustment::process()
             update();
         }
 
-        triggerModelChanged();
         return;
     }
 
@@ -100,7 +98,7 @@ void ColorAdjustment::process()
     cv::merge(channels, result->value);
     addLightness(result->value);
 
-    output_->publish(result);
+    msg::publish(output_, result);
 }
 
 void ColorAdjustment::recompute()
@@ -142,7 +140,6 @@ void ColorAdjustment::update()
 void ColorAdjustment::setPreset()
 {
     active_preset_  = static_cast<Preset> (readParameter<int>("preset"));
-    triggerModelChanged();
 }
 
 void ColorAdjustment::addLightness(cv::Mat &img)

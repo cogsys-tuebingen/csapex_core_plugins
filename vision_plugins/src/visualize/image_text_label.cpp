@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -49,7 +48,7 @@ void ImageTextLabel::setupParameters()
 
 void ImageTextLabel::process()
 {
-    CvMatMessage::ConstPtr input  = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr input  = msg::getMessage<CvMatMessage>(input_);
     if(input->value.type() != CV_8UC3 && input->value.type() != CV_8UC1)
         throw std::runtime_error("Must be mono or color image!");
 
@@ -111,5 +110,5 @@ void ImageTextLabel::process()
                 thickness,
                 CV_AA);
 
-    output_->publish(output);
+    msg::publish(output_, output);
 }

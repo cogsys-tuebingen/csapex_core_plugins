@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -21,7 +20,7 @@ SumChannels::SumChannels()
 
 void SumChannels::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     out->value = cv::Mat(in->value.rows, in->value.cols, CV_32F, 0.f);
@@ -37,7 +36,7 @@ void SumChannels::process()
     if(readParameter<bool>("mean")) {
        out->value = out->value * (1.0 / (double) channels.size());
     }
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void SumChannels::setup()

@@ -2,8 +2,7 @@
 #include "glcm.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/connection_type.h>
@@ -77,7 +76,7 @@ GLCM::GLCM()
 
 void GLCM::process()
 {
-    CvMatMessage::ConstPtr in = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(in_);
     CvMatMessage::Ptr out(new CvMatMessage(enc::mono, in->stamp_micro_seconds));
 
     if(in->value.type() != CV_8UC1)
@@ -86,7 +85,7 @@ void GLCM::process()
     unsigned int bins = readParameter<int>("bins");
     glcm4(in->value, bins, out->value);
 
-    out_->publish(out);
+    msg::publish(out_, out);
 }
 
 void GLCM::setup()

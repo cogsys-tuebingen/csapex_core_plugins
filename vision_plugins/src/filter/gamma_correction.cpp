@@ -2,8 +2,7 @@
 #include "gamma_correction.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -51,7 +50,7 @@ void GammaCorrection::setup()
 
 void GammaCorrection::process()
 {
-    CvMatMessage::ConstPtr input = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr input = msg::getMessage<CvMatMessage>(in_);
     CvMatMessage::Ptr output(new CvMatMessage(input->getEncoding(), input->stamp_micro_seconds));
 
     const cv::Mat& in = input->value;
@@ -83,7 +82,7 @@ void GammaCorrection::process()
 
     tmp.convertTo(out, in.type());
 
-    out_->publish(output);
+    msg::publish(out_, output);
 }
 
 

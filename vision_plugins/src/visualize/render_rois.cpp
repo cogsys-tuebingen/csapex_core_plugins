@@ -6,8 +6,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -33,7 +32,7 @@ void RenderROIs::setupParameters()
 
 void RenderROIs::process()
 {
-    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_img_);
 
     CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp_micro_seconds));
 
@@ -54,8 +53,8 @@ void RenderROIs::process()
     }
 
     bool ignore_uc = readParameter<bool>("ignore unclassified");
-    if(input_rois_->hasMessage()) {
-        VectorMessage::ConstPtr rois = input_rois_->getMessage<VectorMessage>();
+    if(msg::hasMessage(input_rois_)) {
+        VectorMessage::ConstPtr rois = msg::getMessage<VectorMessage>(input_rois_);
         for(const ConnectionType::Ptr& e : rois->value) {
             RoiMessage::Ptr roi = std::dynamic_pointer_cast<RoiMessage>(e);
 
@@ -75,9 +74,9 @@ void RenderROIs::process()
         }
     }
 
-    if(input_rois_gen_->hasMessage()) {
+    if(msg::hasMessage(input_rois_gen_)) {
         std::shared_ptr< std::vector<RoiMessage> const> rois =
-                input_rois_gen_->getMessage<GenericVectorMessage, RoiMessage>();
+                msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_gen_);
 
         for(const RoiMessage& roi : *rois) {
             if(ignore_uc && roi.value.classification() == -1) {
@@ -96,7 +95,7 @@ void RenderROIs::process()
         }
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void RenderROIs::setup()

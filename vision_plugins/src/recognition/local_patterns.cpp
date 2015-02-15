@@ -2,8 +2,7 @@
 #include "local_patterns.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_ml/features_message.h>
@@ -112,7 +111,7 @@ LocalPatterns::LocalPatterns()
 
 void LocalPatterns::process()
 {
-    CvMatMessage::ConstPtr  in = in_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_img_);
     std::shared_ptr< std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(in->value.channels() > 1)
@@ -124,7 +123,7 @@ void LocalPatterns::process()
 
     const cv::Mat &value = in->value;
 
-    if(!in_rois_->hasMessage()) {
+    if(!msg::hasMessage(in_rois_)) {
         FeaturesMessage feature_msg;
 
         feature_msg.classification = 0;
@@ -138,7 +137,7 @@ void LocalPatterns::process()
         out->push_back(feature_msg);
 
     } else {
-        std::shared_ptr< std::vector<RoiMessage> const> in_rois = in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
+        std::shared_ptr< std::vector<RoiMessage> const> in_rois = msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
 
         for(std::vector<RoiMessage>::const_iterator
             it  = in_rois->begin() ;
@@ -162,7 +161,7 @@ void LocalPatterns::process()
         }
     }
 
-    out_->publish<GenericVectorMessage, FeaturesMessage>(out);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
 void LocalPatterns::setup()

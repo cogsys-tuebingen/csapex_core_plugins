@@ -2,8 +2,7 @@
 #include "hog_extractor.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -73,7 +72,7 @@ void HOGExtractor::setup()
 
 void HOGExtractor::process()
 {
-    CvMatMessage::ConstPtr  in = in_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_img_);
     std::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(!in->hasChannels(1, CV_8U))
@@ -100,7 +99,7 @@ void HOGExtractor::process()
                         gauss == 0.0 ? -1 : gauss,
                         gamma);
 
-    if(!in_rois_->hasMessage()) {
+    if(!msg::hasMessage(in_rois_)) {
         if(value.rows < block_size_px)
             throw std::runtime_error("Image must have at least block height in px.");
         if(value.cols < block_size_px)
@@ -121,7 +120,7 @@ void HOGExtractor::process()
 
     } else {
         std::shared_ptr<std::vector<RoiMessage> const> in_rois =
-                in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
+                msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
 
         for(std::vector<RoiMessage>::const_iterator
             it = in_rois->begin() ;
@@ -146,7 +145,7 @@ void HOGExtractor::process()
 
     //    /// BLOCK STEPS X * BLOCK STEPS Y * BINS * CELLS (WITHIN BLOCK)
 
-    out_->publish<GenericVectorMessage, FeaturesMessage>(out);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
 void HOGExtractor::updateOverlap()

@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/tag.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision_features/keypoint_message.h>
 #include <utils_param/parameter_factory.h>
@@ -34,12 +33,12 @@ LKTracking::LKTracking()
 
 void LKTracking::process()
 {
-    CvMatMessage::ConstPtr img = in_image_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(in_image_);
     if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("input image must be 1-channel");
     }
 
-    KeypointMessage::ConstPtr keypoints = in_keypoints_->getMessage<KeypointMessage>();
+    KeypointMessage::ConstPtr keypoints = msg::getMessage<KeypointMessage>(in_keypoints_);
 
     // TODO: parameterize
     cv::TermCriteria termcrit(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 20, 0.03);
@@ -49,11 +48,11 @@ void LKTracking::process()
         points[1].clear();
 
         if(keypoints->value.empty()) {
-            setError(true, "No input points, cannot initialize LK Tracker", EL_WARNING);
+            modifier_->setWarning("No input points, cannot initialize LK Tracker");
             return;
         }
 
-        setError(false);
+        modifier_->setNoError();
 
         int spws = readParameter<int>("subPixWinSize");
         cv::Size subPixWinSize (spws, spws);
@@ -81,7 +80,7 @@ void LKTracking::process()
 
         CvMatMessage::Ptr out_dbg(new CvMatMessage(enc::bgr, img->stamp_micro_seconds));
 
-        bool debug = out_debug_->isConnected();
+        bool debug = msg::isConnected(out_debug_);
         if(debug) {
             cv::cvtColor(img->value, out_dbg->value, CV_GRAY2BGR);
         }
@@ -101,7 +100,7 @@ void LKTracking::process()
         }
 
         if(debug) {
-            out_debug_->publish(out_dbg);
+            msg::publish(out_debug_, out_dbg);
         }
         points[1].resize(k);
     }

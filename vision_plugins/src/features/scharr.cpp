@@ -2,8 +2,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/normalization.hpp>
@@ -22,7 +21,7 @@ Scharr::Scharr()  :
 
 void Scharr::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
     int depth = in->value.type() & 7;
     switch(type_) {
@@ -46,7 +45,7 @@ void Scharr::process()
     default:
         throw std::runtime_error("Unknown derivation type!");
     }
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void Scharr::setupParameters()

@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -70,8 +69,8 @@ MatrixStitcher::MatrixStitcher()
 
 void MatrixStitcher::process()
 {
-    CvMatMessage::ConstPtr mat_1  = matrix_1_->getMessage<CvMatMessage>();
-    CvMatMessage::ConstPtr mat_2  = matrix_2_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr mat_1  = msg::getMessage<CvMatMessage>(matrix_1_);
+    CvMatMessage::ConstPtr mat_2  = msg::getMessage<CvMatMessage>(matrix_2_);
     CvMatMessage::Ptr out(new CvMatMessage(mat_1->getEncoding(), mat_1->stamp_micro_seconds));
 
     if(!mat_1->getEncoding().matches(mat_2->getEncoding()))
@@ -90,7 +89,7 @@ void MatrixStitcher::process()
         break;
     }
 
-    stitched_->publish(out);
+    msg::publish(stitched_, out);
 }
 
 void MatrixStitcher::setup()

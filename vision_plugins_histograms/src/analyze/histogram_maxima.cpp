@@ -2,8 +2,7 @@
 #include "histogram_maxima.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -23,7 +22,7 @@ HistogramMaxima::HistogramMaxima()
 
 void HistogramMaxima::process()
 {
-    HistogramMessage::ConstPtr  input  = histograms_->getMessage<HistogramMessage>();
+    HistogramMessage::ConstPtr  input  = msg::getMessage<HistogramMessage>(histograms_);
     HistogramMaximaMessage::Ptr output(new HistogramMaximaMessage);
 
     unsigned int count = input->value.histograms.size();
@@ -51,7 +50,7 @@ void HistogramMaxima::process()
             throw std::runtime_error("Only 32bit float or 32bit integer histograms supported!");
         }
     }
-    maxima_->publish(output);
+    msg::publish(maxima_, output);
 }
 
 void HistogramMaxima::setup()

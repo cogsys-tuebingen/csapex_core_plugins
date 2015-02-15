@@ -2,8 +2,7 @@
 #include "color_convert.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -77,7 +76,7 @@ void ColorConvert::setupParameters()
 
 void ColorConvert::process()
 {
-    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_img_);
 
     csPair cspair;
     cspair.first  = static_cast<ColorSpace> (readParameter<int>("input"));
@@ -102,9 +101,9 @@ void ColorConvert::process()
         } else {
             throw std::runtime_error("Conversion not supported!");
         }
-        output_img_->publish(out);
+        msg::publish(output_img_, out);
 
     } else {
-        output_img_->publish(img);
+        msg::publish(output_img_, img);
     }
 }

@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/flood.h>
@@ -23,7 +22,7 @@ LabelRegions::LabelRegions()
 void LabelRegions::process()
 {
 #warning "FIX ENCODING"
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, in->stamp_micro_seconds));
 
     if(in->value.type() != CV_8UC1) {
@@ -38,7 +37,7 @@ void LabelRegions::process()
     else
         utils_cv::label(in->value, out->value, edge);
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 void LabelRegions::setup()
