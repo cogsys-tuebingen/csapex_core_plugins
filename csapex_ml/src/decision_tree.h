@@ -18,9 +18,9 @@ class DecisionTree : public csapex::Node
 public:
     DecisionTree();
 
-    void setupParameters();
-    void setup();
-    void process();
+    void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
 private:
     void loadTree();

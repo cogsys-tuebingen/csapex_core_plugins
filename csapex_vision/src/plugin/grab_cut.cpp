@@ -23,7 +23,7 @@ GrabCut::GrabCut()
 {
 }
 
-void GrabCut::setupParameters()
+void GrabCut::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareRange("iterations",
                                                        param::ParameterDescription("Number of iterations of GrabCut"),
@@ -44,16 +44,16 @@ void GrabCut::setupParameters()
                                                                    init_value, cv::GC_BGD));
 }
 
-void GrabCut::setup()
+void GrabCut::setup(NodeModifier& node_modifier)
 {
-    in_  = modifier_->addInput<CvMatMessage>("Image");
-    in_fg_  = modifier_->addInput<CvMatMessage>("certain foreground");
-    in_bg_  = modifier_->addInput<CvMatMessage>("certain background");
+    in_  = node_modifier.addInput<CvMatMessage>("Image");
+    in_fg_  = node_modifier.addInput<CvMatMessage>("certain foreground");
+    in_bg_  = node_modifier.addInput<CvMatMessage>("certain background");
 
-    in_roi_  = modifier_->addOptionalInput<RoiMessage>("ROI");
+    in_roi_  = node_modifier.addOptionalInput<RoiMessage>("ROI");
 
-    out_fg_ = modifier_->addOutput<CvMatMessage>("possible foreground");
-    out_bg_ = modifier_->addOutput<CvMatMessage>("possible background");
+    out_fg_ = node_modifier.addOutput<CvMatMessage>("possible foreground");
+    out_bg_ = node_modifier.addOutput<CvMatMessage>("possible background");
 }
 
 void GrabCut::process()

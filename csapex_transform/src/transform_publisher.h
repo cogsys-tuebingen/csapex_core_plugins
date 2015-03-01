@@ -16,9 +16,10 @@ public:
     TransformPublisher();
     ~TransformPublisher();
 
-    virtual void setupROS();
-    virtual void processROS();
-    virtual void setup();
+    virtual void setupROS() override;
+    virtual void processROS() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
 
 private:
     Input* input_transform;

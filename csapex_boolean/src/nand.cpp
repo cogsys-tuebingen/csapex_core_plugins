@@ -19,12 +19,12 @@ NAND::NAND()
 {
 }
 
-void NAND::setup()
+void NAND::setup(NodeModifier& node_modifier)
 {
-    in_a = modifier_->addInput<bool>("A");
-    in_b = modifier_->addInput<bool>("B");
+    in_a = node_modifier.addInput<bool>("A");
+    in_b = node_modifier.addInput<bool>("B");
 
-    out = modifier_->addOutput<bool>("A nand B");
+    out = node_modifier.addOutput<bool>("A nand B");
 }
 
 void NAND::process()

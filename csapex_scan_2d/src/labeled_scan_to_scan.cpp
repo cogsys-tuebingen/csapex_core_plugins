@@ -18,10 +18,10 @@ LabeledScanToScan::LabeledScanToScan()
 {
 }
 
-void LabeledScanToScan::setup()
+void LabeledScanToScan::setup(NodeModifier& node_modifier)
 {
-    in_ = modifier_->addInput<LabeledScanMessage>("Labeled Scan");
-    out_ = modifier_->addOutput<ScanMessage>("Scan");
+    in_ = node_modifier.addInput<LabeledScanMessage>("Labeled Scan");
+    out_ = node_modifier.addOutput<ScanMessage>("Scan");
 }
 
 void LabeledScanToScan::process()

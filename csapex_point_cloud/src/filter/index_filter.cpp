@@ -19,11 +19,11 @@ IndexFilter::IndexFilter()
 {
 }
 
-void IndexFilter::setup()
+void IndexFilter::setup(NodeModifier& node_modifier)
 {
-    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    indeces_input_ = modifier_->addInput<PointIndecesMessage>("Indeces");
-    output_cloud_ = modifier_->addOutput<PointCloudMessage>("Pointcloud");
+    input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    indeces_input_ = node_modifier.addInput<PointIndecesMessage>("Indeces");
+    output_cloud_ = node_modifier.addOutput<PointCloudMessage>("Pointcloud");
 }
 
 void IndexFilter::process()

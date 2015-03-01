@@ -18,22 +18,22 @@ public:
     {
     }
 
-    void setupParameters()
+    void setupParameters(Parameterizable& parameters)
     {
-        addParameter(param::ParameterFactory::declareRange("angle", -M_PI, M_PI, 0.0, 0.001));
+        parameters.addParameter(param::ParameterFactory::declareRange("angle", -M_PI, M_PI, 0.0, 0.001));
         std::map<std::string, int> modes = boost::assign::map_list_of
                 ("nearest", (int) cv::INTER_NEAREST)
                 ("linear", (int) cv::INTER_LINEAR)
                 ("area", (int) cv::INTER_AREA)
                 ("cubic", (int) cv::INTER_CUBIC)
                 ("lanczos4", (int) cv::INTER_LANCZOS4);
-        addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST));
+        parameters.addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST));
     }
 
-    void setup()
+    void setup(csapex::NodeModifier& node_modifier)
     {
-        in_  = modifier_->addInput<CvMatMessage>("image");
-        out_ = modifier_->addOutput<CvMatMessage>("rotated image");
+        in_  = node_modifier.addInput<CvMatMessage>("image");
+        out_ = node_modifier.addOutput<CvMatMessage>("rotated image");
     }
 
     void process()

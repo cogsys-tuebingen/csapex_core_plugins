@@ -19,14 +19,16 @@ GaussianBlur::GaussianBlur() :
     sigma_x_(0.1),
     sigma_y_(0.0)
 {
-    addParameter(param::ParameterFactory::declareRange("kernel", 1, 255, kernel_, 2),
-                 std::bind(&GaussianBlur::update, this));
-    addParameter(param::ParameterFactory::declareRange("sigma x", 0.1, 128.0, sigma_x_, 0.1),
-                 std::bind(&GaussianBlur::update, this));
-    addParameter(param::ParameterFactory::declareRange("sigma y", 0.0, 128.0, sigma_y_, 0.1),
-                 std::bind(&GaussianBlur::update, this));
+}
 
-
+void GaussianBlur::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange("kernel", 1, 255, kernel_, 2),
+                 std::bind(&GaussianBlur::update, this));
+    parameters.addParameter(param::ParameterFactory::declareRange("sigma x", 0.1, 128.0, sigma_x_, 0.1),
+                 std::bind(&GaussianBlur::update, this));
+    parameters.addParameter(param::ParameterFactory::declareRange("sigma y", 0.0, 128.0, sigma_y_, 0.1),
+                 std::bind(&GaussianBlur::update, this));
 }
 
 void GaussianBlur::process()
@@ -38,10 +40,10 @@ void GaussianBlur::process()
     msg::publish(output_, out);
 }
 
-void GaussianBlur::setup()
+void GaussianBlur::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("Unblurred");
-    output_ = modifier_->addOutput<CvMatMessage>("Blurred");
+    input_ = node_modifier.addInput<CvMatMessage>("Unblurred");
+    output_ = node_modifier.addOutput<CvMatMessage>("Blurred");
 
     update();
 }

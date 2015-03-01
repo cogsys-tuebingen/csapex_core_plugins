@@ -23,10 +23,10 @@ HoldableBuffer::HoldableBuffer() :
 {
 }
 
-void HoldableBuffer::setup()
+void HoldableBuffer::setup(NodeModifier& node_modifier)
 {
-    in_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
-    out_ = modifier_->addOutput<connection_types::AnyMessage>("Same as input");
+    in_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
+    out_ = node_modifier.addOutput<connection_types::AnyMessage>("Same as input");
 }
 
 void HoldableBuffer::process()
@@ -64,10 +64,10 @@ void HoldableBuffer::process()
 
 }
 
-void HoldableBuffer::setupParameters()
+void HoldableBuffer::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("buffer size",1, 50, 1, 1));
-    addParameter(param::ParameterFactory::declareBool("hold", false));
-    addParameter(param::ParameterFactory::declareRange("out idx", 0, (int) buffer_.size() - 1, 0 , 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("buffer size",1, 50, 1, 1));
+    parameters.addParameter(param::ParameterFactory::declareBool("hold", false));
+    parameters.addParameter(param::ParameterFactory::declareRange("out idx", 0, (int) buffer_.size() - 1, 0 , 1));
     setParameterEnabled("out idx", false);
 }

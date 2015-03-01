@@ -20,18 +20,22 @@ using namespace csapex::connection_types;
 
 StatisticalOutlierRemoval::StatisticalOutlierRemoval()
 {
-    addParameter(param::ParameterFactory::declareRange("mean k", 1, 100, 2, 1));
-    addParameter(param::ParameterFactory::declareBool ("keep organized", false));
-    addParameter(param::ParameterFactory::declareBool ("negate", false));
-    addParameter(param::ParameterFactory::declareRange("std dev threshold", 0.0, 10.0, 0.1, 0.1));
 }
 
-void StatisticalOutlierRemoval::setup()
+void StatisticalOutlierRemoval::setupParameters(Parameterizable &parameters)
 {
-    input_cloud_    = modifier_->addInput<PointCloudMessage>   ("PointCloud");
-    input_indeces_  = modifier_->addOptionalInput<PointIndecesMessage> ("Indeces");
-    output_cloud_   = modifier_->addOutput<PointCloudMessage>  ("Pointcloud");
-    output_indeces_ = modifier_->addOutput<PointIndecesMessage>("Indeces");
+    parameters.addParameter(param::ParameterFactory::declareRange("mean k", 1, 100, 2, 1));
+    parameters.addParameter(param::ParameterFactory::declareBool ("keep organized", false));
+    parameters.addParameter(param::ParameterFactory::declareBool ("negate", false));
+    parameters.addParameter(param::ParameterFactory::declareRange("std dev threshold", 0.0, 10.0, 0.1, 0.1));
+}
+
+void StatisticalOutlierRemoval::setup(NodeModifier& node_modifier)
+{
+    input_cloud_    = node_modifier.addInput<PointCloudMessage>   ("PointCloud");
+    input_indeces_  = node_modifier.addOptionalInput<PointIndecesMessage> ("Indeces");
+    output_cloud_   = node_modifier.addOutput<PointCloudMessage>  ("Pointcloud");
+    output_indeces_ = node_modifier.addOutput<PointIndecesMessage>("Indeces");
 }
 
 void StatisticalOutlierRemoval::process()

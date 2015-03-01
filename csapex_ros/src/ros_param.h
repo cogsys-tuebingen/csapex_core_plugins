@@ -17,9 +17,9 @@ class RosParam : public csapex::RosNode
 public:
     RosParam();
 
-    void setupParameters();
-    void setupROS();
-    void processROS();
+    virtual void setupParameters(Parameterizable& parameters) override;
+    virtual void setupROS() override;
+    virtual void processROS() override;
 
 private:
     void update();

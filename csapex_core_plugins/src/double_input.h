@@ -15,9 +15,10 @@ class NumberInput : public Node
 public:
     NumberInput();
 
-    void tick();
-    void setup();
-    void process();
+    void tick() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
+    void process() override;
 
 private:
     Output* out_;

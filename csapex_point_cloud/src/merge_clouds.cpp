@@ -21,16 +21,16 @@ MergeClouds::MergeClouds()
 {
 }
 
-void MergeClouds::setupParameters()
+void MergeClouds::setupParameters(Parameterizable& parameters)
 {
 }
 
-void MergeClouds::setup()
+void MergeClouds::setup(NodeModifier& node_modifier)
 {
-    in_a_ = modifier_->addInput<PointCloudMessage>("Cloud A");
-    in_b_ = modifier_->addInput<PointCloudMessage>("Cloud B");
+    in_a_ = node_modifier.addInput<PointCloudMessage>("Cloud A");
+    in_b_ = node_modifier.addInput<PointCloudMessage>("Cloud B");
 
-    out_ = modifier_->addOutput<PointCloudMessage>("merged PointCloud");
+    out_ = node_modifier.addOutput<PointCloudMessage>("merged PointCloud");
 }
 
 void MergeClouds::process()

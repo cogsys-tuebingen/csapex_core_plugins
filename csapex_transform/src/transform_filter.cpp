@@ -31,14 +31,17 @@ TransformFilter::TransformFilter()
     }
 }
 
-void TransformFilter::setup()
+void TransformFilter::setup(NodeModifier& node_modifier)
 {
-    input_transform_ = modifier_->addInput<connection_types::TransformMessage>("Raw Transformation");
+    input_transform_ = node_modifier.addInput<connection_types::TransformMessage>("Raw Transformation");
 
-    output_transform_ = modifier_->addOutput<connection_types::TransformMessage>("Filtered Transformation");
-    output_text_ = modifier_->addOutput<std::string>("String"); // create a debug output
+    output_transform_ = node_modifier.addOutput<connection_types::TransformMessage>("Filtered Transformation");
+    output_text_ = node_modifier.addOutput<std::string>("String"); // create a debug output
+}
 
-    addParameter(param::ParameterFactory::declareRange("filter size", 1, 10000, 200, 100));
+void TransformFilter::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange("filter size", 1, 10000, 200, 100));
 }
 
 void TransformFilter::process()

@@ -14,8 +14,8 @@ class ScanRenderer : public csapex::Node
 public:
     ScanRenderer();
 
-    virtual void setup();
-    virtual void process();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
     template <typename ScanType>
     void doProcess(const ScanType& s);

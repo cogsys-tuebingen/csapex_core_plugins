@@ -14,8 +14,8 @@ public:
     ColorSegmentation();
 
 public:
-    virtual void process();
-    virtual void setup();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
 
 protected:
     virtual void setParameterState(Memento::Ptr memento);

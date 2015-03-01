@@ -15,10 +15,11 @@ struct KeypointMessage : public MessageTemplate<std::vector<cv::KeyPoint>, Keypo
 {
     KeypointMessage();
 
-    bool isContainer() const;
-    ConnectionType::Ptr nestedType() const;
-    virtual ConnectionType::ConstPtr nestedValue(std::size_t i) const;
-    virtual std::size_t nestedValueCount() const;
+    bool isContainer() const override;
+    ConnectionType::Ptr nestedType() const override;
+    virtual void addNestedValue(const ConnectionType::ConstPtr &msg) override;
+    virtual ConnectionType::ConstPtr nestedValue(std::size_t i) const override;
+    virtual std::size_t nestedValueCount() const override;
 };
 
 

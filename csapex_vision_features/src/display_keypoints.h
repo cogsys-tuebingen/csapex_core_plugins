@@ -16,9 +16,10 @@ public:
     DisplayKeypoints();
 
 public:
-    virtual void setup();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
 
-    virtual void process();
+    virtual void process() override;
 
 private:
     Input* in_img;

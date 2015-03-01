@@ -45,35 +45,33 @@ ImportRos::ImportRos()
 {
 }
 
-void ImportRos::setup()
+void ImportRos::setup(NodeModifier& node_modifier)
 {
-    input_time_ = modifier_->addOptionalInput<connection_types::TimeStampMessage>("time");
-    connector_ = modifier_->addOutput<connection_types::AnyMessage>("Something");
-
-
-    std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
-
-    param::Parameter::Ptr buffer_p = param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
-    addConditionalParameter(buffer_p, connected_condition);
-    param::Parameter::Ptr max_wait_p = param::ParameterFactory::declareRange("buffer/max_wait", 0.0, 10.0, 1.0, 0.1);
-    addConditionalParameter(max_wait_p, connected_condition);
+    input_time_ = node_modifier.addOptionalInput<connection_types::TimeStampMessage>("time");
+    connector_ = node_modifier.addOutput<connection_types::AnyMessage>("Something");
 }
 
-void ImportRos::setupParameters()
+void ImportRos::setupParameters(Parameterizable& parameters)
 {
     std::vector<std::string> set;
     set.push_back(no_topic_);
-    addParameter(param::ParameterFactory::declareParameterStringSet("topic", set),
+    parameters.addParameter(param::ParameterFactory::declareParameterStringSet("topic", set),
                  std::bind(&ImportRos::update, this));
 
-    addParameter(param::ParameterFactory::declareTrigger("refresh"),
+    parameters.addParameter(param::ParameterFactory::declareTrigger("refresh"),
                  std::bind(&ImportRos::refresh, this));
 
-    addParameter(param::ParameterFactory::declareRange("rate", 0.1, 100.0, 60.0, 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("rate", 0.1, 100.0, 60.0, 0.1),
                  std::bind(&ImportRos::updateRate, this));
-    addParameter(param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
                  std::bind(&ImportRos::updateSubscriber, this));
-    addParameter(param::ParameterFactory::declareBool("latch", false));
+    parameters.addParameter(param::ParameterFactory::declareBool("latch", false));
+
+    std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
+    param::Parameter::Ptr buffer_p = param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
+    parameters.addConditionalParameter(buffer_p, connected_condition);
+    param::Parameter::Ptr max_wait_p = param::ParameterFactory::declareRange("buffer/max_wait", 0.0, 10.0, 1.0, 0.1);
+    parameters.addConditionalParameter(max_wait_p, connected_condition);
 }
 
 void ImportRos::setupROS()

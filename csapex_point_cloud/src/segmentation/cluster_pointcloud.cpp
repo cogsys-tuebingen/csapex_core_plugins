@@ -38,10 +38,13 @@ using namespace std;
 
 ClusterPointcloud::ClusterPointcloud()
 {
+}
 
-    addParameter(param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001));
-    addParameter(param::ParameterFactory::declareRange("MinClusterSize", 10, 20000, 100, 200));
-    addParameter(param::ParameterFactory::declareRange("MaxClusterSize", 10, 100000, 25000, 1000));
+void ClusterPointcloud::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001));
+    parameters.addParameter(param::ParameterFactory::declareRange("MinClusterSize", 10, 20000, 100, 200));
+    parameters.addParameter(param::ParameterFactory::declareRange("MaxClusterSize", 10, 100000, 25000, 1000));
 }
 
 void ClusterPointcloud::process()
@@ -55,11 +58,11 @@ void ClusterPointcloud::process()
     param_clusterMaxSize_   = readParameter<int>("MaxClusterSize");
 }
 
-void ClusterPointcloud::setup()
+void ClusterPointcloud::setup(NodeModifier& node_modifier)
 {
-    in_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    out_ = modifier_->addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
-    out_debug_ = modifier_->addOutput<std::string>("Debug Info");
+    in_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
+    out_debug_ = node_modifier.addOutput<std::string>("Debug Info");
 }
 
 template <class PointT>

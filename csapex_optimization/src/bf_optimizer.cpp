@@ -23,14 +23,14 @@ BFOptimizer::BFOptimizer()
 {
 }
 
-void BFOptimizer::setupParameters()
+void BFOptimizer::setupParameters(Parameterizable& parameters)
 {
 }
 
-void BFOptimizer::setup()
+void BFOptimizer::setup(NodeModifier& node_modifier)
 {
-    in_  = modifier_->addInput<double>("Fitness");
-    out_ = modifier_->addOutput<AnyMessage>("Trigger");
+    in_  = node_modifier.addInput<double>("Fitness");
+    out_ = node_modifier.addOutput<AnyMessage>("Trigger");
 
 
     //    modifier_->setIsSource(true);

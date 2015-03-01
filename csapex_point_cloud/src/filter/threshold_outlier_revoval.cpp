@@ -179,16 +179,20 @@ struct ThresholdNoiseFilter {
 
 ThresholdOutlierRemoval::ThresholdOutlierRemoval()
 {
-    addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
-    addParameter(param::ParameterFactory::declareRange("max. distance", 0.0, 10.0, 0.25, 0.01));
-    addParameter(param::ParameterFactory::declareBool("interpolate", false));
 }
 
-void ThresholdOutlierRemoval::setup()
+void ThresholdOutlierRemoval::setupParameters(Parameterizable &parameters)
 {
-    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    thresholds_ = modifier_->addInput<CvMatMessage>("Thresholds");
-    output_ = modifier_->addOutput<PointCloudMessage>("Filtered Pointcloud");
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("max. distance", 0.0, 10.0, 0.25, 0.01));
+    parameters.addParameter(param::ParameterFactory::declareBool("interpolate", false));
+}
+
+void ThresholdOutlierRemoval::setup(NodeModifier& node_modifier)
+{
+    input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    thresholds_ = node_modifier.addInput<CvMatMessage>("Thresholds");
+    output_ = node_modifier.addOutput<PointCloudMessage>("Filtered Pointcloud");
 }
 
 void ThresholdOutlierRemoval::process()

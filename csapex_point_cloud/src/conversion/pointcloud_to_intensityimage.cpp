@@ -18,11 +18,11 @@ PointCloudToIntensityImage::PointCloudToIntensityImage()
 {
 }
 
-void PointCloudToIntensityImage::setup()
+void PointCloudToIntensityImage::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
 
-    output_ = modifier_->addOutput<CvMatMessage>("Intensity Image");
+    output_ = node_modifier.addOutput<CvMatMessage>("Intensity Image");
 }
 
 void PointCloudToIntensityImage::process()

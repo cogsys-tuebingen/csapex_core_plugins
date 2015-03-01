@@ -23,14 +23,14 @@ EmptyLabeledFeaturesMessage::EmptyLabeledFeaturesMessage()
 {
 }
 
-void EmptyLabeledFeaturesMessage::setup()
+void EmptyLabeledFeaturesMessage::setup(NodeModifier& node_modifier)
 {
-    output_ = modifier_->addOutput<FeaturesMessage>("static feature");
+    output_ = node_modifier.addOutput<FeaturesMessage>("static feature");
 }
 
-void EmptyLabeledFeaturesMessage::setupParameters()
+void EmptyLabeledFeaturesMessage::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("class id", 0, 255, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("class id", 0, 255, 0, 1));
 }
 
 

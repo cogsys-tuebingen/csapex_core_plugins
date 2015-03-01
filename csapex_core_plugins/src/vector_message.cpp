@@ -122,6 +122,29 @@ bool VectorMessage::acceptsConnectionFrom(const ConnectionType *other_side) cons
     }
 }
 
+bool VectorMessage::isContainer() const
+{
+    return true;
+}
+
+ConnectionType::Ptr VectorMessage::nestedType() const
+{
+    return value.empty() ? connection_types::makeEmpty<connection_types::NoMessage>() : value.front()->toType();
+}
+
+ConnectionType::ConstPtr VectorMessage::nestedValue(std::size_t i) const
+{
+    return  value.at(i);
+}
+std::size_t VectorMessage::nestedValueCount() const
+{
+    return value.size();
+}
+void VectorMessage::addNestedValue(const ConnectionType::ConstPtr &msg)
+{
+    value.push_back(msg);
+}
+
 
 /// YAML
 namespace YAML {

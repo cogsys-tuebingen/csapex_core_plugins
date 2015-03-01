@@ -25,16 +25,16 @@ SegmentLabeler::SegmentLabeler()
 {
 }
 
-void SegmentLabeler::setupParameters()
+void SegmentLabeler::setupParameters(Parameterizable& parameters)
 {
 }
 
-void SegmentLabeler::setup()
+void SegmentLabeler::setup(NodeModifier& node_modifier)
 {
-    in_segments_ = modifier_->addInput<GenericVectorMessage, Segment>("Segments");
-    in_labeled_scan_ = modifier_->addInput<LabeledScanMessage>("Labeled Scan");
+    in_segments_ = node_modifier.addInput<GenericVectorMessage, Segment>("Segments");
+    in_labeled_scan_ = node_modifier.addInput<LabeledScanMessage>("Labeled Scan");
 
-    out_ = modifier_->addOutput<GenericVectorMessage, Segment>("Labeled Segments");
+    out_ = node_modifier.addOutput<GenericVectorMessage, Segment>("Labeled Segments");
 }
 
 void SegmentLabeler::process()

@@ -48,14 +48,17 @@ void ModelToMarker::process()
 
 }
 
-void ModelToMarker::setup()
+void ModelToMarker::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<GenericVectorMessage, ModelMessage >("ModelMessages");
-    output_ = modifier_->addOutput<visualization_msgs::MarkerArray>("Marker");
-    output_text_ = modifier_->addOutput<std::string>("String");
+    input_ = node_modifier.addInput<GenericVectorMessage, ModelMessage >("ModelMessages");
+    output_ = node_modifier.addOutput<visualization_msgs::MarkerArray>("Marker");
+    output_text_ = node_modifier.addOutput<std::string>("String");
+}
 
-    addParameter(param::ParameterFactory::declareBool("publish marker", true));
-    addParameter(param::ParameterFactory::declareColorParameter("color/marker", 0xFF, 0xCC, 0x00));
+void ModelToMarker::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareBool("publish marker", true));
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/marker", 0xFF, 0xCC, 0x00));
 }
 
 

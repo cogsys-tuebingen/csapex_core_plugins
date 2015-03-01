@@ -12,8 +12,9 @@ class GaussianBlur : public Node
 public:
     GaussianBlur();
 
-    virtual void process();
-    virtual void setup();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void process() override;
 
 private:
     void update();

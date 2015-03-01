@@ -34,11 +34,11 @@ void LabelClusteredPointCloud::process()
     boost::apply_visitor (PointCloudMessage::Dispatch<LabelClusteredPointCloud>(this, cloud), cloud->value);
 }
 
-void LabelClusteredPointCloud::setup()
+void LabelClusteredPointCloud::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
-    in_indices_ = modifier_->addInput<GenericVectorMessage, pcl::PointIndices>("Indices");
-    output_ = modifier_->addOutput<PointCloudMessage>("Labeled PointCloud");
+    input_  = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    in_indices_ = node_modifier.addInput<GenericVectorMessage, pcl::PointIndices>("Indices");
+    output_ = node_modifier.addOutput<PointCloudMessage>("Labeled PointCloud");
 }
 
 namespace implementation {

@@ -20,13 +20,13 @@ EvaluateBinaryClassifier::EvaluateBinaryClassifier()
 {
 }
 
-void EvaluateBinaryClassifier::setupParameters()
+void EvaluateBinaryClassifier::setupParameters(Parameterizable& parameters)
 {
 }
 
-void EvaluateBinaryClassifier::setup()
+void EvaluateBinaryClassifier::setup(NodeModifier& node_modifier)
 {
-    in_ = modifier_->addInput<ConfusionMatrixMessage>("Confusion Matrix");
+    in_ = node_modifier.addInput<ConfusionMatrixMessage>("Confusion Matrix");
 }
 
 void EvaluateBinaryClassifier::process()

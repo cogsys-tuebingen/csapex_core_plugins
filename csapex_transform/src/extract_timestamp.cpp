@@ -16,11 +16,11 @@ ExtractTimeStamp::ExtractTimeStamp()
 {
 }
 
-void ExtractTimeStamp::setup()
+void ExtractTimeStamp::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<AnyMessage>("Message");
+    input_ = node_modifier.addInput<AnyMessage>("Message");
 
-    output_ = modifier_->addOutput<TimeStampMessage>("Time");
+    output_ = node_modifier.addOutput<TimeStampMessage>("Time");
 }
 
 void ExtractTimeStamp::process()

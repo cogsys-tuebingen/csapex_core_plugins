@@ -31,6 +31,10 @@ using namespace connection_types;
 ExtractKeypoints::ExtractKeypoints()
     : refresh_(true)
 {
+}
+
+void ExtractKeypoints::setupParameters(Parameterizable &parameters)
+{
     ExtractorManager& manager = ExtractorManager::instance();
     std::vector<std::string> methods;
 
@@ -41,7 +45,7 @@ ExtractKeypoints::ExtractKeypoints()
     }
 
     param::Parameter::Ptr method = param::ParameterFactory::declareParameterStringSet("method", methods);
-    addParameter(method, std::bind(&ExtractKeypoints::update, this));
+    parameters.addParameter(method, std::bind(&ExtractKeypoints::update, this));
 
     Q_FOREACH(Pair fc, manager.featureDetectors()) {
         std::string key = fc.second.getType();
@@ -49,17 +53,17 @@ ExtractKeypoints::ExtractKeypoints()
 
         Q_FOREACH(param::Parameter::Ptr param, manager.featureDetectorParameters(key)) {
             param::Parameter::Ptr param_clone = param::ParameterFactory::clone(param);
-            addConditionalParameter(param_clone, condition, std::bind(&ExtractKeypoints::update, this));
+            parameters.addConditionalParameter(param_clone, condition, std::bind(&ExtractKeypoints::update, this));
         }
     }
 }
 
-void ExtractKeypoints::setup()
+void ExtractKeypoints::setup(NodeModifier& node_modifier)
 {
-    in_img = modifier_->addInput<CvMatMessage>("Image");
-    in_mask = modifier_->addOptionalInput<CvMatMessage>("Mask");
+    in_img = node_modifier.addInput<CvMatMessage>("Image");
+    in_mask = node_modifier.addOptionalInput<CvMatMessage>("Mask");
 
-    out_key = modifier_->addOutput<csapex::connection_types::KeypointMessage>("Keypoints");
+    out_key = node_modifier.addOutput<csapex::connection_types::KeypointMessage>("Keypoints");
 }
 
 void ExtractKeypoints::process()

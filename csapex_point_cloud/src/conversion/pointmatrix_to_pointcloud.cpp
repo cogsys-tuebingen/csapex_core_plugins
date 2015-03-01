@@ -59,13 +59,13 @@ void PointmatrixToPointcloud::process()
     msg::publish(output_, out);
 }
 
-void PointmatrixToPointcloud::setup()
+void PointmatrixToPointcloud::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("Point Matrix");
-    output_ = modifier_->addOutput<PointCloudMessage>("PointCloud");
+    input_  = node_modifier.addInput<CvMatMessage>("Point Matrix");
+    output_ = node_modifier.addOutput<PointCloudMessage>("PointCloud");
 }
 
-void PointmatrixToPointcloud::setupParameters()
+void PointmatrixToPointcloud::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareText("frame", "/camera"));
+    parameters.addParameter(param::ParameterFactory::declareText("frame", "/camera"));
 }

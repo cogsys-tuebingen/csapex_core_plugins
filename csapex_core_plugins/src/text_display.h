@@ -11,8 +11,8 @@ class TextDisplay : public Node
 public:
     TextDisplay();
 
-    virtual void process();
-    virtual void setup();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
 
 public:
     boost::signals2::signal<void(const std::string&)> display_request;

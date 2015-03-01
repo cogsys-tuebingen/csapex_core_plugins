@@ -40,39 +40,37 @@ FileImporter::~FileImporter()
 }
 
 
-void FileImporter::setupParameters()
+void FileImporter::setupParameters(Parameterizable& parameters)
 {
     param::Parameter::Ptr directory = param::ParameterFactory::declareBool("import directory", false);
-    addParameter(directory);
+    parameters.addParameter(directory);
 
     std::function<bool()> cond_file = [directory]() { return !directory->as<bool>(); };
     std::function<bool()> cond_dir = [directory]() { return directory->as<bool>(); };
 
-    addConditionalParameter(param::ParameterFactory::declareBool("recursive import", false), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("recursive import", false), cond_dir);
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
-    addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
+    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
 
-    addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
-    addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
-    addConditionalParameter(param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
 
     param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
-    addParameter(immediate, std::bind(&FileImporter::changeMode, this));
-}
-
-void FileImporter::setup()
-{
-    outputs_.push_back(modifier_->addOutput<connection_types::AnyMessage>("Unknown"));
-
-    param::Parameter::Ptr immediate = getParameter("playback/immediate");
+    parameters.addParameter(immediate, std::bind(&FileImporter::changeMode, this));
 
     std::function<void(param::Parameter*)> setf = std::bind(&NodeModifier::setTickFrequency, modifier_, std::bind(&param::Parameter::as<double>, std::placeholders::_1));
     std::function<bool()> conditionf = [immediate]() { return !immediate->as<bool>(); };
     addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
+}
 
-    begin_ = modifier_->addTrigger("begin");
-    end_ = modifier_->addTrigger("end");
+void FileImporter::setup(NodeModifier& node_modifier)
+{
+    outputs_.push_back(node_modifier.addOutput<connection_types::AnyMessage>("Unknown"));
+
+    begin_ = node_modifier.addTrigger("begin");
+    end_ = node_modifier.addTrigger("end");
 }
 
 void FileImporter::changeMode()
@@ -113,10 +111,8 @@ void FileImporter::tick()
                 }
             }
         }
-    } else {
+    } else if(directory_import_) {
         INTERLUDE("directory");
-        apex_assert_hard(directory_import_);
-
         int current = readParameter<int>("directory/current");
 
         int files = dir_files_.size();

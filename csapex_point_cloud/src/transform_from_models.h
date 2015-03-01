@@ -13,8 +13,10 @@ class TransformFromModels : public csapex::Node
 public:
     TransformFromModels();
 
-    virtual void process();
-    virtual void setup();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void process() override;
+
 private:
     Input* input_models_ref_;
     Input* input_models_new_;

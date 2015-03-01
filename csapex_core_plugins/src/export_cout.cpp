@@ -20,9 +20,9 @@ ExportCout::ExportCout()
 {
 }
 
-void ExportCout::setup()
+void ExportCout::setup(NodeModifier& node_modifier)
 {
-    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
+    connector_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
 }
 
 void ExportCout::process()

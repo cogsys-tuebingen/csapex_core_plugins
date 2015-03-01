@@ -26,15 +26,15 @@ ExportRos::ExportRos()
 {
 }
 
-void ExportRos::setupParameters()
+void ExportRos::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareText("topic", "export"),
+    parameters.addParameter(param::ParameterFactory::declareText("topic", "export"),
                  std::bind(&ExportRos::updateTopic, this));
 }
 
-void ExportRos::setup()
+void ExportRos::setup(NodeModifier& node_modifier)
 {
-    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
+    connector_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
 }
 
 void ExportRos::setupROS()

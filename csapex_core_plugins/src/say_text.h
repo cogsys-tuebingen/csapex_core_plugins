@@ -14,8 +14,8 @@ class SayText : public Node
 public:
     SayText();
 
-    virtual void process();
-    virtual void setup();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
 
 private:
     Input* connector_;

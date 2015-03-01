@@ -19,7 +19,11 @@ using namespace csapex;
 
 TextInput::TextInput()
 {
-    addParameter(param::ParameterFactory::declareText("text", ""), std::bind(&TextInput::publish, this));
+}
+
+void TextInput::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareText("text", ""), std::bind(&TextInput::publish, this));
 }
 
 void TextInput::process()
@@ -27,9 +31,9 @@ void TextInput::process()
 
 }
 
-void TextInput::setup()
+void TextInput::setup(NodeModifier& node_modifier)
 {
-    connector_ = modifier_->addOutput<std::string>("Text");
+    connector_ = node_modifier.addOutput<std::string>("Text");
 }
 
 void TextInput::publish()

@@ -17,12 +17,12 @@ ExtractTimeStampCloud::ExtractTimeStampCloud()
 {
 }
 
-void ExtractTimeStampCloud::setup()
+void ExtractTimeStampCloud::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
 
-    output_ = modifier_->addOutput<TimeStampMessage>("Time");
-    output_frame_ = modifier_->addOutput<std::string>("Target Frame");
+    output_ = node_modifier.addOutput<TimeStampMessage>("Time");
+    output_frame_ = node_modifier.addOutput<std::string>("Target Frame");
 }
 
 void ExtractTimeStampCloud::process()

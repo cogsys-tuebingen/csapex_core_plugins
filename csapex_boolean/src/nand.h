@@ -14,8 +14,8 @@ public:
     NAND();
 
 public:
-    virtual void setup();
-    virtual void process();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
 private:
     Input* in_a;

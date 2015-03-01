@@ -12,8 +12,8 @@ class Relay : public Node
 public:
     Relay();
 
-    virtual void setup();
-    virtual void process();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
 private:
     Input* input_;

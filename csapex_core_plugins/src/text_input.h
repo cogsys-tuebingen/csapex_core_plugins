@@ -11,8 +11,9 @@ class TextInput : public Node
 public:
     TextInput();
 
-    void process();
-    virtual void setup();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
 
 protected:
     void publish();

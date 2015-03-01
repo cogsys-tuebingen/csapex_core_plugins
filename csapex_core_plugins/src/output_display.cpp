@@ -21,9 +21,9 @@ OutputDisplay::~OutputDisplay()
 {
 }
 
-void OutputDisplay::setup()
+void OutputDisplay::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<AnyMessage>("Message");
+    input_ = node_modifier.addInput<AnyMessage>("Message");
 }
 
 void OutputDisplay::process()

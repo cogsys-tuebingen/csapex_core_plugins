@@ -35,7 +35,14 @@ ConnectionType::ConstPtr KeypointMessage::nestedValue(std::size_t i) const
 }
 std::size_t KeypointMessage::nestedValueCount() const
 {
-    throw value.size();
+    return value.size();
+}
+void KeypointMessage::addNestedValue(const ConnectionType::ConstPtr &msg)
+{
+    auto v = std::dynamic_pointer_cast<GenericValueMessage<cv::KeyPoint> const> (msg);
+    if(v) {
+        value.push_back(v->value);
+    }
 }
 
 

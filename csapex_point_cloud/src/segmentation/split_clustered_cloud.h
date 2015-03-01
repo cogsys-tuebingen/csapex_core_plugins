@@ -11,8 +11,8 @@ class SplitClusteredCloud : public csapex::Node
 public:
     SplitClusteredCloud();
 
-    virtual void process();
-    virtual void setup();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);

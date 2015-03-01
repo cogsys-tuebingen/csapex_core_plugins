@@ -22,17 +22,21 @@ using namespace csapex::connection_types;
 
 CropBox::CropBox()
 {
-    addParameter(param::ParameterFactory::declareInterval("dx", -10.0, 10.0, -10.0, 10.0, 0.01));
-    addParameter(param::ParameterFactory::declareInterval("dy", -10.0, 10.0, -10.0, 10.0, 0.01));
-    addParameter(param::ParameterFactory::declareInterval("dz", -10.0, 10.0, -10.0, 10.0, 0.01));
 }
 
-void CropBox::setup()
+void CropBox::setupParameters(Parameterizable &parameters)
 {
-    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    parameters.addParameter(param::ParameterFactory::declareInterval("dx", -10.0, 10.0, -10.0, 10.0, 0.01));
+    parameters.addParameter(param::ParameterFactory::declareInterval("dy", -10.0, 10.0, -10.0, 10.0, 0.01));
+    parameters.addParameter(param::ParameterFactory::declareInterval("dz", -10.0, 10.0, -10.0, 10.0, 0.01));
+}
 
-    output_pos_ = modifier_->addOutput<PointCloudMessage>("cropped PointCloud (+)");
-    output_neg_ = modifier_->addOutput<PointCloudMessage>("cropped PointCloud (-)");
+void CropBox::setup(NodeModifier& node_modifier)
+{
+    input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+
+    output_pos_ = node_modifier.addOutput<PointCloudMessage>("cropped PointCloud (+)");
+    output_neg_ = node_modifier.addOutput<PointCloudMessage>("cropped PointCloud (-)");
 }
 
 void CropBox::process()

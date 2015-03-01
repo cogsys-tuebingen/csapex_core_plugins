@@ -30,10 +30,10 @@ void TransformCombiner::process()
 }
 
 
-void TransformCombiner::setup()
+void TransformCombiner::setup(NodeModifier& node_modifier)
 {
-    input_a_ = modifier_->addInput<connection_types::TransformMessage>("A");
-    input_b_ = modifier_->addInput<connection_types::TransformMessage>("B");
+    input_a_ = node_modifier.addInput<connection_types::TransformMessage>("A");
+    input_b_ = node_modifier.addInput<connection_types::TransformMessage>("B");
 
-    output_ = modifier_->addOutput<connection_types::TransformMessage>("A*B");
+    output_ = node_modifier.addOutput<connection_types::TransformMessage>("A*B");
 }

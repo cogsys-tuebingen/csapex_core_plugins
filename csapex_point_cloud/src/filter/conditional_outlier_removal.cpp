@@ -26,38 +26,42 @@ ConditionalOutlierRemoval::ConditionalOutlierRemoval() :
     z_range_(-30.0, 30.0),
     keep_organized_(false)
 {
+}
+
+void ConditionalOutlierRemoval::setupParameters(Parameterizable &parameters)
+{
     std::map<std::string, int> types = boost::assign::map_list_of
             ("AND", (int) AND)
             ("OR", (int) OR);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) AND), std::bind(&ConditionalOutlierRemoval::update, this));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) AND), std::bind(&ConditionalOutlierRemoval::update, this));
 
-    addParameter(param::ParameterFactory::declareBool ("keep organized", keep_organized_),
+    parameters.addParameter(param::ParameterFactory::declareBool ("keep organized", keep_organized_),
                  std::bind(&ConditionalOutlierRemoval::update, this));
 
     std::map<std::string, int> conditions = boost::assign::map_list_of
             ("x", 1)
             ("y", 2)
             ("z", 4);
-    addParameter(param::ParameterFactory::declareParameterBitSet("conditions", conditions),
+    parameters.addParameter(param::ParameterFactory::declareParameterBitSet("conditions", conditions),
                  std::bind(&ConditionalOutlierRemoval::update, this));
-    addParameter(param::ParameterFactory::declareRange("min x", -30.0, 30.0, x_range_.x(), 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("min x", -30.0, 30.0, x_range_.x(), 0.1),
                  std::bind(&ConditionalOutlierRemoval::update, this));
-    addParameter(param::ParameterFactory::declareRange("min y", -30.0, 30.0, y_range_.x(), 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("min y", -30.0, 30.0, y_range_.x(), 0.1),
                  std::bind(&ConditionalOutlierRemoval::update, this));
-    addParameter(param::ParameterFactory::declareRange("min z", -30.0, 30.0, z_range_.x(), 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("min z", -30.0, 30.0, z_range_.x(), 0.1),
                  std::bind(&ConditionalOutlierRemoval::update, this));
-    addParameter(param::ParameterFactory::declareRange("max x", -30.0, 30.0, x_range_.y(), 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("max x", -30.0, 30.0, x_range_.y(), 0.1),
                  std::bind(&ConditionalOutlierRemoval::update, this));
-    addParameter(param::ParameterFactory::declareRange("max y", -30.0, 30.0, y_range_.y(), 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("max y", -30.0, 30.0, y_range_.y(), 0.1),
                  std::bind(&ConditionalOutlierRemoval::update, this));
-    addParameter(param::ParameterFactory::declareRange("max z", -30.0, 30.0, z_range_.y(), 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("max z", -30.0, 30.0, z_range_.y(), 0.1),
                  std::bind(&ConditionalOutlierRemoval::update, this));
 }
 
-void ConditionalOutlierRemoval::setup()
+void ConditionalOutlierRemoval::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    output_ = modifier_->addOutput<PointCloudMessage>("Filtered Pointcloud");
+    input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    output_ = node_modifier.addOutput<PointCloudMessage>("Filtered Pointcloud");
     update();
 }
 

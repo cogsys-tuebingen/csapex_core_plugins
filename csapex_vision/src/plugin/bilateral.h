@@ -12,8 +12,9 @@ class BilateralFilter : public Node
 public:
     BilateralFilter();
 
-    virtual void process();
-    virtual void setup();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void process() override;
 
 protected:
     Input  *input_;

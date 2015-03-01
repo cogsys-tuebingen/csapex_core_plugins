@@ -26,7 +26,7 @@ ImageRoi::~ImageRoi()
 {
 }
 
-void ImageRoi::setupParameters()
+void ImageRoi::setupParameters(Parameterizable& parameters)
 {
     param::Parameter::Ptr method = param::ParameterFactory::declareBool("step",
                                                                         param::ParameterDescription("Step by step submission."),
@@ -35,11 +35,11 @@ void ImageRoi::setupParameters()
                  std::bind(&ImageRoi::submit, this));
 
     std::function<bool()> k_cond = (std::bind(&param::Parameter::as<bool>, method.get()));
-    addConditionalParameter(param::ParameterFactory::declareTrigger("submit"),
+    parameters.addConditionalParameter(param::ParameterFactory::declareTrigger("submit"),
                             k_cond,
                             std::bind(&ImageRoi::submit, this));
 
-    addConditionalParameter(param::ParameterFactory::declareTrigger("drop"),
+    parameters.addConditionalParameter(param::ParameterFactory::declareTrigger("drop"),
                             k_cond,
                             std::bind(&ImageRoi::drop, this));
 
@@ -55,10 +55,10 @@ void ImageRoi::setupParameters()
                                                        -1, 255, -1, 1));
 }
 
-void ImageRoi::setup()
+void ImageRoi::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("Image");
-    output_ = modifier_->addOutput<RoiMessage>("Roi");
+    input_  = node_modifier.addInput<CvMatMessage>("Image");
+    output_ = node_modifier.addOutput<RoiMessage>("Roi");
 }
 
 void ImageRoi::submit()

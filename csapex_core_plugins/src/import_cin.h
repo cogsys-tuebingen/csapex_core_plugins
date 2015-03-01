@@ -11,8 +11,8 @@ class ImportCin : public Node
 public:
     ImportCin();
 
-    void process();
-    virtual void setup();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void tick();
 
 private:

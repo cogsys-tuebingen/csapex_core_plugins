@@ -22,8 +22,12 @@ using namespace csapex::connection_types;
 TransformPublisher::TransformPublisher()
     : tfb_(nullptr)
 {
-    addParameter(param::ParameterFactory::declareText("from", "/"));
-    addParameter(param::ParameterFactory::declareText("to", "/"));
+}
+
+void TransformPublisher::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareText("from", "/"));
+    parameters.addParameter(param::ParameterFactory::declareText("to", "/"));
 }
 
 TransformPublisher::~TransformPublisher()
@@ -55,8 +59,8 @@ void TransformPublisher::processROS()
 }
 
 
-void TransformPublisher::setup()
+void TransformPublisher::setup(NodeModifier& node_modifier)
 {
-    input_transform = modifier_->addInput<connection_types::TransformMessage>("T");
-    input_time = modifier_->addOptionalInput<connection_types::TimeStampMessage>("time");
+    input_transform = node_modifier.addInput<connection_types::TransformMessage>("T");
+    input_time = node_modifier.addOptionalInput<connection_types::TimeStampMessage>("time");
 }

@@ -23,17 +23,17 @@ RandomTrees::RandomTrees()
 {
 }
 
-void RandomTrees::setupParameters()
+void RandomTrees::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareFileInputPath("file", "rforest.yaml"), std::bind(&RandomTrees::loadTree, this));
+    parameters.addParameter(param::ParameterFactory::declareFileInputPath("file", "rforest.yaml"), std::bind(&RandomTrees::loadTree, this));
 }
 
-void RandomTrees::setup()
+void RandomTrees::setup(NodeModifier& node_modifier)
 {
-    in_  = modifier_->addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Unclassified feature");
-    out_ = modifier_->addOutput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
+    in_  = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Unclassified feature");
+    out_ = node_modifier.addOutput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
 
-    reload_ = modifier_->addSlot("Reload", std::bind(&RandomTrees::loadTree, this));
+    reload_ = node_modifier.addSlot("Reload", std::bind(&RandomTrees::loadTree, this));
 }
 
 void RandomTrees::process()

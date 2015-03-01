@@ -17,9 +17,9 @@ class MergeClouds : public csapex::Node
 public:
     MergeClouds();
 
-    void setupParameters();
-    void setup();
-    void process();
+    void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);

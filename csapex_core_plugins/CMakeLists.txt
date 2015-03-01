@@ -59,7 +59,7 @@ add_library(csapex_core_plugins
     src/text_input.cpp
 
     src/demultiplexer.cpp
-
+    src/multiplexer.cpp
 
     src/output_display.cpp
     src/output_display_adapter.cpp

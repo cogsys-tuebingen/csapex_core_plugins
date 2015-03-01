@@ -49,18 +49,18 @@ void Row::process()
     msg::publish(output_, out);
 }
 
-void Row::setup()
+void Row::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("Matrix");
-    output_ = modifier_->addOutput<CvMatMessage>("Row");
+    input_  = node_modifier.addInput<CvMatMessage>("Matrix");
+    output_ = node_modifier.addOutput<CvMatMessage>("Row");
 }
 
-void Row::setupParameters()
+void Row::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareRange("row",
                                                        param::ParameterDescription("Row to extract."),
                                                        0, 1, 0, 1));
-    addParameter(param::ParameterFactory::declareTrigger("center"),
+    parameters.addParameter(param::ParameterFactory::declareTrigger("center"),
                  std::bind(&Row::requestCenter, this));
 
 }

@@ -24,15 +24,15 @@ Filter::~Filter()
 {
 }
 
-void Filter::setup()
+void Filter::setup(NodeModifier& node_modifier)
 {
-    input_img_ = modifier_->addInput<CvMatMessage>("Image");
+    input_img_ = node_modifier.addInput<CvMatMessage>("Image");
     if(usesMask()) {
-        input_mask_ = modifier_->addOptionalInput<CvMatMessage>("Mask");
+        input_mask_ = node_modifier.addOptionalInput<CvMatMessage>("Mask");
     }
-    output_img_ = modifier_->addOutput<CvMatMessage>("Image");
+    output_img_ = node_modifier.addOutput<CvMatMessage>("Image");
     if(usesMask()) {
-        output_mask_ = modifier_->addOutput<CvMatMessage>("Mask");
+        output_mask_ = node_modifier.addOutput<CvMatMessage>("Mask");
     }
 }
 

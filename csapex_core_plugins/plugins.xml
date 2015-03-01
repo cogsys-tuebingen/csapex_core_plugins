@@ -7,6 +7,11 @@
   <description></description>
 </class>
 
+<class type="csapex::Multiplexer" base_class_type="csapex::Node">
+  <description>Multiplexes a series of messages into a multidimensional message</description>
+  <tags>General, Multiplex</tags>
+</class>
+
 <class type="csapex::Demultiplexer" base_class_type="csapex::Node">
   <description>Demultiplexes a multidimensional message</description>
   <tags>General, Multiplex</tags>

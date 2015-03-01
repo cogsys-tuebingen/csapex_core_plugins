@@ -25,7 +25,7 @@ ExportFile::ExportFile()
     suffix_ = 0;
 }
 
-void ExportFile::setupParameters()
+void ExportFile::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareBool("yaml",
                                                       param::ParameterDescription("Export message in cs::APEX-YAML format?"),
@@ -38,9 +38,9 @@ void ExportFile::setupParameters()
                                                                      "", ""), std::bind(&ExportFile::setExportPath, this));
 }
 
-void ExportFile::setup()
+void ExportFile::setup(NodeModifier& node_modifier)
 {
-    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
+    connector_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
 }
 
 void ExportFile::setExportPath()

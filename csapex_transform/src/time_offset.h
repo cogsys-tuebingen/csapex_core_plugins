@@ -11,8 +11,9 @@ class TimeOffset : public csapex::Node
 public:
     TimeOffset();
 
-    virtual void process();
-    virtual void setup();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
 
 private:
     Output* output_;

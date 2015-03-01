@@ -18,11 +18,12 @@ class Camera : public Node
 public:
     Camera();
 
-    void process() override;
-    void tick() override;
-    void setup() override;
+    virtual void process() override;
+    virtual void tick() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
 
-    bool canTick() override;
+    virtual bool canTick() override;
 
 protected:
     void update();

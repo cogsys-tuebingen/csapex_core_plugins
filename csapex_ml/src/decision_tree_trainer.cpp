@@ -23,14 +23,14 @@ DecisionTreeTrainer::DecisionTreeTrainer()
 {
 }
 
-void DecisionTreeTrainer::setup()
+void DecisionTreeTrainer::setup(NodeModifier& node_modifier)
 {
-    CollectionNode<connection_types::FeaturesMessage>::setup();
+    CollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
 }
 
-void DecisionTreeTrainer::setupParameters()
+void DecisionTreeTrainer::setupParameters(Parameterizable& parameters)
 {
-    CollectionNode<FeaturesMessage>::setupParameters();
+    CollectionNode<FeaturesMessage>::setupParameters(parameters);
 
     addParameter(param::ParameterFactory::declareRange<int>
                  ("classes",

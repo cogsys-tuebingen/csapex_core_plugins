@@ -26,9 +26,9 @@ ScanLabeler::~ScanLabeler()
 {
 }
 
-void ScanLabeler::setupParameters()
+void ScanLabeler::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareTrigger("submit", param::ParameterDescription("Continue with the current labeling")),
+    parameters.addParameter(param::ParameterFactory::declareTrigger("submit", param::ParameterDescription("Continue with the current labeling")),
                                                          std::bind(&ScanLabeler::submit, this));
 
     addParameter(param::ParameterFactory::declareRange("label",
@@ -36,10 +36,10 @@ void ScanLabeler::setupParameters()
                                                        0, 9, 0, 1));
 }
 
-void ScanLabeler::setup()
+void ScanLabeler::setup(NodeModifier& node_modifier)
 {    
-    input_ = modifier_->addMultiInput<ScanMessage, LabeledScanMessage>("Scan");
-    output_ = modifier_->addOutput<LabeledScanMessage>("Labeled Scan");
+    input_ = node_modifier.addMultiInput<ScanMessage, LabeledScanMessage>("Scan");
+    output_ = node_modifier.addOutput<LabeledScanMessage>("Labeled Scan");
 }
 
 void ScanLabeler::submit()
@@ -69,7 +69,6 @@ void ScanLabeler::process()
         msg::publish(output_, result_);
     }
 }
-
 
 void ScanLabeler::setResult(connection_types::LabeledScanMessage::Ptr result)
 {

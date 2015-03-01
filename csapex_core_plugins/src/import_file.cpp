@@ -21,7 +21,7 @@ ImportFile::ImportFile()
 {
 }
 
-void ImportFile::setupParameters()
+void ImportFile::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareDirectoryInputPath("path",
                                                                     param::ParameterDescription("Directory to read messages from"),
@@ -34,7 +34,7 @@ void ImportFile::setupParameters()
                                                       param::ParameterDescription("When reaching the end of the directory, do a loop?"),
                                                       true));
     param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("immediate", false);
-    addParameter(immediate, std::bind(&ImportFile::changeMode, this));
+    parameters.addParameter(immediate, std::bind(&ImportFile::changeMode, this));
 }
 
 
@@ -70,9 +70,9 @@ void ImportFile::setImportPath()
     current_file_ = bfs::directory_iterator(path_);
 }
 
-void ImportFile::setup()
+void ImportFile::setup(NodeModifier& node_modifier)
 {
-    out_ = modifier_->addOutput<connection_types::AnyMessage>("?");
+    out_ = node_modifier.addOutput<connection_types::AnyMessage>("?");
 }
 
 void ImportFile::process()

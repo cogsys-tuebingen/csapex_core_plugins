@@ -17,7 +17,11 @@ using namespace csapex;
 
 TimeOffset::TimeOffset()
 {
-    addParameter(param::ParameterFactory::declareRange<double>("offset", -5000.0, 5000.0, 0.0, 0.5));
+}
+
+void TimeOffset::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange<double>("offset", -5000.0, 5000.0, 0.0, 0.5));
 }
 
 
@@ -40,8 +44,8 @@ void TimeOffset::process()
     msg::publish(output_, time);
 }
 
-void TimeOffset::setup()
+void TimeOffset::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<connection_types::TimeStampMessage>("Time");
-    output_ = modifier_->addOutput<connection_types::TimeStampMessage>("Time");
+    input_ = node_modifier.addInput<connection_types::TimeStampMessage>("Time");
+    output_ = node_modifier.addOutput<connection_types::TimeStampMessage>("Time");
 }

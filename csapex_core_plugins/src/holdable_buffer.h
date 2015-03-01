@@ -14,9 +14,9 @@ class HoldableBuffer : public Node
 public:
     HoldableBuffer();
 
-    virtual void setup();
-    virtual void process();
-    virtual void setupParameters();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
+    virtual void setupParameters(Parameterizable& parameters);
 
 private:
     Input  *in_;

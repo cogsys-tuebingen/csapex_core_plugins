@@ -29,11 +29,11 @@ void PointCloudValidity::process()
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudValidity>(this, msg), msg->value);
 }
 
-void PointCloudValidity::setup()
+void PointCloudValidity::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
-    mask_   = modifier_->addOutput<CvMatMessage>("Mask");
-    index_  = modifier_->addOutput<PointIndecesMessage>("Indeces");
+    input_  = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    mask_   = node_modifier.addOutput<CvMatMessage>("Mask");
+    index_  = node_modifier.addOutput<PointIndecesMessage>("Indeces");
 }
 
 namespace {

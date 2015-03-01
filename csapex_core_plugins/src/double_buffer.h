@@ -12,9 +12,10 @@ class DoubleBuffer : public Node
 public:
     DoubleBuffer();
 
-    virtual void setup();
-    virtual void process();
-    virtual void tick();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void process() override;
+    virtual void tick() override;
 
 private:
     void swapBuffers();

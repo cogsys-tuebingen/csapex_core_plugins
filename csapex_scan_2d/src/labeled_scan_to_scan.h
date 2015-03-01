@@ -11,8 +11,8 @@ class LabeledScanToScan : public Node
 public:
     LabeledScanToScan();
 
-    void setup();
-    void process();
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
 private:
     Input* in_;

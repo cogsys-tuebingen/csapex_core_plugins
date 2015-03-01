@@ -17,10 +17,10 @@ IndexedPointCloud::IndexedPointCloud()
 {
 }
 
-void IndexedPointCloud::setup()
+void IndexedPointCloud::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("Depth Image");
-    output_ = modifier_->addOutput<PointCloudMessage>("Indexed Pointcloud");
+    input_  = node_modifier.addInput<CvMatMessage>("Depth Image");
+    output_ = node_modifier.addOutput<PointCloudMessage>("Indexed Pointcloud");
 }
 
 void IndexedPointCloud::process()

@@ -21,13 +21,13 @@ SVMTrainer::SVMTrainer() :
 {
 }
 
-void SVMTrainer::setup()
+void SVMTrainer::setup(NodeModifier& node_modifier)
 {
-    in_        = modifier_->addOptionalInput<FeaturesMessage>("Feature");
-    in_vector_ = modifier_->addOptionalInput<GenericVectorMessage, FeaturesMessage>("Features");
+    in_        = node_modifier.addOptionalInput<FeaturesMessage>("Feature");
+    in_vector_ = node_modifier.addOptionalInput<GenericVectorMessage, FeaturesMessage>("Features");
 }
 
-void SVMTrainer::setupParameters()
+void SVMTrainer::setupParameters(Parameterizable& parameters)
 {
 
     addParameter(param::ParameterFactory::declareFileOutputPath("path",
@@ -56,7 +56,7 @@ void SVMTrainer::setupParameters()
                                                          param::ParameterDescription("Kernel type to be trained."),
                                                          kernel_types,
                                                          (int) cv::SVM::RBF);
-    addParameter(kernel_param);
+    parameters.addParameter(kernel_param);
 
     std::map<std::string, int> svm_types =
             boost::assign::map_list_of
@@ -72,7 +72,7 @@ void SVMTrainer::setupParameters()
                                                          svm_types,
                                                          (int) cv::SVM::C_SVC);
 
-    addParameter(svm_param);
+    parameters.addParameter(svm_param);
 
     std::function<bool()> deg_cond    = [kernel_param]() -> bool {
             auto t = kernel_param->as<int>();
@@ -101,17 +101,17 @@ void SVMTrainer::setupParameters()
     };
 
 
-    addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, M_PI * 2, 0.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, M_PI * 2, 0.0, 0.05),
                             deg_cond);
-    addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", -M_PI, M_PI, 1.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", -M_PI, M_PI, 1.0, 0.05),
                             gamma_cond);
-    addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -M_PI, M_PI, 0.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -M_PI, M_PI, 0.0, 0.05),
                             coeff0_cond);
-    addConditionalParameter(param::ParameterFactory::declareRange<double>("C", -M_PI, M_PI, 1.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("C", -M_PI, M_PI, 1.0, 0.05),
                             cvalue_cond);
-    addConditionalParameter(param::ParameterFactory::declareRange<double>("nu", 0.0, 1.0, 0.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("nu", 0.0, 1.0, 0.0, 0.05),
                             nu_cond);
-    addConditionalParameter(param::ParameterFactory::declareRange<double>("p", -M_PI, M_PI, 0.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("p", -M_PI, M_PI, 0.0, 0.05),
                             p_cond);
 }
 

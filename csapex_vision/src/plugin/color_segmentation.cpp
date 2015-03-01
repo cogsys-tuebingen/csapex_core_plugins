@@ -104,9 +104,9 @@ void ColorSegmentation::recompute()
     update();
 }
 
-void ColorSegmentation::setup()
+void ColorSegmentation::setup(NodeModifier& node_modifier)
 {
-    input_img_ = modifier_->addInput<CvMatMessage>("Image");
-    input_mask_ = modifier_->addOptionalInput<CvMatMessage>("Mask");
-    output_mask_ = modifier_->addOutput<CvMatMessage>("Mask");
+    input_img_ = node_modifier.addInput<CvMatMessage>("Image");
+    input_mask_ = node_modifier.addOptionalInput<CvMatMessage>("Mask");
+    output_mask_ = node_modifier.addOutput<CvMatMessage>("Mask");
 }

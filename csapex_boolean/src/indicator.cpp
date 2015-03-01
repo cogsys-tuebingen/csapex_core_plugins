@@ -16,12 +16,16 @@ using namespace csapex::connection_types;
 
 Indicator::Indicator()
 {
-    addParameter(param::ParameterFactory::declareBool("signal", true));
 }
 
-void Indicator::setup()
+void Indicator::setupParameters(Parameterizable &parameters)
 {
-    in = modifier_->addInput<bool>("Signal");
+    parameters.addParameter(param::ParameterFactory::declareBool("signal", true));
+}
+
+void Indicator::setup(NodeModifier& node_modifier)
+{
+    in = node_modifier.addInput<bool>("Signal");
 }
 
 void Indicator::process()

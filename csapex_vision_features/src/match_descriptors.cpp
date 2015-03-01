@@ -284,6 +284,10 @@ public:
 MatchDescriptors::MatchDescriptors()
     : in_img_1(nullptr), current_method_(SIMPLE)
 {
+}
+
+void MatchDescriptors::setupParameters(Parameterizable &parameters)
+{
     std::function<void(param::Parameter*)> update = std::bind(&MatchDescriptors::update, this);
 
     std::map<std::string, int> methods = boost::assign::map_list_of
@@ -292,18 +296,18 @@ MatchDescriptors::MatchDescriptors()
             ("Robust", (int) ROBUST);
 
     param::Parameter::Ptr method = param::ParameterFactory::declareParameterSet("method", methods, (int) ROBUST);
-    addParameter(method, update);
+    parameters.addParameter(method, update);
 
-    addParameter(param::ParameterFactory::declareColorParameter("color/match", 255,128,128));
-    addParameter(param::ParameterFactory::declareColorParameter("color/single", 128,128,255));
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/match", 255,128,128));
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/single", 128,128,255));
 
     // peak
     std::function<bool()> cond_peak = [method]() { return method->as<int>() == PEAK; };
 
-    addConditionalParameter(param::ParameterFactory::declareRange("peak/cluster_count", 1, 32, 1, 1), cond_peak);
-    addConditionalParameter(param::ParameterFactory::declareRange("peak/scaling", 1, 8, 1, 1), cond_peak);
-    addConditionalParameter(param::ParameterFactory::declareRange("peak/octaves", 1, 12, 1, 1), cond_peak);
-    addConditionalParameter(param::ParameterFactory::declareRange("peak/min_cluster_size", 1, 256, 1, 1), cond_peak);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("peak/cluster_count", 1, 32, 1, 1), cond_peak);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("peak/scaling", 1, 8, 1, 1), cond_peak);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("peak/octaves", 1, 12, 1, 1), cond_peak);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("peak/min_cluster_size", 1, 256, 1, 1), cond_peak);
 }
 
 void MatchDescriptors::update()
@@ -444,15 +448,15 @@ void MatchDescriptors::matchPeak(CvMatMessage::ConstPtr,
 }
 
 
-void MatchDescriptors::setup()
+void MatchDescriptors::setup(NodeModifier& node_modifier)
 {
-    in_img_1 = modifier_->addInput<CvMatMessage>("Image 1");
-    in_key_1 = modifier_->addInput<KeypointMessage>("Keypoints 1");
-    in_des_1 = modifier_->addInput<DescriptorMessage>("Descriptor 1");
+    in_img_1 = node_modifier.addInput<CvMatMessage>("Image 1");
+    in_key_1 = node_modifier.addInput<KeypointMessage>("Keypoints 1");
+    in_des_1 = node_modifier.addInput<DescriptorMessage>("Descriptor 1");
 
-    in_img_2 = modifier_->addInput<CvMatMessage>("Image 2");
-    in_key_2 = modifier_->addInput<KeypointMessage>("Keypoints 2");
-    in_des_2 = modifier_->addInput<DescriptorMessage>("Descriptor 2");
+    in_img_2 = node_modifier.addInput<CvMatMessage>("Image 2");
+    in_key_2 = node_modifier.addInput<KeypointMessage>("Keypoints 2");
+    in_des_2 = node_modifier.addInput<DescriptorMessage>("Descriptor 2");
 
-    out_img = modifier_->addOutput<CvMatMessage>("Debug View");
+    out_img = node_modifier.addOutput<CvMatMessage>("Debug View");
 }

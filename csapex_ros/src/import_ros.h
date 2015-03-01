@@ -17,8 +17,8 @@ class ImportRos : public RosNode
 public:
     ImportRos();
 
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters);
     virtual void setupROS();
     virtual void processROS();
     virtual bool canTick();

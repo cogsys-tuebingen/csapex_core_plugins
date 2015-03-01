@@ -31,6 +31,10 @@ using namespace connection_types;
 ExtractDescriptors::ExtractDescriptors()
     : refresh_(true)
 {
+}
+
+void ExtractDescriptors::setupParameters(Parameterizable &parameters)
+{
     ExtractorManager& manager = ExtractorManager::instance();
     std::vector<std::string> methods;
 
@@ -41,7 +45,7 @@ ExtractDescriptors::ExtractDescriptors()
     }
 
     param::Parameter::Ptr method = param::ParameterFactory::declareParameterStringSet("method", methods);
-    addParameter(method, std::bind(&ExtractDescriptors::update, this));
+    parameters.addParameter(method, std::bind(&ExtractDescriptors::update, this));
 
     Q_FOREACH(Pair fc, manager.descriptorExtractors()) {
         std::string key = fc.second.getType();
@@ -49,17 +53,17 @@ ExtractDescriptors::ExtractDescriptors()
 
         Q_FOREACH(param::Parameter::Ptr param, manager.featureDescriptorParameters(key)) {
             param::Parameter::Ptr param_clone = param::ParameterFactory::clone(param);
-            addConditionalParameter(param_clone, condition, std::bind(&ExtractDescriptors::update, this));
+            parameters.addConditionalParameter(param_clone, condition, std::bind(&ExtractDescriptors::update, this));
         }
     }
 }
 
-void ExtractDescriptors::setup()
+void ExtractDescriptors::setup(NodeModifier& node_modifier)
 {
-    in_img = modifier_->addInput<CvMatMessage>("Image");
-    in_key = modifier_->addInput<KeypointMessage>("Keypoints");
+    in_img = node_modifier.addInput<CvMatMessage>("Image");
+    in_key = node_modifier.addInput<KeypointMessage>("Keypoints");
 
-    out_des = modifier_->addOutput<DescriptorMessage>("Descriptors");
+    out_des = node_modifier.addOutput<DescriptorMessage>("Descriptors");
 }
 
 

@@ -136,10 +136,10 @@ void BarCodeReader::process()
 }
 
 
-void BarCodeReader::setup()
+void BarCodeReader::setup(NodeModifier& node_modifier)
 {
-    in_img = modifier_->addInput<CvMatMessage>("Image");
+    in_img = node_modifier.addInput<CvMatMessage>("Image");
 
-    out_str = modifier_->addOutput<std::string>("String");
-    out_roi = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
+    out_str = node_modifier.addOutput<std::string>("String");
+    out_roi = node_modifier.addOutput<VectorMessage, RoiMessage>("ROIs");
 }

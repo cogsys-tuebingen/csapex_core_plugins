@@ -79,14 +79,14 @@ void MeanStdDevNormalization::process()
     msg::publish(out_, out);
 }
 
-void MeanStdDevNormalization::setup()
+void MeanStdDevNormalization::setup(NodeModifier& node_modifier)
 {
-    in_mean_ = modifier_->addInput<GenericVectorMessage, double>("Mean");
-    in_dev_  = modifier_->addInput<GenericVectorMessage, double>("StdDeviation");
-    in_mat_  = modifier_->addInput<CvMatMessage>("Matrix");
-    out_     = modifier_->addOutput<CvMatMessage>("Normalized Matrix");
+    in_mean_ = node_modifier.addInput<GenericVectorMessage, double>("Mean");
+    in_dev_  = node_modifier.addInput<GenericVectorMessage, double>("StdDeviation");
+    in_mat_  = node_modifier.addInput<CvMatMessage>("Matrix");
+    out_     = node_modifier.addOutput<CvMatMessage>("Normalized Matrix");
 }
 
-void MeanStdDevNormalization::setupParameters()
+void MeanStdDevNormalization::setupParameters(Parameterizable& parameters)
 {
 }

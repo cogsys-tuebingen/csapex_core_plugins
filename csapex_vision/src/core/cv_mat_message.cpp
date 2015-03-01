@@ -10,13 +10,20 @@ using namespace connection_types;
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::CvMatMessage)
 
+
 CvMatMessage::CvMatMessage()
     : MessageTemplate<cv::Mat, CvMatMessage> ("/camera"), encoding(enc::bgr)
-{}
+{
+}
 
 CvMatMessage::CvMatMessage(const Encoding& encoding, Message::Stamp stamp)
     : MessageTemplate<cv::Mat, CvMatMessage> ("/camera", stamp), encoding(encoding)
-{}
+{
+}
+
+CvMatMessage::~CvMatMessage()
+{
+}
 
 ConnectionType::Ptr CvMatMessage::clone() const
 {

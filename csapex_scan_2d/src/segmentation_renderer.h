@@ -14,8 +14,9 @@ class ScanSegmentation2DRenderer : public csapex::Node
 public:
     ScanSegmentation2DRenderer();
 
-    virtual void process();
-    virtual void setup();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void process() override;
 
 private:
     void publishMarkers(const std::vector<lib_laser_processing::Segment> &segments);

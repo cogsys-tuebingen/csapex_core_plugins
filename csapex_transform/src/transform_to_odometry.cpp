@@ -26,14 +26,14 @@ TransformToOdometry::TransformToOdometry()
 {
 }
 
-void TransformToOdometry::setupParameters()
+void TransformToOdometry::setupParameters(Parameterizable& parameters)
 {
 }
 
-void TransformToOdometry::setup()
+void TransformToOdometry::setup(NodeModifier& node_modifier)
 {
-    in_ = modifier_->addInput<connection_types::TransformMessage>("TF");
-    out_ = modifier_->addOutput<nav_msgs::Odometry>("Odometry");
+    in_ = node_modifier.addInput<connection_types::TransformMessage>("TF");
+    out_ = node_modifier.addOutput<nav_msgs::Odometry>("Odometry");
 }
 
 void TransformToOdometry::process()

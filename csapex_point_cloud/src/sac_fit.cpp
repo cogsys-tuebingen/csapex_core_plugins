@@ -24,12 +24,16 @@ using namespace std;
 
 SacFit::SacFit()
 {
-    addParameter(param::ParameterFactory::declareRange("iterations", 1, 20000, 5000, 200));
-    addParameter(param::ParameterFactory::declareRange("min inliers", 5, 20000, 100, 100));
-    addParameter(param::ParameterFactory::declareRange("normal distance weight", 0.0, 2.0, 0.085, 0.001));
-    addParameter(param::ParameterFactory::declareRange("distance threshold", 0.0, 2.0, 0.009, 0.001));
-    addParameter(param::ParameterFactory::declareRange("sphere min radius", 0.0, 2.0, 0.02, 0.005));
-    addParameter(param::ParameterFactory::declareRange("sphere max radius", 0.0, 2.0, 0.8, 0.005));
+}
+
+void SacFit::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange("iterations", 1, 20000, 5000, 200));
+    parameters.addParameter(param::ParameterFactory::declareRange("min inliers", 5, 20000, 100, 100));
+    parameters.addParameter(param::ParameterFactory::declareRange("normal distance weight", 0.0, 2.0, 0.085, 0.001));
+    parameters.addParameter(param::ParameterFactory::declareRange("distance threshold", 0.0, 2.0, 0.009, 0.001));
+    parameters.addParameter(param::ParameterFactory::declareRange("sphere min radius", 0.0, 2.0, 0.02, 0.005));
+    parameters.addParameter(param::ParameterFactory::declareRange("sphere max radius", 0.0, 2.0, 0.8, 0.005));
 
     std::map<std::string, int> models = boost::assign::map_list_of
             ("fit sphere", (int) pcl::SACMODEL_SPHERE)
@@ -38,7 +42,7 @@ SacFit::SacFit()
             ("fit cone", (int) pcl::SACMODEL_CONE);
 
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("models", models, (int) pcl::SACMODEL_PLANE),
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("models", models, (int) pcl::SACMODEL_PLANE),
                  std::bind(&SacFit::setParameters, this));
 
     cluster_indices_.reset(new std::vector<pcl::PointIndices>);
@@ -62,15 +66,15 @@ void SacFit::process()
     setParameters();
 }
 
-void SacFit::setup()
+void SacFit::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    out_text_= modifier_->addOutput<std::string>("String");
-    in_indices_ = modifier_->addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Clusters"); // optional input
+    input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    out_text_= node_modifier.addOutput<std::string>("String");
+    in_indices_ = node_modifier.addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Clusters"); // optional input
 
-    out_model_ = modifier_->addOutput<GenericVectorMessage, ModelMessage >("Models");
-    out_cloud_ = modifier_->addOutput<PointCloudMessage>("Points of Model");
-    out_cloud_residue_ = modifier_->addOutput<PointCloudMessage>("Residue");
+    out_model_ = node_modifier.addOutput<GenericVectorMessage, ModelMessage >("Models");
+    out_cloud_ = node_modifier.addOutput<PointCloudMessage>("Points of Model");
+    out_cloud_residue_ = node_modifier.addOutput<PointCloudMessage>("Residue");
 }
 
 

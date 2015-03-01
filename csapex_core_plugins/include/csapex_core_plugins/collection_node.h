@@ -19,19 +19,18 @@ public:
     CollectionNode()
     {}
 
-    void setupParameters()
-    {
+    virtual void setupParameters(Parameterizable &parameters) {
         addParameter(param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType>::doProcessCollection, this, boost::ref(buffer_)));
         addParameter(param::ParameterFactory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType>::clearCollection, this));
     }
 
-    void setup()
+    virtual void setup(NodeModifier& modifier) override
     {
-        in_vector  = modifier_->addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
-        in_single  = modifier_->addOptionalInput<MessageType>("message to collect");
+        in_vector  = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
+        in_single  = modifier.addOptionalInput<MessageType>("message to collect");
     }
 
-    void process()
+    virtual void process() override
     {
         if(msg::hasMessage(in_vector)) {
             std::shared_ptr<std::vector<MessageType> const> input = msg::getMessage<connection_types::GenericVectorMessage, MessageType>(in_vector);

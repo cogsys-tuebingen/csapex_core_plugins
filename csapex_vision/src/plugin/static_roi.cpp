@@ -19,18 +19,18 @@ StaticRoi::StaticRoi()
 {
 }
 
-void StaticRoi::setupParameters()
+void StaticRoi::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("h", 1, 4096, 100, 1));
-    addParameter(param::ParameterFactory::declareRange("w", 1, 4096, 100, 1));
-    addParameter(param::ParameterFactory::declareRange("x", 0, 4095, 0, 1));
-    addParameter(param::ParameterFactory::declareRange("y", 0, 4095, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("h", 1, 4096, 100, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("w", 1, 4096, 100, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("x", 0, 4095, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("y", 0, 4095, 0, 1));
 }
 
-void StaticRoi::setup()
+void StaticRoi::setup(NodeModifier& node_modifier)
 {
-    in_ = modifier_->addOptionalInput<CvMatMessage>("matrix");
-    out_ = modifier_->addOutput<RoiMessage>("ROI");
+    in_ = node_modifier.addOptionalInput<CvMatMessage>("matrix");
+    out_ = node_modifier.addOutput<RoiMessage>("ROI");
 }
 
 void StaticRoi::process()

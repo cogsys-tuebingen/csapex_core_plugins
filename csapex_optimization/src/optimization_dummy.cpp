@@ -22,24 +22,24 @@ OptimizationDummy::OptimizationDummy()
 {
 }
 
-void OptimizationDummy::setupParameters()
+void OptimizationDummy::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("a", -10.0, 10.0, 0.0, 0.1));
-    addParameter(param::ParameterFactory::declareRange("b", -10.0, 10.0, 0.0, 0.1));
-    addParameter(param::ParameterFactory::declareRange("c", -10.0, 10.0, 0.0, 0.1));
-    addParameter(param::ParameterFactory::declareRange("d", -10.0, 10.0, 0.0, 0.1));
-    addParameter(param::ParameterFactory::declareRange("e", -10.0, 10.0, 0.0, 0.1));
-    addParameter(param::ParameterFactory::declareRange("f", -10.0, 10.0, 0.0, 0.1));
-    addParameter(param::ParameterFactory::declareRange("g", -10.0, 10.0, 0.0, 0.1));
-    addParameter(param::ParameterFactory::declareRange("h", -10.0, 10.0, 0.0, 0.1));
-    addParameter(param::ParameterFactory::declareRange("i", -10.0, 10.0, 0.0, 0.1));
-    addParameter(param::ParameterFactory::declareRange("j", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("a", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("b", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("c", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("d", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("e", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("f", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("g", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("h", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("i", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("j", -10.0, 10.0, 0.0, 0.1));
 }
 
-void OptimizationDummy::setup()
+void OptimizationDummy::setup(NodeModifier& node_modifier)
 {
-    in_  = modifier_->addSlot("Evaluate", std::bind(&OptimizationDummy::start, this));
-    out_ = modifier_->addOutput<double>("Fitness");
+    in_  = node_modifier.addSlot("Evaluate", std::bind(&OptimizationDummy::start, this));
+    out_ = node_modifier.addOutput<double>("Fitness");
 }
 
 void OptimizationDummy::start()

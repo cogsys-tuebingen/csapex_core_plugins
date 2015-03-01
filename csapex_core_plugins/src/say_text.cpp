@@ -16,9 +16,9 @@ SayText::SayText()
 {
 }
 
-void SayText::setup()
+void SayText::setup(NodeModifier& node_modifier)
 {
-    connector_ = modifier_->addInput<std::string>("Text");
+    connector_ = node_modifier.addInput<std::string>("Text");
 }
 
 void SayText::process()

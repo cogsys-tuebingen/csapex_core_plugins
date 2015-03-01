@@ -22,7 +22,7 @@ public:
 public:
     virtual ~Filter();
 
-    void setup();
+    void setup(NodeModifier& node_modifier);
 
 public:
     virtual void filter(cv::Mat& img, cv::Mat& mask) = 0;

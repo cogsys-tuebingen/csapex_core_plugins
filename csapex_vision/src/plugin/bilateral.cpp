@@ -58,9 +58,13 @@ BilateralFilter::BilateralFilter() :
     sigma_color_(0.0),
     sigma_space_(0.0)
 {
-    addParameter(param::ParameterFactory::declareRange("d", 1, 255, d_, 1));
-    addParameter(param::ParameterFactory::declareRange("sigma color", -255.0, 255.0, sigma_color_, 0.1));
-    addParameter(param::ParameterFactory::declareRange("sigma space", -255.0, 255.0, sigma_space_, 0.1));
+}
+
+void BilateralFilter::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange("d", 1, 255, d_, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("sigma color", -255.0, 255.0, sigma_color_, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("sigma space", -255.0, 255.0, sigma_space_, 0.1));
 }
 
 void BilateralFilter::process()
@@ -77,8 +81,8 @@ void BilateralFilter::process()
     msg::publish(output_, out);
 }
 
-void BilateralFilter::setup()
+void BilateralFilter::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("Unblurred");
-    output_ = modifier_->addOutput<CvMatMessage>("Blurred");
+    input_ = node_modifier.addInput<CvMatMessage>("Unblurred");
+    output_ = node_modifier.addOutput<CvMatMessage>("Blurred");
 }

@@ -39,8 +39,8 @@ void VectorizePyramid::process()
     msg::publish<GenericVectorMessage, CvMatMessage::Ptr>(output_, out);
 }
 
-void VectorizePyramid::setup()
+void VectorizePyramid::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvPyramidMessage>("pyramid");
-    output_ = modifier_->addOutput<GenericVectorMessage, CvMatMessage::Ptr>("vectorized");
+    input_ = node_modifier.addInput<CvPyramidMessage>("pyramid");
+    output_ = node_modifier.addOutput<GenericVectorMessage, CvMatMessage::Ptr>("vectorized");
 }

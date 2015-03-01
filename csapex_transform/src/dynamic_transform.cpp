@@ -26,14 +26,14 @@ DynamicTransform::DynamicTransform()
 {
 }
 
-void DynamicTransform::setupParameters()
+void DynamicTransform::setupParameters(Parameterizable& parameters)
 {
     std::vector<std::string> topics;
-    addParameter(param::ParameterFactory::declareParameterStringSet("source", topics), std::bind(&DynamicTransform::update, this));
-    addParameter(param::ParameterFactory::declareParameterStringSet("target", topics), std::bind(&DynamicTransform::update, this));
+    parameters.addParameter(param::ParameterFactory::declareParameterStringSet("source", topics), std::bind(&DynamicTransform::update, this));
+    parameters.addParameter(param::ParameterFactory::declareParameterStringSet("target", topics), std::bind(&DynamicTransform::update, this));
 
-    addParameter(param::ParameterFactory::declareTrigger("refresh"), std::bind(&DynamicTransform::refresh, this));
-    addParameter(param::ParameterFactory::declareTrigger("reset tf"), std::bind(&DynamicTransform::resetTf, this));
+    parameters.addParameter(param::ParameterFactory::declareTrigger("refresh"), std::bind(&DynamicTransform::refresh, this));
+    parameters.addParameter(param::ParameterFactory::declareTrigger("reset tf"), std::bind(&DynamicTransform::resetTf, this));
 
     source_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("source"));
     target_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("target"));
@@ -157,17 +157,17 @@ void DynamicTransform::publishTransform(const ros::Time& time)
     msg::publish(output_frame_, readParameter<std::string>("target"));
 }
 
-void DynamicTransform::setup()
+void DynamicTransform::setup(NodeModifier& node_modifier)
 {
-    time_in_ = modifier_->addOptionalInput<connection_types::TimeStampMessage>("Time");
-    frame_in_source_ = modifier_->addOptionalInput<std::string>("Origin Frame");
-    frame_in_target_ = modifier_->addOptionalInput<std::string>("Target Frame");
+    time_in_ = node_modifier.addOptionalInput<connection_types::TimeStampMessage>("Time");
+    frame_in_source_ = node_modifier.addOptionalInput<std::string>("Origin Frame");
+    frame_in_target_ = node_modifier.addOptionalInput<std::string>("Target Frame");
 
-    output_ = modifier_->addOutput<connection_types::TransformMessage>("Transform");
-    output_frame_ = modifier_->addOutput<std::string>("Target Frame");
+    output_ = node_modifier.addOutput<connection_types::TransformMessage>("Transform");
+    output_frame_ = node_modifier.addOutput<std::string>("Target Frame");
 
-    modifier_->addSlot("reset", std::bind(&DynamicTransform::resetTf, this));
-    reset_ = modifier_->addTrigger("reset");
+    node_modifier.addSlot("reset", std::bind(&DynamicTransform::resetTf, this));
+    reset_ = node_modifier.addTrigger("reset");
 }
 
 

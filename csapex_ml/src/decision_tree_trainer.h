@@ -13,14 +13,14 @@ class DecisionTreeTrainer : public CollectionNode<connection_types::FeaturesMess
 public:
     DecisionTreeTrainer();
 
-    void setup();
-    void setupParameters();
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 private:
     void updatePriors();
     void udpatePriorValues();
 
-    void processCollection(std::vector<connection_types::FeaturesMessage> &collection);
+    void processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
 
 private:
     int categories_;

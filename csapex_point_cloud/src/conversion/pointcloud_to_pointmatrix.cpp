@@ -28,11 +28,11 @@ void PointCloudToPointMatrix::process()
     boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToPointMatrix>(this, msg), msg->value);
 }
 
-void PointCloudToPointMatrix::setup()
+void PointCloudToPointMatrix::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
-    output_ = modifier_->addOutput<CvMatMessage>("Point Matrix");
-    mask_   = modifier_->addOutput<CvMatMessage>("Vadility");
+    input_  = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    output_ = node_modifier.addOutput<CvMatMessage>("Point Matrix");
+    mask_   = node_modifier.addOutput<CvMatMessage>("Vadility");
 }
 
 namespace implementation {

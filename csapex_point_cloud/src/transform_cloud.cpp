@@ -21,12 +21,12 @@ TransformCloud::TransformCloud()
 {
 }
 
-void TransformCloud::setup()
+void TransformCloud::setup(NodeModifier& node_modifier)
 {
-    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    input_transform_ = modifier_->addInput<TransformMessage>("Transformation");
+    input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    input_transform_ = node_modifier.addInput<TransformMessage>("Transformation");
 
-    output_ = modifier_->addOutput<PointCloudMessage>("PointCloud");
+    output_ = node_modifier.addOutput<PointCloudMessage>("PointCloud");
 }
 
 void TransformCloud::process()

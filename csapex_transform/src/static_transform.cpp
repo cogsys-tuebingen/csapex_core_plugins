@@ -20,19 +20,22 @@ using namespace csapex;
 
 StaticTransform::StaticTransform()
 {
+}
+
+void StaticTransform::setupParameters(Parameterizable &parameters)
+{
     double p = 3.2;
     double d = 5.0;
 
+    parameters.addParameter(param::ParameterFactory::declareText("frame", "/base_link"));
+    parameters.addParameter(param::ParameterFactory::declareText("child_frame", "/marlin"));
 
-    addParameter(param::ParameterFactory::declareText("frame", "/base_link"));
-    addParameter(param::ParameterFactory::declareText("child_frame", "/marlin"));
-
-    addParameter(param::ParameterFactory::declareRange("roll", -p, p, 0.0, 0.001));
-    addParameter(param::ParameterFactory::declareRange("pitch", -p, p, 0.0, 0.001));
-    addParameter(param::ParameterFactory::declareRange("yaw", -p, p, 0.0, 0.001));
-    addParameter(param::ParameterFactory::declareRange("dx", -d, d, 0.0, 0.01));
-    addParameter(param::ParameterFactory::declareRange("dy", -d, d, 0.0, 0.01));
-    addParameter(param::ParameterFactory::declareRange("dz", -d, d, 0.0, 0.01));
+    parameters.addParameter(param::ParameterFactory::declareRange("roll", -p, p, 0.0, 0.001));
+    parameters.addParameter(param::ParameterFactory::declareRange("pitch", -p, p, 0.0, 0.001));
+    parameters.addParameter(param::ParameterFactory::declareRange("yaw", -p, p, 0.0, 0.001));
+    parameters.addParameter(param::ParameterFactory::declareRange("dx", -d, d, 0.0, 0.01));
+    parameters.addParameter(param::ParameterFactory::declareRange("dy", -d, d, 0.0, 0.01));
+    parameters.addParameter(param::ParameterFactory::declareRange("dz", -d, d, 0.0, 0.01));
 }
 
 void StaticTransform::process()
@@ -57,7 +60,7 @@ void StaticTransform::tick()
 }
 
 
-void StaticTransform::setup()
+void StaticTransform::setup(NodeModifier& node_modifier)
 {
-    output_ = modifier_->addOutput<connection_types::TransformMessage>("Transformation");
+    output_ = node_modifier.addOutput<connection_types::TransformMessage>("Transformation");
 }

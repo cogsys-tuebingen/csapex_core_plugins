@@ -19,15 +19,18 @@ using namespace connection_types;
 DisplayKeypoints::DisplayKeypoints()
     : in_key(nullptr)
 {
-    addParameter(param::ParameterFactory::declareColorParameter("color", 255,0,0));
-    addParameter(param::ParameterFactory::declareBool("random color", true));
+}
 
+void DisplayKeypoints::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color", 255,0,0));
+    parameters.addParameter(param::ParameterFactory::declareBool("random color", true));
 
     std::map<std::string, std::pair<int, bool> > flags;
     //    flags["DRAW_OVER_OUTIMG"] = (int) cv::DrawMatchesFlags::DRAW_OVER_OUTIMG;
     flags["NOT_DRAW_SINGLE_POINTS"] = std::make_pair((int) cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS, false);
     flags["DRAW_RICH_KEYPOINTS"] = std::make_pair((int) cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS, true);
-    addParameter(param::ParameterFactory::declareParameterBitSet("flags", flags));
+    parameters.addParameter(param::ParameterFactory::declareParameterBitSet("flags", flags));
 }
 
 void DisplayKeypoints::process()
@@ -51,10 +54,10 @@ void DisplayKeypoints::process()
     msg::publish(out_img, out);
 }
 
-void DisplayKeypoints::setup()
+void DisplayKeypoints::setup(NodeModifier& node_modifier)
 {
-    in_img = modifier_->addInput<CvMatMessage>("Image");
-    in_key = modifier_->addInput<KeypointMessage> ("Keypoints");
+    in_img = node_modifier.addInput<CvMatMessage>("Image");
+    in_key = node_modifier.addInput<KeypointMessage> ("Keypoints");
 
-    out_img = modifier_->addOutput<CvMatMessage>("Image");
+    out_img = node_modifier.addOutput<CvMatMessage>("Image");
 }

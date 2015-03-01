@@ -13,8 +13,8 @@ class RandomTreesTrainer : public CollectionNode<connection_types::FeaturesMessa
 public:
     RandomTreesTrainer();
 
-    void setup();
-    void setupParameters();
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters);
 
 private:
     void updatePriors();

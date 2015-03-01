@@ -11,8 +11,8 @@ class IndexFilter : public Node
 public:
     IndexFilter();
 
-    virtual void setup();
-    virtual void process();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);

@@ -16,9 +16,9 @@ class SplitLabeledScan : public csapex::Node
 public:
     SplitLabeledScan();
 
-    void setupParameters();
-    void setup();
-    void process();
+    void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
 private:
     Input* in_;

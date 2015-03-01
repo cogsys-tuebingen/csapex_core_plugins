@@ -11,10 +11,10 @@ class ExportRos : public RosNode
 public:
     ExportRos();
 
-    void setup();
+    void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupROS();
     virtual void processROS();
-    virtual void setupParameters();
+    virtual void setupParameters(Parameterizable& parameters);
 
 protected:
     void updateTopic();

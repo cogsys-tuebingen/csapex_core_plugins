@@ -15,13 +15,17 @@ using namespace csapex::boolean;
 
 Toggle::Toggle()
 {
-    addParameter(param::ParameterFactory::declareBool("true", true),
+}
+
+void Toggle::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareBool("true", true),
                  std::bind(&Toggle::setSignal, this));
 }
 
-void Toggle::setup()
+void Toggle::setup(NodeModifier& node_modifier)
 {
-    out = modifier_->addOutput<bool>("Signal");
+    out = node_modifier.addOutput<bool>("Signal");
 }
 
 void Toggle::process()

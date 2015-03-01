@@ -24,14 +24,14 @@ RandomTreesTrainer::RandomTreesTrainer()
 {
 }
 
-void RandomTreesTrainer::setup()
+void RandomTreesTrainer::setup(NodeModifier& node_modifier)
 {
-    CollectionNode<connection_types::FeaturesMessage>::setup();
+    CollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
 }
 
-void RandomTreesTrainer::setupParameters()
+void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
 {
-    CollectionNode<FeaturesMessage>::setupParameters();
+    CollectionNode<FeaturesMessage>::setupParameters(parameters);
 
     addParameter(param::ParameterFactory::declareRange<int>
                  ("classes",
@@ -111,7 +111,7 @@ void RandomTreesTrainer::setupParameters()
                                          "CV_TERMCRIT_EPS Terminate learning by the forest_accuracy;\n"
                                          "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS Use both termination criteria."),
              termcrit_type, (int) (CV_TERMCRIT_ITER | CV_TERMCRIT_EPS));
-    addParameter(termcrit_type_p);
+    parameters.addParameter(termcrit_type_p);
 }
 
 void RandomTreesTrainer::updatePriors()

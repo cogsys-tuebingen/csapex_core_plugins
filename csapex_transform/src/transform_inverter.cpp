@@ -29,9 +29,9 @@ void TransformInverter::process()
 }
 
 
-void TransformInverter::setup()
+void TransformInverter::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<connection_types::TransformMessage>("T");
+    input_ = node_modifier.addInput<connection_types::TransformMessage>("T");
 
-    output_ = modifier_->addOutput<connection_types::TransformMessage>("T^-1");
+    output_ = node_modifier.addOutput<connection_types::TransformMessage>("T^-1");
 }

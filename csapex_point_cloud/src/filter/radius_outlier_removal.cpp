@@ -19,18 +19,22 @@ using namespace csapex::connection_types;
 
 RadiusOutlierRemoval::RadiusOutlierRemoval()
 {
-    addParameter(param::ParameterFactory::declareRange("min neighbours", 1, 1000, 2, 1));
-    addParameter(param::ParameterFactory::declareBool ("keep organized", false));
-    addParameter(param::ParameterFactory::declareBool ("negate", false));
-    addParameter(param::ParameterFactory::declareRange("search radius", 0.0, 30.0, 0.8, 0.1));
 }
 
-void RadiusOutlierRemoval::setup()
+void RadiusOutlierRemoval::setupParameters(Parameterizable &parameters)
 {
-    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    indeces_input_ = modifier_->addOptionalInput<PointIndecesMessage>("Indeces");
-    output_cloud_ = modifier_->addOutput<PointCloudMessage>("Pointcloud");
-    output_indeces_ = modifier_->addOutput<PointIndecesMessage>("Indeces");
+    parameters.addParameter(param::ParameterFactory::declareRange("min neighbours", 1, 1000, 2, 1));
+    parameters.addParameter(param::ParameterFactory::declareBool ("keep organized", false));
+    parameters.addParameter(param::ParameterFactory::declareBool ("negate", false));
+    parameters.addParameter(param::ParameterFactory::declareRange("search radius", 0.0, 30.0, 0.8, 0.1));
+}
+
+void RadiusOutlierRemoval::setup(NodeModifier& node_modifier)
+{
+    input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    indeces_input_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indeces");
+    output_cloud_ = node_modifier.addOutput<PointCloudMessage>("Pointcloud");
+    output_indeces_ = node_modifier.addOutput<PointIndecesMessage>("Indeces");
 }
 
 void RadiusOutlierRemoval::process()

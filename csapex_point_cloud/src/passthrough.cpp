@@ -23,20 +23,24 @@ using namespace csapex::connection_types;
 
 PassThrough::PassThrough()
 {
-    addParameter(param::ParameterFactory::declareInterval("interval", -100.0, 100.0, 0.0, 100.0, 0.01));
-    addParameter(param::ParameterFactory::declareBool("keep organized", true));
+}
+
+void PassThrough::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareInterval("interval", -100.0, 100.0, 0.0, 100.0, 0.01));
+    parameters.addParameter(param::ParameterFactory::declareBool("keep organized", true));
 
     std::vector<std::string> field;
     field.push_back("x");
-    addParameter(param::ParameterFactory::declareParameterStringSet("field", field), std::bind(&PassThrough::updateBorders, this));
+    parameters.addParameter(param::ParameterFactory::declareParameterStringSet("field", field), std::bind(&PassThrough::updateBorders, this));
 }
 
-void PassThrough::setup()
+void PassThrough::setup(NodeModifier& node_modifier)
 {
-    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
 
-    output_pos_ = modifier_->addOutput<PointCloudMessage>("cropped PointCloud (+)");
-    output_neg_ = modifier_->addOutput<PointCloudMessage>("cropped PointCloud (-)");
+    output_pos_ = node_modifier.addOutput<PointCloudMessage>("cropped PointCloud (+)");
+    output_neg_ = node_modifier.addOutput<PointCloudMessage>("cropped PointCloud (-)");
 }
 
 void PassThrough::updateBorders()

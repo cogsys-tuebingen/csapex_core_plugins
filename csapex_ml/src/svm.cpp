@@ -18,13 +18,13 @@ SVM::SVM() :
 {
 }
 
-void SVM::setup()
+void SVM::setup(NodeModifier& node_modifier)
 {
-    in_ = modifier_->addInput<GenericVectorMessage, FeaturesMessage>("Features");
-    out_ = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("Labeled Features");
+    in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
+    out_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Labeled Features");
 }
 
-void SVM::setupParameters()
+void SVM::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declarePath("svm path",
                                                       param::ParameterDescription("Path to a saved svm."),

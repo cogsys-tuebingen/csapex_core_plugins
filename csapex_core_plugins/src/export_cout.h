@@ -11,8 +11,8 @@ class ExportCout : public Node
 public:
     ExportCout();
 
-    virtual void setup();
-    virtual void process();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
 private:
     Input* connector_;

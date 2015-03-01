@@ -22,7 +22,11 @@ using namespace csapex::connection_types;
 
 LabelPointCloud::LabelPointCloud()
 {
-    addParameter(param::ParameterFactory::declareBool("exclude default label", false));
+}
+
+void LabelPointCloud::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareBool("exclude default label", false));
 }
 
 void LabelPointCloud::process()
@@ -37,11 +41,11 @@ void LabelPointCloud::process()
     boost::apply_visitor (PointCloudMessage::Dispatch<LabelPointCloud>(this, cloud), cloud->value);
 }
 
-void LabelPointCloud::setup()
+void LabelPointCloud::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
-    labels_ = modifier_->addInput<CvMatMessage>("Labels");
-    output_ = modifier_->addOutput<PointCloudMessage>("Labeled PointCloud");
+    input_  = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    labels_ = node_modifier.addInput<CvMatMessage>("Labels");
+    output_ = node_modifier.addOutput<PointCloudMessage>("Labeled PointCloud");
 }
 
 namespace implementation {

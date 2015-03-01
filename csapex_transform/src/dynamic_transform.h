@@ -15,10 +15,10 @@ class DynamicTransform : public csapex::Node
 public:
     DynamicTransform();
 
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters);
 
-    virtual void process();
+    virtual void process() override;
     bool canTick();
     virtual void tick();
     void update();

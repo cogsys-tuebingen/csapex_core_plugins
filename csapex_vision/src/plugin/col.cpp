@@ -48,18 +48,18 @@ void Col::process()
     msg::publish(output_, out);
 }
 
-void Col::setup()
+void Col::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("Matrix");
-    output_ = modifier_->addOutput<CvMatMessage>("Col");
+    input_  = node_modifier.addInput<CvMatMessage>("Matrix");
+    output_ = node_modifier.addOutput<CvMatMessage>("Col");
 }
 
-void Col::setupParameters()
+void Col::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareRange("col",
                                                        param::ParameterDescription("Col to extract."),
                                                        0, 1, 0, 1));
-    addParameter(param::ParameterFactory::declareTrigger("center"),
+    parameters.addParameter(param::ParameterFactory::declareTrigger("center"),
                  std::bind(&Col::requestCenter, this));
 
 }

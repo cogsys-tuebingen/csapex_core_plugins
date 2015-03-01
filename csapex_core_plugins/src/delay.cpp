@@ -23,7 +23,7 @@ Delay::Delay()
 {
 }
 
-void Delay::setupParameters()
+void Delay::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareRange<double>
                  ("delay",
@@ -32,13 +32,13 @@ void Delay::setupParameters()
 
     param::Parameter::Ptr p = param::ParameterFactory::declareOutputProgress("delay progress");
     progress_ = dynamic_cast<param::OutputProgressParameter*>(p.get());
-    addParameter(p);
+    parameters.addParameter(p);
 }
 
-void Delay::setup()
+void Delay::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<connection_types::AnyMessage>("Input");
-    output_ = modifier_->addOutput<connection_types::AnyMessage>("Delayed Input");
+    input_ = node_modifier.addInput<connection_types::AnyMessage>("Input");
+    output_ = node_modifier.addOutput<connection_types::AnyMessage>("Delayed Input");
 }
 
 void Delay::process()

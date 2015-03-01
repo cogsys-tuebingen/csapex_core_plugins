@@ -24,9 +24,9 @@ void ImportCin::process()
 
 }
 
-void ImportCin::setup()
+void ImportCin::setup(NodeModifier& node_modifier)
 {
-    connector_ = modifier_->addOutput<connection_types::AnyMessage>("Anything");
+    connector_ = node_modifier.addOutput<connection_types::AnyMessage>("Anything");
 }
 
 void ImportCin::tick()

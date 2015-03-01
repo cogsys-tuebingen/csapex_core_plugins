@@ -18,16 +18,16 @@ MeanStdDev::MeanStdDev()
 {
 }
 
-void MeanStdDev::setup()
+void MeanStdDev::setup(NodeModifier& node_modifier)
 {
-    in_mat_ = modifier_->addInput<CvMatMessage>("input");
-    in_mask_ = modifier_->addOptionalInput<CvMatMessage>("input mask");
-    out_mean_ = modifier_->addOutput<GenericVectorMessage, double>("mean");
-    out_stddev_ = modifier_->addOutput<GenericVectorMessage, double>("stddev");
+    in_mat_ = node_modifier.addInput<CvMatMessage>("input");
+    in_mask_ = node_modifier.addOptionalInput<CvMatMessage>("input mask");
+    out_mean_ = node_modifier.addOutput<GenericVectorMessage, double>("mean");
+    out_stddev_ = node_modifier.addOutput<GenericVectorMessage, double>("stddev");
 
 }
 
-void MeanStdDev::setupParameters()
+void MeanStdDev::setupParameters(Parameterizable& parameters)
 {
 
 }

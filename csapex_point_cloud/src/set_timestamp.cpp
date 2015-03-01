@@ -17,13 +17,13 @@ SetTimeStamp::SetTimeStamp()
 {
 }
 
-void SetTimeStamp::setup()
+void SetTimeStamp::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<connection_types::PointCloudMessage>("PointCloud");
-    input_frame_ = modifier_->addOptionalInput<std::string>("Frame");
-    input_time_ = modifier_->addInput<connection_types::TimeStampMessage>("Time");
+    input_ = node_modifier.addInput<connection_types::PointCloudMessage>("PointCloud");
+    input_frame_ = node_modifier.addOptionalInput<std::string>("Frame");
+    input_time_ = node_modifier.addInput<connection_types::TimeStampMessage>("Time");
 
-    output_ = modifier_->addOutput<connection_types::PointCloudMessage>("PointCloud");
+    output_ = node_modifier.addOutput<connection_types::PointCloudMessage>("PointCloud");
 }
 
 void SetTimeStamp::process()

@@ -21,14 +21,18 @@ using namespace csapex::connection_types;
 
 VoxelGrid::VoxelGrid()
 {
-    addParameter(param::ParameterFactory::declareRange("resolution", 0.01, 1.0, 0.1, 0.01));
 }
 
-void VoxelGrid::setup()
+void VoxelGrid::setupParameters(Parameterizable &parameters)
 {
-    input_cloud_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    parameters.addParameter(param::ParameterFactory::declareRange("resolution", 0.01, 1.0, 0.1, 0.01));
+}
 
-    output_ = modifier_->addOutput<PointCloudMessage>("PointCloud");
+void VoxelGrid::setup(NodeModifier& node_modifier)
+{
+    input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+
+    output_ = node_modifier.addOutput<PointCloudMessage>("PointCloud");
 }
 
 void VoxelGrid::process()

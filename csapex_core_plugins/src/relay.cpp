@@ -17,10 +17,10 @@ Relay::Relay()
 {
 }
 
-void Relay::setup()
+void Relay::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
-    output_ = modifier_->addOutput<connection_types::AnyMessage>("Same as input");
+    input_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
+    output_ = node_modifier.addOutput<connection_types::AnyMessage>("Same as input");
 }
 
 void Relay::process()

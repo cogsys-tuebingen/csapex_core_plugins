@@ -31,15 +31,15 @@ void SplitClusteredCloud::process()
     boost::apply_visitor (PointCloudMessage::Dispatch<SplitClusteredCloud>(this, msg), msg->value);
 }
 
-void SplitClusteredCloud::setup()
+void SplitClusteredCloud::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<PointCloudMessage>("PointCloud");
-    in_indices_ = modifier_->addInput<GenericVectorMessage, pcl::PointIndices>("Clusters");
+    input_  = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    in_indices_ = node_modifier.addInput<GenericVectorMessage, pcl::PointIndices>("Clusters");
 
-    output1_ = modifier_->addOutput<PointCloudMessage>("PointCloud1");
-    output2_ = modifier_->addOutput<PointCloudMessage>("PointCloud2");
-    output3_ = modifier_->addOutput<PointCloudMessage>("PointCloud3");
-    output4_ = modifier_->addOutput<PointCloudMessage>("PointCloud4");
+    output1_ = node_modifier.addOutput<PointCloudMessage>("PointCloud1");
+    output2_ = node_modifier.addOutput<PointCloudMessage>("PointCloud2");
+    output3_ = node_modifier.addOutput<PointCloudMessage>("PointCloud3");
+    output4_ = node_modifier.addOutput<PointCloudMessage>("PointCloud4");
 }
 
 template <class PointT>

@@ -30,19 +30,23 @@ CSAPEX_REGISTER_CLASS(csapex::ScanSegmentation2DRenderer, csapex::Node)
 ScanSegmentation2DRenderer::ScanSegmentation2DRenderer() :
     last_id_(0)
 {
-    addParameter(param::ParameterFactory::declareBool("publish marker", false));
+}
 
-    addParameter(param::ParameterFactory::declareBool("use random color", false));
-    addParameter(param::ParameterFactory::declareBool("draw all points", false));
+void ScanSegmentation2DRenderer::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareBool("publish marker", false));
 
-    addParameter(param::ParameterFactory::declareRange("width", 100, 2000, 1000, 1));
-    addParameter(param::ParameterFactory::declareRange("height", 100, 2000, 1000, 1));
+    parameters.addParameter(param::ParameterFactory::declareBool("use random color", false));
+    parameters.addParameter(param::ParameterFactory::declareBool("draw all points", false));
 
-    addParameter(param::ParameterFactory::declareRange("scale", 0.1, 15.0, 1.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("width", 100, 2000, 1000, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("height", 100, 2000, 1000, 1));
 
-    addParameter(param::ParameterFactory::declareColorParameter("color/segments", 0xFF, 0xCC, 0x00));
-    addParameter(param::ParameterFactory::declareColorParameter("color/segments/classified", 0xFF, 0x00, 0x00));
-    addParameter(param::ParameterFactory::declareColorParameter("color/bg", 0x00, 0x00, 0x00));
+    parameters.addParameter(param::ParameterFactory::declareRange("scale", 0.1, 15.0, 1.0, 0.1));
+
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/segments", 0xFF, 0xCC, 0x00));
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/segments/classified", 0xFF, 0x00, 0x00));
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/bg", 0x00, 0x00, 0x00));
 }
 
 void ScanSegmentation2DRenderer::process()
@@ -57,11 +61,11 @@ void ScanSegmentation2DRenderer::process()
     }
 }
 
-void ScanSegmentation2DRenderer::setup()
+void ScanSegmentation2DRenderer::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<GenericVectorMessage, Segment>("Segments");
-    output_ = modifier_->addOutput<CvMatMessage>("Rendered");
-    output_marker_ = modifier_->addOutput<visualization_msgs::MarkerArray>("Marker");
+    input_  = node_modifier.addInput<GenericVectorMessage, Segment>("Segments");
+    output_ = node_modifier.addOutput<CvMatMessage>("Rendered");
+    output_marker_ = node_modifier.addOutput<visualization_msgs::MarkerArray>("Marker");
 }
 
 void ScanSegmentation2DRenderer::render(const std::vector<Segment> &segments)

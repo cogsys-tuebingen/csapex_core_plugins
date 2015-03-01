@@ -11,9 +11,10 @@ class StaticTransform : public csapex::Node
 public:
     StaticTransform();
 
-    void tick();
-    void process();
-    virtual void setup();
+    virtual void tick() override;
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
 
 private:
     Output* output_;

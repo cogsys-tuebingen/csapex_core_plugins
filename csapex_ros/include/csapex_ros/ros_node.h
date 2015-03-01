@@ -20,7 +20,7 @@ protected:
 
     void process();
 
-    void setup();
+    void setup(NodeModifier& node_modifier);
     virtual void setupROS() = 0;
     virtual void processROS() = 0;
 

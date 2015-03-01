@@ -27,16 +27,18 @@ TransformFromModels::TransformFromModels()
 {
 }
 
-void TransformFromModels::setup()
+void TransformFromModels::setup(NodeModifier& node_modifier)
 {
-    input_models_ref_ = modifier_->addInput<GenericVectorMessage, ModelMessage >("Reference Models");
-    input_models_new_ = modifier_->addInput<GenericVectorMessage, ModelMessage >("New Models");
-    output_ = modifier_->addOutput<connection_types::TransformMessage>("Transformation");
-    output_text_ = modifier_->addOutput<std::string>("String"); // create a debug output
+    input_models_ref_ = node_modifier.addInput<GenericVectorMessage, ModelMessage >("Reference Models");
+    input_models_new_ = node_modifier.addInput<GenericVectorMessage, ModelMessage >("New Models");
+    output_ = node_modifier.addOutput<connection_types::TransformMessage>("Transformation");
+    output_text_ = node_modifier.addOutput<std::string>("String"); // create a debug output
+}
 
-
-    addParameter(param::ParameterFactory::declareRange("Apex height", 0.0, 2.0, 0.5, 0.01));
-    addParameter(param::ParameterFactory::declareRange("Cone angle", 0.0001, 3.2, 0.5, 0.001));
+void TransformFromModels::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange("Apex height", 0.0, 2.0, 0.5, 0.01));
+    parameters.addParameter(param::ParameterFactory::declareRange("Cone angle", 0.0001, 3.2, 0.5, 0.001));
 }
 
 void TransformFromModels::process()

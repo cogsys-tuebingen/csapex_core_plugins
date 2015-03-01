@@ -30,13 +30,13 @@ void BoxBlur::process()
     msg::publish(output_, out);
 }
 
-void BoxBlur::setup()
+void BoxBlur::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("Unblurred");
-    output_ = modifier_->addOutput<CvMatMessage>("Blurred");
+    input_ = node_modifier.addInput<CvMatMessage>("Unblurred");
+    output_ = node_modifier.addOutput<CvMatMessage>("Blurred");
 }
 
-void BoxBlur::setupParameters()
+void BoxBlur::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("kernel", 1, 255, 2, 2));
+    parameters.addParameter(param::ParameterFactory::declareRange("kernel", 1, 255, 2, 2));
 }

@@ -18,19 +18,19 @@ ImagePadding::ImagePadding()
 {
 }
 
-void ImagePadding::setupParameters()
+void ImagePadding::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("border", 0, 1000, 0, 1));
-    addParameter(param::ParameterFactory::declareRange("mask offset", 0, 100, 0, 1));
-    addParameter(param::ParameterFactory::declareColorParameter("color", 0x00, 0x00, 0x00));
+    parameters.addParameter(param::ParameterFactory::declareRange("border", 0, 1000, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("mask offset", 0, 100, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color", 0x00, 0x00, 0x00));
 }
 
-void ImagePadding::setup()
+void ImagePadding::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("Image");
+    input_ = node_modifier.addInput<CvMatMessage>("Image");
 
-    output_ = modifier_->addOutput<CvMatMessage>("Expanded Image");
-    output_mask_ = modifier_->addOutput<CvMatMessage>("Expanded Mask");
+    output_ = node_modifier.addOutput<CvMatMessage>("Expanded Image");
+    output_mask_ = node_modifier.addOutput<CvMatMessage>("Expanded Mask");
 }
 
 void ImagePadding::process()

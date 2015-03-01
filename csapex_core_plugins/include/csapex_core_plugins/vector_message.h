@@ -48,11 +48,18 @@ struct VectorMessage : public Message
     virtual bool canConnectTo(const ConnectionType* other_side) const override;
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const override;
 
+
+    bool isContainer() const override;
+    ConnectionType::Ptr nestedType() const override;
+    virtual void addNestedValue(const ConnectionType::ConstPtr &msg) override;
+    virtual ConnectionType::ConstPtr nestedValue(std::size_t i) const override;
+    virtual std::size_t nestedValueCount() const override;
+
 private:
     VectorMessage(ConnectionType::Ptr type, const std::string& frame_id, Stamp stamp_micro_seconds);
 
 public:
-    std::vector<ConnectionType::Ptr> value;
+    std::vector<ConnectionType::ConstPtr> value;
 
 private:
     ConnectionType::Ptr type_;

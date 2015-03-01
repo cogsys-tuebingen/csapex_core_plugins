@@ -18,12 +18,13 @@ using namespace csapex;
 FilterStaticMask::FilterStaticMask()
     : state(this)
 {
-    addParameter(param::ParameterFactory::declareTrigger("create mask"), std::bind(&FilterStaticMask::showPainter, this));
 }
 
-FilterStaticMask::~FilterStaticMask()
+void FilterStaticMask::setupParameters(Parameterizable &parameters)
 {
+    parameters.addParameter(param::ParameterFactory::declareTrigger("create mask"), std::bind(&FilterStaticMask::showPainter, this));
 }
+
 
 void FilterStaticMask::State::writeYaml(YAML::Node& out) const {
     out["rows"] = mask_.rows;

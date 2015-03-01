@@ -23,15 +23,15 @@ SplitLabeledScan::SplitLabeledScan()
 {
 }
 
-void SplitLabeledScan::setupParameters()
+void SplitLabeledScan::setupParameters(Parameterizable& parameters)
 {
 }
 
-void SplitLabeledScan::setup()
+void SplitLabeledScan::setup(NodeModifier& node_modifier)
 {
-    in_  = modifier_->addInput<LabeledScanMessage>("Labeled Scan");
-    out_scan_ = modifier_->addOutput<ScanMessage>("Scan");
-    out_labels_ = modifier_->addOutput<GenericVectorMessage, int>("Labels");
+    in_  = node_modifier.addInput<LabeledScanMessage>("Labeled Scan");
+    out_scan_ = node_modifier.addOutput<ScanMessage>("Scan");
+    out_labels_ = node_modifier.addOutput<GenericVectorMessage, int>("Labels");
 }
 
 void SplitLabeledScan::process()

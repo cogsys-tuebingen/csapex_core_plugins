@@ -17,11 +17,12 @@ private:
 public:    
     Clock();
 
-    void setupROS();
-    void processROS();
-    void setup();
+    virtual void setupROS() override;
+    virtual void processROS() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
 
-    virtual void tick();
+    virtual void tick() override;
 
 private:
     Output* output_;

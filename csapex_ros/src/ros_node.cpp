@@ -17,7 +17,7 @@ ROSHandler& RosNode::getRosHandler()
     return ROSHandler::instance();
 }
 
-void RosNode::setup()
+void RosNode::setup(NodeModifier& node_modifier)
 {
 }
 

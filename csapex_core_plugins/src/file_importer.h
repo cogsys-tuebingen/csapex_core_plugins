@@ -16,12 +16,12 @@ public:
     FileImporter();
     ~FileImporter();
 
-    void setupParameters();
-    void setup();
+    void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
 
     void import();
 
-    void process();
+    virtual void process() override;
     bool canTick();
     void tick();
 

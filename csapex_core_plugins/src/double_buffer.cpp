@@ -18,13 +18,17 @@ using namespace csapex;
 DoubleBuffer::DoubleBuffer()
     : input_(nullptr), output_(nullptr), dirty_(false)
 {
-    addParameter(param::ParameterFactory::declareBool("synchronized", true));
 }
 
-void DoubleBuffer::setup()
+void DoubleBuffer::setupParameters(Parameterizable &parameters)
 {
-    input_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
-    output_ = modifier_->addOutput<connection_types::AnyMessage>("Same as input");
+    parameters.addParameter(param::ParameterFactory::declareBool("synchronized", true));
+}
+
+void DoubleBuffer::setup(NodeModifier& node_modifier)
+{
+    input_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
+    output_ = node_modifier.addOutput<connection_types::AnyMessage>("Same as input");
 }
 
 void DoubleBuffer::process()

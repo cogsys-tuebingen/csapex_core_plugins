@@ -22,6 +22,6 @@ void PointCloudGenerator::process()
 
 }
 
-void PointCloudGenerator::setup()
+void PointCloudGenerator::setup(NodeModifier& node_modifier)
 {
 }

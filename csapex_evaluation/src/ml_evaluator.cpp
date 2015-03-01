@@ -41,17 +41,17 @@ MLEvaluator::MLEvaluator()
 {
 }
 
-void MLEvaluator::setupParameters()
+void MLEvaluator::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareTrigger("reset"), [&](param::Parameter*) { confusion_.reset(); });
+    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"), [&](param::Parameter*) { confusion_.reset(); });
 }
 
-void MLEvaluator::setup()
+void MLEvaluator::setup(NodeModifier& node_modifier)
 {
-    in_truth_  = modifier_->addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("True feature");
-    in_classified_  = modifier_->addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
+    in_truth_  = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("True feature");
+    in_classified_  = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
 
-    out_ = modifier_->addOutput<ConfusionMatrixMessage>("Evaluation Result");
+    out_ = node_modifier.addOutput<ConfusionMatrixMessage>("Evaluation Result");
 
     confusion_ = ConfusionMatrix();
 }

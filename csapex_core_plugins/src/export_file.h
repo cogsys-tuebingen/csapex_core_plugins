@@ -13,9 +13,9 @@ class ExportFile : public Node
 public:
     ExportFile();
 
-    virtual void setup();
-    virtual void setupParameters();
-    virtual void process();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters);
+    virtual void process() override;
 
 protected:
     void setExportPath();

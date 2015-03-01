@@ -13,9 +13,14 @@ using namespace csapex;
 template <typename T>
 NumberInput<T>::NumberInput()
 {
-    addParameter(param::ParameterFactory::declareValue<T>("value", (T) 0.0));
-    addParameter(param::ParameterFactory::declareTrigger("publish"), std::bind(&NumberInput::process, this));
-    addParameter(param::ParameterFactory::declareBool("tick", false));
+}
+
+template <typename T>
+void NumberInput<T>::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareValue<T>("value", (T) 0.0));
+    parameters.addParameter(param::ParameterFactory::declareTrigger("publish"), std::bind(&NumberInput::process, this));
+    parameters.addParameter(param::ParameterFactory::declareBool("tick", false));
 }
 
 template <typename T>
@@ -27,9 +32,9 @@ void NumberInput<T>::tick()
 }
 
 template <typename T>
-void NumberInput<T>::setup()
+void NumberInput<T>::setup(NodeModifier& node_modifier)
 {
-    out_ = modifier_->addOutput<T>(type2name(typeid(T)));
+    out_ = node_modifier.addOutput<T>(type2name(typeid(T)));
 }
 
 template <typename T>

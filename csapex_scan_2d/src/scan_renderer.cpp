@@ -27,10 +27,10 @@ ScanRenderer::ScanRenderer()
     renderer.useTimer(profiling_timer_);
 }
 
-void ScanRenderer::setup()
+void ScanRenderer::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addMultiInput<ScanMessage, LabeledScanMessage>("Scan");
-    output_ = modifier_->addOutput<CvMatMessage>("Render");
+    input_ = node_modifier.addMultiInput<ScanMessage, LabeledScanMessage>("Scan");
+    output_ = node_modifier.addOutput<CvMatMessage>("Render");
 }
 
 void ScanRenderer::process()

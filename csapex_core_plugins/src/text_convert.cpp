@@ -16,10 +16,10 @@ TextConvert::TextConvert()
 {
 }
 
-void TextConvert::setup()
+void TextConvert::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<std::string>("Text");
-    output_ = modifier_->addOutput<int>("Number");
+    input_  = node_modifier.addInput<std::string>("Text");
+    output_ = node_modifier.addOutput<int>("Number");
 }
 
 void TextConvert::process()

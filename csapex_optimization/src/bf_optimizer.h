@@ -18,9 +18,9 @@ class BFOptimizer : public csapex::Node
 public:
     BFOptimizer();
 
-    void setupParameters();
-    void setup();
-    void process();
+    void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
     void tick();
 
     int stepsNecessary();

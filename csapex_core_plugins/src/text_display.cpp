@@ -17,9 +17,9 @@ TextDisplay::TextDisplay()
 {
 }
 
-void TextDisplay::setup()
+void TextDisplay::setup(NodeModifier& node_modifier)
 {
-    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
+    connector_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
 }
 void TextDisplay::process()
 {

@@ -18,7 +18,7 @@ ImageCollage::ImageCollage()
 {
 }
 
-void ImageCollage::setupParameters()
+void ImageCollage::setupParameters(Parameterizable& parameters)
 {
     param::Parameter::Ptr x = param::ParameterFactory::declareRange("x",
                                                    param::ParameterDescription("x position of the overlay"),
@@ -30,16 +30,16 @@ void ImageCollage::setupParameters()
     p_x_ = std::dynamic_pointer_cast<param::RangeParameter>(x);
     p_y_ = std::dynamic_pointer_cast<param::RangeParameter>(y);
 
-    addParameter(p_x_);
-    addParameter(p_y_);
+    parameters.addParameter(p_x_);
+    parameters.addParameter(p_y_);
 }
 
-void ImageCollage::setup()
+void ImageCollage::setup(NodeModifier& node_modifier)
 {
-    in_main_  = modifier_->addInput<CvMatMessage>("Main image");
-    in_secondary_  = modifier_->addInput<CvMatMessage>("Secondary image");
+    in_main_  = node_modifier.addInput<CvMatMessage>("Main image");
+    in_secondary_  = node_modifier.addInput<CvMatMessage>("Secondary image");
 
-    out_ = modifier_->addOutput<CvMatMessage>("Collage");
+    out_ = node_modifier.addOutput<CvMatMessage>("Collage");
 }
 
 void ImageCollage::process()

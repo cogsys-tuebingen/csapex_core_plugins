@@ -17,9 +17,9 @@ ConfusionMatrixDisplay::ConfusionMatrixDisplay()
 {
 }
 
-void ConfusionMatrixDisplay::setup()
+void ConfusionMatrixDisplay::setup(NodeModifier& node_modifier)
 {
-    connector_ = modifier_->addInput<connection_types::AnyMessage>("Anything");
+    connector_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
 }
 void ConfusionMatrixDisplay::process()
 {

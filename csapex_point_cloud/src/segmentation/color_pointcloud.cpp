@@ -33,10 +33,10 @@ void ColorPointCloud::process()
     boost::apply_visitor (PointCloudMessage::Dispatch<ColorPointCloud>(this, msg), msg->value);
 }
 
-void ColorPointCloud::setup()
+void ColorPointCloud::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<PointCloudMessage>("Labeled PointCloud");
-    output_ = modifier_->addOutput<PointCloudMessage>("Colored PointCloud");
+    input_  = node_modifier.addInput<PointCloudMessage>("Labeled PointCloud");
+    output_ = node_modifier.addOutput<PointCloudMessage>("Colored PointCloud");
 }
 
 namespace implementation {

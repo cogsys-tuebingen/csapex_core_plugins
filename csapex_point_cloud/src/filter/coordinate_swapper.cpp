@@ -83,10 +83,10 @@ CoordinateSwapper::CoordinateSwapper()
 {
 }
 
-void CoordinateSwapper::setup()
+void CoordinateSwapper::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
-    output_ = modifier_->addOutput<PointCloudMessage>("Swapped Pointcloud");
+    input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    output_ = node_modifier.addOutput<PointCloudMessage>("Swapped Pointcloud");
 }
 
 void CoordinateSwapper::process()

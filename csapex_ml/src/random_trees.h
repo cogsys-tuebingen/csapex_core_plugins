@@ -18,9 +18,9 @@ class RandomTrees : public csapex::Node
 public:
     RandomTrees();
 
-    void setupParameters();
-    void setup();
-    void process();
+    void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
 private:
     void loadTree();

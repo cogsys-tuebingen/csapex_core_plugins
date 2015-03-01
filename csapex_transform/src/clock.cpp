@@ -20,10 +20,14 @@ using namespace csapex;
 
 Clock::Clock()
 {
+}
+
+void Clock::setupParameters(Parameterizable &parameters)
+{
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("ros::Time::now()", (int) CURRENT)
             ("ros::Time(0)", (int) ZERO);
-    addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CURRENT));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CURRENT));
 }
 
 
@@ -49,8 +53,8 @@ void Clock::processROS()
 
 }
 
-void Clock::setup()
+void Clock::setup(NodeModifier& node_modifier)
 {
-    output_ = modifier_->addOutput<connection_types::TimeStampMessage>("Time");
+    output_ = node_modifier.addOutput<connection_types::TimeStampMessage>("Time");
 }
 

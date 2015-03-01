@@ -18,9 +18,9 @@ PointCount::PointCount()
 {
 }
 
-void PointCount::setup()
+void PointCount::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<PointCloudMessage>("PointCloud");
+    input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
 }
 
 void PointCount::process()

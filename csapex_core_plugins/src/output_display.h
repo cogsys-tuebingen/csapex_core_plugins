@@ -21,8 +21,8 @@ public:
     OutputDisplay();
     virtual ~OutputDisplay();
 
-    void setup();
-    void process();
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
 protected:
     Input* input_;
