@@ -33,7 +33,7 @@ BlobDetector::~BlobDetector()
 {
 }
 
-void BlobDetector::setupParameters()
+void BlobDetector::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareBool("RoiInformation",
                                                param::ParameterDescription("Show the information of each RoI"),
@@ -99,11 +99,10 @@ void BlobDetector::process()
 
     CvBlobs blobs;
 
-    IplImage* grayPtr = new IplImage(gray);
-    IplImage* labelImgPtr = cvCreateImage(cvGetSize(grayPtr), IPL_DEPTH_LABEL, 1);
+    IplImage grayPtr(gray);
+    IplImage* labelImgPtr = cvCreateImage(cvGetSize(&grayPtr), IPL_DEPTH_LABEL, 1);
 
-    cvLabel(grayPtr, labelImgPtr, blobs);
-
+    cvLabel(&grayPtr, labelImgPtr, blobs);
 
     VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
@@ -116,10 +115,12 @@ void BlobDetector::process()
         int h = (blob.maxy - blob.miny + 1);
 
         if((blob.area < range_area.first) || (blob.area > range_area.second)) {
+            cvReleaseBlob((*it).second);
             it = blobs.erase(it);
-        } else {
-            ++it;
+            continue;
         }
+
+        ++it;
 
          RoiMessage::Ptr roi(new RoiMessage);
         double r, g, b;
@@ -131,11 +132,13 @@ void BlobDetector::process()
         out->value.push_back(roi);
     }
 
+    ainfo << blobs.size() << " blobs" << std::endl;
+
     msg::publish(output_, out);
 
     if(msg::isConnected(output_debug_)) {
-        IplImage* debugPtr = new IplImage(debug->value);
-        cvRenderBlobs(labelImgPtr, blobs, debugPtr, debugPtr);
+        IplImage debugPtr(debug->value);
+        cvRenderBlobs(labelImgPtr, blobs, &debugPtr, &debugPtr);
 
         for (CvBlobs::const_iterator it=blobs.begin(); it!=blobs.end(); ++it) {
             const CvBlob& blob = *it->second;
@@ -170,19 +173,17 @@ void BlobDetector::process()
             }
         }
         msg::publish(output_debug_, debug);
-        delete(debugPtr);
     }
 
     if(msg::isConnected(output_reduce_)) {
 
-        IplImage* reducedPtr = new IplImage(reduced->value);
+        IplImage reducedPtr(reduced->value);
 
         cvFilterByArea(blobs, range_area.first, range_area.second);
 
-        cvFilterLabels(labelImgPtr, reducedPtr, blobs);
+        cvFilterLabels(labelImgPtr, &reducedPtr, blobs);
 
         msg::publish(output_reduce_, reduced);
-        delete(reducedPtr);
     }
 
     cvReleaseBlobs(blobs);
@@ -190,12 +191,12 @@ void BlobDetector::process()
 }
 
 
-void BlobDetector::setup()
+void BlobDetector::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("Image");
+    input_ = node_modifier.addInput<CvMatMessage>("Image");
 
-    output_debug_ = modifier_->addOutput<CvMatMessage>("OutputImage");
-    output_ = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
-    output_reduce_ = modifier_->addOutput<CvMatMessage>("ReducedImage");
+    output_debug_ = node_modifier.addOutput<CvMatMessage>("OutputImage");
+    output_ = node_modifier.addOutput<VectorMessage, RoiMessage>("ROIs");
+    output_reduce_ = node_modifier.addOutput<CvMatMessage>("ReducedImage");
 
 }
