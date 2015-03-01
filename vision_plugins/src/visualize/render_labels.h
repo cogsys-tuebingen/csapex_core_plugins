@@ -10,9 +10,9 @@ class RenderLabels : public csapex::Node
 public:
     RenderLabels();
 
-    virtual void process();
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters);
 
 protected:
     csapex::Input*    labels_;

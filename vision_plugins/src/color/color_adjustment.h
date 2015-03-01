@@ -11,9 +11,9 @@ class ColorAdjustment : public csapex::Node
 public:
     ColorAdjustment();
 
-    void setup();
-    void setupParameters();
-    void process();
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters);
+    virtual void process() override;
 
     void setParameterState(Memento::Ptr memento);
     void setPreset();

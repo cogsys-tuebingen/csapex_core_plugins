@@ -28,8 +28,8 @@ void MergeROIs::process()
     VectorMessage::ConstPtr rois = msg::getMessage<VectorMessage>(input_);
 
     RectangleCluster cluster;
-    for(std::vector<ConnectionType::Ptr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
-        RoiMessage::Ptr roi = std::dynamic_pointer_cast<RoiMessage>(*it);
+    for(std::vector<ConnectionType::ConstPtr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
+        RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(*it);
         const Roi& r = roi->value;
         cluster.integrate(r.rect());
     }
@@ -44,8 +44,8 @@ void MergeROIs::process()
     msg::publish(output_, out);
 }
 
-void MergeROIs::setup()
+void MergeROIs::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<VectorMessage, RoiMessage>("ROIs");
-    output_ = modifier_->addOutput<VectorMessage, RoiMessage>("merged ROIs");
+    input_ = node_modifier.addInput<VectorMessage, RoiMessage>("ROIs");
+    output_ = node_modifier.addOutput<VectorMessage, RoiMessage>("merged ROIs");
 }

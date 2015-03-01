@@ -30,16 +30,16 @@ void MedianFilter::process()
     msg::publish(output_, out);
 }
 
-void MedianFilter::setup()
+void MedianFilter::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("filtered");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("filtered");
     update();
 }
 
-void MedianFilter::setupParameters()
+void MedianFilter::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("kernel", 3, 31, kernel_size_, 2),
+    parameters.addParameter(param::ParameterFactory::declareRange("kernel", 3, 31, kernel_size_, 2),
                  std::bind(&MedianFilter::update, this));
 }
 

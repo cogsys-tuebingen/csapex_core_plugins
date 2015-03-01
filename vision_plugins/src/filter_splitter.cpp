@@ -25,15 +25,15 @@ Splitter::~Splitter()
 {
 }
 
-void Splitter::setup()
+void Splitter::setup(NodeModifier& node_modifier)
 {
     /// add input
-    input_ = modifier_->addInput<CvMatMessage>("Image");
+    input_ = node_modifier.addInput<CvMatMessage>("Image");
 
     updateOutputs();
 }
 
-void Splitter::setupParameters()
+void Splitter::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareBool
                  ("enforce mono",

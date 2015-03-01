@@ -38,7 +38,7 @@ void FeatureToHistogram::process()
             it != in_vector->value.end() ;
             ++it) {
 
-            FeaturesMessage::Ptr feature_msg = std::dynamic_pointer_cast<FeaturesMessage>(*it);
+            FeaturesMessage::ConstPtr feature_msg = std::dynamic_pointer_cast<FeaturesMessage const>(*it);
             hist->value.ranges.push_back(utils_vision::histogram::Range(0, feature_msg->value.size()));
             hist->value.histograms.push_back(cv::Mat(feature_msg->value, true));
         }
@@ -47,9 +47,9 @@ void FeatureToHistogram::process()
     msg::publish(out_, hist);
 }
 
-void FeatureToHistogram::setup()
+void FeatureToHistogram::setup(NodeModifier& node_modifier)
 {
-    in_        = modifier_->addOptionalInput<FeaturesMessage>("feature");
-    in_vector_ = modifier_->addOptionalInput<VectorMessage, FeaturesMessage>("features");
-    out_       = modifier_->addOutput<HistogramMessage>("histograms");
+    in_        = node_modifier.addOptionalInput<FeaturesMessage>("feature");
+    in_vector_ = node_modifier.addOptionalInput<VectorMessage, FeaturesMessage>("features");
+    out_       = node_modifier.addOutput<HistogramMessage>("histograms");
 }

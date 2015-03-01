@@ -23,9 +23,9 @@ class SetOperation : public csapex::Node
 public:
     SetOperation();
 
-    void setup();
-    void setupParameters();
-    void process();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
+    virtual void process() override;
 
 private:
     csapex::Input* i1_;

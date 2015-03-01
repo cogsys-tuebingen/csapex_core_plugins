@@ -12,7 +12,8 @@ class PerspectiveTransform : public csapex::Filter
 public:
     PerspectiveTransform();
 
-    virtual void filter(cv::Mat &img, cv::Mat &mask);
+    virtual void filter(cv::Mat &img, cv::Mat &mask) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
 
     void update();
 

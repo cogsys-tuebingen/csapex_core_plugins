@@ -20,7 +20,7 @@ Debayer::Debayer()
 {
 }
 
-void Debayer::setupParameters()
+void Debayer::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("BayerBG2RGB", (int) CV_BayerBG2RGB)
@@ -29,7 +29,7 @@ void Debayer::setupParameters()
             ("BayerGR2RGB", (int) CV_BayerGR2RGB)
             ("NNRG2RGB", 667);
 
-    addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
 }
 
 void Debayer::filter(cv::Mat &img, cv::Mat &/*mask*/)

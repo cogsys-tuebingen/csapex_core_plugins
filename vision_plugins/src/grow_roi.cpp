@@ -23,8 +23,12 @@ using namespace connection_types;
 
 GrowROI::GrowROI()
 {
-    addParameter(param::ParameterFactory::declareRange("x", 0, 100, 0, 1));
-    addParameter(param::ParameterFactory::declareRange("y", 0, 100, 0, 1));
+}
+
+void GrowROI::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange("x", 0, 100, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("y", 0, 100, 0, 1));
 }
 
 void GrowROI::process()
@@ -37,8 +41,8 @@ void GrowROI::process()
     msg::publish(output_, out);
 }
 
-void GrowROI::setup()
+void GrowROI::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<RoiMessage>("ROI");
-    output_ = modifier_->addOutput<RoiMessage>("grown ROI");
+    input_ = node_modifier.addInput<RoiMessage>("ROI");
+    output_ = node_modifier.addOutput<RoiMessage>("grown ROI");
 }

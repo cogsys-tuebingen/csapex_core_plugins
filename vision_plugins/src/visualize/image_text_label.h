@@ -10,9 +10,9 @@ class ImageTextLabel : public csapex::Node
 public:
     ImageTextLabel();
 
-    void setup();
-    void setupParameters();
-    void process();
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 protected:
     enum Position {TOP_LEFT, BOTTOM_LEFT,

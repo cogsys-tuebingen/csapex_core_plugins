@@ -12,10 +12,10 @@ public:
     Splitter();
     ~Splitter();
 
-    void setup();
-    void setupParameters();
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters);
 
-    void process();
+    virtual void process() override;
 
 private:
     Input *input_;

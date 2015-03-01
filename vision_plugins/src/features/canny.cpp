@@ -41,21 +41,21 @@ void Canny::process()
     msg::publish(output_, out);
 }
 
-void Canny::setup()
+void Canny::setup(NodeModifier& node_modifier)
 {
-    CornerLineDetection::setup();
+    CornerLineDetection::setup(node_modifier);
     update();
 }
 
-void Canny::setupParameters()
+void Canny::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("aperture", 3, 7, 3, 2),
+    parameters.addParameter(param::ParameterFactory::declareRange("aperture", 3, 7, 3, 2),
                  std::bind(&Canny::update, this));
-    addParameter(param::ParameterFactory::declareRange("threshold 1", 0.0, 500.0, 0.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold 1", 0.0, 500.0, 0.0, 1.0),
                  std::bind(&Canny::update, this));
-    addParameter(param::ParameterFactory::declareRange("threshold 2", 0.0, 500.0, 255.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold 2", 0.0, 500.0, 255.0, 1.0),
                  std::bind(&Canny::update, this));
-    addParameter(param::ParameterFactory::declareBool("L2 gradient", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("L2 gradient", false),
                  std::bind(&Canny::update, this));
 }
 

@@ -28,15 +28,15 @@ ToFeature::ToFeature()
 {
 }
 
-void ToFeature::setup()
+void ToFeature::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<connection_types::AnyMessage>("anything");
-    output_ = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("features");
+    input_  = node_modifier.addInput<connection_types::AnyMessage>("anything");
+    output_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("features");
 }
 
-void ToFeature::setupParameters()
+void ToFeature::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("class id", 0, 255, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("class id", 0, 255, 0, 1));
 }
 
 namespace {

@@ -22,13 +22,13 @@ ImageTextLabel::ImageTextLabel()
 {
 }
 
-void ImageTextLabel::setup()
+void ImageTextLabel::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("Image");
-    output_ = modifier_->addOutput<CvMatMessage>("Labeled");
+    input_  = node_modifier.addInput<CvMatMessage>("Image");
+    output_ = node_modifier.addOutput<CvMatMessage>("Labeled");
 }
 
-void ImageTextLabel::setupParameters()
+void ImageTextLabel::setupParameters(Parameterizable& parameters)
 {
 
     std::map<std::string, int> positions = boost::assign::map_list_of
@@ -36,13 +36,13 @@ void ImageTextLabel::setupParameters()
             ("BOTTOM_RIGHT", BOTTOM_RIGHT)
             ("TOP_LEFT", TOP_LEFT)
             ("TOP_RIGHT", TOP_RIGHT);
-    addParameter(param::ParameterFactory::declareParameterSet("position", positions, (int) TOP_LEFT));
-    addParameter(param::ParameterFactory::declareColorParameter("color/label", 255, 255, 255));
-    addParameter(param::ParameterFactory::declareColorParameter("color/box", 0, 0, 0));
-    addParameter(param::ParameterFactory::declareBool("boxed", false));
-    addParameter(param::ParameterFactory::declareRange("thickness", 1, 10, 1, 1));
-    addParameter(param::ParameterFactory::declareRange("scale", 1.0, 10.0, 1.0, 0.1));
-    addParameter(param::ParameterFactory::declareText("label", "label"));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("position", positions, (int) TOP_LEFT));
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/label", 255, 255, 255));
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/box", 0, 0, 0));
+    parameters.addParameter(param::ParameterFactory::declareBool("boxed", false));
+    parameters.addParameter(param::ParameterFactory::declareRange("thickness", 1, 10, 1, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("scale", 1.0, 10.0, 1.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareText("label", "label"));
 
 }
 

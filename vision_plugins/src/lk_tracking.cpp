@@ -21,14 +21,18 @@ using namespace connection_types;
 LKTracking::LKTracking()
     : init_(true)
 {
+}
+
+void LKTracking::setupParameters(Parameterizable &parameters)
+{
     std::function<void(const param::Parameter*)> cb = std::bind(&LKTracking::update, this, std::placeholders::_1);
 
-    addParameter(param::ParameterFactory::declareRange<int>("winSize", 10, 80, 31, 1));
-    addParameter(param::ParameterFactory::declareRange<int>("subPixWinSize", 1, 40, 10, 1), cb);
+    parameters.addParameter(param::ParameterFactory::declareRange<int>("winSize", 10, 80, 31, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange<int>("subPixWinSize", 1, 40, 10, 1), cb);
 
-    addParameter(param::ParameterFactory::declareTrigger("reset"), cb);
+    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"), cb);
 
-    addParameter(param::ParameterFactory::declareRange<int>("debug/circlesize", 1, 15, 2, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange<int>("debug/circlesize", 1, 15, 2, 1));
 }
 
 void LKTracking::process()
@@ -120,10 +124,10 @@ void LKTracking::update(const param::Parameter*)
     reset();
 }
 
-void LKTracking::setup()
+void LKTracking::setup(NodeModifier& node_modifier)
 {
-    in_image_ = modifier_->addInput<CvMatMessage>("Image");
-    in_keypoints_ = modifier_->addInput<KeypointMessage>("Keypoints");
+    in_image_ = node_modifier.addInput<CvMatMessage>("Image");
+    in_keypoints_ = node_modifier.addInput<KeypointMessage>("Keypoints");
 
-    out_debug_ = modifier_->addOutput<CvMatMessage>("Debug");
+    out_debug_ = node_modifier.addOutput<CvMatMessage>("Debug");
 }

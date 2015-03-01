@@ -24,13 +24,13 @@ ColorConvert::~ColorConvert()
 {
 }
 
-void ColorConvert::setup()
+void ColorConvert::setup(NodeModifier& node_modifier)
 {
-    input_img_ = modifier_->addInput<CvMatMessage>("original");
-    output_img_ = modifier_->addOutput<CvMatMessage>("converted");
+    input_img_ = node_modifier.addInput<CvMatMessage>("original");
+    output_img_ = node_modifier.addOutput<CvMatMessage>("converted");
 }
 
-void ColorConvert::setupParameters()
+void ColorConvert::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> encodings = boost::assign::map_list_of
             ("YUV", (int) YUV)
@@ -40,8 +40,8 @@ void ColorConvert::setupParameters()
             ("HSV", (int) HSV)
             ("MONO", (int) MONO);
 
-    addParameter(param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
-    addParameter(param::ParameterFactory::declareParameterSet("output", encodings, (int) MONO));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("output", encodings, (int) MONO));
 
     cs_pair_to_operation_.insert(csiPair(csPair(RGB, BGR), (int) CV_RGB2BGR));
     cs_pair_to_operation_.insert(csiPair(csPair(BGR, RGB), (int) CV_BGR2RGB));

@@ -10,9 +10,9 @@ class MatrixStitcher : public csapex::Node
 public:
     MatrixStitcher();
 
-    virtual void process();
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
     enum Mode {HORIZONTAL, VERTICAL};

@@ -36,19 +36,19 @@ void Pyramid::process()
 
     msg::publish(out_pyr_, out);
 }
-void Pyramid::setup()
+void Pyramid::setup(NodeModifier& node_modifier)
 {
-    input_     = modifier_->addInput<CvMatMessage>("original");
-    out_level_ = modifier_->addOutput<CvMatMessage>("preview");
-    out_pyr_   = modifier_->addOutput<CvPyramidMessage>("pyramid");
+    input_     = node_modifier.addInput<CvMatMessage>("original");
+    out_level_ = node_modifier.addOutput<CvMatMessage>("preview");
+    out_pyr_   = node_modifier.addOutput<CvPyramidMessage>("pyramid");
 }
 
-void Pyramid::setupParameters()
+void Pyramid::setupParameters(Parameterizable& parameters)
 {
 
-    addParameter(param::ParameterFactory::declareRange("levels", 1, 10, out_levels_, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("levels", 1, 10, out_levels_, 1),
                  std::bind(&Pyramid::update, this));
-    addParameter(param::ParameterFactory::declareRange("preview",0, 9, out_level_idx_, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("preview",0, 9, out_level_idx_, 1),
                  std::bind(&Pyramid::update, this));
 }
 

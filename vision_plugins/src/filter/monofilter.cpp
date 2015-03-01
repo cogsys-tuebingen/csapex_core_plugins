@@ -45,22 +45,22 @@ void MonoFilter::process()
 }
 
 
-void MonoFilter::setup()
+void MonoFilter::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("filtered");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("filtered");
     update();
 }
 
-void MonoFilter::setupParameters()
+void MonoFilter::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
                  std::bind(&MonoFilter::update, this));
-    addParameter(param::ParameterFactory::declareRange("max", 0, 255, 255, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("max", 0, 255, 255, 1),
                  std::bind(&MonoFilter::update, this));
-    addParameter(param::ParameterFactory::declareRange("def", 0, 255, 255, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("def", 0, 255, 255, 1),
                  std::bind(&MonoFilter::update, this));
-    addParameter(param::ParameterFactory::declareBool("invert", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("invert", false),
                  std::bind(&MonoFilter::update, this));
 }
 

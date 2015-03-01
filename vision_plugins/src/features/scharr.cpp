@@ -48,15 +48,16 @@ void Scharr::process()
     msg::publish(output_, out);
 }
 
-void Scharr::setupParameters()
+void Scharr::setupParameters(Parameterizable& parameters)
 {
-    Operator::setupParameters();
+    Operator::setupParameters(parameters);
+
     std::map<std::string, int> types = boost::assign::map_list_of
             ("DX1", DX1)
             ("DY1", DY1)
             ("Strength", STRENGTH);
 
-    addParameter(param::ParameterFactory::declareParameterSet("derive", types, (int) DX1),
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("derive", types, (int) DX1),
                  std::bind(&Scharr::update, this));
 }
 

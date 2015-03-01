@@ -23,7 +23,7 @@ HOGTrainingRois::HOGTrainingRois()
 {
 }
 
-void HOGTrainingRois::setupParameters()
+void HOGTrainingRois::setupParameters(Parameterizable& parameters)
 {
 
     addParameter(param::ParameterFactory::declareRange("overlap",
@@ -32,11 +32,11 @@ void HOGTrainingRois::setupParameters()
                                                        0, 100, 50, 1));
 }
 
-void HOGTrainingRois::setup()
+void HOGTrainingRois::setup(NodeModifier& node_modifier)
 {
-    in_image_ = modifier_->addOptionalInput<CvMatMessage>("image");
-    in_roi_   = modifier_->addInput<RoiMessage>("roi");
-    out_      = modifier_->addOutput<GenericVectorMessage, RoiMessage>("rois");
+    in_image_ = node_modifier.addOptionalInput<CvMatMessage>("image");
+    in_roi_   = node_modifier.addInput<RoiMessage>("roi");
+    out_      = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("rois");
 }
 
 void HOGTrainingRois::process()

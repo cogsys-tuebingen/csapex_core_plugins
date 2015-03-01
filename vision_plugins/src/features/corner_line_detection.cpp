@@ -19,9 +19,9 @@ CornerLineDetection::CornerLineDetection()
 {
 }
 
-void CornerLineDetection::setup()
+void CornerLineDetection::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("corners / lines / edges");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("corners / lines / edges");
 }
 

@@ -40,15 +40,15 @@ void LabelRegions::process()
     msg::publish(output_, out);
 }
 
-void LabelRegions::setup()
+void LabelRegions::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("edges");
-    output_ = modifier_->addOutput<CvMatMessage>("labels");
+    input_ = node_modifier.addInput<CvMatMessage>("edges");
+    output_ = node_modifier.addOutput<CvMatMessage>("labels");
 }
 
-void LabelRegions::setupParameters()
+void LabelRegions::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("edge value", 0, 255, 255, 1));
-    addParameter(param::ParameterFactory::declareRange("area thresh", 0, 1000, 0, 10));
+    parameters.addParameter(param::ParameterFactory::declareRange("edge value", 0, 255, 255, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("area thresh", 0, 1000, 0, 10));
 }
 

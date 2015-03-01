@@ -95,15 +95,15 @@ void ThresholdNoiseFilter::process()
     msg::publish(output_, output);
 }
 
-void ThresholdNoiseFilter::setup()
+void ThresholdNoiseFilter::setup(NodeModifier& node_modifier)
 {
-    input_      = modifier_->addInput<CvMatMessage>("unfiltered");
-    threshold_  = modifier_->addInput<CvMatMessage>("weights");
-    output_     = modifier_->addOutput<CvMatMessage>("filtered");
+    input_      = node_modifier.addInput<CvMatMessage>("unfiltered");
+    threshold_  = node_modifier.addInput<CvMatMessage>("weights");
+    output_     = node_modifier.addOutput<CvMatMessage>("filtered");
 }
 
-void ThresholdNoiseFilter::setupParameters()
+void ThresholdNoiseFilter::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
-    addParameter(param::ParameterFactory::declareBool("interpolate", false));
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
+    parameters.addParameter(param::ParameterFactory::declareBool("interpolate", false));
 }

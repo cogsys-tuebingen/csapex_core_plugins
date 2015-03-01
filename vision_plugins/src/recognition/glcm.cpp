@@ -88,13 +88,13 @@ void GLCM::process()
     msg::publish(out_, out);
 }
 
-void GLCM::setup()
+void GLCM::setup(NodeModifier& node_modifier)
 {
-   in_  = modifier_->addInput<CvMatMessage>("mono image");
-   out_ = modifier_->addOutput<CvMatMessage>("glcm");
+   in_  = node_modifier.addInput<CvMatMessage>("mono image");
+   out_ = node_modifier.addOutput<CvMatMessage>("glcm");
 }
 
-void GLCM::setupParameters()
+void GLCM::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareRange("bins",
                                                        param::ParameterDescription("GLCM histogram bins."),

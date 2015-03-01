@@ -13,15 +13,13 @@ class ToFeature : public csapex::Node
 public:
     ToFeature();
 
-    virtual void setup();
-    virtual void setupParameters();
-    virtual void process();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
+    virtual void process() override;
 
 protected:
     csapex::Input   *input_;
     csapex::Output  *output_;
-
-
 };
 
 }

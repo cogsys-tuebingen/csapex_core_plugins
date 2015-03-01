@@ -39,14 +39,14 @@ void SumChannels::process()
     msg::publish(output_, out);
 }
 
-void SumChannels::setup()
+void SumChannels::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("sum");
+    input_  = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("sum");
 }
 
-void SumChannels::setupParameters()
+void SumChannels::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareBool("mean", true));
-    addParameter(param::ParameterFactory::declareBool("abs",  false));
+    parameters.addParameter(param::ParameterFactory::declareBool("mean", true));
+    parameters.addParameter(param::ParameterFactory::declareBool("abs",  false));
 }

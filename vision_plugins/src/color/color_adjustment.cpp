@@ -19,13 +19,13 @@ ColorAdjustment::ColorAdjustment() :
 {
 }
 
-void ColorAdjustment::setup()
+void ColorAdjustment::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("adjusted");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("adjusted");
 }
 
-void ColorAdjustment::setupParameters()
+void ColorAdjustment::setupParameters(Parameterizable& parameters)
 {
 
     std::map<std::string, int> presets = boost::assign::map_list_of
@@ -33,10 +33,10 @@ void ColorAdjustment::setupParameters()
             ("HSL", (int) HSL)
             ("STD", (int) STD);
 
-    addParameter(param::ParameterFactory::declareBool("normalize", false));
-    addParameter(param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareBool("normalize", false));
+    parameters.addParameter(param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
 
-    addParameter(param::ParameterFactory::declareParameterSet("preset", presets, (int) HSV),
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("preset", presets, (int) HSV),
                  std::bind(&ColorAdjustment::setPreset, this));
 }
 

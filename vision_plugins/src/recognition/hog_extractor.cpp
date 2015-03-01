@@ -26,7 +26,7 @@ HOGExtractor::HOGExtractor()
 {
 }
 
-void HOGExtractor::setupParameters()
+void HOGExtractor::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareRange("gaussian sigma",
                                                        param::ParameterDescription("Standard deviation for Gaussian blur."),
@@ -50,7 +50,7 @@ void HOGExtractor::setupParameters()
                                                   param::ParameterDescription("Set the amount of cells in each direction of block."),
                                                   2, 8, 2, 1);
 
-    addParameter(cells_per_block, std::bind(&HOGExtractor::updateOverlap, this));
+    parameters.addParameter(cells_per_block, std::bind(&HOGExtractor::updateOverlap, this));
 
     std::function<bool()> k_cond = [cells_per_block]() { return cells_per_block->as<int>() > 2; };
 
@@ -60,14 +60,14 @@ void HOGExtractor::setupParameters()
                 1, 7, 1, 1);
     overlap_ = std::dynamic_pointer_cast<param::RangeParameter>(o);
 
-    addConditionalParameter(overlap_, k_cond);
+    parameters.addConditionalParameter(overlap_, k_cond);
 }
 
-void HOGExtractor::setup()
+void HOGExtractor::setup(NodeModifier& node_modifier)
 {
-    in_img_     = modifier_->addInput<CvMatMessage>("image");
-    in_rois_    = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
-    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("features");
+    in_img_     = node_modifier.addInput<CvMatMessage>("image");
+    in_rois_    = node_modifier.addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
+    out_        = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("features");
 }
 
 void HOGExtractor::process()

@@ -34,13 +34,13 @@ void BinomialFilter::process()
     msg::publish(output_, out);
 }
 
-void BinomialFilter::setup()
+void BinomialFilter::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("filtered");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("filtered");
 }
 
-void BinomialFilter::setupParameters()
+void BinomialFilter::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("kernel", 3, 131, 3, 2));
+    parameters.addParameter(param::ParameterFactory::declareRange("kernel", 3, 131, 3, 2));
 }

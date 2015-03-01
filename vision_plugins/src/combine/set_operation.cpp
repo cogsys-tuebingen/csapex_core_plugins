@@ -64,19 +64,19 @@ void SetOperation::process()
     }
 }
 
-void SetOperation::setup()
+void SetOperation::setup(NodeModifier& node_modifier)
 {
-    i1_ = modifier_->addInput<CvMatMessage>("mask 1");
-    i2_ = modifier_->addOptionalInput<CvMatMessage>("mask 2");
-    out_ = modifier_->addOutput<CvMatMessage>("combined");
+    i1_ = node_modifier.addInput<CvMatMessage>("mask 1");
+    i2_ = node_modifier.addOptionalInput<CvMatMessage>("mask 2");
+    out_ = node_modifier.addOutput<CvMatMessage>("combined");
 }
 
-void SetOperation::setupParameters()
+void SetOperation::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> methods = map_list_of
             ("Complement", (int) COMPLEMENT)
             ("Intersection", (int) INTERSECTION)
             ("Union", (int) UNION);
 
-    addParameter(param::ParameterFactory::declareParameterSet("operation", methods, (int) UNION));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("operation", methods, (int) UNION));
 }

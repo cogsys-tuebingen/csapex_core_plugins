@@ -52,24 +52,24 @@ void HoughLinesP::process()
     msg::publish(output_, out);
 }
 
-void HoughLinesP::setup()
+void HoughLinesP::setup(NodeModifier& node_modifier)
 {
-    CornerLineDetection::setup();
-    output_vector_ = modifier_->addOutput<GenericVectorMessage, cv::Vec4i>  ("lines saved in vector");
+    CornerLineDetection::setup(node_modifier);
+    output_vector_ = node_modifier.addOutput<GenericVectorMessage, cv::Vec4i>  ("lines saved in vector");
     update();
 }
 
-void HoughLinesP::setupParameters()
+void HoughLinesP::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("rho", 1.0, 100.0, 1.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("rho", 1.0, 100.0, 1.0, 1.0),
                  std::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("theta", 1.0, 2 * CV_PI, CV_PI, 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("theta", 1.0, 2 * CV_PI, CV_PI, 0.1),
                  std::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("threshold", 1, 500, 80, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold", 1, 500, 80, 1),
                  std::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("min length", 0.0, 1000.0, 30.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("min length", 0.0, 1000.0, 30.0, 1.0),
                  std::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("max gap", 0.0, 400.0, 10.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("max gap", 0.0, 400.0, 10.0, 1.0),
                  std::bind(&HoughLinesP::update, this));
 
 }

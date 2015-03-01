@@ -87,7 +87,7 @@ void DifferenceMaximum::process()
     msg::publish(output_, out);
 }
 
-void DifferenceMaximum::setupParameters()
+void DifferenceMaximum::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareBool("abs difference", false));
+    parameters.addParameter(param::ParameterFactory::declareBool("abs difference", false));
 }

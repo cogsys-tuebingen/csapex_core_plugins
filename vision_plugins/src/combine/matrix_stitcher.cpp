@@ -92,18 +92,18 @@ void MatrixStitcher::process()
     msg::publish(stitched_, out);
 }
 
-void MatrixStitcher::setup()
+void MatrixStitcher::setup(NodeModifier& node_modifier)
 {
-    matrix_1_ =  modifier_->addInput<CvMatMessage>("matrix 1");
-    matrix_2_ =  modifier_->addInput<CvMatMessage>("matrix 2");
-    stitched_ = modifier_->addOutput<CvMatMessage>("stitched");
+    matrix_1_ =  node_modifier.addInput<CvMatMessage>("matrix 1");
+    matrix_2_ =  node_modifier.addInput<CvMatMessage>("matrix 2");
+    stitched_ = node_modifier.addOutput<CvMatMessage>("stitched");
 }
 
-void MatrixStitcher::setupParameters()
+void MatrixStitcher::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> modes = boost::assign::map_list_of
             ("HORIZONTAL", HORIZONTAL)
             ("VERTICAL", VERTICAL);
-    addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) HORIZONTAL));
-    addParameter(param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) HORIZONTAL));
+    parameters.addParameter(param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
 }

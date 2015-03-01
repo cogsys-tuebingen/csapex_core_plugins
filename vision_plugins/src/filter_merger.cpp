@@ -14,12 +14,16 @@ using namespace connection_types;
 
 Merger::Merger()
 {
-    addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), std::bind(&Merger::updateInputs, this));
 }
 
-void Merger::setup()
+void Merger::setupParameters(Parameterizable &parameters)
 {
-    output_ = modifier_->addOutput<CvMatMessage>("Merged Image");
+    parameters.addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), std::bind(&Merger::updateInputs, this));
+}
+
+void Merger::setup(NodeModifier& node_modifier)
+{
+    output_ = node_modifier.addOutput<CvMatMessage>("Merged Image");
 
     updateInputs();
 }

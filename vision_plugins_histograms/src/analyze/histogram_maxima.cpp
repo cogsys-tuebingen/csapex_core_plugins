@@ -53,14 +53,14 @@ void HistogramMaxima::process()
     msg::publish(maxima_, output);
 }
 
-void HistogramMaxima::setup()
+void HistogramMaxima::setup(NodeModifier& node_modifier)
 {
-    histograms_ = modifier_->addInput<HistogramMessage>("histograms");
-    maxima_     = modifier_->addOutput<HistogramMaximaMessage>("maxima");
+    histograms_ = node_modifier.addInput<HistogramMessage>("histograms");
+    maxima_     = node_modifier.addOutput<HistogramMaximaMessage>("maxima");
 }
 
-void HistogramMaxima::setupParameters()
+void HistogramMaxima::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("k", 1, 128, 2, 1));
-    addParameter(param::ParameterFactory::declareRange("thresh", 0, 1000, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("k", 1, 128, 2, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("thresh", 0, 1000, 0, 1));
 }

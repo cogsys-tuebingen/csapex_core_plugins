@@ -29,12 +29,12 @@ void Sobel::process()
     msg::publish(output_, out);
 }
 
-void Sobel::setupParameters()
+void Sobel::setupParameters(Parameterizable& parameters)
 {
-    Operator::setupParameters();
-    addParameter(param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
+    Operator::setupParameters(parameters);
+    parameters.addParameter(param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
                  std::bind(&Sobel::update, this));
-    addParameter(param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
                  std::bind(&Sobel::update, this));
 }
 

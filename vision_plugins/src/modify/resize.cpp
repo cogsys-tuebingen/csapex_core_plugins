@@ -35,18 +35,18 @@ void Resize::process()
     msg::publish(output_, out);
 }
 
-void Resize::setup()
+void Resize::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("resize");
+    input_  = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("resize");
     update();
 }
 
-void Resize::setupParameters()
+void Resize::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("size width", 1, 10000, 640, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("size width", 1, 10000, 640, 1),
                  std::bind(&Resize::update, this));
-    addParameter(param::ParameterFactory::declareRange("size height", 1, 10000, 480, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("size height", 1, 10000, 480, 1),
                  std::bind(&Resize::update, this));
 
     std::map<std::string, int> modes = boost::assign::map_list_of
@@ -55,7 +55,7 @@ void Resize::setupParameters()
             ("area", (int) CV_INTER_AREA)
             ("cubic", (int) CV_INTER_CUBIC)
             ("lanczos4", (int) CV_INTER_LANCZOS4);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) cv::INTER_NEAREST), std::bind(&Resize::update, this));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) cv::INTER_NEAREST), std::bind(&Resize::update, this));
 }
 
 void Resize::update()

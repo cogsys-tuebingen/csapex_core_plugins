@@ -28,8 +28,8 @@ void Equalize::process()
     msg::publish(output_, out);
 }
 
-void Equalize::setup()
+void Equalize::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("equalized");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("equalized");
 }

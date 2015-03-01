@@ -10,7 +10,7 @@ class Laplacian : public Operator
 public:
     Laplacian();
 
-    virtual void process();
+    virtual void process() override;
 };
 }
 #endif // LAPLACIAN_H

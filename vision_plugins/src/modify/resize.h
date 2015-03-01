@@ -13,9 +13,9 @@ class Resize : public csapex::Node
 public:
     Resize();
 
-    virtual void process();
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
     csapex::Output*            output_;

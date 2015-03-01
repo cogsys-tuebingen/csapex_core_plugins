@@ -72,22 +72,22 @@ void MatrixToHeatmap::process()
     msg::publish(output_, out);
 }
 
-void MatrixToHeatmap::setup()
+void MatrixToHeatmap::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("matrix");
-    output_ = modifier_->addOutput<CvMatMessage>("heatmap");
-    mask_   = modifier_->addOptionalInput<CvMatMessage>("mask");
+    input_ = node_modifier.addInput<CvMatMessage>("matrix");
+    output_ = node_modifier.addOutput<CvMatMessage>("heatmap");
+    mask_   = node_modifier.addOptionalInput<CvMatMessage>("mask");
 
     update();
 }
 
-void MatrixToHeatmap::setupParameters()
+void MatrixToHeatmap::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> types = boost::assign::map_list_of
             ("BEZIER", (int) BEZIER)
             ("PARABOLA", (int) PARABOLA);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types, (int) BEZIER),
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types, (int) BEZIER),
                  std::bind(&MatrixToHeatmap::update, this));
 }
 

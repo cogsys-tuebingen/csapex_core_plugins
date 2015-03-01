@@ -19,19 +19,19 @@ Operator::Operator() :
 {
 }
 
-void Operator::setup()
+void Operator::setup(NodeModifier& node_modifier)
 {
-    CornerLineDetection::setup();
+    CornerLineDetection::setup(node_modifier);
     update();
 }
 
-void Operator::setupParameters()
+void Operator::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("kernel", 1, 31, ksize_, 2),
+    parameters.addParameter(param::ParameterFactory::declareRange("kernel", 1, 31, ksize_, 2),
                  std::bind(&Operator::update, this));
-    addParameter(param::ParameterFactory::declareRange("scale", -10.0, 10.0, scale_, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("scale", -10.0, 10.0, scale_, 0.01),
                  std::bind(&Operator::update, this));
-    addParameter(param::ParameterFactory::declareRange("delta", -100.0, 100.0, delta_, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("delta", -100.0, 100.0, delta_, 0.01),
                  std::bind(&Operator::update, this));
 }
 

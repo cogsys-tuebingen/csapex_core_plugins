@@ -10,9 +10,9 @@ class HOGDetector : public csapex::Node
 public:
     HOGDetector();
 
-    void setupParameters();
-    void setup();
-    void process();
+    void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
 
 private:
     enum SVMType        {DEFAULT, DAIMLER, CUSTOM};

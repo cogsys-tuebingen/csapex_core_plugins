@@ -126,25 +126,25 @@ void Histogram::process()
     msg::publish(output_, out);
 }
 
-void Histogram::setup()
+void Histogram::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("input");
-    mask_   = modifier_->addOptionalInput<CvMatMessage>("mask");
-    output_ = modifier_->addOutput<HistogramMessage>("histograms");
+    input_  = node_modifier.addInput<CvMatMessage>("input");
+    mask_   = node_modifier.addOptionalInput<CvMatMessage>("mask");
+    output_ = node_modifier.addOutput<HistogramMessage>("histograms");
     update();
 }
 
-void Histogram::setupParameters()
+void Histogram::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
                  std::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
+    parameters.addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
                  std::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
+    parameters.addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
                  std::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("min max range", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("min max range", false),
                  std::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("global min max", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("global min max", false),
                  std::bind(&Histogram::update, this));
 }
 

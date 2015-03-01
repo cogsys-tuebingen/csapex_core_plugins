@@ -46,28 +46,28 @@ void AdaptiveThreshold::process()
 }
 
 
-void AdaptiveThreshold::setup()
+void AdaptiveThreshold::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
 
-    output_ = modifier_->addOutput<CvMatMessage>("thresholded");
+    output_ = node_modifier.addOutput<CvMatMessage>("thresholded");
 }
 
-void AdaptiveThreshold::setupParameters()
+void AdaptiveThreshold::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("maxValue", 1.0, 255.0, 100.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("maxValue", 1.0, 255.0, 100.0, 0.1));
 
     std::map<std::string, int > adaptiveMethod;
     adaptiveMethod["ADAPTIVE_THRESH_MEAN_C"] = (int) cv::ADAPTIVE_THRESH_MEAN_C;
     adaptiveMethod["ADAPTIVE_THRESH_GAUSSIAN_C"] = (int) cv::ADAPTIVE_THRESH_GAUSSIAN_C;
-    addParameter(param::ParameterFactory::declareParameterSet<int>("adaptiveMethod", adaptiveMethod, (int) cv::ADAPTIVE_THRESH_MEAN_C));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("adaptiveMethod", adaptiveMethod, (int) cv::ADAPTIVE_THRESH_MEAN_C));
 
     std::map<std::string, int> thresholdType;
     thresholdType["THRESH_BINARY"] = (int) cv::THRESH_BINARY;
     thresholdType["THRESH_BINARY_INV"] = (int) cv::THRESH_BINARY_INV;
-    addParameter(param::ParameterFactory::declareParameterSet<int>("thresholdType", thresholdType, (int) cv::THRESH_BINARY));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("thresholdType", thresholdType, (int) cv::THRESH_BINARY));
 
-    addParameter(param::ParameterFactory::declareRange("blockSize", 3, 1001, 3, 2));
+    parameters.addParameter(param::ParameterFactory::declareRange("blockSize", 3, 1001, 3, 2));
 
-    addParameter(param::ParameterFactory::declareRange("C", -255.0, 255.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("C", -255.0, 255.0, 0.0, 0.1));
 }

@@ -10,8 +10,8 @@ class Scharr : public Operator
 public:
     Scharr();
 
-    virtual void process();
-    virtual void setupParameters();
+    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void process() override;
 
 protected:
     enum Type {DX1, DY1, STRENGTH};

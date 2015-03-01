@@ -198,15 +198,15 @@ void GenericImageCombiner::process()
     msg::publish(out_, out);
 }
 
-void GenericImageCombiner::setup()
+void GenericImageCombiner::setup(NodeModifier& node_modifier)
 {
-    i1_ = modifier_->addInput<CvMatMessage>("image 1");
-    i2_ = modifier_->addOptionalInput<CvMatMessage>("image 2");
-    out_ = modifier_->addOutput<CvMatMessage>("combined");
+    i1_ = node_modifier.addInput<CvMatMessage>("image 1");
+    i2_ = node_modifier.addOptionalInput<CvMatMessage>("image 2");
+    out_ = node_modifier.addOutput<CvMatMessage>("combined");
 }
 
-void GenericImageCombiner::setupParameters()
+void GenericImageCombiner::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
+    parameters.addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
                  std::bind(&GenericImageCombiner::updateFormula, this));
 }

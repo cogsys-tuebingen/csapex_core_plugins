@@ -22,12 +22,12 @@ RenderROIs::RenderROIs()
 {
 }
 
-void RenderROIs::setupParameters()
+void RenderROIs::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
-    addParameter(param::ParameterFactory::declareColorParameter("color", 0,0,0));
-    addParameter(param::ParameterFactory::declareBool("force color", false));
-    addParameter(param::ParameterFactory::declareBool("ignore unclassified", false));
+    parameters.addParameter(param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
+    parameters.addParameter(param::ParameterFactory::declareColorParameter("color", 0,0,0));
+    parameters.addParameter(param::ParameterFactory::declareBool("force color", false));
+    parameters.addParameter(param::ParameterFactory::declareBool("ignore unclassified", false));
 }
 
 void RenderROIs::process()
@@ -55,8 +55,8 @@ void RenderROIs::process()
     bool ignore_uc = readParameter<bool>("ignore unclassified");
     if(msg::hasMessage(input_rois_)) {
         VectorMessage::ConstPtr rois = msg::getMessage<VectorMessage>(input_rois_);
-        for(const ConnectionType::Ptr& e : rois->value) {
-            RoiMessage::Ptr roi = std::dynamic_pointer_cast<RoiMessage>(e);
+        for(const ConnectionType::ConstPtr& e : rois->value) {
+            RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(e);
 
             if(ignore_uc && roi->value.classification() == -1) {
                 continue;
@@ -98,11 +98,11 @@ void RenderROIs::process()
     msg::publish(output_, out);
 }
 
-void RenderROIs::setup()
+void RenderROIs::setup(NodeModifier& node_modifier)
 {
-    input_img_      = modifier_->addInput<CvMatMessage>("image");
-    input_rois_     = modifier_->addOptionalInput<VectorMessage, RoiMessage>("ROIs");
-    input_rois_gen_ = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage>("ROIs");
+    input_img_      = node_modifier.addInput<CvMatMessage>("image");
+    input_rois_     = node_modifier.addOptionalInput<VectorMessage, RoiMessage>("ROIs");
+    input_rois_gen_ = node_modifier.addOptionalInput<GenericVectorMessage, RoiMessage>("ROIs");
 
-    output_ = modifier_->addOutput<CvMatMessage>("Rendered Image");
+    output_ = node_modifier.addOutput<CvMatMessage>("Rendered Image");
 }

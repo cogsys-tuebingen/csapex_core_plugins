@@ -96,20 +96,20 @@ void RenderHistogram::process()
     msg::publish(output_, out);
 }
 
-void RenderHistogram::setupParameters()
+void RenderHistogram::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
+    parameters.addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
                  std::bind(&RenderHistogram::update, this));
-    addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
+    parameters.addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
                  std::bind(&RenderHistogram::update, this));
-    addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
 }
 
-void RenderHistogram::setup()
+void RenderHistogram::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<HistogramMessage>("histograms");
-    output_ = modifier_->addOutput<CvMatMessage>("image");
-    maxima_ = modifier_->addOptionalInput<HistogramMaximaMessage>("maxima");
+    input_  = node_modifier.addInput<HistogramMessage>("histograms");
+    output_ = node_modifier.addOutput<CvMatMessage>("image");
+    maxima_ = node_modifier.addOptionalInput<HistogramMaximaMessage>("maxima");
 }
 
 void RenderHistogram::update()

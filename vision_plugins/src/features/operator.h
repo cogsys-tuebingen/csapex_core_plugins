@@ -9,8 +9,8 @@ class Operator : public CornerLineDetection
 public:
     Operator();
 
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
     int     ddepth_;

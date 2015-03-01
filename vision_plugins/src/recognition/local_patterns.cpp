@@ -164,14 +164,14 @@ void LocalPatterns::process()
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
-void LocalPatterns::setup()
+void LocalPatterns::setup(NodeModifier& node_modifier)
 {
-    in_img_     = modifier_->addInput<CvMatMessage>("image");
-    in_rois_    = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
-    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("descriptors");
+    in_img_     = node_modifier.addInput<CvMatMessage>("image");
+    in_rois_    = node_modifier.addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
+    out_        = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("descriptors");
 }
 
-void LocalPatterns::setupParameters()
+void LocalPatterns::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> types =
             boost::assign::map_list_of
@@ -183,8 +183,8 @@ void LocalPatterns::setupParameters()
                                                          (int) LBP);
     std::function<bool()> condition = [type]() { return type->as<int>() == LTP; };
 
-    addParameter(type);
-    addConditionalParameter(param::ParameterFactory::declareRange("k1", -100.0, 100.0, 0.0, 0.1),
+    parameters.addParameter(type);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("k1", -100.0, 100.0, 0.0, 0.1),
                             condition);
 
 }

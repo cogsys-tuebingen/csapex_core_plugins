@@ -35,8 +35,8 @@ void NumberGenerator::process()
     ++n;
 }
 
-void NumberGenerator::setup()
+void NumberGenerator::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<connection_types::AnyMessage>("Trigger");
-    output_ = modifier_->addOutput<connection_types::CvMatMessage>("Image");
+    input_ = node_modifier.addInput<connection_types::AnyMessage>("Trigger");
+    output_ = node_modifier.addOutput<connection_types::CvMatMessage>("Image");
 }

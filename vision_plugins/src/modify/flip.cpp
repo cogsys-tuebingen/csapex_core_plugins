@@ -47,13 +47,13 @@ void Flip::process()
     msg::publish(output_, out);
 }
 
-void Flip::setup()
+void Flip::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("flipped");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("flipped");
 }
 
-void Flip::setupParameters()
+void Flip::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> types = boost::assign::map_list_of
             ("v", 0)
@@ -61,7 +61,7 @@ void Flip::setupParameters()
             ("+90", 2)
             ("-90", 3)
             ("v+h", -1);
-    addParameter(param::ParameterFactory::declareParameterSet("type", types, -1),
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("type", types, -1),
                  std::bind(&Flip::update, this));
 }
 

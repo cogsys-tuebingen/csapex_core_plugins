@@ -55,16 +55,16 @@ void SequenceMean::process()
     msg::publish(output_, out);
 }
 
-void SequenceMean::setup()
+void SequenceMean::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("filtered");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("filtered");
     update();
 }
 
-void SequenceMean::setupParameters()
+void SequenceMean::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
                  std::bind(&SequenceMean::update, this));
 }
 

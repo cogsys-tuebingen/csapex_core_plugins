@@ -21,7 +21,7 @@ DistanceTransform::DistanceTransform()
 {
 }
 
-void DistanceTransform::setupParameters()
+void DistanceTransform::setupParameters(Parameterizable& parameters)
 {
 
     std::map<std::string, int > distanceType;
@@ -29,7 +29,7 @@ void DistanceTransform::setupParameters()
     distanceType["CV_DIST_L2"] = (int) CV_DIST_L2;
     distanceType["CV_DIST_C"] = (int) CV_DIST_C;
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("distanceType", distanceType, (int) CV_DIST_L1));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("distanceType", distanceType, (int) CV_DIST_L1));
 
 
     std::map<std::string, int > maskSize;
@@ -37,22 +37,22 @@ void DistanceTransform::setupParameters()
     maskSize["4"] = 5;
     maskSize["CV_DIST_MASK_PRECISE"] = (int) CV_DIST_MASK_PRECISE;
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("maskSize", maskSize, 3));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("maskSize", maskSize, 3));
 
 
     std::map<std::string, int > labelType;
     labelType["DIST_LABEL_CCOMP"] = (int) cv::DIST_LABEL_CCOMP;
     labelType["DIST_LABEL_PIXEL"] = (int) cv::DIST_LABEL_PIXEL;
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("labelType", labelType, (int) cv::DIST_LABEL_CCOMP));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("labelType", labelType, (int) cv::DIST_LABEL_CCOMP));
 }
 
-void DistanceTransform::setup()
+void DistanceTransform::setup(NodeModifier& node_modifier)
 {
-    in_ = modifier_->addInput<CvMatMessage>("original");
+    in_ = node_modifier.addInput<CvMatMessage>("original");
 
-    out_ = modifier_->addOutput<CvMatMessage>("thresholded");
-    out_label_ = modifier_->addOutput<CvMatMessage>("lables");
+    out_ = node_modifier.addOutput<CvMatMessage>("thresholded");
+    out_label_ = node_modifier.addOutput<CvMatMessage>("lables");
 }
 
 void DistanceTransform::process()
