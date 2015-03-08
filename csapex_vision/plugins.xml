@@ -69,6 +69,12 @@
   </description>
   <tags>Vision</tags>
 </class>
+<class type="csapex::Reshape" base_class_type="csapex::Node">
+  <description>
+    Reshape a CV matrix concerning rows and columns.
+  </description>
+  <tags>Vision</tags>
+</class>
 <class type="csapex::GaussianBlur" base_class_type="csapex::Node">
   <description>
     Blur an image or a matrix applying a gaussian function.
