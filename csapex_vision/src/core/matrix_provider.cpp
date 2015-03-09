@@ -5,6 +5,9 @@
 #include <utils_param/parameter_factory.h>
 #include <utils_param/set_parameter.h>
 
+/// COMPONENT
+#include <csapex_vision/cv_mat_message.h>
+
 /// SYSTEM
 #include <boost/assign.hpp>
 #include <utility>
@@ -22,6 +25,10 @@ MatrixProvider::MatrixProvider()
     param::ParameterFactory::declareParameterStringSet("matrix",
                                                        param::ParameterDescription("All contained matrices"),
                                                        empty));
+    state.addParameter(
+    param::ParameterFactory::declareBool("resend",
+                                         param::ParameterDescription("Resend matrix / all matrices."),
+                                         true));
 }
 
 MatrixProvider::~MatrixProvider()
@@ -49,19 +56,35 @@ void MatrixProvider::load(const std::string &file)
         matrices.insert(std::make_pair(name, mat));
     }
 
-    std::swap(matrices_, matrices);
+    std::swap(mats_, matrices);
+    mats_it_ = mats_.begin();
+    mats_last_ = mats_.begin();
     auto param = state.getParameter("matrix");
     param->set(names);
 }
 
 bool MatrixProvider::hasNext()
 {
+    bool resend  = state.readParameter<bool>("resend");
+    bool iterate = state.readParameter<bool>("iterate");
+    if(resend)
+        return true;
+    if(iterate && mats_it_ != mats_.end()) {
+        return true;
+    }
 
+    return mats_it_ != mats_last_;
 }
 
 connection_types::Message::Ptr MatrixProvider::next(std::size_t slot)
 {
+    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::unknown, 0));
 
+    next(msg->value, mask);
+
+    msg->setEncoding((msg->value.channels() == 1) ? enc::mono : enc::bgr);
+
+    return msg;
 }
 
 std::string MatrixProvider::getLabel(std::size_t slot) const
