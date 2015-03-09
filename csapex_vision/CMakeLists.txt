@@ -94,7 +94,7 @@ add_library(csapex_vision_plugin
     src/plugin/bilateral.cpp
     src/plugin/mean_dev.cpp
 
-
+    src/core/matrix_provider.cpp
     src/core/image_renderer.cpp
     src/core/image_provider.cpp
 
