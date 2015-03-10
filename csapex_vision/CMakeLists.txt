@@ -96,7 +96,6 @@ add_library(csapex_vision_plugin
 
     src/plugin/load_filestorage.cpp
 
-    src/core/matrix_provider.cpp
     src/core/image_renderer.cpp
     src/core/image_provider.cpp
 
