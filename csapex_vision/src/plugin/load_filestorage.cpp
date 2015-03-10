@@ -106,6 +106,9 @@ void LoadFilestorage::setupParameters(Parameterizable &parameters)
 void LoadFilestorage::loadFile()
 {
     std::string path = readParameter<std::string>("file storage");
+    if(path.empty())
+        return;
+
     cv::FileStorage fs(path, cv::FileStorage::READ);
     if(!fs.isOpened()) {
         std::cerr << "Failed to open '" << path << "'!" << std::endl;
