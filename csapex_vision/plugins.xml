@@ -115,7 +115,9 @@
   <tags>Vision</tags>
 </class>
 
-
+<class type="csapex::LoadFilestorage" base_class_type="csapex::Node">
+  <description>Load OpenCV file storages containing matrices.</description>
+</class>
 <class type="csapex::ImageProviderDir" base_class_type="csapex::MessageProvider">
   <description></description>
 </class>

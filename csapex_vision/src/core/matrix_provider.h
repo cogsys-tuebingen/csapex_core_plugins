@@ -29,13 +29,14 @@ public:
     virtual Memento::Ptr getState() const;
     virtual void setParameterState(Memento::Ptr memento);
 
-    void parameterChanged();
-
 private:
     std::string                              file_;
     std::map<std::string, cv::Mat>           mats_;
     std::map<std::string, cv::Mat>::iterator mats_it_;
     std::map<std::string, cv::Mat>::iterator mats_last_;
+    std::string                              last_selection_;
+
+    void itemSelected();
 };
 }
 
