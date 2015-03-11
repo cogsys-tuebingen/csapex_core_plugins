@@ -5,8 +5,7 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -22,10 +21,10 @@ Morpholocial::Morpholocial()
 {
 }
 
-void Morpholocial::setupParameters()
+void Morpholocial::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange<int>("size", 1, 20, 2, 1));
-    addParameter(param::ParameterFactory::declareRange<int>("iterations", 0, 10, 1, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange<int>("size", 1, 20, 2, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange<int>("iterations", 0, 10, 1, 1));
 
     std::map<std::string, int> types = boost::assign::map_list_of
             ("MORPH_ERODE", (int) cv::MORPH_ERODE)
@@ -36,18 +35,18 @@ void Morpholocial::setupParameters()
             ("MORPH_TOPHAT", (int) cv::MORPH_TOPHAT)
             ("MORPH_BLACKHAT", (int) cv::MORPH_BLACKHAT);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) cv::MORPH_ERODE));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) cv::MORPH_ERODE));
 
     std::map<std::string, int> elem = boost::assign::map_list_of
             ("MORPH_RECT", (int) cv::MORPH_RECT)
             ("MORPH_CROSS", (int) cv::MORPH_CROSS)
             ("MORPH_ELLIPSE", (int) cv::MORPH_ELLIPSE);
-    addParameter(param::ParameterFactory::declareParameterSet<int>("elem", elem, (int) cv::MORPH_RECT));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("elem", elem, (int) cv::MORPH_RECT));
 }
 
 void Morpholocial::process()
 {
-    connection_types::CvMatMessage::ConstPtr a = input_->getMessage<connection_types::CvMatMessage>();
+    connection_types::CvMatMessage::ConstPtr a = msg::getMessage<connection_types::CvMatMessage>(input_);
 
     connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(a->getEncoding(), a->stamp_micro_seconds));
     int op = readParameter<int>("type");
@@ -63,13 +62,13 @@ void Morpholocial::process()
         cv::morphologyEx(a->value, msg->value, op, kernel, anchor, iterations, border_type, border_value);
     }
 
-    output_->publish(msg);
+    msg::publish(output_, msg);
 }
 
 
-void Morpholocial::setup()
+void Morpholocial::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<connection_types::CvMatMessage>("original");
+    input_ = node_modifier.addInput<connection_types::CvMatMessage>("original");
 
-    output_ = modifier_->addOutput<connection_types::CvMatMessage>("morph(original)");
+    output_ = node_modifier.addOutput<connection_types::CvMatMessage>("morph(original)");
 }

@@ -2,8 +2,7 @@
 #include "camera_calibration.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -25,7 +24,7 @@ vision_plugins::CameraCalibration::CameraCalibration() :
 
 void vision_plugins::CameraCalibration::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     /// BUFFER THE CURRENT FRAME
@@ -47,14 +46,14 @@ void vision_plugins::CameraCalibration::process()
     }
 
     calibration_->drawFoundCorners(out->value);
-    output_->publish(out);
+    msg::publish(output_, out);
 
 }
 
-void vision_plugins::CameraCalibration::setup()
+void vision_plugins::CameraCalibration::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("image");
-    output_ = modifier_->addOutput<CvMatMessage>("rendered corners");
+    input_  = node_modifier.addInput<CvMatMessage>("image");
+    output_ = node_modifier.addOutput<CvMatMessage>("rendered corners");
 }
 
 void vision_plugins::CameraCalibration::add()
@@ -62,22 +61,22 @@ void vision_plugins::CameraCalibration::add()
     calibration_->addFrame();
 }
 
-void vision_plugins::CameraCalibration::setupParameters()
+void vision_plugins::CameraCalibration::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareDirectoryOutputPath("results", ""));
-    addParameter(param::ParameterFactory::declareTrigger("add"),
+    parameters.addParameter(param::ParameterFactory::declareDirectoryOutputPath("results", ""));
+    parameters.addParameter(param::ParameterFactory::declareTrigger("add"),
                  std::bind(&CameraCalibration::add, this));
-    addParameter(param::ParameterFactory::declareTrigger("reset"),
+    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
                  std::bind(&CameraCalibration::requestUpdateCalibration, this));
-    addParameter(param::ParameterFactory::declareTrigger("calibrate"),
+    parameters.addParameter(param::ParameterFactory::declareTrigger("calibrate"),
                  std::bind(&CameraCalibration::calibrate, this));
-    addParameter(param::ParameterFactory::declareRange("kernel", 1, 31, 11, 2),
+    parameters.addParameter(param::ParameterFactory::declareRange("kernel", 1, 31, 11, 2),
                  std::bind(&CameraCalibration::requestUpdateCalibration, this));
-    addParameter(param::ParameterFactory::declareRange("squares x", 1, 12, 5, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("squares x", 1, 12, 5, 1),
                  std::bind(&CameraCalibration::requestUpdateCalibration, this));
-    addParameter(param::ParameterFactory::declareRange("squares y", 1, 12, 8, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("squares y", 1, 12, 8, 1),
                  std::bind(&CameraCalibration::requestUpdateCalibration, this));
-    addParameter(param::ParameterFactory::declareRange("squares scale", 0.05, 0.5, 0.1, 0.05),
+    parameters.addParameter(param::ParameterFactory::declareRange("squares scale", 0.05, 0.5, 0.1, 0.05),
                  std::bind(&CameraCalibration::requestUpdateCalibration, this));
 
     std::map<std::string, int> types = boost::assign::map_list_of
@@ -85,7 +84,7 @@ void vision_plugins::CameraCalibration::setupParameters()
             ("circles grid", (int) utils_vision::CameraCalibration::CIRCLES_GRID)
             ("asym. circles grid", (int) utils_vision::CameraCalibration::ASYMMETRIC_CIRCLES_GRID);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) utils_vision::CameraCalibration::CHESSBOARD),
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("type", types, (int) utils_vision::CameraCalibration::CHESSBOARD),
                  std::bind(&CameraCalibration::requestUpdateCalibration, this));
 
     std::map<std::string, std::pair<int, bool> > corner_flags = boost::assign::map_list_of
@@ -93,14 +92,14 @@ void vision_plugins::CameraCalibration::setupParameters()
             ("CV_CALIB_CB_FAST_CHECK",      std::make_pair(CV_CALIB_CB_FAST_CHECK, false))
             ("CV_CALIB_CB_NORMALIZE_IMAGE", std::make_pair(CV_CALIB_CB_NORMALIZE_IMAGE, false))
             ("CV_CALIB_CB_FILTER_QUADS",    std::make_pair(CV_CALIB_CB_FILTER_QUADS, true));
-    addParameter(param::ParameterFactory::declareParameterBitSet("corner flags", corner_flags),
+    parameters.addParameter(param::ParameterFactory::declareParameterBitSet("corner flags", corner_flags),
                  std::bind(&CameraCalibration::requestUpdateCalibration, this));
 
     std::map<std::string, std::pair<int, bool> > calib_flags = boost::assign::map_list_of
             ("CV_CALIB_FIX_K4", std::make_pair(CV_CALIB_FIX_K4, true))
             ("CV_CALIB_FIX_K5", std::make_pair(CV_CALIB_FIX_K5, true))
             ("CV_CALIB_FIX_K6", std::make_pair(CV_CALIB_FIX_K6, false));
-    addParameter(param::ParameterFactory::declareParameterBitSet("calib flags", calib_flags),
+    parameters.addParameter(param::ParameterFactory::declareParameterBitSet("calib flags", calib_flags),
                  std::bind(&CameraCalibration::requestUpdateCalibration, this));
 }
 

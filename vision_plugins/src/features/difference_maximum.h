@@ -10,8 +10,8 @@ class DifferenceMaximum : public CornerLineDetection
 public:
     DifferenceMaximum();
 
-    virtual void process();
-    virtual void setupParameters();
+    virtual void process() override;
+    virtual void setupParameters(Parameterizable& parameters);
 
 };
 }

@@ -26,11 +26,12 @@ public:
     /**
      * @brief See base class documentation.
      */
-    virtual void setup();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable &parameters) override;
 
-    void process();
+    virtual void process() override;
     void updateInputs();
-    void stateChanged();
+    virtual void stateChanged() override;
 
 private:
     Output *output_;

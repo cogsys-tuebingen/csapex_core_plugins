@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_cv/heatmap.hpp>
 #include <csapex_vision/cv_mat_message.h>
@@ -29,7 +28,7 @@ MatrixToHeatmap::MatrixToHeatmap() :
 
 void MatrixToHeatmap::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
 
@@ -37,8 +36,8 @@ void MatrixToHeatmap::process()
     cv::Mat heatmap (working.rows, working.cols, CV_32FC3, cv::Scalar::all(0));
     cv::Mat mean    (working.rows, working.cols, CV_32FC1, cv::Scalar::all(0));
     cv::Mat mask;
-    if(mask_->hasMessage()) {
-        CvMatMessage::ConstPtr mask_msg = mask_->getMessage<connection_types::CvMatMessage>();
+    if(msg::hasMessage(mask_)) {
+        CvMatMessage::ConstPtr mask_msg = msg::getMessage<connection_types::CvMatMessage>(mask_);
         mask = mask_msg->value;
     } else {
         mask = cv::Mat(working.rows, working.cols, CV_8UC1, 255);
@@ -70,25 +69,25 @@ void MatrixToHeatmap::process()
     utils_cv::Heatmap::renderHeatmap(mean, heatmap, fc, mask);
 
     out->value = heatmap;
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void MatrixToHeatmap::setup()
+void MatrixToHeatmap::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("matrix");
-    output_ = modifier_->addOutput<CvMatMessage>("heatmap");
-    mask_   = modifier_->addOptionalInput<CvMatMessage>("mask");
+    input_ = node_modifier.addInput<CvMatMessage>("matrix");
+    output_ = node_modifier.addOutput<CvMatMessage>("heatmap");
+    mask_   = node_modifier.addOptionalInput<CvMatMessage>("mask");
 
     update();
 }
 
-void MatrixToHeatmap::setupParameters()
+void MatrixToHeatmap::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> types = boost::assign::map_list_of
             ("BEZIER", (int) BEZIER)
             ("PARABOLA", (int) PARABOLA);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types, (int) BEZIER),
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types, (int) BEZIER),
                  std::bind(&MatrixToHeatmap::update, this));
 }
 

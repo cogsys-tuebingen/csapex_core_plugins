@@ -2,8 +2,7 @@
 #include "hog_detector.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -27,13 +26,13 @@ HOGDetector::HOGDetector()
 {
 }
 
-void HOGDetector::setupParameters()
+void HOGDetector::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("thresh", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("thresh", -10.0, 10.0, 0.0, 0.1));
     std::map<std::string, int> det_types = boost::assign::map_list_of
             ("single scale", SINGLE_SCALE)
             ("multi scale", MULTI_SCALE);
-    addParameter(param::ParameterFactory::declareParameterSet("detection type", det_types, (int) SINGLE_SCALE));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("detection type", det_types, (int) SINGLE_SCALE));
 
     std::map<std::string, int> svm_types = boost::assign::map_list_of
             ("default", DEFAULT)
@@ -41,12 +40,12 @@ void HOGDetector::setupParameters()
             ("daimler", DAIMLER);
 
     param::Parameter::Ptr svm_param = param::ParameterFactory::declareParameterSet("svm type", svm_types, (int) DEFAULT);
-    addParameter(svm_param);
+    parameters.addParameter(svm_param);
 
 
     std::function<bool()> condition = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
 
-    addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm path","", "*.yml *.yaml *.tar.gz"),
+    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm path","", "*.yml *.yaml *.tar.gz"),
                             condition, std::bind(&HOGDetector::load, this));
 
     setParameterEnabled("svm path", false);
@@ -64,15 +63,15 @@ void HOGDetector::setupParameters()
                                                       true));
 }
 
-void HOGDetector::setup()
+void HOGDetector::setup(NodeModifier& node_modifier)
 {
-    in_  = modifier_->addInput<CvMatMessage>("image");
-    out_ = modifier_->addOutput<GenericVectorMessage, RoiMessage>("detections");
+    in_  = node_modifier.addInput<CvMatMessage>("image");
+    out_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("detections");
 }
 
 void HOGDetector::process()
 {
-    CvMatMessage::ConstPtr  in = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_);
     std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
 
     if(!in->hasChannels(1, CV_8U))
@@ -142,7 +141,7 @@ void HOGDetector::process()
         roi.value = Roi(r, color, 0);
         out->push_back(roi);
     }
-    out_->publish<GenericVectorMessage, RoiMessage>(out);
+    msg::publish<GenericVectorMessage, RoiMessage>(out_, out);
 }
 
 void HOGDetector::load()

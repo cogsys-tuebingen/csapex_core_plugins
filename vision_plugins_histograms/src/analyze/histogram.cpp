@@ -2,8 +2,7 @@
 #include "histogram.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
@@ -31,12 +30,12 @@ Histogram::Histogram() :
 
 void Histogram::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
     HistogramMessage::Ptr out(new HistogramMessage);
 
     cv::Mat mask;
-    if(mask_->hasMessage()) {
-        CvMatMessage::ConstPtr mask_ptr = mask_->getMessage<CvMatMessage>();
+    if(msg::hasMessage(mask_)) {
+        CvMatMessage::ConstPtr mask_ptr = msg::getMessage<CvMatMessage>(mask_);
         mask = mask_ptr->value;
     }
 
@@ -124,28 +123,28 @@ void Histogram::process()
         out->value.histograms.push_back(*it);
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void Histogram::setup()
+void Histogram::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<CvMatMessage>("input");
-    mask_   = modifier_->addOptionalInput<CvMatMessage>("mask");
-    output_ = modifier_->addOutput<HistogramMessage>("histograms");
+    input_  = node_modifier.addInput<CvMatMessage>("input");
+    mask_   = node_modifier.addOptionalInput<CvMatMessage>("mask");
+    output_ = node_modifier.addOutput<HistogramMessage>("histograms");
     update();
 }
 
-void Histogram::setupParameters()
+void Histogram::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
                  std::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
+    parameters.addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
                  std::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
+    parameters.addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
                  std::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("min max range", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("min max range", false),
                  std::bind(&Histogram::update, this));
-    addParameter(param::ParameterFactory::declareBool("global min max", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("global min max", false),
                  std::bind(&Histogram::update, this));
 }
 

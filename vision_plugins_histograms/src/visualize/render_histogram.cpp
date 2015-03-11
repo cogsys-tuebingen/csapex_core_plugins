@@ -2,8 +2,7 @@
 #include "render_histogram.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -27,10 +26,10 @@ RenderHistogram::RenderHistogram() :
 
 void RenderHistogram::process()
 {
-    HistogramMessage::ConstPtr in = input_->getMessage<HistogramMessage>();
+    HistogramMessage::ConstPtr in = msg::getMessage<HistogramMessage>(input_);
     HistogramMaximaMessage::ConstPtr maxima;
-    if(maxima_->hasMessage()) {
-        maxima = maxima_->getMessage<HistogramMaximaMessage>();
+    if(msg::hasMessage(maxima_)) {
+        maxima = msg::getMessage<HistogramMaximaMessage>(maxima_);
         if(maxima->value.maxima.size() != in->value.histograms.size()) {
             throw std::runtime_error("Histograms and maxima entries must have the same size!");
         }
@@ -94,23 +93,23 @@ void RenderHistogram::process()
         }
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void RenderHistogram::setupParameters()
+void RenderHistogram::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
+    parameters.addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
                  std::bind(&RenderHistogram::update, this));
-    addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
+    parameters.addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
                  std::bind(&RenderHistogram::update, this));
-    addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
 }
 
-void RenderHistogram::setup()
+void RenderHistogram::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<HistogramMessage>("histograms");
-    output_ = modifier_->addOutput<CvMatMessage>("image");
-    maxima_ = modifier_->addOptionalInput<HistogramMaximaMessage>("maxima");
+    input_  = node_modifier.addInput<HistogramMessage>("histograms");
+    output_ = node_modifier.addOutput<CvMatMessage>("image");
+    maxima_ = node_modifier.addOptionalInput<HistogramMaximaMessage>("maxima");
 }
 
 void RenderHistogram::update()

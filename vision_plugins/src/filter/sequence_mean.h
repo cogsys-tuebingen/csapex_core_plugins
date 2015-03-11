@@ -12,9 +12,9 @@ class SequenceMean : public csapex::Node
 public:
     SequenceMean();
 
-    virtual void process();
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters);
 
 protected:
     csapex::Input  *input_;

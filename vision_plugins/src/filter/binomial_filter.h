@@ -11,9 +11,9 @@ class BinomialFilter : public csapex::Node
 public:
     BinomialFilter();
 
-    virtual void process();
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
     int                     kernel_size_;

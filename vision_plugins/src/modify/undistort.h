@@ -11,9 +11,9 @@ class Undistort : public csapex::Node
 public:
     Undistort();
 
-    virtual void process();
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(csapex::Parameterizable& parameters) override;
 
 private:
     utils_cv::Undistortion::Ptr undist_;

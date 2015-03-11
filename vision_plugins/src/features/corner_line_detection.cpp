@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -20,9 +19,9 @@ CornerLineDetection::CornerLineDetection()
 {
 }
 
-void CornerLineDetection::setup()
+void CornerLineDetection::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("corners / lines / edges");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("corners / lines / edges");
 }
 

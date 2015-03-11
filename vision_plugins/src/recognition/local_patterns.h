@@ -10,9 +10,9 @@ class LocalPatterns : public csapex::Node
 public:
     LocalPatterns();
 
-    virtual void process();
-    virtual void setup();
-    virtual void setupParameters();
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters);
 
 protected:
     enum Type {LBP, LTP};

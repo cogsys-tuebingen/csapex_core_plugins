@@ -1,8 +1,7 @@
 #include "convert_type.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -40,7 +39,7 @@ ConvertType::ConvertType() :
 void ConvertType::process()
 {
 #warning "Change to csapex type encoding!"
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
     out->value = in->value.clone();
 
@@ -85,17 +84,17 @@ void ConvertType::process()
         break;
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void ConvertType::setup()
+void ConvertType::setup(NodeModifier& node_modifier)
 {
-    input_ =  modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("converted");
+    input_ =  node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("converted");
     update();
 }
 
-void ConvertType::setupParameters()
+void ConvertType::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> types = boost::assign::map_list_of
             (" 8 Bit unsigned", CV_8U)
@@ -106,10 +105,10 @@ void ConvertType::setupParameters()
             ("32 Bit floating", CV_32F)
             ("64 Bit floating", CV_64F);
 
-    addParameter(param::ParameterFactory::declareParameterSet("convert to", types, CV_8U),
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("convert to", types, CV_8U),
                  std::bind(&ConvertType::update, this));
 
-    addParameter(param::ParameterFactory::declareBool("normalize", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("normalize", false),
                  std::bind(&ConvertType::update, this));
 }
 

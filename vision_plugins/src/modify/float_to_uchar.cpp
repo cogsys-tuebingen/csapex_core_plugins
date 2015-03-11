@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/normalization.hpp>
@@ -28,7 +27,7 @@ FloatToUchar::FloatToUchar() :
 
 void FloatToUchar::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
     out->value = in->value.clone();
 
@@ -53,25 +52,25 @@ void FloatToUchar::process()
 
 //    out->value *= 255.0;
     out->value.convertTo(out->value, CV_8UC(in->value.channels()));
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void FloatToUchar::setup()
+void FloatToUchar::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("float");
-    output_ = modifier_->addOutput<CvMatMessage>("uchar");
+    input_ = node_modifier.addInput<CvMatMessage>("float");
+    output_ = node_modifier.addOutput<CvMatMessage>("uchar");
 
     update();
 }
 
-void FloatToUchar::setupParameters()
+void FloatToUchar::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> types = boost::assign::map_list_of
             ("RELATIVE", RELATIVE)
             ("ABSOLUTE", ABSOLUTE)
             ("SCALE",    SCALE);
 
-    addParameter(param::ParameterFactory::declareParameterSet("type", types, (int) RELATIVE),
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("type", types, (int) RELATIVE),
                  std::bind(&FloatToUchar::update, this));
 }
 

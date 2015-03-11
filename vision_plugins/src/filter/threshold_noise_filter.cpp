@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -23,8 +22,8 @@ ThresholdNoiseFilter::ThresholdNoiseFilter()
 
 void ThresholdNoiseFilter::process()
 {
-    CvMatMessage::ConstPtr input = input_->getMessage<CvMatMessage>();
-    CvMatMessage::ConstPtr threshold = threshold_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr input = msg::getMessage<CvMatMessage>(input_);
+    CvMatMessage::ConstPtr threshold = msg::getMessage<CvMatMessage>(threshold_);
     CvMatMessage::Ptr output(new CvMatMessage(input->getEncoding(), input->stamp_micro_seconds));
 
     if(!threshold->hasChannels(1, CV_8U)) {
@@ -93,18 +92,18 @@ void ThresholdNoiseFilter::process()
         break;
     }
 
-    output_->publish(output);
+    msg::publish(output_, output);
 }
 
-void ThresholdNoiseFilter::setup()
+void ThresholdNoiseFilter::setup(NodeModifier& node_modifier)
 {
-    input_      = modifier_->addInput<CvMatMessage>("unfiltered");
-    threshold_  = modifier_->addInput<CvMatMessage>("weights");
-    output_     = modifier_->addOutput<CvMatMessage>("filtered");
+    input_      = node_modifier.addInput<CvMatMessage>("unfiltered");
+    threshold_  = node_modifier.addInput<CvMatMessage>("weights");
+    output_     = node_modifier.addOutput<CvMatMessage>("filtered");
 }
 
-void ThresholdNoiseFilter::setupParameters()
+void ThresholdNoiseFilter::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
-    addParameter(param::ParameterFactory::declareBool("interpolate", false));
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
+    parameters.addParameter(param::ParameterFactory::declareBool("interpolate", false));
 }

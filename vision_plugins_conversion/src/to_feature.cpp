@@ -2,8 +2,7 @@
 #include "to_feature.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
 #include <csapex/msg/message_factory.h>
 #include <csapex/model/connection_type.h>
@@ -29,15 +28,15 @@ ToFeature::ToFeature()
 {
 }
 
-void ToFeature::setup()
+void ToFeature::setup(NodeModifier& node_modifier)
 {
-    input_  = modifier_->addInput<connection_types::AnyMessage>("anything");
-    output_ = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("features");
+    input_  = node_modifier.addInput<connection_types::AnyMessage>("anything");
+    output_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("features");
 }
 
-void ToFeature::setupParameters()
+void ToFeature::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("class id", 0, 255, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("class id", 0, 255, 0, 1));
 }
 
 namespace {
@@ -133,7 +132,7 @@ inline void processVector(const connection_types::VectorMessage::ConstPtr    &sr
 
 void ToFeature::process()
 {
-    ConnectionType::ConstPtr msg = input_->getMessage<ConnectionType>();
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
     std::shared_ptr< std::vector<FeaturesMessage> > out (new std::vector<FeaturesMessage>);
 
 
@@ -147,6 +146,6 @@ void ToFeature::process()
         processSingle(msg, out, class_id);
     }
 
-    output_->publish<GenericVectorMessage, FeaturesMessage>(out);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(output_, out);
 }
 

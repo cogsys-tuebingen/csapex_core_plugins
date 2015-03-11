@@ -5,8 +5,7 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -23,7 +22,7 @@ AdaptiveThreshold::AdaptiveThreshold()
 
 void AdaptiveThreshold::process()
 {
-    CvMatMessage::ConstPtr img = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_);
 
     if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
@@ -43,32 +42,32 @@ void AdaptiveThreshold::process()
 
     cv::adaptiveThreshold(img->value, out->value, maxValue, adaptiveMethod, thresholdType, blockSize, C);
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 
-void AdaptiveThreshold::setup()
+void AdaptiveThreshold::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
 
-    output_ = modifier_->addOutput<CvMatMessage>("thresholded");
+    output_ = node_modifier.addOutput<CvMatMessage>("thresholded");
 }
 
-void AdaptiveThreshold::setupParameters()
+void AdaptiveThreshold::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("maxValue", 1.0, 255.0, 100.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("maxValue", 1.0, 255.0, 100.0, 0.1));
 
     std::map<std::string, int > adaptiveMethod;
     adaptiveMethod["ADAPTIVE_THRESH_MEAN_C"] = (int) cv::ADAPTIVE_THRESH_MEAN_C;
     adaptiveMethod["ADAPTIVE_THRESH_GAUSSIAN_C"] = (int) cv::ADAPTIVE_THRESH_GAUSSIAN_C;
-    addParameter(param::ParameterFactory::declareParameterSet<int>("adaptiveMethod", adaptiveMethod, (int) cv::ADAPTIVE_THRESH_MEAN_C));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("adaptiveMethod", adaptiveMethod, (int) cv::ADAPTIVE_THRESH_MEAN_C));
 
     std::map<std::string, int> thresholdType;
     thresholdType["THRESH_BINARY"] = (int) cv::THRESH_BINARY;
     thresholdType["THRESH_BINARY_INV"] = (int) cv::THRESH_BINARY_INV;
-    addParameter(param::ParameterFactory::declareParameterSet<int>("thresholdType", thresholdType, (int) cv::THRESH_BINARY));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("thresholdType", thresholdType, (int) cv::THRESH_BINARY));
 
-    addParameter(param::ParameterFactory::declareRange("blockSize", 3, 1001, 3, 2));
+    parameters.addParameter(param::ParameterFactory::declareRange("blockSize", 3, 1001, 3, 2));
 
-    addParameter(param::ParameterFactory::declareRange("C", -255.0, 255.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("C", -255.0, 255.0, 0.0, 0.1));
 }

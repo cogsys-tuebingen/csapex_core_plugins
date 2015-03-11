@@ -11,8 +11,7 @@
 #include <csapex_vision_features/keypoint_message.h>
 
 /// PROJECT
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -34,7 +33,7 @@ BlobDetector::~BlobDetector()
 {
 }
 
-void BlobDetector::setupParameters()
+void BlobDetector::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareBool("RoiInformation",
                                                param::ParameterDescription("Show the information of each RoI"),
@@ -84,7 +83,7 @@ void BlobDetector::process()
 {
     bool roi_info = readParameter<bool>("RoiInformation");
 
-    CvMatMessage::ConstPtr img = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_);
 
     if(!img->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
@@ -100,25 +99,28 @@ void BlobDetector::process()
 
     CvBlobs blobs;
 
-    IplImage* grayPtr = new IplImage(gray);
-    IplImage* labelImgPtr = cvCreateImage(cvGetSize(grayPtr), IPL_DEPTH_LABEL, 1);
+    IplImage grayPtr(gray);
+    IplImage* labelImgPtr = cvCreateImage(cvGetSize(&grayPtr), IPL_DEPTH_LABEL, 1);
 
-    cvLabel(grayPtr, labelImgPtr, blobs);
-
+    cvLabel(&grayPtr, labelImgPtr, blobs);
 
     VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
     std::pair<unsigned int,unsigned int> range_area = readParameter<std::pair<int, int> >("Area");
 
-    for (CvBlobs::const_iterator it=blobs.begin(); it!=blobs.end(); ++it) {
-         const CvBlob& blob = *it->second;
+    for (CvBlobs::iterator it=blobs.begin(); it!=blobs.end();) {
+        const CvBlob& blob = *it->second;
 
         int w = (blob.maxx - blob.minx + 1);
         int h = (blob.maxy - blob.miny + 1);
 
         if((blob.area < range_area.first) || (blob.area > range_area.second)) {
+            cvReleaseBlob((*it).second);
+            it = blobs.erase(it);
             continue;
         }
+
+        ++it;
 
          RoiMessage::Ptr roi(new RoiMessage);
         double r, g, b;
@@ -130,11 +132,13 @@ void BlobDetector::process()
         out->value.push_back(roi);
     }
 
-    output_->publish(out);
+    ainfo << blobs.size() << " blobs" << std::endl;
 
-    if(output_debug_->isConnected()) {
-        IplImage* debugPtr = new IplImage(debug->value);
-        cvRenderBlobs(labelImgPtr, blobs, debugPtr, debugPtr);
+    msg::publish(output_, out);
+
+    if(msg::isConnected(output_debug_)) {
+        IplImage debugPtr(debug->value);
+        cvRenderBlobs(labelImgPtr, blobs, &debugPtr, &debugPtr);
 
         for (CvBlobs::const_iterator it=blobs.begin(); it!=blobs.end(); ++it) {
             const CvBlob& blob = *it->second;
@@ -168,20 +172,18 @@ void BlobDetector::process()
                 cv::putText(debug->value, ss.str(), cv::Point(blob.centroid.x, blob.centroid.y), cv::FONT_HERSHEY_PLAIN, 1.0, cv::Scalar::all(255), 1);
             }
         }
-        output_debug_->publish(debug);
-        delete(debugPtr);
+        msg::publish(output_debug_, debug);
     }
 
-    if(output_reduce_->isConnected()) {
+    if(msg::isConnected(output_reduce_)) {
 
-        IplImage* reducedPtr = new IplImage(reduced->value);
+        IplImage reducedPtr(reduced->value);
 
         cvFilterByArea(blobs, range_area.first, range_area.second);
 
-        cvFilterLabels(labelImgPtr, reducedPtr, blobs);
+        cvFilterLabels(labelImgPtr, &reducedPtr, blobs);
 
-        output_reduce_->publish(reduced);
-        delete(reducedPtr);
+        msg::publish(output_reduce_, reduced);
     }
 
     cvReleaseBlobs(blobs);
@@ -189,12 +191,12 @@ void BlobDetector::process()
 }
 
 
-void BlobDetector::setup()
+void BlobDetector::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("Image");
+    input_ = node_modifier.addInput<CvMatMessage>("Image");
 
-    output_debug_ = modifier_->addOutput<CvMatMessage>("OutputImage");
-    output_ = modifier_->addOutput<VectorMessage, RoiMessage>("ROIs");
-    output_reduce_ = modifier_->addOutput<CvMatMessage>("ReducedImage");
+    output_debug_ = node_modifier.addOutput<CvMatMessage>("OutputImage");
+    output_ = node_modifier.addOutput<VectorMessage, RoiMessage>("ROIs");
+    output_reduce_ = node_modifier.addOutput<CvMatMessage>("ReducedImage");
 
 }

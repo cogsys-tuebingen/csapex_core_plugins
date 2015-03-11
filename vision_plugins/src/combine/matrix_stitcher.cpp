@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -70,8 +69,8 @@ MatrixStitcher::MatrixStitcher()
 
 void MatrixStitcher::process()
 {
-    CvMatMessage::ConstPtr mat_1  = matrix_1_->getMessage<CvMatMessage>();
-    CvMatMessage::ConstPtr mat_2  = matrix_2_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr mat_1  = msg::getMessage<CvMatMessage>(matrix_1_);
+    CvMatMessage::ConstPtr mat_2  = msg::getMessage<CvMatMessage>(matrix_2_);
     CvMatMessage::Ptr out(new CvMatMessage(mat_1->getEncoding(), mat_1->stamp_micro_seconds));
 
     if(!mat_1->getEncoding().matches(mat_2->getEncoding()))
@@ -90,21 +89,21 @@ void MatrixStitcher::process()
         break;
     }
 
-    stitched_->publish(out);
+    msg::publish(stitched_, out);
 }
 
-void MatrixStitcher::setup()
+void MatrixStitcher::setup(NodeModifier& node_modifier)
 {
-    matrix_1_ =  modifier_->addInput<CvMatMessage>("matrix 1");
-    matrix_2_ =  modifier_->addInput<CvMatMessage>("matrix 2");
-    stitched_ = modifier_->addOutput<CvMatMessage>("stitched");
+    matrix_1_ =  node_modifier.addInput<CvMatMessage>("matrix 1");
+    matrix_2_ =  node_modifier.addInput<CvMatMessage>("matrix 2");
+    stitched_ = node_modifier.addOutput<CvMatMessage>("stitched");
 }
 
-void MatrixStitcher::setupParameters()
+void MatrixStitcher::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> modes = boost::assign::map_list_of
             ("HORIZONTAL", HORIZONTAL)
             ("VERTICAL", VERTICAL);
-    addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) HORIZONTAL));
-    addParameter(param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) HORIZONTAL));
+    parameters.addParameter(param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
 }

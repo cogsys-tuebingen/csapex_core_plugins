@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_vision/utils/histogram.hpp>
@@ -22,7 +21,7 @@ MonoFilter::MonoFilter()
 
 void MonoFilter::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
 
     if(!in->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
@@ -42,26 +41,26 @@ void MonoFilter::process()
         }
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 
-void MonoFilter::setup()
+void MonoFilter::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("filtered");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("filtered");
     update();
 }
 
-void MonoFilter::setupParameters()
+void MonoFilter::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
                  std::bind(&MonoFilter::update, this));
-    addParameter(param::ParameterFactory::declareRange("max", 0, 255, 255, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("max", 0, 255, 255, 1),
                  std::bind(&MonoFilter::update, this));
-    addParameter(param::ParameterFactory::declareRange("def", 0, 255, 255, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("def", 0, 255, 255, 1),
                  std::bind(&MonoFilter::update, this));
-    addParameter(param::ParameterFactory::declareBool("invert", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("invert", false),
                  std::bind(&MonoFilter::update, this));
 }
 

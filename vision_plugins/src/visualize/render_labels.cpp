@@ -2,8 +2,7 @@
 #include "render_labels.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
@@ -23,11 +22,11 @@ RenderLabels::RenderLabels()
 
 void RenderLabels::process()
 {
-    CvMatMessage::ConstPtr labels = labels_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr labels = msg::getMessage<connection_types::CvMatMessage>(labels_);
     CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, labels->stamp_micro_seconds));
 
-    if(image_->hasMessage()) {
-        CvMatMessage::ConstPtr image = image_->getMessage<connection_types::CvMatMessage>();
+    if(msg::hasMessage(image_)) {
+        CvMatMessage::ConstPtr image = msg::getMessage<connection_types::CvMatMessage>(image_);
         if(!image->hasChannels(3, CV_8U))
             throw std::runtime_error("Image encoding must be 8UC3!");
         output->value = image->value.clone();
@@ -55,18 +54,18 @@ void RenderLabels::process()
         double occ = readParameter<double>("color occupancy");
         cv::addWeighted(output->value, 1.0 - occ, label_colors, occ, 0.0, output->value);
     }
-    output_->publish(output);
+    msg::publish(output_, output);
 }
 
-void RenderLabels::setup()
+void RenderLabels::setup(NodeModifier& node_modifier)
 {
-    labels_ = modifier_->addInput<CvMatMessage>("labels");
-    image_  = modifier_->addOptionalInput<CvMatMessage>("image");
-    output_ = modifier_->addOutput<CvMatMessage>("rendered");
+    labels_ = node_modifier.addInput<CvMatMessage>("labels");
+    image_  = node_modifier.addOptionalInput<CvMatMessage>("image");
+    output_ = node_modifier.addOutput<CvMatMessage>("rendered");
 }
 
-void RenderLabels::setupParameters()
+void RenderLabels::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("color occupancy", 0.1, 1.0, 0.25, 0.05));
+    parameters.addParameter(param::ParameterFactory::declareRange("color occupancy", 0.1, 1.0, 0.25, 0.05));
 }
 

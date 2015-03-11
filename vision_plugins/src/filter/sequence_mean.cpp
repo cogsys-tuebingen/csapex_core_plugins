@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/normalization.hpp>
@@ -26,7 +25,7 @@ SequenceMean::SequenceMean() :
 
 void SequenceMean::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
     cv::Mat tmp = in->value.clone();
 
@@ -53,19 +52,19 @@ void SequenceMean::process()
         cv::add(buff, *it, buff);
     }
     buff.convertTo(out->value,  type_, 1.0 / (double) acc_.size());
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void SequenceMean::setup()
+void SequenceMean::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("filtered");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("filtered");
     update();
 }
 
-void SequenceMean::setupParameters()
+void SequenceMean::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
                  std::bind(&SequenceMean::update, this));
 }
 

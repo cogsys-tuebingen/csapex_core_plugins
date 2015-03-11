@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -28,7 +27,7 @@ SetOperation::SetOperation()
 
 void SetOperation::process()
 {
-    CvMatMessage::ConstPtr img1 = i1_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img1 = msg::getMessage<CvMatMessage>(i1_);
 
     if(!img1->hasChannels(1)) {
         throw std::runtime_error("No Single Channel!");
@@ -42,11 +41,11 @@ void SetOperation::process()
         out->value = ~img1->value;
 
     } else {
-        if(!i2_->hasMessage()) {
+        if(!msg::hasMessage(i2_)) {
             return;
         }
 
-        CvMatMessage::ConstPtr img2 = i2_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr img2 = msg::getMessage<CvMatMessage>(i2_);
 
         if(img1->value.rows != img2->value.rows || img1->value.cols != img2->value.cols) {
             throw std::runtime_error("Dimension is not matching!");
@@ -61,23 +60,23 @@ void SetOperation::process()
     }
 
     if(out->value.rows != 0 && out->value.cols != 0) {
-        out_->publish(out);
+        msg::publish(out_, out);
     }
 }
 
-void SetOperation::setup()
+void SetOperation::setup(NodeModifier& node_modifier)
 {
-    i1_ = modifier_->addInput<CvMatMessage>("mask 1");
-    i2_ = modifier_->addOptionalInput<CvMatMessage>("mask 2");
-    out_ = modifier_->addOutput<CvMatMessage>("combined");
+    i1_ = node_modifier.addInput<CvMatMessage>("mask 1");
+    i2_ = node_modifier.addOptionalInput<CvMatMessage>("mask 2");
+    out_ = node_modifier.addOutput<CvMatMessage>("combined");
 }
 
-void SetOperation::setupParameters()
+void SetOperation::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> methods = map_list_of
             ("Complement", (int) COMPLEMENT)
             ("Intersection", (int) INTERSECTION)
             ("Union", (int) UNION);
 
-    addParameter(param::ParameterFactory::declareParameterSet("operation", methods, (int) UNION));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("operation", methods, (int) UNION));
 }

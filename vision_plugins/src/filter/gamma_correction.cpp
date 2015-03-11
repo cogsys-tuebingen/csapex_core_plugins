@@ -2,8 +2,7 @@
 #include "gamma_correction.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -22,7 +21,7 @@ GammaCorrection::GammaCorrection()
 {
 }
 
-void GammaCorrection::setupParameters()
+void GammaCorrection::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> types = boost::assign::map_list_of
             ("power law", (int) POWER_LAW)
@@ -31,7 +30,7 @@ void GammaCorrection::setupParameters()
     param::Parameter::Ptr type = param::ParameterFactory::declareParameterSet<int>("type",
                                                                                    param::ParameterDescription("The type of transformation to apply"),
                                                                                    types, POWER_LAW);
-    addParameter(type);
+    parameters.addParameter(type);
 
     addParameter(param::ParameterFactory::declareRange("c",
                                                        param::ParameterDescription("Constant factor in  dst = c * log(src + 1)"),
@@ -43,15 +42,15 @@ void GammaCorrection::setupParameters()
                             [type]() { return type->as<int>() == POWER_LAW; });
 }
 
-void GammaCorrection::setup()
+void GammaCorrection::setup(NodeModifier& node_modifier)
 {
-    in_  = modifier_->addInput<CvMatMessage>("Image");
-    out_ = modifier_->addOutput<CvMatMessage>("Image");
+    in_  = node_modifier.addInput<CvMatMessage>("Image");
+    out_ = node_modifier.addOutput<CvMatMessage>("Image");
 }
 
 void GammaCorrection::process()
 {
-    CvMatMessage::ConstPtr input = in_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr input = msg::getMessage<CvMatMessage>(in_);
     CvMatMessage::Ptr output(new CvMatMessage(input->getEncoding(), input->stamp_micro_seconds));
 
     const cv::Mat& in = input->value;
@@ -83,7 +82,7 @@ void GammaCorrection::process()
 
     tmp.convertTo(out, in.type());
 
-    out_->publish(output);
+    msg::publish(out_, output);
 }
 
 

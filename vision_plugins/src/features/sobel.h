@@ -10,8 +10,8 @@ class Sobel : public Operator
 public:
     Sobel();
 
-    virtual void process();
-    virtual void setupParameters();
+    virtual void process() override;
+    virtual void setupParameters(Parameterizable& parameters);
 
 protected:
     int     dx_;

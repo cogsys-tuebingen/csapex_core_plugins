@@ -11,9 +11,9 @@ class RenderROIs : public csapex::Node
 public:
     RenderROIs();
 
-    virtual void setupParameters();
-    virtual void process();
-    virtual void setup();
+    virtual void setupParameters(Parameterizable& parameters);
+    virtual void process() override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
 
 private:
     Input* input_img_;

@@ -2,8 +2,7 @@
 #include "undistort.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -21,7 +20,7 @@ Undistort::Undistort()
 
 void Undistort::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     out->value = in->value.clone();
@@ -31,21 +30,21 @@ void Undistort::process()
         undist_->reset_map(margin_size, margin, margin);
         undist_->undistort(out->value, out->value);
     }
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void Undistort::setup()
+void Undistort::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("undistorted");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("undistorted");
 
     update();
 }
 
-void Undistort::setupParameters()
+void Undistort::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareFileInputPath("file", ""), std::bind(&Undistort::update, this));
-    addParameter(param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), std::bind(&Undistort::update, this));
+    parameters.addParameter(param::ParameterFactory::declareFileInputPath("file", ""), std::bind(&Undistort::update, this));
+    parameters.addParameter(param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), std::bind(&Undistort::update, this));
 
     std::map<std::string, int> modes;
     modes["nearest"] = (int) CV_INTER_NN;
@@ -53,7 +52,7 @@ void Undistort::setupParameters()
     modes["area"] = (int) CV_INTER_AREA;
     modes["cubic"] = (int) CV_INTER_CUBIC;
     modes["lanczos4"] = (int) CV_INTER_LANCZOS4;
-    addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), std::bind(&Undistort::update, this));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), std::bind(&Undistort::update, this));
 }
 
 bool Undistort::read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs)

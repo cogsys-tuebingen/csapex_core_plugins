@@ -6,8 +6,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -71,7 +70,7 @@ void VJDetector::process()
         return;
     }
 
-    CvMatMessage::ConstPtr a = input_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr a = msg::getMessage<CvMatMessage>(input_);
 
     if(!a->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
@@ -89,7 +88,7 @@ void VJDetector::process()
         out->value.push_back(msg);
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
 

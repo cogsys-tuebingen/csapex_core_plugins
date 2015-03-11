@@ -298,9 +298,9 @@ class GenericImageCombiner : public csapex::Node
 public:
     GenericImageCombiner();
 
-    void setup();
-    void setupParameters();
-    void process();
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
+    virtual void process() override;
 
 private:
     void updateFormula();

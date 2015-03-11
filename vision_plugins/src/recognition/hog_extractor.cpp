@@ -2,8 +2,7 @@
 #include "hog_extractor.h"
 
 /// PROJECT
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -27,7 +26,7 @@ HOGExtractor::HOGExtractor()
 {
 }
 
-void HOGExtractor::setupParameters()
+void HOGExtractor::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareRange("gaussian sigma",
                                                        param::ParameterDescription("Standard deviation for Gaussian blur."),
@@ -51,7 +50,7 @@ void HOGExtractor::setupParameters()
                                                   param::ParameterDescription("Set the amount of cells in each direction of block."),
                                                   2, 8, 2, 1);
 
-    addParameter(cells_per_block, std::bind(&HOGExtractor::updateOverlap, this));
+    parameters.addParameter(cells_per_block, std::bind(&HOGExtractor::updateOverlap, this));
 
     std::function<bool()> k_cond = [cells_per_block]() { return cells_per_block->as<int>() > 2; };
 
@@ -61,19 +60,19 @@ void HOGExtractor::setupParameters()
                 1, 7, 1, 1);
     overlap_ = std::dynamic_pointer_cast<param::RangeParameter>(o);
 
-    addConditionalParameter(overlap_, k_cond);
+    parameters.addConditionalParameter(overlap_, k_cond);
 }
 
-void HOGExtractor::setup()
+void HOGExtractor::setup(NodeModifier& node_modifier)
 {
-    in_img_     = modifier_->addInput<CvMatMessage>("image");
-    in_rois_    = modifier_->addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
-    out_        = modifier_->addOutput<GenericVectorMessage, FeaturesMessage>("features");
+    in_img_     = node_modifier.addInput<CvMatMessage>("image");
+    in_rois_    = node_modifier.addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
+    out_        = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("features");
 }
 
 void HOGExtractor::process()
 {
-    CvMatMessage::ConstPtr  in = in_img_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_img_);
     std::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(!in->hasChannels(1, CV_8U))
@@ -100,7 +99,7 @@ void HOGExtractor::process()
                         gauss == 0.0 ? -1 : gauss,
                         gamma);
 
-    if(!in_rois_->hasMessage()) {
+    if(!msg::hasMessage(in_rois_)) {
         if(value.rows < block_size_px)
             throw std::runtime_error("Image must have at least block height in px.");
         if(value.cols < block_size_px)
@@ -121,7 +120,7 @@ void HOGExtractor::process()
 
     } else {
         std::shared_ptr<std::vector<RoiMessage> const> in_rois =
-                in_rois_->getMessage<GenericVectorMessage, RoiMessage>();
+                msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
 
         for(std::vector<RoiMessage>::const_iterator
             it = in_rois->begin() ;
@@ -146,7 +145,7 @@ void HOGExtractor::process()
 
     //    /// BLOCK STEPS X * BLOCK STEPS Y * BINS * CELLS (WITHIN BLOCK)
 
-    out_->publish<GenericVectorMessage, FeaturesMessage>(out);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
 void HOGExtractor::updateOverlap()

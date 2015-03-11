@@ -2,8 +2,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -15,12 +14,16 @@ using namespace connection_types;
 
 Merger::Merger()
 {
-    addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), std::bind(&Merger::updateInputs, this));
 }
 
-void Merger::setup()
+void Merger::setupParameters(Parameterizable &parameters)
 {
-    output_ = modifier_->addOutput<CvMatMessage>("Merged Image");
+    parameters.addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), std::bind(&Merger::updateInputs, this));
+}
+
+void Merger::setup(NodeModifier& node_modifier)
+{
+    output_ = node_modifier.addOutput<CvMatMessage>("Merged Image");
 
     updateInputs();
 }
@@ -35,7 +38,7 @@ void Merger::process()
     cv::merge(msgs, out_img);
     CvMatMessage::Ptr out_msg(new CvMatMessage(encoding, stamp_));
     out_msg->value = out_img;
-    output_->publish(out_msg);
+    msg::publish(output_, out_msg);
 }
 
 void Merger::updateInputs()
@@ -48,16 +51,16 @@ void Merger::updateInputs()
     if(current_amount > input_count) {
         for(int i = current_amount; i > input_count ; i--) {
             Input* in = inputs[i - 1];
-            if(in->isConnected()) {
-                in->disable();
+            if(msg::isConnected(in)) {
+                msg::disable(in);
             } else {
-                modifier_->removeInput(in->getUUID());
+                modifier_->removeInput(msg::getUUID(in));
             }
         }
     } else {
         int to_add = input_count - current_amount;
         for(int i = 0 ; i < current_amount; i++) {
-            inputs[i]->enable();
+            msg::enable(inputs[i]);
         }
         for(int i = 0 ; i < to_add ; i++) {
             modifier_->addOptionalInput<CvMatMessage>("Channel");
@@ -72,13 +75,13 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
     std::vector<Input*> inputs = modifier_->getMessageInputs();
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
         Input *in = inputs[i];
-        if(in->hasMessage()) {
-            CvMatMessage::ConstPtr msg = in->getMessage<CvMatMessage>();
+        if(msg::hasMessage(in)) {
+            CvMatMessage::ConstPtr msg = msg::getMessage<CvMatMessage>(in);
             if(first) {
                 stamp_ = msg->stamp_micro_seconds;
                 first = false;
             }
-            in->setLabel(msg->getEncoding().toString());
+            msg::setLabel(in, msg->getEncoding().toString());
             messages.push_back(msg->value);
             encoding.append(msg->getEncoding());
         }

@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
@@ -130,7 +129,7 @@ void GenericImageCombiner::updateFormula()
     bool r = qi::phrase_parse(iter,end,p,ascii::space,e);
 
     if (r && iter == end) {
-        setError(false);
+        modifier_->setNoError();
 
     } else {
         std::string rest(iter, end);
@@ -145,7 +144,7 @@ void GenericImageCombiner::process()
     }
 
 
-    CvMatMessage::ConstPtr img1 = i1_->getMessage<CvMatMessage>();
+    CvMatMessage::ConstPtr img1 = msg::getMessage<CvMatMessage>(i1_);
 
     cv::Mat f1;
     img1->value.copyTo(f1);
@@ -164,9 +163,9 @@ void GenericImageCombiner::process()
     vm.get("1") = f1;
 
     // handle optional second image
-    if(i2_->hasMessage()) {
+    if(msg::hasMessage(i2_)) {
         cv::Mat f2;
-        CvMatMessage::ConstPtr img2 = i2_->getMessage<CvMatMessage>();
+        CvMatMessage::ConstPtr img2 = msg::getMessage<CvMatMessage>(i2_);
         img2->value.copyTo(f2);
 
         if(f1.channels() != f2.channels()) {
@@ -196,18 +195,18 @@ void GenericImageCombiner::process()
     } else if(f1.channels() == 3) {
         r.convertTo(out->value, CV_8UC3);
     }
-    out_->publish(out);
+    msg::publish(out_, out);
 }
 
-void GenericImageCombiner::setup()
+void GenericImageCombiner::setup(NodeModifier& node_modifier)
 {
-    i1_ = modifier_->addInput<CvMatMessage>("image 1");
-    i2_ = modifier_->addOptionalInput<CvMatMessage>("image 2");
-    out_ = modifier_->addOutput<CvMatMessage>("combined");
+    i1_ = node_modifier.addInput<CvMatMessage>("image 1");
+    i2_ = node_modifier.addOptionalInput<CvMatMessage>("image 2");
+    out_ = node_modifier.addOutput<CvMatMessage>("combined");
 }
 
-void GenericImageCombiner::setupParameters()
+void GenericImageCombiner::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
+    parameters.addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
                  std::bind(&GenericImageCombiner::updateFormula, this));
 }

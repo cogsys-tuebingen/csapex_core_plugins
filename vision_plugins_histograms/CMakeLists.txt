@@ -8,7 +8,7 @@ find_package(catkin COMPONENTS
                     csapex_vision_features
                     csapex_ml
                     utils_vision
-                    utils_viola_jones  REQUIRED)
+                    REQUIRED)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 

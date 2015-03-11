@@ -2,8 +2,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 
@@ -23,7 +22,7 @@ Canny::Canny() :
 
 void Canny::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
 
     if(!in->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
@@ -39,24 +38,24 @@ void Canny::process()
     out->value.setTo(cv::Scalar::all(0));
     in->value.copyTo(out->value,edges);
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void Canny::setup()
+void Canny::setup(NodeModifier& node_modifier)
 {
-    CornerLineDetection::setup();
+    CornerLineDetection::setup(node_modifier);
     update();
 }
 
-void Canny::setupParameters()
+void Canny::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("aperture", 3, 7, 3, 2),
+    parameters.addParameter(param::ParameterFactory::declareRange("aperture", 3, 7, 3, 2),
                  std::bind(&Canny::update, this));
-    addParameter(param::ParameterFactory::declareRange("threshold 1", 0.0, 500.0, 0.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold 1", 0.0, 500.0, 0.0, 1.0),
                  std::bind(&Canny::update, this));
-    addParameter(param::ParameterFactory::declareRange("threshold 2", 0.0, 500.0, 255.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold 2", 0.0, 500.0, 255.0, 1.0),
                  std::bind(&Canny::update, this));
-    addParameter(param::ParameterFactory::declareBool("L2 gradient", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("L2 gradient", false),
                  std::bind(&Canny::update, this));
 }
 

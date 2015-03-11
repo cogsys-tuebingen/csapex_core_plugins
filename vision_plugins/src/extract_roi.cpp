@@ -5,8 +5,7 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -21,25 +20,50 @@ using namespace connection_types;
 
 ExtractROI::ExtractROI()
 {
-    addParameter(param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
+}
+
+void ExtractROI::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
 }
 
 void ExtractROI::process()
 {
-    CvMatMessage::ConstPtr img = input_img_->getMessage<CvMatMessage>();
-    RoiMessage::ConstPtr roi = input_roi_->getMessage<RoiMessage>();
+    CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_img_);
+    RoiMessage::ConstPtr roi = msg::getMessage<RoiMessage>(input_roi_);
 
     CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp_micro_seconds));
 
-    cv::Mat(img->value, roi->value.rect()).copyTo(out->value);
+    cv::Mat mat = img->value;
+    cv::Rect rect = roi->value.rect();
 
-    output_->publish(out);
+    if(rect.x < 0) {
+        rect.x = 0;
+    } else if(rect.x >= mat.cols) {
+        rect.x = mat.cols;
+    }
+    if(rect.y < 0) {
+        rect.y = 0;
+    } else if(rect.y >= mat.rows) {
+        rect.y = mat.rows;
+    }
+
+    if(rect.x + rect.width >= mat.cols) {
+        rect.width = mat.cols - rect.x - 1;
+    }
+    if(rect.y + rect.height >= mat.rows) {
+        rect.height = mat.rows - rect.y - 1;
+    }
+
+    cv::Mat(mat, rect).copyTo(out->value);
+
+    msg::publish(output_, out);
 }
 
-void ExtractROI::setup()
+void ExtractROI::setup(NodeModifier& node_modifier)
 {
-    input_img_ = modifier_->addInput<CvMatMessage>("Image");
-    input_roi_ = modifier_->addInput<RoiMessage >("ROI");
+    input_img_ = node_modifier.addInput<CvMatMessage>("Image");
+    input_roi_ = node_modifier.addInput<RoiMessage >("ROI");
 
-    output_ = modifier_->addOutput<CvMatMessage>("SubImage");
+    output_ = node_modifier.addOutput<CvMatMessage>("SubImage");
 }

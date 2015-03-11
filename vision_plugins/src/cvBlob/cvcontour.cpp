@@ -45,350 +45,356 @@ const double pi = std::atan(1.)*4.;
 namespace cvb
 {
 
-  void cvRenderContourChainCode(CvContourChainCode const *contour, IplImage const *img, CvScalar const &color)
-  {
+void cvRenderContourChainCode(CvContourChainCode const *contour, IplImage const *img, CvScalar const &color)
+{
     CV_FUNCNAME("cvRenderContourChainCode");
     __CV_BEGIN__;
     {
-      CV_ASSERT(img&&(img->depth==IPL_DEPTH_8U)&&(img->nChannels==3));
+        CV_ASSERT(img&&(img->depth==IPL_DEPTH_8U)&&(img->nChannels==3));
 
-      int stepDst = img->widthStep/(img->depth/8);
-      int img_width = img->width;
-      int img_height = img->height;
-      int img_offset = 0;
+        int stepDst = img->widthStep/(img->depth/8);
+        int img_width = img->width;
+        int img_height = img->height;
+        int img_offset = 0;
 
-      if(img->roi)
-      {
-	img_width = img->roi->width;
-	img_height = img->roi->height;
-	img_offset = (img->nChannels * img->roi->xOffset) + (img->roi->yOffset * stepDst);
-      }
+        if(img->roi)
+        {
+            img_width = img->roi->width;
+            img_height = img->roi->height;
+            img_offset = (img->nChannels * img->roi->xOffset) + (img->roi->yOffset * stepDst);
+        }
 
-      unsigned char *imgData = (unsigned char *)img->imageData + img_offset;
+        unsigned char *imgData = (unsigned char *)img->imageData + img_offset;
 
-      unsigned int x = contour->startingPoint.x;
-      unsigned int y = contour->startingPoint.y;
+        unsigned int x = contour->startingPoint.x;
+        unsigned int y = contour->startingPoint.y;
 
-      for (CvChainCodes::const_iterator it=contour->chainCode.begin(); it!=contour->chainCode.end(); ++it)
-      {
-	imgData[img->nChannels*x+img->widthStep*y+0] = (unsigned char)(color.val[0]); // Blue
-	imgData[img->nChannels*x+img->widthStep*y+1] = (unsigned char)(color.val[1]); // Green
-	imgData[img->nChannels*x+img->widthStep*y+2] = (unsigned char)(color.val[2]); // Red
+        for (CvChainCodes::const_iterator it=contour->chainCode.begin(); it!=contour->chainCode.end(); ++it)
+        {
+            imgData[img->nChannels*x+img->widthStep*y+0] = (unsigned char)(color.val[0]); // Blue
+            imgData[img->nChannels*x+img->widthStep*y+1] = (unsigned char)(color.val[1]); // Green
+            imgData[img->nChannels*x+img->widthStep*y+2] = (unsigned char)(color.val[2]); // Red
 
-	x += cvChainCodeMoves[*it][0];
-	y += cvChainCodeMoves[*it][1];
-      }
+            x += cvChainCodeMoves[*it][0];
+            y += cvChainCodeMoves[*it][1];
+        }
     }
     __CV_END__;
-  }
+}
 
-  CvContourPolygon *cvConvertChainCodesToPolygon(CvContourChainCode const *cc)
-  {
+CvContourPolygon *cvConvertChainCodesToPolygon(CvContourChainCode const *cc)
+{
     CV_FUNCNAME("cvConvertChainCodesToPolygon");
     __CV_BEGIN__;
     {
-      CV_ASSERT(cc!=NULL);
+        CV_ASSERT(cc!=NULL);
 
-      CvContourPolygon *contour = new CvContourPolygon;
+        CvContourPolygon *contour = new CvContourPolygon;
 
-      unsigned int x = cc->startingPoint.x;
-      unsigned int y = cc->startingPoint.y;
-      contour->push_back(cvPoint(x, y));
+        unsigned int x = cc->startingPoint.x;
+        unsigned int y = cc->startingPoint.y;
+        contour->push_back(cvPoint(x, y));
 
-      if (cc->chainCode.size())
-      {
-        CvChainCodes::const_iterator it=cc->chainCode.begin();
-        CvChainCode lastCode = *it;
-
-        x += cvChainCodeMoves[*it][0];
-        y += cvChainCodeMoves[*it][1];
-
-        ++it;
-
-        for (; it!=cc->chainCode.end(); ++it)
+        if (cc->chainCode.size())
         {
-          if (lastCode!=*it)
-          {
-            contour->push_back(cvPoint(x, y));
-            lastCode=*it;
-          }
+            CvChainCodes::const_iterator it=cc->chainCode.begin();
+            CvChainCode lastCode = *it;
 
-          x += cvChainCodeMoves[*it][0];
-          y += cvChainCodeMoves[*it][1];
+            x += cvChainCodeMoves[*it][0];
+            y += cvChainCodeMoves[*it][1];
+
+            ++it;
+
+            for (; it!=cc->chainCode.end(); ++it)
+            {
+                if (lastCode!=*it)
+                {
+                    contour->push_back(cvPoint(x, y));
+                    lastCode=*it;
+                }
+
+                x += cvChainCodeMoves[*it][0];
+                y += cvChainCodeMoves[*it][1];
+            }
         }
-      }
 
-      return contour;
+        return contour;
     }
     __CV_END__;
-  }
+    return nullptr;
+}
 
-  void cvRenderContourPolygon(CvContourPolygon const *contour, IplImage *img, CvScalar const &color)
-  {
+void cvRenderContourPolygon(CvContourPolygon const *contour, IplImage *img, CvScalar const &color)
+{
     CV_FUNCNAME("cvRenderContourPolygon");
     __CV_BEGIN__;
     {
-      CV_ASSERT(img&&(img->depth==IPL_DEPTH_8U)&&(img->nChannels==3));
+        CV_ASSERT(img&&(img->depth==IPL_DEPTH_8U)&&(img->nChannels==3));
 
-      CvContourPolygon::const_iterator it=contour->begin();
+        CvContourPolygon::const_iterator it=contour->begin();
 
-      if (it!=contour->end())
-      {
-	unsigned int fx, x, fy, y;
-	fx = x = it->x;
-	fy = y = it->y;
+        if (it!=contour->end())
+        {
+            unsigned int fx, x, fy, y;
+            fx = x = it->x;
+            fy = y = it->y;
 
-	for (; it!=contour->end(); ++it)
-	{
-	  cvLine(img, cvPoint(x, y), cvPoint(it->x, it->y), color, 1);
-	  x = it->x;
-	  y = it->y;
-	}
+            for (; it!=contour->end(); ++it)
+            {
+                cvLine(img, cvPoint(x, y), cvPoint(it->x, it->y), color, 1);
+                x = it->x;
+                y = it->y;
+            }
 
-	cvLine(img, cvPoint(x, y), cvPoint(fx, fy), color, 1);
-      }
+            cvLine(img, cvPoint(x, y), cvPoint(fx, fy), color, 1);
+        }
     }
     __CV_END__;
-  }
+}
 
-  double cvContourPolygonArea(CvContourPolygon const *p)
-  {
+double cvContourPolygonArea(CvContourPolygon const *p)
+{
     CV_FUNCNAME("cvContourPolygonArea");
     __CV_BEGIN__;
     {
-      CV_ASSERT(p!=NULL);
+        CV_ASSERT(p!=NULL);
 
-      if (p->size()<=2)
-	return 1.;
+        if (p->size()<=2)
+            return 1.;
 
-      CvContourPolygon::const_iterator it=p->begin();
-      CvPoint lastPoint = p->back();
+        CvContourPolygon::const_iterator it=p->begin();
+        CvPoint lastPoint = p->back();
 
-      double a = 0.;
+        double a = 0.;
 
-      for (; it!=p->end(); ++it)
-      {
-	a += lastPoint.x*it->y - lastPoint.y*it->x;
-	lastPoint = *it;
-      }
+        for (; it!=p->end(); ++it)
+        {
+            a += lastPoint.x*it->y - lastPoint.y*it->x;
+            lastPoint = *it;
+        }
 
-      return a*0.5;
+        return a*0.5;
     }
     __CV_END__;
-  }
+    return 0.0;
+}
 
-  double cvContourChainCodePerimeter(CvContourChainCode const *c)
-  {
+double cvContourChainCodePerimeter(CvContourChainCode const *c)
+{
     CV_FUNCNAME("cvContourChainCodePerimeter");
     __CV_BEGIN__;
     {
-      CV_ASSERT(c!=NULL);
+        CV_ASSERT(c!=NULL);
 
-      double perimeter = 0.;
+        double perimeter = 0.;
 
-      for(CvChainCodes::const_iterator it=c->chainCode.begin(); it!=c->chainCode.end(); ++it)
-      {
-	if ((*it)%2)
-	  perimeter+=sqrt(1.+1.);
-	else
-	  perimeter+=1.;
-      }
+        for(CvChainCodes::const_iterator it=c->chainCode.begin(); it!=c->chainCode.end(); ++it)
+        {
+            if ((*it)%2)
+                perimeter+=sqrt(1.+1.);
+            else
+                perimeter+=1.;
+        }
 
-      return perimeter;
+        return perimeter;
     }
     __CV_END__;
-  }
+    return 0.0;
+}
 
-  double cvContourPolygonPerimeter(CvContourPolygon const *p)
-  {
+double cvContourPolygonPerimeter(CvContourPolygon const *p)
+{
     CV_FUNCNAME("cvContourPolygonPerimeter");
     __CV_BEGIN__;
     {
-      CV_ASSERT(p!=NULL);
+        CV_ASSERT(p!=NULL);
 
-      double perimeter = cvDistancePointPoint((*p)[p->size()-1], (*p)[0]);
+        double perimeter = cvDistancePointPoint((*p)[p->size()-1], (*p)[0]);
 
-      for (unsigned int i=0; i<p->size()-1; i++)
-	perimeter+=cvDistancePointPoint((*p)[i], (*p)[i+1]);
+        for (unsigned int i=0; i<p->size()-1; i++)
+            perimeter+=cvDistancePointPoint((*p)[i], (*p)[i+1]);
 
-      return perimeter;
+        return perimeter;
     }
     __CV_END__;
-  }
+    return 0.0;
+}
 
-  double cvContourPolygonCircularity(const CvContourPolygon *p)
-  {
+double cvContourPolygonCircularity(const CvContourPolygon *p)
+{
     CV_FUNCNAME("cvContourPolygonCircularity");
     __CV_BEGIN__;
     {
-      CV_ASSERT(p!=NULL);
+        CV_ASSERT(p!=NULL);
 
-      double l = cvContourPolygonPerimeter(p);
-      double c = (l*l/cvContourPolygonArea(p)) - 4.*pi;
+        double l = cvContourPolygonPerimeter(p);
+        double c = (l*l/cvContourPolygonArea(p)) - 4.*pi;
 
-      if (c>=0.)
-        return c;
-      else // This could happen if the blob it's only a pixel: the perimeter will be 0. Another solution would be to force "cvContourPolygonPerimeter" to be 1 or greater.
-        return 0.;
+        if (c>=0.)
+            return c;
+        else // This could happen if the blob it's only a pixel: the perimeter will be 0. Another solution would be to force "cvContourPolygonPerimeter" to be 1 or greater.
+            return 0.;
     }
     __CV_END__;
-  }
+    return 0.0;
+}
 
-  void simplifyPolygonRecursive(CvContourPolygon const *p, int const i1, int const i2, bool *pnUseFlag, double const delta)
-  {
-    CV_FUNCNAME("cvSimplifyPolygonRecursive");
+void simplifyPolygonRecursive(CvContourPolygon const *p, int const i1, int const i2, bool *pnUseFlag, double const delta)
+{
     __CV_BEGIN__;
     {
-      int endIndex = (i2<0)?p->size():i2;
+        int endIndex = (i2<0)?p->size():i2;
 
-      if (abs(i1-endIndex)<=1)
-	return;
+        if (abs(i1-endIndex)<=1)
+            return;
 
-      CvPoint firstPoint = (*p)[i1];
-      CvPoint lastPoint = (i2<0)?p->front():(*p)[i2];
+        CvPoint firstPoint = (*p)[i1];
+        CvPoint lastPoint = (i2<0)?p->front():(*p)[i2];
 
-      double furtherDistance=0.;
-      int furtherIndex=0;
+        double furtherDistance=0.;
+        int furtherIndex=0;
 
-      for (int i=i1+1; i<endIndex; i++)
-      {
-	double d = cvDistanceLinePoint(firstPoint, lastPoint, (*p)[i]);
+        for (int i=i1+1; i<endIndex; i++)
+        {
+            double d = cvDistanceLinePoint(firstPoint, lastPoint, (*p)[i]);
 
-	if ((d>=delta)&&(d>furtherDistance))
-	{
-	  furtherDistance=d;
-	  furtherIndex=i;
-	}
-      }
+            if ((d>=delta)&&(d>furtherDistance))
+            {
+                furtherDistance=d;
+                furtherIndex=i;
+            }
+        }
 
-      if (furtherIndex)
-      {
-	pnUseFlag[furtherIndex]=true;
+        if (furtherIndex)
+        {
+            pnUseFlag[furtherIndex]=true;
 
-	simplifyPolygonRecursive(p, i1, furtherIndex, pnUseFlag, delta);
-	simplifyPolygonRecursive(p, furtherIndex, i2, pnUseFlag, delta);
-      }
+            simplifyPolygonRecursive(p, i1, furtherIndex, pnUseFlag, delta);
+            simplifyPolygonRecursive(p, furtherIndex, i2, pnUseFlag, delta);
+        }
     }
     __CV_END__;
-  }
+}
 
-  CvContourPolygon *cvSimplifyPolygon(CvContourPolygon const *p, double const delta)
-  {
+CvContourPolygon *cvSimplifyPolygon(CvContourPolygon const *p, double const delta)
+{
     CV_FUNCNAME("cvSimplifyPolygon");
     __CV_BEGIN__;
     {
-      CV_ASSERT(p!=NULL);
+        CV_ASSERT(p!=NULL);
 
-      double furtherDistance=0.;
-      unsigned int furtherIndex=0;
+        double furtherDistance=0.;
+        unsigned int furtherIndex=0;
 
-      CvContourPolygon::const_iterator it=p->begin();
-      ++it;
-      for (unsigned int i=1; it!=p->end(); ++it, i++)
-      {
-	double d = cvDistancePointPoint(*it, p->front());
+        CvContourPolygon::const_iterator it=p->begin();
+        ++it;
+        for (unsigned int i=1; it!=p->end(); ++it, i++)
+        {
+            double d = cvDistancePointPoint(*it, p->front());
 
-	if (d>furtherDistance)
-	{
-	  furtherDistance = d;
-	  furtherIndex = i;
-	}
-      }
+            if (d>furtherDistance)
+            {
+                furtherDistance = d;
+                furtherIndex = i;
+            }
+        }
 
-      if (furtherDistance<delta)
-      {
-	CvContourPolygon *result = new CvContourPolygon;
-	result->push_back(p->front());
-	return result;
-      }
+        if (furtherDistance<delta)
+        {
+            CvContourPolygon *result = new CvContourPolygon;
+            result->push_back(p->front());
+            return result;
+        }
 
-      bool *pnUseFlag = new bool[p->size()];
-      for (unsigned int i=1; i<p->size(); i++) pnUseFlag[i] = false;
+        bool *pnUseFlag = new bool[p->size()];
+        for (unsigned int i=1; i<p->size(); i++) pnUseFlag[i] = false;
 
-      pnUseFlag[0] = pnUseFlag[furtherIndex] = true;
+        pnUseFlag[0] = pnUseFlag[furtherIndex] = true;
 
-      simplifyPolygonRecursive(p, 0, furtherIndex, pnUseFlag, delta);
-      simplifyPolygonRecursive(p, furtherIndex, -1, pnUseFlag, delta);
+        simplifyPolygonRecursive(p, 0, furtherIndex, pnUseFlag, delta);
+        simplifyPolygonRecursive(p, furtherIndex, -1, pnUseFlag, delta);
 
-      CvContourPolygon *result = new CvContourPolygon;
+        CvContourPolygon *result = new CvContourPolygon;
 
-      for (unsigned int i=0; i<p->size(); i++)
-	if (pnUseFlag[i])
-	  result->push_back((*p)[i]);
+        for (unsigned int i=0; i<p->size(); i++)
+            if (pnUseFlag[i])
+                result->push_back((*p)[i]);
 
-      delete[] pnUseFlag;
+        delete[] pnUseFlag;
 
-      return result;
+        return result;
     }
     __CV_END__;
-  }
+    return nullptr;
+}
 
-  CvContourPolygon *cvPolygonContourConvexHull(CvContourPolygon const *p)
-  {
+CvContourPolygon *cvPolygonContourConvexHull(CvContourPolygon const *p)
+{
     CV_FUNCNAME("cvPolygonContourConvexHull");
     __CV_BEGIN__;
     {
-      CV_ASSERT(p!=NULL);
-      
-      if (p->size()<=3)
-      {
-	return new CvContourPolygon(p->begin(), p->end());
-      }
+        CV_ASSERT(p!=NULL);
 
-      deque<CvPoint> dq;
+        if (p->size()<=3)
+        {
+            return new CvContourPolygon(p->begin(), p->end());
+        }
 
-      if (cvCrossProductPoints((*p)[0], (*p)[1], (*p)[2])>0)
-      {
-	dq.push_back((*p)[0]);
-	dq.push_back((*p)[1]);
-      }
-      else
-      {
-	dq.push_back((*p)[1]);
-	dq.push_back((*p)[0]);
-      }
+        deque<CvPoint> dq;
 
-      dq.push_back((*p)[2]);
-      dq.push_front((*p)[2]);
+        if (cvCrossProductPoints((*p)[0], (*p)[1], (*p)[2])>0)
+        {
+            dq.push_back((*p)[0]);
+            dq.push_back((*p)[1]);
+        }
+        else
+        {
+            dq.push_back((*p)[1]);
+            dq.push_back((*p)[0]);
+        }
 
-      for (unsigned int i=3; i<p->size(); i++)
-      {
-	int s = dq.size();
+        dq.push_back((*p)[2]);
+        dq.push_front((*p)[2]);
 
-	if ((cvCrossProductPoints((*p)[i], dq.at(0), dq.at(1))>=0) && (cvCrossProductPoints(dq.at(s-2), dq.at(s-1), (*p)[i])>=0))
-	  continue; // TODO Optimize.
+        for (unsigned int i=3; i<p->size(); i++)
+        {
+            int s = dq.size();
 
-	while (cvCrossProductPoints(dq.at(s-2), dq.at(s-1), (*p)[i])<0)
-	{
-	  dq.pop_back();
-	  s = dq.size();
-	}
+            if ((cvCrossProductPoints((*p)[i], dq.at(0), dq.at(1))>=0) && (cvCrossProductPoints(dq.at(s-2), dq.at(s-1), (*p)[i])>=0))
+                continue; // TODO Optimize.
 
-	dq.push_back((*p)[i]);
+            while (cvCrossProductPoints(dq.at(s-2), dq.at(s-1), (*p)[i])<0)
+            {
+                dq.pop_back();
+                s = dq.size();
+            }
 
-	while (cvCrossProductPoints((*p)[i], dq.at(0), dq.at(1))<0)
-	  dq.pop_front();
+            dq.push_back((*p)[i]);
 
-	dq.push_front((*p)[i]);
-      }
+            while (cvCrossProductPoints((*p)[i], dq.at(0), dq.at(1))<0)
+                dq.pop_front();
 
-      return new CvContourPolygon(dq.begin(), dq.end());
+            dq.push_front((*p)[i]);
+        }
+
+        return new CvContourPolygon(dq.begin(), dq.end());
     }
     __CV_END__;
-  }
+    return nullptr;
+}
 
-  void cvWriteContourPolygonCSV(const CvContourPolygon& p, const string& filename)
-  {
+void cvWriteContourPolygonCSV(const CvContourPolygon& p, const string& filename)
+{
     ofstream f;
     f.open(filename.c_str());
 
     f << p << endl;
 
     f.close();
-  }
+}
 
-  void cvWriteContourPolygonSVG(const CvContourPolygon& p, const string& filename, const CvScalar& stroke, const CvScalar& fill)
-  {
+void cvWriteContourPolygonSVG(const CvContourPolygon& p, const string& filename, const CvScalar& stroke, const CvScalar& fill)
+{
     int minx=INT_MAX;
     int miny=INT_MAX;
     int maxx=INT_MIN;
@@ -398,17 +404,17 @@ namespace cvb
 
     for (CvContourPolygon::const_iterator it=p.begin(); it!=p.end(); ++it)
     {
-      if (it->x>maxx)
-	maxx = it->x;
-      if (it->x<minx)
-	minx = it->x;
+        if (it->x>maxx)
+            maxx = it->x;
+        if (it->x<minx)
+            minx = it->x;
 
-      if (it->y>maxy)
-	maxy = it->y;
-      if (it->y<miny)
-	miny = it->y;
+        if (it->y>maxy)
+            maxy = it->y;
+        if (it->y<miny)
+            miny = it->y;
 
-      buffer << it->x << "," << it->y << " ";
+        buffer << it->x << "," << it->y << " ";
     }
 
     ofstream f;
@@ -423,14 +429,14 @@ namespace cvb
     f << "</svg>" << endl;
 
     f.close();
-  }
+}
 
 }
 
 ostream& operator<< (ostream& output, const cvb::CvContourPolygon& p)
 {
-  for (cvb::CvContourPolygon::const_iterator it=p.begin(); it!=p.end(); ++it)
-    output << it->x << ", " << it->y << endl;
+    for (cvb::CvContourPolygon::const_iterator it=p.begin(); it!=p.end(); ++it)
+        output << it->x << ", " << it->y << endl;
 
-  return output;
+    return output;
 }

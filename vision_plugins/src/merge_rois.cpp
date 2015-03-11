@@ -5,8 +5,7 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_vision/utils/rectangle_cluster.h>
 #include <csapex/model/node_modifier.h>
@@ -26,11 +25,11 @@ MergeROIs::MergeROIs()
 
 void MergeROIs::process()
 {
-    VectorMessage::ConstPtr rois = input_->getMessage<VectorMessage>();
+    VectorMessage::ConstPtr rois = msg::getMessage<VectorMessage>(input_);
 
     RectangleCluster cluster;
-    for(std::vector<ConnectionType::Ptr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
-        RoiMessage::Ptr roi = std::dynamic_pointer_cast<RoiMessage>(*it);
+    for(std::vector<ConnectionType::ConstPtr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
+        RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(*it);
         const Roi& r = roi->value;
         cluster.integrate(r.rect());
     }
@@ -42,11 +41,11 @@ void MergeROIs::process()
         out->value.push_back(msg);
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void MergeROIs::setup()
+void MergeROIs::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<VectorMessage, RoiMessage>("ROIs");
-    output_ = modifier_->addOutput<VectorMessage, RoiMessage>("merged ROIs");
+    input_ = node_modifier.addInput<VectorMessage, RoiMessage>("ROIs");
+    output_ = node_modifier.addOutput<VectorMessage, RoiMessage>("merged ROIs");
 }

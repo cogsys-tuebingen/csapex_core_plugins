@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_core_plugins/vector_message.h>
@@ -31,7 +30,7 @@ HoughLinesP::HoughLinesP() :
 
 void HoughLinesP::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
 
     if(!in->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
@@ -49,28 +48,28 @@ void HoughLinesP::process()
                 cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0,0,255), 3, 8 );
     }
 
-    output_vector_->publish<GenericVectorMessage, cv::Vec4i>(lines_ptr);
-    output_->publish(out);
+    msg::publish<GenericVectorMessage, cv::Vec4i>(output_vector_, lines_ptr);
+    msg::publish(output_, out);
 }
 
-void HoughLinesP::setup()
+void HoughLinesP::setup(NodeModifier& node_modifier)
 {
-    CornerLineDetection::setup();
-    output_vector_ = modifier_->addOutput<GenericVectorMessage, cv::Vec4i>  ("lines saved in vector");
+    CornerLineDetection::setup(node_modifier);
+    output_vector_ = node_modifier.addOutput<GenericVectorMessage, cv::Vec4i>  ("lines saved in vector");
     update();
 }
 
-void HoughLinesP::setupParameters()
+void HoughLinesP::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("rho", 1.0, 100.0, 1.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("rho", 1.0, 100.0, 1.0, 1.0),
                  std::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("theta", 1.0, 2 * CV_PI, CV_PI, 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("theta", 1.0, 2 * CV_PI, CV_PI, 0.1),
                  std::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("threshold", 1, 500, 80, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold", 1, 500, 80, 1),
                  std::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("min length", 0.0, 1000.0, 30.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("min length", 0.0, 1000.0, 30.0, 1.0),
                  std::bind(&HoughLinesP::update, this));
-    addParameter(param::ParameterFactory::declareRange("max gap", 0.0, 400.0, 10.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("max gap", 0.0, 400.0, 10.0, 1.0),
                  std::bind(&HoughLinesP::update, this));
 
 }

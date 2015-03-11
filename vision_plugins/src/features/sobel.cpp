@@ -2,8 +2,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <utils_cv/normalization.hpp>
@@ -23,19 +22,19 @@ Sobel::Sobel() :
 
 void Sobel::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
     int depth = in->value.type() & 7;
     cv::Sobel(in->value, out->value, depth, dx_, dy_, ksize_, scale_,delta_);
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void Sobel::setupParameters()
+void Sobel::setupParameters(Parameterizable& parameters)
 {
-    Operator::setupParameters();
-    addParameter(param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
+    Operator::setupParameters(parameters);
+    parameters.addParameter(param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
                  std::bind(&Sobel::update, this));
-    addParameter(param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
+    parameters.addParameter(param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
                  std::bind(&Sobel::update, this));
 }
 

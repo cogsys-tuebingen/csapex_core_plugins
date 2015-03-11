@@ -3,8 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
@@ -21,7 +20,7 @@ Scale::Scale()
 
 void Scale::process()
 {
-    CvMatMessage::ConstPtr in = input_->getMessage<connection_types::CvMatMessage>();
+    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(!in->value.empty()) {
@@ -30,21 +29,21 @@ void Scale::process()
         throw std::runtime_error("Cannot scale empty images!");
     }
 
-    output_->publish(out);
+    msg::publish(output_, out);
 }
 
-void Scale::setup()
+void Scale::setup(NodeModifier& node_modifier)
 {
-    input_ = modifier_->addInput<CvMatMessage>("original");
-    output_ = modifier_->addOutput<CvMatMessage>("scale");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
+    output_ = node_modifier.addOutput<CvMatMessage>("scale");
     update();
 }
 
-void Scale::setupParameters()
+void Scale::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
                  std::bind(&Scale::update, this));
-    addParameter(param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
                  std::bind(&Scale::update, this));
     std::map<std::string, int> modes = boost::assign::map_list_of
             ("nearest", (int) cv::INTER_NEAREST)
@@ -52,7 +51,7 @@ void Scale::setupParameters()
             ("area", (int) cv::INTER_AREA)
             ("cubic", (int) cv::INTER_CUBIC)
             ("lanczos4", (int) cv::INTER_LANCZOS4);
-    addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST), std::bind(&Scale::update, this));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST), std::bind(&Scale::update, this));
 }
 
 void Scale::update()
