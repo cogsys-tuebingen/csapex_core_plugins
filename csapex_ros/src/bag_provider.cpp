@@ -151,7 +151,7 @@ bool BagProvider::hasNext()
 
     // check if we are paused
     if(!state.readParameter<bool>("bag/play")) {
-        has_next = false;
+        has_next = state.readParameter<bool>("bag/latch");
     } else {
         has_next = initiated;
     }
@@ -217,8 +217,10 @@ void BagProvider::advanceIterators()
 
     } else {
         // advance frame
-        ++frame_;
-        state["bag/frame"] = frame_;
+        if(state.readParameter<bool>("bag/play")) {
+            ++frame_;
+            state["bag/frame"] = frame_;
+        }
     }
 
     if(reset) {
@@ -237,7 +239,7 @@ void BagProvider::advanceIterators()
         begin();
     }
 
-    bool done = false;
+    bool done = !state.readParameter<bool>("bag/play");
     bool pub_tf = state.readParameter<bool>("bag/publish tf");
     for(; view_it_ != view_all_->end() && !done; ++view_it_) {
         rosbag::MessageInstance next = *view_it_;
