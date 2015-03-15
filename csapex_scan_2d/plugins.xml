@@ -2,6 +2,12 @@
 <class type="csapex::SegmentLabeler" base_class_type="csapex::Node">
   <description>Assigns labels to segements based on a labeled scan</description>
 </class>
+<class type="csapex::SegmentDistanceFilter" base_class_type="csapex::Node">
+  <description>Filters segments with a distance inside a given interval</description>
+</class>
+<class type="csapex::SegmentLabelFilter" base_class_type="csapex::Node">
+  <description>Filters segments with a classification inside a given interval</description>
+</class>
 <class type="csapex::RegisterScan2DPlugin" base_class_type="csapex::CorePlugin">
   <description></description>
 </class>
