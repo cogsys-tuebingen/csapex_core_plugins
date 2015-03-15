@@ -88,6 +88,7 @@ add_library(csapex_vision_plugin
     src/plugin/col.cpp
     src/plugin/mean_dev_normalization.cpp
 
+    src/plugin/levels.cpp
     src/plugin/blur.cpp
     src/plugin/gaussian_blur.cpp
     src/plugin/bilateral.cpp

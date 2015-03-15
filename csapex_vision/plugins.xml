@@ -31,6 +31,12 @@
   <description></description>
 </class>
 
+<class type="csapex::Levels" base_class_type="csapex::Node">
+  <description>
+    Adjust the levels of all color channels in an image.
+  </description>
+  <tags>Vision, Filter, Levels, White Balance, Auto Levels</tags>
+</class>
 
 <class type="csapex::ImagePadding" base_class_type="csapex::Node">
   <description>Adds padding pixels to an image</description>
