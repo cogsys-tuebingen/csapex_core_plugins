@@ -43,6 +43,8 @@ struct Image2CvMat
         } else if(source_encoding == sensor_msgs::image_encodings::MONO8 ||
                   source_encoding == sensor_msgs::image_encodings::MONO16) {
             target_encoding = enc::mono;
+        } else if(source_encoding == sensor_msgs::image_encodings::YUV422) {
+            target_encoding = enc::yuv;
         } else if(source_encoding.substr(6) == "bayer_") {
             target_encoding = enc::mono;
         } else {

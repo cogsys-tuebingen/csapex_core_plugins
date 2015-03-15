@@ -5,6 +5,10 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_qt/QtCvImageConverter.h>
 
+/// SYSTEM
+#include <QImage>
+#include <QPainter>
+
 CSAPEX_REGISTER_CLASS(csapex::ImageRenderer, csapex::MessageRenderer)
 
 using namespace csapex;
@@ -39,7 +43,17 @@ QSharedPointer<QImage> ImageRenderer::doRender(const connection_types::CvMatMess
 
     } else if(encoding.matches(enc::bgr) || encoding.matches(enc::mono)) {
         return QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(msg.value);
+
+    } else if(encoding.matches(enc::depth)) {
+        return QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(msg.value);
+
+    } else {
+        auto i = QSharedPointer<QImage>(new QImage(70, 20, QImage::Format_ARGB32));
+        QPainter painter(i.data());
+        painter.fillRect(i->rect(), Qt::SolidPattern);
+        painter.setPen(QPen(Qt::white));
+        painter.drawText(i->rect(), "No Image");
+        return i;
     }
 
-    return QSharedPointer<QImage>();
 }
