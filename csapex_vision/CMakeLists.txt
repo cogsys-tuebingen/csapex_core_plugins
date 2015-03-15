@@ -86,6 +86,7 @@ add_library(csapex_vision_plugin
     src/plugin/image_roi_adapter.cpp
     src/plugin/row.cpp
     src/plugin/col.cpp
+    src/plugin/reshape.cpp
     src/plugin/mean_dev_normalization.cpp
 
     src/plugin/levels.cpp
@@ -94,6 +95,7 @@ add_library(csapex_vision_plugin
     src/plugin/bilateral.cpp
     src/plugin/mean_dev.cpp
 
+    src/plugin/load_filestorage.cpp
 
     src/core/image_renderer.cpp
     src/core/image_provider.cpp
