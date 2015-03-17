@@ -32,6 +32,8 @@ add_library(csapex_ml_plugin
 
     src/svm_trainer.cpp
     src/svm.cpp
+
+    src/arff_format_export.cpp
 )
 
 target_link_libraries(csapex_ml_plugin
