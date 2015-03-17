@@ -81,9 +81,11 @@ void ArffFormatExport::process()
 
 namespace {
 const static std::string TAG_RELATION("@relation");
-const static std::string TAG_ATTRIBUTE("@attribute");
+const static std::string TAG_ATTRIBUTE("@attribute attr_");
+const static std::string TYPE_ATTRIBUTE("numeric");
 const static std::string TAG_CLASS("@attribute class");
 const static std::string TAG_DATA("@data");
+const static std::string CLASS_PREFIX("cl_");
 
 inline void writeHeader(const std::string   &relation,
                         const unsigned int   features,
@@ -92,13 +94,13 @@ inline void writeHeader(const std::string   &relation,
 {
     out << TAG_RELATION  << " " << relation << std::endl;
     for(unsigned int i = 0 ; i < features ; ++i)
-        out << TAG_ATTRIBUTE << " " << i << std::endl;
+        out << TAG_ATTRIBUTE  << i << " " << TYPE_ATTRIBUTE << std::endl;
     out << TAG_CLASS << " { ";
     auto it_class = classes.begin();
     for(unsigned int i = 0 ; i < classes.size() -1 ; ++i, ++it_class)
-        out << *it_class << " , ";
-    ++it_class;
-    out << *it_class << " }" << std::endl;
+        out << CLASS_PREFIX <<  *it_class << " , ";
+
+    out << CLASS_PREFIX << *(++it_class)  << " }" << std::endl;
     out << TAG_DATA << std::endl;
 }
 
@@ -141,7 +143,7 @@ void ArffFormatExport::save()
              it != msgs.end() ;
            ++it) {
         exportVector<float>(it->value, out_file);
-        out_file << it->classification << std::endl;
+        out_file << CLASS_PREFIX << it->classification << std::endl;
     }
 
     out_file.close();
