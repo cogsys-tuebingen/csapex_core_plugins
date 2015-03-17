@@ -15,11 +15,13 @@
   <build_depend>csapex_ros</build_depend>
   <build_depend>csapex_transform</build_depend>
   <build_depend>csapex_vision</build_depend>
+  <build_depend>pcl_ros</build_depend>
 
   <run_depend>csapex</run_depend>
   <run_depend>csapex_ros</run_depend>
   <run_depend>csapex_transform</run_depend>
   <run_depend>csapex_vision</run_depend>
+  <run_depend>pcl_ros</run_depend>
 
   <export>
     <csapex plugin="${prefix}/plugins.xml" />

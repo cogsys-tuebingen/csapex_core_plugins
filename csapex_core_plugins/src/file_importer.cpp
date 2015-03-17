@@ -15,13 +15,9 @@
 
 /// SYSTEM
 #include <boost/filesystem.hpp>
-#include <QLabel>
-#include <QFileDialog>
-#include <QTimer>
-#include <QtConcurrentRun>
-#include <QCheckBox>
-#include <QUrl>
 #include <boost/lambda/lambda.hpp>
+#include <QDir>
+#include <QUrl>
 
 CSAPEX_REGISTER_CLASS(csapex::FileImporter, csapex::Node)
 

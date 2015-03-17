@@ -21,6 +21,12 @@ void RosNode::setup(NodeModifier& node_modifier)
 {
 }
 
+bool RosNode::canTick()
+{
+    ROSHandler& ros = getRosHandler();
+    return ros.isConnected();
+}
+
 void RosNode::tick()
 {
     ROSHandler& ros = getRosHandler();

@@ -24,6 +24,7 @@ protected:
     virtual void setupROS() = 0;
     virtual void processROS() = 0;
 
+    virtual bool canTick() override;
     virtual void tick();
     virtual void tickROS();
 

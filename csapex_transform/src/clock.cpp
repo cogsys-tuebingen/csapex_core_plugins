@@ -35,6 +35,13 @@ void Clock::tick()
 {
     getRosHandler().waitForConnection();
 
+    if(!getRosHandler().isConnected()) {
+        modifier_->setWarning("No ROS connection");
+        return;
+    }
+
+    getRosHandler().nh();
+
     connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
     if(readParameter<int>("method") == CURRENT) {
         time->value = ros::Time::now();

@@ -55,7 +55,7 @@ private:
     std::shared_ptr<ros::AsyncSpinner> spinner_;
 
     bool initialized_;
-    std::mutex has_connection_mutex;
+    std::recursive_mutex has_connection_mutex;
     QFuture<bool> has_connection;
 
     std::vector<std::function<void()> > connection_callbacks_;

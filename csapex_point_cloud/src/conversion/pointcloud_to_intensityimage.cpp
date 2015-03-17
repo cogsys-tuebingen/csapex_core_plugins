@@ -67,14 +67,17 @@ void PointCloudToIntensityImage::inputCloudImpl(typename pcl::PointCloud<pcl::Po
     int rows = n / cols;
 
     CvMatMessage::Ptr output(new CvMatMessage(enc::mono, cloud->header.stamp));
-    output->value.create(rows,cols, CV_8U);
+    output->value = cv::Mat(rows,cols, CV_8U, cv::Scalar::all(0));
 
     typename pcl::PointCloud<pcl::PointXYZI>::const_iterator pt = cloud->points.begin();
     uchar* data = (uchar*) output->value.data;
 
     for(unsigned idx = 0; idx < n; ++idx) {
         const pcl::PointXYZI& p = *pt;
-        *data = p.intensity;
+        double dist = std::sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
+        if(dist == dist) {
+            *data = p.intensity;
+        }
 
         ++data;
         ++pt;

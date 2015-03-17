@@ -13,8 +13,8 @@
 #include <csapex/msg/message_factory.h>
 
 /// SYSTEM
-#include <QFileDialog>
 #include <fstream>
+#include <QDir>
 
 CSAPEX_REGISTER_CLASS(csapex::ExportFile, csapex::Node)
 
