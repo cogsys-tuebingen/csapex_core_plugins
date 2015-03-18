@@ -100,7 +100,7 @@ inline void writeHeader(const std::string   &relation,
     for(unsigned int i = 0 ; i < classes.size() -1 ; ++i, ++it_class)
         out << CLASS_PREFIX <<  *it_class << " , ";
 
-    out << CLASS_PREFIX << *(++it_class)  << " }" << std::endl;
+    out << CLASS_PREFIX << *it_class  << " }" << std::endl;
     out << TAG_DATA << std::endl;
 }
 
