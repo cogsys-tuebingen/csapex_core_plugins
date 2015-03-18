@@ -39,12 +39,17 @@ Q_SIGNALS:
 protected:
     bool eventFilter(QObject* o, QEvent* e);
     void labelSelected(int label);
+    void updatePolygon();
+    void labelInside();
 
     ScanLabeler* wrapped_;
 
     struct State : public Memento {
         int width;
         int height;
+
+        QPolygonF inside;
+        QGraphicsPolygonItem* inside_item;
 
         State()
             : width(300), height(300)
@@ -53,12 +58,30 @@ protected:
         virtual void writeYaml(YAML::Node& out) const {
             out["width"] = width;
             out["height"] = height;
+
+            std::vector<double> pts;
+            for(const auto& pt : inside) {
+                pts.push_back(pt.x());
+                pts.push_back(pt.y());
+            }
+            out["inside"] = pts;
         }
         virtual void readYaml(const YAML::Node& node) {
-            if(node["width"].IsDefined())
+            if(node["width"].IsDefined()) {
                 width = node["width"].as<int>();
-            if(node["height"].IsDefined())
+            }
+            if(node["height"].IsDefined()) {
                 height = node["height"].as<int>();
+            }
+            if(node["inside"].IsDefined()) {
+                auto pts = node["inside"].as<std::vector<double>>();
+                for(std::size_t i = 0; i < pts.size(); i+= 2) {
+                    QPointF pt;
+                    pt.setX(pts[i]);
+                    pt.setY(pts[i+1]);
+                    inside.push_back(pt);
+                }
+            }
         }
     };
 

@@ -18,9 +18,9 @@ class RosNode : public Node
 protected:
     RosNode();
 
-    void process();
+    virtual void process() override;
+    virtual void setup(NodeModifier& node_modifier) override;
 
-    void setup(NodeModifier& node_modifier);
     virtual void setupROS() = 0;
     virtual void processROS() = 0;
 

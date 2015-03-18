@@ -1,5 +1,5 @@
-#ifndef YAML_IO_HPP
-#define YAML_IO_HPP
+#ifndef ROS_YAML_IO_HPP
+#define ROS_YAML_IO_HPP
 
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
@@ -79,4 +79,4 @@ struct convert<nav_msgs::Odometry> {
 
 }
 
-#endif // YAML_IO_HPP
+#endif // ROS_YAML_IO_HPP

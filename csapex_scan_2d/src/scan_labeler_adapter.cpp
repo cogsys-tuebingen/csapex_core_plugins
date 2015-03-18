@@ -16,6 +16,7 @@
 #include <QPushButton>
 #include <QKeyEvent>
 #include <QScrollBar>
+#include <QApplication>
 
 using namespace csapex;
 
@@ -44,7 +45,7 @@ void ScanLabelerAdapter::labelSelected(int label)
     QBrush brush(color::fromCount(label), Qt::SolidPattern);
     QPen pen(color::fromCount(label));
 
-    Q_FOREACH(QGraphicsItem* item, view_->scene()->selectedItems()) {
+    for(QGraphicsItem* item : view_->scene()->selectedItems()) {
         result_->value.labels[item->data(0).toUInt()] = label;
 
         QGraphicsRectItem* rect = dynamic_cast<QGraphicsRectItem*> (item);
@@ -59,6 +60,21 @@ void ScanLabelerAdapter::labelSelected(int label)
 void ScanLabelerAdapter::updateLabel(int label)
 {
     node_->getNode()->getParameter("label")->set(label);
+}
+
+void ScanLabelerAdapter::updatePolygon()
+{
+    state.inside_item->setPolygon(state.inside);
+
+    labelInside();
+}
+
+void ScanLabelerAdapter::labelInside()
+{
+    for(QGraphicsItem* item : view_->scene()->collidingItems(state.inside_item)) {
+        item->setSelected(true);
+    }
+    labelSelected();
 }
 
 bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
@@ -86,12 +102,24 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
         break;
     }
     case QEvent::GraphicsSceneMousePress:
-        if(me->button() == Qt::MiddleButton || me->button() == Qt::RightButton) {
-            resize_down_ = me->button() == Qt::MiddleButton;
-            move_down_ = me->button() == Qt::RightButton;
-            last_pos_ = me->screenPos();
-            e->accept();
-            return true;
+        if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+            if(me->button() == Qt::LeftButton) {
+                state.inside.push_back(me->scenePos());
+                updatePolygon();
+                return true;
+            } else if(me->button() == Qt::RightButton) {
+                state.inside.clear();
+                updatePolygon();
+                return true;
+            }
+        } else {
+            if(me->button() == Qt::MiddleButton || me->button() == Qt::RightButton) {
+                resize_down_ = me->button() == Qt::MiddleButton;
+                move_down_ = me->button() == Qt::RightButton;
+                last_pos_ = me->screenPos();
+                e->accept();
+                return true;
+            }
         }
         break;
     case QEvent::GraphicsSceneMouseRelease: {
@@ -119,7 +147,7 @@ bool ScanLabelerAdapter::eventFilter(QObject *o, QEvent *e)
                 double f = 1.0;
                 view_->horizontalScrollBar()->setValue(view_->horizontalScrollBar()->value() + delta.x() * f);
                 view_->verticalScrollBar()->setValue(view_->verticalScrollBar()->value() + delta.y() * f);
-//                view_->translate(state.offset_x, state.offset_y);
+                //                view_->translate(state.offset_x, state.offset_y);
             }
 
 
@@ -227,8 +255,14 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
         item->setFlag(QGraphicsItem::ItemIsFocusable);
     }
 
+    state.inside_item = scene->addPolygon(state.inside);
+    labelInside();
 
     scene->update();
+
+    if(node_->getNode()->readParameter<bool>("automatic")) {
+        submit();
+    }
 }
 
 void ScanLabelerAdapter::submit()

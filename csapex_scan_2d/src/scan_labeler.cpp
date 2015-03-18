@@ -31,6 +31,7 @@ void ScanLabeler::setupParameters(Parameterizable& parameters)
     parameters.addParameter(param::ParameterFactory::declareTrigger("submit", param::ParameterDescription("Continue with the current labeling")),
                                                          std::bind(&ScanLabeler::submit, this));
 
+    addParameter(param::ParameterFactory::declareBool("automatic", param::ParameterDescription("Automatically continue without user interaction"), false));
     addParameter(param::ParameterFactory::declareRange("label",
                                                        param::ParameterDescription("The label to be assigned to the selected points"),
                                                        0, 9, 0, 1));
