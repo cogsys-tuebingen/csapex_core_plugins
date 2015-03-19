@@ -8,6 +8,8 @@
 /// SYSTEM
 #include <QTableView>
 #include <QPainter>
+#include <QGridLayout>
+#include <QLabel>
 
 using namespace csapex;
 
@@ -61,12 +63,14 @@ QVariant ConfusionMatrixTableModel::data(const QModelIndex &index, int role) con
         return QVariant();
     }
 
-    int entry = confusion_.histogram.at(std::make_pair(index.row(), index.column()));
+    auto actual = index.column();
+    auto prediction = index.row();
+    int entry = confusion_.histogram.at(std::make_pair(actual, prediction));
     if(role == Qt::DisplayRole) {
         return entry;
     }
 
-    double f = entry / double(sum[index.column()]);
+    double f = entry / double(sum[actual]);
 
     static QColor min_color = QColor::fromRgb(255, 255, 255);
     static QColor max_color = QColor::fromRgb(0, 0, 0);
@@ -111,7 +115,16 @@ void ConfusionMatrixDisplayAdapter::setupUi(QBoxLayout* layout)
     table_->viewport()->setMinimumSize(0, 0);
     table_->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
 
-    layout->addWidget(table_);
+    QGridLayout* grid = new QGridLayout;
+    layout->addLayout(grid);
+
+    auto actual = new QLabel("actual");
+
+    grid->addWidget(actual, 0, 1);
+    grid->addWidget(new QLabel("predicted"), 1, 0);
+
+    grid->addWidget(table_, 1, 1);
+
 
     connect(this, SIGNAL(displayRequest()), this, SLOT(display()));
 }
