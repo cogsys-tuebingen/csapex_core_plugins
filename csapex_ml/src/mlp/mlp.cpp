@@ -33,7 +33,7 @@ MLP::MLP (
 	this->weights = new double[this->weights_num];
 	//
 	for (size_t i = 0; i < this->weights_num; ++i) {
-		this->weights[i] = weights[i];
+        this->weights[i] = weights[i];
 	}
 	//
 	this->input_size  = this->layer_sizes[0];
@@ -64,7 +64,7 @@ void MLP::compute(const double* input, double* output) {
 	//
 	// copy input into buffer
 	//
-	ptr = this->buffer;
+    ptr = this->buffer;
 	//
 	for (size_t i = 0; i < this->input_size; ++i) {
 		*ptr = *input_ptr;
@@ -97,8 +97,8 @@ void MLP::compute(const double* input, double* output) {
 			//
 			// collect net input.
 			//
-			for (size_t i = 0; i < prev_size; ++i) {
-				const double xwij = (*read_ptr) * (*weight_ptr);
+            for (size_t i = 0; i < prev_size; ++i) {
+                const double xwij = (*read_ptr) * (*weight_ptr);
 				*ptr += xwij;
 				read_ptr++;
 				weight_ptr++;
@@ -136,7 +136,7 @@ void MLP::compute(const double* input, double* output) {
 		// collect net input.
 		//
 		for (size_t i = 0; i < prev_size; ++i) {
-			const double xwij = *read_ptr * *weight_ptr;
+            const double xwij = *read_ptr * *weight_ptr;
 			*ptr += xwij;
 			read_ptr++;
 			weight_ptr++;
@@ -164,20 +164,20 @@ void MLP::compute(const double* input, double* output) {
 	//
 	double* output_ptr = output;
 	read_ptr = curr_ptr;
-	//
+    //
 	for (size_t j = 0; j < curr_size; ++j) {
 		*output_ptr = *read_ptr;
 		output_ptr++;
-		read_ptr++;
-	}
-	//
-	// done.
-	//
-	/*
-	for (size_t i = 0; i < this->buffer_size; ++i) {
-		std::cout << buffer[i] << std::endl;
-	}
-	*/
+        read_ptr++;
+    }
+    //
+    // done.
+    //
+    /*
+    for (size_t i = 0; i < this->buffer_size; ++i) {
+        std::cout << buffer[i] << std::endl;
+    }
+    */
 }
 
 

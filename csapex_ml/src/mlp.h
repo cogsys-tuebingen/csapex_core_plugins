@@ -32,6 +32,14 @@ private:
     std::vector<int>    mlp_class_labels_;
 
     void load();
+
+    std::vector<size_t> layers;
+    std::vector<double> weights;
+
+    std::vector<std::vector<double>> norm;
+
+    std::string mlp_path;
+    std::string norm_path;
 };
 }
 

@@ -8,6 +8,10 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_core_plugins/vector_message.h>
 
+/// SYSTEM
+#include <fstream>
+#include <sstream>
+
 CSAPEX_REGISTER_CLASS(csapex::MLP, csapex::Node)
 
 using namespace csapex;
@@ -33,13 +37,19 @@ void MLP::setupParameters(Parameterizable& parameters)
                                                       "",
                                                       "*.yaml"),
                  std::bind(&MLP::load, this));
+    addParameter(param::ParameterFactory::declarePath("normalization path",
+                                                      param::ParameterDescription("Path to a normalization file."),
+                                                      true,
+                                                      "",
+                                                      "*.norm"),
+                 std::bind(&MLP::load, this));
 
 }
 
 namespace {
 inline unsigned int maxIndex(const std::vector<double> &nn_output)
 {
-    double       max = std::numeric_limits<double>::min();
+    double       max = -std::numeric_limits<double>::infinity();
     unsigned int pos = 0;
     for(unsigned int i = 0 ; i < nn_output.size() ; ++i) {
         if(nn_output.at(i) > max) {
@@ -70,7 +80,7 @@ void MLP::process()
     std::shared_ptr<std::vector<FeaturesMessage> const> in = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
     std::shared_ptr<std::vector<FeaturesMessage> >      out(new std::vector<FeaturesMessage>());
 
-    m_.lock();
+    std::unique_lock<std::mutex> lock(m_);
     if(mlp_input_size_ == 0 || mlp_output_size_ == 0) {
         *out = *in;
         modifier_->setWarning("cannot classfiy, no mlp loaded");
@@ -91,28 +101,49 @@ void MLP::process()
 
             *it_out = *it_in;
             std::vector<double> mlp_input;
-            std::vector<double> mlp_output(mlp_output_size_, 0.0);
             convertNumeric(it_out->value, mlp_input);
+
+            if(!norm.empty()) {
+                apex_assert_hard(norm.size() == 2);
+                apex_assert_hard(norm[0].size() == mlp_input_size_);
+                apex_assert_hard(norm[1].size() == mlp_input_size_);
+
+                for(std::size_t i = 0; i < mlp_input.size(); ++i) {
+                    mlp_input[i] = (mlp_input[i] - norm[0][i]) / (norm[1][i]);
+                }
+            }
+
+            std::vector<double> mlp_output(mlp_output_size_, 0.0);
+
             mlp_->compute(mlp_input.data(),mlp_output.data());
             it_out->classification = mlp_class_labels_.at(maxIndex(mlp_output));
         }
     }
-    m_.unlock();
+    lock.unlock();
 
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
 void MLP::load()
 {
-    std::string path = readParameter<std::string>("MLP path");
-    if(path == "")
-        return;
+    auto mlp_p = readParameter<std::string>("MLP path");
+    auto norm_p = readParameter<std::string>("normalization path");
 
-    std::vector<size_t> layers;
-    std::vector<double> weights;
+    if(mlp_path == mlp_p && norm_path == norm_p) {
+        return;
+    }
+
+    mlp_path = mlp_p;
+    norm_path = norm_p;
+
+    if(mlp_path.empty()) {
+        return;
+    }
+
 
     try {
-        YAML::Node document = YAML::LoadFile(path);
+        YAML::Node document = YAML::LoadFile(mlp_path);
+        layers.clear();
         YAML::Node y_layers = document["layers"];
         for(auto it = y_layers.begin() ; it != y_layers.end() ; ++it)
             layers.push_back((*it).as<size_t>());
@@ -124,8 +155,22 @@ void MLP::load()
         return;
     }
 
+    if(!norm_path.empty()) {
+        std::string line;
+        std::ifstream in(norm_path);
+        while (std::getline(in, line)) {
+            norm.emplace_back();
 
-    m_.lock();
+            std::istringstream iss(line);
+            double num = 0;
+            while(iss >> num)  {
+                norm.back().push_back(num);
+            }
+        }
+    }
+
+
+    std::unique_lock<std::mutex> lock(m_);
     mlp_.reset();
     mlp_input_size_  = 0;
     mlp_output_size_ = 0;
@@ -143,6 +188,18 @@ void MLP::load()
         return;
     }
 
+    int connections = 0;
+    for(std::size_t i = 0; i < layers.size() - 1; ++i) {
+        int l = layers[i];
+        int lnext = layers[i+1];
+        connections += (l * lnext);
+    }
+
+    if(connections != weights.size()) {
+        modifier_->setWarning(std::string("Net has ") + std::to_string(connections) + " connections but " + std::to_string(weights.size()) + " weights");
+        return;
+    }
+
     mlp_input_size_  = layers.front();
     mlp_output_size_ = layers.back();
 
@@ -150,5 +207,4 @@ void MLP::load()
                             layers.data(),
                             weights.size(),
                             weights.data()));
-    m_.unlock();
 }
