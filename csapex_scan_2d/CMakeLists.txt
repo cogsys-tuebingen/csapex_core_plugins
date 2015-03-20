@@ -61,6 +61,7 @@ add_library(csapex_scan_2d_plugin
     src/renderer.cpp
     src/segmentation_renderer.cpp
     src/segment_distance_filter.cpp
+    src/segment_mincount_filter.cpp
     src/segment_label_filter.cpp
     src/scan_renderer.cpp
     src/scan_message_renderer.cpp
