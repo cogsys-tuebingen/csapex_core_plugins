@@ -73,6 +73,12 @@
   </description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::RayAngles" base_class_type="csapex::Node">
+  <description>
+    Calculate the angles to the main axis.
+  </description>
+  <tags>PointCloud</tags>
+</class>
 <class type="csapex::ConditionalOutlierRemoval" base_class_type="csapex::Node">
   <description>
     Filter outliers by condition. Currently the Filter only works with ranges in 3D.
