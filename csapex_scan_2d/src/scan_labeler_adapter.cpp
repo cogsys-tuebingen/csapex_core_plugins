@@ -241,6 +241,9 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 
     float dim = SCALE * 0.05f;
 
+    lib_laser_processing::Scan& s = result_->value;
+    s = *scan;
+
     result_->value.rays = scan->rays;
     result_->value.labels.resize(scan->rays.size(), 0);
 
