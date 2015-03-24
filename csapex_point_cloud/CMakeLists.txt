@@ -81,6 +81,8 @@ add_library(csapex_point_cloud_plugin
     src/segmentation/split_clustered_cloud.cpp
     src/segmentation/label_clustered_pointcloud.cpp
 
+    src/analysis/ray_angles.cpp
+
     src/pointcloud_generator.cpp
     src/sac_fit.cpp
     src/model_to_marker.cpp

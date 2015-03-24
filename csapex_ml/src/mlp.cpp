@@ -195,7 +195,7 @@ void MLP::load()
         connections += (l * lnext);
     }
 
-    if(connections != weights.size()) {
+    if(connections != (int) weights.size()) {
         modifier_->setWarning(std::string("Net has ") + std::to_string(connections) + " connections but " + std::to_string(weights.size()) + " weights");
         return;
     }
