@@ -37,6 +37,7 @@ Node convert<csapex::connection_types::FeaturesMessage>::encode(const csapex::co
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
     node["features"] = rhs.value;
     node["classification"] = rhs.classification;
+    node["confidence"] = rhs.confidence;
     return node;
 }
 
@@ -48,6 +49,11 @@ bool convert<csapex::connection_types::FeaturesMessage>::decode(const Node& node
     convert<csapex::connection_types::Message>::decode(node, rhs);
     rhs.value = node["features"].as<std::vector<float> >();
     rhs.classification = node["classification"].as<int>();
+    if(node["confidence"].IsDefined())
+        rhs.confidence = node["confidence"].as<float>();
+    else
+        rhs.confidence = 1.f;
+
     return true;
 }
 }
