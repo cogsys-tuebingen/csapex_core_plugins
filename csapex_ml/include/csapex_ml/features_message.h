@@ -22,7 +22,8 @@ struct FeaturesMessage : public Message
     virtual ConnectionType::Ptr toType() const override;
 
     std::vector<float> value;
-    int classification;
+    int   classification;
+    float confidence;
 };
 
 /// TRAITS

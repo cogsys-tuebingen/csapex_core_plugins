@@ -19,6 +19,8 @@ include_directories(
 add_library(csapex_evaluation
     src/confusion_matrix.cpp
     src/confusion_matrix_message.cpp
+    src/confidence_matrix.cpp
+    src/confidence_matrix_message.cpp
 )
 target_link_libraries(csapex_evaluation
     yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES})
