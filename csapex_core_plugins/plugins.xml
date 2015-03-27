@@ -98,4 +98,14 @@
   <description>Buffer up to 50 message and hold state to publish one of the currently buffered.</description>
   <icon>:/buffer.png</icon>
 </class>
+
+
+<class type="csapex::StampDelayMeasurement" base_class_type="csapex::Node">
+  <description>Measure delay between time stamp of a message and the current time</description>
+  <tags>Time</tags>
+</class>
+<class type="csapex::SignalDelayMeasurement" base_class_type="csapex::Node">
+  <description>Measure delay between two signals</description>
+  <tags>Time</tags>
+</class>
 </library>

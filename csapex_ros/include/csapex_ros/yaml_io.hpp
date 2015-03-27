@@ -25,6 +25,19 @@ struct convert<visualization_msgs::MarkerArray> {
     }
 };
 
+
+template<>
+struct convert<visualization_msgs::Marker> {
+    static Node encode(const visualization_msgs::Marker& rhs) {
+        Node node;
+        return node;
+    }
+
+    static bool decode(const Node& node, visualization_msgs::Marker& rhs) {
+        return true;
+    }
+};
+
 // TODO: implement
 template<>
 struct convert<nav_msgs::OccupancyGrid> {

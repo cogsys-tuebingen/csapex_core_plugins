@@ -140,8 +140,9 @@ void APEXRosInterface::init(CsApexCore &core)
     RosMessageConversion::registerConversion<std_msgs::String, connection_types::GenericValueMessage<std::string>, ConvertIntegral<std_msgs::String, std::string> >();
 
     RosMessageConversionT<nav_msgs::Odometry>::registerConversion();
-    RosMessageConversionT<geometry_msgs::PoseStamped>::registerConversion();    
+    RosMessageConversionT<geometry_msgs::PoseStamped>::registerConversion();
     RosMessageConversionT<visualization_msgs::MarkerArray>::registerConversion();
+    RosMessageConversionT<visualization_msgs::Marker>::registerConversion();
 }
 
 void APEXRosInterface::registerCommandListener()

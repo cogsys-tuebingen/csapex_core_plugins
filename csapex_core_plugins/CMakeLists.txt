@@ -58,6 +58,9 @@ add_library(csapex_core_plugins
     src/double_input.cpp
     src/text_input.cpp
 
+    src/stamp_delay_measurement.cpp
+    src/signal_delay_measurement.cpp
+
 #    src/demultiplexer.cpp
 #    src/multiplexer.cpp
 
