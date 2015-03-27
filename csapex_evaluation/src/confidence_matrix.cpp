@@ -53,9 +53,11 @@ void ConfidenceMatrix::initializeClass(int _class)
     resetClass(_class);
 }
 
-void ConfidenceMatrix::reset()
+void ConfidenceMatrix::reset(UpdateType update)
 {
     for(auto c: classes) {
         resetClass(c);
     }
+
+    update_type = update;
 }

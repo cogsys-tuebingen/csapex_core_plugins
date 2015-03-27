@@ -1,0 +1,28 @@
+#ifndef CONFIDENCE_CLASS_TOGGLE_H
+#define CONFIDENCE_CLASS_TOGGLE_H
+
+/// PROJECT
+#include <csapex/model/node.h>
+
+namespace csapex {
+
+
+class ConfidenceClassToggle : public csapex::Node
+{
+
+public:
+    ConfidenceClassToggle();
+
+    void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void process() override;
+
+private:
+    Input* in_;
+    Output* out_;
+};
+
+
+}
+
+#endif // CONFIDENCE_CLASS_TOGGLE_H

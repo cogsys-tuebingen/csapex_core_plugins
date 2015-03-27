@@ -19,7 +19,7 @@ public:
                           int   estimation,
                           float estimation_confidence);
 
-    void reset();
+    void reset(UpdateType update = MEAN);
 
 public:
     std::vector<int>                     classes;

@@ -69,14 +69,14 @@ connection_types::FeaturesMessage RandomTrees::classify(const FeaturesMessage &i
     int max_class_id = 0;
     int ntrees = dtree_.get_tree_count();
     for(int i = 0 ; i < ntrees ; ++i) {
-        cv::Mat sample(result.value);
+        cv::Mat sample(1, result.value.size(), CV_32FC1, result.value.data());
         CvDTreeNode* prediction = dtree_.get_tree(i)->predict(sample);
         int prediction_class_id = std::round(prediction->value);
         if(votes.find(prediction_class_id) == votes.end()) {
             votes[prediction_class_id] = 0;
         }
 
-       ++votes[prediction_class_id];
+       votes[prediction_class_id] += 1;
 
        if(votes[prediction_class_id] > max_votes) {
            max_class_id = prediction_class_id;

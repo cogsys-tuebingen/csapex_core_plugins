@@ -197,7 +197,7 @@ void RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     cv::RandomTrees rtrees;
     ainfo << "starting training with " << n << " features" << std::endl;
     /*bool result = */
-    rtrees.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, missing, params);
+    rtrees.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, cv::Mat(), params);
 
     ainfo << "training finished, writing forest" << std::endl;
     rtrees.save(readParameter<std::string>("file").c_str());

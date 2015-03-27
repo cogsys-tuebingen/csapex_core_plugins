@@ -29,10 +29,14 @@ target_link_libraries(csapex_evaluation
 add_library(csapex_evaluation_plugin
     src/confusion_matrix_display.cpp
     src/confusion_matrix_display_adapter.cpp
+    src/confidence_matrix_display.cpp
+    src/confidence_matrix_display_adapter.cpp
     src/evaluate_binary_classifier.cpp
     src/evaluate_binary_classifier_adapter.cpp
     src/empty_labeled_feature_message.cpp
+    src/confidence_evaluator.cpp
     src/ml_evaluator.cpp
+    src/confidence_class_toggle.cpp
 )
 
 target_link_libraries(csapex_evaluation_plugin csapex_evaluation
