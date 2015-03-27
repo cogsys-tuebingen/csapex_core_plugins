@@ -64,6 +64,27 @@ connection_types::FeaturesMessage RandomTrees::classify(const FeaturesMessage &i
     cv::Mat feature(1, input.value.size(), CV_32FC1, result.value.data());
     float prediction = dtree_.predict(feature);
 
+    std::map<int, float> votes;
+    int max_votes    = 0;
+    int max_class_id = 0;
+    int ntrees = dtree_.get_tree_count();
+    for(int i = 0 ; i < ntrees ; ++i) {
+        cv::Mat sample(result.value);
+        CvDTreeNode* prediction = dtree_.get_tree(i)->predict(sample);
+        int prediction_class_id = std::round(prediction->value);
+        if(votes.find(prediction_class_id) == votes.end()) {
+            votes[prediction_class_id] = 0;
+        }
+
+       ++votes[prediction_class_id];
+
+       if(votes[prediction_class_id] > max_votes) {
+           max_class_id = prediction_class_id;
+           max_votes = votes[prediction_class_id];
+       }
+    }
+
+    result.confidence = votes[max_class_id] / (float) ntrees;
     result.classification = std::round(prediction);
     return result;
 }

@@ -27,7 +27,7 @@ private:
     connection_types::FeaturesMessage classify(const connection_types::FeaturesMessage& input);
 
 private:
-    Input* in_;
+    Input*  in_;
     Output* out_;
 
     Slot* reload_;
