@@ -36,8 +36,11 @@ void EvaluateBinaryClassifier::process()
     const ConfusionMatrix& cm = msg->confusion;
 
     if(cm.classes.size() != 2) {
-        throw std::logic_error("needs a confusion matrix with exactly 2 classes");
+        modifier_->setWarning("needs a confusion matrix with exactly 2 classes");
+        return;
     }
+
+    modifier_->setNoError();
 
     metrics_.clear();
 
