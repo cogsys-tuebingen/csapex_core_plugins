@@ -10,6 +10,14 @@
   <description>Evaluate a machine learing node</description>
   <tags>ML, evaluation</tags>
 </class>
+<class type="csapex::ConfidenceEvaluator" base_class_type="csapex::Node">
+  <description>Evaluate the confidence of a machine learing node</description>
+  <tags>ML, evaluation</tags>
+</class>
+<class type="csapex::ConfidenceClassToggle" base_class_type="csapex::Node">
+  <description>Toggle feature classes.clas</description>
+  <tags>ML, evaluation</tags>
+</class>
 
 <class type="csapex::ConfusionMatrixDisplay" base_class_type="csapex::Node">
   <description>Displays the content of messages</description>
@@ -18,6 +26,15 @@
 <class type="csapex::ConfusionMatrixDisplayAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
+
+<class type="csapex::ConfidenceMatrixDisplay" base_class_type="csapex::Node">
+  <description>Displays the content of messages</description>
+  <tags>ML, evaluation, Output</tags>
+</class>
+<class type="csapex::ConfidenceMatrixDisplayAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+
 <class type="csapex::EmptyLabeledFeaturesMessage" base_class_type="csapex::Node">
   <description>Generate a statically labeled empty message. If the classification should always have the same value.</description>
   <tags>ML, evaluation</tags>
