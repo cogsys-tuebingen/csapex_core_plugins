@@ -45,6 +45,7 @@ public:
 private:
     Input* in_;
 
+    mutable std::recursive_mutex mutex_;
     Metrics metrics_;
 };
 

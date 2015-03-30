@@ -7,6 +7,9 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
+/// SYSTEM
+#include <mutex>
+
 namespace csapex {
 
 class ConfusionMatrixDisplay : public Node
@@ -25,6 +28,7 @@ public:
 private:
     Input* connector_;
 
+    mutable std::recursive_mutex mutex_;
     ConfusionMatrix confusion_;
 };
 

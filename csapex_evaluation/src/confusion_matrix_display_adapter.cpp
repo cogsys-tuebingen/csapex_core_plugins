@@ -131,6 +131,8 @@ void ConfusionMatrixDisplayAdapter::setupUi(QBoxLayout* layout)
 
 void ConfusionMatrixDisplayAdapter::display()
 {
+    assert(QThread::currentThread() == QApplication::instance()->thread());
+
     model_->update(wrapped_->getConfusionMatrix());
 
     table_->resizeColumnsToContents();

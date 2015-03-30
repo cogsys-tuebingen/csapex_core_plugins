@@ -22,9 +22,11 @@ EvaluateBinaryClassifierTableModel::EvaluateBinaryClassifierTableModel() :
 
 void EvaluateBinaryClassifierTableModel::update(EvaluateBinaryClassifier::Metrics metrics)
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
+
     metrics_ = metrics;
 
-    if(rows != (int) metrics_.size()){
+    if(rows < (int) metrics_.size()){
         beginInsertRows(QModelIndex(), rows, metrics_.size()-1);
         rows = metrics_.size();
         endInsertRows();
@@ -33,6 +35,7 @@ void EvaluateBinaryClassifierTableModel::update(EvaluateBinaryClassifier::Metric
 
 int EvaluateBinaryClassifierTableModel::rowCount(const QModelIndex &parent) const
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return rows;
 }
 
@@ -43,6 +46,7 @@ int EvaluateBinaryClassifierTableModel::columnCount(const QModelIndex &parent) c
 
 QVariant EvaluateBinaryClassifierTableModel::data(const QModelIndex &index, int role) const
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     if(role == Qt::DisplayRole) {
         return metrics_[index.row()].value;
     } else if(role == Qt::ToolTipRole) {
@@ -118,6 +122,7 @@ QVariant EvaluateBinaryClassifierTableModel::data(const QModelIndex &index, int 
 
 QVariant EvaluateBinaryClassifierTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     if (role == Qt::DisplayRole) {
         return QString::fromStdString(orientation == Qt::Vertical ? metrics_[section].name : std::string("Value"));
     } else if(role == Qt::ToolTipRole) {
@@ -155,6 +160,8 @@ void EvaluateBinaryClassifierAdapter::setupUi(QBoxLayout* layout)
 
 void EvaluateBinaryClassifierAdapter::display()
 {
+    assert(QThread::currentThread() == QApplication::instance()->thread());
+
     model_->update(wrapped_->getMetrics());
 
     table_->resizeColumnsToContents();
