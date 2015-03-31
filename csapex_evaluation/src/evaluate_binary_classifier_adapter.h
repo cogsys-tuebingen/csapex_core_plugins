@@ -30,6 +30,7 @@ public:
     void update(EvaluateBinaryClassifier::Metrics metrics);
 
 private:
+    mutable std::recursive_mutex mutex_;
     EvaluateBinaryClassifier::Metrics metrics_;
     int rows;
 };

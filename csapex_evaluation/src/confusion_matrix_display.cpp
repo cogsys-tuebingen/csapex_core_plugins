@@ -25,12 +25,16 @@ void ConfusionMatrixDisplay::process()
 {
     connection_types::ConfusionMatrixMessage::ConstPtr msg = msg::getMessage<connection_types::ConfusionMatrixMessage>(connector_);
 
-    confusion_ = msg->confusion;
+    {
+        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        confusion_ = msg->confusion;
+    }
 
     display_request();
 }
 
 const ConfusionMatrix& ConfusionMatrixDisplay::getConfusionMatrix() const
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return confusion_;
 }
