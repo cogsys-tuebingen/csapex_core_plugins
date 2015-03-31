@@ -9,8 +9,6 @@
 
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
-#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#include <pcl_ros/transforms.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TransformCloud, csapex::Node)
 
@@ -43,7 +41,29 @@ void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud
     const tf::Transform& t = transform->value;
 
     typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
-    pcl_ros::transformPointCloud(*cloud, *out, t);
+    out->header = cloud->header;
+    out->width = cloud->width;
+    out->height = cloud->height;
+    out->is_dense = cloud->is_dense;
+
+
+    std::size_t N = cloud->points.size();
+    out->points.resize(N);
+
+    for(std::size_t i = 0; i < N; ++i) {
+        PointT pt = cloud->points[i];
+        tf::Quaternion q = t.getRotation();
+        tf::Vector3 tr = t.getOrigin();
+
+        tf::Vector3 p(pt.x, pt.y, pt.z);
+
+//        tf::Vector3 tfd =  tf::quatRotate(q, p) + tr;
+        tf::Vector3 tfd = t * p;
+        pt.x = tfd.x();
+        pt.y = tfd.y();
+        pt.z = tfd.z();
+        out->points[i] = pt;
+    }
 
     std::string frame = cloud->header.frame_id;
 
