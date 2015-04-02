@@ -12,7 +12,6 @@
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#include <pcl_ros/transforms.h>
 #include <pcl/filters/passthrough.h>
 #include <boost/assign/std.hpp>
 
