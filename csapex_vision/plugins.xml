@@ -75,6 +75,12 @@
   </description>
   <tags>Vision</tags>
 </class>
+<class type="csapex::SetColor" base_class_type="csapex::Node">
+  <description>
+    Set color in image using a mask.
+  </description>
+  <tags>Vision</tags>
+</class>
 <class type="csapex::Reshape" base_class_type="csapex::Node">
   <description>
     Reshape a CV matrix concerning rows and columns.
