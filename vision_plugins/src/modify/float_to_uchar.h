@@ -15,14 +15,9 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
-    enum Type {ABSOLUTE, RELATIVE, SCALE};
-
-    Type           type_;
-
     csapex::Input*   input_;
     csapex::Output*  output_;
 
-    void update();
 };
 }
 #endif // FLOAT_TO_UCHAR_H

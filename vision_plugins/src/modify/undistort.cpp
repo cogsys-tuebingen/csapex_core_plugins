@@ -24,7 +24,7 @@ void Undistort::process()
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     out->value = in->value.clone();
-    if(undist_.get() != nullptr) {
+    if(!undist_.empty()) {
         int margin       = readParameter<int>("margin");
         cv::Size  margin_size(2 * margin + in->value.cols, 2 * margin + in->value.rows);
         undist_->reset_map(margin_size, margin, margin);
@@ -84,7 +84,7 @@ void Undistort::update()
     int mode = readParameter<int>("mode");
 
     if(read_matrices(path, intr, coef)) {
-        undist_.reset(new utils_cv::Undistortion(intr, coef, mode));
+        undist_ = utils_vision::Undistortion::Ptr(new utils_vision::Undistortion(intr, coef, mode));
     }
 
 }

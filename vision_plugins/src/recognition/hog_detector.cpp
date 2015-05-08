@@ -9,7 +9,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
 #include <csapex_core_plugins/vector_message.h>
-#include <utils_cv/color_functions.hpp>
+#include <utils_vision/utils/color_functions.hpp>
 
 
 /// SYSTEM
@@ -128,14 +128,14 @@ void HOGDetector::process()
 
     for(unsigned int i = 0 ; i < loc_rects.size() ; ++i) {
         RoiMessage roi;
-        cv::Scalar color(utils_cv::color::bezierColor<cv::Scalar>(i / (float) loc_rects.size()));
+        cv::Scalar color(utils_vision::color::bezierColor<cv::Scalar>(i / (float) loc_rects.size()));
         roi.value = Roi(loc_rects.at(i), color, 0);
         out->push_back(roi);
     }
 
     for(unsigned int i = 0 ; i < loc_points.size() ; ++i) {
         RoiMessage roi;
-        cv::Scalar color(utils_cv::color::bezierColor<cv::Scalar>(i / (float) loc_points.size()));
+        cv::Scalar color(utils_vision::color::bezierColor<cv::Scalar>(i / (float) loc_points.size()));
         cv::Point &p = loc_points.at(i);
         cv::Rect r(p.x, p.y, svm_width_, svm_height_);
         roi.value = Roi(r, color, 0);

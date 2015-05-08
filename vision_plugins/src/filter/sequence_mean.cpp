@@ -6,7 +6,6 @@
 #include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <utils_cv/normalization.hpp>
 #include <csapex/model/node_modifier.h>
 
 /// SYSTEM

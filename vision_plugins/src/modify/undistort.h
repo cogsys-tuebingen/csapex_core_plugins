@@ -2,7 +2,7 @@
 #define FILTER_UNDISTORT_H
 
 /// COMPONENT
-#include <utils_cv/undistortion.h>
+#include <utils_vision/utils/undistortion.h>
 #include <csapex/model/node.h>
 
 namespace vision_plugins {
@@ -16,7 +16,7 @@ public:
     virtual void setupParameters(csapex::Parameterizable& parameters) override;
 
 private:
-    utils_cv::Undistortion::Ptr undist_;
+    utils_vision::Undistortion::Ptr undist_;
 
     bool read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs);
     void update();
