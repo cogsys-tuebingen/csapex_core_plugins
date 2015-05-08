@@ -21,7 +21,7 @@ SetColor::SetColor()
 void SetColor::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
-    CvMatMessage::ConstPtr in_mask = msg::getMessage<CvMatMessage>(input_);
+    CvMatMessage::ConstPtr in_mask = msg::getMessage<CvMatMessage>(input_mask_);
     CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
 
     if(in->value.type() != CV_8UC3)
