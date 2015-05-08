@@ -30,6 +30,7 @@ ConnectionType::Ptr CvMatMessage::clone() const
     Ptr new_msg(new CvMatMessage(encoding, stamp_micro_seconds));
     value.copyTo(new_msg->value);
     new_msg->frame_id = frame_id;
+    new_msg->stamp_micro_seconds = stamp_micro_seconds;
     return new_msg;
 }
 

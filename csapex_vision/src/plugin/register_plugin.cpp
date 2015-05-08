@@ -30,7 +30,7 @@ RegisterPlugin::RegisterPlugin()
 struct Image2CvMat
 {
     static connection_types::CvMatMessage::Ptr ros2apex(const sensor_msgs::Image::ConstPtr &ros_msg) {
-        u_int64_t stamp = ros_msg->header.stamp.toNSec();
+        u_int64_t stamp_micro_seconds = ros_msg->header.stamp.toNSec() * 1e-3;
 
         std::string source_encoding = ros_msg->encoding;
         csapex::Encoding target_encoding;
@@ -45,18 +45,23 @@ struct Image2CvMat
             target_encoding = enc::mono;
         } else if(source_encoding == sensor_msgs::image_encodings::YUV422) {
             target_encoding = enc::yuv;
-        } else if(source_encoding.substr(6) == "bayer_") {
+        } else if(source_encoding.size() > 6 && source_encoding.substr(6) == "bayer_") {
             target_encoding = enc::mono;
+        } else if(source_encoding == sensor_msgs::image_encodings::TYPE_16UC1) {
+            target_encoding = enc::depth;
         } else {
             target_encoding = enc::unknown;
         }
 
-        connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(target_encoding, stamp));
+        connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(target_encoding, stamp_micro_seconds));
+
         try {
             cv_bridge::toCvShare(ros_msg, ros_msg->encoding)->image.copyTo(out->value);
             out->frame_id = ros_msg->header.frame_id;
-        } catch (cv_bridge::Exception& e) {
+        } catch (const cv_bridge::Exception& e) {
             std::cerr << "cv_bridge exception: " << e.what() << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "some other exception in cv_bridge: " << e.what() << std::endl;
         }
         return out;
     }

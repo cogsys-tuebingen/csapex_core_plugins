@@ -61,8 +61,8 @@ add_library(csapex_core_plugins
     src/stamp_delay_measurement.cpp
     src/signal_delay_measurement.cpp
 
-#    src/demultiplexer.cpp
-#    src/multiplexer.cpp
+    src/demultiplexer.cpp
+    src/multiplexer.cpp
 
     src/output_display.cpp
     src/output_display_adapter.cpp

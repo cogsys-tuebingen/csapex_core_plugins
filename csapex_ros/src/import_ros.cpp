@@ -35,7 +35,7 @@ const std::string ImportRos::no_topic_("-----");
 namespace {
 ros::Time rosTime(u_int64_t stamp_micro_seconds) {
     ros::Time t;
-    t.fromNSec(stamp_micro_seconds / 1e3);
+    t.fromNSec(stamp_micro_seconds * 1e3);
     return t;
 }
 }
@@ -198,7 +198,7 @@ void ImportRos::processROS()
         return;
     }
 
-    if(ros::Time(msgs_.back()->stamp_micro_seconds) == ros::Time(0)) {
+    if(rosTime(msgs_.back()->stamp_micro_seconds) == ros::Time(0)) {
         modifier_->setWarning("buffered time is 0, using default behaviour");
         publishLatestMessage();
         return;

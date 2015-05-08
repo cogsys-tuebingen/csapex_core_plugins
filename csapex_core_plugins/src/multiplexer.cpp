@@ -30,7 +30,7 @@ public:
     void process()
     {
         std::vector<ConnectionTypeConstPtr> msg = input->getMessageParts();
-        aerr << "size is " << msg.size() << std::endl;
+//        aerr << "size is " << msg.size() << std::endl;
 
         if(msg.empty()) {
             msg::publish(output, connection_types::makeEmpty<connection_types::NoMessage>());
