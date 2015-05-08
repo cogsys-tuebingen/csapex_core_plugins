@@ -95,12 +95,14 @@ add_library(vision_plugins
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
+    src/analyze/cluster_boundary_mask.cpp
+    src/analyze/glcm.cpp
     src/analyze/label_regions.cpp
+    src/analyze/preemptiveSLIC.cpp
 
     src/recognition/hog_detector.cpp
     src/recognition/hog_extractor.cpp
     src/recognition/local_patterns.cpp
-    src/recognition/glcm.cpp
     src/recognition/hog_training_rois.cpp
 
 )
