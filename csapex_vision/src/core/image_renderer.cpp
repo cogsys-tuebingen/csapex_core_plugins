@@ -47,12 +47,15 @@ QSharedPointer<QImage> ImageRenderer::doRender(const connection_types::CvMatMess
     } else if(encoding.matches(enc::depth)) {
         return QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(msg.value);
 
+    } else if(msg.value.channels() == 1 || msg.value.channels() == 3) {
+        return QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(msg.value);
+
     } else {
-        auto i = QSharedPointer<QImage>(new QImage(70, 20, QImage::Format_ARGB32));
+        auto i = QSharedPointer<QImage>(new QImage(100, 20, QImage::Format_ARGB32));
         QPainter painter(i.data());
         painter.fillRect(i->rect(), Qt::SolidPattern);
         painter.setPen(QPen(Qt::white));
-        painter.drawText(i->rect(), "No Image");
+        painter.drawText(i->rect(), "Cannot render image");
         return i;
     }
 
