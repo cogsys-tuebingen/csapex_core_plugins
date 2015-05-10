@@ -40,7 +40,7 @@ add_library(csapex_evaluation_plugin
 )
 
 target_link_libraries(csapex_evaluation_plugin csapex_evaluation
-    yaml-cpp csapex_ml ${catkin_LIBRARIES})
+    yaml-cpp ${catkin_LIBRARIES})
 
 #
 # INSTALL
