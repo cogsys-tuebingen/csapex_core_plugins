@@ -9,6 +9,7 @@
 #include <QTableView>
 #include <QPainter>
 #include <QVector3D>
+#include <QApplication>
 
 using namespace csapex;
 

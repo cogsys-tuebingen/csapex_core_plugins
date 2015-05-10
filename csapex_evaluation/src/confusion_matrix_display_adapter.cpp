@@ -10,6 +10,7 @@
 #include <QPainter>
 #include <QGridLayout>
 #include <QLabel>
+#include <QApplication>
 
 using namespace csapex;
 
