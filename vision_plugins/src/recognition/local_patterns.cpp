@@ -14,7 +14,8 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 
-#include <utils_vision/utils/local_patterns.hpp>
+#include <utils_vision/textures/lbp.hpp>
+#include <utils_vision/textures/ltp.hpp>
 
 /// SYSTEM
 #include <boost/lambda/lambda.hpp>
@@ -55,7 +56,7 @@ inline void lbp(const cv::Mat &src,
     }
 
     std::vector<int> histogram;
-    pattern.getHistogram(histogram);
+    pattern.get(histogram);
 
     float max = *(std::max_element(histogram.begin(), histogram.end()));
     result.resize(histogram.size());
