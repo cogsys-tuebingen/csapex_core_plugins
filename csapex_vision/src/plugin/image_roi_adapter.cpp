@@ -113,7 +113,6 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
     }
 
     view_->setFixedSize(QSize(state.width, state.height));
-    view_->setMouseTracking(true);
     view_->setAcceptDrops(false);
     view_->setDragMode(QGraphicsView::RubberBandDrag);
     view_->scene()->installEventFilter(this);

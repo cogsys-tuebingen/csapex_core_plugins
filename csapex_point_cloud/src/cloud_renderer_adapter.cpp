@@ -52,7 +52,6 @@ void CloudRendererAdapter::setupUi(QBoxLayout* layout)
         scene = new QGraphicsScene();
         //scene->addWidget(this);
         view_->setScene(scene);
-        view_->setMouseTracking(true);
     }
 
     view_->setContextMenuPolicy(Qt::PreventContextMenu);

@@ -195,7 +195,6 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
     scene->installEventFilter(this);
 
     view_->setFixedSize(QSize(state.width, state.height));
-    view_->setMouseTracking(true);
     view_->setAcceptDrops(false);
     view_->setDragMode(QGraphicsView::RubberBandDrag);
     view_->setContextMenuPolicy(Qt::PreventContextMenu);
