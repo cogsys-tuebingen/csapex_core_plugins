@@ -34,25 +34,25 @@ inline void lbp(const cv::Mat &src,
 
     switch(src.type()) {
     case CV_8UC1:
-         utils_vision::LBP::stdExtraction<uchar>(src, 0, histogram);
+         utils_vision::LBP::histogram<uchar>(src, 0, histogram);
          break;
     case CV_8SC1:
-         utils_vision::LBP::stdExtraction<char>(src, 0, histogram);
+         utils_vision::LBP::histogram<char>(src, 0, histogram);
          break;
     case CV_16UC1:
-         utils_vision::LBP::stdExtraction<ushort>(src, 0, histogram);
+         utils_vision::LBP::histogram<ushort>(src, 0, histogram);
          break;
     case CV_16SC1:
-         utils_vision::LBP::stdExtraction<short>(src, 0, histogram);
+         utils_vision::LBP::histogram<short>(src, 0, histogram);
          break;
     case CV_32SC1:
-         utils_vision::LBP::stdExtraction<int>(src, 0, histogram);
+         utils_vision::LBP::histogram<int>(src, 0, histogram);
          break;
     case CV_32FC1:
-         utils_vision::LBP::stdExtraction<float>(src, 0, histogram);
+         utils_vision::LBP::histogram<float>(src, 0, histogram);
          break;
     case CV_64FC1:
-         utils_vision::LBP::stdExtraction<double>(src, 0, histogram);
+         utils_vision::LBP::histogram<double>(src, 0, histogram);
          break;
     default:
         throw std::runtime_error("Unknown matrix type!");
@@ -68,25 +68,25 @@ inline void ltp(const cv::Mat &src,
     std::vector<int> histogram;
     switch(src.type()) {
     case CV_8UC1:
-         utils_vision::LTP::stdExtraction<uchar>(src, k, histogram);
+         utils_vision::LTP::histogram<uchar>(src, k, histogram);
          break;
     case CV_8SC1:
-         utils_vision::LTP::stdExtraction<char>(src, k, histogram);
+         utils_vision::LTP::histogram<char>(src, k, histogram);
          break;
     case CV_16UC1:
-         utils_vision::LTP::stdExtraction<ushort>(src, k, histogram);
+         utils_vision::LTP::histogram<ushort>(src, k, histogram);
          break;
     case CV_16SC1:
-         utils_vision::LTP::stdExtraction<short>(src, k, histogram);
+         utils_vision::LTP::histogram<short>(src, k, histogram);
          break;
     case CV_32SC1:
-         utils_vision::LTP::stdExtraction<int>(src, k, histogram);
+         utils_vision::LTP::histogram<int>(src, k, histogram);
          break;
     case CV_32FC1:
-         utils_vision::LTP::stdExtraction<float>(src, k, histogram);
+         utils_vision::LTP::histogram<float>(src, k, histogram);
          break;
     case CV_64FC1:
-         utils_vision::LTP::stdExtraction<double>(src, k, histogram);
+         utils_vision::LTP::histogram<double>(src, k, histogram);
          break;
     default:
         throw std::runtime_error("Unknown matrix type!");
