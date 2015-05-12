@@ -30,79 +30,69 @@ namespace {
 inline void lbp(const cv::Mat &src,
                 std::vector<float> &result)
 {
-    utils_vision::LBP pattern;
+    std::vector<int> histogram;
+
     switch(src.type()) {
     case CV_8UC1:
-        pattern.stdExtraction<uchar>(src);
-        break;
+         utils_vision::LBP::stdExtraction<uchar>(src, 0, histogram);
+         break;
     case CV_8SC1:
-        pattern.stdExtraction<char>(src);
-        break;
+         utils_vision::LBP::stdExtraction<char>(src, 0, histogram);
+         break;
     case CV_16UC1:
-        pattern.stdExtraction<ushort>(src);
-        break;
+         utils_vision::LBP::stdExtraction<ushort>(src, 0, histogram);
+         break;
     case CV_16SC1:
-        pattern.stdExtraction<short>(src);
-        break;
+         utils_vision::LBP::stdExtraction<short>(src, 0, histogram);
+         break;
     case CV_32SC1:
-        pattern.stdExtraction<int>(src);
-        break;
+         utils_vision::LBP::stdExtraction<int>(src, 0, histogram);
+         break;
     case CV_32FC1:
-        pattern.stdExtraction<float>(src);
-        break;
+         utils_vision::LBP::stdExtraction<float>(src, 0, histogram);
+         break;
     case CV_64FC1:
-        pattern.stdExtraction<double>(src);
-        break;
+         utils_vision::LBP::stdExtraction<double>(src, 0, histogram);
+         break;
+    default:
+        throw std::runtime_error("Unknown matrix type!");
     }
 
-    std::vector<int> histogram;
-    pattern.get(histogram);
-
-    float max = *(std::max_element(histogram.begin(), histogram.end()));
-    result.resize(histogram.size());
-    for(unsigned int i = 0 ; i < histogram.size() ; ++i) {
-        result.at(i) = histogram.at(i) / max;
-    }
-
+    result.assign(histogram.begin(), histogram.end());
 }
 
 inline void ltp(const cv::Mat &src,
                 const double   k,
                 std::vector<float> &result)
 {
-    utils_vision::LTP pattern;
+    std::vector<int> histogram;
     switch(src.type()) {
     case CV_8UC1:
-        pattern.stdExtraction<uchar>(src, k);
-        break;
+         utils_vision::LTP::stdExtraction<uchar>(src, k, histogram);
+         break;
     case CV_8SC1:
-        pattern.stdExtraction<char>(src, k);
-        break;
+         utils_vision::LTP::stdExtraction<char>(src, k, histogram);
+         break;
     case CV_16UC1:
-        pattern.stdExtraction<ushort>(src, k);
-        break;
+         utils_vision::LTP::stdExtraction<ushort>(src, k, histogram);
+         break;
     case CV_16SC1:
-        pattern.stdExtraction<short>(src, k);
-        break;
+         utils_vision::LTP::stdExtraction<short>(src, k, histogram);
+         break;
     case CV_32SC1:
-        pattern.stdExtraction<int>(src, k);
-        break;
+         utils_vision::LTP::stdExtraction<int>(src, k, histogram);
+         break;
     case CV_32FC1:
-        pattern.stdExtraction<float>(src, k);
-        break;
+         utils_vision::LTP::stdExtraction<float>(src, k, histogram);
+         break;
     case CV_64FC1:
-        pattern.stdExtraction<double>(src, k);
-        break;
+         utils_vision::LTP::stdExtraction<double>(src, k, histogram);
+         break;
+    default:
+        throw std::runtime_error("Unknown matrix type!");
     }
 
-    std::vector<int> histogram;
-    pattern.getAll(histogram);
-
-    float max = *(std::max_element(histogram.begin(), histogram.end()));
-    result.resize(histogram.size());
-    for(unsigned int i = 0 ; i < histogram.size() ; ++i) {
-        result.at(i) = histogram.at(i) / max;
-    }
+    result.assign(histogram.begin(), histogram.end());
 }
 }
 
