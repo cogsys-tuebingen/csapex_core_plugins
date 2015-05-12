@@ -53,8 +53,10 @@ void Filter::process()
 
         filter(img_msg->value, mask);
 
+
         msg::publish(output_img_, img_msg);
         if(usesMask() && mask_msg != nullptr) {
+            mask_msg->value = mask;
             msg::publish(output_mask_, mask_msg);
         }
     }
