@@ -35,6 +35,10 @@ void Merger::process()
     collectMessage(msgs, encoding);
     cv::Mat out_img;
 
+    if(msgs.empty()) {
+        return;
+    }
+
     cv::merge(msgs, out_img);
     CvMatMessage::Ptr out_msg(new CvMatMessage(encoding, stamp_));
     out_msg->value = out_img;
