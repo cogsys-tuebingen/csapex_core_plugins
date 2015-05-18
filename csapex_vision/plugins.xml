@@ -99,6 +99,12 @@
   </description>
   <tags>Vision</tags>
 </class>
+<class type="csapex::CopyMakeBorder" base_class_type="csapex::Node">
+  <description>
+    Add border to image.
+  </description>
+  <tags>Vision</tags>
+</class>
 <class type="csapex::ColorSegmentation" base_class_type="csapex::Node">
   <description>Allows the user to segment an image based on its channels</description>
   <tags>Vision, Segmentation, Filter</tags>
