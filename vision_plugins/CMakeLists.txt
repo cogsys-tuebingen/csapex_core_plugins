@@ -5,7 +5,7 @@ find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_feature
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
-#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
 #add_definitions("-O3")
 
@@ -100,6 +100,7 @@ add_library(vision_plugins
 
     src/recognition/hog_detector.cpp
     src/recognition/hog_extractor.cpp
+    src/recognition/local_patterns.cpp
     src/recognition/local_patterns_histogram.cpp
     src/recognition/hog_training_rois.cpp
 
