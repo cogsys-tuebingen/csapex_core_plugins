@@ -15,7 +15,10 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    enum Type {LBP, LTP};
+    enum Type {LBP, LBP_EXT, LBP_VAR, LBP_CS,
+               LTP, LTP_EXT, LTP_SHORT,
+               WLD, WLD_SHORT, WLD_ORIENTED,
+               HOMOGENITY, HOMOGENITY_TEX};
 
     csapex::Input  *in_;
     csapex::Output *out_;

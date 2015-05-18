@@ -17,9 +17,6 @@
 #include <utils_vision/textures/lbp.hpp>
 #include <utils_vision/textures/ltp.hpp>
 
-/// SYSTEM
-#include <boost/lambda/lambda.hpp>
-
 CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatternsHistogram, csapex::Node)
 
 using namespace csapex;
