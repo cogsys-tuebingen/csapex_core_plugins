@@ -1,5 +1,5 @@
 /// HEADER
-#include "local_patterns.h"
+#include "local_patterns_histogram.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -20,7 +20,7 @@
 /// SYSTEM
 #include <boost/lambda/lambda.hpp>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatterns, csapex::Node)
+CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatternsHistogram, csapex::Node)
 
 using namespace csapex;
 using namespace vision_plugins;
@@ -59,6 +59,7 @@ inline void lbp(const cv::Mat &src,
     }
 
     result.assign(histogram.begin(), histogram.end());
+
 }
 
 inline void ltp(const cv::Mat &src,
@@ -96,11 +97,11 @@ inline void ltp(const cv::Mat &src,
 }
 }
 
-LocalPatterns::LocalPatterns()
+LocalPatternsHistogram::LocalPatternsHistogram()
 {
 }
 
-void LocalPatterns::process()
+void LocalPatternsHistogram::process()
 {
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_img_);
     std::shared_ptr< std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
@@ -155,14 +156,14 @@ void LocalPatterns::process()
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
-void LocalPatterns::setup(NodeModifier& node_modifier)
+void LocalPatternsHistogram::setup(NodeModifier& node_modifier)
 {
     in_img_     = node_modifier.addInput<CvMatMessage>("image");
     in_rois_    = node_modifier.addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
     out_        = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("descriptors");
 }
 
-void LocalPatterns::setupParameters(Parameterizable& parameters)
+void LocalPatternsHistogram::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> types =
             boost::assign::map_list_of

@@ -7,8 +7,7 @@ ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 #set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
-
-#set(CMAKE_CXX_FLAGS "-O3")
+#add_definitions("-O3")
 
 ###################################
 ## catkin specific configuration ##
@@ -28,6 +27,7 @@ catkin_package(
 
 include_directories(include
     ${catkin_INCLUDE_DIRS}
+
 )
 
 add_subdirectory(src/cvBlob)
@@ -49,8 +49,6 @@ add_library(vision_plugins
     src/grow_roi.cpp
     src/extract_roi.cpp
     src/number_generator.cpp
-
-    ###  NEW API ###
 
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp
@@ -102,7 +100,7 @@ add_library(vision_plugins
 
     src/recognition/hog_detector.cpp
     src/recognition/hog_extractor.cpp
-    src/recognition/local_patterns.cpp
+    src/recognition/local_patterns_histogram.cpp
     src/recognition/hog_training_rois.cpp
 
 )

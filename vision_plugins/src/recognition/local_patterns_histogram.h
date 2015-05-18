@@ -5,10 +5,10 @@
 #include <csapex/model/node.h>
 
 namespace vision_plugins {
-class LocalPatterns : public csapex::Node
+class LocalPatternsHistogram : public csapex::Node
 {
 public:
-    LocalPatterns();
+    LocalPatternsHistogram();
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;

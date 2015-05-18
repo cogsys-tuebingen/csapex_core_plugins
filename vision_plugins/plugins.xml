@@ -38,7 +38,7 @@
     <description>Transforms an image using a perspective transformation</description>
     <tags>Vision, Filter</tags>
   </class>
-  <class type="vision_plugins::LocalPatterns" base_class_type="csapex::Node">
+  <class type="vision_plugins::LocalPatternsHistogram" base_class_type="csapex::Node">
     <description>Extracts local patterns (binary, ternary)</description>
     <tags>Vision, Features</tags>
   </class>
