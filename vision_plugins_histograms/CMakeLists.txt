@@ -55,6 +55,7 @@ target_link_libraries(vision_plugins_histograms_msgs
 add_library(vision_plugins_histograms
     src/visualize/render_histogram.cpp
     src/analyze/histogram.cpp
+    src/analyze/cluster_histograms.cpp
     src/analyze/histogram_maxima.cpp
 )
 
