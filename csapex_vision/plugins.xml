@@ -105,6 +105,12 @@
   </description>
   <tags>Vision</tags>
 </class>
+<class type="csapex::MinMaxLoc" base_class_type="csapex::Node">
+  <description>
+    Get mininma / maxima / indeces for these of a matrix.
+  </description>
+  <tags>Vision</tags>
+</class>
 <class type="csapex::ColorSegmentation" base_class_type="csapex::Node">
   <description>Allows the user to segment an image based on its channels</description>
   <tags>Vision, Segmentation, Filter</tags>
