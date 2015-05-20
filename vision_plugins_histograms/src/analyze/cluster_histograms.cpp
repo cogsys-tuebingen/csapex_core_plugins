@@ -44,6 +44,30 @@ void ClusterHistograms::process()
 
     /// PUT INTRESTING CODE HERE
 
+    utils_vision::histogram::Range range;
+    int type = in->value.type() & 7;
+    switch(type) {
+    case CV_8U:
+        break;
+    case CV_8S:
+        break;
+    case CV_16U:
+        break;
+    case CV_16S:
+        break;
+    case CV_32S:
+        break;
+    case CV_32F:
+        break;
+    case CV_64F:
+        break;
+    default:
+        throw std::runtime_error("Unsupported cv type!");
+    }
+
+
+
+
     msg::publish(out_histograms_, out_histograms);
     msg::publish<GenericVectorMessage, int>(out_cluster_ids_, out_labels);
 
