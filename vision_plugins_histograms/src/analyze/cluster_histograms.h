@@ -15,17 +15,12 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Output*   out_cluster_ids_;
     csapex::Output*   out_histograms_;
+    csapex::Output*   out_clusters_;
 
     csapex::Input*    input_;
     csapex::Input*    clusters_;
     csapex::Input*    mask_;
-
-    int bins_;
-
-
-    void update();
 
 };
 }

@@ -45,21 +45,23 @@ void RenderHistogram::process()
         for(std::vector<cv::Mat>::const_iterator it = in->value.histograms.begin() ;
             it != in->value.histograms.end() ;
             ++it, ++color_count) {
-            int type = it->type() & 7;
+            int type = it->type();
+            std::cout << *it << std::endl;
             switch(type) {
-            case CV_32F:
+            case CV_32FC1:
                 utils_vision::histogram::render_curve<float>(*it,
                                                          utils_vision::histogram::COLOR_PALETTE.at
                                                          (color_count % utils_vision::histogram::COLOR_PALETTE.size()),
                                                          line_width,
                                                          out->value);
                 break;
-            case CV_32S:
+            case CV_32SC1:
                 utils_vision::histogram::render_curve<int>(  *it,
                                                          utils_vision::histogram::COLOR_PALETTE.at
                                                          (color_count % utils_vision::histogram::COLOR_PALETTE.size()),
                                                          line_width,
                                                          out->value);
+                break;
             default:
                 throw std::runtime_error("Only 32bit float or 32bit integer histograms supported!");
             }
@@ -86,6 +88,7 @@ void RenderHistogram::process()
                                                        line_width,
                                                        5,
                                                        out->value);
+                break;
             default:
                 throw std::runtime_error("Only 32bit float or 32bit integer histograms supported!");
 
