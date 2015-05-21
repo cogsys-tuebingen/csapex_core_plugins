@@ -46,7 +46,6 @@ void RenderHistogram::process()
             it != in->value.histograms.end() ;
             ++it, ++color_count) {
             int type = it->type();
-            std::cout << *it << std::endl;
             switch(type) {
             case CV_32FC1:
                 utils_vision::histogram::render_curve<float>(*it,

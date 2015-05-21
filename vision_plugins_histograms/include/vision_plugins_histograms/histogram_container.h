@@ -7,7 +7,7 @@
 
 struct HistogramContainer
 {
-    std::vector<utils_vision::histogram::Range> ranges;
+    std::vector<utils_vision::histogram::Rangef> ranges;
     std::vector<cv::Mat>                        histograms;
 };
 

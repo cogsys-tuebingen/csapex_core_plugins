@@ -33,19 +33,18 @@ struct Dispatch {
     void apply(const cv::Mat &src,
                const cv::Mat &mask,
                const cv::Mat &clusters,
-               const utils_vision::histogram::Range &range,
+               const utils_vision::histogram::Ranged &range,
                const int bins,
                int  &num_clusters,
                HistogramMessage &msg)
     {
         std::vector<cv::Mat> channels;
-        std::vector<cv::Mat> tmp;
         cv::split(src, channels);
-        cv::Mat *channel_ptr = channels.data();
         num_clusters = utils_vision::histogram::numClusters(clusters);
         msg.value.ranges.resize(channels.size(), range);
         for(int i = 0 ; i < channels.size() ; ++i) {
-            utils_vision::histogram::histogram<_Tp>(*channel_ptr, mask, clusters,
+            std::vector<cv::Mat> tmp;
+            utils_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
                                                     range.first,  range.second, bins,
                                                     num_clusters, tmp);
             msg.value.histograms.insert(msg.value.histograms.end(), tmp.begin(), tmp.end());
@@ -75,13 +74,23 @@ void ClusterHistograms::process()
     if(!mask.empty() &&  mask.type() != CV_8UC1) {
             throw std::runtime_error("Mask must be single channel uchar!");
     }
+    if(!mask.empty() &&
+            (in->value.rows != mask.rows || in->value.cols != mask.cols)) {
+        throw std::runtime_error("Mask dimension not matching!");
+    }
+    if(clusters->value.rows != in->value.rows ||
+            clusters->value.cols != in->value.cols) {
+        throw std::runtime_error("Cluster matrix dimension not matching!");
+    }
+
+
 
     /// PUT INTRESTING CODE HERE
     bool min_max  = readParameter<bool>("min max");
     int  bins     = readParameter<int>("bins");
     int  out_clusters = 0;
 
-    utils_vision::histogram::Range range;
+    utils_vision::histogram::Ranged range;
     int type = in->value.type() & 7;
     switch(type) {
     case CV_8U:

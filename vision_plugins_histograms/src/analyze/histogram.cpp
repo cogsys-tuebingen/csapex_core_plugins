@@ -45,7 +45,7 @@ void Histogram::process()
     if(min_max_ && type != last_type_)
         resetMinMax();
 
-    utils_vision::histogram::Range range;
+    utils_vision::histogram::Rangef range;
     switch(type) {
     case CV_8U:
         if(min_max_)
