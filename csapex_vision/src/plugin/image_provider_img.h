@@ -32,6 +32,7 @@ private:
     cv::Mat img_;
     bool border_;
     bool displayed;
+    bool has_sent_;
 };
 
 } /// NAMESPACE
