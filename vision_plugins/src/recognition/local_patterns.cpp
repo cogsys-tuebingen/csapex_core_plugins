@@ -92,6 +92,11 @@ void LocalPatterns::process()
                                cv::BORDER_REFLECT_101);
             utils_vision::LTP::shortened(working, k, out->value);
             break;
+        case LTP_CS:
+            cv::copyMakeBorder(in->value, working,
+                               size, size, size, size,
+                               cv::BORDER_REFLECT_101);
+            utils_vision::LTP::centerSymmetric(working, k, out->value);
         case WLD:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
@@ -147,6 +152,9 @@ void LocalPatterns::process()
         case LTP_SHORT:
             utils_vision::LTP::shortened(in->value, k, out->value);
             break;
+        case LTP_CS:
+            utils_vision::LTP::centerSymmetric(in->value, k, out->value);
+            break;
         case WLD:
             utils_vision::WLD::standard(in->value, out->value);
             break;
@@ -180,7 +188,7 @@ void LocalPatterns::setupParameters(Parameterizable &parameters)
     std::map<std::string, int> types =
             boost::assign::map_list_of
             ("LBP", LBP)("LBP_EXT", LBP_EXT)("LBP_VAR", LBP_VAR)("LBP_CS", LBP_CS)
-            ("LTP", LTP)("LTP_EXT", LTP_EXT)("LTP_SHORT", LTP_SHORT)
+            ("LTP", LTP)("LTP_EXT", LTP_EXT)("LTP_SHORT", LTP_SHORT)("LTP_CS", LTP_CS)
             ("WLD", WLD)("WLD_SHORT", WLD_SHORT)("WLD_ORIENTED", WLD_ORIENTED)
             ("HOMOGENITY", HOMOGENITY)("HOMOGENITY_TEX", HOMOGENITY_TEX);
 

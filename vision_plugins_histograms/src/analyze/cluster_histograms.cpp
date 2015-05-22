@@ -86,9 +86,17 @@ void ClusterHistograms::process()
 
 
     /// PUT INTRESTING CODE HERE
-    bool min_max  = readParameter<bool>("min max");
-    int  bins     = readParameter<int>("bins");
-    int  out_clusters = 0;
+    bool   min_max  = readParameter<bool>("min max norm");
+    int    bins     = readParameter<int>("bins");
+    int    out_clusters = 0;
+    bool   set_max = readParameter<bool>("set max");
+    bool   set_min = readParameter<bool>("set min");
+    double max = 0.0;
+    double min = 0.0;
+    if(set_max)
+        max = readParameter<double>("max");
+    if(set_min)
+        min = readParameter<double>("min");
 
     utils_vision::histogram::Ranged range;
     int type = in->value.type() & 7;
@@ -100,6 +108,11 @@ void ClusterHistograms::process()
         else
             range = utils_vision::histogram::
                     make_range<unsigned char>();
+        if(set_max)
+            range.second = max;
+        if(set_min)
+            range.first = min;
+
         Dispatch<uchar>::apply(in->value,
                                mask,
                                clusters->value,
@@ -115,6 +128,12 @@ void ClusterHistograms::process()
         else
             range = utils_vision::histogram::
                     make_range<signed char>();
+
+        if(set_max)
+            range.second = max;
+        if(set_min)
+            range.first = min;
+
         Dispatch<char>::apply(in->value,
                               mask,
                               clusters->value,
@@ -130,6 +149,12 @@ void ClusterHistograms::process()
         else
             range = utils_vision::histogram::
                     make_range<unsigned short>();
+
+        if(set_max)
+            range.second = max;
+        if(set_min)
+            range.first = min;
+
         Dispatch<ushort>::apply(in->value,
                                 mask,
                                 clusters->value,
@@ -145,6 +170,11 @@ void ClusterHistograms::process()
         else
             range = utils_vision::histogram::
                     make_range<signed short>();
+        if(set_max)
+            range.second = max;
+        if(set_min)
+            range.first = min;
+
         Dispatch<short>::apply(in->value,
                                mask,
                                clusters->value,
@@ -160,6 +190,11 @@ void ClusterHistograms::process()
         else
             range = utils_vision::histogram::
                     make_range<int>();
+        if(set_max)
+            range.second = max;
+        if(set_min)
+            range.first = min;
+
         Dispatch<int>::apply(in->value,
                              mask,
                              clusters->value,
@@ -175,6 +210,11 @@ void ClusterHistograms::process()
         else
             range = utils_vision::histogram::
                     make_range<float>();
+        if(set_max)
+            range.second = max;
+        if(set_min)
+            range.first = min;
+
         Dispatch<float>::apply(in->value,
                                mask,
                                clusters->value,
@@ -205,7 +245,18 @@ void ClusterHistograms::setup(NodeModifier &node_modifier)
 
 void ClusterHistograms::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("min max", false));
+    parameters.addParameter(param::ParameterFactory::declareBool("min max norm", false));
     parameters.addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 256, 1));
+
+    param::Parameter::Ptr set_max = param::ParameterFactory::declareBool("set max", false);
+    parameters.addParameter(set_max);
+    param::Parameter::Ptr set_min = param::ParameterFactory::declareBool("set min", false);
+    parameters.addParameter(set_min);
+
+    std::function<bool()> cond_max = [set_max]() { return set_max->as<bool>();};
+    std::function<bool()> cond_min = [set_min]() { return set_min->as<bool>();};
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareValue("max", 255.0), cond_max);
+    parameters.addConditionalParameter(param::ParameterFactory::declareValue("min", 0.0), cond_min);
 }
 

@@ -16,7 +16,7 @@ public:
 
 protected:
     enum Type {LBP, LBP_EXT, LBP_VAR, LBP_CS,
-               LTP, LTP_EXT, LTP_SHORT,
+               LTP, LTP_EXT, LTP_SHORT, LTP_CS,
                WLD, WLD_SHORT, WLD_ORIENTED,
                HOMOGENITY, HOMOGENITY_TEX};
 
