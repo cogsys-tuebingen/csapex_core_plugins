@@ -3,21 +3,28 @@
 
 /// PROJECT
 #include <utils_param/parameter_factory.h>
+#include <csapex/msg/io.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex_vision/cv_mat_message.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
-#include <QComboBox>
-#include <QLabel>
 #include <boost/assign/list_of.hpp>
-
 
 CSAPEX_REGISTER_CLASS(vision_plugins::Debayer, csapex::Node)
 
 using namespace vision_plugins;
 using namespace csapex;
+using namespace connection_types;
 
 Debayer::Debayer()
 {
+}
+
+void Debayer::setup(NodeModifier &node_modifier)
+{
+    input_img_ = node_modifier.addInput<CvMatMessage>("Image");
+    output_img_ = node_modifier.addOutput<CvMatMessage>("Image");
 }
 
 void Debayer::setupParameters(Parameterizable& parameters)
@@ -32,8 +39,11 @@ void Debayer::setupParameters(Parameterizable& parameters)
     parameters.addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
 }
 
-void Debayer::filter(cv::Mat &img, cv::Mat &/*mask*/)
+void Debayer::process(csapex::Parameterizable& parameters)
 {
+    CvMatMessage::ConstPtr img_msg = msg::getMessage<CvMatMessage>(input_img_);
+    const cv::Mat& img = img_msg->value;
+
     int mode = readParameter<int>("method");
 
     // assume 1 channel raw image comes in
@@ -43,13 +53,16 @@ void Debayer::filter(cv::Mat &img, cv::Mat &/*mask*/)
     } else {
         cv::cvtColor(img, raw, CV_RGB2GRAY);
     }
+
+    CvMatMessage::Ptr img_out(new CvMatMessage(enc::bgr, img_msg->stamp_micro_seconds));
     if (mode == 667) {
-        this->debayerAndResize(raw, img);
-        cv::cvtColor(img, img, CV_BGR2RGB);
+        debayerAndResize(raw, img_out->value);
+        cv::cvtColor(img_out->value, img_out->value, CV_BGR2RGB);
     }
     else {
-        cv::cvtColor(raw, img, mode);
+        cv::cvtColor(raw, img_out->value, mode);
     }
+    msg::publish(output_img_, img_out);
 }
 
 bool Debayer::usesMask()
@@ -60,16 +73,16 @@ bool Debayer::usesMask()
 // Debayer: bayer-Pattern
 // - every pixel has it's own color filter (e.g. only sees red)
 // - pixel returns brightness value
-void Debayer::debayerAndResize(cv::Mat& source, cv::Mat& dest) {
+void Debayer::debayerAndResize(const cv::Mat& source, cv::Mat& dest) {
 
-    cv::MatIterator_<uchar> it = source.begin<uchar>(),
-                         itEnd = source.end<uchar>();
+    cv::MatConstIterator_<uchar> it = source.begin<uchar>(),
+            itEnd = source.end<uchar>();
     uchar* destination = (uchar*) dest.data;
 
     while(it != itEnd) {
         // r g r g r g
         // g b g b g b
-        cv::MatIterator_<uchar> itLineEnd = it + 640;
+        cv::MatConstIterator_<uchar> itLineEnd = it + 640;
         while(it != itLineEnd) {
             *destination = *it;
             ++it;
