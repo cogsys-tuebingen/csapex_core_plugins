@@ -3,21 +3,32 @@
 
 /// PROJECT
 #include <utils_param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex_vision/cv_mat_message.h>
+#include <csapex/msg/io.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <QComboBox>
 #include <QLabel>
 #include <boost/assign/list_of.hpp>
+
 
 
 CSAPEX_REGISTER_CLASS(vision_plugins::Debayer, csapex::Node)
 
 using namespace vision_plugins;
 using namespace csapex;
+using namespace connection_types;
 
 Debayer::Debayer()
 {
+}
+
+void Debayer::setup(NodeModifier &node_modifier)
+{
+    input_ = node_modifier.addInput<CvMatMessage>("Image");
+    output_ = node_modifier.addOutput<CvMatMessage>("Debayered Image");
 }
 
 void Debayer::setupParameters(Parameterizable& parameters)
@@ -32,8 +43,10 @@ void Debayer::setupParameters(Parameterizable& parameters)
     parameters.addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
 }
 
-void Debayer::filter(cv::Mat &img, cv::Mat &/*mask*/)
+void Debayer::process()
 {
+    CvMatMessage::ConstPtr img_msg = msg::getMessage<CvMatMessage>(input_);
+    cv::Mat img = img_msg->value.clone();
     int mode = readParameter<int>("method");
 
     // assume 1 channel raw image comes in
@@ -50,6 +63,9 @@ void Debayer::filter(cv::Mat &img, cv::Mat &/*mask*/)
     else {
         cv::cvtColor(raw, img, mode);
     }
+    CvMatMessage::Ptr result(new CvMatMessage(enc::bgr,img_msg->stamp_micro_seconds));
+    result->value = img;
+    msg::publish(output_,result);
 }
 
 bool Debayer::usesMask()
