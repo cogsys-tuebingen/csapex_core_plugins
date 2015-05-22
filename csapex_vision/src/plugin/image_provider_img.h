@@ -30,8 +30,7 @@ public:
 
 private:
     cv::Mat img_;
-    bool border_;
-    bool displayed;
+    bool sent_;
 };
 
 } /// NAMESPACE
