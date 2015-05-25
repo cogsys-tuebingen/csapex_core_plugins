@@ -97,6 +97,8 @@ void LocalPatterns::process()
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
             utils_vision::LTP::centerSymmetric(working, k, out->value);
+            out->setEncoding(enc::unknown);
+            break;
         case WLD:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
@@ -154,6 +156,7 @@ void LocalPatterns::process()
             break;
         case LTP_CS:
             utils_vision::LTP::centerSymmetric(in->value, k, out->value);
+            out->setEncoding(enc::unknown);
             break;
         case WLD:
             utils_vision::WLD::standard(in->value, out->value);
