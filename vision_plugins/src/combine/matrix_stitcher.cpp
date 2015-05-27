@@ -24,7 +24,7 @@ namespace {
                 const unsigned int offset,
                 cv::Mat &dst)
     {
-        apex_assert_hard(src1.type() == src2.type());
+        apex_assert(src1.type() == src2.type());
         int rows = std::max(src1.rows, src2.rows);
         int cols = std::max(src1.cols, src2.cols);
         int pad_rows = 0;
