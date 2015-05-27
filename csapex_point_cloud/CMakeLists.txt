@@ -94,18 +94,18 @@ target_link_libraries(csapex_point_cloud_plugin
     csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
 )
 
-add_executable(apex_cloud_test
-  src/test.cpp
-)
-
-target_link_libraries(apex_cloud_test
-
-    yaml-cpp
-    ${catkin_LIBRARIES}
-
+#add_executable(apex_cloud_test
+#  src/test.cpp
+#)
+#
+#target_link_libraries(apex_cloud_test
+#
+#    yaml-cpp
+#    ${catkin_LIBRARIES}
+#
 #    Qt5::OpenGL
-    csapex_point_cloud
-)
+#    csapex_point_cloud
+#)
 
 #
 # INSTALL

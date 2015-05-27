@@ -48,6 +48,7 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
+qt5_add_resources(QT_RESOURCES res/csapex_vision_resources.qrc)
 
 add_library(csapex_vision
     src/core/filter.cpp
@@ -99,9 +100,6 @@ add_library(csapex_vision_plugin
 
     src/core/image_renderer.cpp
     src/core/image_provider.cpp
-
-
-    res/csapex_vision_resources.qrc
 )
 target_link_libraries(csapex_vision_plugin csapex_vision
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})

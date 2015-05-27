@@ -95,20 +95,70 @@ struct Image2CvMat
     }
 };
 
-void testWrap(const connection_types::CvMatMessage& input, int flipcode, connection_types::CvMatMessage& output)
+void testWrap(const connection_types::CvMatMessage& input, int flipcode,
+              connection_types::CvMatMessage& output)
 {
     cv::flip(input.value, output.value, flipcode);
 }
 
+void testWrapDirect(const cv::Mat& input, int flipcode,
+                    cv::Mat& output)
+{
+    cv::flip(input, output, flipcode);
+}
+
+struct ParameterInfoTestWrap
+{
+    static std::string getName(int index) {
+        switch(index) {
+        case 0:
+            return "Image";
+        case 1:
+            return "flip code";
+        case 2:
+            return "Flipped Image";
+        default:
+            return "";
+        }
+    }
+    template <typename P>
+    static param::ParameterPtr declareParameter(int index) {
+        switch(index) {
+        case 1:
+            return param::ParameterFactory::declareRange<P>(getName(index), -1, 3, 0, 1);
+        default:
+            return nullptr;
+        }
+    }
+};
+
 void RegisterPlugin::init(CsApexCore& core)
 {
-    qRegisterMetaType<cv::Mat>("cv::Mat");
-
     RosMessageConversion::registerConversion<sensor_msgs::Image, connection_types::CvMatMessage, Image2CvMat>();
 
     ConnectionType::setDefaultConnectionType(connection_types::makeEmpty<connection_types::CvMatMessage>());
 
-    core.getNodeFactory().registerNodeType(GenericNodeFactory::createConstructorFromFunction(testWrap,
-                                                                                             "TestWrap", "Test direct wrapping",
-                                                                                             core.getSettings()));
+    auto cWrap = GenericNodeFactory::createConstructorFromFunction<ParameterInfoTestWrap>
+            (testWrap,
+             "TestWrap",
+             "Test direct wrapping.",
+             core.getSettings(), {"Wrap", "Test", "Flip"},
+             ":/combiner.png");
+    core.getNodeFactory().registerNodeType(cWrap);
+
+    auto cWrapDirect = GenericNodeFactory::createConstructorFromFunction<ParameterInfoTestWrap>
+            (testWrapDirect,
+             "TestWrapDirect",
+             "Test directly wrapping a non-apex function.",
+             core.getSettings(), {"Wrap", "Test", "Flip"},
+             ":/combiner.png");
+    core.getNodeFactory().registerNodeType(cWrapDirect);
+
+    auto cWrapDirectNoInfo = GenericNodeFactory::createConstructorFromFunction
+            (testWrapDirect,
+             "TestWrapDirectNoInfo",
+             "Test directly wrapping a non-apex function with default info.",
+             core.getSettings());
+    core.getNodeFactory().registerNodeType(cWrapDirectNoInfo);
+
 }

@@ -35,8 +35,8 @@ std::string Roi::label() const
 
 void Roi::check()
 {
-    apex_assert_hard(rect_.x >= 0);
-    apex_assert_hard(rect_.y >= 0);
+    apex_assert(rect_.x >= 0);
+    apex_assert(rect_.y >= 0);
 }
 
 bool Roi::covers(const Roi& rhs) const

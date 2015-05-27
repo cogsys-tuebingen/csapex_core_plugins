@@ -57,6 +57,20 @@ inline std::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage>()
     return std::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr, 0));
 }
 
+template <>
+struct MessageContainer<cv::Mat>
+{
+    typedef CvMatMessage type;
+
+    static cv::Mat& access(CvMatMessage& msg) {
+        return msg.value;
+    }
+    static const cv::Mat& accessConst(const CvMatMessage& msg) {
+        return msg.value;
+    }
+};
+
+
 }
 }
 

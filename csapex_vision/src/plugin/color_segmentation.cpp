@@ -55,7 +55,7 @@ void ColorSegmentation::process()
         out_mask->value = bw;
     }
 
-    apex_assert_hard(!out_mask->value.empty());
+    apex_assert(!out_mask->value.empty());
     msg::publish(output_mask_, out_mask);
 }
 

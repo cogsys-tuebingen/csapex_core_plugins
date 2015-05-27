@@ -74,7 +74,7 @@ public:
         doc["rows"] = mask.mask_.rows;
         doc["cols"] = mask.mask_.cols;
 
-        apex_assert_hard(mask.mask_.type() == CV_8UC1);
+        apex_assert(mask.mask_.type() == CV_8UC1);
 
         QByteArray raw = qCompress(mask.mask_.data, mask.mask_.rows * mask.mask_.cols);
         doc["rawdata"] = raw.toBase64().data();

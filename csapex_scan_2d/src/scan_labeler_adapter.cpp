@@ -222,7 +222,7 @@ Memento::Ptr ScanLabelerAdapter::getState() const
 void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
-    apex_assert_hard(m.get());
+    apex_assert(m.get());
 
     state = *m;
 

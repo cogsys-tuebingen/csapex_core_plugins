@@ -82,7 +82,7 @@ class RosIoHandler
                     state->setParameterState(dummy.getParameterState());
 
                     std::string type("csapex::ImportRos");
-                    dispatcher->execute(Command::Ptr(new command::AddNode(type, pos, UUID::NONE, uuid, state)));
+                    dispatcher->execute(Command::Ptr(new command::AddNode(type, Point(pos.x(), pos.y()), UUID::NONE, uuid, state)));
 
                     return true;
                 }

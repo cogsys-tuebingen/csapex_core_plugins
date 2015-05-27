@@ -67,7 +67,7 @@ void MLEvaluator::process()
         const FeaturesMessage& truth = truth_msg->at(i);
         const FeaturesMessage& classified = classified_msg->at(i);
 
-        apex_assert_hard(truth.value.size() == classified.value.size());
+        apex_assert(truth.value.size() == classified.value.size());
 
         const float& t = truth.classification;
         const float& c = classified.classification;

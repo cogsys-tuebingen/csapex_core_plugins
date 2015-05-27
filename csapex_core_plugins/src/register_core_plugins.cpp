@@ -71,7 +71,7 @@ class FileHandler
                 state->setParameterState(child_state);
 
                 std::string type("csapex::FileImporter");
-                dispatcher->execute(Command::Ptr(new command::AddNode(type, scene_pos.toPoint(), UUID::NONE, uuid, state)));
+                dispatcher->execute(Command::Ptr(new command::AddNode(type, Point(scene_pos.x(), scene_pos.y()), UUID::NONE, uuid, state)));
 
                 e->accept();
                 return true;

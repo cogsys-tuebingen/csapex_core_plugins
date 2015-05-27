@@ -82,9 +82,9 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
     double correction_f = readParameter<double>("correct/f");
 
     if(boost::is_same<PointT, pcl::PointXYZI>()) {
-        apex_assert_hard(intensity.type() == CV_8UC1);
+        apex_assert(intensity.type() == CV_8UC1);
     }
-    apex_assert_hard(depth.type() == CV_32FC1);
+    apex_assert(depth.type() == CV_32FC1);
 
     std::pair<int,int> range = readParameter<std::pair<int,int> >("intensity");
 
