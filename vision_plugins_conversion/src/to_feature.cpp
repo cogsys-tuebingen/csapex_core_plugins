@@ -55,19 +55,15 @@ inline void doProcessSingle(const typename HistogramMessage::ConstPtr &src,
                             std::shared_ptr< std::vector<FeaturesMessage> > &dst,
                             const int label)
 {
-    FeaturesMessage features;
     for(std::vector<cv::Mat>::const_iterator
         it  = src->value.histograms.begin() ;
         it != src->value.histograms.end() ;
         ++it) {
-        std::vector<float> tmp;
-        it->copyTo(tmp);
-        features.value.insert(features.value.end(),
-                              tmp.begin(),
-                              tmp.end());
+        FeaturesMessage msg;
+        msg.classification = label;
+        it->copyTo(msg.value);
+        dst->push_back(msg);
     }
-    features.classification = label;
-    dst->push_back(features);
 }
 
 template<>

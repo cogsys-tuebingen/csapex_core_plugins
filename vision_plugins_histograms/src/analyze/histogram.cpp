@@ -23,6 +23,7 @@ Histogram::Histogram() :
     accumulate_(false),
     min_max_(false),
     min_max_global_(false),
+    append_(false),
     min_max_value_(std::make_pair<float, float>(std::numeric_limits<float>::max(),
                                                 std::numeric_limits<float>::min()))
 {
@@ -33,6 +34,8 @@ void Histogram::process()
     CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
     HistogramMessage::Ptr out(new HistogramMessage);
 
+    append_         = readParameter<bool>("append histograms");
+
     cv::Mat mask;
     if(msg::hasMessage(mask_)) {
         CvMatMessage::ConstPtr mask_ptr = msg::getMessage<CvMatMessage>(mask_);
@@ -40,7 +43,7 @@ void Histogram::process()
     }
 
     int type = in->value.type() & 7;
-    std::vector<int>                            bins;
+    std::vector<int> bins;
 
     if(min_max_ && type != last_type_)
         resetMinMax();
@@ -110,17 +113,27 @@ void Histogram::process()
         range = min_max_value_;
     }
 
-    for(int i = 0 ; i < in->value.channels() ; ++i) {
-        out->value.ranges.push_back(range);
-        bins.push_back(bins_);
-    }
+    std::vector<utils_vision::histogram::Rangef> ranges (in->value.channels(), range);
+    bins.resize(in->value.channels(), bins_);
 
     std::vector<cv::Mat> histograms;
     utils_vision::histogram::histogram
-            (in->value, out->value.histograms, mask, bins, out->value.ranges, uniform_, accumulate_);
+            (in->value, histograms, mask, bins, ranges, uniform_, accumulate_);
 
-    for(std::vector<cv::Mat>::iterator it = histograms.begin() ; it != histograms.end() ; ++it) {
-        out->value.histograms.push_back(*it);
+    if(append_) {
+        int length = histograms.front().rows;
+        cv::Mat all(histograms.size() * length, 1, CV_32FC1, cv::Scalar::all(0));
+        for(unsigned int i = 0 ; i < histograms.size() ; ++i) {
+            cv::Mat rows(all, cv::Rect(0, i * length, 1, length));
+            histograms.at(i).copyTo(rows);
+        }
+        out->value.histograms.push_back(all);
+        out->value.ranges.resize(1, range);
+    } else {
+        for(std::vector<cv::Mat>::iterator it = histograms.begin() ; it != histograms.end() ; ++it) {
+            out->value.histograms.push_back(*it);
+        }
+        out->value.ranges = ranges;
     }
 
     msg::publish(output_, out);
@@ -137,15 +150,17 @@ void Histogram::setup(NodeModifier& node_modifier)
 void Histogram::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
-                 std::bind(&Histogram::update, this));
+                            std::bind(&Histogram::update, this));
     parameters.addParameter(param::ParameterFactory::declareBool("uniform", uniform_),
-                 std::bind(&Histogram::update, this));
+                            std::bind(&Histogram::update, this));
     parameters.addParameter(param::ParameterFactory::declareBool("accumulate", accumulate_),
-                 std::bind(&Histogram::update, this));
+                            std::bind(&Histogram::update, this));
     parameters.addParameter(param::ParameterFactory::declareBool("min max range", false),
-                 std::bind(&Histogram::update, this));
+                            std::bind(&Histogram::update, this));
     parameters.addParameter(param::ParameterFactory::declareBool("global min max", false),
-                 std::bind(&Histogram::update, this));
+                            std::bind(&Histogram::update, this));
+    parameters.addParameter(param::ParameterFactory::declareBool("append histograms", false),
+                            std::bind(&Histogram::update, this));
 }
 
 void Histogram::update()

@@ -35,20 +35,44 @@ struct Dispatch {
                const cv::Mat &clusters,
                const utils_vision::histogram::Ranged &range,
                const int bins,
+               const bool append,
                int  &num_clusters,
                HistogramMessage &msg)
     {
         std::vector<cv::Mat> channels;
         cv::split(src, channels);
         num_clusters = utils_vision::histogram::numClusters(clusters);
-        msg.value.ranges.resize(channels.size(), range);
-        for(int i = 0 ; i < channels.size() ; ++i) {
-            std::vector<cv::Mat> tmp;
-            utils_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
-                                                    range.first,  range.second, bins,
-                                                    num_clusters, tmp);
-            msg.value.histograms.insert(msg.value.histograms.end(), tmp.begin(), tmp.end());
 
+        if(append) {
+            msg.value.ranges.resize(1, range);
+            msg.value.histograms.resize(num_clusters);
+
+            for(cv::Mat &m : msg.value.histograms) {
+                m = cv::Mat(bins * channels.size(), 1, CV_32SC1, cv::Scalar::all(0));
+            }
+
+            for(int i = 0 ; i < channels.size() ; ++i) {
+                std::vector<cv::Mat> tmp;
+                utils_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
+                                                        range.first,  range.second, bins,
+                                                        num_clusters, tmp);
+
+                for(int j = 0 ; j < num_clusters ; ++j) {
+                    cv::Mat &histgram = msg.value.histograms.at(j);
+                    cv::Mat histogram_roi(histgram, cv::Rect(0, i * bins, 1, bins));
+                    tmp.at(j).copyTo(histogram_roi);
+                }
+            }
+        } else {
+            msg.value.ranges.resize(channels.size(), range);
+            for(int i = 0 ; i < channels.size() ; ++i) {
+                std::vector<cv::Mat> tmp;
+                utils_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
+                                                        range.first,  range.second, bins,
+                                                        num_clusters, tmp);
+                msg.value.histograms.insert(msg.value.histograms.end(), tmp.begin(), tmp.end());
+
+            }
         }
     }
 };
@@ -72,7 +96,7 @@ void ClusterHistograms::process()
         throw std::runtime_error("Cluster label matrix must be single channel integer!");
     }
     if(!mask.empty() &&  mask.type() != CV_8UC1) {
-            throw std::runtime_error("Mask must be single channel uchar!");
+        throw std::runtime_error("Mask must be single channel uchar!");
     }
     if(!mask.empty() &&
             (in->value.rows != mask.rows || in->value.cols != mask.cols)) {
@@ -91,6 +115,7 @@ void ClusterHistograms::process()
     int    out_clusters = 0;
     bool   set_max = readParameter<bool>("set max");
     bool   set_min = readParameter<bool>("set min");
+    bool   append = readParameter<bool>("append histograms");
     double max = 0.0;
     double min = 0.0;
     if(set_max)
@@ -118,6 +143,7 @@ void ClusterHistograms::process()
                                clusters->value,
                                range,
                                bins,
+                               append,
                                out_clusters,
                                *out_histograms);
         break;
@@ -139,6 +165,7 @@ void ClusterHistograms::process()
                               clusters->value,
                               range,
                               bins,
+                              append,
                               out_clusters,
                               *out_histograms);
         break;
@@ -160,6 +187,7 @@ void ClusterHistograms::process()
                                 clusters->value,
                                 range,
                                 bins,
+                                append,
                                 out_clusters,
                                 *out_histograms);
         break;
@@ -180,6 +208,7 @@ void ClusterHistograms::process()
                                clusters->value,
                                range,
                                bins,
+                               append,
                                out_clusters,
                                *out_histograms);
         break;
@@ -200,6 +229,7 @@ void ClusterHistograms::process()
                              clusters->value,
                              range,
                              bins,
+                             append,
                              out_clusters,
                              *out_histograms);
         break;
@@ -220,6 +250,7 @@ void ClusterHistograms::process()
                                clusters->value,
                                range,
                                bins,
+                               append,
                                out_clusters,
                                *out_histograms);
 
@@ -246,6 +277,7 @@ void ClusterHistograms::setup(NodeModifier &node_modifier)
 void ClusterHistograms::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareBool("min max norm", false));
+    parameters.addParameter(param::ParameterFactory::declareBool("append histograms", false));
     parameters.addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 256, 1));
 
     param::Parameter::Ptr set_max = param::ParameterFactory::declareBool("set max", false);

@@ -25,6 +25,7 @@ protected:
     bool accumulate_;
     bool min_max_;
     bool min_max_global_;
+    bool append_;
     std::pair<float, float> min_max_value_;
 
     void update();
