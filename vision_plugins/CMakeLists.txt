@@ -95,8 +95,11 @@ add_library(vision_plugins
     src/analyze/camera_calibration.cpp
     src/analyze/cluster_boundary_mask.cpp
     src/analyze/glcm.cpp
-    src/analyze/label_regions.cpp
     src/analyze/preemptiveSLIC.cpp
+
+    src/label/label_regions.cpp
+    src/label/assign_cluster_class.cpp
+    src/label/assign_cluster_class_adapter.cpp
 
     src/recognition/hog_detector.cpp
     src/recognition/hog_extractor.cpp
