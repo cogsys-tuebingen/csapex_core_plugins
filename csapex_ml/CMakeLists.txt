@@ -37,6 +37,8 @@ add_library(csapex_ml_plugin
     src/mlp/mlp.cpp
 
     src/arff_format_export.cpp
+
+    src/assign_class.cpp
 )
 
 target_link_libraries(csapex_ml_plugin
