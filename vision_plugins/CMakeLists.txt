@@ -98,6 +98,7 @@ add_library(vision_plugins
     src/analyze/preemptiveSLIC.cpp
 
     src/label/label_regions.cpp
+    src/label/cluster_grid.cpp
     src/label/assign_cluster_class.cpp
     src/label/assign_cluster_class_adapter.cpp
 

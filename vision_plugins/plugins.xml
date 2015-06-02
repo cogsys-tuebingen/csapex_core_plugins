@@ -318,5 +318,9 @@
   </class>
   <class type="csapex::AssignClusterClassAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
     <description></description>
-  </class>-->
+  </class>
+  <class type="vision_plugins::ClusterGrid" base_class_type="csapex::Node">
+     <description></description>
+     <tags>Vision</tags>
+   </class>
 </library>
