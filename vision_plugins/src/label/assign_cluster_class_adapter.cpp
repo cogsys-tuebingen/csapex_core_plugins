@@ -32,6 +32,7 @@ AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorker* worker, AssignC
       empty(32, 32, QImage::Format_RGB16),
       painter(&empty),
       middle_button_down_(false),
+      left_button_down_(false),
       loaded_(false)
 {
     painter.setPen(QPen(Qt::red));
@@ -63,6 +64,11 @@ bool AssignClusterClassAdapter::eventFilter(QObject *o, QEvent *e)
             e->accept();
             return true;
         }
+        if(me->button() == Qt::LeftButton) {
+            left_button_down_ = true;
+            e->accept();
+            return true;
+        }
         break;
     case QEvent::GraphicsSceneMouseRelease: {
         if(me->button() == Qt::MiddleButton) {
@@ -77,6 +83,7 @@ bool AssignClusterClassAdapter::eventFilter(QObject *o, QEvent *e)
             updateClusterClass(QPoint(mpos.x() - ppos.x(),
                                       mpos.y() - ppos.y()));
 
+            left_button_down_ = false;
             e->accept();
             return true;
         }
@@ -92,6 +99,16 @@ bool AssignClusterClassAdapter::eventFilter(QObject *o, QEvent *e)
             state.height = std::max(32, view_->height() + delta.y());
 
             view_->setFixedSize(QSize(state.width, state.height));
+            e->accept();
+            return true;
+        }
+        if(left_button_down_) {
+            QPointF ppos = pixmap_->scenePos();
+            QPointF mpos = me->scenePos();
+
+            updateClusterClass(QPoint(mpos.x() - ppos.x(),
+                                      mpos.y() - ppos.y()));
+
             e->accept();
             return true;
         }
@@ -212,6 +229,20 @@ void AssignClusterClassAdapter::display(QSharedPointer<QImage> img, const cv::Ma
 
     QPixmap pixmap = QPixmap::fromImage(*img_);
 
+    bool init_overlay = clusters_.rows != clusters.rows || clusters_.cols != clusters.cols;
+    if(!clusters_.empty()) {
+        cv::Mat diff;
+        cv::bitwise_and(clusters, clusters_, diff);
+        init_overlay |= (cv::countNonZero(diff) > 0);
+    }
+
+    if(init_overlay) {
+        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
+        overlay_->fill(QColor(0,0,0,0));
+        QPixmap pixmap = QPixmap::fromImage(*overlay_);
+        pixmap_overlay_->setPixmap(pixmap);
+    }
+
     clusters_ = clusters;
 
     bool change = state.last_size != img_->size();
@@ -245,7 +276,7 @@ void AssignClusterClassAdapter::submit()
     if(pixmap_ == nullptr)
         return;
 
-     wrapped_->setResult(classes_);
+    wrapped_->setResult(classes_);
 }
 
 void AssignClusterClassAdapter::drop()
