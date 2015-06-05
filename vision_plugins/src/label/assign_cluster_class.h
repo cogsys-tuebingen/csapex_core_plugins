@@ -30,6 +30,7 @@ public:
 private:
     void submit();
     void drop();
+    void clear();
     void setColor();
     void setClass();
     void display();
@@ -50,6 +51,7 @@ public:
     boost::signals2::signal<void(QSharedPointer<QImage>, const cv::Mat&)> display_request;
     boost::signals2::signal<void()>                                       submit_request;
     boost::signals2::signal<void()>                                       drop_request;
+    boost::signals2::signal<void()>                                       clear_request;
     boost::signals2::signal<void(int)>                                    set_class;
     boost::signals2::signal<void(int,int,int)>                            set_color;
 };

@@ -36,10 +36,6 @@ void ClusterGrid::process()
     int cell_width  = in->value.cols / dim_x;
     int rest_witdh  = in->value.cols % dim_x;
 
-    std::cout << in->value.rows << " " << in->value.cols << std::endl;
-    std::cout << dim_x << " " << cell_width << " " << rest_witdh << std::endl;
-    std::cout << dim_y << " " << cell_height << " " << rest_height << std::endl;
-
     int label = 0;
     cv::Rect roi;
     cv::Mat  roi_mat;

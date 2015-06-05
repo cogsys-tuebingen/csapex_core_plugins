@@ -47,6 +47,7 @@ AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorker* worker, AssignC
                                       std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     node->submit_request.connect(std::bind(&AssignClusterClassAdapter::submitRequest, this));
     node->drop_request.connect(std::bind(&AssignClusterClassAdapter::dropRequest, this));
+    node->clear_request.connect(std::bind(&AssignClusterClassAdapter::clearRequest, this));
 }
 
 bool AssignClusterClassAdapter::eventFilter(QObject *o, QEvent *e)
@@ -198,6 +199,7 @@ void AssignClusterClassAdapter::setupUi(QBoxLayout* layout)
     connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>, const cv::Mat&)), this, SLOT(display(QSharedPointer<QImage>, const cv::Mat&)));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
     connect(this, SIGNAL(dropRequest()), this, SLOT(drop()));
+    connect(this, SIGNAL(clearRequest()), this, SLOT(clear()));
     connect(this, SIGNAL(setColorRequest(int,int,int)), this, SLOT(setColor(int,int,int)));
     connect(this, SIGNAL(setClassRequest(int)), this, SLOT(setClass(int)));
 
@@ -232,7 +234,7 @@ void AssignClusterClassAdapter::display(QSharedPointer<QImage> img, const cv::Ma
     bool init_overlay = clusters_.rows != clusters.rows || clusters_.cols != clusters.cols;
     if(!clusters_.empty()) {
         cv::Mat diff;
-        cv::bitwise_and(clusters, clusters_, diff);
+        cv::subtract(clusters, clusters_, diff);
         init_overlay |= (cv::countNonZero(diff) > 0);
     }
 
@@ -283,6 +285,17 @@ void AssignClusterClassAdapter::drop()
 {
     std::vector<int> empty;
     wrapped_->setResult(empty);
+}
+
+void AssignClusterClassAdapter::clear()
+{
+    if(!img_->isNull()) {
+        classes_.resize(classes_.size(), -1);
+        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
+        overlay_->fill(QColor(0,0,0,0));
+        QPixmap pixmap = QPixmap::fromImage(*overlay_);
+        pixmap_overlay_->setPixmap(pixmap);
+    }
 }
 
 void AssignClusterClassAdapter::setColor(int r, int g, int b)

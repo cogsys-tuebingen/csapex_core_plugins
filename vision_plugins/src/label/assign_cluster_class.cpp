@@ -39,6 +39,9 @@ void AssignClusterClass::setupParameters(Parameterizable& parameters)
     parameters.addParameter(param::ParameterFactory::declareTrigger("drop"),
                             std::bind(&AssignClusterClass::drop, this));
 
+    parameters.addParameter(param::ParameterFactory::declareTrigger("clear"),
+                            std::bind(&AssignClusterClass::clear, this));
+
     parameters.addParameter(param::ParameterFactory::declareRange("class id",
                                                                   param::ParameterDescription("The class id to be used!"),
                                                                   0, 255, 0, 1),
@@ -75,6 +78,11 @@ void AssignClusterClass::submit()
 void AssignClusterClass::drop()
 {
     drop_request();
+}
+
+void AssignClusterClass::clear()
+{
+    clear_request();
 }
 
 void AssignClusterClass::setColor()

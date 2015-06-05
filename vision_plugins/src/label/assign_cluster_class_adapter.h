@@ -32,6 +32,7 @@ public Q_SLOTS:
     void fitInView();
     void submit();
     void drop();
+    void clear();
     void setColor(int r,int g, int b);
     void setClass(int c);
 
@@ -39,6 +40,7 @@ Q_SIGNALS:
     void displayRequest(QSharedPointer<QImage> img, const cv::Mat &clusters);
     void submitRequest();
     void dropRequest();
+    void clearRequest();
     void setColorRequest(int r,int g, int b);
     void setClassRequest(int c);
 
