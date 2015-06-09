@@ -36,6 +36,7 @@ public:
     {
         parameters.addParameter(param::ParameterFactory::declareRange("dimension x", 1, 1000, 64, 1));
         parameters.addParameter(param::ParameterFactory::declareRange("dimension y", 1, 1000, 48, 1));
+        parameters.addParameter(param::ParameterFactory::declareRange("class id", -1, 255, -1, 1));
         parameters.addParameter(param::ParameterFactory::declareColorParameter("color", 255,0,0));
     }
 
@@ -46,13 +47,14 @@ public:
 
         int dim_x = readParameter<int>("dimension x");
         int dim_y = readParameter<int>("dimension y");
+        int class_id = readParameter<int>("class id");
+        const std::vector<int>& c = readParameter<std::vector<int> >("color");
+        cv::Scalar color = cv::Scalar(c[2], c[1], c[0]);
         int cell_height = in->value.rows / dim_y;
         int rest_height = in->value.rows % dim_y;
         int cell_width  = in->value.cols / dim_x;
         int rest_witdh  = in->value.cols % dim_x;
 
-        const std::vector<int>& c = readParameter<std::vector<int> >("color");
-        cv::Scalar color = cv::Scalar(c[2], c[1], c[0]);
 
         cv::Rect rect;
         for(int i = 0 ; i < dim_y ; ++i) {
@@ -64,6 +66,7 @@ public:
                 rect.height = cell_height + ((i == dim_y - 1) ? rest_height : 0);
                 roi->value.setRect(rect);
                 roi->value.setColor(color);
+                roi->value.setClassification(class_id);
                 out->value.push_back(roi);
             }
         }
