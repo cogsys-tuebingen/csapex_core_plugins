@@ -65,7 +65,7 @@ void ClusterGrid::setup(NodeModifier& node_modifier)
 void ClusterGrid::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareRange("dimension x", 1, 1000, 64, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange("dimension y", 1, 1000, 64, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("dimension y", 1, 1000, 48, 1));
 }
 
 
