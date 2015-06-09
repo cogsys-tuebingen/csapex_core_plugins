@@ -137,6 +137,7 @@ void AssignClusterClass::process()
     utils_vision::getClusterBoundaryMask<int32_t>(clusters_, mask_);
 
     setColor();
+    setClass();
     display();
 
     bool continue_p = waitForView();

@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   vision_plugins_histograms
 )
 
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 ###################################
 ## catkin specific configuration ##
