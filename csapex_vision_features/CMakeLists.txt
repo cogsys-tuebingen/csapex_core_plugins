@@ -56,6 +56,7 @@ add_library(csapex_vision_features_plugin
     src/register_plugin.cpp
     src/extract_keypoints.cpp
     src/extract_descriptors.cpp
+    src/grid_arranged_keypoints.cpp
     src/display_keypoints.cpp
     src/match_descriptors.cpp
 )
