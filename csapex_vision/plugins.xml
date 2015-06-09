@@ -3,6 +3,10 @@
   <description>Produce static roi matrix.</description>
   <tags>Vision</tags>
 </class>
+<class type="csapex::GridArrangedRois" base_class_type="csapex::Node">
+  <description>Produce vector of grid arranged rois.</description>
+  <tags>Vision</tags>
+</class>
 <class type="csapex::RotateImage" base_class_type="csapex::Node">
   <description>Rotates an image</description>
 </class>
