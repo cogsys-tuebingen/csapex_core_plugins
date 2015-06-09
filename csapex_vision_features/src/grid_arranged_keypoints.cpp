@@ -1,9 +1,6 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-/// PROJECT
-#include <utils_vision/utils/extractor.h>
-
 /// COMPONENT
 #include <csapex_vision_features/keypoint_message.h>
 #include <csapex_vision/cv_mat_message.h>

@@ -83,8 +83,11 @@ add_library(csapex_vision_plugin
     src/plugin/image_provider_set.cpp
     src/plugin/hough_circle.cpp
     src/plugin/vectorize_pyramid.cpp
+
     src/plugin/image_roi.cpp
     src/plugin/image_roi_adapter.cpp
+    src/plugin/grid_arranged_rois.cpp
+
     src/plugin/row.cpp
     src/plugin/col.cpp
     src/plugin/minmax_loc.cpp
