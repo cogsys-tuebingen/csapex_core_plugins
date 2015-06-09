@@ -101,6 +101,8 @@ add_library(vision_plugins
     src/label/cluster_grid.cpp
     src/label/assign_cluster_class.cpp
     src/label/assign_cluster_class_adapter.cpp
+    src/label/assign_roi_class.cpp
+    src/label/assign_roi_class_adapter.cpp
 
     src/recognition/hog_detector.cpp
     src/recognition/hog_extractor.cpp

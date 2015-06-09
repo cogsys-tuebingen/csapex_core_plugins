@@ -1,0 +1,315 @@
+/// HEADER
+#include "assign_roi_class_adapter.h"
+
+/// PROJECT
+#include <csapex/msg/io.h>
+#include <csapex/utility/register_node_adapter.h>
+#include <utils_qt/QtCvImageConverter.h>
+#include <csapex/utility/color.hpp>
+#include <csapex/utility/assert.h>
+#include <utils_vision/utils/histogram.hpp>
+
+/// SYSTEM
+#include <QPainter>
+#include <QGraphicsSceneEvent>
+#include <QGraphicsPixmapItem>
+#include <QCheckBox>
+#include <QPushButton>
+#include <QKeyEvent>
+
+using namespace csapex;
+using namespace vision_plugins;
+
+CSAPEX_REGISTER_NODE_ADAPTER(AssignROIClassAdapter, vision_plugins::AssignROIClass)
+
+AssignROIClassAdapter::AssignROIClassAdapter(NodeWorker* worker, AssignROIClass *node, WidgetController* widget_ctrl)
+    : DefaultNodeAdapter(worker, widget_ctrl),
+      wrapped_(node),
+      active_class_(0),
+      pixmap_overlay_(nullptr),
+      pixmap_(nullptr),
+      view_(new QGraphicsView),
+      empty(32, 32, QImage::Format_RGB16),
+      painter(&empty),
+      middle_button_down_(false),
+      left_button_down_(false),
+      loaded_(false)
+{
+    painter.setPen(QPen(Qt::red));
+    painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
+    painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
+
+    // translate to UI thread via Qt signal
+    node->display_request.connect(std::bind(&AssignROIClassAdapter::displayRequest, this,
+                                            std::placeholders::_1, std::placeholders::_2));
+    node->set_class.connect(std::bind(&AssignROIClassAdapter::setClassRequest, this, std::placeholders::_1));
+    node->set_color.connect(std::bind(&AssignROIClassAdapter::setColorRequest, this,
+                                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+    node->submit_request.connect(std::bind(&AssignROIClassAdapter::submitRequest, this));
+    node->drop_request.connect(std::bind(&AssignROIClassAdapter::dropRequest, this));
+    node->clear_request.connect(std::bind(&AssignROIClassAdapter::clearRequest, this));
+}
+
+bool AssignROIClassAdapter::eventFilter(QObject *o, QEvent *e)
+{
+    QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
+
+    switch(e->type()) {
+    case QEvent::KeyPress: {
+        break;
+    }
+    case QEvent::GraphicsSceneMousePress:
+        if(me->button() == Qt::MiddleButton) {
+            middle_button_down_ = true;
+            middle_last_pos_ = me->screenPos();
+            e->accept();
+            return true;
+        }
+        if(me->button() == Qt::LeftButton) {
+            left_button_down_ = true;
+            e->accept();
+            return true;
+        }
+        break;
+    case QEvent::GraphicsSceneMouseRelease: {
+        if(me->button() == Qt::MiddleButton) {
+            middle_button_down_ = false;
+            e->accept();
+            return true;
+        }
+        if(me->button() == Qt::LeftButton) {
+            QPointF ppos = pixmap_->scenePos();
+            QPointF mpos = me->scenePos();
+
+            updateClusterClass(QPoint(mpos.x() - ppos.x(),
+                                      mpos.y() - ppos.y()));
+
+            left_button_down_ = false;
+            e->accept();
+            return true;
+        }
+    }
+        break;
+    case QEvent::GraphicsSceneMouseMove:
+        if(middle_button_down_) {
+            QPoint delta     = me->screenPos() - middle_last_pos_;
+
+            middle_last_pos_ = me->screenPos();
+
+            state.width = std::max(32, view_->width() + delta.x());
+            state.height = std::max(32, view_->height() + delta.y());
+
+            view_->setFixedSize(QSize(state.width, state.height));
+            e->accept();
+            return true;
+        }
+        if(left_button_down_) {
+            QPointF ppos = pixmap_->scenePos();
+            QPointF mpos = me->scenePos();
+
+            updateClusterClass(QPoint(mpos.x() - ppos.x(),
+                                      mpos.y() - ppos.y()));
+
+            e->accept();
+            return true;
+        }
+        break;
+    case QEvent::GraphicsSceneWheel: {
+        e->accept();
+
+        QGraphicsSceneWheelEvent* we = dynamic_cast<QGraphicsSceneWheelEvent*> (e);
+        double scaleFactor = 1.1;
+        if(we->delta() > 0) {
+            // Zoom in
+            view_->scale(scaleFactor, scaleFactor);
+        } else {
+            // Zooming out
+            view_->scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+        }
+        return true;
+    }
+    default:
+        break;
+    }
+
+    return false;
+}
+
+void AssignROIClassAdapter::updateClusterClass(const QPoint &pos)
+{
+    if(pos.x() < 0 || pos.x() >= clusters_.cols)
+        return;
+    if(pos.y() < 0 || pos.y() >= clusters_.rows)
+        return;
+
+    int cluster = clusters_.at<int>(pos.y(),pos.x());
+    classes_.at(cluster) = active_class_;
+
+    if(overlay_.isNull()) {
+        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
+        overlay_->fill(QColor(0,0,0,0));
+    }
+
+    QColor &c = colors_[active_class_];
+    for(int i = 0 ; i < clusters_.rows ; ++i) {
+        for(int j = 0 ; j < clusters_.cols ; ++j) {
+            if(clusters_.at<int>(i,j) == cluster) {
+                overlay_->setPixel(j,i, c.rgba());
+            }
+        }
+    }
+
+    QPixmap pixmap = QPixmap::fromImage(*overlay_);
+    if(pixmap_overlay_ != nullptr)
+        pixmap_overlay_->setPixmap(pixmap);
+
+    view_->scene()->update();
+}
+
+void AssignROIClassAdapter::setupUi(QBoxLayout* layout)
+{
+    QGraphicsScene* scene = view_->scene();
+    if(scene == nullptr) {
+        scene = new QGraphicsScene();
+        view_->setScene(scene);
+        scene->installEventFilter(this);
+    }
+
+    view_->setFixedSize(QSize(state.width, state.height));
+    view_->setMouseTracking(true);
+    view_->setAcceptDrops(false);
+    view_->setDragMode(QGraphicsView::RubberBandDrag);
+    view_->scene()->installEventFilter(this);
+
+    layout->addWidget(view_);
+
+    QHBoxLayout* sub = new QHBoxLayout;
+    QPushButton* fit = new QPushButton("fit size");
+    sub->addWidget(fit, 0,  Qt::AlignLeft);
+    QObject::connect(fit, SIGNAL(clicked()), this, SLOT(fitInView()));
+
+    sub->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    layout_->addLayout(sub);
+
+    pixmap_overlay_ = new QGraphicsPixmapItem;
+    pixmap_ = new QGraphicsPixmapItem;
+    view_->scene()->addItem(pixmap_);
+    view_->scene()->addItem(pixmap_overlay_);
+
+    connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>, const cv::Mat&)), this, SLOT(display(QSharedPointer<QImage>, const cv::Mat&)));
+    connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
+    connect(this, SIGNAL(dropRequest()), this, SLOT(drop()));
+    connect(this, SIGNAL(clearRequest()), this, SLOT(clear()));
+    connect(this, SIGNAL(setColorRequest(int,int,int)), this, SLOT(setColor(int,int,int)));
+    connect(this, SIGNAL(setClassRequest(int)), this, SLOT(setClass(int)));
+
+    DefaultNodeAdapter::setupUi(layout);
+}
+
+Memento::Ptr AssignROIClassAdapter::getState() const
+{
+    return std::shared_ptr<State>(new State(state));
+}
+
+void AssignROIClassAdapter::setParameterState(Memento::Ptr memento)
+{
+    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
+    apex_assert_hard(m.get());
+
+    state = *m;
+
+    view_->setFixedSize(QSize(state.width, state.height));
+    loaded_ = true;
+}
+
+void AssignROIClassAdapter::display(QSharedPointer<QImage> img, const cv::Mat &clusters)
+{
+    /// PREPARE LABLES
+    int num_clusters = utils_vision::histogram::numClusters(clusters);
+    classes_.resize(num_clusters, -1);
+    img_ = img;
+
+    QPixmap pixmap = QPixmap::fromImage(*img_);
+
+    bool init_overlay = clusters_.rows != clusters.rows || clusters_.cols != clusters.cols;
+    if(!clusters_.empty()) {
+        cv::Mat diff;
+        cv::subtract(clusters, clusters_, diff);
+        init_overlay |= (cv::countNonZero(diff) > 0);
+    }
+
+    if(init_overlay) {
+        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
+        overlay_->fill(QColor(0,0,0,0));
+        QPixmap pixmap = QPixmap::fromImage(*overlay_);
+        pixmap_overlay_->setPixmap(pixmap);
+    }
+
+    clusters_ = clusters;
+
+    bool change = state.last_size != img_->size();
+    if(change || loaded_) {
+        view_->scene()->setSceneRect(img_->rect());
+        view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
+        loaded_ = false;
+    }
+
+    if(pixmap_ != nullptr)
+        pixmap_->setPixmap(pixmap);
+
+    view_->scene()->update();
+
+    state.last_size = img_->size();
+}
+
+void AssignROIClassAdapter::fitInView()
+{
+    if(state.last_size.isNull()) {
+        return;
+    }
+    state.width  = state.last_size.width();
+    state.height = state.last_size.height();
+    view_->setFixedSize(QSize(state.width, state.height));
+    view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
+}
+
+void AssignROIClassAdapter::submit()
+{
+    if(pixmap_ == nullptr)
+        return;
+
+    wrapped_->setResult(classes_);
+}
+
+void AssignROIClassAdapter::drop()
+{
+    std::vector<int> empty;
+    wrapped_->setResult(empty);
+}
+
+void AssignROIClassAdapter::clear()
+{
+    if(!img_->isNull()) {
+        classes_.resize(classes_.size(), -1);
+        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
+        overlay_->fill(QColor(0,0,0,0));
+        QPixmap pixmap = QPixmap::fromImage(*overlay_);
+        pixmap_overlay_->setPixmap(pixmap);
+    }
+}
+
+void AssignROIClassAdapter::setColor(int r, int g, int b)
+{
+    QColor c(r,g,b,127);
+    colors_[active_class_] = c;
+}
+
+void AssignROIClassAdapter::setClass(int c)
+{
+    active_class_ = c;
+    QColor &col = colors_[c];
+    wrapped_->setActiveClassColor(col.red(),col.green(), col.blue());
+}
+
+/// MOC
+#include "moc_assign_roi_class_adapter.cpp"
