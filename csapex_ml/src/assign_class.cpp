@@ -36,15 +36,16 @@ void AssignClass::process()
             msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_features_);
     std::shared_ptr<std::vector<int> const> in_labels =
             msg::getMessage<GenericVectorMessage, int>(in_labels_);
-    std::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>(in_features->size(),
-                                                                                        FeaturesMessage()));
+    std::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
 
     if(in_features->size() != in_labels->size())
         throw std::runtime_error("Label count != FeatureMsg count!");
 
     for(unsigned int i = 0 ; i < in_features->size() ; ++i) {
-        out->at(i) = in_features->at(i);
-        out->at(i).classification = in_labels->at(i);
+        if(in_labels->at(i) > -1) {
+            out->push_back(in_features->at(i));
+            out->back().classification = in_labels->at(i);
+        }
     }
 
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
