@@ -48,6 +48,7 @@ include_directories(include
 add_library(csapex_vision_features
     src/keypoint_message.cpp
     src/descriptor_message.cpp
+    src/match_message.cpp
 )
 target_link_libraries(csapex_vision_features
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
@@ -56,6 +57,7 @@ add_library(csapex_vision_features_plugin
     src/register_plugin.cpp
     src/extract_keypoints.cpp
     src/extract_descriptors.cpp
+    src/find_homography.cpp
     src/display_keypoints.cpp
     src/match_descriptors.cpp
 )
