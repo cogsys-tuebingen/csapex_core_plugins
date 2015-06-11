@@ -15,6 +15,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_core_plugins/vector_message.h>
 
+
 #include <QColor>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::AssignROIClass, csapex::Node)
@@ -49,17 +50,14 @@ void AssignROIClass::setupParameters(Parameterizable& parameters)
 
     parameters.addParameter(param::ParameterFactory::declareColorParameter("class color", 0, 255, 0),
                             std::bind(&AssignROIClass::setColor, this));
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("border color", 0, 0, 0),
-                            std::bind(&AssignROIClass::display, this));
-
     setColor();
 }
 
 void AssignROIClass::setup(NodeModifier& node_modifier)
 {
     in_image_    = node_modifier.addInput<CvMatMessage>("Image");
-    in_clusters_ = node_modifier.addInput<CvMatMessage>("Clusters");
-    out_labels_  = node_modifier.addOutput<GenericVectorMessage, int>("labels");
+    in_rois_ = node_modifier.addInput<VectorMessage, RoiMessage>("Rois");
+    out_rois_  = node_modifier.addOutput<VectorMessage, RoiMessage>("Labeled Rois");
 }
 
 void AssignROIClass::setActiveClassColor(const int r, const int g, const int b)
@@ -102,16 +100,10 @@ void AssignROIClass::display()
     if(image_.empty())
         return;
 
-    /// GET PARAMETERS
-    const std::vector<int>& bc = readParameter<std::vector<int> >("border color");
-    cv::Scalar border_color(bc[2], bc[1], bc[0]);
-
-    image_.setTo(border_color, mask_);
-
     QSharedPointer<QImage> qimg =
             QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(image_);
 
-    display_request(qimg, clusters_);
+    display_request(qimg);
 }
 
 
@@ -119,23 +111,23 @@ void AssignROIClass::process()
 {
     InteractiveNode::process();
 
-    CvMatMessage::ConstPtr in_img = msg::getMessage<CvMatMessage>(in_image_);
-    CvMatMessage::ConstPtr in_clu = msg::getMessage<CvMatMessage>(in_clusters_);
+    CvMatMessage::ConstPtr  in_img  = msg::getMessage<CvMatMessage>(in_image_);
+    VectorMessage::ConstPtr in_rois = msg::getMessage<VectorMessage>(in_rois_);
+
     if(in_img->value.empty())
         return;
-    if(in_img->value.rows != in_clu->value.rows)
-        throw std::runtime_error("Matrix row counts are not matchin!");
-    if(in_img->value.cols != in_clu->value.cols)
-        throw std::runtime_error("Matrix column counts are not matchin!");
-    if(in_clu->value.type() != CV_32SC1)
-        throw std::runtime_error("Cluster matrix has to be one channel integer!");
 
+    /// COPY INPUT DATA
+    rois_.clear();
+    for(std::vector<ConnectionType::ConstPtr>::const_iterator it = in_rois->value.begin(); it != in_rois->value.end(); ++it) {
+        RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(*it);
+        RoiMessage::Ptr roi_msg(new RoiMessage);
+        roi_msg->value = roi->value;
+        rois_.push_back(roi_msg);
+    }
+    image_    = in_img->value.clone();
 
     /// RENDER CLUSTER BOARDERS
-    image_ = in_img->value.clone();
-    clusters_ = in_clu->value;
-    utils_vision::getClusterBoundaryMask<int32_t>(clusters_, mask_);
-
     setColor();
     setClass();
     display();
@@ -145,16 +137,7 @@ void AssignROIClass::process()
         return;
     }
 
-    if(result_) {
-       msg::publish<GenericVectorMessage, int>(out_labels_, result_);
-    }
-}
-
-void AssignROIClass::setResult(std::vector<int> &result)
-{
-    if(result.empty())
-        result_.reset();
-
-    result_ = std::shared_ptr<std::vector<int>>(new std::vector<int>(result));
-    done();
+    VectorMessage::Ptr out_rois(VectorMessage::make<RoiMessage>());
+    out_rois->value.assign(rois_.begin(), rois_.end());
+    msg::publish(out_rois_, out_rois);
 }

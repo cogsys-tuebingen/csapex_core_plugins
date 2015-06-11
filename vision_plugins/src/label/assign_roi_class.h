@@ -10,7 +10,6 @@
 #include <QImage>
 #include <QSharedPointer>
 
-
 namespace vision_plugins {
 class AssignROIClass : public csapex::InteractiveNode
 {
@@ -24,7 +23,6 @@ public:
     void setupParameters(Parameterizable& parameters);
     virtual void process() override;
 
-    void setResult(std::vector<int> &result);
     void setActiveClassColor(const int r, const int g, const int b);
 
 private:
@@ -37,23 +35,19 @@ private:
 
 protected:
     csapex::Input*    in_image_;
-    csapex::Input*    in_clusters_;
-    csapex::Output*   out_labels_;
+    csapex::Input*    in_rois_;
+    csapex::Output*   out_rois_;
 
-    cv::Mat           image_;
-    cv::Mat           mask_;
-    cv::Mat           clusters_;
-
-    std::shared_ptr<std::vector<int>> result_;
-
+    cv::Mat                                                image_;
+    std::vector<csapex::connection_types::RoiMessage::Ptr> rois_;
 
 public:
-    boost::signals2::signal<void(QSharedPointer<QImage>, const cv::Mat&)> display_request;
-    boost::signals2::signal<void()>                                       submit_request;
-    boost::signals2::signal<void()>                                       drop_request;
-    boost::signals2::signal<void()>                                       clear_request;
-    boost::signals2::signal<void(int)>                                    set_class;
-    boost::signals2::signal<void(int,int,int)>                            set_color;
+    boost::signals2::signal<void(QSharedPointer<QImage>)> display_request;
+    boost::signals2::signal<void()>                       submit_request;
+    boost::signals2::signal<void()>                       drop_request;
+    boost::signals2::signal<void()>                       clear_request;
+    boost::signals2::signal<void(int)>                    set_class;
+    boost::signals2::signal<void(int,int,int)>            set_color;
 };
 
 }

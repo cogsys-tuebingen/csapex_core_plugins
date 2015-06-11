@@ -20,7 +20,7 @@
 using namespace csapex;
 using namespace vision_plugins;
 
-CSAPEX_REGISTER_NODE_ADAPTER(AssignClusterClassAdapter, vision_plugins::AssignClusterClass)
+CSAPEX_REGISTER_NODE_ADAPTER_NS(vision_plugins, AssignClusterClassAdapter, vision_plugins::AssignClusterClass)
 
 AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorker* worker, AssignClusterClass *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),

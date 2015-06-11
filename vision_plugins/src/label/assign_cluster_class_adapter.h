@@ -11,7 +11,7 @@
 #include <QGraphicsView>
 #include <QImage>
 
-namespace csapex {
+namespace vision_plugins {
 
 class AssignClusterClassAdapter : public QObject, public csapex::DefaultNodeAdapter
 {

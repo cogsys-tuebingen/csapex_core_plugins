@@ -20,13 +20,93 @@
 using namespace csapex;
 using namespace vision_plugins;
 
-CSAPEX_REGISTER_NODE_ADAPTER(AssignROIClassAdapter, vision_plugins::AssignROIClass)
+CSAPEX_REGISTER_NODE_ADAPTER_NS(vision_plugins, AssignROIClassAdapter, vision_plugins::AssignROIClass)
+
+namespace vision_plugins {
+    class QInteractiveRect : public QGraphicsRectItem {
+    public:
+        QInteractiveRect(csapex::Roi &roi, float tx, float ty,
+                         QColor &active_color, int &active_class) :
+            QGraphicsRectItem(roi.x() + tx, roi.y() + ty,
+                              roi.w(), roi.h()),
+            roi_(roi),
+            active_color_(active_color),
+            active_class_(active_class)
+        {
+            //                                    setFlag(QGraphicsItem::ItemIsSelectable);
+
+            cv::Scalar color = roi.color();
+            QBrush brush(QColor(color[2], color[1], color[0], 127));
+            setPen(QPen(QColor(color[2], color[1], color[0], 255)));
+            setBrush(brush);
+        }
+
+        void setColor(const QColor &q)
+        {
+            QBrush brush(QColor(q.red(),
+                                q.green(),
+                                q.blue(),
+                                127));
+            QPen pen(QColor(q.red(),
+                            q.green(),
+                            q.blue(),
+                            255));
+            setPen(pen);
+            setBrush(brush);
+        }
+
+        void updateCheck(const QPointF &pos)
+        {
+            QRectF rect = sceneBoundingRect();
+            if(rect.contains(pos)) {
+                update();
+            }
+        }
+
+    protected:
+        csapex::Roi &roi_;
+        QColor      &active_color_;
+        int         &active_class_;
+
+
+
+        void update()
+        {
+            roi_.setClassification(active_class_);
+            roi_.setColor(cv::Scalar(active_color_.blue(),
+                                     active_color_.green(),
+                                     active_color_.red()));
+            setColor(active_color_);
+        }
+
+//        void mousePressEvent  (QGraphicsSceneMouseEvent *event)
+//        {
+//            event->accept();
+//            std::cout << "Press" << std::endl;
+//            update();
+//        }
+
+//        void mouseMoveEvent   (QGraphicsSceneMouseEvent *event)
+//        {
+//            event->accept();
+//            std::cout << "Move" << std::endl;
+//            update();
+//        }
+
+//        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+//        {
+//            event->accept();
+//            std::cout << "Release" << std::endl;
+//            update();
+//        }
+    };
+}
+
 
 AssignROIClassAdapter::AssignROIClassAdapter(NodeWorker* worker, AssignROIClass *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       active_class_(0),
-      pixmap_overlay_(nullptr),
       pixmap_(nullptr),
       view_(new QGraphicsView),
       empty(32, 32, QImage::Format_RGB16),
@@ -41,7 +121,7 @@ AssignROIClassAdapter::AssignROIClassAdapter(NodeWorker* worker, AssignROIClass 
 
     // translate to UI thread via Qt signal
     node->display_request.connect(std::bind(&AssignROIClassAdapter::displayRequest, this,
-                                            std::placeholders::_1, std::placeholders::_2));
+                                            std::placeholders::_1));
     node->set_class.connect(std::bind(&AssignROIClassAdapter::setClassRequest, this, std::placeholders::_1));
     node->set_color.connect(std::bind(&AssignROIClassAdapter::setColorRequest, this,
                                       std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
@@ -78,14 +158,15 @@ bool AssignROIClassAdapter::eventFilter(QObject *o, QEvent *e)
             return true;
         }
         if(me->button() == Qt::LeftButton) {
-            QPointF ppos = pixmap_->scenePos();
-            QPointF mpos = me->scenePos();
-
-            updateClusterClass(QPoint(mpos.x() - ppos.x(),
-                                      mpos.y() - ppos.y()));
-
             left_button_down_ = false;
             e->accept();
+
+            QPointF mpos = me->scenePos();
+            for(QInteractiveRect *i : rectangles_) {
+                i->updateCheck(mpos);
+            }
+
+
             return true;
         }
     }
@@ -104,13 +185,12 @@ bool AssignROIClassAdapter::eventFilter(QObject *o, QEvent *e)
             return true;
         }
         if(left_button_down_) {
-            QPointF ppos = pixmap_->scenePos();
-            QPointF mpos = me->scenePos();
-
-            updateClusterClass(QPoint(mpos.x() - ppos.x(),
-                                      mpos.y() - ppos.y()));
-
             e->accept();
+            QPointF mpos = me->scenePos();
+            for(QInteractiveRect *i : rectangles_) {
+                i->updateCheck(mpos);
+            }
+
             return true;
         }
         break;
@@ -132,38 +212,9 @@ bool AssignROIClassAdapter::eventFilter(QObject *o, QEvent *e)
         break;
     }
 
-    return false;
-}
-
-void AssignROIClassAdapter::updateClusterClass(const QPoint &pos)
-{
-    if(pos.x() < 0 || pos.x() >= clusters_.cols)
-        return;
-    if(pos.y() < 0 || pos.y() >= clusters_.rows)
-        return;
-
-    int cluster = clusters_.at<int>(pos.y(),pos.x());
-    classes_.at(cluster) = active_class_;
-
-    if(overlay_.isNull()) {
-        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
-        overlay_->fill(QColor(0,0,0,0));
-    }
-
-    QColor &c = colors_[active_class_];
-    for(int i = 0 ; i < clusters_.rows ; ++i) {
-        for(int j = 0 ; j < clusters_.cols ; ++j) {
-            if(clusters_.at<int>(i,j) == cluster) {
-                overlay_->setPixel(j,i, c.rgba());
-            }
-        }
-    }
-
-    QPixmap pixmap = QPixmap::fromImage(*overlay_);
-    if(pixmap_overlay_ != nullptr)
-        pixmap_overlay_->setPixmap(pixmap);
-
     view_->scene()->update();
+
+    return false;
 }
 
 void AssignROIClassAdapter::setupUi(QBoxLayout* layout)
@@ -191,12 +242,10 @@ void AssignROIClassAdapter::setupUi(QBoxLayout* layout)
     sub->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
     layout_->addLayout(sub);
 
-    pixmap_overlay_ = new QGraphicsPixmapItem;
     pixmap_ = new QGraphicsPixmapItem;
     view_->scene()->addItem(pixmap_);
-    view_->scene()->addItem(pixmap_overlay_);
 
-    connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>, const cv::Mat&)), this, SLOT(display(QSharedPointer<QImage>, const cv::Mat&)));
+    connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>)), this, SLOT(display(QSharedPointer<QImage>)));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
     connect(this, SIGNAL(dropRequest()), this, SLOT(drop()));
     connect(this, SIGNAL(clearRequest()), this, SLOT(clear()));
@@ -222,30 +271,40 @@ void AssignROIClassAdapter::setParameterState(Memento::Ptr memento)
     loaded_ = true;
 }
 
-void AssignROIClassAdapter::display(QSharedPointer<QImage> img, const cv::Mat &clusters)
+void AssignROIClassAdapter::display(QSharedPointer<QImage> img)
 {
     /// PREPARE LABLES
-    int num_clusters = utils_vision::histogram::numClusters(clusters);
-    classes_.resize(num_clusters, -1);
     img_ = img;
 
     QPixmap pixmap = QPixmap::fromImage(*img_);
 
-    bool init_overlay = clusters_.rows != clusters.rows || clusters_.cols != clusters.cols;
-    if(!clusters_.empty()) {
-        cv::Mat diff;
-        cv::subtract(clusters, clusters_, diff);
-        init_overlay |= (cv::countNonZero(diff) > 0);
+    if(!rectangles_.empty()) {
+        for(QGraphicsRectItem* r : rectangles_) {
+            view_->scene()->removeItem(r);
+            delete r;
+        }
+        rectangles_.clear();
     }
 
-    if(init_overlay) {
-        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
-        overlay_->fill(QColor(0,0,0,0));
-        QPixmap pixmap = QPixmap::fromImage(*overlay_);
-        pixmap_overlay_->setPixmap(pixmap);
+    for(auto it = wrapped_->rois_.begin() ;
+        it != wrapped_->rois_.end() ;
+        ++it) {
+        csapex::Roi &roi = (*it)->value;
+
+        QPointF ppos = pixmap_->scenePos();
+        QInteractiveRect *rect = new QInteractiveRect(roi,
+                                                      -ppos.x(), -ppos.y(),
+                                                      active_color_,
+                                                      active_class_);
+
+        cv::Scalar color = roi.color();
+        QColor qcolor(color[2], color[1], color[0]);
+        rect->setColor(qcolor);
+//        rect->setFlag(QGraphicsItem::ItemIsSelectable);
+        view_->scene()->addItem(rect);
+        rectangles_.push_back(rect);
     }
 
-    clusters_ = clusters;
 
     bool change = state.last_size != img_->size();
     if(change || loaded_) {
@@ -277,31 +336,29 @@ void AssignROIClassAdapter::submit()
 {
     if(pixmap_ == nullptr)
         return;
-
-    wrapped_->setResult(classes_);
+    wrapped_->done();
 }
 
 void AssignROIClassAdapter::drop()
 {
-    std::vector<int> empty;
-    wrapped_->setResult(empty);
+    for(auto it = wrapped_->rois_.begin() ;
+        it != wrapped_->rois_.end() ;
+        ++it) {
+        (*it)->value.setClassification(-1);
+    }
+    wrapped_->done();
 }
 
 void AssignROIClassAdapter::clear()
 {
-    if(!img_->isNull()) {
-        classes_.resize(classes_.size(), -1);
-        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
-        overlay_->fill(QColor(0,0,0,0));
-        QPixmap pixmap = QPixmap::fromImage(*overlay_);
-        pixmap_overlay_->setPixmap(pixmap);
-    }
+
 }
 
 void AssignROIClassAdapter::setColor(int r, int g, int b)
 {
     QColor c(r,g,b,127);
     colors_[active_class_] = c;
+    active_color_ = c;
 }
 
 void AssignROIClassAdapter::setClass(int c)
@@ -309,6 +366,7 @@ void AssignROIClassAdapter::setClass(int c)
     active_class_ = c;
     QColor &col = colors_[c];
     wrapped_->setActiveClassColor(col.red(),col.green(), col.blue());
+    active_color_ = col;
 }
 
 /// MOC

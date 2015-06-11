@@ -9,9 +9,12 @@
 
 /// SYSTEM
 #include <QGraphicsView>
+#include <QGraphicsRectItem>
 #include <QImage>
 
-namespace csapex {
+namespace vision_plugins {
+
+class QInteractiveRect;
 
 class AssignROIClassAdapter : public QObject, public csapex::DefaultNodeAdapter
 {
@@ -28,7 +31,7 @@ public:
     virtual void                 setupUi(QBoxLayout* layout);
 
 public Q_SLOTS:
-    void display(QSharedPointer<QImage> img, const cv::Mat &clusters);
+    void display(QSharedPointer<QImage> img);
     void fitInView();
     void submit();
     void drop();
@@ -37,7 +40,7 @@ public Q_SLOTS:
     void setClass(int c);
 
 Q_SIGNALS:
-    void displayRequest(QSharedPointer<QImage> img, const cv::Mat &clusters);
+    void displayRequest(QSharedPointer<QImage> img);
     void submitRequest();
     void dropRequest();
     void clearRequest();
@@ -46,8 +49,6 @@ Q_SIGNALS:
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);
-    void updateClusterClass(const QPoint &pos);
-
 
     struct State : public csapex::Memento {
         int     width;
@@ -86,20 +87,16 @@ protected:
     vision_plugins::AssignROIClass *wrapped_;
 
 private:
-    std::vector<int>      classes_;
     std::map<int, QColor> colors_;
     int                   active_class_;
-
+    QColor                active_color_;
 
     State                  state;
 
     QSharedPointer<QImage> img_;
-    QSharedPointer<QImage> overlay_;
-
-    QGraphicsPixmapItem   *pixmap_overlay_;
     QGraphicsPixmapItem   *pixmap_;
-    cv::Mat                clusters_;
 
+    std::vector<QInteractiveRect*> rectangles_;
 
     QGraphicsView*       view_;
 
