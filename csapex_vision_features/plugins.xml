@@ -23,6 +23,11 @@
   <description>Finds matches between two sets of descriptors</description>
   <tags>Vision, Features</tags>
 </class>
+
+<class type="csapex::FindHomography" base_class_type="csapex::Node">
+  <description>Finds homography given feature matches</description>
+  <tags>Vision, Features</tags>
+</class>
 </library>
 
 
