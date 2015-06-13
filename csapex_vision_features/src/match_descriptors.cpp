@@ -351,6 +351,12 @@ void MatchDescriptors::process()
 
     cv::drawMatches(image1->value, keypoints1->value, image2->value, keypoints2->value, matches, out->value, matchColor, singlePointColor, mask, flag);
 
+    MatchMessage::Ptr matches_msg(new MatchMessage());
+    for (std::vector<std::vector<cv::DMatch> >::iterator it = matches.begin(); it != matches.end(); it++) {
+        matches_msg->value.insert(matches_msg->value.end(), it->begin(), it->end());
+    }
+
+    msg::publish(out_match, matches_msg);
     msg::publish(out_img, out);
 }
 
@@ -459,4 +465,5 @@ void MatchDescriptors::setup(NodeModifier& node_modifier)
     in_des_2 = node_modifier.addInput<DescriptorMessage>("Descriptor 2");
 
     out_img = node_modifier.addOutput<CvMatMessage>("Debug View");
+    out_match = node_modifier.addOutput<MatchMessage>("Matches");
 }

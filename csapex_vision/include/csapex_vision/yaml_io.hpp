@@ -94,6 +94,33 @@ struct convert<cv::Vec<T, size> > {
     }
 };
 
+template<>
+struct convert<cv::DMatch> {
+    static Node encode(const cv::DMatch& rhs)
+    {
+        Node node;
+        node["distance"] = rhs.distance;
+        node["imgIdx"] = rhs.imgIdx;
+        node["queryIdx"] = rhs.queryIdx;
+        node["trainIdx"] = rhs.trainIdx;
+
+        return node;
+    }
+
+    static bool decode(const Node& node, cv::DMatch& rhs)
+    {
+        if(!node.IsMap()) {
+            return false;
+        }
+
+        rhs.distance = node["distance"].as<float>();
+        rhs.imgIdx = node["imgIdx"].as<int>();
+        rhs.queryIdx = node["queryIdx"].as<int>();
+        rhs.trainIdx = node["trainIdx"].as<int>();
+
+        return true;
+    }
+};
 
 template<>
 struct convert<cv::Mat> {

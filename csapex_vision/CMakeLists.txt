@@ -70,6 +70,7 @@ add_library(csapex_vision_plugin
     src/plugin/register_plugin.cpp
     src/plugin/camera.cpp
     src/plugin/image_padding.cpp
+    src/plugin/copymakeborder.cpp
     src/plugin/color_segmentation.cpp
     src/plugin/filter_apply_mask.cpp
     src/plugin/filter_static_mask.cpp
@@ -82,10 +83,15 @@ add_library(csapex_vision_plugin
     src/plugin/image_provider_set.cpp
     src/plugin/hough_circle.cpp
     src/plugin/vectorize_pyramid.cpp
+
     src/plugin/image_roi.cpp
     src/plugin/image_roi_adapter.cpp
+    src/plugin/grid_arranged_rois.cpp
+
     src/plugin/row.cpp
     src/plugin/col.cpp
+    src/plugin/minmax_loc.cpp
+    src/plugin/set_color.cpp
     src/plugin/reshape.cpp
     src/plugin/mean_dev_normalization.cpp
 

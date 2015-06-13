@@ -6,6 +6,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision_features/keypoint_message.h>
 #include <csapex_vision_features/descriptor_message.h>
+#include <csapex_vision_features/match_message.h>
 
 namespace csapex
 {
@@ -70,6 +71,7 @@ private:
     Input* in_des_2;
 
     Output* out_img;
+    Output* out_match;
 
     Method current_method_;
 };

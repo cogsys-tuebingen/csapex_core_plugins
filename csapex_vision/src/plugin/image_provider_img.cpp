@@ -21,6 +21,7 @@ ImageProviderImg::ImageProviderImg()
 
 void ImageProviderImg::load(const std::string& path)
 {
+    has_sent_ = false;
     img_ = cv::imread(path, CV_LOAD_IMAGE_UNCHANGED);
 }
 
@@ -54,9 +55,11 @@ void ImageProviderImg::next(cv::Mat& img, cv::Mat& mask)
     } else {
         img_.copyTo(img);
     }
+
+    has_sent_ = true;
 }
 
 bool ImageProviderImg::hasNext()
 {
-    return state.readParameter<bool>("playback/resend");
+    return !has_sent_ || state.readParameter<bool>("playback/resend");
 }
