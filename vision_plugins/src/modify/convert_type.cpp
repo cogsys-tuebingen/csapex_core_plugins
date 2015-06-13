@@ -38,7 +38,6 @@ ConvertType::ConvertType() :
 
 void ConvertType::process()
 {
-#warning "Change to csapex type encoding!"
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
     out->value = in->value.clone();

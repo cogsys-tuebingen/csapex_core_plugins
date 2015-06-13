@@ -18,8 +18,6 @@ using namespace vision_plugins;
 
 CSAPEX_REGISTER_CLASS(vision_plugins::FloatToUchar, csapex::Node)
 
-#warning "Temporary implementation fix with fixing the channel encoding!"
-
 FloatToUchar::FloatToUchar() :
     type_(RELATIVE)
 {
@@ -28,7 +26,8 @@ FloatToUchar::FloatToUchar() :
 void FloatToUchar::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
+    auto encoding = in->value.channels() == 1 ? enc::mono : enc::unknown;
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(encoding, in->stamp_micro_seconds));
     out->value = in->value.clone();
 
 
