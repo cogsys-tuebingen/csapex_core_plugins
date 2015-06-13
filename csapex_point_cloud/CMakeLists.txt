@@ -27,7 +27,7 @@ add_definitions(${PCL_DEFINITIONS})
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_point_cloud
-  CATKIN_DEPENDS csapex
+  CATKIN_DEPENDS csapex csapex_ros pcl_ros
 #  DEPENDS system_lib
 )
 
