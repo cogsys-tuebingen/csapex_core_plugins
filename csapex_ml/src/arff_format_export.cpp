@@ -9,7 +9,6 @@
 #include <utils_param/path_parameter.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/core/settings.h>
 #include <csapex/msg/message_factory.h>
 
 /// SYSTEM
