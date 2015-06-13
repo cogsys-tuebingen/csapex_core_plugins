@@ -34,9 +34,7 @@ void RegisterVisionFeaturePlugin::init(CsApexCore& core)
 {
     Tag::createIfNotExists("Features");
 
-    auto c = GenericNodeFactory::createConstructorFromFunction(
-                rotateKeypoint,
-                "rotateKeypoint", "Test function for rotating a keypoint",
-                core.getSettings(), {"Keypoint", "Wrap"});
+    auto c = GenericNodeFactory::createConstructorFromFunction(rotateKeypoint, "rotateKeypoint");
+    c->setDescription("Test function for rotating a keypoint");
     core.getNodeFactory().registerNodeType(c);
 }

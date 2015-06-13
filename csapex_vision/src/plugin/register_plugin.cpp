@@ -139,26 +139,18 @@ void RegisterPlugin::init(CsApexCore& core)
     ConnectionType::setDefaultConnectionType(connection_types::makeEmpty<connection_types::CvMatMessage>());
 
     auto cWrap = GenericNodeFactory::createConstructorFromFunction<ParameterInfoTestWrap>
-            (testWrap,
-             "TestWrap",
-             "Test direct wrapping.",
-             core.getSettings(), {"Wrap", "Test", "Flip"},
-             ":/combiner.png");
+            (testWrap, "TestWrap");
+    cWrap->setDescription("Test direct wrapping.").setIcon(":/combiner.png").setTags({"Wrap", "Test", "Flip"});
     core.getNodeFactory().registerNodeType(cWrap);
 
     auto cWrapDirect = GenericNodeFactory::createConstructorFromFunction<ParameterInfoTestWrap>
-            (testWrapDirect,
-             "TestWrapDirect",
-             "Test directly wrapping a non-apex function.",
-             core.getSettings(), {"Wrap", "Test", "Flip"},
-             ":/combiner.png");
+            (testWrapDirect, "TestWrapDirect");
+    cWrapDirect->setDescription( "Test directly wrapping a non-apex function.").setIcon(":/combiner.png").setTags({"Wrap", "Test", "Flip"});
     core.getNodeFactory().registerNodeType(cWrapDirect);
 
     auto cWrapDirectNoInfo = GenericNodeFactory::createConstructorFromFunction
-            (testWrapDirect,
-             "TestWrapDirectNoInfo",
-             "Test directly wrapping a non-apex function with default info.",
-             core.getSettings());
+            (testWrapDirect, "TestWrapDirectNoInfo");
+    cWrapDirectNoInfo->setDescription("Test directly wrapping a non-apex function with default info.");
     core.getNodeFactory().registerNodeType(cWrapDirectNoInfo);
 
 }
