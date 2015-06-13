@@ -10,6 +10,7 @@
 #include <csapex/utility/qt_helper.hpp>
 #include <csapex/model/node_modifier.h>
 #include <utils_param/output_progress_parameter.h>
+#include <csapex/signal/trigger.h>
 
 /// SYSTEM
 #include <thread>
@@ -39,12 +40,16 @@ void Delay::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<connection_types::AnyMessage>("Input");
     output_ = node_modifier.addOutput<connection_types::AnyMessage>("Delayed Input");
+
+    delayed_forward_ = node_modifier.addTrigger("delayed forwarded signal");
+    delayed_slot_ = node_modifier.addSlot("delayed slot", [this]() {
+        doSleep();
+        delayed_forward_->trigger();
+    });
 }
 
-void Delay::process()
+void Delay::doSleep()
 {
-    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
-
     long wait_time = readParameter<double>("delay") * 1000;
     long t = wait_time;
 
@@ -55,6 +60,13 @@ void Delay::process()
         t -= 10;
     }
     progress_->setProgress(wait_time, wait_time);
+}
+
+void Delay::process()
+{
+    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
+
+    doSleep();
 
     msg::publish(output_, msg);
 }
