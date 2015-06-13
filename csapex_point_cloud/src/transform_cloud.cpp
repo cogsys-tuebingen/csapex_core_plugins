@@ -52,12 +52,9 @@ void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud
 
     for(std::size_t i = 0; i < N; ++i) {
         PointT pt = cloud->points[i];
-        tf::Quaternion q = t.getRotation();
-        tf::Vector3 tr = t.getOrigin();
 
         tf::Vector3 p(pt.x, pt.y, pt.z);
 
-//        tf::Vector3 tfd =  tf::quatRotate(q, p) + tr;
         tf::Vector3 tfd = t * p;
         pt.x = tfd.x();
         pt.y = tfd.y();
