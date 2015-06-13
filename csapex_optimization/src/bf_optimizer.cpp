@@ -56,7 +56,7 @@ void BFOptimizer::tick()
     }
 
     if(nextStep()) {
-        apex_assert_hard(!running_);
+        apex_assert(!running_);
         running_ = true;
 
         AnyMessage::Ptr trigger(new AnyMessage);
@@ -114,7 +114,7 @@ bool BFOptimizer::increaseParameter(std::size_t i)
 
 void BFOptimizer::process()
 {
-    apex_assert_hard(running_);
+    apex_assert(running_);
     running_ = false;
 
     double fitness = msg::getValue<double>(in_);

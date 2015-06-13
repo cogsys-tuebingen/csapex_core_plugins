@@ -40,7 +40,7 @@ class EvaluateBinaryClassifierAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    EvaluateBinaryClassifierAdapter(NodeWorker* worker, EvaluateBinaryClassifier* node, WidgetController *widget_ctrl);
+    EvaluateBinaryClassifierAdapter(NodeWorkerWeakPtr worker, EvaluateBinaryClassifier* node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 

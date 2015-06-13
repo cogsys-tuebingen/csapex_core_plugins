@@ -24,12 +24,14 @@ using namespace connection_types;
 
 BarCodeReader::BarCodeReader()
     : lost(false), forget(0)
+{}
+
+void BarCodeReader::setupParameters(Parameterizable &params)
 {
-    addParameter(param::ParameterFactory::declareBool("republish",
-                                                      param::ParameterDescription("publish the last detected code again, "
-                                                                                  "if no new code has been detected "),
-                                                      false));
-    std::cerr << 23 << std::endl;
+    params.addParameter(param::ParameterFactory::declareBool("republish",
+                                                             param::ParameterDescription("publish the last detected code again, "
+                                                                                         "if no new code has been detected "),
+                                                             false));
 }
 
 void BarCodeReader::process()
@@ -54,22 +56,22 @@ void BarCodeReader::process()
 
     // scan the image for barcodes
     /*int n = */scanner.scan(image);
-//    if(n == 0) {
-//        if(!data_.empty() && !lost) {
-//            lost = true;
-//            forget = 30;
-//        }
-//    }
+    //    if(n == 0) {
+    //        if(!data_.empty() && !lost) {
+    //            lost = true;
+    //            forget = 30;
+    //        }
+    //    }
 
-//    if(lost) {
-//        if(forget > 0) {
-//            --forget;
-//        }
-//        if(forget == 0) {
-//            data_ = "";
-//            lost = false;
-//        }
-//    }
+    //    if(lost) {
+    //        if(forget > 0) {
+    //            --forget;
+    //        }
+    //        if(forget == 0) {
+    //            data_ = "";
+    //            lost = false;
+    //        }
+    //    }
 
     VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 
@@ -104,15 +106,15 @@ void BarCodeReader::process()
             }
         }
 
-//        if(data == data_) {
-//            if(lost) {
-//                lost = false;
-//            }
+        //        if(data == data_) {
+        //            if(lost) {
+        //                lost = false;
+        //            }
 
-//            if(!republish) {
-//                continue;
-//            }
-//        }
+        //            if(!republish) {
+        //                continue;
+        //            }
+        //        }
 
         msg::publish(out_str, data);
         published = true;

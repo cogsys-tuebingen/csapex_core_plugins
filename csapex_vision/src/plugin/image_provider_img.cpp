@@ -15,14 +15,14 @@ std::function<bool(ImageProvider*)> ImageProviderImg::Identity
 = std::bind(&ImageProviderImg::checkIdentity, std::placeholders::_1);
 
 ImageProviderImg::ImageProviderImg()
-    : border_(false), displayed(false)
+    : sent_(false)
 {
 }
 
 void ImageProviderImg::load(const std::string& path)
 {
-    has_sent_ = false;
     img_ = cv::imread(path, CV_LOAD_IMAGE_UNCHANGED);
+    sent_ = false;
 }
 
 std::vector<std::string> ImageProviderImg::getExtensions() const
@@ -37,29 +37,12 @@ bool ImageProviderImg::checkIdentity(ImageProvider* other)
 
 void ImageProviderImg::next(cv::Mat& img, cv::Mat& mask)
 {
-    displayed = true;
+    img_.copyTo(img);
 
-    if(border_) {
-        int bx = 40;
-        int by = 40;
-
-        img = cv::Mat(img_.rows + 2 * bx, img_.cols + 2 * by, img_.type(), cv::Scalar::all(0));
-
-        cv::Rect roi(bx, by, img_.cols, img_.rows);
-
-        img_.copyTo(cv::Mat(img, roi));
-        mask = cv::Mat(img.rows, img.cols, CV_8UC1, cv::Scalar::all(0));
-
-        cv::rectangle(mask, roi + cv::Point(2,2) + cv::Size(-4,-4), cv::Scalar::all(255), CV_FILLED);
-
-    } else {
-        img_.copyTo(img);
-    }
-
-    has_sent_ = true;
+    sent_ = true;
 }
 
 bool ImageProviderImg::hasNext()
 {
-    return !has_sent_ || state.readParameter<bool>("playback/resend");
+    return !sent_ || state.readParameter<bool>("playback/resend");
 }

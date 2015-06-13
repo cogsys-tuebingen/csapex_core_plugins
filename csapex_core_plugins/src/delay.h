@@ -16,9 +16,13 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
     virtual void process() override;
 
+    void doSleep();
 private:
     Input* input_;
     Output* output_;
+
+    Slot* delayed_slot_;
+    Trigger* delayed_forward_;
 
     param::OutputProgressParameter* progress_;
 };

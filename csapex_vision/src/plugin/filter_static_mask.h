@@ -9,6 +9,8 @@ namespace csapex
 
 class FilterStaticMask : public Filter
 {
+    friend class StaticMaskSerializer;
+
 public:
     FilterStaticMask();
 
@@ -27,20 +29,7 @@ public:
     boost::signals2::signal<void()> show_painter;
 
 private:
-    struct State : public Memento {
-        cv::Mat mask_;
-
-        State(FilterStaticMask* parent)
-            : parent(parent)
-        {}
-
-        virtual void writeYaml(YAML::Node& out) const;
-        virtual void readYaml(const YAML::Node& node);
-
-        FilterStaticMask* parent;
-    };
-
-    State state;
+    cv::Mat mask_;
 };
 
 } /// NAMESPACE

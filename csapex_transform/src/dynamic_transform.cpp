@@ -46,7 +46,7 @@ bool DynamicTransform::canTick()
     return !init_
             ||
             (source_p->noParameters() != 0 && target_p->noParameters() != 0 &&
-            !msg::isConnected(frame_in_source_) && !msg::isConnected(frame_in_target_) && !msg::isConnected(time_in_));
+            !msg::isConnected(time_in_));
 }
 
 void DynamicTransform::tick()
@@ -61,43 +61,17 @@ void DynamicTransform::process()
     }
 
     modifier_->setNoError();
-    bool update = false;
 
-    bool use_in_frame = msg::hasMessage(frame_in_source_);
-    source_p->setEnabled(!use_in_frame);
-
-    if(use_in_frame) {
-        std::string from = msg::getValue<std::string>(frame_in_source_);
-
-        if(readParameter<std::string>("source") != from) {
-            setParameter("source", from);
-            update = true;
+    try {
+        if(msg::isConnected(time_in_) && msg::hasMessage(time_in_)) {
+            connection_types::TimeStampMessage::ConstPtr time_msg = msg::getMessage<connection_types::TimeStampMessage>(time_in_);
+            publishTransform(time_msg->value);
+        } else {
+            publishTransform(ros::Time(0));
         }
-    }
-
-
-    bool use_to_frame = msg::hasMessage(frame_in_target_);
-    target_p->setEnabled(!use_to_frame);
-
-    if(use_to_frame) {
-        std::string target = msg::getValue<std::string>(frame_in_target_);
-
-        if(readParameter<std::string>("target") != target) {
-            setParameter("target", target);
-            update = true;
-        }
-    }
-
-    if(update) {
-        refresh();
-    }
-
-
-    if(msg::isConnected(time_in_) && msg::hasMessage(time_in_)) {
-        connection_types::TimeStampMessage::ConstPtr time_msg = msg::getMessage<connection_types::TimeStampMessage>(time_in_);
-        publishTransform(time_msg->value);
-    } else {
-        publishTransform(ros::Time(0));
+    } catch(const std::exception& e) {
+        aerr << "error: " << e.what() << std::endl;
+        modifier_->setWarning(e.what());
     }
 }
 
@@ -153,18 +127,13 @@ void DynamicTransform::publishTransform(const ros::Time& time)
     msg->frame_id = target;
     msg->child_frame = source;
     msg::publish(output_, msg);
-
-    msg::publish(output_frame_, readParameter<std::string>("target"));
 }
 
 void DynamicTransform::setup(NodeModifier& node_modifier)
 {
     time_in_ = node_modifier.addOptionalInput<connection_types::TimeStampMessage>("Time");
-    frame_in_source_ = node_modifier.addOptionalInput<std::string>("Origin Frame");
-    frame_in_target_ = node_modifier.addOptionalInput<std::string>("Target Frame");
 
     output_ = node_modifier.addOutput<connection_types::TransformMessage>("Transform");
-    output_frame_ = node_modifier.addOutput<std::string>("Target Frame");
 
     node_modifier.addSlot("reset", std::bind(&DynamicTransform::resetTf, this));
     reset_ = node_modifier.addTrigger("reset");

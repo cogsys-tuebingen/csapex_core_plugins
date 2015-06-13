@@ -10,6 +10,7 @@
 #include <QPainter>
 #include <QGridLayout>
 #include <QLabel>
+#include <QApplication>
 
 using namespace csapex;
 
@@ -96,7 +97,7 @@ QVariant ConfusionMatrixTableModel::headerData(int section, Qt::Orientation orie
 
 
 
-ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeWorker *worker, ConfusionMatrixDisplay *node, WidgetController* widget_ctrl)
+ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeWorkerWeakPtr worker, ConfusionMatrixDisplay *node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal

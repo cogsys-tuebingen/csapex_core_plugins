@@ -104,9 +104,9 @@ void MLP::process()
             convertNumeric(it_out->value, mlp_input);
 
             if(!norm.empty()) {
-                apex_assert_hard(norm.size() == 2);
-                apex_assert_hard(norm[0].size() == mlp_input_size_);
-                apex_assert_hard(norm[1].size() == mlp_input_size_);
+                apex_assert(norm.size() == 2);
+                apex_assert(norm[0].size() == mlp_input_size_);
+                apex_assert(norm[1].size() == mlp_input_size_);
 
                 for(std::size_t i = 0; i < mlp_input.size(); ++i) {
                     mlp_input[i] = (mlp_input[i] - norm[0][i]) / (norm[1][i]);

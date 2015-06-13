@@ -47,7 +47,6 @@ target_link_libraries(csapex_core_lib
 
 add_library(csapex_core_plugins
     src/import_file.cpp
-    src/double_buffer.cpp
     src/relay.cpp
     src/delay.cpp
     src/holdable_buffer.cpp
@@ -61,8 +60,8 @@ add_library(csapex_core_plugins
     src/stamp_delay_measurement.cpp
     src/signal_delay_measurement.cpp
 
-#    src/demultiplexer.cpp
-#    src/multiplexer.cpp
+    src/demultiplexer.cpp
+    src/multiplexer.cpp
 
     src/output_display.cpp
     src/output_display_adapter.cpp

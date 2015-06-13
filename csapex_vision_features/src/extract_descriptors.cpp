@@ -39,7 +39,7 @@ void ExtractDescriptors::setupParameters(Parameterizable &parameters)
     std::vector<std::string> methods;
 
     typedef std::pair<std::string, ExtractorManager::ExtractorInitializer> Pair;
-    Q_FOREACH(Pair fc, manager.descriptorExtractors()) {
+    for(Pair fc : manager.descriptorExtractors()) {
         std::string key = fc.second.getType();
         methods.push_back(key);
     }
@@ -47,11 +47,11 @@ void ExtractDescriptors::setupParameters(Parameterizable &parameters)
     param::Parameter::Ptr method = param::ParameterFactory::declareParameterStringSet("method", methods);
     parameters.addParameter(method, std::bind(&ExtractDescriptors::update, this));
 
-    Q_FOREACH(Pair fc, manager.descriptorExtractors()) {
+    for(Pair fc : manager.descriptorExtractors()) {
         std::string key = fc.second.getType();
         std::function<bool()> condition = [method, key]() { return method->as<std::string>() == key; };
 
-        Q_FOREACH(param::Parameter::Ptr param, manager.featureDescriptorParameters(key)) {
+        for(param::Parameter::Ptr param : manager.featureDescriptorParameters(key)) {
             param::Parameter::Ptr param_clone = param::ParameterFactory::clone(param);
             parameters.addConditionalParameter(param_clone, condition, std::bind(&ExtractDescriptors::update, this));
         }

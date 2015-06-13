@@ -20,7 +20,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
-ImageRoiAdapter::ImageRoiAdapter(NodeWorker* worker, ImageRoi *node, WidgetController* widget_ctrl)
+ImageRoiAdapter::ImageRoiAdapter(NodeWorkerWeakPtr worker, ImageRoi *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       pixmap_(nullptr),
@@ -113,7 +113,6 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
     }
 
     view_->setFixedSize(QSize(state.width, state.height));
-    view_->setMouseTracking(true);
     view_->setAcceptDrops(false);
     view_->setDragMode(QGraphicsView::RubberBandDrag);
     view_->scene()->installEventFilter(this);
@@ -150,7 +149,7 @@ Memento::Ptr ImageRoiAdapter::getState() const
 void ImageRoiAdapter::setParameterState(Memento::Ptr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
-    apex_assert_hard(m.get());
+    apex_assert(m.get());
 
     state = *m;
 

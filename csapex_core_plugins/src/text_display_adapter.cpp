@@ -10,7 +10,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
 
-TextDisplayAdapter::TextDisplayAdapter(NodeWorker *worker, TextDisplay *node, WidgetController* widget_ctrl)
+TextDisplayAdapter::TextDisplayAdapter(NodeWorkerWeakPtr worker, TextDisplay *node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal

@@ -18,7 +18,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayAdapter::OutputDisplayAdapter(NodeWorker* worker, OutputDisplay *node, WidgetController* widget_ctrl)
+OutputDisplayAdapter::OutputDisplayAdapter(NodeWorkerWeakPtr worker, OutputDisplay *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(nullptr), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), down_(false)
 {
     painter.setPen(QPen(Qt::red));
@@ -68,7 +68,6 @@ bool OutputDisplayAdapter::eventFilter(QObject *o, QEvent *e)
 void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 {
     view_->setFixedSize(QSize(state.width, state.height));
-    view_->setMouseTracking(true);
     view_->setAcceptDrops(false);
     QGraphicsScene* scene = view_->scene();
     if(scene == nullptr) {
@@ -113,7 +112,7 @@ Memento::Ptr OutputDisplayAdapter::getState() const
 void OutputDisplayAdapter::setParameterState(Memento::Ptr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
-    apex_assert_hard(m.get());
+    apex_assert(m.get());
 
     state = *m;
 

@@ -9,6 +9,7 @@
 #include <QTableView>
 #include <QPainter>
 #include <QVector3D>
+#include <QApplication>
 
 using namespace csapex;
 
@@ -134,7 +135,7 @@ QVariant EvaluateBinaryClassifierTableModel::headerData(int section, Qt::Orienta
 
 
 
-EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeWorker *worker, EvaluateBinaryClassifier *node, WidgetController* widget_ctrl)
+EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeWorkerWeakPtr worker, EvaluateBinaryClassifier *node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal

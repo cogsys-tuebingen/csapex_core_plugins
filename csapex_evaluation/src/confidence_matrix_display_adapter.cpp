@@ -85,7 +85,7 @@ QVariant ConfidenceMatrixTableModel::headerData(int section, Qt::Orientation ori
 
 
 
-ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeWorker *worker, ConfidenceMatrixDisplay *node, WidgetController* widget_ctrl)
+ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeWorkerWeakPtr worker, ConfidenceMatrixDisplay *node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal

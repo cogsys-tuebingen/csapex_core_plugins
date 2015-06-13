@@ -14,6 +14,7 @@ public:
 
 public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& params) override;
 
     virtual void process() override;
 

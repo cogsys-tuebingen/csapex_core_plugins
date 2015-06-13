@@ -54,7 +54,7 @@ void ROSHandler::initHandle(bool try_only)
 
     bool make_spinner = false;
     {
-        std::lock_guard<std::recursive_mutex> lock(has_connection_mutex);
+        std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
         if(try_only && has_connection.isRunning()) {
             return;
         }
@@ -76,7 +76,7 @@ void ROSHandler::initHandle(bool try_only)
 
 bool ROSHandler::isConnected()
 {
-    std::lock_guard<std::recursive_mutex> lock(has_connection_mutex);
+    std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
     if(has_connection.isRunning()) {
         return false;
     } else {
@@ -117,7 +117,7 @@ void ROSHandler::registerShutdownCallback(std::function<void ()> f)
 
 void ROSHandler::checkMasterConnection()
 {
-    std::lock_guard<std::recursive_mutex> lock(has_connection_mutex);
+    std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
 
     if(!ros::isInitialized()) {
         std::vector<std::string> additional_args;
@@ -141,7 +141,7 @@ void ROSHandler::waitForConnection()
     while(true) {
         checkMasterConnection();
 
-        std::lock_guard<std::recursive_mutex> lock(has_connection_mutex);
+        std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
         has_connection.waitForFinished();
 
         if(isConnected()) {
@@ -163,7 +163,7 @@ void ROSHandler::refresh()
     }
 
     if(nh_) {
-        std::lock_guard<std::recursive_mutex> lock(has_connection_mutex);
+        std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
         // connection was there
         has_connection.waitForFinished();
         if(!has_connection.result()) {

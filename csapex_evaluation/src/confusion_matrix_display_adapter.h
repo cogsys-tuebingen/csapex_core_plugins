@@ -41,7 +41,7 @@ class ConfusionMatrixDisplayAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    ConfusionMatrixDisplayAdapter(NodeWorker* worker, ConfusionMatrixDisplay *node, WidgetController *widget_ctrl);
+    ConfusionMatrixDisplayAdapter(NodeWorkerWeakPtr worker, ConfusionMatrixDisplay *node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 

@@ -72,9 +72,9 @@ add_library(csapex_scan_2d_plugin
 target_link_libraries(csapex_scan_2d_plugin
     yaml-cpp csapex_scan_2d ${catkin_LIBRARIES})
 
-add_executable(scan_test src/test.cpp)
 
-target_link_libraries(scan_test csapex_scan_2d_plugin csapex_scan_2d)
+#add_executable(scan_test src/test.cpp)
+#target_link_libraries(scan_test csapex_scan_2d_plugin csapex_scan_2d)
 
 #
 # INSTALL

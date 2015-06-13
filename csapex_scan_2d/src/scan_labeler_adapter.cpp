@@ -23,7 +23,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
-ScanLabelerAdapter::ScanLabelerAdapter(NodeWorker* worker, ScanLabeler *node, WidgetController* widget_ctrl)
+ScanLabelerAdapter::ScanLabelerAdapter(NodeWorkerWeakPtr worker, ScanLabeler *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
@@ -59,7 +59,10 @@ void ScanLabelerAdapter::labelSelected(int label)
 
 void ScanLabelerAdapter::updateLabel(int label)
 {
-    node_->getNode()->getParameter("label")->set(label);
+    NodeWorkerPtr node = node_.lock();
+    if(node) {
+        node->getNode()->getParameter("label")->set(label);
+    }
 }
 
 void ScanLabelerAdapter::updatePolygon()
@@ -195,7 +198,6 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
     scene->installEventFilter(this);
 
     view_->setFixedSize(QSize(state.width, state.height));
-    view_->setMouseTracking(true);
     view_->setAcceptDrops(false);
     view_->setDragMode(QGraphicsView::RubberBandDrag);
     view_->setContextMenuPolicy(Qt::PreventContextMenu);
@@ -223,7 +225,7 @@ Memento::Ptr ScanLabelerAdapter::getState() const
 void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
-    apex_assert_hard(m.get());
+    apex_assert(m.get());
 
     state = *m;
 
@@ -232,6 +234,11 @@ void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
 
 void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 {
+    NodeWorkerPtr node = node_.lock();
+    if(!node) {
+        return;
+    }
+
     result_.reset(new connection_types::LabeledScanMessage);
 
     QGraphicsScene* scene = view_->scene();
@@ -263,7 +270,7 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 
     scene->update();
 
-    if(node_->getNode()->readParameter<bool>("automatic")) {
+    if(node->getNode()->readParameter<bool>("automatic")) {
         submit();
     }
 }
