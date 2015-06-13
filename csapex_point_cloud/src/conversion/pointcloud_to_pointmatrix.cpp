@@ -96,7 +96,6 @@ struct Impl<pcl::PointXYZI> {
 template <class PointT>
 void PointCloudToPointMatrix::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    #warning "FIX ENCODING"
     CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, cloud->header.stamp));
     CvMatMessage::Ptr mask(new CvMatMessage(enc::mono, cloud->header.stamp));
     implementation::Impl<PointT>::convert(cloud, out->value, mask->value);
