@@ -20,7 +20,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
-ImageRoiAdapter::ImageRoiAdapter(NodeWorker* worker, ImageRoi *node, WidgetController* widget_ctrl)
+ImageRoiAdapter::ImageRoiAdapter(NodeWorkerWeakPtr worker, ImageRoi *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       pixmap_(nullptr),

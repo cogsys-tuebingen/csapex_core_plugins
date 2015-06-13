@@ -20,7 +20,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(FilterStaticMaskAdapter, csapex::FilterStaticMask)
 
 
-FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeWorker* worker, FilterStaticMask *node, WidgetController* widget_ctrl)
+FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeWorkerWeakPtr worker, FilterStaticMask *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal

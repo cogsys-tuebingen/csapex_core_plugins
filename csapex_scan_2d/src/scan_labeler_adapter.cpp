@@ -23,7 +23,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
-ScanLabelerAdapter::ScanLabelerAdapter(NodeWorker* worker, ScanLabeler *node, WidgetController* widget_ctrl)
+ScanLabelerAdapter::ScanLabelerAdapter(NodeWorkerWeakPtr worker, ScanLabeler *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
@@ -59,7 +59,10 @@ void ScanLabelerAdapter::labelSelected(int label)
 
 void ScanLabelerAdapter::updateLabel(int label)
 {
-    node_->getNode()->getParameter("label")->set(label);
+    NodeWorkerPtr node = node_.lock();
+    if(node) {
+        node->getNode()->getParameter("label")->set(label);
+    }
 }
 
 void ScanLabelerAdapter::updatePolygon()
@@ -231,6 +234,11 @@ void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
 
 void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 {
+    NodeWorkerPtr node = node_.lock();
+    if(!node) {
+        return;
+    }
+
     result_.reset(new connection_types::LabeledScanMessage);
 
     QGraphicsScene* scene = view_->scene();
@@ -262,7 +270,7 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 
     scene->update();
 
-    if(node_->getNode()->readParameter<bool>("automatic")) {
+    if(node->getNode()->readParameter<bool>("automatic")) {
         submit();
     }
 }

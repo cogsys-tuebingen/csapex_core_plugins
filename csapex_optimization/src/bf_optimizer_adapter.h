@@ -17,7 +17,7 @@ class BFOptimizerAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    BFOptimizerAdapter(NodeWorker *worker, BFOptimizer *node, WidgetController *widget_ctrl);
+    BFOptimizerAdapter(NodeWorkerWeakPtr worker, BFOptimizer *node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 

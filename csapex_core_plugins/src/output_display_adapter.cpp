@@ -18,7 +18,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayAdapter::OutputDisplayAdapter(NodeWorker* worker, OutputDisplay *node, WidgetController* widget_ctrl)
+OutputDisplayAdapter::OutputDisplayAdapter(NodeWorkerWeakPtr worker, OutputDisplay *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(nullptr), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), down_(false)
 {
     painter.setPen(QPen(Qt::red));

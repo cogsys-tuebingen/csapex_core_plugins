@@ -39,7 +39,7 @@ class ConfidenceMatrixDisplayAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    ConfidenceMatrixDisplayAdapter(NodeWorker* worker, ConfidenceMatrixDisplay *node, WidgetController *widget_ctrl);
+    ConfidenceMatrixDisplayAdapter(NodeWorkerWeakPtr worker, ConfidenceMatrixDisplay *node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 
