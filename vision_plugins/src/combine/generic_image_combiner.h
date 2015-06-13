@@ -52,7 +52,7 @@ struct Expression : AbstractExpression
     Expression(E const& e) : e_(make_from(e)) { } // cloning the expression
 
     bool valid() const { return (bool) e_; }
-    cv::Mat evaluate(VariableMap& vm) const { apex_assert_hard(e_); return e_->evaluate(vm); }
+    cv::Mat evaluate(VariableMap& vm) const { apex_assert(e_); return e_->evaluate(vm); }
 
     // special purpose overload to avoid unnecessary wrapping
     friend Ptr make_from(Expression const& t) { return t.e_; }

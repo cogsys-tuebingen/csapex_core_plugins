@@ -53,14 +53,10 @@ void cvRenderContourChainCode(CvContourChainCode const *contour, IplImage const 
         CV_ASSERT(img&&(img->depth==IPL_DEPTH_8U)&&(img->nChannels==3));
 
         int stepDst = img->widthStep/(img->depth/8);
-        int img_width = img->width;
-        int img_height = img->height;
         int img_offset = 0;
 
         if(img->roi)
         {
-            img_width = img->roi->width;
-            img_height = img->roi->height;
             img_offset = (img->nChannels * img->roi->xOffset) + (img->roi->yOffset * stepDst);
         }
 

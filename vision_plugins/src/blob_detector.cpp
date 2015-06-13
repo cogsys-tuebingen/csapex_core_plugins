@@ -132,7 +132,7 @@ void BlobDetector::process()
         out->value.push_back(roi);
     }
 
-    ainfo << blobs.size() << " blobs" << std::endl;
+//    ainfo << blobs.size() << " blobs" << std::endl;
 
     msg::publish(output_, out);
 

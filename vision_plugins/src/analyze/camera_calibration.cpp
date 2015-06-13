@@ -63,7 +63,7 @@ void vision_plugins::CameraCalibration::add()
 
 void vision_plugins::CameraCalibration::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareDirectoryOutputPath("results", ""));
+    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("results", ""));
     parameters.addParameter(param::ParameterFactory::declareTrigger("add"),
                  std::bind(&CameraCalibration::add, this));
     parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
