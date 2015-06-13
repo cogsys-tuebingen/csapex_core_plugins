@@ -78,11 +78,6 @@
   <tags>General, Input</tags>
 </class>
 
-<class type="csapex::DoubleBuffer" base_class_type="csapex::Node">
-  <description>Buffers a message, allows to bridge connections and make them asynchronous</description>
-  <icon>:/buffer.png</icon>
-  <tags>General, Buffer</tags>
-</class>
 <class type="csapex::Relay" base_class_type="csapex::Node">
   <description>Relays a message directly</description>
   <icon>:/buffer.png</icon>
