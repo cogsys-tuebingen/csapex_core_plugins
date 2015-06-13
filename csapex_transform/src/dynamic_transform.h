@@ -31,10 +31,7 @@ private:
 
 private:
     Output* output_;
-    Output* output_frame_;
 
-    Input* frame_in_source_;
-    Input* frame_in_target_;
     Input* time_in_;
 
     Trigger* reset_;
