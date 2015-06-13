@@ -254,7 +254,7 @@ void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDista
                 getClusterForTrack(j, close, nBlobs, nTracks, blobs, tracks, bb, tt);
 
                 // Select track
-                CvTrack *track;
+                CvTrack *track = nullptr;
                 unsigned int area = 0;
                 for (list<CvTrack*>::const_iterator it=tt.begin(); it!=tt.end(); ++it)
                 {
@@ -268,8 +268,13 @@ void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDista
                     }
                 }
 
+                if(!track) {
+                    // should not happend
+                    continue;
+                }
+
                 // Select blob
-                CvBlob *blob;
+                CvBlob *blob = nullptr;
                 area = 0;
                 //cout << "Matching blobs: ";
                 for (list<CvBlob*>::const_iterator it=bb.begin(); it!=bb.end(); ++it)
@@ -284,6 +289,12 @@ void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDista
                         blob = b;
                     }
                 }
+
+                if(!blob) {
+                    // should not happend
+                    continue;
+                }
+
                 //cout << endl;
 
                 // Update track
