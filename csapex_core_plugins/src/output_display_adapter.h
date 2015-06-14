@@ -18,7 +18,7 @@ class OutputDisplayAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    OutputDisplayAdapter(NodeWorkerWeakPtr worker, OutputDisplay *node, WidgetController *widget_ctrl);
+    OutputDisplayAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<OutputDisplay> node, WidgetController *widget_ctrl);
 
     virtual Memento::Ptr getState() const;
     virtual void setParameterState(Memento::Ptr memento);
@@ -35,7 +35,7 @@ Q_SIGNALS:
 protected:
     bool eventFilter(QObject* o, QEvent* e);
 
-    OutputDisplay* wrapped_;
+    std::weak_ptr<OutputDisplay> wrapped_;
 
     struct State : public Memento {
         int width;

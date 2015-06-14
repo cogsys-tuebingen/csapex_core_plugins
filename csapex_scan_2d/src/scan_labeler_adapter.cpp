@@ -23,18 +23,24 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
-ScanLabelerAdapter::ScanLabelerAdapter(NodeWorkerWeakPtr worker, ScanLabeler *node, WidgetController* widget_ctrl)
+ScanLabelerAdapter::ScanLabelerAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ScanLabeler> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
+    auto n = wrapped_.lock();
+
     // translate to UI thread via Qt signal
-    trackConnection(node->display_request.connect(std::bind(&ScanLabelerAdapter::displayRequest, this, std::placeholders::_1)));
-    trackConnection(node->submit_request.connect(std::bind(&ScanLabelerAdapter::submitRequest, this)));
+    trackConnection(n->display_request.connect(std::bind(&ScanLabelerAdapter::displayRequest, this, std::placeholders::_1)));
+    trackConnection(n->submit_request.connect(std::bind(&ScanLabelerAdapter::submitRequest, this)));
 }
 
 void ScanLabelerAdapter::labelSelected()
 {
-    int label = wrapped_->readParameter<int>("label");
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    int label = node->readParameter<int>("label");
 
     labelSelected(label);
     view_->scene()->clearSelection();
@@ -277,7 +283,11 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 
 void ScanLabelerAdapter::submit()
 {
-    wrapped_->setResult(result_);
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    node->setResult(result_);
 }
 /// MOC
 #include "moc_scan_labeler_adapter.cpp"

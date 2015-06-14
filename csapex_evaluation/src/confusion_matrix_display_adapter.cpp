@@ -97,11 +97,12 @@ QVariant ConfusionMatrixTableModel::headerData(int section, Qt::Orientation orie
 
 
 
-ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeWorkerWeakPtr worker, ConfusionMatrixDisplay *node, WidgetController* widget_ctrl)
+ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ConfusionMatrixDisplay> node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
+    auto n = wrapped_.lock();
     // translate to UI thread via Qt signal
-    trackConnection(node->display_request.connect(std::bind(&ConfusionMatrixDisplayAdapter::displayRequest, this)));
+    trackConnection(n ->display_request.connect(std::bind(&ConfusionMatrixDisplayAdapter::displayRequest, this)));
 }
 
 void ConfusionMatrixDisplayAdapter::setupUi(QBoxLayout* layout)
@@ -132,9 +133,14 @@ void ConfusionMatrixDisplayAdapter::setupUi(QBoxLayout* layout)
 
 void ConfusionMatrixDisplayAdapter::display()
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+
     assert(QThread::currentThread() == QApplication::instance()->thread());
 
-    model_->update(wrapped_->getConfusionMatrix());
+    model_->update(node->getConfusionMatrix());
 
     table_->resizeColumnsToContents();
     table_->resizeRowsToContents();

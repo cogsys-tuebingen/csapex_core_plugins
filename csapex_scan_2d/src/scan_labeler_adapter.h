@@ -18,7 +18,7 @@ class ScanLabelerAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    ScanLabelerAdapter(NodeWorkerWeakPtr worker, ScanLabeler *node, WidgetController *widget_ctrl);
+    ScanLabelerAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ScanLabeler> node, WidgetController *widget_ctrl);
 
     virtual Memento::Ptr getState() const;
     virtual void setParameterState(Memento::Ptr memento);
@@ -42,7 +42,7 @@ protected:
     void updatePolygon();
     void labelInside();
 
-    ScanLabeler* wrapped_;
+    std::weak_ptr<ScanLabeler> wrapped_;
 
     struct State : public Memento {
         int width;

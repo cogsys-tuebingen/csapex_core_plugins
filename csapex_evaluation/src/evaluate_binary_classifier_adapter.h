@@ -40,7 +40,7 @@ class EvaluateBinaryClassifierAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    EvaluateBinaryClassifierAdapter(NodeWorkerWeakPtr worker, EvaluateBinaryClassifier* node, WidgetController *widget_ctrl);
+    EvaluateBinaryClassifierAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<EvaluateBinaryClassifier> node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 
@@ -51,7 +51,7 @@ Q_SIGNALS:
     void displayRequest();
 
 protected:
-    EvaluateBinaryClassifier* wrapped_;
+    std::weak_ptr<EvaluateBinaryClassifier> wrapped_;
 
 private:
     EvaluateBinaryClassifierTableModel* model_;

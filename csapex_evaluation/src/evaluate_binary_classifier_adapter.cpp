@@ -135,11 +135,13 @@ QVariant EvaluateBinaryClassifierTableModel::headerData(int section, Qt::Orienta
 
 
 
-EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeWorkerWeakPtr worker, EvaluateBinaryClassifier *node, WidgetController* widget_ctrl)
+EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<EvaluateBinaryClassifier> node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
+    auto n = wrapped_.lock();
+
     // translate to UI thread via Qt signal
-    trackConnection(node->display_request.connect(std::bind(&EvaluateBinaryClassifierAdapter::displayRequest, this)));
+    trackConnection(n->display_request.connect(std::bind(&EvaluateBinaryClassifierAdapter::displayRequest, this)));
 }
 
 void EvaluateBinaryClassifierAdapter::setupUi(QBoxLayout* layout)
@@ -161,9 +163,13 @@ void EvaluateBinaryClassifierAdapter::setupUi(QBoxLayout* layout)
 
 void EvaluateBinaryClassifierAdapter::display()
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     assert(QThread::currentThread() == QApplication::instance()->thread());
 
-    model_->update(wrapped_->getMetrics());
+    model_->update(node->getMetrics());
 
     table_->resizeColumnsToContents();
     table_->resizeRowsToContents();

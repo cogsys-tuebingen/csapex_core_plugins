@@ -21,7 +21,7 @@ class CloudRendererAdapter : public QGLWidget, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    CloudRendererAdapter(NodeWorkerWeakPtr worker, CloudRenderer *node, WidgetController *widget_ctrl);
+    CloudRendererAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<CloudRenderer> node, WidgetController *widget_ctrl);
     ~CloudRendererAdapter();
 
     void stop();
@@ -66,7 +66,7 @@ Q_SIGNALS:
     void resizeRequest();
 
 protected:
-    CloudRenderer* wrapped_;
+    std::weak_ptr<CloudRenderer> wrapped_;
 
     QGraphicsView* view_;
     QGraphicsPixmapItem* pixmap_;

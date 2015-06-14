@@ -85,11 +85,13 @@ QVariant ConfidenceMatrixTableModel::headerData(int section, Qt::Orientation ori
 
 
 
-ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeWorkerWeakPtr worker, ConfidenceMatrixDisplay *node, WidgetController* widget_ctrl)
+ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ConfidenceMatrixDisplay> node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
+    auto n = wrapped_.lock();
+
     // translate to UI thread via Qt signal
-    trackConnection(node->display_request.connect(std::bind(&ConfidenceMatrixDisplayAdapter::displayRequest, this)));
+    trackConnection(n->display_request.connect(std::bind(&ConfidenceMatrixDisplayAdapter::displayRequest, this)));
 }
 
 void ConfidenceMatrixDisplayAdapter::setupUi(QBoxLayout* layout)
@@ -120,7 +122,12 @@ void ConfidenceMatrixDisplayAdapter::setupUi(QBoxLayout* layout)
 
 void ConfidenceMatrixDisplayAdapter::display()
 {
-    model_->update(wrapped_->getConfidenceMatrix());
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+
+    model_->update(node->getConfidenceMatrix());
 
     table_->resizeColumnsToContents();
     table_->resizeRowsToContents();

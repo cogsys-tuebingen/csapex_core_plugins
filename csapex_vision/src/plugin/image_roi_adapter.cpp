@@ -20,7 +20,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
-ImageRoiAdapter::ImageRoiAdapter(NodeWorkerWeakPtr worker, ImageRoi *node, WidgetController* widget_ctrl)
+ImageRoiAdapter::ImageRoiAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ImageRoi> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       pixmap_(nullptr),
@@ -30,18 +30,25 @@ ImageRoiAdapter::ImageRoiAdapter(NodeWorkerWeakPtr worker, ImageRoi *node, Widge
       middle_button_down_(false),
       loaded_(false)
 {
+    auto n = wrapped_.lock();
+
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    trackConnection(node->display_request.connect(std::bind(&ImageRoiAdapter::displayRequest, this, std::placeholders::_1)));
-    trackConnection(node->submit_request.connect(std::bind(&ImageRoiAdapter::submitRequest, this)));
-    trackConnection(node->drop_request.connect(std::bind(&ImageRoiAdapter::dropRequest, this)));
+    trackConnection(n->display_request.connect(std::bind(&ImageRoiAdapter::displayRequest, this, std::placeholders::_1)));
+    trackConnection(n->submit_request.connect(std::bind(&ImageRoiAdapter::submitRequest, this)));
+    trackConnection(n->drop_request.connect(std::bind(&ImageRoiAdapter::dropRequest, this)));
 }
 
 bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return false;
+    }
+
     QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
 
     switch(e->type()) {
@@ -63,7 +70,7 @@ bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
             return true;
         }
         if(me->button() == Qt::LeftButton) {
-            if(!wrapped_->readParameter<bool>("step"))
+            if(!node->readParameter<bool>("step"))
                 submit();
             e->accept();
         }
@@ -160,9 +167,14 @@ void ImageRoiAdapter::setParameterState(Memento::Ptr memento)
 
 void ImageRoiAdapter::display(const QImage& img)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+
     QPixmap pixmap = QPixmap::fromImage(img);
-    state.roi_rect.setWidth(wrapped_->readParameter<int>("roi width"));
-    state.roi_rect.setHeight(wrapped_->readParameter<int>("roi height"));
+    state.roi_rect.setWidth(node->readParameter<int>("roi width"));
+    state.roi_rect.setHeight(node->readParameter<int>("roi height"));
 
     QSize roi_size(state.roi_rect.width(), state.roi_rect.height());
     bool change = state.last_size != img.size() ||
@@ -206,6 +218,10 @@ void ImageRoiAdapter::submit()
     if(pixmap_ == nullptr)
         return;
 
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
 
     QPointF top_left     = rect_->sceneBoundingRect().topLeft();
     QPointF bottom_right = rect_->sceneBoundingRect().bottomRight();
@@ -226,14 +242,18 @@ void ImageRoiAdapter::submit()
     if(roi.w() > 0 && roi.h() > 0) {
         connection_types::RoiMessage::Ptr result_msg(new connection_types::RoiMessage);
         result_msg->value = roi;
-        wrapped_->setResult(result_msg);
+        node->setResult(result_msg);
     }
 }
 
 void ImageRoiAdapter::drop()
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     connection_types::RoiMessage::Ptr result_msg(new connection_types::RoiMessage);
-    wrapped_->setResult(result_msg);
+    node->setResult(result_msg);
 }
 /// MOC
 #include "moc_image_roi_adapter.cpp"

@@ -10,11 +10,13 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
 
-TextDisplayAdapter::TextDisplayAdapter(NodeWorkerWeakPtr worker, TextDisplay *node, WidgetController* widget_ctrl)
+TextDisplayAdapter::TextDisplayAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<TextDisplay> node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
+    auto n = wrapped_.lock();
+
     // translate to UI thread via Qt signal
-    trackConnection(node->display_request.connect(std::bind(&TextDisplayAdapter::displayRequest, this, std::placeholders::_1)));
+    trackConnection(n->display_request.connect(std::bind(&TextDisplayAdapter::displayRequest, this, std::placeholders::_1)));
 }
 
 namespace {

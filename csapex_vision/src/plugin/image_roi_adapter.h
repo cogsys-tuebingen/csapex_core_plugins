@@ -17,7 +17,7 @@ class ImageRoiAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    ImageRoiAdapter(NodeWorkerWeakPtr worker, ImageRoi *node, WidgetController *widget_ctrl);
+    ImageRoiAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ImageRoi> node, WidgetController *widget_ctrl);
 
     virtual Memento::Ptr getState() const;
     virtual void         setParameterState(Memento::Ptr memento);
@@ -80,7 +80,7 @@ protected:
 
     };
 
-    ImageRoi *wrapped_;
+    std::weak_ptr<ImageRoi> wrapped_;
 
 private:
     State                state;

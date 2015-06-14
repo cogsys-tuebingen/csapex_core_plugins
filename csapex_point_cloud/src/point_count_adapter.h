@@ -17,7 +17,7 @@ class PointCountAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    PointCountAdapter(NodeWorkerWeakPtr worker, PointCount *node, WidgetController *widget_ctrl);
+    PointCountAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<PointCount> node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 
@@ -27,7 +27,7 @@ Q_SIGNALS:
     void displayRequest(int no);
 
 protected:
-    PointCount* wrapped_;
+    std::weak_ptr<PointCount> wrapped_;
 
 private:
     QLCDNumber* number_;

@@ -18,7 +18,7 @@ using namespace csapex::connection_types;
 
 CSAPEX_REGISTER_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
 
-CloudRendererAdapter::CloudRendererAdapter(NodeWorkerWeakPtr worker, CloudRenderer *node, WidgetController* widget_ctrl)
+CloudRendererAdapter::CloudRendererAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<CloudRenderer> node, WidgetController* widget_ctrl)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node), view_(nullptr), pixmap_(nullptr), fbo_(nullptr), drag_(false), repaint_(true),
       w_view_(10), h_view_(10), point_size_(1),
@@ -26,8 +26,10 @@ CloudRendererAdapter::CloudRendererAdapter(NodeWorkerWeakPtr worker, CloudRender
       axes_(false), grid_size_(10), grid_resolution_(1.0), grid_xy_(true), grid_yz_(false), grid_xz_(false),
       list_cloud_(0), list_augmentation_(0)
 {
-    trackConnection(node->display_request.connect(std::bind(&CloudRendererAdapter::display, this)));
-    trackConnection(node->refresh_request.connect(std::bind(&CloudRendererAdapter::refresh, this)));
+    auto node_ptr = wrapped_.lock();
+
+    trackConnection(node_ptr->display_request.connect(std::bind(&CloudRendererAdapter::display, this)));
+    trackConnection(node_ptr->refresh_request.connect(std::bind(&CloudRendererAdapter::refresh, this)));
 
     QObject::connect(this, SIGNAL(repaintRequest()), this, SLOT(paintGLImpl()), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(resizeRequest()), this, SLOT(resize()), Qt::QueuedConnection);
@@ -199,6 +201,11 @@ void CloudRendererAdapter::paintAugmentation()
 
 void CloudRendererAdapter::paintGLImpl(bool request)
 {
+    auto n = wrapped_.lock();
+    if(!n) {
+        return;
+    }
+
     // initialization
     makeCurrent();
     initializeGL();
@@ -268,14 +275,19 @@ void CloudRendererAdapter::paintGLImpl(bool request)
     view_->blockSignals(false);
     //    view_->scene()->update();
 
-    if(msg::isConnected(wrapped_->output_) && request){
+    if(msg::isConnected(n->output_) && request){
         cv::Mat mat = QtCvImageConverter::Converter<QImage>::QImage2Mat(img);
-        wrapped_->publishImage(mat);
+        n->publishImage(mat);
     }
 }
 
 bool CloudRendererAdapter::eventFilter(QObject * o, QEvent * e)
 {
+    auto n = node_.lock();
+    if(!n) {
+        return false;
+    }
+
     if(view_->signalsBlocked()) {
         return false;
     }
@@ -312,22 +324,31 @@ void CloudRendererAdapter::mousePressEventImpl(QGraphicsSceneMouseEvent *event)
 
 void CloudRendererAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+
     drag_ = false;
 
-    wrapped_->getParameter("~size/width")->set<int>(w_view_);
-    wrapped_->getParameter("~size/height")->set<int>(h_view_);
+    node->getParameter("~size/width")->set<int>(w_view_);
+    node->getParameter("~size/height")->set<int>(h_view_);
 
     if(size_sync_) {
         w_out_ = w_view_;
         h_out_ = h_view_;
-        wrapped_->getParameter("~size/out/width")->set<int>(w_out_);
-        wrapped_->getParameter("~size/out/height")->set<int>(h_out_);
+        node->getParameter("~size/out/width")->set<int>(w_out_);
+        node->getParameter("~size/out/height")->set<int>(h_out_);
     }
     event->accept();
 }
 
 void CloudRendererAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     if(!drag_) {
         return;
     }
@@ -363,9 +384,9 @@ void CloudRendererAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
         offset_ += rot * QVector3D(f*dy, f*dx, 0);
 
 
-        wrapped_->getParameter("~view/dx")->set<double>(offset_.x());
-        wrapped_->getParameter("~view/dy")->set<double>(offset_.y());
-        wrapped_->getParameter("~view/dz")->set<double>(offset_.z());
+        node->getParameter("~view/dx")->set<double>(offset_.x());
+        node->getParameter("~view/dy")->set<double>(offset_.y());
+        node->getParameter("~view/dz")->set<double>(offset_.z());
 
     }
     last_pos_ = pos;
@@ -374,10 +395,14 @@ void CloudRendererAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
 
 void CloudRendererAdapter::wheelEventImpl(QGraphicsSceneWheelEvent *event)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     event->accept();
 
     r_ += event->delta() * -0.0025;
-    wrapped_->getParameter("~view/r")->set<double>(r_);
+    node->getParameter("~view/r")->set<double>(r_);
     paintGLImpl(false);
 
 }
@@ -390,53 +415,57 @@ void CloudRendererAdapter::display()
 
 void CloudRendererAdapter::refresh()
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     if(!drag_){
         {
-            const std::vector<int>& c = wrapped_->readParameter<std::vector<int> >("color/background");
+            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/background");
             color_bg_ = QColor::fromRgb(c[0], c[1], c[2]);
         }
         {
-            const std::vector<int>& c = wrapped_->readParameter<std::vector<int> >("color/grid");
+            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/grid");
             color_grid_ = QColor::fromRgb(c[0], c[1], c[2]);
         }
         {
-            const std::vector<int>& c = wrapped_->readParameter<std::vector<int> >("color/gradient/start");
+            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/gradient/start");
             color_grad_start_ = QVector3D(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
         }
         {
-            const std::vector<int>& c = wrapped_->readParameter<std::vector<int> >("color/gradient/end");
+            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/gradient/end");
             color_grad_end_ = QVector3D(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
         }
-        r_ = wrapped_->readParameter<double>("~view/r");
-        theta_ = wrapped_->readParameter<double>("~view/theta");
-        phi_ = wrapped_->readParameter<double>("~view/phi");
+        r_ = node->readParameter<double>("~view/r");
+        theta_ = node->readParameter<double>("~view/theta");
+        phi_ = node->readParameter<double>("~view/phi");
 
-        double dx = wrapped_->readParameter<double>("~view/dx");
-        double dy = wrapped_->readParameter<double>("~view/dy");
-        double dz = wrapped_->readParameter<double>("~view/dz");
+        double dx = node->readParameter<double>("~view/dx");
+        double dy = node->readParameter<double>("~view/dy");
+        double dz = node->readParameter<double>("~view/dz");
 
         offset_ = QVector3D(dx,dy,dz);
-        point_size_ = wrapped_->readParameter<double>("point/size");
+        point_size_ = node->readParameter<double>("point/size");
 
-        size_sync_ = wrapped_->readParameter<bool>("~size/out/sync");
-        w_view_ = wrapped_->readParameter<int>("~size/width");
-        h_view_ = wrapped_->readParameter<int>("~size/height");
+        size_sync_ = node->readParameter<bool>("~size/out/sync");
+        w_view_ = node->readParameter<int>("~size/width");
+        h_view_ = node->readParameter<int>("~size/height");
 
         if(size_sync_) {
             w_out_ = w_view_;
             h_out_ = h_view_;
         } else {
-            w_out_ = wrapped_->readParameter<int>("~size/out/width");
-            h_out_ = wrapped_->readParameter<int>("~size/out/height");
+            w_out_ = node->readParameter<int>("~size/out/width");
+            h_out_ = node->readParameter<int>("~size/out/height");
         }
 
-        axes_ = wrapped_->readParameter<bool>("show axes");
+        axes_ = node->readParameter<bool>("show axes");
 
-        grid_size_ = wrapped_->readParameter<int>("~grid/size");
-        grid_resolution_ = wrapped_->readParameter<double>("~grid/resolution");
-        grid_xy_ = wrapped_->readParameter<bool>("~grid/xy");
-        grid_yz_ = wrapped_->readParameter<bool>("~grid/yz");
-        grid_xz_ = wrapped_->readParameter<bool>("~grid/xz");
+        grid_size_ = node->readParameter<int>("~grid/size");
+        grid_resolution_ = node->readParameter<double>("~grid/resolution");
+        grid_xy_ = node->readParameter<bool>("~grid/xy");
+        grid_yz_ = node->readParameter<bool>("~grid/yz");
+        grid_xz_ = node->readParameter<bool>("~grid/xz");
 
         repaint_ = true;
 
@@ -448,7 +477,11 @@ void CloudRendererAdapter::refresh()
 
 void CloudRendererAdapter::displayCloud()
 {
-    auto copy = wrapped_->message_;
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    auto copy = node->message_;
     boost::apply_visitor (PointCloudMessage::Dispatch<CloudRendererAdapter>(this, copy), copy->value);
 }
 
@@ -624,6 +657,11 @@ struct Renderer<pcl::PointXYZRGB, Component>
 template <class PointT>
 void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+
     makeCurrent();
 
     if(list_cloud_ == 0) {
@@ -636,11 +674,11 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
 
     glBegin(GL_POINTS);
 
-    std::string component = wrapped_->readParameter<std::string>("color/field");
+    std::string component = node->readParameter<std::string>("color/field");
 
-    bool rainbow = wrapped_->readParameter<bool>("color/rainbow");
+    bool rainbow = node->readParameter<bool>("color/rainbow");
 
-    if(wrapped_->readParameter<bool>("color/force gradient")) {
+    if(node->readParameter<bool>("color/force gradient")) {
         if(component == "x") {
             RendererGradient<PointT, X>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "y") {
@@ -696,6 +734,11 @@ double normalizeAngle(double angle) {
 
 void CloudRendererAdapter::setTheta(double angle)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+
     double eps = 1e-3;
     if(angle < eps) {
         angle = eps;
@@ -706,17 +749,23 @@ void CloudRendererAdapter::setTheta(double angle)
     if (angle != theta_) {
         theta_ = angle;
         Q_EMIT thetaChanged(angle);
-        wrapped_->getParameter("~view/theta")->set<double>(theta_);
+        node->getParameter("~view/theta")->set<double>(theta_);
     }
 }
 
 void CloudRendererAdapter::setPhi(double angle)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+
+
     angle = normalizeAngle(angle);
     if (angle != phi_) {
         phi_ = angle;
         Q_EMIT phiChanged(angle);
-        wrapped_->getParameter("~view/phi")->set<double>(phi_);
+        node->getParameter("~view/phi")->set<double>(phi_);
     }
 }
 /// MOC

@@ -17,7 +17,7 @@ class BFOptimizerAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    BFOptimizerAdapter(NodeWorkerWeakPtr worker, BFOptimizer *node, WidgetController *widget_ctrl);
+    BFOptimizerAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<BFOptimizer> node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 
@@ -33,7 +33,7 @@ private:
     QDialog* makeTypeDialog();
 
 protected:
-    BFOptimizer* wrapped_;
+    std::weak_ptr<BFOptimizer> wrapped_;
 
     QProgressBar* progress_;
     std::string next_type_;

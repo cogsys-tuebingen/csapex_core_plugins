@@ -18,7 +18,7 @@ class TextDisplayAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    TextDisplayAdapter(NodeWorkerWeakPtr worker, TextDisplay *node, WidgetController *widget_ctrl);
+    TextDisplayAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<TextDisplay> node, WidgetController *widget_ctrl);
 
     virtual void setupUi(QBoxLayout* layout);
 
@@ -29,7 +29,7 @@ Q_SIGNALS:
     void displayRequest(const std::string& txt);
 
 protected:
-    TextDisplay* wrapped_;
+    std::weak_ptr<TextDisplay> wrapped_;
 
 private:
     QLabel* txt_;

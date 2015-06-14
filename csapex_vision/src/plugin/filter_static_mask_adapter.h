@@ -17,7 +17,7 @@ class FilterStaticMaskAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    FilterStaticMaskAdapter(NodeWorkerWeakPtr worker, FilterStaticMask *node, WidgetController *widget_ctrl);
+    FilterStaticMaskAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<FilterStaticMask> node, WidgetController *widget_ctrl);
     ~FilterStaticMaskAdapter();
 
 Q_SIGNALS:
@@ -29,7 +29,7 @@ public Q_SLOTS:
     void setMask(cv::Mat);
 
 private:
-    FilterStaticMask* wrapped_;
+    std::weak_ptr<FilterStaticMask> wrapped_;
 };
 
 }

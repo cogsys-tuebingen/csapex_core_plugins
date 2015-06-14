@@ -21,10 +21,11 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(BFOptimizerAdapter, csapex::BFOptimizer)
 
 
-BFOptimizerAdapter::BFOptimizerAdapter(NodeWorkerWeakPtr worker, BFOptimizer *node, WidgetController* widget_ctrl)
+BFOptimizerAdapter::BFOptimizerAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<BFOptimizer> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
-    wrapped_->step.connect(std::bind(&BFOptimizerAdapter::triggerStep, this, std::placeholders::_1));
+    auto n = wrapped_.lock();
+    n->step.connect(std::bind(&BFOptimizerAdapter::triggerStep, this, std::placeholders::_1));
 }
 
 
@@ -54,13 +55,21 @@ void BFOptimizerAdapter::setupUi(QBoxLayout* layout)
 
 void BFOptimizerAdapter::startOptimization()
 {
-    wrapped_->start();
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    node->start();
 }
 
 
 void BFOptimizerAdapter::stopOptimization()
 {
-    wrapped_->stop();
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    node->stop();
 }
 
 QDialog* BFOptimizerAdapter::makeTypeDialog()
@@ -102,23 +111,31 @@ void BFOptimizerAdapter::setNextParameterType(const QString &type)
 
 void BFOptimizerAdapter::createParameter()
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     QDialog* type_dialog = makeTypeDialog();
     if(type_dialog->exec() == QDialog::Accepted) {
 
         ParameterDialog diag(next_type_);
         if(diag.exec() == QDialog::Accepted) {
             param::Parameter::Ptr param = diag.getParameter();
-            wrapped_->addPersistentParameter(param);
+            node->addPersistentParameter(param);
 
-            progress_->setMaximum(wrapped_->stepsNecessary());
+            progress_->setMaximum(node->stepsNecessary());
         }
     }
 }
 
 void BFOptimizerAdapter::triggerStep(int s)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     progress_->setValue(s);
-    progress_->setMaximum(wrapped_->stepsNecessary());
+    progress_->setMaximum(node->stepsNecessary());
 }
 /// MOC
 #include "moc_bf_optimizer_adapter.cpp"

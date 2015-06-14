@@ -20,12 +20,14 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(FilterStaticMaskAdapter, csapex::FilterStaticMask)
 
 
-FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeWorkerWeakPtr worker, FilterStaticMask *node, WidgetController* widget_ctrl)
+FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<FilterStaticMask> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
+    auto n = wrapped_.lock();
+
     // translate to UI thread via Qt signal
-    wrapped_->show_painter.connect(std::bind(&FilterStaticMaskAdapter::displayRequest, this));
-    wrapped_->input.connect(std::bind(&FilterStaticMaskAdapter::inputRequest, this, std::placeholders::_1));
+    n->show_painter.connect(std::bind(&FilterStaticMaskAdapter::displayRequest, this));
+    n->input.connect(std::bind(&FilterStaticMaskAdapter::inputRequest, this, std::placeholders::_1));
 
     QObject::connect(this, SIGNAL(displayRequest()), this, SLOT(display()));
 }
@@ -36,12 +38,20 @@ FilterStaticMaskAdapter::~FilterStaticMaskAdapter()
 
 void FilterStaticMaskAdapter::setMask(cv::Mat mask)
 {
-    wrapped_->setMask(mask);
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    node->setMask(mask);
 }
 
 void FilterStaticMaskAdapter::display()
 {
-    StaticMaskPainter painter(wrapped_->getMask());
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    StaticMaskPainter painter(node->getMask());
 
     QObject::connect(this, SIGNAL(inputRequest(cv::Mat)), &painter, SLOT(input(cv::Mat)));
     QObject::connect(&painter, SIGNAL(new_mask(cv::Mat)), this, SLOT(setMask(cv::Mat)));
