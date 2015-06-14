@@ -18,7 +18,7 @@ class AssignClusterClassAdapter : public QObject, public csapex::DefaultNodeAdap
     Q_OBJECT
 
 public:
-    AssignClusterClassAdapter(csapex::NodeWorker *worker,
+    AssignClusterClassAdapter(csapex::NodeWorkerWeakPtr worker,
                               vision_plugins::AssignClusterClass *node,
                               csapex::WidgetController *widget_ctrl);
 
@@ -28,7 +28,7 @@ public:
     virtual void                 setupUi(QBoxLayout* layout);
 
 public Q_SLOTS:
-    void display(QSharedPointer<QImage> img, const cv::Mat &clusters);
+    void display(QImage img, const cv::Mat &clusters);
     void fitInView();
     void submit();
     void drop();
@@ -37,7 +37,7 @@ public Q_SLOTS:
     void setClass(int c);
 
 Q_SIGNALS:
-    void displayRequest(QSharedPointer<QImage> img, const cv::Mat &clusters);
+    void displayRequest(QImage img, const cv::Mat &clusters);
     void submitRequest();
     void dropRequest();
     void clearRequest();
@@ -93,8 +93,8 @@ private:
 
     State                  state;
 
-    QSharedPointer<QImage> img_;
-    QSharedPointer<QImage> overlay_;
+    QImage img_;
+    QImage overlay_;
 
     QGraphicsPixmapItem   *pixmap_overlay_;
     QGraphicsPixmapItem   *pixmap_;

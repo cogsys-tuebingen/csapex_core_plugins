@@ -100,8 +100,7 @@ void AssignROIClass::display()
     if(image_.empty())
         return;
 
-    QSharedPointer<QImage> qimg =
-            QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(image_);
+    QImage qimg = QtCvImageConverter::Converter<QImage>::mat2QImage(image_);
 
     display_request(qimg);
 }

@@ -103,7 +103,7 @@ namespace vision_plugins {
 }
 
 
-AssignROIClassAdapter::AssignROIClassAdapter(NodeWorker* worker, AssignROIClass *node, WidgetController* widget_ctrl)
+AssignROIClassAdapter::AssignROIClassAdapter(NodeWorkerWeakPtr worker, AssignROIClass *node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       active_class_(0),
@@ -120,14 +120,14 @@ AssignROIClassAdapter::AssignROIClassAdapter(NodeWorker* worker, AssignROIClass 
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    node->display_request.connect(std::bind(&AssignROIClassAdapter::displayRequest, this,
-                                            std::placeholders::_1));
-    node->set_class.connect(std::bind(&AssignROIClassAdapter::setClassRequest, this, std::placeholders::_1));
-    node->set_color.connect(std::bind(&AssignROIClassAdapter::setColorRequest, this,
-                                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-    node->submit_request.connect(std::bind(&AssignROIClassAdapter::submitRequest, this));
-    node->drop_request.connect(std::bind(&AssignROIClassAdapter::dropRequest, this));
-    node->clear_request.connect(std::bind(&AssignROIClassAdapter::clearRequest, this));
+    trackConnection(node->display_request.connect(std::bind(&AssignROIClassAdapter::displayRequest, this,
+                                            std::placeholders::_1)));
+    trackConnection(node->set_class.connect(std::bind(&AssignROIClassAdapter::setClassRequest, this, std::placeholders::_1)));
+    trackConnection(node->set_color.connect(std::bind(&AssignROIClassAdapter::setColorRequest, this,
+                                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+    trackConnection(node->submit_request.connect(std::bind(&AssignROIClassAdapter::submitRequest, this)));
+    trackConnection(node->drop_request.connect(std::bind(&AssignROIClassAdapter::dropRequest, this)));
+    trackConnection(node->clear_request.connect(std::bind(&AssignROIClassAdapter::clearRequest, this)));
 }
 
 bool AssignROIClassAdapter::eventFilter(QObject *o, QEvent *e)
@@ -245,7 +245,7 @@ void AssignROIClassAdapter::setupUi(QBoxLayout* layout)
     pixmap_ = new QGraphicsPixmapItem;
     view_->scene()->addItem(pixmap_);
 
-    connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>)), this, SLOT(display(QSharedPointer<QImage>)));
+    connect(this, SIGNAL(displayRequest(QImage)), this, SLOT(display(QImage)));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
     connect(this, SIGNAL(dropRequest()), this, SLOT(drop()));
     connect(this, SIGNAL(clearRequest()), this, SLOT(clear()));
@@ -271,12 +271,12 @@ void AssignROIClassAdapter::setParameterState(Memento::Ptr memento)
     loaded_ = true;
 }
 
-void AssignROIClassAdapter::display(QSharedPointer<QImage> img)
+void AssignROIClassAdapter::display(QImage img)
 {
     /// PREPARE LABLES
     img_ = img;
 
-    QPixmap pixmap = QPixmap::fromImage(*img_);
+    QPixmap pixmap = QPixmap::fromImage(img_);
 
     if(!rectangles_.empty()) {
         for(QGraphicsRectItem* r : rectangles_) {
@@ -306,9 +306,9 @@ void AssignROIClassAdapter::display(QSharedPointer<QImage> img)
     }
 
 
-    bool change = state.last_size != img_->size();
+    bool change = state.last_size != img_.size();
     if(change || loaded_) {
-        view_->scene()->setSceneRect(img_->rect());
+        view_->scene()->setSceneRect(img_.rect());
         view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
         loaded_ = false;
     }
@@ -318,7 +318,7 @@ void AssignROIClassAdapter::display(QSharedPointer<QImage> img)
 
     view_->scene()->update();
 
-    state.last_size = img_->size();
+    state.last_size = img_.size();
 }
 
 void AssignROIClassAdapter::fitInView()

@@ -48,7 +48,7 @@ protected:
 
 
 public:
-    boost::signals2::signal<void(QSharedPointer<QImage>, const cv::Mat&)> display_request;
+    boost::signals2::signal<void(QImage, const cv::Mat&)> display_request;
     boost::signals2::signal<void()>                                       submit_request;
     boost::signals2::signal<void()>                                       drop_request;
     boost::signals2::signal<void()>                                       clear_request;
