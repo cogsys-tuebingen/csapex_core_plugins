@@ -98,8 +98,7 @@ void ImageRoi::process()
         last_mat_size_.width  = in->value.cols;
     }
 
-    QSharedPointer<QImage> img =
-            QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(in->value);
+    QImage img = QtCvImageConverter::Converter<QImage>::mat2QImage(in->value);
 
     display_request(img);
 

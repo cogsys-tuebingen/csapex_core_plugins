@@ -35,9 +35,9 @@ ImageRoiAdapter::ImageRoiAdapter(NodeWorkerWeakPtr worker, ImageRoi *node, Widge
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    node->display_request.connect(std::bind(&ImageRoiAdapter::displayRequest, this, std::placeholders::_1));
-    node->submit_request.connect(std::bind(&ImageRoiAdapter::submitRequest, this));
-    node->drop_request.connect(std::bind(&ImageRoiAdapter::dropRequest, this));
+    trackConnection(node->display_request.connect(std::bind(&ImageRoiAdapter::displayRequest, this, std::placeholders::_1)));
+    trackConnection(node->submit_request.connect(std::bind(&ImageRoiAdapter::submitRequest, this)));
+    trackConnection(node->drop_request.connect(std::bind(&ImageRoiAdapter::dropRequest, this)));
 }
 
 bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)
@@ -134,7 +134,7 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
     view_->scene()->addItem(pixmap_);
     view_->scene()->addItem(rect_);
 
-    connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>)), this, SLOT(display(QSharedPointer<QImage>)));
+    connect(this, SIGNAL(displayRequest(QImage)), this, SLOT(display(QImage)));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
     connect(this, SIGNAL(dropRequest()), this, SLOT(drop()));
 
@@ -158,18 +158,18 @@ void ImageRoiAdapter::setParameterState(Memento::Ptr memento)
     loaded_ = true;
 }
 
-void ImageRoiAdapter::display(QSharedPointer<QImage> img)
+void ImageRoiAdapter::display(const QImage& img)
 {
-    QPixmap pixmap = QPixmap::fromImage(*img);
+    QPixmap pixmap = QPixmap::fromImage(img);
     state.roi_rect.setWidth(wrapped_->readParameter<int>("roi width"));
     state.roi_rect.setHeight(wrapped_->readParameter<int>("roi height"));
 
     QSize roi_size(state.roi_rect.width(), state.roi_rect.height());
-    bool change = state.last_size != img->size() ||
+    bool change = state.last_size != img.size() ||
                   state.last_roi_size != roi_size;
 
     if(change || loaded_) {
-        view_->scene()->setSceneRect(img->rect());
+        view_->scene()->setSceneRect(img.rect());
         view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
         loaded_ = false;
     }
@@ -185,7 +185,7 @@ void ImageRoiAdapter::display(QSharedPointer<QImage> img)
 
     view_->scene()->update();
 
-    state.last_size     = img->size();
+    state.last_size     = img.size();
     state.last_roi_size = roi_size;
     state.scene_pos     = rect_->scenePos();
 }

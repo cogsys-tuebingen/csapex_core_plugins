@@ -12,7 +12,7 @@ namespace csapex
 class ImageRenderer : public MessageRendererImplementation<connection_types::CvMatMessage>
 {
 public:
-    virtual QSharedPointer<QImage> doRender(const connection_types::CvMatMessage& msg);
+    virtual QImage doRender(const connection_types::CvMatMessage& msg);
 };
 }
 

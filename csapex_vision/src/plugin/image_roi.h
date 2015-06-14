@@ -40,7 +40,7 @@ protected:
     connection_types::RoiMessage::Ptr result_;
 
 public:
-    boost::signals2::signal<void(QSharedPointer<QImage>)> display_request;
+    boost::signals2::signal<void(QImage)> display_request;
     boost::signals2::signal<void()>                       submit_request;
     boost::signals2::signal<void()>                       drop_request;
 };

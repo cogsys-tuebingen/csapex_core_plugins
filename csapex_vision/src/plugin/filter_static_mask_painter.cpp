@@ -138,11 +138,11 @@ void StaticMaskPainter::input(cv::Mat img)
     }
     img.copyTo(masked, mask_);
 
-    QSharedPointer<QImage> image = QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(masked);
+    QImage image = QtCvImageConverter::Converter<QImage>::mat2QImage(masked);
     QGraphicsScene* scene = view->scene();
     scene->clear();
     scene->setSceneRect(0, 0, img.cols, img.rows);
-    scene->addPixmap(QPixmap::fromImage(*image));
+    scene->addPixmap(QPixmap::fromImage(image));
 
     view->fitInView(scene->itemsBoundingRect() ,Qt::KeepAspectRatio);
 }

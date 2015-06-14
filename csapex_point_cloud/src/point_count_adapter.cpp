@@ -12,7 +12,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(PointCountAdapter, csapex::PointCount)
 PointCountAdapter::PointCountAdapter(NodeWorkerWeakPtr worker, PointCount *node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
-    node->display_request.connect(std::bind(&PointCountAdapter::display, this, std::placeholders::_1));
+    trackConnection(node->display_request.connect(std::bind(&PointCountAdapter::display, this, std::placeholders::_1)));
 }
 
 void PointCountAdapter::setupUi(QBoxLayout* layout)

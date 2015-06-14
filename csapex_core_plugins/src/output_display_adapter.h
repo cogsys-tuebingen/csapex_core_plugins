@@ -26,11 +26,11 @@ public:
     virtual void setupUi(QBoxLayout* layout);
 
 public Q_SLOTS:
-    void display(QSharedPointer<QImage> img);
+    void display(const QImage& img);
     void fitInView();
 
 Q_SIGNALS:
-    void displayRequest(QSharedPointer<QImage> img);
+    void displayRequest(QImage img);
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);

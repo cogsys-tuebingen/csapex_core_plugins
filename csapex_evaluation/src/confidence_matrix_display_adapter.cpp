@@ -89,7 +89,7 @@ ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeWorkerWeakPtr
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal
-    node->display_request.connect(std::bind(&ConfidenceMatrixDisplayAdapter::displayRequest, this));
+    trackConnection(node->display_request.connect(std::bind(&ConfidenceMatrixDisplayAdapter::displayRequest, this)));
 }
 
 void ConfidenceMatrixDisplayAdapter::setupUi(QBoxLayout* layout)

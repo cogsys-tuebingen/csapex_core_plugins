@@ -11,11 +11,11 @@ CSAPEX_REGISTER_CLASS(csapex::LabeledScanMessageRenderer, csapex::MessageRendere
 using namespace csapex;
 
 
-QSharedPointer<QImage> ScanMessageRenderer::doRender(const connection_types::ScanMessage &msg)
+QImage ScanMessageRenderer::doRender(const connection_types::ScanMessage &msg)
 {
     cv::Mat mat;
     renderer.render(msg.value, mat);
-    return QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(mat);
+    return QtCvImageConverter::Converter<QImage>::mat2QImage(mat);
 }
 
 std::vector<param::ParameterPtr> ScanMessageRenderer::getParameters() const
@@ -23,11 +23,11 @@ std::vector<param::ParameterPtr> ScanMessageRenderer::getParameters() const
     return renderer.getParameters();
 }
 
-QSharedPointer<QImage> LabeledScanMessageRenderer::doRender(const connection_types::LabeledScanMessage &msg)
+QImage LabeledScanMessageRenderer::doRender(const connection_types::LabeledScanMessage &msg)
 {
     cv::Mat mat;
     renderer.render(msg.value, mat);
-    return QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(mat);
+    return QtCvImageConverter::Converter<QImage>::mat2QImage(mat);
 }
 
 std::vector<param::ParameterPtr> LabeledScanMessageRenderer::getParameters() const

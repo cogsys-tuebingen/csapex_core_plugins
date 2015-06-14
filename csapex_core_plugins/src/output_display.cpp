@@ -37,7 +37,7 @@ void OutputDisplay::process()
         setTemporaryParameters(renderer_->getParameters());
     }
 
-    QSharedPointer<QImage> img = renderer->render(msg);
+    QImage img = renderer->render(msg);
 
     if(!img.isNull()) {
         display_request(img);

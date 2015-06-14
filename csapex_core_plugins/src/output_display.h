@@ -28,7 +28,7 @@ protected:
     Input* input_;
 
 public:
-    boost::signals2::signal<void(QSharedPointer<QImage>)> display_request;
+    boost::signals2::signal<void(QImage)> display_request;
     MessageRendererPtr renderer_;
 };
 

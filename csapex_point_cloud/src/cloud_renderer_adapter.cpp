@@ -26,8 +26,8 @@ CloudRendererAdapter::CloudRendererAdapter(NodeWorkerWeakPtr worker, CloudRender
       axes_(false), grid_size_(10), grid_resolution_(1.0), grid_xy_(true), grid_yz_(false), grid_xz_(false),
       list_cloud_(0), list_augmentation_(0)
 {
-    node->display_request.connect(std::bind(&CloudRendererAdapter::display, this));
-    node->refresh_request.connect(std::bind(&CloudRendererAdapter::refresh, this));
+    trackConnection(node->display_request.connect(std::bind(&CloudRendererAdapter::display, this)));
+    trackConnection(node->refresh_request.connect(std::bind(&CloudRendererAdapter::refresh, this)));
 
     QObject::connect(this, SIGNAL(repaintRequest()), this, SLOT(paintGLImpl()), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(resizeRequest()), this, SLOT(resize()), Qt::QueuedConnection);
@@ -269,7 +269,7 @@ void CloudRendererAdapter::paintGLImpl(bool request)
     //    view_->scene()->update();
 
     if(msg::isConnected(wrapped_->output_) && request){
-        cv::Mat mat = QtCvImageConverter::Converter<QImage, QSharedPointer>::QImage2Mat(img);
+        cv::Mat mat = QtCvImageConverter::Converter<QImage>::QImage2Mat(img);
         wrapped_->publishImage(mat);
     }
 }

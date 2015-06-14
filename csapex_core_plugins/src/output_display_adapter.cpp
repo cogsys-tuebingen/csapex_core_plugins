@@ -26,7 +26,7 @@ OutputDisplayAdapter::OutputDisplayAdapter(NodeWorkerWeakPtr worker, OutputDispl
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    node->display_request.connect(std::bind(&OutputDisplayAdapter::displayRequest, this, std::placeholders::_1));
+    trackConnection(node->display_request.connect(std::bind(&OutputDisplayAdapter::displayRequest, this, std::placeholders::_1)));
 }
 
 
@@ -88,7 +88,7 @@ void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 
     layout->addLayout(sub);
 
-    connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>)), this, SLOT(display(QSharedPointer<QImage>)));
+    connect(this, SIGNAL(displayRequest(QImage)), this, SLOT(display(QImage)));
 
     DefaultNodeAdapter::setupUi(layout);
 }
@@ -119,7 +119,7 @@ void OutputDisplayAdapter::setParameterState(Memento::Ptr memento)
     view_->setFixedSize(QSize(state.width, state.height));
 }
 
-void OutputDisplayAdapter::display(QSharedPointer<QImage> img)
+void OutputDisplayAdapter::display(const QImage& img)
 {
     if(pixmap_ == nullptr) {
         if(view_->scene()) {
@@ -128,15 +128,15 @@ void OutputDisplayAdapter::display(QSharedPointer<QImage> img)
         view_->setScene(new QGraphicsScene());
         view_->scene()->installEventFilter(this);
 
-        pixmap_ = view_->scene()->addPixmap(QPixmap::fromImage(*img));
+        pixmap_ = view_->scene()->addPixmap(QPixmap::fromImage(img));
 
     } else {
-        pixmap_->setPixmap(QPixmap::fromImage(*img));
+        pixmap_->setPixmap(QPixmap::fromImage(img));
     }
 
-    last_size_ = img->size();
+    last_size_ = img.size();
 
-    view_->scene()->setSceneRect(img->rect());
+    view_->scene()->setSceneRect(img.rect());
     view_->fitInView(view_->scene()->sceneRect(), Qt::KeepAspectRatio);
     view_->scene()->update();
 }

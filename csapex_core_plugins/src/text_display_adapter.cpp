@@ -14,7 +14,7 @@ TextDisplayAdapter::TextDisplayAdapter(NodeWorkerWeakPtr worker, TextDisplay *no
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     // translate to UI thread via Qt signal
-    node->display_request.connect(std::bind(&TextDisplayAdapter::displayRequest, this, std::placeholders::_1));
+    trackConnection(node->display_request.connect(std::bind(&TextDisplayAdapter::displayRequest, this, std::placeholders::_1)));
 }
 
 namespace {
