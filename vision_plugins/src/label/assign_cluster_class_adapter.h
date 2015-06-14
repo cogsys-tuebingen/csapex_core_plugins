@@ -19,7 +19,7 @@ class AssignClusterClassAdapter : public QObject, public csapex::DefaultNodeAdap
 
 public:
     AssignClusterClassAdapter(csapex::NodeWorkerWeakPtr worker,
-                              vision_plugins::AssignClusterClass *node,
+                              std::weak_ptr<AssignClusterClass> node,
                               csapex::WidgetController *widget_ctrl);
 
     virtual csapex::Memento::Ptr getState() const;
@@ -83,7 +83,7 @@ protected:
     };
 
 
-    vision_plugins::AssignClusterClass *wrapped_;
+    std::weak_ptr<vision_plugins::AssignClusterClass> wrapped_;
 
 private:
     std::vector<int>      classes_;

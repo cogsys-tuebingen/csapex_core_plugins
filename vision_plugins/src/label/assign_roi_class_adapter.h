@@ -22,7 +22,7 @@ class AssignROIClassAdapter : public QObject, public csapex::DefaultNodeAdapter
 
 public:
     AssignROIClassAdapter(csapex::NodeWorkerWeakPtr worker,
-                              vision_plugins::AssignROIClass *node,
+                              std::weak_ptr<AssignROIClass> node,
                               csapex::WidgetController *widget_ctrl);
 
     virtual csapex::Memento::Ptr getState() const;
@@ -84,7 +84,7 @@ protected:
     };
 
 
-    vision_plugins::AssignROIClass *wrapped_;
+    std::weak_ptr<vision_plugins::AssignROIClass> wrapped_;
 
 private:
     std::map<int, QColor> colors_;

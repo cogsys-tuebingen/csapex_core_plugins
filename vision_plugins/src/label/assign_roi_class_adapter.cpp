@@ -103,7 +103,7 @@ namespace vision_plugins {
 }
 
 
-AssignROIClassAdapter::AssignROIClassAdapter(NodeWorkerWeakPtr worker, AssignROIClass *node, WidgetController* widget_ctrl)
+AssignROIClassAdapter::AssignROIClassAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<AssignROIClass> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       active_class_(0),
@@ -115,19 +115,21 @@ AssignROIClassAdapter::AssignROIClassAdapter(NodeWorkerWeakPtr worker, AssignROI
       left_button_down_(false),
       loaded_(false)
 {
+    auto n = wrapped_.lock();
+
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    trackConnection(node->display_request.connect(std::bind(&AssignROIClassAdapter::displayRequest, this,
+    trackConnection(n->display_request.connect(std::bind(&AssignROIClassAdapter::displayRequest, this,
                                             std::placeholders::_1)));
-    trackConnection(node->set_class.connect(std::bind(&AssignROIClassAdapter::setClassRequest, this, std::placeholders::_1)));
-    trackConnection(node->set_color.connect(std::bind(&AssignROIClassAdapter::setColorRequest, this,
+    trackConnection(n->set_class.connect(std::bind(&AssignROIClassAdapter::setClassRequest, this, std::placeholders::_1)));
+    trackConnection(n->set_color.connect(std::bind(&AssignROIClassAdapter::setColorRequest, this,
                                       std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    trackConnection(node->submit_request.connect(std::bind(&AssignROIClassAdapter::submitRequest, this)));
-    trackConnection(node->drop_request.connect(std::bind(&AssignROIClassAdapter::dropRequest, this)));
-    trackConnection(node->clear_request.connect(std::bind(&AssignROIClassAdapter::clearRequest, this)));
+    trackConnection(n->submit_request.connect(std::bind(&AssignROIClassAdapter::submitRequest, this)));
+    trackConnection(n->drop_request.connect(std::bind(&AssignROIClassAdapter::dropRequest, this)));
+    trackConnection(n->clear_request.connect(std::bind(&AssignROIClassAdapter::clearRequest, this)));
 }
 
 bool AssignROIClassAdapter::eventFilter(QObject *o, QEvent *e)
@@ -273,6 +275,11 @@ void AssignROIClassAdapter::setParameterState(Memento::Ptr memento)
 
 void AssignROIClassAdapter::display(QImage img)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+
     /// PREPARE LABLES
     img_ = img;
 
@@ -286,8 +293,8 @@ void AssignROIClassAdapter::display(QImage img)
         rectangles_.clear();
     }
 
-    for(auto it = wrapped_->rois_.begin() ;
-        it != wrapped_->rois_.end() ;
+    for(auto it = node->rois_.begin() ;
+        it != node->rois_.end() ;
         ++it) {
         csapex::Roi &roi = (*it)->value;
 
@@ -336,17 +343,25 @@ void AssignROIClassAdapter::submit()
 {
     if(pixmap_ == nullptr)
         return;
-    wrapped_->done();
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    node->done();
 }
 
 void AssignROIClassAdapter::drop()
 {
-    for(auto it = wrapped_->rois_.begin() ;
-        it != wrapped_->rois_.end() ;
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    for(auto it = node->rois_.begin() ;
+        it != node->rois_.end() ;
         ++it) {
         (*it)->value.setClassification(-1);
     }
-    wrapped_->done();
+    node->done();
 }
 
 void AssignROIClassAdapter::clear()
@@ -363,9 +378,13 @@ void AssignROIClassAdapter::setColor(int r, int g, int b)
 
 void AssignROIClassAdapter::setClass(int c)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     active_class_ = c;
     QColor &col = colors_[c];
-    wrapped_->setActiveClassColor(col.red(),col.green(), col.blue());
+    node->setActiveClassColor(col.red(),col.green(), col.blue());
     active_color_ = col;
 }
 

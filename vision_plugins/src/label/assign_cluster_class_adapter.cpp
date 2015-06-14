@@ -22,7 +22,7 @@ using namespace vision_plugins;
 
 CSAPEX_REGISTER_NODE_ADAPTER_NS(vision_plugins, AssignClusterClassAdapter, vision_plugins::AssignClusterClass)
 
-AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorkerWeakPtr worker, AssignClusterClass *node, WidgetController* widget_ctrl)
+AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<AssignClusterClass> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       active_class_(0),
@@ -35,19 +35,21 @@ AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorkerWeakPtr worker, A
       left_button_down_(false),
       loaded_(false)
 {
+    auto n = wrapped_.lock();
+
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    trackConnection(node->display_request.connect(std::bind(&AssignClusterClassAdapter::displayRequest, this,
+    trackConnection(n->display_request.connect(std::bind(&AssignClusterClassAdapter::displayRequest, this,
                                             std::placeholders::_1, std::placeholders::_2)));
-    trackConnection(node->set_class.connect(std::bind(&AssignClusterClassAdapter::setClassRequest, this, std::placeholders::_1)));
-    trackConnection(node->set_color.connect(std::bind(&AssignClusterClassAdapter::setColorRequest, this,
+    trackConnection(n->set_class.connect(std::bind(&AssignClusterClassAdapter::setClassRequest, this, std::placeholders::_1)));
+    trackConnection(n->set_color.connect(std::bind(&AssignClusterClassAdapter::setColorRequest, this,
                                       std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    trackConnection(node->submit_request.connect(std::bind(&AssignClusterClassAdapter::submitRequest, this)));
-    trackConnection(node->drop_request.connect(std::bind(&AssignClusterClassAdapter::dropRequest, this)));
-    trackConnection(node->clear_request.connect(std::bind(&AssignClusterClassAdapter::clearRequest, this)));
+    trackConnection(n->submit_request.connect(std::bind(&AssignClusterClassAdapter::submitRequest, this)));
+    trackConnection(n->drop_request.connect(std::bind(&AssignClusterClassAdapter::dropRequest, this)));
+    trackConnection(n->clear_request.connect(std::bind(&AssignClusterClassAdapter::clearRequest, this)));
 }
 
 bool AssignClusterClassAdapter::eventFilter(QObject *o, QEvent *e)
@@ -278,13 +280,21 @@ void AssignClusterClassAdapter::submit()
     if(pixmap_ == nullptr)
         return;
 
-    wrapped_->setResult(classes_);
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    node->setResult(classes_);
 }
 
 void AssignClusterClassAdapter::drop()
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     std::vector<int> empty;
-    wrapped_->setResult(empty);
+    node->setResult(empty);
 }
 
 void AssignClusterClassAdapter::clear()
@@ -306,9 +316,13 @@ void AssignClusterClassAdapter::setColor(int r, int g, int b)
 
 void AssignClusterClassAdapter::setClass(int c)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     active_class_ = c;
     QColor &col = colors_[c];
-    wrapped_->setActiveClassColor(col.red(),col.green(), col.blue());
+    node->setActiveClassColor(col.red(),col.green(), col.blue());
 }
 
 /// MOC
