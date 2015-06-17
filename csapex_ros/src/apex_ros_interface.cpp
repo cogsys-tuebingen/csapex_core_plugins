@@ -143,6 +143,7 @@ void APEXRosInterface::init(CsApexCore &core)
     RosMessageConversionT<geometry_msgs::PoseStamped>::registerConversion();
     RosMessageConversionT<visualization_msgs::MarkerArray>::registerConversion();
     RosMessageConversionT<visualization_msgs::Marker>::registerConversion();
+    RosMessageConversionT<nav_msgs::OccupancyGrid>::registerConversion();
 }
 
 void APEXRosInterface::registerCommandListener()
