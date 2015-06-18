@@ -24,8 +24,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
+#include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_core_plugins/vector_message.h>
@@ -50,7 +49,7 @@ LineSegmentDetector::LineSegmentDetector()
 
 void LineSegmentDetector::process()
 {
-    connection_types::CvMatMessage::Ptr a = input_->getMessage<connection_types::CvMatMessage>();
+    connection_types::CvMatMessage::ConstPtr a = msg::getMessage<connection_types::CvMatMessage>(input_);
 
 //    cv::Mat image_cv = a->value;
 
