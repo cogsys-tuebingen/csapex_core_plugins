@@ -57,12 +57,17 @@ void ConfidenceEvaluator::process()
 
     for(std::size_t i = 0; i < n; ++i) {
         const FeaturesMessage& truth = truth_msg->at(i);
-        const FeaturesMessage& classified = classified_msg->at(i);
+        const FeaturesMessage& classified = classified_msg->at(i);        
 
         apex_assert_hard(truth.value.size() == classified.value.size());
 
-        const float& t = truth.classification;
-        const float& c = classified.classification;
+        const int& t = truth.classification;
+        const int& c = classified.classification;
+
+        // items with an invalid label are simply dropped so they dont influence the evaluation
+        if(c == FeaturesMessage::INVALID_LABEL || t == FeaturesMessage::INVALID_LABEL) {
+            continue;
+        }
 
         confidence_.reportConfidence(t, c, classified.confidence);
     }

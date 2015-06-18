@@ -13,6 +13,8 @@ namespace connection_types {
 
 struct FeaturesMessage : public Message
 {
+    static const int INVALID_LABEL = -1;
+
     typedef std::shared_ptr<FeaturesMessage> Ptr;
     typedef std::shared_ptr<FeaturesMessage const> ConstPtr;
 
