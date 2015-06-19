@@ -6,7 +6,7 @@
 #include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <utils_cv/kernel.hpp>
+#include <utils_vision/utils/kernel.hpp>
 #include <csapex/model/node_modifier.h>
 
 using namespace csapex;
@@ -26,7 +26,7 @@ void BinomialFilter::process()
 
     int kernel_size = readParameter<int>("kernel");
     if(kernel_size != kernel_size_) {
-        utils_cv::buildBinomialKernel(kernel_, kernel_size);
+        utils_vision::buildBinomialKernel(kernel_, kernel_size);
         kernel_size_ = kernel_size;
     }
 

@@ -28,7 +28,7 @@ void FeatureToHistogram::process()
 
     if(msg::hasMessage(in_)) {
         in = msg::getMessage<FeaturesMessage>(in_);
-        hist->value.ranges.push_back(utils_vision::histogram::Range(0, in->value.size()));
+        hist->value.ranges.push_back(utils_vision::histogram::Rangef(0, in->value.size()));
         hist->value.histograms.push_back(cv::Mat(in->value, true));
     }
     if(msg::hasMessage(in_vector_)) {
@@ -39,7 +39,7 @@ void FeatureToHistogram::process()
             ++it) {
 
             FeaturesMessage::ConstPtr feature_msg = std::dynamic_pointer_cast<FeaturesMessage const>(*it);
-            hist->value.ranges.push_back(utils_vision::histogram::Range(0, feature_msg->value.size()));
+            hist->value.ranges.push_back(utils_vision::histogram::Rangef(0, feature_msg->value.size()));
             hist->value.histograms.push_back(cv::Mat(feature_msg->value, true));
         }
     }

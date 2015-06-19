@@ -5,10 +5,10 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
-#include <utils_cv/heatmap.hpp>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
-#include <utils_cv/color_functions.hpp>
+#include <utils_vision/utils/heatmap.hpp>
+#include <utils_vision/utils/color_functions.hpp>
 
 
 /// SYSTEM
@@ -54,19 +54,19 @@ void MatrixToHeatmap::process()
     float divider = 1 / (float) channels.size();
     mean = mean * divider;
 
-    utils_cv::Heatmap::colorFunction fc;
+    utils_vision::heatmap::colorFunction fc;
     switch(color_type_) {
     case BEZIER:
-        fc = &utils_cv::color::bezierColor<cv::Vec3f>;
+        fc = &utils_vision::color::bezierColor<cv::Vec3f>;
         break;
     case PARABOLA:
-        fc = &utils_cv::color::parabolaColor<cv::Vec3f>;
+        fc = &utils_vision::color::parabolaColor<cv::Vec3f>;
         break;
     default:
         throw std::runtime_error("Unknown color function type!");
     }
 
-    utils_cv::Heatmap::renderHeatmap(mean, heatmap, fc, mask);
+    utils_vision::heatmap::renderHeatmap(mean, heatmap, fc, mask);
 
     out->value = heatmap;
     msg::publish(output_, out);

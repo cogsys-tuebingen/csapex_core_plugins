@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(vision_plugins)
 
-find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_features csapex_ml utils_cv utils_vision REQUIRED)
+find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_features csapex_ml utils_vision REQUIRED)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
-#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Debug)
 #set(CMAKE_BUILD_TYPE Release)
-
-#set(CMAKE_CXX_FLAGS "-O3")
+#add_definitions("-O3")
 
 ###################################
 ## catkin specific configuration ##
@@ -28,6 +27,7 @@ catkin_package(
 
 include_directories(include
     ${catkin_INCLUDE_DIRS}
+
 )
 
 add_subdirectory(src/cvBlob)
@@ -49,8 +49,6 @@ add_library(vision_plugins
     src/grow_roi.cpp
     src/extract_roi.cpp
     src/number_generator.cpp
-
-    ###  NEW API ###
 
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp
@@ -96,12 +94,21 @@ add_library(vision_plugins
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
-    src/analyze/label_regions.cpp
+    src/analyze/cluster_boundary_mask.cpp
+    src/analyze/glcm.cpp
+    src/analyze/preemptiveSLIC.cpp
+
+    src/label/label_regions.cpp
+    src/label/cluster_grid.cpp
+    src/label/assign_cluster_class.cpp
+    src/label/assign_cluster_class_adapter.cpp
+    src/label/assign_roi_class.cpp
+    src/label/assign_roi_class_adapter.cpp
 
     src/recognition/hog_detector.cpp
     src/recognition/hog_extractor.cpp
     src/recognition/local_patterns.cpp
-    src/recognition/glcm.cpp
+    src/recognition/local_patterns_histogram.cpp
     src/recognition/hog_training_rois.cpp
 
 )

@@ -1,5 +1,5 @@
-#ifndef LOCAL_PATTERNS_H
-#define LOCAL_PATTERNS_H
+#ifndef LOCALPATTERNS_H
+#define LOCALPATTERNS_H
 
 /// PROJECT
 #include <csapex/model/node.h>
@@ -15,11 +15,13 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    enum Type {LBP, LTP};
+    enum Type {LBP, LBP_EXT, LBP_VAR, LBP_CS,
+               LTP, LTP_EXT, LTP_SHORT, LTP_CS,
+               WLD, WLD_SHORT, WLD_ORIENTED,
+               HOMOGENITY, HOMOGENITY_TEX};
 
-    csapex::Input  *in_img_;
-    csapex::Input  *in_rois_;
+    csapex::Input  *in_;
     csapex::Output *out_;
 };
 }
-#endif // LOCAL_PATTERNS_H
+#endif // LOCALPATTERNS_H

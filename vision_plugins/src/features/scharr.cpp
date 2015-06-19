@@ -5,7 +5,6 @@
 #include <csapex/msg/io.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <utils_cv/normalization.hpp>
 #include <boost/assign.hpp>
 
 using namespace csapex;

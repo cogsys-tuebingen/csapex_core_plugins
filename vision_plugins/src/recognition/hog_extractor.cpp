@@ -6,7 +6,6 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <utils_cv/color_functions.hpp>
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/roi_message.h>
 #include <csapex_vision/cv_mat_message.h>

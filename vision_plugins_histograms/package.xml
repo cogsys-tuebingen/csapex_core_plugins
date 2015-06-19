@@ -12,7 +12,6 @@
  <build_depend>csapex_ml</build_depend>
  <build_depend>csapex_vision_features</build_depend>
  <build_depend>csapex</build_depend>
- <build_depend>utils_cv</build_depend>
  <build_depend>utils_vision</build_depend>
  <build_depend>roscpp</build_depend>
 
