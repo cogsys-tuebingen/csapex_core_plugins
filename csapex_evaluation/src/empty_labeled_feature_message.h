@@ -18,9 +18,11 @@ public:
     virtual void process() override;
     virtual void tick();
 
-protected:
-    csapex::Output  *output_;
+    virtual bool canTick() override;
 
+protected:
+    csapex::Output *output_;
+    csapex::Output *output_vec_;
 
 };
 

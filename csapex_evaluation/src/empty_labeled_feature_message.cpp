@@ -9,6 +9,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex_core_plugins/vector_message.h>
 
 /// CONCRETE MESSAGES
 #include <csapex_ml/features_message.h>
@@ -25,6 +26,7 @@ EmptyLabeledFeaturesMessage::EmptyLabeledFeaturesMessage()
 void EmptyLabeledFeaturesMessage::setup(NodeModifier& node_modifier)
 {
     output_ = node_modifier.addOutput<FeaturesMessage>("static feature");
+    output_vec_ = node_modifier.addOutput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("static feature (vector)");
 }
 
 void EmptyLabeledFeaturesMessage::setupParameters(Parameterizable& parameters)
@@ -37,9 +39,18 @@ void EmptyLabeledFeaturesMessage::process()
 {
 }
 
+bool EmptyLabeledFeaturesMessage::canTick()
+{
+    return true;
+}
+
 void EmptyLabeledFeaturesMessage::tick()
 {
     FeaturesMessage::Ptr static_feature(new FeaturesMessage);
     static_feature->classification = readParameter<int>("class id");
     msg::publish(output_, static_feature);
+
+    std::shared_ptr<std::vector<FeaturesMessage> > static_features(new std::vector<FeaturesMessage>);
+    static_features->push_back(*static_feature);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(output_vec_, static_features);
 }
