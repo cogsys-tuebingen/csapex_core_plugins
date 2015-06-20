@@ -43,7 +43,7 @@ void ConfusionMatrixTableModel::update(const ConfusionMatrix& confusion)
     for(int col = 0; col < dim; ++col) {
         sum[col] = 0;
         for(int row = 0; row < dim; ++row) {
-            sum[col] += confusion.histogram.at(std::make_pair(row, col));
+            sum[col] += confusion.histogram.at(std::make_pair(confusion.classes[row], confusion.classes[col]));
         }
     }
 }
@@ -64,8 +64,8 @@ QVariant ConfusionMatrixTableModel::data(const QModelIndex &index, int role) con
         return QVariant();
     }
 
-    auto actual = index.column();
-    auto prediction = index.row();
+    auto actual = confusion_.classes[index.column()];
+    auto prediction = confusion_.classes[index.row()];
     int entry = confusion_.histogram.at(std::make_pair(actual, prediction));
     if(role == Qt::DisplayRole) {
         return entry;
