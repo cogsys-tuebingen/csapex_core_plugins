@@ -358,6 +358,11 @@ void ImportRos::callback(ConnectionTypeConstPtr message)
             awarn << "detected time anomaly -> reset";
             msgs_.clear();
         }
+
+        if(!msg::isConnected(input_time_)) {
+            msgs_.clear();
+        }
+
         msgs_.push_back(msg);
 
         while((int) msgs_.size() > buffer_size_) {
