@@ -15,6 +15,7 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QKeyEvent>
+#include <QBoxLayout>
 
 using namespace csapex;
 

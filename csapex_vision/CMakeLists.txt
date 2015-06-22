@@ -20,6 +20,10 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 
 find_package(OpenCV REQUIRED)
 
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+
+set(CMAKE_AUTOMOC ON)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -46,6 +50,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 qt5_add_resources(QT_RESOURCES res/csapex_vision_resources.qrc)

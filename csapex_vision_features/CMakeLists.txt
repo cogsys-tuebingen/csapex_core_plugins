@@ -19,6 +19,9 @@ find_package(OpenCV REQUIRED)
 
 find_package(Boost COMPONENTS program_options REQUIRED)
 
+find_package(Qt5 COMPONENTS Core Concurrent Gui Widgets REQUIRED)
+
+set(CMAKE_AUTOMOC ON)
 
 ###################################
 ## catkin specific configuration ##
@@ -43,6 +46,7 @@ catkin_package(
 # include_directories(include)
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 add_library(csapex_vision_features

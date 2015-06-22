@@ -5,7 +5,6 @@
 #include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>

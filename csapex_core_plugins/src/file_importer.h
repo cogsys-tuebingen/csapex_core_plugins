@@ -5,6 +5,9 @@
 #include <csapex/msg/message_provider.h>
 #include <csapex/model/node.h>
 
+/// SYSTEM
+#include <QString>
+
 namespace csapex
 {
 

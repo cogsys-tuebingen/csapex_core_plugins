@@ -44,10 +44,10 @@ public:
         double angle = readParameter<double>("angle");
         int mode = readParameter<int>("mode");
 
-        process(src, angle, mode, dst);
+        doProcess(src, angle, mode, dst);
     }
 
-    void process(const CvMatMessage::ConstPtr& src,
+    void doProcess(const CvMatMessage::ConstPtr& src,
                  double angle,
                  int mode,
                  CvMatMessage::Ptr& dst)

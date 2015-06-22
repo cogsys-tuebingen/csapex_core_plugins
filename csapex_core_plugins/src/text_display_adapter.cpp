@@ -5,6 +5,9 @@
 #include <csapex/msg/io.h>
 #include <csapex/utility/register_node_adapter.h>
 
+/// SYSTEM
+#include <QBoxLayout>
+
 using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)

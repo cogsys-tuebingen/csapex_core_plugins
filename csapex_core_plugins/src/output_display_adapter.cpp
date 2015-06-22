@@ -12,6 +12,7 @@
 #include <QGraphicsPixmapItem>
 #include <QCheckBox>
 #include <QPushButton>
+#include <QBoxLayout>
 
 using namespace csapex;
 

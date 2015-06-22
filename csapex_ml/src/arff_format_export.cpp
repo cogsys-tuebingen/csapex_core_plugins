@@ -12,7 +12,6 @@
 #include <csapex/msg/message_factory.h>
 
 /// SYSTEM
-#include <QFileDialog>
 #include <fstream>
 
 CSAPEX_REGISTER_CLASS(csapex::ArffFormatExport, csapex::Node)

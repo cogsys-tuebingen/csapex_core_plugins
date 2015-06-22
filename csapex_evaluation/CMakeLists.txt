@@ -5,6 +5,9 @@ find_package(catkin REQUIRED COMPONENTS
   csapex
   csapex_ml
 )
+find_package(Qt5 COMPONENTS Core Concurrent Gui Widgets REQUIRED)
+
+set(CMAKE_AUTOMOC ON)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -15,6 +18,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 add_library(csapex_evaluation
     src/confusion_matrix.cpp

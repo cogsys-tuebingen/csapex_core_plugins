@@ -17,6 +17,7 @@
 #include <QKeyEvent>
 #include <QScrollBar>
 #include <QApplication>
+#include <QLayout>
 
 using namespace csapex;
 

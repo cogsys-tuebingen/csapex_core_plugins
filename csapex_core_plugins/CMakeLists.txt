@@ -3,8 +3,9 @@ project(csapex_core_plugins)
 
 find_package(catkin REQUIRED COMPONENTS csapex)
 
-find_package(Qt5 COMPONENTS Concurrent REQUIRED)
+find_package(Qt5 COMPONENTS Core Concurrent Gui Widgets REQUIRED)
 
+set(CMAKE_AUTOMOC ON)
 qt5_add_resources(QT_RESOURCES
     res/csapex_core_resources.qrc
 )
@@ -29,6 +30,7 @@ catkin_package(
 ###########
 
 include_directories(include
+    ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
 )
 

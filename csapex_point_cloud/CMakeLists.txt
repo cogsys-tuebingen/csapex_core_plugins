@@ -18,7 +18,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_vision)
 find_package(pcl_ros REQUIRED)
 
-find_package(Qt5 COMPONENTS OpenGL REQUIRED)
+find_package(Qt5 COMPONENTS Core OpenGL Gui Widgets REQUIRED)
+
+set(CMAKE_AUTOMOC ON)
 
 find_package(PCL REQUIRED COMPONENTS common filters segmentation)
 include_directories(${PCL_INCLUDE_DIRS})
@@ -38,6 +40,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${pcl_ros_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 add_library(csapex_point_cloud

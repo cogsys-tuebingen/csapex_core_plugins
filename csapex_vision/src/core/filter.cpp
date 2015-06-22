@@ -8,9 +8,6 @@
 #include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 
-/// SYSTEM
-#include <QLabel>
-
 using namespace csapex;
 using namespace connection_types;
 

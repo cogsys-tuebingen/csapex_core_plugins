@@ -12,6 +12,7 @@
 
 /// SYSTEM
 #include <sensor_msgs/LaserScan.h>
+#include <QObject>
 
 CSAPEX_REGISTER_CLASS(csapex::RegisterScan2DPlugin, csapex::CorePlugin)
 

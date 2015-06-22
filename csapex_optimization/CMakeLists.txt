@@ -5,6 +5,10 @@ find_package(catkin REQUIRED COMPONENTS
   csapex
 )
 
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+
+set(CMAKE_AUTOMOC ON)
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_optimization

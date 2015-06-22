@@ -4,9 +4,6 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-/// SYSTEM
-#include <QSlider>
-
 namespace csapex
 {
 

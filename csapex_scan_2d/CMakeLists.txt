@@ -15,6 +15,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_vision utils_laser_processing)
 
+find_package(Qt5 COMPONENTS Core Concurrent Gui Widgets REQUIRED)
+set(CMAKE_AUTOMOC ON)
+
 find_package(Boost REQUIRED)
 
 ###################################
@@ -42,6 +45,7 @@ catkin_package(
 # include_directories(include)
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 add_library(csapex_scan_2d
