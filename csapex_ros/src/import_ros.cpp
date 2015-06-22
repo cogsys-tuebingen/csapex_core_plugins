@@ -20,11 +20,6 @@
 
 /// SYSTEM
 #include <yaml-cpp/eventhandler.h>
-#include <sensor_msgs/Image.h>
-#include <QAction>
-#include <QComboBox>
-#include <QPushButton>
-#include <QLabel>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportRos, csapex::Node)
 
@@ -173,6 +168,7 @@ bool ImportRos::doSetTopic()
 
 void ImportRos::processROS()
 {
+    std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
     INTERLUDE("process");
 
     // first check if connected -> if not connected, we only use tick
@@ -277,6 +273,7 @@ void ImportRos::processROS()
 
 bool ImportRos::isStampCovered(const ros::Time &stamp)
 {
+    std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
     return rosTime(msgs_.back()->stamp_micro_seconds) >= stamp;
 }
 
@@ -298,6 +295,7 @@ void ImportRos::waitForTopic()
 
 bool ImportRos::canTick()
 {
+    std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
     return !msg::isConnected(input_time_) && !msgs_.empty();
 }
 
@@ -328,6 +326,8 @@ void ImportRos::tickROS()
 
 void ImportRos::publishLatestMessage()
 {
+    std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
+
     INTERLUDE("publish");
 
     if(msgs_.empty()) {
@@ -354,6 +354,8 @@ void ImportRos::callback(ConnectionTypeConstPtr message)
 {
     connection_types::Message::ConstPtr msg = std::dynamic_pointer_cast<connection_types::Message const>(message);
     if(msg) {
+        std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
+
         if(!msgs_.empty() && msg->stamp_micro_seconds < msgs_.front()->stamp_micro_seconds) {
             awarn << "detected time anomaly -> reset";
             msgs_.clear();

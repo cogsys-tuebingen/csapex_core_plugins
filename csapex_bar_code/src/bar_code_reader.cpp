@@ -23,7 +23,6 @@ using namespace csapex;
 using namespace connection_types;
 
 BarCodeReader::BarCodeReader()
-    : lost(false), forget(0)
 {}
 
 void BarCodeReader::setupParameters(Parameterizable &params)
@@ -55,23 +54,7 @@ void BarCodeReader::process()
     zbar::Image image(w, h, "Y800", msg->value.data, w * h);
 
     // scan the image for barcodes
-    /*int n = */scanner.scan(image);
-    //    if(n == 0) {
-    //        if(!data_.empty() && !lost) {
-    //            lost = true;
-    //            forget = 30;
-    //        }
-    //    }
-
-    //    if(lost) {
-    //        if(forget > 0) {
-    //            --forget;
-    //        }
-    //        if(forget == 0) {
-    //            data_ = "";
-    //            lost = false;
-    //        }
-    //    }
+    scanner.scan(image);
 
     VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
 

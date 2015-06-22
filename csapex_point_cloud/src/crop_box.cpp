@@ -13,7 +13,10 @@
 #include <boost/mpl/for_each.hpp>
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <pcl_ros/transforms.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
 #include <pcl/filters/crop_box.h>
+#pragma clang diagnostic pop
 
 CSAPEX_REGISTER_CLASS(csapex::CropBox, csapex::Node)
 

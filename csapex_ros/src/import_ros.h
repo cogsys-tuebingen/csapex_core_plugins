@@ -44,6 +44,8 @@ protected:
 private:
     Input* input_time_;
     Output* connector_;
+
+    std::recursive_mutex msgs_mtx_;
     std::deque<connection_types::Message::ConstPtr> msgs_;
 
     ros::Subscriber current_subscriber;

@@ -9,8 +9,12 @@
 #include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#pragma clang diagnostic ignored "-Wsign-compare"
 #include <pcl/point_types.h>
 #include <pcl/filters/radius_outlier_removal.h>
+#pragma clang diagnostic pop
 
 CSAPEX_REGISTER_CLASS(csapex::RadiusOutlierRemoval, csapex::Node)
 

@@ -226,7 +226,7 @@ int SacFit::findModels(typename pcl::PointCloud<PointT>::ConstPtr  cloud_in,
         ransac_probability_ = segmenter.getProbability();
 
         ainfo << "!! SIZE INLIER: " << inliers->indices.size() << std::endl;
-        if (inliers->indices.size() > min_inliers_) {
+        if ((int) inliers->indices.size() > min_inliers_) {
             // extract the points that belong to a model
             extract_points.setInputCloud(cloud);
             extract_points.setIndices(inliers);

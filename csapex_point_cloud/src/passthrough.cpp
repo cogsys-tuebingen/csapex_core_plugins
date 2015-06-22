@@ -12,7 +12,10 @@
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
 #include <pcl/filters/passthrough.h>
+#pragma clang diagnostic pop
 #include <boost/assign/std.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::PassThrough, csapex::Node)

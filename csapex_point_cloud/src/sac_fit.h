@@ -7,11 +7,14 @@
 #include <csapex_point_cloud/model_message.h>
 
 /// POINT CLOUD
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
 #include <pcl/sample_consensus/method_types.h>
 #include <pcl/sample_consensus/model_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/features/normal_3d.h>
+#pragma clang diagnostic pop
 
 namespace csapex {
 class SacFit : public csapex::Node
@@ -34,7 +37,7 @@ private:
     Output* out_cloud_;
     Output* out_cloud_residue_;
 
-    int shape_inliers_;
+//    int shape_inliers_;
     double ransac_probability_;
 
     // PCL parameter

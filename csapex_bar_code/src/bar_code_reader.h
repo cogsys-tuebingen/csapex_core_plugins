@@ -24,8 +24,6 @@ private:
     Output* out_roi;
 
     std::string data_;
-    bool lost;
-    int forget;
 };
 
 }

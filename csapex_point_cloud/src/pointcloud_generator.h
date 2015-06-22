@@ -13,9 +13,6 @@ public:
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-
-private:
-    Output *out_;
 };
 }
 

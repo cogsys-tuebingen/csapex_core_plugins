@@ -9,9 +9,12 @@
 #include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+#pragma clang diagnostic ignored "-Wsign-compare"
 #include <pcl/point_types.h>
 #include <pcl/filters/statistical_outlier_removal.h>
-#include <pcl/filters/approximate_voxel_grid.h>
+#pragma clang diagnostic pop#include <pcl/filters/statistical_outlier_removal.h>
 
 CSAPEX_REGISTER_CLASS(csapex::StatisticalOutlierRemoval, csapex::Node)
 

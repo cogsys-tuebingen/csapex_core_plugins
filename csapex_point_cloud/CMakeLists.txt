@@ -15,19 +15,21 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_vision pcl_ros)
+find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_vision)
+find_package(pcl_ros REQUIRED)
 
 find_package(Qt5 COMPONENTS OpenGL REQUIRED)
 
-find_package(PCL 1.2 REQUIRED COMPONENTS common filters segmentation)
+find_package(PCL REQUIRED COMPONENTS common filters segmentation)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
+
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS include ${PCL_INCLUDE_DIRS}
   LIBRARIES csapex_point_cloud
-  CATKIN_DEPENDS csapex csapex_ros pcl_ros
+  CATKIN_DEPENDS csapex
 #  DEPENDS system_lib
 )
 
@@ -35,6 +37,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${pcl_ros_INCLUDE_DIRS}
 )
 
 add_library(csapex_point_cloud
@@ -94,18 +97,6 @@ target_link_libraries(csapex_point_cloud_plugin
     csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
 )
 
-#add_executable(apex_cloud_test
-#  src/test.cpp
-#)
-#
-#target_link_libraries(apex_cloud_test
-#
-#    yaml-cpp
-#    ${catkin_LIBRARIES}
-#
-#    Qt5::OpenGL
-#    csapex_point_cloud
-#)
 
 #
 # INSTALL

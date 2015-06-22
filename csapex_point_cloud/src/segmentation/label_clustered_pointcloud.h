@@ -6,7 +6,10 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 
 /// SYSTEM
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
 #include <pcl/filters/filter_indices.h>
+#pragma clang diagnostic pop
 
 namespace csapex {
 class LabelClusteredPointCloud : public csapex::Node
