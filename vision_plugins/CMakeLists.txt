@@ -3,6 +3,9 @@ project(vision_plugins)
 
 find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_features csapex_ml utils_vision REQUIRED)
 
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+set(CMAKE_AUTOMOC ON)
+
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 set(CMAKE_BUILD_TYPE Debug)
@@ -27,7 +30,7 @@ catkin_package(
 
 include_directories(include
     ${catkin_INCLUDE_DIRS}
-
+    ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 add_subdirectory(src/cvBlob)
