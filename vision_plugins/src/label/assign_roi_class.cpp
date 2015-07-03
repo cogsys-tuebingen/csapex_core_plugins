@@ -106,10 +106,8 @@ void AssignROIClass::display()
 }
 
 
-void AssignROIClass::process()
+void AssignROIClass::beginProcess()
 {
-    InteractiveNode::process();
-
     CvMatMessage::ConstPtr  in_img  = msg::getMessage<CvMatMessage>(in_image_);
     VectorMessage::ConstPtr in_rois = msg::getMessage<VectorMessage>(in_rois_);
 
@@ -130,12 +128,10 @@ void AssignROIClass::process()
     setColor();
     setClass();
     display();
+}
 
-    bool continue_p = waitForView();
-    if(!continue_p) {
-        return;
-    }
-
+void AssignROIClass::finishProcess()
+{
     VectorMessage::Ptr out_rois(VectorMessage::make<RoiMessage>());
     out_rois->value.assign(rois_.begin(), rois_.end());
     msg::publish(out_rois_, out_rois);

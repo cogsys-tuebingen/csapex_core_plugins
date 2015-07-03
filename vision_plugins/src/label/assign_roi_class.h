@@ -21,7 +21,9 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier) override;
     void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+
+    virtual void beginProcess() override;
+    virtual void finishProcess() override;
 
     void setActiveClassColor(const int r, const int g, const int b);
 

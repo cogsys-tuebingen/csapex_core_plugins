@@ -114,10 +114,8 @@ void AssignClusterClass::display()
 }
 
 
-void AssignClusterClass::process()
+void AssignClusterClass::beginProcess()
 {
-    InteractiveNode::process();
-
     CvMatMessage::ConstPtr in_img = msg::getMessage<CvMatMessage>(in_image_);
     CvMatMessage::ConstPtr in_clu = msg::getMessage<CvMatMessage>(in_clusters_);
     if(in_img->value.empty())
@@ -138,12 +136,10 @@ void AssignClusterClass::process()
     setColor();
     setClass();
     display();
+}
 
-    bool continue_p = waitForView();
-    if(!continue_p) {
-        return;
-    }
-
+void AssignClusterClass::finishProcess()
+{
     if(result_) {
        msg::publish<GenericVectorMessage, int>(out_labels_, result_);
     }
