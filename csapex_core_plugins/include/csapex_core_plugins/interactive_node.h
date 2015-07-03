@@ -6,7 +6,6 @@
 
 /// SYSTEM
 #include <mutex>
-#include <condition_variable>
 
 namespace csapex {
 
@@ -17,20 +16,25 @@ class InteractiveNode : public Node
 public:
     InteractiveNode();
 
-    virtual void process();
+    virtual void process() final override;
+    virtual void process(Parameterizable &parameters) final override;
+
+    virtual void process(Parameterizable &parameters, std::function<void(std::function<void ()>)> continuation) final override;
     virtual void abort();
+
+    virtual bool isAsynchronous() const override;
 
     void done();
 
 protected:
-    bool waitForView();
+    virtual void beginProcess() = 0;
+    virtual void finishProcess() = 0;
 
 protected:
-    std::mutex result_mutex_;
-    std::condition_variable wait_for_view_;
-
-    bool view_done_;
     bool stopped_;
+    bool done_;
+
+    std::function<void (std::function<void ()>)> continuation_;
 };
 
 }

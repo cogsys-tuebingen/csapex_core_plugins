@@ -73,10 +73,8 @@ void CloudRenderer::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<CvMatMessage>("Rendered Image");
 }
 
-void CloudRenderer::process()
+void CloudRenderer::beginProcess()
 {
-    InteractiveNode::process();
-
     if(!result_) {
         refresh_request();
     }
@@ -88,13 +86,16 @@ void CloudRenderer::process()
 
     display_request();
 
-    // todo wait only in !headless
+    if(!msg::isConnected(output_)) {
+        done();
+    }
+}
 
+void CloudRenderer::finishProcess()
+{
     if(msg::isConnected(output_)) {
-        if(waitForView()) {
-            if(result_) {
-                msg::publish(output_, result_);
-            }
+        if(result_) {
+            msg::publish(output_, result_);
         }
     }
 }

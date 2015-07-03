@@ -21,9 +21,12 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier) override;
     void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
 
     void setResult(connection_types::LabeledScanMessage::Ptr result);
+
+protected:
+    virtual void beginProcess() override;
+    virtual void finishProcess() override;
 
 private:
     void submit();

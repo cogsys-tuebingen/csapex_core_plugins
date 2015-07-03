@@ -48,10 +48,8 @@ void ScanLabeler::submit()
     submit_request();
 }
 
-void ScanLabeler::process()
+void ScanLabeler::beginProcess()
 {
-    InteractiveNode::process();
-
     result_.reset();
 
     if(msg::isMessage<LabeledScanMessage>(input_)) {
@@ -65,10 +63,11 @@ void ScanLabeler::process()
     } else {
         throw std::runtime_error("invalid input type");
     }
+}
 
-    if(waitForView()) {
-        msg::publish(output_, result_);
-    }
+void ScanLabeler::finishProcess()
+{
+    msg::publish(output_, result_);
 }
 
 void ScanLabeler::setResult(connection_types::LabeledScanMessage::Ptr result)

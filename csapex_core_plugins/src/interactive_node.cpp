@@ -3,47 +3,46 @@
 
 /// SYSTEM
 #include <chrono>
-#include <QApplication>
 
 using namespace csapex;
 
 InteractiveNode::InteractiveNode()
-    : view_done_(false), stopped_(false)
+    : stopped_(false), done_(false)
 {
 }
-
 void InteractiveNode::process()
 {
-    view_done_ = false;
+    throw std::runtime_error("not implemented");
+}
+void InteractiveNode::process(Parameterizable &parameters)
+{
+    throw std::runtime_error("not implemented");
+}
+
+void InteractiveNode::process(Parameterizable &parameters, std::function<void (std::function<void ()>)> continuation)
+{
+    continuation_ = continuation;
+
+    done_ = false;
+    beginProcess();
+}
+
+bool InteractiveNode::isAsynchronous() const
+{
+    return true;
 }
 
 void InteractiveNode::done()
 {
-    view_done_ = true;
-    wait_for_view_.notify_all();
-}
-
-bool InteractiveNode::waitForView()
-{
-    std::chrono::microseconds poll_time(100);
-
-    std::unique_lock<std::mutex> lock(result_mutex_);
-    while(!view_done_) {
-        wait_for_view_.wait_for(lock, poll_time);
-
-        QApplication::processEvents();
-
-        if(stopped_) {
-            return false;
-        }
+    if(!done_){
+        done_ = true;
+        continuation_([this](){ finishProcess(); });
     }
-
-    return true;
 }
 
 void InteractiveNode::abort()
 {
-    std::unique_lock<std::mutex> lock(result_mutex_);
     stopped_ = true;
-    wait_for_view_.notify_all();
+
+    continuation_([](){});
 }

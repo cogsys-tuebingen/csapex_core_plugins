@@ -71,10 +71,8 @@ void ImageRoi::drop()
     drop_request();
 }
 
-void ImageRoi::process()
+void ImageRoi::beginProcess()
 {
-    InteractiveNode::process();
-
     CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
     if(in->value.empty())
         return;
@@ -104,15 +102,17 @@ void ImageRoi::process()
 
     bool wait = readParameter<bool>("step");
     if(wait) {
-        bool continue_p = waitForView();
-        if(!continue_p) {
-            return;
-        }
+        return;
+    } else {
+        done();
     }
 
-    int class_label = readParameter<int>("class label");
+}
 
+void ImageRoi::finishProcess()
+{
     if(result_) {
+        int class_label = readParameter<int>("class label");
         result_->value.setClassification(class_label);
         msg::publish(output_, result_);
     }

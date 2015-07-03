@@ -24,7 +24,9 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier) override;
     void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+
+    virtual void beginProcess() override;
+    virtual void finishProcess() override;
 
     void setResult(connection_types::RoiMessage::Ptr result);
 

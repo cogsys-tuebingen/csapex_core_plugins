@@ -169,6 +169,10 @@ void FileImporter::doImportDir(const QString &dir_string)
 bool FileImporter::doImport(const QString& file_path)
 {
     INTERLUDE("doImport");
+    if(file_path.isEmpty()) {
+        modifier_->setWarning("no file selected");
+        return false;
+    }
     if(file_path == file_ && provider_) {
         return false;
     }
