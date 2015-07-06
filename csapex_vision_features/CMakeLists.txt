@@ -19,7 +19,7 @@ find_package(OpenCV REQUIRED)
 
 find_package(Boost COMPONENTS program_options REQUIRED)
 
-find_package(Qt5 COMPONENTS Core Concurrent Gui Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 

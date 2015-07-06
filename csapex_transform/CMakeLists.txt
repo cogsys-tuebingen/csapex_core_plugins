@@ -17,8 +17,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS csapex csapex_ros tf)
 
-find_package(Qt5 COMPONENTS Concurrent REQUIRED)
-
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_transform
@@ -30,7 +28,6 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${Qt5Concurrent_INCLUDE_DIRS}
 )
 
 add_library(csapex_transform

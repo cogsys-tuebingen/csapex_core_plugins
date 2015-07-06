@@ -5,7 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   csapex
   csapex_ml
 )
-find_package(Qt5 COMPONENTS Core Concurrent Gui Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 

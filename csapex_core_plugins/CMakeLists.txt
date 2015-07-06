@@ -3,7 +3,7 @@ project(csapex_core_plugins)
 
 find_package(catkin REQUIRED COMPONENTS csapex)
 
-find_package(Qt5 COMPONENTS Core Concurrent Gui Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 qt5_add_resources(QT_RESOURCES
@@ -77,7 +77,7 @@ add_library(csapex_core_plugins
 
 
 target_link_libraries(csapex_core_plugins csapex_core_lib
-    ${catkin_LIBRARIES} Qt5::Concurrent
+    ${catkin_LIBRARIES}
 )
 
 

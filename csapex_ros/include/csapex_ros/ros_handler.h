@@ -6,7 +6,7 @@
 
 /// SYSTEM
 #include <ros/ros.h>
-#include <QFuture>
+#include <future>
 #include <mutex>
 
 namespace csapex
@@ -31,12 +31,10 @@ public:
     void stop();
 
     std::shared_ptr<ros::NodeHandle> nh();
-    void initHandle(bool try_only = false);
 
     bool isConnected();
     bool topicExists(const std::string& topic);
 
-    void checkMasterConnection();
     void waitForConnection();
     void refresh();
 
@@ -45,6 +43,11 @@ public:
 
 private:
     ROSHandler(Settings& settings);
+
+    void initHandle(bool try_only = false);
+    void checkMasterConnection();
+
+    void waitForCheck();
 
 private:
     static ROSHandler* g_instance_;
@@ -56,7 +59,10 @@ private:
 
     bool initialized_;
     std::recursive_mutex has_connection_mutex;
-    QFuture<bool> has_connection;
+    bool has_connection;
+
+    bool check_is_running;
+    std::condition_variable_any check_is_done;
 
     std::vector<std::function<void()> > connection_callbacks_;
     std::vector<std::function<void()> > shutdown_callbacks_;
