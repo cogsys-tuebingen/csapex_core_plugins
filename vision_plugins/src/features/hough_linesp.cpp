@@ -61,9 +61,9 @@ void HoughLinesP::setup(NodeModifier& node_modifier)
 
 void HoughLinesP::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("rho", 1.0, 100.0, 1.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("rho", 0.1, 100.0, 1.0, 0.1),
                  std::bind(&HoughLinesP::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("theta", 1.0, 2 * CV_PI, CV_PI, 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("theta", 0.1, 2 * CV_PI, CV_PI, 0.01),
                  std::bind(&HoughLinesP::update, this));
     parameters.addParameter(param::ParameterFactory::declareRange("threshold", 1, 500, 80, 1),
                  std::bind(&HoughLinesP::update, this));
