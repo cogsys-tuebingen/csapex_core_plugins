@@ -100,17 +100,14 @@ void AssignROIClass::display()
     if(image_.empty())
         return;
 
-    QSharedPointer<QImage> qimg =
-            QtCvImageConverter::Converter<QImage, QSharedPointer>::mat2QImage(image_);
+    QImage qimg = QtCvImageConverter::Converter<QImage>::mat2QImage(image_);
 
     display_request(qimg);
 }
 
 
-void AssignROIClass::process()
+void AssignROIClass::beginProcess()
 {
-    InteractiveNode::process();
-
     CvMatMessage::ConstPtr  in_img  = msg::getMessage<CvMatMessage>(in_image_);
     VectorMessage::ConstPtr in_rois = msg::getMessage<VectorMessage>(in_rois_);
 
@@ -131,12 +128,10 @@ void AssignROIClass::process()
     setColor();
     setClass();
     display();
+}
 
-    bool continue_p = waitForView();
-    if(!continue_p) {
-        return;
-    }
-
+void AssignROIClass::finishProcess()
+{
     VectorMessage::Ptr out_rois(VectorMessage::make<RoiMessage>());
     out_rois->value.assign(rois_.begin(), rois_.end());
     msg::publish(out_rois_, out_rois);

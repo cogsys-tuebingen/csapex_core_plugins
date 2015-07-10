@@ -8,6 +8,8 @@
 namespace csapex {
 class Splitter : public csapex::Node
 {
+    friend class SplitterSerializer;
+
 public:
     Splitter();
     ~Splitter();
@@ -22,17 +24,8 @@ private:
 
     void updateOutputs();
 
-    class State : public Memento {
-    public:
-        void readYaml(const YAML::Node &node);
-        void writeYaml(YAML::Node &out) const;
-
-    public:
-        Encoding encoding_;
-        int channel_count_;
-    };
-
-    State state_;
+    Encoding encoding_;
+    int channel_count_;
 
 };
 }

@@ -22,7 +22,7 @@ using namespace vision_plugins;
 
 CSAPEX_REGISTER_NODE_ADAPTER_NS(vision_plugins, AssignClusterClassAdapter, vision_plugins::AssignClusterClass)
 
-AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorker* worker, AssignClusterClass *node, WidgetController* widget_ctrl)
+AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<AssignClusterClass> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       active_class_(0),
@@ -35,19 +35,21 @@ AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorker* worker, AssignC
       left_button_down_(false),
       loaded_(false)
 {
+    auto n = wrapped_.lock();
+
     painter.setPen(QPen(Qt::red));
     painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    node->display_request.connect(std::bind(&AssignClusterClassAdapter::displayRequest, this,
-                                            std::placeholders::_1, std::placeholders::_2));
-    node->set_class.connect(std::bind(&AssignClusterClassAdapter::setClassRequest, this, std::placeholders::_1));
-    node->set_color.connect(std::bind(&AssignClusterClassAdapter::setColorRequest, this,
-                                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-    node->submit_request.connect(std::bind(&AssignClusterClassAdapter::submitRequest, this));
-    node->drop_request.connect(std::bind(&AssignClusterClassAdapter::dropRequest, this));
-    node->clear_request.connect(std::bind(&AssignClusterClassAdapter::clearRequest, this));
+    trackConnection(n->display_request.connect(std::bind(&AssignClusterClassAdapter::displayRequest, this,
+                                            std::placeholders::_1, std::placeholders::_2)));
+    trackConnection(n->set_class.connect(std::bind(&AssignClusterClassAdapter::setClassRequest, this, std::placeholders::_1)));
+    trackConnection(n->set_color.connect(std::bind(&AssignClusterClassAdapter::setColorRequest, this,
+                                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+    trackConnection(n->submit_request.connect(std::bind(&AssignClusterClassAdapter::submitRequest, this)));
+    trackConnection(n->drop_request.connect(std::bind(&AssignClusterClassAdapter::dropRequest, this)));
+    trackConnection(n->clear_request.connect(std::bind(&AssignClusterClassAdapter::clearRequest, this)));
 }
 
 bool AssignClusterClassAdapter::eventFilter(QObject *o, QEvent *e)
@@ -146,20 +148,20 @@ void AssignClusterClassAdapter::updateClusterClass(const QPoint &pos)
     classes_.at(cluster) = active_class_;
 
     if(overlay_.isNull()) {
-        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
-        overlay_->fill(QColor(0,0,0,0));
+        overlay_ = QImage(img_.size(), QImage::Format_ARGB32);
+        overlay_.fill(QColor(0,0,0,0));
     }
 
     QColor &c = colors_[active_class_];
     for(int i = 0 ; i < clusters_.rows ; ++i) {
         for(int j = 0 ; j < clusters_.cols ; ++j) {
             if(clusters_.at<int>(i,j) == cluster) {
-                overlay_->setPixel(j,i, c.rgba());
+                overlay_.setPixel(j,i, c.rgba());
             }
         }
     }
 
-    QPixmap pixmap = QPixmap::fromImage(*overlay_);
+    QPixmap pixmap = QPixmap::fromImage(overlay_);
     if(pixmap_overlay_ != nullptr)
         pixmap_overlay_->setPixmap(pixmap);
 
@@ -196,7 +198,7 @@ void AssignClusterClassAdapter::setupUi(QBoxLayout* layout)
     view_->scene()->addItem(pixmap_);
     view_->scene()->addItem(pixmap_overlay_);
 
-    connect(this, SIGNAL(displayRequest(QSharedPointer<QImage>, const cv::Mat&)), this, SLOT(display(QSharedPointer<QImage>, const cv::Mat&)));
+    connect(this, SIGNAL(displayRequest(QImage, const cv::Mat&)), this, SLOT(display(QImage, const cv::Mat&)));
     connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
     connect(this, SIGNAL(dropRequest()), this, SLOT(drop()));
     connect(this, SIGNAL(clearRequest()), this, SLOT(clear()));
@@ -222,14 +224,14 @@ void AssignClusterClassAdapter::setParameterState(Memento::Ptr memento)
     loaded_ = true;
 }
 
-void AssignClusterClassAdapter::display(QSharedPointer<QImage> img, const cv::Mat &clusters)
+void AssignClusterClassAdapter::display(QImage img, const cv::Mat &clusters)
 {
     /// PREPARE LABLES
     int num_clusters = utils_vision::histogram::numClusters(clusters);
     classes_.resize(num_clusters, -1);
     img_ = img;
 
-    QPixmap pixmap = QPixmap::fromImage(*img_);
+    QPixmap pixmap = QPixmap::fromImage(img_);
 
     bool init_overlay = clusters_.rows != clusters.rows || clusters_.cols != clusters.cols;
     if(!clusters_.empty()) {
@@ -239,17 +241,17 @@ void AssignClusterClassAdapter::display(QSharedPointer<QImage> img, const cv::Ma
     }
 
     if(init_overlay) {
-        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
-        overlay_->fill(QColor(0,0,0,0));
-        QPixmap pixmap = QPixmap::fromImage(*overlay_);
+        overlay_ = QImage(img_.size(), QImage::Format_ARGB32);
+        overlay_.fill(QColor(0,0,0,0));
+        QPixmap pixmap = QPixmap::fromImage(overlay_);
         pixmap_overlay_->setPixmap(pixmap);
     }
 
     clusters_ = clusters;
 
-    bool change = state.last_size != img_->size();
+    bool change = state.last_size != img_.size();
     if(change || loaded_) {
-        view_->scene()->setSceneRect(img_->rect());
+        view_->scene()->setSceneRect(img_.rect());
         view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
         loaded_ = false;
     }
@@ -259,7 +261,7 @@ void AssignClusterClassAdapter::display(QSharedPointer<QImage> img, const cv::Ma
 
     view_->scene()->update();
 
-    state.last_size = img_->size();
+    state.last_size = img_.size();
 }
 
 void AssignClusterClassAdapter::fitInView()
@@ -278,22 +280,30 @@ void AssignClusterClassAdapter::submit()
     if(pixmap_ == nullptr)
         return;
 
-    wrapped_->setResult(classes_);
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
+    node->setResult(classes_);
 }
 
 void AssignClusterClassAdapter::drop()
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     std::vector<int> empty;
-    wrapped_->setResult(empty);
+    node->setResult(empty);
 }
 
 void AssignClusterClassAdapter::clear()
 {
-    if(!img_->isNull()) {
+    if(!img_.isNull()) {
         classes_.resize(classes_.size(), -1);
-        overlay_.reset(new QImage(img_->size(), QImage::Format_ARGB32));
-        overlay_->fill(QColor(0,0,0,0));
-        QPixmap pixmap = QPixmap::fromImage(*overlay_);
+        overlay_ = QImage(img_.size(), QImage::Format_ARGB32);
+        overlay_.fill(QColor(0,0,0,0));
+        QPixmap pixmap = QPixmap::fromImage(overlay_);
         pixmap_overlay_->setPixmap(pixmap);
     }
 }
@@ -306,9 +316,13 @@ void AssignClusterClassAdapter::setColor(int r, int g, int b)
 
 void AssignClusterClassAdapter::setClass(int c)
 {
+    auto node = wrapped_.lock();
+    if(!node) {
+        return;
+    }
     active_class_ = c;
     QColor &col = colors_[c];
-    wrapped_->setActiveClassColor(col.red(),col.green(), col.blue());
+    node->setActiveClassColor(col.red(),col.green(), col.blue());
 }
 
 /// MOC

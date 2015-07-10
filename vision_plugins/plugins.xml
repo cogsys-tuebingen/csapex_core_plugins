@@ -89,6 +89,7 @@
         combinatoric operation.
     </description>
     <tags>Vision, Filter, Combiner</tags>
+    <icon>:/combiner.png</icon>
   </class>
   <class type="vision_plugins::SetOperation" base_class_type="csapex::Node">
     <description>

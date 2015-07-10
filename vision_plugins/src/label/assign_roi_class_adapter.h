@@ -21,8 +21,8 @@ class AssignROIClassAdapter : public QObject, public csapex::DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    AssignROIClassAdapter(csapex::NodeWorker *worker,
-                              vision_plugins::AssignROIClass *node,
+    AssignROIClassAdapter(csapex::NodeWorkerWeakPtr worker,
+                              std::weak_ptr<AssignROIClass> node,
                               csapex::WidgetController *widget_ctrl);
 
     virtual csapex::Memento::Ptr getState() const;
@@ -31,7 +31,7 @@ public:
     virtual void                 setupUi(QBoxLayout* layout);
 
 public Q_SLOTS:
-    void display(QSharedPointer<QImage> img);
+    void display(QImage img);
     void fitInView();
     void submit();
     void drop();
@@ -40,7 +40,7 @@ public Q_SLOTS:
     void setClass(int c);
 
 Q_SIGNALS:
-    void displayRequest(QSharedPointer<QImage> img);
+    void displayRequest(QImage img);
     void submitRequest();
     void dropRequest();
     void clearRequest();
@@ -84,7 +84,7 @@ protected:
     };
 
 
-    vision_plugins::AssignROIClass *wrapped_;
+    std::weak_ptr<vision_plugins::AssignROIClass> wrapped_;
 
 private:
     std::map<int, QColor> colors_;
@@ -93,7 +93,7 @@ private:
 
     State                  state;
 
-    QSharedPointer<QImage> img_;
+    QImage img_;
     QGraphicsPixmapItem   *pixmap_;
 
     std::vector<QInteractiveRect*> rectangles_;

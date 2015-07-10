@@ -287,7 +287,7 @@ void cvRenderBlobs(const IplImage *imgLabel, CvBlobs &blobs, IplImage *imgSource
             {
                 CvLabel label = (*it).second->label;
 
-                double r, g, b;
+                double r = 0, g = 0, b = 0;
 
                 _HSV2RGB_((double)((colorCount*77)%360), .5, 1., r, g, b);
                 colorCount++;

@@ -1,7 +1,6 @@
 #include "filter_splitter.h"
 
 /// PROJECT
-#include <csapex/view/box.h>
 #include <csapex/command/meta.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/msg/io.h>
@@ -9,6 +8,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/assert.h>
 #include <utils_param/parameter_factory.h>
+#include <csapex/core/serialization.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Splitter, csapex::Node)
 
@@ -18,7 +18,7 @@ using namespace connection_types;
 Splitter::Splitter() :
     input_(nullptr)
 {
-    state_.channel_count_ = 0;    
+    channel_count_ = 0;
 }
 
 Splitter::~Splitter()
@@ -55,20 +55,20 @@ void Splitter::process()
     std::vector<cv::Mat> channels;
     cv::split(m->value, channels);
 
-    bool recompute = state_.channel_count_ != (int) channels.size();
-    if(m->getEncoding().channelCount() != state_.encoding_.channelCount()) {
+    bool recompute = channel_count_ != (int) channels.size();
+    if(m->getEncoding().channelCount() != encoding_.channelCount()) {
         recompute = true;
     } else {
         for(int i = 0, n = esize; i < n; ++i) {
-            if(m->getEncoding().getChannel(i).name != state_.encoding_.getChannel(i).name) {
+            if(m->getEncoding().getChannel(i).name != encoding_.getChannel(i).name) {
                 recompute = true;
                 break;
             }
         }
     }
     if(recompute) {
-        state_.encoding_ = m->getEncoding();
-        state_.channel_count_ = channels.size();
+        encoding_ = m->getEncoding();
+        channel_count_ = channels.size();
 
         msg::setLabel(input_, m->getEncoding().toString());
         updateOutputs();
@@ -80,11 +80,11 @@ void Splitter::process()
     std::vector<Output*> outputs = modifier_->getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
-        if(i < state_.encoding_.channelCount()) {
+        if(i < encoding_.channelCount()) {
             if(enforce_mono) {
                 e = enc::mono;
             } else {
-                e.push_back(state_.encoding_.getChannel(i));
+                e.push_back(encoding_.getChannel(i));
             }
         } else {
             e.push_back(enc::channel::unknown);
@@ -101,17 +101,17 @@ void Splitter::updateOutputs()
     std::vector<Output*> outputs = modifier_->getMessageOutputs();
     int n = outputs.size();
 
-    if(state_.channel_count_ > n) {
-        for(int i = n ; i < state_.channel_count_ ; ++i) {
-            if(i < (int) state_.encoding_.channelCount()) {
-                modifier_->addOutput<CvMatMessage>(state_.encoding_.getChannel(i).name);
+    if(channel_count_ > n) {
+        for(int i = n ; i < channel_count_ ; ++i) {
+            if(i < (int) encoding_.channelCount()) {
+                modifier_->addOutput<CvMatMessage>(encoding_.getChannel(i).name);
             } else {
                 modifier_->addOutput<CvMatMessage>("unknown");
             }
         }
     } else {
         bool del = true;
-        for(int i = n-1 ; i >= (int) state_.channel_count_; --i) {
+        for(int i = n-1 ; i >= (int) channel_count_; --i) {
             Output* output = outputs[i];
             if(msg::isConnected(output)) {
                 del = false;
@@ -127,10 +127,10 @@ void Splitter::updateOutputs()
 
 
     outputs = modifier_->getMessageOutputs();
-    for(int i = 0, n = state_.channel_count_; i < n; ++i) {
+    for(int i = 0, n = channel_count_; i < n; ++i) {
         Output* output = outputs[i];
-        if(i < (int) state_.encoding_.channelCount()) {
-            msg::setLabel(output, state_.encoding_.getChannel(i).name);
+        if(i < (int) encoding_.channelCount()) {
+            msg::setLabel(output, encoding_.getChannel(i).name);
         } else {
             msg::setLabel(output, "unknown");
         }
@@ -139,35 +139,25 @@ void Splitter::updateOutputs()
 
 }
 
-/// MEMENTO ------------------------------------------------------------------------------------
-//Memento::Ptr Splitter::getParameterState() const
-//{
-//    return std::shared_ptr<State>(new State(state_));
-//}
-
-//void Splitter::setParameterState(Memento::Ptr memento)
-//{
-//    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
-//    apex_assert_hard(m.get());
-
-//    state_ = *m;
-
-////    while((int) state_.encoding_.size() < state_.channel_count_) {
-////        state_.encoding_.push_back(Channel("Channel", 0, 255));
-////    }
-
-//    updateOutputs();
-//}
-
-
-/// MEMENTO
-void Splitter::State::readYaml(const YAML::Node &node)
+namespace csapex
 {
-    channel_count_ = node["channel_count"].as<int>();
+class SplitterSerializer
+{
+public:
+    static void serialize(const Splitter& splitter, YAML::Node& doc)
+    {
+        doc["channel_count"] = splitter.channel_count_;
+    }
+
+    static void deserialize(Splitter& splitter, const YAML::Node& doc)
+    {
+        if(doc["channel_count"].IsDefined()) {
+            splitter.channel_count_ = doc["channel_count"].as<int>();
+        }
+
+        splitter.updateOutputs();
+    }
+};
 }
 
-
-void Splitter::State::writeYaml(YAML::Node &out) const
-{
-    out["channel_count"] = channel_count_;
-}
+CSAPEX_REGISTER_SERIALIZER(csapex::Splitter, SplitterSerializer)

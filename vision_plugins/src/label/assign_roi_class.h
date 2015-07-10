@@ -21,7 +21,9 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier) override;
     void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+
+    virtual void beginProcess() override;
+    virtual void finishProcess() override;
 
     void setActiveClassColor(const int r, const int g, const int b);
 
@@ -42,7 +44,7 @@ protected:
     std::vector<csapex::connection_types::RoiMessage::Ptr> rois_;
 
 public:
-    boost::signals2::signal<void(QSharedPointer<QImage>)> display_request;
+    boost::signals2::signal<void(QImage)> display_request;
     boost::signals2::signal<void()>                       submit_request;
     boost::signals2::signal<void()>                       drop_request;
     boost::signals2::signal<void()>                       clear_request;
