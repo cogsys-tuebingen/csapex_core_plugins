@@ -61,8 +61,13 @@ void ConfidenceEvaluator::process()
 
         apex_assert(truth.value.size() == classified.value.size());
 
-        const float& t = truth.classification;
-        const float& c = classified.classification;
+        const int& t = truth.classification;
+        const int& c = classified.classification;
+
+        // items with an invalid label are simply dropped so they dont influence the evaluation
+        if(c == FeaturesMessage::INVALID_LABEL || t == FeaturesMessage::INVALID_LABEL) {
+            continue;
+        }
 
         confidence_.reportConfidence(t, c, classified.confidence);
     }
