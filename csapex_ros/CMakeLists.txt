@@ -35,6 +35,8 @@ add_custom_command(TARGET csapex_ros_boot POST_BUILD
 
 ## extensions
 add_library(csapex_ros_core
+    src/generic_ros_message.cpp
+
     src/ros_node.cpp
     src/ros_handler.cpp
     src/ros_message_conversion.cpp
