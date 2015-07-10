@@ -13,10 +13,14 @@
 /// PCL
 #include <pcl/point_types.h>
 #include <pcl/conversions.h>
+#if __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
+#endif //__clang__
 #include <pcl/filters/extract_indices.h>
+#if __clang__
 #pragma clang diagnostic pop
+#endif //__clang__
 
 CSAPEX_REGISTER_CLASS(csapex::SplitClusteredCloud, csapex::Node)
 

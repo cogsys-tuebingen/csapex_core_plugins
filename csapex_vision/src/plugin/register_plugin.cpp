@@ -136,8 +136,6 @@ void RegisterPlugin::init(CsApexCore& core)
 {
     RosMessageConversion::registerConversion<sensor_msgs::Image, connection_types::CvMatMessage, Image2CvMat>();
 
-    ConnectionType::setDefaultConnectionType(connection_types::makeEmpty<connection_types::CvMatMessage>());
-
     auto cWrap = GenericNodeFactory::createConstructorFromFunction<ParameterInfoTestWrap>
             (testWrap, "TestWrap");
     cWrap->setDescription("Test direct wrapping.").setIcon(":/combiner.png").setTags({"Wrap", "Test", "Flip"});

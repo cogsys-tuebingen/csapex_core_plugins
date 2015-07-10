@@ -29,18 +29,18 @@ ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &to
 
 ros::Publisher RosMessageConversion::advertise(ConnectionType::ConstPtr type, const std::string &topic, int queue, bool latch)
 {
-    std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(type->rawName());
+    std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(type->typeName());
     if(it == converters_inv_.end()) {
-        throw std::runtime_error(std::string("cannot advertise type ") + type->name() + " on topic " + topic);
+        throw std::runtime_error(std::string("cannot advertise type ") + type->descriptiveName() + " on topic " + topic);
     }
     return it->second->advertise(topic, queue, latch);
 }
 
 void RosMessageConversion::publish(ros::Publisher &pub, ConnectionType::ConstPtr msg)
 {
-    std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(msg->rawName());
+    std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(msg->typeName());
     if(it == converters_inv_.end()) {
-        throw std::runtime_error(std::string("cannot publish message of type ") + msg->name());
+        throw std::runtime_error(std::string("cannot publish message of type ") + msg->descriptiveName());
     }
     it->second->publish(pub, msg);
 }

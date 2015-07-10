@@ -4,9 +4,6 @@
 /// PROJECT
 #include <utils_param/parameter_factory.h>
 
-/// SYSTEM
-#include <QHBoxLayout>
-
 using namespace csapex;
 
 ImageProviderSet::ImageProviderSet()

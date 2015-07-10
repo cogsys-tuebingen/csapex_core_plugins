@@ -58,6 +58,7 @@ void BagProvider::setupRosPublisher()
 void BagProvider::load(const std::string& file)
 {
     file_ = file;
+    std::cout << "loading bag file " << file << ", this can take a while..." << std::endl;
     bag.open(file_);
 
     RosMessageConversion& rmc = RosMessageConversion::instance();
@@ -113,8 +114,11 @@ void BagProvider::setTopic()
     }
     frames_--;
 
+    int current_frame = state.getParameter("bag/frame")->as<int>();
+
     param::RangeParameter::Ptr frame = std::dynamic_pointer_cast<param::RangeParameter>(state.getParameter("bag/frame"));
     frame->setMax(frames_);
+    frame->set(current_frame);
 
     frame_ = 0;
 
@@ -172,7 +176,8 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
 
     std::string topic = topics_[slot];
 
-    if(view_it_map_.find(topic) != view_it_map_.end() && view_it_map_[topic] != view_all_->end()) {
+    auto it = view_it_map_.find(topic);
+    if(it != view_it_map_.end() && it->second != view_all_->end()) {
         rosbag::MessageInstance instance = *view_it_map_[topic];
 
         RosMessageConversion& rmc = RosMessageConversion::instance();
@@ -239,7 +244,7 @@ void BagProvider::advanceIterators()
         begin();
     }
 
-    bool done = !state.readParameter<bool>("bag/play");
+    bool done = !reset && !state.readParameter<bool>("bag/play");
     bool pub_tf = state.readParameter<bool>("bag/publish tf");
     for(; view_it_ != view_all_->end() && !done; ++view_it_) {
         rosbag::MessageInstance next = *view_it_;

@@ -38,9 +38,9 @@ bool GenericVectorMessage::acceptsConnectionFrom(const ConnectionType *other_sid
     return impl->acceptsConnectionFrom(other_side);
 }
 
-std::string GenericVectorMessage::name() const
+std::string GenericVectorMessage::descriptiveName() const
 {
-    return impl->name();
+    return impl->descriptiveName();
 }
 
 
@@ -70,13 +70,14 @@ bool convert<csapex::connection_types::GenericVectorMessage>::decode(const Node&
 
 //// OLD
 VectorMessage::VectorMessage(const std::string& frame_id, Message::Stamp stamp)
-    : Message (type<VectorMessage>::name(), frame_id, stamp)
+    : Message ("MessageVector", frame_id, stamp)
 {
     type_ = connection_types::makeEmpty<AnyMessage>();
 }
 VectorMessage::VectorMessage(ConnectionType::Ptr type, const std::string& frame_id, Message::Stamp stamp)
-    : Message (std::string("std::vector<") + type->rawName()  + "::Ptr>", frame_id, stamp)
+    : Message ("MessageVector", frame_id, stamp)
 {
+    setDescriptiveName(std::string("std::vector<") + type->typeName()  + "::Ptr>");
     type_ = type;
 }
 

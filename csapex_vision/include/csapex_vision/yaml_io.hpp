@@ -130,7 +130,7 @@ struct convert<cv::Mat> {
         Node node;
         cv::FileStorage fs(".yml", cv::FileStorage::WRITE | cv::FileStorage::MEMORY);
         fs << "data" << rhs;
-        node["data"] = fs.releaseAndGetString();
+        node["data"] = fs.releaseAndGetString().c_str();
 
         return node;
     }

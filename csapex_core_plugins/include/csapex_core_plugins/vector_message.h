@@ -274,7 +274,7 @@ public:
     virtual bool canConnectTo(const ConnectionType* other_side) const override;
     virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const override;
 
-    virtual std::string name() const override;
+    virtual std::string descriptiveName() const override;
 
 private:
     GenericVectorMessage(EntryInterface::Ptr impl, const std::string &frame_id, Message::Stamp stamp_micro_seconds);

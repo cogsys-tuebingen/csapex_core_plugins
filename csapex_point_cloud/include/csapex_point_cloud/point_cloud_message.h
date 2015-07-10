@@ -78,7 +78,7 @@ struct PointCloudMessage : public Message
 
     virtual ConnectionType::Ptr toType() const override;
 
-    virtual std::string name() const override;
+    virtual std::string descriptiveName() const override;
 
     bool acceptsConnectionFrom(const ConnectionType* other_side) const override;
 

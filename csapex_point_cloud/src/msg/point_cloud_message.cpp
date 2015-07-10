@@ -41,9 +41,9 @@ ConnectionType::Ptr PointCloudMessage::toType() const
     return new_msg;
 }
 
-std::string PointCloudMessage::name() const
+std::string PointCloudMessage::descriptiveName() const
 {
-    return Message::name();
+    return Message::descriptiveName();
 }
 
 bool PointCloudMessage::acceptsConnectionFrom(const ConnectionType* other_side) const

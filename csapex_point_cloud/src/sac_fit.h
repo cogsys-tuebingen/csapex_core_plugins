@@ -7,14 +7,18 @@
 #include <csapex_point_cloud/model_message.h>
 
 /// POINT CLOUD
+#if __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
+#endif //__clang__
 #include <pcl/sample_consensus/method_types.h>
 #include <pcl/sample_consensus/model_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/features/normal_3d.h>
+#if __clang__
 #pragma clang diagnostic pop
+#endif //__clang__
 
 namespace csapex {
 class SacFit : public csapex::Node

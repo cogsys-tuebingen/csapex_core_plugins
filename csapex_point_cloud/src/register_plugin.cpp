@@ -12,14 +12,18 @@
 
 /// SYSTEM
 #include <sensor_msgs/PointCloud2.h>
+#if __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
 #pragma clang diagnostic ignored "-Wsign-compare"
+#endif //__clang__
 #include <pcl_conversions/pcl_conversions.h>
 //#include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/common/impl/io.hpp>
+#if __clang__
 #pragma clang diagnostic pop
+#endif //__clang__
 #include <boost/mpl/for_each.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::RegisterPointCloudPlugin, csapex::CorePlugin)
