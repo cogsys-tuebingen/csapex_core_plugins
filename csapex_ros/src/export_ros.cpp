@@ -52,11 +52,11 @@ void ExportRos::processROS()
 
     connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
 
-    ConnectionType::Ptr type;
+    ConnectionType::ConstPtr type;
     if(vector) {
         type = vector->getSubType();
     } else {
-        type = msg->toType();
+        type = msg;//->toType();
     }
 
     if(create_pub) {

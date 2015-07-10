@@ -381,16 +381,16 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 
     current_subscriber.shutdown();
 
-    if(RosMessageConversion::instance().canHandle(topic)) {
+    //if(RosMessageConversion::instance().isTopicTypeRegistered(topic)) {
         modifier_->setNoError();
 
         current_topic_ = topic;
         updateSubscriber();
 
-    } else {
-        modifier_->setError(std::string("cannot import topic of type ") + topic.datatype);
-        return;
-    }
+//    } else {
+//        modifier_->setError(std::string("cannot import topic of type ") + topic.datatype);
+//        return;
+//    }
 
 }
 

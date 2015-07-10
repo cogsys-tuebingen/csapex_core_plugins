@@ -171,7 +171,7 @@ public:
         instance().doRegisterConversion(converter->apexType(), converter->rosType(), converter);
     }
 
-    bool canHandle(const ros::master::TopicInfo &topic);
+    bool isTopicTypeRegistered(const ros::master::TopicInfo &topic);
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output);
     ros::Publisher advertise(ConnectionType::ConstPtr, const std::string& topic,  int queue, bool latch = false);

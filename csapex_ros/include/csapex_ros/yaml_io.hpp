@@ -1,95 +1,61 @@
 #ifndef ROS_YAML_IO_HPP
 #define ROS_YAML_IO_HPP
 
+/// PROJECT
+#include <csapex/msg/generic_pointer_message.hpp>
+
 /// SYSTEM
-#include <yaml-cpp/yaml.h>
-#include <visualization_msgs/MarkerArray.h>
-#include <nav_msgs/OccupancyGrid.h>
-#include <nav_msgs/Odometry.h>
-#include <geometry_msgs/Pose.h>
-#include <geometry_msgs/PoseStamped.h>
+#include <yaml-cpp/node/convert.h>
+#include <yaml-cpp/stlemitter.h>
+#include <ros/serialization.h>
 
-/// YAML
-namespace YAML {
+namespace csapex {
+namespace serial {
 
-// TODO: implement
-template<>
-struct convert<visualization_msgs::MarkerArray> {
-    static Node encode(const visualization_msgs::MarkerArray& rhs) {
-        Node node;
-        return node;
+
+template <typename Message>
+struct Serializer<connection_types::GenericPointerMessage<Message>,
+        typename std::enable_if<ros::message_traits::IsMessage<Message>::value>::type>
+{
+static YAML::Node encode(const connection_types::GenericPointerMessage<Message>& msg)
+{
+    YAML::Node n;
+
+    // serialize the message using ros
+    auto serialized = ros::serialization::serializeMessage(*msg.value);
+
+    // allocate the buffer
+    n["buf"] = std::vector<uint8_t>(serialized.num_bytes);
+    auto buf = n["buf"];
+
+    // fill the buffer
+    for(std::size_t i = 0; i < serialized.num_bytes; ++i) {
+        buf[i] = serialized.buf[i];
     }
 
-    static bool decode(const Node& node, visualization_msgs::MarkerArray& rhs) {
-        return true;
+    return n;
+}
+
+static bool decode(const YAML::Node& node, connection_types::GenericPointerMessage<Message>& msg)
+{
+    // read the buffer
+    auto vec = node["buf"].as<std::vector<uint8_t>>();
+    int num_bytes = vec.size();
+
+    // ros needs a shared array instead of a vector
+    boost::shared_array<uint8_t> buf(new uint8_t[num_bytes]);
+    for(std::size_t i = 0; i < num_bytes; ++i) {
+        buf[i] = vec[i];
     }
+
+    // deserialize the message
+    msg.value.reset(new Message);
+    ros::serialization::deserializeMessage(ros::SerializedMessage(buf, num_bytes), *msg.value);
+    return true;
+}
 };
 
-
-template<>
-struct convert<visualization_msgs::Marker> {
-    static Node encode(const visualization_msgs::Marker& rhs) {
-        Node node;
-        return node;
-    }
-
-    static bool decode(const Node& node, visualization_msgs::Marker& rhs) {
-        return true;
-    }
-};
-
-// TODO: implement
-template<>
-struct convert<nav_msgs::OccupancyGrid> {
-    static Node encode(const nav_msgs::OccupancyGrid& rhs) {
-        Node node;
-        return node;
-    }
-
-    static bool decode(const Node& node, nav_msgs::OccupancyGrid& rhs) {
-        return true;
-    }
-};
-
-// TODO: implement
-template<>
-struct convert<geometry_msgs::Pose> {
-    static Node encode(const geometry_msgs::Pose& rhs) {
-        Node node;
-        return node;
-    }
-
-    static bool decode(const Node& node, geometry_msgs::Pose& rhs) {
-        return true;
-    }
-};
-
-// TODO: implement
-template<>
-struct convert<geometry_msgs::PoseStamped> {
-    static Node encode(const geometry_msgs::PoseStamped& rhs) {
-        Node node;
-        return node;
-    }
-
-    static bool decode(const Node& node, geometry_msgs::PoseStamped& rhs) {
-        return true;
-    }
-};
-
-// TODO: implement
-template<>
-struct convert<nav_msgs::Odometry> {
-    static Node encode(const nav_msgs::Odometry& rhs) {
-        Node node;
-        return node;
-    }
-
-    static bool decode(const Node& node, nav_msgs::Odometry& rhs) {
-        return true;
-    }
-};
-
+}
 }
 
 #endif // ROS_YAML_IO_HPP
