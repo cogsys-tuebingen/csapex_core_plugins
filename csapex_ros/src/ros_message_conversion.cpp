@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <csapex_ros/generic_ros_message.h>
+#include <csapex/msg/generic_pointer_message.hpp>
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -56,24 +57,29 @@ ros::Publisher RosMessageConversion::advertise(ConnectionType::ConstPtr type, co
 {
     auto gen_ros = std::dynamic_pointer_cast<connection_types::GenericRosMessage const>(type);
     if(gen_ros) {
-        if(!gen_ros->value) {
-            throw std::runtime_error("generic ros message is null");
-        }
-
-        std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
-        if(!nh) {
-            throw std::runtime_error("no ros connection");
-        }
-
-        return gen_ros->value->advertise(*nh, topic, queue, latch);
+        return advertiseGenericRos(gen_ros, topic, queue, latch);
 
     } else {
-        std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(type->typeName());
+        std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(type->descriptiveName());
         if(it == converters_inv_.end()) {
             throw std::runtime_error(std::string("cannot advertise type ") + type->descriptiveName() + " on topic " + topic);
         }
         return it->second->advertise(topic, queue, latch);
     }
+}
+
+ros::Publisher RosMessageConversion::advertiseGenericRos(const connection_types::GenericRosMessage::ConstPtr& gen_ros, const std::string &topic, int queue, bool latch)
+{
+    if(!gen_ros->value) {
+        throw std::runtime_error("generic ros message is null");
+    }
+
+    std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
+    if(!nh) {
+        throw std::runtime_error("no ros connection");
+    }
+
+    return gen_ros->value->advertise(*nh, topic, queue, latch);
 }
 
 void RosMessageConversion::publish(ros::Publisher &pub, ConnectionType::ConstPtr msg)
@@ -87,7 +93,7 @@ void RosMessageConversion::publish(ros::Publisher &pub, ConnectionType::ConstPtr
         pub.publish(*gen_ros->value);
 
     } else {
-        std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(msg->typeName());
+        std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(msg->descriptiveName());
         if(it == converters_inv_.end()) {
             throw std::runtime_error(std::string("cannot publish message of type ") + msg->descriptiveName());
         }

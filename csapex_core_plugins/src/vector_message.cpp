@@ -4,6 +4,7 @@
 /// COMPONENT
 #include <csapex/msg/message_traits.h>
 #include <csapex/utility/register_msg.h>
+#include <csapex/serialization/yaml.h>
 
 CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::GenericVectorMessage, g_instance_generic_vector_)
 CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::VectorMessage, g_instance_vector_)
@@ -162,19 +163,6 @@ bool convert<csapex::connection_types::VectorMessage>::decode(const Node& node, 
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
-    return true;
-}
-}
-
-namespace YAML {
-Node convert<csapex::ConnectionType>::encode(const csapex::ConnectionType& rhs)
-{
-    return MessageFactory::serializeMessage(rhs);
-}
-
-bool convert<csapex::ConnectionType>::decode(const Node& node, csapex::ConnectionType& rhs)
-{
-    rhs = *MessageFactory::deserializeMessage(node);
     return true;
 }
 }

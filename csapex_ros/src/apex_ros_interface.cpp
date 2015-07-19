@@ -20,7 +20,6 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
-#include <nav_msgs/Odometry.h>
 #include <QMimeData>
 
 CSAPEX_REGISTER_CLASS(csapex::APEXRosInterface, csapex::CorePlugin)

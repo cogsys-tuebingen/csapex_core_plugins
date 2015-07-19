@@ -9,7 +9,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ros/yaml_io.hpp>
 #include <csapex/msg/generic_value_message.hpp>
-#include <csapex/msg/generic_pointer_message.hpp>
+#include <csapex_ros/ros_message_conversion.h>
 
 /// SYSTEM
 #include <geometry_msgs/Point.h>

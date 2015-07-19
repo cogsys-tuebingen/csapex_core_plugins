@@ -313,12 +313,6 @@ struct convert<csapex::connection_types::VectorMessage> {
     static Node encode(const csapex::connection_types::VectorMessage& rhs);
     static bool decode(const Node& node, csapex::connection_types::VectorMessage& rhs);
 };
-
-template<>
-struct convert<csapex::ConnectionType> {
-    static Node encode(const csapex::ConnectionType& rhs);
-    static bool decode(const Node& node, csapex::ConnectionType& rhs);
-};
 }
 
 #endif // VECTOR_MESSAGE_H

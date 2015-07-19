@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <csapex_ros/ros_handler.h>
+#include <csapex_ros/generic_ros_message.h>
 #include <csapex/msg/generic_pointer_message.hpp>
 
 /// PROJECT
@@ -20,9 +21,6 @@
 
 namespace csapex
 {
-
-template <typename T>
-class RosMessageConversionT;
 
 class Convertor
 {
@@ -54,7 +52,8 @@ public:
         return ros::message_traits::DataType<T>::value();
     }
     std::string apexType() {
-        return ros::message_traits::DataType<T>::value();
+        typename connection_types::GenericPointerMessage<T>::Ptr type = std::make_shared<connection_types::GenericPointerMessage<T>>();
+        return type->typeName();//ros::message_traits::DataType<T>::value();
     }
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) {
@@ -184,6 +183,9 @@ public:
     }
 
 private:
+    ros::Publisher advertiseGenericRos(const connection_types::GenericRosMessage::ConstPtr &gen_ros, const std::string& topic,  int queue, bool latch = false);
+
+private:
     void doRegisterConversion(const std::string &apex_type, const std::string &ros_type, Convertor::Ptr c);
 
     template <typename T>
@@ -229,6 +231,19 @@ public:
     }
 };
 
+namespace connection_types
+{
+
+template <template <class> class Container, typename T>
+class MessageConversionHook<Container, T, typename std::enable_if<ros::message_traits::IsMessage<T>::value>::type>
+{
+public:
+    static void registerConversion() {
+        RosMessageConversionT<T>::registerConversion();
+    }
+};
+
+}
 
 }
 

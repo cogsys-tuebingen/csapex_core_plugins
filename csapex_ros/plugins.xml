@@ -17,6 +17,12 @@
 </class>
 
 
+<class type="csapex::RosTest" base_class_type="csapex::Node">
+  <description>For testing ROS importing</description>
+  <tags>RosIO, General, Debug</tags>
+</class>
+
+
 <class type="csapex::BagProvider" base_class_type="csapex::MessageProvider">
   <description></description>
 </class>

@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/msg/message_factory.h>
+#include <csapex/serialization/message_serializer.h>
 #include <csapex/utility/timer.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)
@@ -28,7 +28,7 @@ void TextDisplay::process()
     YAML::Node node;
     {
         INTERLUDE("serialize");
-        node = MessageFactory::serializeMessage(*msg);
+        node = MessageSerializer::serializeMessage(*msg);
     }
 
     std::stringstream ss;
@@ -59,10 +59,15 @@ void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node, const s
         }
 
     } else if(node.IsSequence()) {
-        for(std::size_t i = 0, n = node.size(); i < n; ++i) {
-//            ss << prefix + "-";
+        std::size_t total = node.size();
+        std::size_t max_count = 16;
+
+        for(std::size_t i = 0, n = std::min(max_count, total); i < n; ++i) {
             convert(ss, node[i], prefix + "|");
             ss << "\n";
+        }
+        if(max_count < total) {
+            ss << "...\n";
         }
 
     } else {

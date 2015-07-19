@@ -6,7 +6,7 @@
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/msg/message_factory.h>
+#include <csapex/serialization/message_serializer.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
@@ -31,7 +31,7 @@ void ExportCout::process()
 
     ainfo << "writing to cout: ";
 
-    YAML::Node node = MessageFactory::serializeMessage(*msg);
+    YAML::Node node = MessageSerializer::serializeMessage(*msg);
     ainfo << node;
     ainfo << std::endl;
 

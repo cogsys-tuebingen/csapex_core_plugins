@@ -1,24 +1,37 @@
 #ifndef GENERIC_ROS_MESSAGE_H
 #define GENERIC_ROS_MESSAGE_H
 
-
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/msg/generic_pointer_message.hpp>
+#include <csapex/utility/type.h>
 
 /// SYSTEM
 #include <ros/time.h>
-
-namespace topic_tools {
-class ShapeShifter;
-}
+#include <nav_msgs/Odometry.h>
+#include <ros/message_traits.h>
+#include <topic_tools/shape_shifter.h>
 
 namespace csapex {
+
 namespace connection_types {
 
 
-struct GenericRosMessage : public MessageTemplate<std::shared_ptr<topic_tools::ShapeShifter const>, GenericRosMessage>
+class GenericRosMessage : public MessageTemplate<std::shared_ptr<topic_tools::ShapeShifter const>, GenericRosMessage>
 {
+public:
     GenericRosMessage();
+
+    bool canConnectTo(const ConnectionType *other_side) const override
+    {
+        return true;
+    }
+
+    bool acceptsConnectionFrom(const ConnectionType* other_side) const override
+    {
+        return true;
+    }
 };
 
 
@@ -31,6 +44,64 @@ struct type<GenericRosMessage> {
 };
 
 }
+
+namespace msg
+{
+
+//template <typename R>
+//struct MessageCaster<R, connection_types::GenericRosMessage, void>
+//{
+//    static std::shared_ptr<R const> cast(const std::shared_ptr<connection_types::GenericRosMessage const>& msg)
+//    {
+//        std::abort();
+//        return std::dynamic_pointer_cast<R const>(msg);
+//    }
+//    static std::shared_ptr<R> cast(const std::shared_ptr<connection_types::GenericRosMessage>& msg)
+//    {
+//        std::abort();
+//        return std::dynamic_pointer_cast<R>(msg);
+//    }
+//};
+
+template <>
+template <typename R, typename S>
+struct MessageCaster<connection_types::GenericPointerMessage<R>, S, void>
+{
+    static std::shared_ptr<connection_types::GenericPointerMessage<R> const> constcast(const std::shared_ptr<S const>& msg)
+    {
+        auto rosmsg = std::dynamic_pointer_cast<connection_types::GenericRosMessage const>(msg);
+        if(rosmsg) {
+            try {
+                auto boost_ptr = rosmsg->value->template instantiate<R>();
+                auto msg = connection_types::makeEmpty<connection_types::GenericPointerMessage<R>>();
+                msg->value = shared_ptr_tools::to_std_shared(boost_ptr);
+                return msg;
+            } catch(const ros::Exception& e) {
+                // no success...
+            }
+        }
+        return DefaultMessageCaster<connection_types::GenericPointerMessage<R>, S, void>::constcast(msg);
+    }
+    static std::shared_ptr<connection_types::GenericPointerMessage<R>> cast(const std::shared_ptr<S>& msg)
+    {
+        auto rosmsg = std::dynamic_pointer_cast<connection_types::GenericRosMessage>(msg);
+        if(rosmsg) {
+            try {
+                auto boost_ptr = rosmsg->value->template instantiate<R>();
+                auto msg = connection_types::makeEmpty<connection_types::GenericPointerMessage<R>>();
+                msg->value = shared_ptr_tools::to_std_shared(boost_ptr);
+                return msg;
+            } catch(const ros::Exception& e) {
+                // no success...
+            }
+        }
+        return DefaultMessageCaster<connection_types::GenericPointerMessage<R>, S, void>::cast(msg);
+    }
+};
+
+}
+
+
 }
 
 

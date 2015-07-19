@@ -11,6 +11,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_ros/yaml_io.hpp>
 #include <csapex/msg/generic_pointer_message.hpp>
+#include <csapex_ros/ros_message_conversion.h>
 
 /// SYSTEM
 #include <nav_msgs/Odometry.h>

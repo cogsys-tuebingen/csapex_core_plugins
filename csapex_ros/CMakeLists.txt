@@ -57,6 +57,8 @@ add_library(csapex_ros
     src/import_ros.cpp
 
     src/bag_provider.cpp
+
+    src/ros_test.cpp
 )
 
 ## Specify libraries to link a library or executable target against

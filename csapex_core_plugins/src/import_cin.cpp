@@ -7,6 +7,7 @@
 #include <csapex/msg/message.h>
 #include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/serialization/message_serializer.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/yaml_node_builder.h>
 
@@ -76,9 +77,9 @@ void ImportCin::tick()
 
             ConnectionType::Ptr msg;
             try {
-                msg = MessageFactory::readYaml(doc);
+                msg = MessageSerializer::readYaml(doc);
 
-            } catch(const MessageFactory::DeserializationError& e) {
+            } catch(const MessageSerializer::DeserializationError& e) {
                 ainfo << "could not deserialize message: \n";
                 YAML::Emitter emitter;
                 emitter << doc;
