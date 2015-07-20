@@ -163,6 +163,7 @@ bool convert<csapex::connection_types::VectorMessage>::decode(const Node& node, 
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
+    rhs.value = node["values"].as<std::vector<ConnectionTypeConstPtr>>();
     return true;
 }
 }
