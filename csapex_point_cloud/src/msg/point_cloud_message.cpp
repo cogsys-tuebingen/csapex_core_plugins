@@ -7,9 +7,9 @@
 
 /// SYSTEM
 #include <pcl/PCLPointField.h>
-//#include <pcl/io/boost.h>
 #include <pcl/console/print.h>
-//#include <pcl/io/pcd_io.h>
+#include <pcl/PCLPointCloud2.h>
+#include <pcl/conversions.h>
 #include <boost/mpl/for_each.hpp>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::PointCloudMessage)
@@ -66,25 +66,25 @@ struct Import  {
             return;
         }
 
-        const YAML::Node& data = node["data"];
-        apex_assert(data.Type() == YAML::NodeType::Sequence);
+        pcl::PCLPointCloud2 pcl_pc;
 
-//        std::string file = "import_cloud.tmp";
-//        std::ofstream tmp(file.c_str());
 
-//        for(std::size_t i = 0; i < data.size(); ++i) {
-//            std::string line = data[i].as<std::string>();
-//            tmp << line << '\n';
-//        }
-//        tmp.flush();
-//        tmp.close();
+        pcl_pc.header = node["header"].as<pcl::PCLHeader>();
+        pcl_pc.height = node["height"].as<pcl::uint32_t>();
+        pcl_pc.width = node["width"].as<pcl::uint32_t>();
+        pcl_pc.fields = node["fields"].as<std::vector< ::pcl::PCLPointField>>();
+        pcl_pc.is_bigendian = node["is_bigendian"].as<pcl::uint8_t>();
+        pcl_pc.point_step = node["point_step"].as<pcl::uint32_t>();
+        pcl_pc.row_step = node["row_step"].as<pcl::uint32_t>();
 
-//        typename pcl::PointCloud<PointT>::Ptr cloud(new pcl::PointCloud<PointT>);
+        YAML::Binary data = node["data"].as<YAML::Binary>();
+        data.swap(pcl_pc.data);
 
-//        pcl::PCDReader reader;
-//        reader.read(file, *cloud);
+        pcl_pc.is_dense = node["is_dense"].as<pcl::uint8_t>();
 
-//        value = cloud;
+        boost::shared_ptr<pcl::PointCloud<PointT>> cloud(new pcl::PointCloud<PointT>);
+        pcl::fromPCLPointCloud2(pcl_pc, *cloud);
+        value = cloud;
     }
 
     const YAML::Node& node;
@@ -104,16 +104,18 @@ struct Export : public boost::static_visitor<void> {
 
         node["point_type"] = traits::name<PointT>();
 
-//        pcl::PCDWriter writer;
-//        std::string file = "export_cloud.tmp";
-//        writer.writeASCII(file, *cloud_ptr);
+        pcl::PCLPointCloud2 pcl_pc;
+        pcl::toPCLPointCloud2(*cloud_ptr, pcl_pc);
 
-//        std::ifstream fi(file.c_str());
-//        std::string line;
-
-//        while(std::getline(fi, line)) {
-//            node["data"].push_back(line);
-//        }
+        node["header"] = pcl_pc.header;
+        node["height"] = pcl_pc.height;
+        node["width"] = pcl_pc.width;
+        node["fields"] = pcl_pc.fields;
+        node["is_bigendian"] = pcl_pc.is_bigendian;
+        node["point_step"] = pcl_pc.point_step;
+        node["row_step"] = pcl_pc.row_step;
+        node["data"] = YAML::Binary(pcl_pc.data.data(), pcl_pc.data.size());
+        node["is_dense"] = pcl_pc.is_dense;
     }
 
     YAML::Node& node;
@@ -124,6 +126,50 @@ struct Export : public boost::static_visitor<void> {
 
 /// YAML
 namespace YAML {
+
+template<>
+struct convert<pcl::PCLHeader> {
+  static Node encode(const pcl::PCLHeader& rhs)
+  {
+      Node n;
+      n["seq"] = rhs.seq;
+      n["stamp"] = rhs.stamp;
+      n["frame_id"] = rhs.frame_id;
+      return n;
+  }
+
+  static bool decode(const Node& node, pcl::PCLHeader& rhs)
+  {
+      rhs.seq = node["seq"].as<pcl::uint32_t>();
+      rhs.stamp = node["stamp"].as<pcl::uint64_t>();
+      rhs.frame_id = node["frame_id"].as<std::string>();
+      return true;
+  }
+};
+
+template<>
+struct convert<pcl::PCLPointField> {
+  static Node encode(const pcl::PCLPointField& rhs)
+  {
+      Node n;
+      n["name"] = rhs.name;
+      n["offset"] = rhs.offset;
+      n["datatype"] = rhs.datatype;
+      n["count"] = rhs.count;
+      return n;
+  }
+
+  static bool decode(const Node& node, pcl::PCLPointField& rhs)
+  {
+      rhs.name = node["name"].as<std::string>();
+      rhs.offset = node["offset"].as<pcl::uint32_t>();
+      rhs.datatype = node["datatype"].as<pcl::uint8_t>();
+      rhs.count = node["count"].as<pcl::uint32_t>();
+      return true;
+  }
+};
+
+
 Node convert<csapex::connection_types::PointCloudMessage>::encode(const csapex::connection_types::PointCloudMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
