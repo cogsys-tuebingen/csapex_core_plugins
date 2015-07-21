@@ -39,6 +39,9 @@ void Camera::tick()
 {
     connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
     cap_ >> msg->value;
+    if(msg->value.channels() == 1)
+        msg->setEncoding(enc::mono);
+
     msg::publish(output_, msg);
 }
 
