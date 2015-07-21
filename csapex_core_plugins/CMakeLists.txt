@@ -36,6 +36,7 @@ include_directories(include
 
 add_library(csapex_core_lib
     src/vector_message.cpp
+    src/composite_message.cpp
     src/point_message.cpp
     src/interactive_node.cpp
     src/collection_node.cpp
@@ -64,6 +65,9 @@ add_library(csapex_core_plugins
 
     src/demultiplexer.cpp
     src/multiplexer.cpp
+
+    src/composer.cpp
+    src/decomposer.cpp
 
     src/output_display.cpp
     src/output_display_adapter.cpp

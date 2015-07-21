@@ -11,10 +11,19 @@
   <description>Multiplexes a series of messages into a multidimensional message</description>
   <tags>General, Multiplex</tags>
 </class>
-
 <class type="csapex::Demultiplexer" base_class_type="csapex::Node">
   <description>Demultiplexes a multidimensional message</description>
   <tags>General, Multiplex</tags>
+</class>
+
+<class type="csapex::Composer" base_class_type="csapex::Node">
+  <description>Combines multiple messages into a composed message</description>
+  <tags>General, Composition</tags>
+</class>
+<class type="csapex::Decomposer" base_class_type="csapex::Node">
+  <description>Decomposes a combined message into multiple messages.
+  Extracts messages from composed messages.</description>
+  <tags>General, Composition</tags>
 </class>
 
 <class type="csapex::TextInput" base_class_type="csapex::Node">
