@@ -124,6 +124,7 @@
   <icon>:/filter.png</icon>
   <tags>Vision, Filter</tags>
 </class>
+
 <class type="csapex::FilterStaticMask" base_class_type="csapex::Node">
   <description>Allows the user to generate a static mask</description>
   <icon>:/filter.png</icon>
@@ -132,6 +133,17 @@
 <class type="csapex::FilterStaticMaskAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
+
+
+<class type="csapex::MaskRefinement" base_class_type="csapex::Node">
+  <description>Allows the user to refine a mask</description>
+  <icon>:/filter.png</icon>
+  <tags>Vision, Filter</tags>
+</class>
+<class type="csapex::MaskRefinementAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+
 
 <class type="csapex::HoughCircle" base_class_type="csapex::Node">
   <description>Finds circles in an image</description>
