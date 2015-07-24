@@ -79,9 +79,13 @@ add_library(csapex_vision_plugin
     src/plugin/copymakeborder.cpp
     src/plugin/color_segmentation.cpp
     src/plugin/filter_apply_mask.cpp
+
     src/plugin/filter_static_mask.cpp
     src/plugin/filter_static_mask_painter.cpp
     src/plugin/filter_static_mask_adapter.cpp
+
+    src/plugin/mask_refinement.cpp
+    src/plugin/mask_refinement_adapter.cpp
 
     src/plugin/image_provider_dir.cpp
     src/plugin/image_provider_img.cpp
