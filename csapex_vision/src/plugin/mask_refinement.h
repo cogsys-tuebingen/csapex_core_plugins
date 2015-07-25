@@ -27,6 +27,7 @@ protected:
 
 private:
     void ok();
+    void drop();
 
 public:
     boost::signals2::signal<void(QImage&, QImage&)> input;

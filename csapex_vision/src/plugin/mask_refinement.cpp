@@ -35,6 +35,8 @@ void MaskRefinement::setup(csapex::NodeModifier& node_modifier)
 void MaskRefinement::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareTrigger("submit"), std::bind(&MaskRefinement::ok, this));
+    parameters.addParameter(param::ParameterFactory::declareTrigger("drop"), std::bind(&MaskRefinement::drop, this));
+
     parameters.addParameter(param::ParameterFactory::declareRange("brush/size", 1, 64, 4, 1), [this](param::Parameter*){
         update_brush();
     });
@@ -43,6 +45,12 @@ void MaskRefinement::setupParameters(Parameterizable &parameters)
 void MaskRefinement::ok()
 {
     next_image();
+}
+
+void MaskRefinement::drop()
+{
+    result_.reset();
+    done();
 }
 
 void MaskRefinement::setMask(const QImage &mask)
@@ -62,7 +70,6 @@ void MaskRefinement::beginProcess()
     mask_ = in->value;
 
     result_ = std::make_shared<connection_types::CvMatMessage>(in->getEncoding(), in->stamp_micro_seconds);
-    result_->value = mask_.clone();
 
     QImage qmask = QtCvImageConverter::Converter<QImage>::mat2QImage(mask_);
 
@@ -82,5 +89,7 @@ void MaskRefinement::beginProcess()
 
 void MaskRefinement::finishProcess()
 {
-    msg::publish(out_, result_);
+    if(result_) {
+        msg::publish(out_, result_);
+    }
 }
