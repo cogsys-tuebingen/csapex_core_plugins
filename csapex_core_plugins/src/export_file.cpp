@@ -29,7 +29,7 @@ void ExportFile::setupParameters(Parameterizable& parameters)
 {
     addParameter(param::ParameterFactory::declareBool("yaml",
                                                       param::ParameterDescription("Export message in cs::APEX-YAML format?"),
-                                                      false));
+                                                      true));
     addParameter(param::ParameterFactory::declareText("filename",
                                                       param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
                                                       "msg"), std::bind(&ExportFile::setExportPath, this));
@@ -73,12 +73,14 @@ void ExportFile::exportVector(const connection_types::VectorMessage::ConstPtr& v
 
 void ExportFile::exportSingle(const ConnectionType::ConstPtr& msg)
 {
+    if(std::dynamic_pointer_cast<connection_types::NoMessage const>(msg)) {
+        return;
+    }
+
     QDir dir(path_.c_str());
     if(!dir.exists()) {
         QDir().mkdir(path_.c_str());
     }
-
-
 
     if(readParameter<bool>("yaml")) {
         while(true) {

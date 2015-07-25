@@ -72,7 +72,7 @@ Channel makeChannel(const std::string& name)
         channel != enc::channel::g_channels.end();
         ++channel) {
         const Channel& c = *channel;
-        if(c.name == name) {
+        if(c.name == key) {
             return c;
         }
     }

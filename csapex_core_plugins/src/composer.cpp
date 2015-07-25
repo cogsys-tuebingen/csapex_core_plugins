@@ -33,6 +33,9 @@ public:
 
         for(auto input : modifier_->getMessageInputs()) {
             ConnectionType::ConstPtr msg = msg::getMessage(input);
+            if(std::dynamic_pointer_cast<connection_types::NoMessage const>(msg)) {
+                return;
+            }
             composite->value.push_back(msg);
         }
 

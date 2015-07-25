@@ -26,11 +26,20 @@ protected:
     void changeMode();
 
 private:
-    std::string prefix_;
-    std::string path_;
     Output* out_;
 
+    Trigger* begin_;
+    Trigger* end_;
+
+    std::string prefix_;
+    std::string path_;
+
     boost::filesystem::directory_iterator current_file_;
+
+    bool do_buffer_;
+    std::map<std::string, ConnectionTypeConstPtr> buffer_;
+
+    bool next_is_first_;
 };
 
 

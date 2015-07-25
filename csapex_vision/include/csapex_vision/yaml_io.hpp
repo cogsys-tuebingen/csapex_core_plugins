@@ -128,9 +128,13 @@ struct convert<cv::Mat> {
     static Node encode(const cv::Mat& rhs)
     {
         Node node;
+        node["version"] = 2;
+
         cv::FileStorage fs(".yml", cv::FileStorage::WRITE | cv::FileStorage::MEMORY);
         fs << "data" << rhs;
-        node["data"] = fs.releaseAndGetString().c_str();
+
+        std::string data = fs.releaseAndGetString();
+        node["data"] = YAML::Binary((unsigned char*) data.data(), data.size());
 
         return node;
     }
@@ -141,10 +145,33 @@ struct convert<cv::Mat> {
             return false;
         }
 
-        std::string buffer = node["data"].as<std::string>();
-        cv::FileStorage fs(buffer, cv::FileStorage::READ | cv::FileStorage::MEMORY);
-        fs["data"] >> rhs;
-        return true;
+        int version = 1;
+        if(node["version"].IsDefined()) {
+            version = node["version"].as<int>();
+        }
+
+        switch(version) {
+        case 1:
+        {
+            std::string buffer = node["data"].as<std::string>();
+            cv::FileStorage fs(buffer, cv::FileStorage::READ | cv::FileStorage::MEMORY);
+            fs["data"] >> rhs;
+            return true;
+        }
+        case 2:
+        {
+            YAML::Binary data = node["data"].as<YAML::Binary>();
+            std::string buffer(data.data(), data.data() + data.size());
+//            buffer.swap(data.data());
+            cv::FileStorage fs(buffer, cv::FileStorage::READ | cv::FileStorage::MEMORY);
+            fs["data"] >> rhs;
+            return true;
+        }
+        default:
+            break;
+        }
+
+        throw std::runtime_error(std::string("unknown serialization version ") + std::to_string(version));
     }
 };
 
