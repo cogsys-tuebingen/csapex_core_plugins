@@ -18,7 +18,7 @@ using namespace csapex::connection_types;
 namespace bfs = boost::filesystem;
 
 ImportFile::ImportFile()
-    : prefix_("msg"), do_buffer_(false), next_is_first_(true)
+    : prefix_("msg"), do_buffer_(false), at_end_(false), next_is_first_(true)
 {
 }
 
@@ -41,6 +41,10 @@ void ImportFile::setupParameters(Parameterizable& parameters)
     });
     param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("immediate", false);
     parameters.addParameter(immediate, std::bind(&ImportFile::changeMode, this));
+
+    addParameter(param::ParameterFactory::declareTrigger("restart"), [this](param::Parameter*) {
+        restart();
+    });
 }
 
 
@@ -88,6 +92,13 @@ void ImportFile::process()
 {
 }
 
+void ImportFile::restart()
+{
+    current_file_ = bfs::directory_iterator(path_);
+    next_is_first_ = true;
+    at_end_ = false;
+}
+
 void ImportFile::tick()
 {
     if(path_.empty()) {
@@ -99,14 +110,24 @@ void ImportFile::tick()
     bool continue_searching = true;
     while(continue_searching) {
         if(current_file_ == end) {
-            end_->trigger();
-            if(readParameter<bool>("loop")) {
-                current_file_ = bfs::directory_iterator(path_);
-                next_is_first_ = true;
+            if(!at_end_) {
+                at_end_ = true;
+                end_->trigger();
+
+            } else {
+                continue_searching = false;
             }
-            //            continue_searching = false;
+
+        } else if(at_end_){
+            if(readParameter<bool>("loop")) {
+                restart();
+
+            } else {
+                continue_searching = false;
+            }
 
         } else {
+            at_end_ = false;
             if(bfs::is_directory(current_file_->status())) {
                 // do nothing
             } else {

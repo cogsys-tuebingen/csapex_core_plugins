@@ -24,6 +24,7 @@ protected:
     void setImportPath();
     void setImportPrefix();
     void changeMode();
+    void restart();
 
 private:
     Output* out_;
@@ -39,6 +40,7 @@ private:
     bool do_buffer_;
     std::map<std::string, ConnectionTypeConstPtr> buffer_;
 
+    bool at_end_;
     bool next_is_first_;
 };
 
