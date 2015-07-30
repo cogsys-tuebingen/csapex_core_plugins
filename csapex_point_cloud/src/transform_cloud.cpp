@@ -64,9 +64,7 @@ void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud
 
     std::string frame = cloud->header.frame_id;
 
-    if(frame == transform->child_frame) {
-        frame = transform->frame_id;
-    }
+    frame = transform->frame_id;
 
     PointCloudMessage::Ptr msg(new PointCloudMessage(frame, cloud->header.stamp));
     msg->value = out;
