@@ -44,5 +44,7 @@ void InteractiveNode::abort()
 {
     stopped_ = true;
 
-    continuation_([](){});
+    if(continuation_) {
+        continuation_([](){});
+    }
 }
