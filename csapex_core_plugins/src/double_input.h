@@ -2,15 +2,12 @@
 #define DOUBLE_INPUT_H
 
 /// PROJECT
-#include <csapex/model/node.h>
-
-/// SYSTEM
-#include <QDoubleSpinBox>
+#include <csapex/model/tickable_node.h>
 
 namespace csapex {
 
 template <typename T>
-class NumberInput : public Node
+class NumberInput : public TickableNode
 {
 public:
     NumberInput();

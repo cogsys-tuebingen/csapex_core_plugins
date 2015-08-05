@@ -2,18 +2,18 @@
 #define IMPORT_CIN_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 namespace csapex {
 
-class ImportCin : public Node
+class ImportCin : public TickableNode
 {
 public:
     ImportCin();
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void tick();
+    virtual void tick() override;
 
 private:
     Output* connector_;

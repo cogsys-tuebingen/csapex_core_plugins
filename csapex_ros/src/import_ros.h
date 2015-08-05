@@ -18,12 +18,12 @@ public:
     ImportRos();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
-    virtual void setupROS();
-    virtual void processROS();
-    virtual bool canTick();
-    virtual void tickROS();
-    void abort();
+    virtual void setupParameters(Parameterizable& parameters) override;
+    virtual void setupROS() override;
+    virtual void processROS() override;
+    virtual bool canTick() override;
+    virtual void tickROS() override;
+    virtual void abort() override;
 
     void callback(ConnectionTypeConstPtr message);
 

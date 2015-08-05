@@ -2,23 +2,23 @@
 #define LOADFILESTORAGE_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
 namespace csapex {
-class LoadFilestorage : public Node
+class LoadFilestorage : public TickableNode
 {
 public:
     LoadFilestorage();
     ~LoadFilestorage();
 
     virtual void process() override;
-    virtual void tick();
-    virtual bool canTick();
+    virtual void tick() override;
+    virtual bool canTick() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 private:
     Output *output_;

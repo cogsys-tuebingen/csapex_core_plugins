@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/message_provider.h>
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 /// SYSTEM
 #include <QString>
@@ -13,7 +13,7 @@ namespace csapex
 
 class Output;
 
-class FileImporter : public Node
+class FileImporter : public TickableNode
 {
 public:
     FileImporter();
@@ -25,8 +25,8 @@ public:
     void import();
 
     virtual void process() override;
-    bool canTick();
-    void tick();
+    virtual bool canTick() override;
+    virtual void tick() override;
 
     bool doImport(const QString& file_path);
     void doImportDir(const QString& dir);

@@ -4,24 +4,24 @@
 /// COMPONENT
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 /// SYSTEM
 
 namespace csapex {
 
 
-class BFOptimizer : public csapex::Node
+class BFOptimizer : public csapex::TickableNode
 {
     friend class BFOptimizerAdapter;
 
 public:
     BFOptimizer();
 
-    void setupParameters(Parameterizable& parameters);
-    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
-    void tick();
+    virtual void tick() override;
 
     int stepsNecessary();
 

@@ -2,7 +2,7 @@
 #define CAMERA_H_
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
@@ -13,7 +13,7 @@
 namespace csapex
 {
 
-class Camera : public Node
+class Camera : public TickableNode
 {
 public:
     Camera();

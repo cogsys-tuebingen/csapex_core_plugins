@@ -4,27 +4,27 @@
 /// COMPONENT
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 /// SYSTEM
 
 namespace csapex {
 
 
-class OptimizationDummy : public csapex::Node
+class OptimizationDummy : public csapex::TickableNode
 {
 public:
     OptimizationDummy();
 
-    void setupParameters(Parameterizable& parameters);
-    void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
 
-    bool canTick();
+    virtual bool canTick() override;
 
 private:
     void start();
-    void tick();
+    virtual void tick() override;
 
 private:
     Slot* in_;

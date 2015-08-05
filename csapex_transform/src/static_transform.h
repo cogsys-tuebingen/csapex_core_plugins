@@ -2,11 +2,11 @@
 #define STATIC_TRANSFORM_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 namespace csapex {
 
-class StaticTransform : public csapex::Node
+class StaticTransform : public csapex::TickableNode
 {
 public:
     StaticTransform();

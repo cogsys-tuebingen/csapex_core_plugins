@@ -66,9 +66,12 @@ void ScanLabelerAdapter::labelSelected(int label)
 
 void ScanLabelerAdapter::updateLabel(int label)
 {
-    NodeWorkerPtr node = node_.lock();
-    if(node) {
-        node->getNode()->getParameter("label")->set(label);
+    NodeWorkerPtr node_worker = node_.lock();
+    if(node_worker) {
+        auto node = node_worker->getNode().lock();
+        if(node) {
+            node->getParameter("label")->set(label);
+        }
     }
 }
 
@@ -241,8 +244,8 @@ void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
 
 void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 {
-    NodeWorkerPtr node = node_.lock();
-    if(!node) {
+    NodeWorkerPtr node_worker = node_.lock();
+    if(!node_worker) {
         return;
     }
 
@@ -277,7 +280,8 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 
     scene->update();
 
-    if(node->getNode()->readParameter<bool>("automatic")) {
+    auto node = node_worker->getNode().lock();
+    if(node && node->readParameter<bool>("automatic")) {
         submit();
     }
 }

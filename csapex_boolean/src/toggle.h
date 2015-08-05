@@ -2,13 +2,13 @@
 #define TOGGLE_H
 
 /// COMPONENT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 namespace csapex {
 
 namespace boolean {
 
-class Toggle : public Node
+class Toggle : public TickableNode
 {
 public:
     Toggle();

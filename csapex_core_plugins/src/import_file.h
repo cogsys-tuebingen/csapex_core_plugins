@@ -2,7 +2,7 @@
 #define IMPORT_FILE_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>
@@ -10,7 +10,7 @@
 namespace csapex {
 
 
-class ImportFile : public csapex::Node
+class ImportFile : public csapex::TickableNode
 {
 public:
     ImportFile();
@@ -18,7 +18,7 @@ public:
     void setupParameters(Parameterizable& parameters);
     void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
-    void tick();
+    virtual void tick() override;
 
 protected:
     void setImportPath();

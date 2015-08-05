@@ -5,7 +5,7 @@
 #include <csapex_ros/ros_handler.h>
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 
 /// SYSTEM
 #include <ros/ros.h>
@@ -13,7 +13,7 @@
 namespace csapex
 {
 
-class RosNode : public Node
+class RosNode : public TickableNode
 {
 protected:
     RosNode();
@@ -25,7 +25,7 @@ protected:
     virtual void processROS() = 0;
 
     virtual bool canTick() override;
-    virtual void tick();
+    virtual void tick() override;
     virtual void tickROS();
 
     ROSHandler& getRosHandler();

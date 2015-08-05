@@ -2,7 +2,7 @@
 #define DYNAMIC_TRANSFORM_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex/model/tickable_node.h>
 #include <utils_param/set_parameter.h>
 
 /// SYSTEM
@@ -10,17 +10,17 @@
 
 namespace csapex {
 
-class DynamicTransform : public csapex::Node
+class DynamicTransform : public csapex::TickableNode
 {
 public:
     DynamicTransform();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
+    virtual void setupParameters(Parameterizable& parameters) override;
 
     virtual void process() override;
-    bool canTick();
-    virtual void tick();
+    virtual bool canTick() override;
+    virtual void tick() override;
     void update();
 
     void refresh();
