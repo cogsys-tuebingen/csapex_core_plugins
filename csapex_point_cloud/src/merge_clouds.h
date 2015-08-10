@@ -25,11 +25,12 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
-    Input* in_a_;
-    Input* in_b_;
+    void updateInputs();
+
+private:
     Output* out_;
 
-    pcl::PointCloud<pcl::PointXYZL>::Ptr result_;
+    connection_types::PointCloudMessage::Ptr result_;
 };
 
 
