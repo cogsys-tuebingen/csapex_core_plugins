@@ -9,7 +9,7 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_vision/yaml_io.hpp>
-
+#include <csapex/utility/color.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -44,8 +44,10 @@ void HoughLinesP::process()
     cv::HoughLinesP(in->value, lines, rho_, theta_/180, threshold_, min_line_length_, max_line_gap_);
 
     for( size_t i = 0; i < lines.size(); i++ ) {
+        double b,g,r;
+        color::fromCount(i, r,g,b);
         cv::line(out->value, cv::Point(lines[i][0], lines[i][1]),
-                cv::Point(lines[i][2], lines[i][3]), cv::Scalar(0,0,255), 3, 8 );
+                cv::Point(lines[i][2], lines[i][3]), cv::Scalar(b,g,r), 1, CV_AA );
     }
 
     msg::publish<GenericVectorMessage, cv::Vec4i>(output_vector_, lines_ptr);

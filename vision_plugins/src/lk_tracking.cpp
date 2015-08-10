@@ -25,7 +25,7 @@ LKTracking::LKTracking()
 
 void LKTracking::setupParameters(Parameterizable &parameters)
 {
-    std::function<void(const param::Parameter*)> cb = std::bind(&LKTracking::update, this, std::placeholders::_1);
+    std::function<void(param::Parameter*)> cb = std::bind(&LKTracking::update, this, std::placeholders::_1);
 
     parameters.addParameter(param::ParameterFactory::declareRange<int>("winSize", 10, 80, 31, 1));
     parameters.addParameter(param::ParameterFactory::declareRange<int>("subPixWinSize", 1, 40, 10, 1), cb);
