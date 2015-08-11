@@ -43,15 +43,15 @@ void DynamicTransform::setupParameters(Parameterizable& parameters)
 
 bool DynamicTransform::canTick()
 {
-    return !init_
-            ||
-            (source_p->noParameters() != 0 && target_p->noParameters() != 0 &&
-            !msg::isConnected(time_in_));
+    return true;
 }
 
 void DynamicTransform::tick()
 {
-    process();
+    if(source_p->noParameters() != 0 && target_p->noParameters() != 0 && !msg::isConnected(time_in_))
+    {
+        process();
+    }
 }
 
 void DynamicTransform::process()
