@@ -10,8 +10,6 @@ namespace csapex {
 
 class CloudRenderer : public InteractiveNode
 {
-    friend class CloudRendererAdapter;
-
 public:
     CloudRenderer();
 
@@ -22,6 +20,9 @@ public:
     virtual void finishProcess() override;
 
     void publishImage(const cv::Mat &img);
+
+    connection_types::PointCloudMessage::ConstPtr getMessage() const;
+    bool isOutputConnected() const;
 
 private:
     void refresh();
@@ -35,6 +36,7 @@ public:
     boost::signals2::signal<void()> refresh_request;
 
 private:
+    mutable std::mutex message_mutex_;
     connection_types::PointCloudMessage::ConstPtr message_;
 
     connection_types::CvMatMessage::Ptr result_;

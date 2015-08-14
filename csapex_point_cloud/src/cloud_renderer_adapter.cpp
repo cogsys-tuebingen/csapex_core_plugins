@@ -275,7 +275,7 @@ void CloudRendererAdapter::paintGLImpl(bool request)
     view_->blockSignals(false);
     //    view_->scene()->update();
 
-    if(msg::isConnected(n->output_) && request){
+    if(n->isOutputConnected() && request){
         cv::Mat mat = QtCvImageConverter::Converter<QImage>::QImage2Mat(img);
         n->publishImage(mat);
     }
@@ -481,7 +481,7 @@ void CloudRendererAdapter::displayCloud()
     if(!node) {
         return;
     }
-    auto copy = node->message_;
+    auto copy = node->getMessage();
     boost::apply_visitor (PointCloudMessage::Dispatch<CloudRendererAdapter>(this, copy), copy->value);
 }
 

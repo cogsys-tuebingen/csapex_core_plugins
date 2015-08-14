@@ -81,8 +81,11 @@ void CloudRenderer::beginProcess()
 
     PointCloudMessage::ConstPtr msg = msg::getMessage<PointCloudMessage>(input_);
 
-    message_ = msg;
-    result_.reset();
+    {
+        std::unique_lock<std::mutex> lock(message_mutex_);
+        message_ = msg;
+        result_.reset();
+    }
 
     display_request();
 
@@ -100,6 +103,16 @@ void CloudRenderer::finishProcess()
     }
 }
 
+connection_types::PointCloudMessage::ConstPtr CloudRenderer::getMessage() const
+{
+    std::unique_lock<std::mutex> lock(message_mutex_);
+    return message_;
+}
+
+bool CloudRenderer::isOutputConnected() const
+{
+    return msg::isConnected(output_);
+}
 
 void CloudRenderer::refresh()
 {
