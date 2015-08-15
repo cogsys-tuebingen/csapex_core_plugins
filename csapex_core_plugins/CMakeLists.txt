@@ -66,6 +66,8 @@ add_library(csapex_core_plugins
     src/demultiplexer.cpp
     src/multiplexer.cpp
 
+    src/vector_merge.cpp
+
     src/composer.cpp
     src/decomposer.cpp
 

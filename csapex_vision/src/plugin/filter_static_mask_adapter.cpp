@@ -23,6 +23,8 @@ CSAPEX_REGISTER_NODE_ADAPTER(FilterStaticMaskAdapter, csapex::FilterStaticMask)
 FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<FilterStaticMask> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
+    qRegisterMetaType < cv::Mat > ("cv::Mat");
+
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal

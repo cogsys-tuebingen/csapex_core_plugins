@@ -81,6 +81,12 @@ struct Image2CvMat
                 cvb.encoding = sensor_msgs::image_encodings::RGB8;
             } else if(apex_msg->getEncoding().matches(enc::yuv)) {
                 cvb.encoding = sensor_msgs::image_encodings::YUV422;
+            } else if(apex_msg->getEncoding().matches(enc::mono)) {
+                cvb.encoding = sensor_msgs::image_encodings::MONO8;
+            } else if(apex_msg->getEncoding().matches(enc::depth)) {
+                cvb.encoding = sensor_msgs::image_encodings::TYPE_16UC1;
+            } else {
+                std::cerr << "cannot convert encoding " << apex_msg->getEncoding().toString() << " to ROS" << std::endl;
             }
             break;
         }
