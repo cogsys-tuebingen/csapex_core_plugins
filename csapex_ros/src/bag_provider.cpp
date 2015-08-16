@@ -61,8 +61,7 @@ void BagProvider::load(const std::string& file)
     std::cout << "loading bag file " << file << ", this can take a while..." << std::endl;
     bag.open(file_);
 
-    RosMessageConversion& rmc = RosMessageConversion::instance();
-    view_all_ = new rosbag::View(bag, rosbag::TypeQuery(rmc.getRegisteredRosTypes()));
+    view_all_ = new rosbag::View(bag);
 
     std::set<std::string> topics;
     for(rosbag::View::iterator it = view_all_->begin(); it != view_all_->end(); ++it) {
