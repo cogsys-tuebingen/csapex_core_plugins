@@ -103,7 +103,16 @@ void RosMessageConversion::publish(ros::Publisher &pub, ConnectionType::ConstPtr
 
 connection_types::Message::Ptr RosMessageConversion::instantiate(const rosbag::MessageInstance &source)
 {
-    return converters_[source.getDataType()]->instantiate(source);
+    auto pos = converters_.find(source.getDataType());
+    if(pos != converters_.end()) {
+        return pos->second->instantiate(source);
+    } else {
+        auto msg = std::make_shared<connection_types::GenericRosMessage>();
+        auto ros_msg = source.instantiate<topic_tools::ShapeShifter>();
+        msg->value = shared_ptr_tools::to_std_shared(ros_msg);
+
+        return msg;
+    }
 }
 
 //std::vector<std::string> RosMessageConversion::getRegisteredRosTypes()
