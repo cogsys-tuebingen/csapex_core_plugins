@@ -8,11 +8,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_value_message.hpp>
 
-/// SYSTEM
-#include <QLineEdit>
-#include <QPushButton>
-#include <QBoxLayout>
-
 CSAPEX_REGISTER_CLASS(csapex::TextInput, csapex::Node)
 
 using namespace csapex;
@@ -23,12 +18,16 @@ TextInput::TextInput()
 
 void TextInput::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareText("text", ""), std::bind(&TextInput::publish, this));
+    parameters.addParameter(param::ParameterFactory::declareText("text", ""));
 }
 
 void TextInput::process()
 {
+}
 
+void TextInput::tick()
+{
+    publish();
 }
 
 void TextInput::setup(NodeModifier& node_modifier)
