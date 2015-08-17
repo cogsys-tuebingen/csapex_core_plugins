@@ -152,7 +152,7 @@ void BlobDetector::process()
                 double r, g, b;
                 _HSV2RGB_((double)((blob.label *77)%360), .5, 1., r, g, b);
                 cv::Scalar color(b,g,r);
-                cv::line(debug->value, p, next, color, 5, CV_AA);
+                cv::line(debug->value, p, next, color, 1, CV_AA);
 
                 p = next;
             }
