@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <utils_qt/QtCvImageConverter.h>
+#include <csapex/view/QtCvImageConverter.h>
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
 #include <csapex/model/node_modifier.h>

@@ -33,14 +33,13 @@ public:
         connection_types::VectorMessage::Ptr result(new connection_types::VectorMessage);
 
         bool first = true;
-        long stamp_;
         std::vector<Input*> inputs = modifier_->getMessageInputs();
         for(std::size_t i = 0 ; i < inputs.size() ; i++) {
             Input *in = inputs[i];
             if(msg::hasMessage(in)) {
                 connection_types::VectorMessage::ConstPtr msg = msg::getMessage<connection_types::VectorMessage>(in);
                 if(first) {
-                    stamp_ = msg->stamp_micro_seconds;
+                    result->stamp_micro_seconds = msg->stamp_micro_seconds;
                     first = false;
                 }
                 auto v = msg->value;

@@ -4,7 +4,7 @@
 /// SYSTEM
 #include <QPixmap>
 #include <QGraphicsSceneEvent>
-#include <utils_qt/QtCvImageConverter.h>
+#include <csapex/view/QtCvImageConverter.h>
 #include <QKeyEvent>
 #include <QPushButton>
 #include <QBoxLayout>

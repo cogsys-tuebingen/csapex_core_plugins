@@ -9,7 +9,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/msg/io.h>
-#include <utils_qt/QtCvImageConverter.h>
+#include <csapex/view/QtCvImageConverter.h>
 
 /// SYSTEM
 #include <QImage>

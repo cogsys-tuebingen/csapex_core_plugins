@@ -80,11 +80,14 @@ void FileImporter::changeMode()
 
 void FileImporter::process()
 {
-
+    tick();
 }
 
 bool FileImporter::canTick()
 {
+    if(!modifier_->isSource()) {
+        return false;
+    }
     if(directory_import_) {
         return (readParameter<int>("directory/current") < (int) dir_files_.size()) || readParameter<bool>("directory/loop");
     } else {

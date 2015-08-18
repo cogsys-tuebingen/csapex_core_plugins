@@ -9,7 +9,7 @@
 
 /// SYSTEM
 #include <QtOpenGL>
-#include <utils_qt/QtCvImageConverter.h>
+#include <csapex/view/QtCvImageConverter.h>
 #include <pcl/for_each_type.h>
 #include <pcl/conversions.h>
 
