@@ -2,7 +2,7 @@
 #define ASSIGN_ROI_CLASS_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/default_node_adapter.h>
+#include <csapex/view/node/default_node_adapter.h>
 
 /// COMPONENT
 #include "assign_roi_class.h"
