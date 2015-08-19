@@ -8,7 +8,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/assert.h>
 #include <utils_param/parameter_factory.h>
-#include <csapex/core/serialization.h>
+#include <csapex/serialization/serialization.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Splitter, csapex::Node)
 

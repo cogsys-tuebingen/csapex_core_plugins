@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
-#include <csapex/msg/message_factory.h>
+#include <csapex/factory/message_factory.h>
 #include <csapex/model/connection_type.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/path_parameter.h>
