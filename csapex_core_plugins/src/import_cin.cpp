@@ -2,7 +2,7 @@
 #include "import_cin.h"
 
 /// PROJECT
-#include <csapex/msg/message_factory.h>
+#include <csapex/factory/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
 #include <csapex/msg/io.h>

@@ -5,12 +5,12 @@
 #include <csapex_vision/cv_mat_message.h>
 
 /// PROJECT
-#include <csapex/msg/message_factory.h>
+#include <csapex/factory/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_ros/ros_handler.h>
 #include <csapex/factory/generic_node_factory.hpp>
-#include <csapex/model/node_factory.h>
+#include <csapex/factory/node_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

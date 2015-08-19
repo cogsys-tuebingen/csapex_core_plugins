@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/msg/message_factory.h>
+#include <csapex/factory/message_factory.h>
 #include <csapex/utility/timer.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ConfidenceMatrixDisplay, csapex::Node)

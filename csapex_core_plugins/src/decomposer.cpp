@@ -6,7 +6,7 @@
 #include <utils_param/parameter_factory.h>
 #include <csapex_core_plugins/composite_message.h>
 #include <csapex/msg/output.h>
-#include <csapex/core/serialization.h>
+#include <csapex/serialization/serialization.h>
 
 
 using namespace csapex;

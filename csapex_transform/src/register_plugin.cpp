@@ -6,7 +6,7 @@
 #include <csapex_ros/tf_listener.h>
 
 /// PROJECT
-#include <csapex/msg/message_factory.h>
+#include <csapex/factory/message_factory.h>
 #include <csapex/model/tag.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_transform/transform_message.h>

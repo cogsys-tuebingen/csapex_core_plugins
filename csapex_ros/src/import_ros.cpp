@@ -7,7 +7,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex/msg/message_factory.h>
+#include <csapex/factory/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
 #include <utils_param/parameter_factory.h>
