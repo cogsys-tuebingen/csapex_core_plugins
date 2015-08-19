@@ -13,8 +13,6 @@
 #include <utils_param/io.h>
 #include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <csapex/utility/qt_helper.hpp>
-#include <csapex/utility/q_signal_relay.h>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/set_parameter.h>
 #include <csapex/utility/register_apex_plugin.h>

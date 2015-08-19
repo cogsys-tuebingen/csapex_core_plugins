@@ -3,7 +3,7 @@
 
 
 /// PROJECT
-#include <csapex/view/node_adapter.h>
+#include <csapex/view/node/node_adapter.h>
 
 /// COMPONENT
 #include "text_display.h"

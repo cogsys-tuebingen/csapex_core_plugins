@@ -2,7 +2,7 @@
 #define FILTER_STATIC_MASK_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/default_node_adapter.h>
+#include <csapex/view/node/default_node_adapter.h>
 
 /// COMPONENT
 #include "filter_static_mask.h"

@@ -2,7 +2,7 @@
 #define EVALUATE_BINARY_CLASSIFIER_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/node_adapter.h>
+#include <csapex/view/node/node_adapter.h>
 
 /// COMPONENT
 #include "evaluate_binary_classifier.h"

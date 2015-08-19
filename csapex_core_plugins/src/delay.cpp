@@ -7,7 +7,6 @@
 #include <csapex/msg/message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <utils_param/parameter_factory.h>
-#include <csapex/utility/qt_helper.hpp>
 #include <csapex/model/node_modifier.h>
 #include <utils_param/output_progress_parameter.h>
 #include <csapex/signal/trigger.h>

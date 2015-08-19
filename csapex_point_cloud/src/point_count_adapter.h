@@ -2,7 +2,7 @@
 #define POINT_COUNT_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/node_adapter.h>
+#include <csapex/view/node/node_adapter.h>
 
 /// COMPONENT
 #include "point_count.h"

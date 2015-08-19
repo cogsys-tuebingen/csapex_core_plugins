@@ -10,7 +10,6 @@
 #include <csapex/msg/message_factory.h>
 #include <csapex/utility/stream_interceptor.h>
 #include <csapex/msg/message.h>
-#include <csapex/utility/qt_helper.hpp>
 #include <utils_param/parameter_factory.h>
 #include <utils_param/set_parameter.h>
 #include <csapex/model/node_modifier.h>

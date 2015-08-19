@@ -2,7 +2,7 @@
 #define SCAN_LABELER_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/default_node_adapter.h>
+#include <csapex/view/node/default_node_adapter.h>
 
 /// COMPONENT
 #include "scan_labeler.h"

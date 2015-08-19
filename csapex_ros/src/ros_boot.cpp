@@ -7,7 +7,7 @@
 #include <csapex/model/node.h>
 #include <csapex/msg/message_provider.h>
 #include <csapex/msg/message_renderer.h>
-#include <csapex/view/node_adapter_builder.h>
+#include <csapex/view/node/node_adapter_builder.h>
 
 using namespace csapex;
 using namespace pluginlib;

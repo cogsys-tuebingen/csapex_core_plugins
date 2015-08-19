@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/view/QtCvImageConverter.h>
+#include <csapex/view/utility/QtCvImageConverter.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ScanMessageRenderer, csapex::MessageRenderer)
 CSAPEX_REGISTER_CLASS(csapex::LabeledScanMessageRenderer, csapex::MessageRenderer)

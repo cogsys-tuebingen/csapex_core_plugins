@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/view/QtCvImageConverter.h>
+#include <csapex/view/utility/QtCvImageConverter.h>
 
 /// SYSTEM
 #include <QImage>

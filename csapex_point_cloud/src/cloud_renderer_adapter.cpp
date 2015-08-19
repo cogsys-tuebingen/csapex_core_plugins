@@ -4,12 +4,11 @@
 /// PROJECT
 #include <csapex/utility/register_node_adapter.h>
 #include <csapex_point_cloud/point_cloud_message.h>
-#include <csapex/utility/q_signal_relay.h>
 #include <csapex/msg/io.h>
 
 /// SYSTEM
 #include <QtOpenGL>
-#include <csapex/view/QtCvImageConverter.h>
+#include <csapex/view/utility/QtCvImageConverter.h>
 #include <pcl/for_each_type.h>
 #include <pcl/conversions.h>
 
