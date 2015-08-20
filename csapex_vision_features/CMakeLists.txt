@@ -57,8 +57,14 @@ add_library(csapex_vision_features
 target_link_libraries(csapex_vision_features
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
-add_library(csapex_vision_features_plugin
+add_library(csapex_vision_features_plugin_core
     src/register_plugin.cpp
+)
+target_link_libraries(csapex_vision_features_plugin_core csapex_vision_features
+    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+
+
+add_library(csapex_vision_features_plugin_node
     src/extract_keypoints.cpp
     src/extract_descriptors.cpp
     src/grid_arranged_keypoints.cpp
@@ -66,7 +72,7 @@ add_library(csapex_vision_features_plugin
     src/display_keypoints.cpp
     src/match_descriptors.cpp
 )
-target_link_libraries(csapex_vision_features_plugin csapex_vision_features
+target_link_libraries(csapex_vision_features_plugin_node csapex_vision_features
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
 
@@ -82,7 +88,11 @@ install(TARGETS csapex_vision_features
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-install(TARGETS csapex_vision_features_plugin
+install(TARGETS csapex_vision_features_plugin_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_vision_features_plugin_node
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

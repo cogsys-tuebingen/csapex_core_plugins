@@ -51,29 +51,45 @@ include_directories(include
 add_library(csapex_scan_2d
     src/scan_message.cpp
     src/labeled_scan_message.cpp
+    src/renderer.cpp
 )
 target_link_libraries(csapex_scan_2d
     yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
 
-add_library(csapex_scan_2d_plugin
-    src/register_plugin.cpp
 
+add_library(csapex_scan_2d_plugin_core
+    src/register_plugin.cpp
+    src/scan_message_renderer.cpp
+)
+
+target_link_libraries(csapex_scan_2d_plugin_core
+    yaml-cpp csapex_scan_2d ${catkin_LIBRARIES})
+
+
+
+add_library(csapex_scan_2d_plugin_node
     src/segment_labeler.cpp
     src/split_labeled_scan.cpp
     src/labeled_scan_to_scan.cpp
-    src/renderer.cpp
     src/segmentation_renderer.cpp
     src/segment_distance_filter.cpp
     src/segment_mincount_filter.cpp
     src/segment_label_filter.cpp
     src/scan_renderer.cpp
-    src/scan_message_renderer.cpp
     src/scan_labeler.cpp
+)
+
+target_link_libraries(csapex_scan_2d_plugin_node
+    yaml-cpp csapex_scan_2d ${catkin_LIBRARIES})
+
+
+
+add_library(csapex_scan_2d_plugin_qt
     src/scan_labeler_adapter.cpp
 )
 
-target_link_libraries(csapex_scan_2d_plugin
+target_link_libraries(csapex_scan_2d_plugin_qt
     yaml-cpp csapex_scan_2d ${catkin_LIBRARIES})
 
 
@@ -87,7 +103,15 @@ target_link_libraries(csapex_scan_2d_plugin
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_scan_2d
+install(TARGETS csapex_scan_2d_plugin_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_scan_2d_plugin_node
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_scan_2d_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

@@ -22,7 +22,6 @@ public:
     ~APEXRosInterface();
     void prepare(Settings& settings);
     void init(CsApexCore& core);
-    void initUI(DragIO& dragio);
     void shutdown();
 
 private:

@@ -51,13 +51,21 @@ add_library(csapex_point_cloud
 target_link_libraries(csapex_point_cloud
     yaml-cpp ${catkin_LIBRARIES})
 
-add_library(csapex_point_cloud_plugin
-    src/merge_clouds.cpp
+
+add_library(csapex_point_cloud_plugin_core
     src/register_plugin.cpp
+)
+
+target_link_libraries(csapex_point_cloud_plugin_core
+    yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
+    csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
+)
+
+
+add_library(csapex_point_cloud_plugin_node
+    src/merge_clouds.cpp
     src/point_count.cpp
-    src/point_count_adapter.cpp
     src/cloud_renderer.cpp
-    src/cloud_renderer_adapter.cpp
     src/transform_cloud.cpp
     src/voxel_grid.cpp
     src/extract_timestamp.cpp
@@ -95,7 +103,17 @@ add_library(csapex_point_cloud_plugin
     src/transform_from_models.cpp
 )
 
-target_link_libraries(csapex_point_cloud_plugin
+target_link_libraries(csapex_point_cloud_plugin_node
+    yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
+    csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
+)
+
+add_library(csapex_point_cloud_plugin_qt
+    src/point_count_adapter.cpp
+    src/cloud_renderer_adapter.cpp
+)
+
+target_link_libraries(csapex_point_cloud_plugin_qt
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
     csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
 )
@@ -113,7 +131,15 @@ install(TARGETS csapex_point_cloud
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-install(TARGETS csapex_point_cloud_plugin
+install(TARGETS csapex_point_cloud_plugin_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_point_cloud_plugin_node
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_point_cloud_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

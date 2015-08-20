@@ -5,7 +5,6 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ros/ros_handler.h>
 #include "import_ros.h"
-#include <csapex/core/drag_io.h>
 #include <csapex/model/graph.h>
 #include <csapex/model/node_state.h>
 #include <csapex/command/add_node.h>
@@ -25,75 +24,6 @@
 CSAPEX_REGISTER_CLASS(csapex::APEXRosInterface, csapex::CorePlugin)
 
 using namespace csapex;
-
-
-namespace {
-class RosIoHandler
-        : public DragIO::HandlerEnter, public DragIO::HandlerMove, public DragIO::HandlerDrop
-{
-    static const boost::regex fmt;
-
-    std::string getCmd(QDropEvent* e)
-    {
-        QByteArray itemData = e->mimeData()->data("application/x-qabstractitemmodeldatalist");
-        QDataStream stream(&itemData, QIODevice::ReadOnly);
-
-        int r, c;
-        QMap<int, QVariant> v;
-        stream >> r >> c >> v;
-
-        return v[Qt::UserRole].toString().toStdString();
-    }
-
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragEnterEvent* e) {
-        if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
-            std::string cmd = getCmd(e);
-
-            bool cmd_could_be_topic = boost::regex_match(cmd, fmt);
-
-            if(cmd_could_be_topic) {
-                if(ROSHandler::instance().isConnected() && ROSHandler::instance().topicExists(cmd)) {
-                    e->accept();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragMoveEvent* e){
-        return false;
-    }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e, const QPointF& scene_pos) {
-        if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
-            std::string cmd = getCmd(e);
-
-            bool cmd_could_be_topic = boost::regex_match(cmd, fmt);
-
-            if(cmd_could_be_topic) {
-                if(ROSHandler::instance().topicExists(cmd)) {
-                    QPoint pos = e->pos();
-
-                    UUID uuid = UUID::make(dispatcher->getGraph()->makeUUIDPrefix("csapex::ImportRos"));
-
-                    NodeState::Ptr state(new NodeState(nullptr));
-                    ImportRos dummy;
-                    dummy.getParameter("topic")->set(cmd);
-                    state->setParameterState(dummy.getParameterState());
-
-                    std::string type("csapex::ImportRos");
-                    dispatcher->execute(Command::Ptr(new command::AddNode(type, Point(pos.x(), pos.y()), UUID::NONE, uuid, state)));
-
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-};
-
-const boost::regex RosIoHandler::fmt("[a-zA-Z0-9_\\-/]+");
-}
-
 
 template <typename RosType, typename ApexType>
 struct ConvertIntegral
@@ -148,11 +78,6 @@ void APEXRosInterface::registerCommandListener()
             <std_msgs::String>("command", 10, std::bind(&APEXRosInterface::command, this, std::placeholders::_1, false));
 
     ros::spinOnce();
-}
-
-void APEXRosInterface::initUI(DragIO &dragio)
-{
-    dragio.registerHandler<RosIoHandler>();
 }
 
 void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd, bool global_cmd)

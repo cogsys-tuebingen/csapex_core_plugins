@@ -36,9 +36,18 @@ add_library(csapex_transform
 target_link_libraries(csapex_transform
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
 
-add_library(csapex_transform_plugin
-    src/transform_to_odometry.cpp
+
+add_library(csapex_transform_plugin_core
     src/register_plugin.cpp
+)
+target_link_libraries(csapex_transform_plugin_core csapex_transform
+    yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
+
+
+
+
+add_library(csapex_transform_plugin_node
+    src/transform_to_odometry.cpp
     src/clock.cpp
     src/time_offset.cpp
     src/static_transform.cpp
@@ -49,7 +58,7 @@ add_library(csapex_transform_plugin
     src/transform_filter.cpp
     src/extract_timestamp.cpp
 )
-target_link_libraries(csapex_transform_plugin csapex_transform
+target_link_libraries(csapex_transform_plugin_node csapex_transform
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
 
 
@@ -65,7 +74,11 @@ install(TARGETS csapex_transform
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-install(TARGETS csapex_transform_plugin
+install(TARGETS csapex_transform_plugin_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_transform_plugin_node
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

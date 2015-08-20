@@ -48,7 +48,17 @@ target_link_libraries(csapex_core_lib
     ${catkin_LIBRARIES}
 )
 
-add_library(csapex_core_plugins
+add_library(csapex_core_plugins_core
+    src/register_core_plugins.cpp
+)
+
+target_link_libraries(csapex_core_plugins_core csapex_core_lib
+    ${catkin_LIBRARIES}
+)
+
+
+
+add_library(csapex_core_plugins_node
     src/import_file.cpp
     src/relay.cpp
     src/delay.cpp
@@ -72,17 +82,26 @@ add_library(csapex_core_plugins
     src/decomposer.cpp
 
     src/output_display.cpp
-    src/output_display_adapter.cpp
     src/text_display.cpp
-    src/text_display_adapter.cpp
 
     src/say_text.cpp
     src/text_convert.cpp
-    src/register_core_plugins.cpp
+)
+
+target_link_libraries(csapex_core_plugins_node csapex_core_lib
+    ${catkin_LIBRARIES}
 )
 
 
-target_link_libraries(csapex_core_plugins csapex_core_lib
+
+add_library(csapex_core_plugins_qt
+    src/file_drag_io.cpp
+    src/output_display_adapter.cpp
+    src/text_display_adapter.cpp
+)
+
+
+target_link_libraries(csapex_core_plugins_qt csapex_core_lib
     ${catkin_LIBRARIES}
 )
 
@@ -98,7 +117,17 @@ install(TARGETS csapex_core_lib
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-install(TARGETS csapex_core_plugins
+install(TARGETS csapex_core_plugins_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS csapex_core_plugins_node
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS csapex_core_plugins_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

@@ -26,16 +26,22 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(csapex_boolean_plugin
+add_library(csapex_boolean_plugin_core
     src/register_plugin.cpp
+)
+target_link_libraries(csapex_boolean_plugin_core
+    yaml-cpp ${catkin_LIBRARIES})
+
+
+add_library(csapex_boolean_plugin_node
     src/nand.cpp
     src/toggle.cpp
     src/indicator.cpp
 
     res/csapex_boolean_resources.qrc
 )
-target_link_libraries(csapex_boolean_plugin
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES})
+target_link_libraries(csapex_boolean_plugin_node
+    yaml-cpp ${catkin_LIBRARIES})
 
 #
 # INSTALL
@@ -44,7 +50,12 @@ target_link_libraries(csapex_boolean_plugin
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_boolean_plugin
+install(TARGETS csapex_boolean_plugin_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS csapex_boolean_plugin_node
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

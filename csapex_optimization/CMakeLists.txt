@@ -30,14 +30,21 @@ target_link_libraries(csapex_optimization
 )
 
 
-add_library(csapex_optimization_plugin
-    src/parameter_dialog.cpp
+add_library(csapex_optimization_plugin_node
     src/optimization_dummy.cpp
     src/bf_optimizer.cpp
+)
+
+target_link_libraries(csapex_optimization_plugin_node
+    yaml-cpp csapex_optimization ${catkin_LIBRARIES})
+
+
+add_library(csapex_optimization_plugin_qt
+    src/parameter_dialog.cpp
     src/bf_optimizer_adapter.cpp
 )
 
-target_link_libraries(csapex_optimization_plugin
+target_link_libraries(csapex_optimization_plugin_qt
     yaml-cpp csapex_optimization ${catkin_LIBRARIES})
 
 #
@@ -51,8 +58,13 @@ install(TARGETS csapex_optimization
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-        
-install(TARGETS csapex_optimization_plugin
+
+install(TARGETS csapex_optimization_plugin_node
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS csapex_optimization_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

@@ -7,7 +7,6 @@
 /// PROJECT
 #include <csapex/factory/message_factory.h>
 #include <csapex/model/tag.h>
-#include <csapex/core/drag_io.h>
 #include <csapex/command/add_node.h>
 #include <csapex/command/dispatcher.h>
 #include <csapex/factory/node_factory.h>
@@ -17,77 +16,17 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
-#include <QStringList>
-#include <QUrl>
-#include <QMimeData>
 
 CSAPEX_REGISTER_CLASS(csapex::RegisterCorePlugins, csapex::CorePlugin)
 
 using namespace csapex;
 
-namespace {
-
-class FileHandler
-        : public DragIO::HandlerEnter, public DragIO::HandlerMove, public DragIO::HandlerDrop
-{
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragEnterEvent* e) {
-        if(e->mimeData()->hasUrls()) {
-            e->acceptProposedAction();
-            return true;
-
-        } else{
-            return false;
-        }
-    }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDragMoveEvent* e){
-        if(e->mimeData()->hasUrls()) {
-            e->acceptProposedAction();
-            return true;
-
-        } else{
-            return false;
-        }
-    }
-    virtual bool handle(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e, const QPointF& scene_pos) {
-        if(e->mimeData()->hasUrls()) {
-            QList<QUrl> files = e->mimeData()->urls();
-
-            if(files.size() == 0) {
-                return false;
-            }
-
-            if(files.size() > 1) {
-                std::cerr << "warning: droppend more than one file, using the first one" << std::endl;
-            }
-
-            std::cout << "file: " << files.first().toString().toStdString() << std::endl;
-            QFile file(files.first().toLocalFile());
-            if(file.exists()) {
-                UUID uuid = UUID::make(dispatcher->getGraph()->makeUUIDPrefix("csapex::FileImporter"));
-
-                NodeState::Ptr state(new NodeState(nullptr));
-                GenericState::Ptr child_state(new GenericState);
-                child_state->addParameter(param::ParameterFactory::declareFileInputPath("path", files.first().toLocalFile().toStdString()));
-                state->setParameterState(child_state);
-
-                std::string type("csapex::FileImporter");
-                dispatcher->execute(Command::Ptr(new command::AddNode(type, Point(scene_pos.x(), scene_pos.y()), UUID::NONE, uuid, state)));
-
-                e->accept();
-                return true;
-            }
-        }
-        return false;
-    }
-};
-
-}
 
 RegisterCorePlugins::RegisterCorePlugins()
 {
 }
 
-void RegisterCorePlugins::initUI(DragIO &dragio)
+void RegisterCorePlugins::init(CsApexCore& core)
 {
     Tag::createIfNotExists("Buffer");
     Tag::createIfNotExists("General");
@@ -96,12 +35,6 @@ void RegisterCorePlugins::initUI(DragIO &dragio)
     Tag::createIfNotExists("RosIO");
     Tag::createIfNotExists("ConsoleIO");
     Tag::createIfNotExists("Debug");
-
-    dragio.registerHandler<FileHandler>();
-}
-
-void RegisterCorePlugins::init(CsApexCore& core)
-{
 }
 
 void RegisterCorePlugins::shutdown()

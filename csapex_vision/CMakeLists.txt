@@ -69,11 +69,25 @@ add_library(csapex_vision
 target_link_libraries(csapex_vision
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
-add_library(csapex_vision_plugin
+
+
+add_library(csapex_vision_plugin_core
+    src/plugin/register_plugin.cpp
+    src/core/image_renderer.cpp
+    src/core/image_provider.cpp
+    src/plugin/image_provider_dir.cpp
+    src/plugin/image_provider_img.cpp
+    src/plugin/image_provider_mov.cpp
+    src/plugin/image_provider_set.cpp
+)
+target_link_libraries(csapex_vision_plugin_core csapex_vision
+    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+
+
+add_library(csapex_vision_plugin_node
     src/plugin/static_roi.cpp
     src/plugin/rotate_image.cpp
     src/plugin/grab_cut.cpp
-    src/plugin/register_plugin.cpp
     src/plugin/camera.cpp
     src/plugin/image_padding.cpp
     src/plugin/copymakeborder.cpp
@@ -81,21 +95,13 @@ add_library(csapex_vision_plugin
     src/plugin/filter_apply_mask.cpp
 
     src/plugin/filter_static_mask.cpp
-    src/plugin/filter_static_mask_painter.cpp
-    src/plugin/filter_static_mask_adapter.cpp
 
     src/plugin/mask_refinement.cpp
-    src/plugin/mask_refinement_adapter.cpp
 
-    src/plugin/image_provider_dir.cpp
-    src/plugin/image_provider_img.cpp
-    src/plugin/image_provider_mov.cpp
-    src/plugin/image_provider_set.cpp
     src/plugin/hough_circle.cpp
     src/plugin/vectorize_pyramid.cpp
 
     src/plugin/image_roi.cpp
-    src/plugin/image_roi_adapter.cpp
     src/plugin/grid_arranged_rois.cpp
 
     src/plugin/row.cpp
@@ -112,11 +118,18 @@ add_library(csapex_vision_plugin
     src/plugin/mean_dev.cpp
 
     src/plugin/load_filestorage.cpp
-
-    src/core/image_renderer.cpp
-    src/core/image_provider.cpp
 )
-target_link_libraries(csapex_vision_plugin csapex_vision
+target_link_libraries(csapex_vision_plugin_node csapex_vision
+    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+
+
+add_library(csapex_vision_plugin_qt
+    src/plugin/filter_static_mask_painter.cpp
+    src/plugin/filter_static_mask_adapter.cpp
+    src/plugin/mask_refinement_adapter.cpp
+    src/plugin/image_roi_adapter.cpp
+)
+target_link_libraries(csapex_vision_plugin_qt csapex_vision
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 
@@ -134,7 +147,15 @@ install(TARGETS csapex_vision
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-install(TARGETS csapex_vision_plugin
+install(TARGETS csapex_vision_plugin_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_vision_plugin_node
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_vision_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

@@ -30,20 +30,27 @@ target_link_libraries(csapex_evaluation
     yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
 
-add_library(csapex_evaluation_plugin
+add_library(csapex_evaluation_plugin_node
     src/confusion_matrix_display.cpp
-    src/confusion_matrix_display_adapter.cpp
     src/confidence_matrix_display.cpp
-    src/confidence_matrix_display_adapter.cpp
     src/evaluate_binary_classifier.cpp
-    src/evaluate_binary_classifier_adapter.cpp
     src/empty_labeled_feature_message.cpp
     src/confidence_evaluator.cpp
     src/ml_evaluator.cpp
     src/confidence_class_toggle.cpp
 )
 
-target_link_libraries(csapex_evaluation_plugin csapex_evaluation
+target_link_libraries(csapex_evaluation_plugin_node csapex_evaluation
+    yaml-cpp ${catkin_LIBRARIES})
+
+
+add_library(csapex_evaluation_plugin_qt
+    src/confusion_matrix_display_adapter.cpp
+    src/confidence_matrix_display_adapter.cpp
+    src/evaluate_binary_classifier_adapter.cpp
+)
+
+target_link_libraries(csapex_evaluation_plugin_qt csapex_evaluation
     yaml-cpp ${catkin_LIBRARIES})
 
 #
@@ -53,7 +60,12 @@ target_link_libraries(csapex_evaluation_plugin csapex_evaluation
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_evaluation_plugin
+install(TARGETS csapex_evaluation_plugin_node
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS csapex_evaluation_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

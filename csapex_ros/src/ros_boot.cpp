@@ -8,6 +8,7 @@
 #include <csapex/msg/message_provider.h>
 #include <csapex/msg/message_renderer.h>
 #include <csapex/view/node/node_adapter_builder.h>
+#include <csapex/view/designer/drag_io_handler.h>
 
 using namespace csapex;
 using namespace pluginlib;
@@ -19,7 +20,8 @@ RosBoot::RosBoot() :
     loader_msg_("csapex", "csapex::MessageProvider"),
     loader_msg_renderer_("csapex", "csapex::MessageRenderer"),
     loader_node_("csapex", "csapex::Node"),
-    loader_node_adapter_("csapex", "csapex::NodeAdapterBuilder")
+    loader_node_adapter_("csapex", "csapex::NodeAdapterBuilder"),
+    loader_drag_io_("csapex", "csapex::DragIOHandler")
 {
 
 }
@@ -50,4 +52,7 @@ void RosBoot::boot(csapex::PluginLocator* locator)
     locator->registerLocator<Node>(std::bind(
                                        &get_plugin_xml_paths<Node>,
                                        &loader_node_, std::placeholders::_1));
+    locator->registerLocator<DragIOHandler>(std::bind(
+                                                &get_plugin_xml_paths<DragIOHandler>,
+                                                &loader_drag_io_, std::placeholders::_1));
 }

@@ -49,20 +49,37 @@ target_link_libraries(csapex_ros_core
   ${catkin_LIBRARIES}
 )
 
-## plugins
-add_library(csapex_ros
-    src/ros_param.cpp
+## core plugins
+add_library(csapex_ros_plugin_core
     src/apex_ros_interface.cpp
+    src/bag_provider.cpp
+)
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(csapex_ros_plugin_core csapex_ros_core
+  ${catkin_LIBRARIES}
+)
+
+## node plugins
+add_library(csapex_ros_plugin_node
+    src/ros_param.cpp
     src/export_ros.cpp
     src/import_ros.cpp
-
-    src/bag_provider.cpp
-
     src/ros_test.cpp
 )
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(csapex_ros csapex_ros_core
+target_link_libraries(csapex_ros_plugin_node csapex_ros_core
+  ${catkin_LIBRARIES}
+)
+
+## qt plugins
+add_library(csapex_ros_plugin_qt
+    src/file_drag_io.cpp
+)
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(csapex_ros_plugin_qt csapex_ros_core
   ${catkin_LIBRARIES}
 )
 
@@ -81,7 +98,15 @@ install(TARGETS csapex_ros_core
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_ros
+install(TARGETS csapex_ros_plugin_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_ros_plugin_node
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS csapex_ros_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
