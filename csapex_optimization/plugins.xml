@@ -1,10 +1,13 @@
-<library path="libcsapex_optimization_plugin">
+<library path="libcsapex_optimization_plugin_node">
 <class type="csapex::OptimizationDummy" base_class_type="csapex::Node">
   <description>Dummy to test optimization on</description>
 </class>
 <class type="csapex::BFOptimizer" base_class_type="csapex::Node">
   <description>Optimize parameters using brute force</description>
 </class>
+</library>
+
+<library path="libcsapex_optimization_plugin_qt">
 <class type="csapex::BFOptimizerAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>

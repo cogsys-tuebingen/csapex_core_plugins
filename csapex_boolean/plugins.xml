@@ -1,8 +1,10 @@
-<library path="libcsapex_boolean_plugin">
+<library path="libcsapex_boolean_plugin_core">
 <class type="csapex::boolean::RegisterPlugin" base_class_type="csapex::CorePlugin">
   <description></description>
 </class>
+</library>
 
+<library path="libcsapex_boolean_plugin_node">
 <class type="csapex::boolean::NAND" base_class_type="csapex::Node">
   <description>Computes a logical not and of its two inputs</description>
   <tags>Boolean</tags>

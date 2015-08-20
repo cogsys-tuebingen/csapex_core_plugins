@@ -1,26 +1,23 @@
-<library path="libcsapex_point_cloud_plugin">
-<class type="csapex::MergeClouds" base_class_type="csapex::Node">
-  <description>Merge two clouds into one</description>
-</class>
+<library path="libcsapex_point_cloud_plugin_core">
 <class type="csapex::RegisterPointCloudPlugin" base_class_type="csapex::CorePlugin">
   <description></description>
+</class>
+</library>
+
+<library path="libcsapex_point_cloud_plugin_node">
+<class type="csapex::MergeClouds" base_class_type="csapex::Node">
+  <description>Merge two clouds into one</description>
 </class>
 
 <class type="csapex::PointCount" base_class_type="csapex::Node">
   <description>Displays the number of points in a point cloud</description>
   <tags>PointCloud, Output</tags>
 </class>
-<class type="csapex::PointCountAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
-  <description></description>
-</class>
 
 
 <class type="csapex::CloudRenderer" base_class_type="csapex::Node">
   <description>Displays a point cloud</description>
   <tags>PointCloud, Output</tags>
-</class>
-<class type="csapex::CloudRendererAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
-  <description></description>
 </class>
 
 <class type="csapex::TransformCloud" base_class_type="csapex::Node">
@@ -165,5 +162,14 @@
     Filter PointCloud by given indeces.
   </description>
   <tags>PointCloud</tags>
+</class>
+</library>
+
+<library path="libcsapex_point_cloud_plugin_qt">
+<class type="csapex::PointCountAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+<class type="csapex::CloudRendererAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
 </class>
 </library>

@@ -1,4 +1,23 @@
-<library path="libcsapex_vision_plugin">
+<library path="libcsapex_vision_plugin_core">
+<class type="csapex::RegisterPlugin" base_class_type="csapex::CorePlugin">
+  <description></description>
+  </class>
+<class type="csapex::ImageProviderDir" base_class_type="csapex::MessageProvider">
+  <description></description>
+</class>
+<class type="csapex::ImageProviderImg" base_class_type="csapex::MessageProvider">
+  <description></description>
+</class>
+<class type="csapex::ImageProviderMov" base_class_type="csapex::MessageProvider">
+  <description></description>
+</class>
+<class type="csapex::ImageRenderer" base_class_type="csapex::MessageRenderer">
+  <description></description>
+</class>
+</library>
+
+
+<library path="libcsapex_vision_plugin_node">
 <class type="csapex::StaticRoi" base_class_type="csapex::Node">
   <description>Produce static roi matrix.</description>
   <tags>Vision</tags>
@@ -12,9 +31,6 @@
 </class>
 <class type="csapex::GrabCut" base_class_type="csapex::Node">
   <description>GrabCut image segmentation</description>
-</class>
-<class type="csapex::RegisterPlugin" base_class_type="csapex::CorePlugin">
-  <description></description>
 </class>
 
 
@@ -30,9 +46,6 @@
   <description></description>
   <icon>:/picture.png</icon>
   <tags>Vision, ROI</tags>
-</class>
-<class type="csapex::ImageRoiAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
-  <description></description>
 </class>
 
 <class type="csapex::Levels" base_class_type="csapex::Node">
@@ -130,18 +143,12 @@
   <icon>:/filter.png</icon>
   <tags>Vision, Filter</tags>
 </class>
-<class type="csapex::FilterStaticMaskAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
-  <description></description>
-</class>
 
 
 <class type="csapex::MaskRefinement" base_class_type="csapex::Node">
   <description>Allows the user to refine a mask</description>
   <icon>:/filter.png</icon>
   <tags>Vision, Filter</tags>
-</class>
-<class type="csapex::MaskRefinementAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
-  <description></description>
 </class>
 
 
@@ -158,18 +165,18 @@
 <class type="csapex::LoadFilestorage" base_class_type="csapex::Node">
   <description>Load OpenCV file storages containing matrices.</description>
 </class>
-<class type="csapex::ImageProviderDir" base_class_type="csapex::MessageProvider">
-  <description></description>
-</class>
-<class type="csapex::ImageProviderImg" base_class_type="csapex::MessageProvider">
-  <description></description>
-</class>
-<class type="csapex::ImageProviderMov" base_class_type="csapex::MessageProvider">
-  <description></description>
-</class>
+</library>
 
 
-<class type="csapex::ImageRenderer" base_class_type="csapex::MessageRenderer">
+<library path="libcsapex_vision_plugin_qt">
+<class type="csapex::FilterStaticMaskAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+<class type="csapex::ImageRoiAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+<class type="csapex::MaskRefinementAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
 </library>
+
