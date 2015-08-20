@@ -5,7 +5,7 @@
 #include <csapex_optimization/parameter_dialog.h>
 
 /// PROJECT
-#include <csapex/utility/register_node_adapter.h>
+#include <csapex/view/utility/register_node_adapter.h>
 #include <utils_param/range_parameter.h>
 
 /// SYSTEM

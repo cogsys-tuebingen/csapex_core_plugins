@@ -6,7 +6,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex/utility/register_node_adapter.h>
+#include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
 #include <QPainter>
