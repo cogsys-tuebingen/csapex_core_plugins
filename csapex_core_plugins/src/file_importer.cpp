@@ -26,7 +26,7 @@ using namespace connection_types;
 
 
 FileImporter::FileImporter()
-    : directory_import_(false)
+    : last_directory_index_(-1), directory_import_(false)
 {
 }
 
@@ -50,7 +50,10 @@ void FileImporter::setupParameters(Parameterizable& parameters)
 
     parameters.addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/play", true), cond_dir);
     parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/latch", false), cond_dir);
 
     param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
     parameters.addParameter(immediate, std::bind(&FileImporter::changeMode, this));
@@ -88,7 +91,9 @@ bool FileImporter::canTick()
         return false;
     }
     if(directory_import_) {
-        return (readParameter<int>("directory/current") < (int) dir_files_.size()) || readParameter<bool>("directory/loop");
+        return (readParameter<int>("directory/current") < (int) dir_files_.size()) ||
+                readParameter<bool>("directory/loop")  ||
+                readParameter<bool>("directory/latch");
     } else {
         return provider_ != nullptr;
     }
@@ -110,17 +115,30 @@ void FileImporter::tick()
             }
         }
     } else if(directory_import_) {
-        INTERLUDE("directory");
+        bool play = readParameter<bool>("directory/play");
+        bool latch = readParameter<bool>("directory/latch");
+        bool loop = readParameter<bool>("directory/loop");
+
         int current = readParameter<int>("directory/current");
+        bool index_changed = current != last_directory_index_;
+
+        if(!play && !latch && !index_changed) {
+            return;
+        }
+        INTERLUDE("directory");
 
         int files = dir_files_.size();
 
         if(current >= files) {
             end_->trigger();
-            if(readParameter<bool>("directory/loop")) {
+            if(loop) {
                 current = 0;
+            } else if(latch && files > 0) {
+                current = files - 1;
             }
-        } else if(current < files) {
+        }
+
+        if(current < files) {
             if(current == 0) {
                 begin_->trigger();
             }
@@ -129,9 +147,12 @@ void FileImporter::tick()
                 tick();
             }
 
-            ++current;
+            if(play) {
+                ++current;
+            }
         }
         setParameter("directory/current", current);
+        last_directory_index_ = current;
     }
 }
 
@@ -175,7 +196,8 @@ bool FileImporter::doImport(const QString& file_path)
         modifier_->setWarning("no file selected");
         return false;
     }
-    if(file_path == file_ && provider_) {
+    bool latch = readParameter<bool>("directory/latch");
+    if((file_path == file_ && !latch) && provider_) {
         return false;
     }
 
