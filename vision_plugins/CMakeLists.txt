@@ -35,7 +35,8 @@ include_directories(include
 
 add_subdirectory(src/cvBlob)
 
-add_library(vision_plugins
+add_library(vision_plugins_node
+
     src/filter/distance_transform.cpp
     src/filter/gamma_correction.cpp
     src/blob_detector.cpp
@@ -104,9 +105,7 @@ add_library(vision_plugins
     src/label/label_regions.cpp
     src/label/cluster_grid.cpp
     src/label/assign_cluster_class.cpp
-    src/label/assign_cluster_class_adapter.cpp
     src/label/assign_roi_class.cpp
-    src/label/assign_roi_class_adapter.cpp
 
     src/recognition/hog_detector.cpp
     src/recognition/hog_extractor.cpp
@@ -116,7 +115,7 @@ add_library(vision_plugins
 
 )
 
-target_link_libraries(vision_plugins
+target_link_libraries(vision_plugins_node
   yaml-cpp 
   ${OpenCV_LIBS} 
   ${Boost_LIBRARIES}
@@ -124,6 +123,18 @@ target_link_libraries(vision_plugins
   cvblob
 )
 
+add_library(vision_plugins_qt
+    src/label/assign_cluster_class_adapter.cpp
+    src/label/assign_roi_class_adapter.cpp
+)
+
+target_link_libraries(vision_plugins_qt
+  yaml-cpp
+  ${OpenCV_LIBS}
+  ${Boost_LIBRARIES}
+  ${catkin_LIBRARIES}
+  cvblob
+)
 
 
 #
@@ -133,7 +144,11 @@ target_link_libraries(vision_plugins
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS vision_plugins
+install(TARGETS vision_plugins_node
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS vision_plugins_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
