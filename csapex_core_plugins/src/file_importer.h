@@ -45,6 +45,7 @@ private:
     Trigger* end_;
 
     bool directory_import_;
+    int last_directory_index_;
     QString file_;
     std::vector<std::string> dir_files_;
 
