@@ -35,6 +35,8 @@ AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorkerWeakPtr worker, s
       left_button_down_(false),
       loaded_(false)
 {
+    qRegisterMetaType < cv::Mat > ("cv::Mat");
+
     auto n = wrapped_.lock();
 
     painter.setPen(QPen(Qt::red));
