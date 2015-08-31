@@ -7,10 +7,10 @@
 #include <csapex/msg/generic_pointer_message.hpp>
 
 /// PROJECT
+#include <csapex/msg/msg_fwd.h>
 #include <csapex/msg/message.h>
 #include <csapex/msg/message_traits.h>
 #include <csapex/utility/singleton.hpp>
-#include <csapex/csapex_fwd.h>
 #include <csapex/utility/shared_ptr_tools.hpp>
 
 /// SYSTEM

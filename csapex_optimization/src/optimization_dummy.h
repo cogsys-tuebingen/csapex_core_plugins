@@ -2,6 +2,8 @@
 #define OPTIMIZATION_DUMMY_H
 
 /// COMPONENT
+#include <csapex/msg/msg_fwd.h>
+#include <csapex/signal/signal_fwd.h>
 
 /// PROJECT
 #include <csapex/model/tickable_node.h>

@@ -2,6 +2,7 @@
 #define BF_OPTIMIZER_H
 
 /// COMPONENT
+#include <csapex/msg/msg_fwd.h>
 
 /// PROJECT
 #include <csapex/model/tickable_node.h>

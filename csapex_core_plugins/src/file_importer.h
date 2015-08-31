@@ -4,14 +4,13 @@
 /// PROJECT
 #include <csapex/msg/message_provider.h>
 #include <csapex/model/tickable_node.h>
+#include <csapex/signal/signal_fwd.h>
 
 /// SYSTEM
 #include <QString>
 
 namespace csapex
 {
-
-class Output;
 
 class FileImporter : public TickableNode
 {

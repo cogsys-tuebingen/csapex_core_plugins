@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/view/view_fwd.h>
 
 /// SYSTEM
 #include <QImage>

@@ -7,7 +7,6 @@
 #include "import_ros.h"
 #include <csapex/model/graph.h>
 #include <csapex/model/node_state.h>
-#include <csapex/command/add_node.h>
 #include <csapex/factory/message_factory.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/msg/generic_value_message.hpp>

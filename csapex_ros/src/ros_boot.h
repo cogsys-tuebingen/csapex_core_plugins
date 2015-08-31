@@ -3,6 +3,10 @@
 
 /// PROJECT
 #include <csapex/core/bootstrap_plugin.h>
+#include <csapex/core/core_fwd.h>
+#include <csapex/view/view_fwd.h>
+#include <csapex/msg/msg_fwd.h>
+#include <csapex/model/model_fwd.h>
 
 /// SYSTEM
 #include <pluginlib/class_loader.h>

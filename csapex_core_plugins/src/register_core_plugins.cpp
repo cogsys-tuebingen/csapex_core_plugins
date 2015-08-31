@@ -7,8 +7,6 @@
 /// PROJECT
 #include <csapex/factory/message_factory.h>
 #include <csapex/model/tag.h>
-#include <csapex/command/add_node.h>
-#include <csapex/command/dispatcher.h>
 #include <csapex/factory/node_factory.h>
 #include <csapex/model/graph.h>
 #include <csapex/model/node_state.h>

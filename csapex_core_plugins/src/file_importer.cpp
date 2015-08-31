@@ -26,7 +26,7 @@ using namespace connection_types;
 
 
 FileImporter::FileImporter()
-    : last_directory_index_(-1), directory_import_(false)
+    :  directory_import_(false), last_directory_index_(-1)
 {
 }
 
