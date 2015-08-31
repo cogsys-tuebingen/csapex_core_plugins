@@ -67,7 +67,7 @@ add_library(csapex_vision_features
     src/descriptor_message.cpp
     src/match_message.cpp
 
-    src/extractors_opencv.cpp
+   # src/extractors_opencv.cpp
 )
 target_link_libraries(csapex_vision_features
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
