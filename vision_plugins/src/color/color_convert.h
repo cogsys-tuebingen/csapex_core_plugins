@@ -2,7 +2,7 @@
 #define FILTER_COLORCONVERT_H
 
 /// PROJECT
-#include <csapex/csapex_fwd.h>
+#include <csapex/msg/msg_fwd.h>
 
 /// COMPONENT
 #include <csapex/model/node.h>
