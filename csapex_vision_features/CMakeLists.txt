@@ -15,7 +15,20 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS csapex csapex_vision utils_vision utils_clustering)
 
-find_package(OpenCV REQUIRED)
+# note to ubuntu 14 users: if opencv is installed at /usr/local and is not found:    sudo ldconfig /usr/local/lib
+set(USED_OpenCV_COMPONENTS core imgproc ml calib3d)
+find_package(OpenCV COMPONENTS nonfree ${USED_OpenCV_COMPONENTS} QUIET CONFIG)
+
+list(FIND OpenCV_LIB_COMPONENTS opencv_nonfree NONFREE_INDEX)
+set(NONFREE_FOUND NOT ${NONFREE_INDEX} EQUAL -1)
+
+if(${OpenCV_FOUND} AND ${NONFREE_FOUND})
+    add_definitions("-DCV_NON_FREE=1")
+else()
+    add_definitions("-DCV_NON_FREE=0")
+    message("OpenCV nonfree was not found, SIFT and SURF will not be available. If you need them, compile OpenCV from source and remove CMakeCache.txt!")
+    find_package(OpenCV REQUIRED COMPONENTS ${USED_OpenCV_COMPONENTS} CONFIG)
+endif()
 
 find_package(Boost COMPONENTS program_options REQUIRED)
 
@@ -53,6 +66,8 @@ add_library(csapex_vision_features
     src/keypoint_message.cpp
     src/descriptor_message.cpp
     src/match_message.cpp
+
+    src/extractors_opencv.cpp
 )
 target_link_libraries(csapex_vision_features
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})

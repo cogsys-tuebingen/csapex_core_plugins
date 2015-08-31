@@ -2,7 +2,6 @@
 #include "display_keypoints.h"
 
 /// PROJECT
-#include <utils_vision/utils/extractor.h>
 #include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision_features/keypoint_message.h>

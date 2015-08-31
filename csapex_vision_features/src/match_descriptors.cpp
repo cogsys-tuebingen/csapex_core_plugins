@@ -301,6 +301,12 @@ void MatchDescriptors::setupParameters(Parameterizable &parameters)
     parameters.addParameter(param::ParameterFactory::declareColorParameter("color/match", 255,128,128));
     parameters.addParameter(param::ParameterFactory::declareColorParameter("color/single", 128,128,255));
 
+    // simple
+    std::function<bool()> cond_simple = [method]() { return method->as<int>() == SIMPLE; };
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("simple/min_points", 1, 32, 3, 1), cond_simple);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("simple/threshold", 0.0, 1.0, 0.8, 0.01), cond_simple);
+
     // peak
     std::function<bool()> cond_peak = [method]() { return method->as<int>() == PEAK; };
 
@@ -420,7 +426,7 @@ void MatchDescriptors::matchSimple(CvMatMessage::ConstPtr image1,
     MatchableImpl m1(keypoints1->value, descriptors1->value);
     MatchableImpl m2(keypoints2->value, descriptors2->value);
 
-    Matcher m(descriptors1->isBinary());
+    Matcher m(descriptors1->isBinary(), readParameter<int>("simple/min_points"), readParameter<double>("simple/threshold"));
     m.match(&m1, &m2, matches);
 }
 
