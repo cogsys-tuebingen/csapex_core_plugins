@@ -1,7 +1,6 @@
 #include "filter_splitter.h"
 
 /// PROJECT
-#include <csapex/command/meta.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
