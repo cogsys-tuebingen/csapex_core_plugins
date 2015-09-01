@@ -2,7 +2,7 @@
 #define EXTRACTOR_MANAGER_H
 
 /// COMPONENT
-#include "extractor.h"
+#include <utils_vision/utils/extractor.h>
 #include <utils_param/parameter_provider.h>
 
 /// SYSTEM

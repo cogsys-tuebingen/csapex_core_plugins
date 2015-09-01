@@ -1,8 +1,8 @@
 /// HEADER
-#include <utils_vision/utils/extractor_manager.h>
+#include <csapex_vision_features/extractor_manager.h>
 
 /// COMPONENT
-#include <utils_vision/utils/extractor_factory.h>
+#include <csapex_vision_features/extractor_factory.h>
 #include <utils_vision/common/global.hpp>
 
 /// SYSTEM

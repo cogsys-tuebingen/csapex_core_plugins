@@ -2,8 +2,7 @@
 #define EXTRACTORS_DEFAULT_HPP
 
 /// COMPONENT
-#include <utils_vision/utils/extractor_manager.h>
-#include <utils_vision/utils/grusig_descriptor.h>
+#include <csapex_vision_features/extractor_manager.h>
 
 /// PROJECT
 #include <utils_param/parameter_factory.h>
@@ -448,33 +447,5 @@ struct Freak : public ExtractorManager::ExtractorInitializer {
 REGISTER_FEATURE_DETECTOR(Freak, FREAK);
 BOOST_STATIC_ASSERT(!DetectorTraits<Freak>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Freak>::HasDescriptor);
-
-
-struct Grusig : public ExtractorManager::ExtractorInitializer {
-    EXTRACTOR_IMPLEMENTATION
-
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
-            add(ParameterFactory::declareRange("grusig/dimension", 1, 35, 10, 1));
-        }
-    };
-    static KeyParams& params() {
-        static KeyParams p;
-        return p;
-    }
-    static std::vector<Parameter::Ptr> usedParameters() {
-        return params().params;
-    }
-    static void descriptor(Extractor* e, const param::ParameterProvider& param) {
-        int dim = params().read<int>   (param, "grusig/dimension");
-
-        e->is_binary = true;
-        e->descriptor = "grusig";
-        e->descriptor_extractor = new cv::GRUSIG(dim);
-    }
-};
-REGISTER_FEATURE_DETECTOR(Grusig, GRUSIG);
-BOOST_STATIC_ASSERT(!DetectorTraits<Grusig>::HasKeypoint);
-BOOST_STATIC_ASSERT(DetectorTraits<Grusig>::HasDescriptor);
 
 #endif // EXTRACTORS_DEFAULT_HPP

@@ -2,7 +2,7 @@
 #define EXTRACTOR_FACTORY_H
 
 /// COMPONENT
-#include "extractor.h"
+#include <utils_vision/utils/extractor.h>
 
 /// SYSTEM
 #include <boost/shared_ptr.hpp>

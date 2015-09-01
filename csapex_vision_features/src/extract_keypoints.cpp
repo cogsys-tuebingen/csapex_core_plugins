@@ -3,11 +3,11 @@
 
 /// COMPONENT
 #include <csapex_vision_features/keypoint_message.h>
+#include <csapex_vision_features/extractor_factory.h>
+#include <csapex_vision_features/extractor_manager.h>
 
 /// PROJECT
 #include <utils_vision/utils/extractor.h>
-#include <utils_vision/utils/extractor_factory.h>
-#include <utils_vision/utils/extractor_manager.h>
 #include <utils_param/range_parameter.h>
 #include <utils_param/value_parameter.h>
 #include <utils_param/io.h>
