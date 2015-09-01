@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <name>csapex_evaluation</name>
+
+  <version>0.0.1</version>
+  <description>The csapex_evaluation package</description>
+
+  <maintainer email="sebastian.buck@uni-tuebingen.de">buck</maintainer>
+
+  <license>BSD</license>
+  <author email="sebastian.buck@uni-tuebingen.de">buck</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>csapex</run_depend>
+
+  <build_depend>csapex_ml</build_depend>
+  <run_depend>csapex_ml</run_depend>
+
+  <export>
+    <csapex plugin="${prefix}/plugins.xml" />
+  </export>
+</package>
