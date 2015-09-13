@@ -18,6 +18,8 @@
 #include <sensor_msgs/Image.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/CompressedImage.h>
+#include <compressed_image_transport/compressed_subscriber.h>
 
 CSAPEX_REGISTER_CLASS(csapex::RegisterPlugin, csapex::CorePlugin)
 
@@ -101,6 +103,44 @@ struct Image2CvMat
     }
 };
 
+struct CompressedImage2CvMat
+{
+    static connection_types::CvMatMessage::Ptr ros2apex(const sensor_msgs::CompressedImage::ConstPtr &ros_msg) {
+        u_int64_t stamp_micro_seconds = ros_msg->header.stamp.toNSec() * 1e-3;
+
+        std::string source_encoding = ros_msg->format;
+        csapex::Encoding target_encoding;
+        if(source_encoding == sensor_msgs::image_encodings::BGR8 ||
+                source_encoding == sensor_msgs::image_encodings::BGR16) {
+            target_encoding = enc::bgr;
+        } else if(source_encoding == sensor_msgs::image_encodings::RGB8 ||
+                  source_encoding == sensor_msgs::image_encodings::RGB16) {
+            target_encoding = enc::rgb;
+        } else if(source_encoding == sensor_msgs::image_encodings::MONO8 ||
+                  source_encoding == sensor_msgs::image_encodings::MONO16) {
+            target_encoding = enc::mono;
+        } else if(source_encoding == sensor_msgs::image_encodings::YUV422) {
+            target_encoding = enc::yuv;
+        } else if(source_encoding.size() > 6 && source_encoding.substr(6) == "bayer_") {
+            target_encoding = enc::mono;
+        } else if(source_encoding == sensor_msgs::image_encodings::TYPE_16UC1) {
+            target_encoding = enc::depth;
+        } else {
+            target_encoding = enc::unknown;
+        }
+
+        connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(target_encoding, stamp_micro_seconds));
+
+        out->value = cv::imdecode(cv::Mat(ros_msg->data),1);
+
+        return out;
+    }
+    static sensor_msgs::CompressedImage::Ptr apex2ros(const connection_types::CvMatMessage::ConstPtr& apex_msg) {
+        // TODO: implement after SBC...
+        return nullptr;
+    }
+};
+
 void testWrap(const connection_types::CvMatMessage& input, int flipcode,
               connection_types::CvMatMessage& output)
 {
@@ -141,6 +181,7 @@ struct ParameterInfoTestWrap
 void RegisterPlugin::init(CsApexCore& core)
 {
     RosMessageConversion::registerConversion<sensor_msgs::Image, connection_types::CvMatMessage, Image2CvMat>();
+    RosMessageConversion::registerConversion<sensor_msgs::CompressedImage, connection_types::CvMatMessage, CompressedImage2CvMat>();
 
     auto cWrap = GenericNodeFactory::createConstructorFromFunction<ParameterInfoTestWrap>
             (testWrap, "TestWrap");
