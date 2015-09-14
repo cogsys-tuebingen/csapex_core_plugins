@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <utils_param/range_parameter.h>
+#include <csapex/param/range_parameter.h>
 
 namespace vision_plugins {
 class HOGExtractor : public csapex::Node

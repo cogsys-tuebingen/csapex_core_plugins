@@ -12,7 +12,7 @@
 #include <csapex/model/connection_type.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 
 #include <utils_vision/textures/lbp.hpp>
 #include <utils_vision/textures/ltp.hpp>

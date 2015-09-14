@@ -3,7 +3,7 @@
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/io.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 
 using namespace csapex;
@@ -49,11 +49,11 @@ void Canny::setup(NodeModifier& node_modifier)
 
 void Canny::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("aperture", 3, 7, 3, 2),
+    parameters.addParameter(param::ParameterFactory::declareRange("aperture", 1, 7, 3, 2),
                  std::bind(&Canny::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("threshold 1", 0.0, 500.0, 0.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold 1", 0.0, 50000.0, 0.0, 1.0),
                  std::bind(&Canny::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("threshold 2", 0.0, 500.0, 255.0, 1.0),
+    parameters.addParameter(param::ParameterFactory::declareRange("threshold 2", 0.0, 50000.0, 255.0, 1.0),
                  std::bind(&Canny::update, this));
     parameters.addParameter(param::ParameterFactory::declareBool("L2 gradient", false),
                  std::bind(&Canny::update, this));

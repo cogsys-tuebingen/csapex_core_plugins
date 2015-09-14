@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <utils_vision/utils/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <csapex/model/node_modifier.h>

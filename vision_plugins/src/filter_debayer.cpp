@@ -2,7 +2,7 @@
 #include "filter_debayer.h"
 
 /// PROJECT
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_vision/cv_mat_message.h>

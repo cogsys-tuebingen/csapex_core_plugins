@@ -6,7 +6,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/assert.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/serialization/serialization.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Splitter, csapex::Node)
