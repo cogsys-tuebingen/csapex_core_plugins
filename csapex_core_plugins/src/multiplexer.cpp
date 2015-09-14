@@ -4,7 +4,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/dynamic_input.h>
 #include <csapex/msg/io.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex_core_plugins/vector_message.h>
 
 namespace csapex

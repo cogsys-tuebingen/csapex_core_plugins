@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <utils_vision/utils/extractor.h>
-#include <utils_param/parameter_provider.h>
+#include <csapex/param/parameter_provider.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>

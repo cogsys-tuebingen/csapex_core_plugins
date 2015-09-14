@@ -2,8 +2,8 @@
 #include <csapex_optimization/parameter_dialog.h>
 
 /// PROJECT
-#include <utils_param/parameter.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter.h>
+#include <csapex/param/parameter_factory.h>
 
 /// SYSTEM
 #include <QDialogButtonBox>

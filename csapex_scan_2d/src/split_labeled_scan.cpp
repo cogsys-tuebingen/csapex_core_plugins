@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
 #include <csapex_scan_2d/scan_message.h>

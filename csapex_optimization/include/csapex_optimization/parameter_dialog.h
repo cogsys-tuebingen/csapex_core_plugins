@@ -2,7 +2,7 @@
 #define PARAMETER_DIALOG_H
 
 /// PROJECT
-#include <utils_param/param_fwd.h>
+#include <csapex/param/param_fwd.h>
 
 /// SYSTEM
 #include <QDialog>

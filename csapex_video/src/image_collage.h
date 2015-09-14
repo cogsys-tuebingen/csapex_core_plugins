@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <utils_param/parameter.h>
-#include <utils_param/range_parameter.h>
+#include <csapex/param/parameter.h>
+#include <csapex/param/range_parameter.h>
 
 namespace csapex {
 

@@ -5,7 +5,7 @@
 #include <csapex/model/graph.h>
 #include <csapex/model/node_state.h>
 #include <csapex/model/generic_state.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/command/add_node.h>
 #include <csapex/utility/register_apex_plugin.h>
 

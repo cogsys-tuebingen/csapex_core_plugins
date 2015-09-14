@@ -1,11 +1,11 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 #include <csapex/msg/io.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <utils_param/interval_parameter.h>
+#include <csapex/param/interval_parameter.h>
 
 using namespace csapex::connection_types;
 

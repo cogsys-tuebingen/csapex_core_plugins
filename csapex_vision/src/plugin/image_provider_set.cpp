@@ -2,7 +2,7 @@
 #include "image_provider_set.h"
 
 /// PROJECT
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 
 using namespace csapex;
 

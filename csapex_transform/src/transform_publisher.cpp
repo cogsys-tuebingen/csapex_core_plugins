@@ -7,7 +7,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex_ros/ros_handler.h>
 #include <csapex/model/node_modifier.h>
 

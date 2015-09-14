@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/msg/io.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex_scan_2d/labeled_scan_message.h>

@@ -6,7 +6,7 @@
 #include <utils_vision/utils/matcher.h>
 #include <utils_vision/data/matchable.h>
 #include <utils_vision/utils/hough_peak.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 

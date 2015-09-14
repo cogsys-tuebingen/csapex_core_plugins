@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/tickable_node.h>
-#include <utils_param/set_parameter.h>
+#include <csapex/param/set_parameter.h>
 
 /// SYSTEM
 #include <ros/time.h>

@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/utility/register_apex_plugin.h>

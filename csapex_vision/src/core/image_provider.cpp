@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex_vision/cv_mat_message.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>

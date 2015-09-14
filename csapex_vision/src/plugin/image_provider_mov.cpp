@@ -2,7 +2,7 @@
 #include "image_provider_mov.h"
 
 /// PROJECT
-#include <utils_param/range_parameter.h>
+#include <csapex/param/range_parameter.h>
 
 /// SYSTEM
 #include <boost/assign.hpp>

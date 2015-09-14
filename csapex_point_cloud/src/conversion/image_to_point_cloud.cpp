@@ -5,7 +5,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/msg/io.h>
 #include <csapex_ros/time_stamp_message.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/assert.h>

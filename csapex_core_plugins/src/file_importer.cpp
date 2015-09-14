@@ -9,8 +9,8 @@
 #include <csapex/signal/trigger.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/timer.h>
-#include <utils_param/parameter_factory.h>
-#include <utils_param/range_parameter.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/param/range_parameter.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>

@@ -7,8 +7,8 @@
 #include <csapex_ros/tf_listener.h>
 
 /// PROJECT
-#include <utils_param/parameter_factory.h>
-#include <utils_param/range_parameter.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/param/range_parameter.h>
 
 /// SYSTEM
 #include <boost/assign.hpp>

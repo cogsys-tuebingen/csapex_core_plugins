@@ -5,7 +5,7 @@
 #include <csapex_vision_features/extractor_manager.h>
 
 /// PROJECT
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 
 /// SYSTEM
 #include <opencv2/features2d/features2d.hpp>

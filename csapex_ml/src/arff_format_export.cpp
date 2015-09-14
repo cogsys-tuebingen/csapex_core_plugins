@@ -5,8 +5,8 @@
 #include <csapex/msg/io.h>
 #include <csapex/model/connection_type.h>
 #include <csapex/msg/message.h>
-#include <utils_param/parameter_factory.h>
-#include <utils_param/path_parameter.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/param/path_parameter.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/factory/message_factory.h>

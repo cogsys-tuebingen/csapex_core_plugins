@@ -2,7 +2,7 @@
 #include "mask_refinement.h"
 
 /// PROJECT
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/assert.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/serialization/serialization.h>

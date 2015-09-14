@@ -10,7 +10,7 @@
 #include <csapex/factory/node_factory.h>
 #include <csapex/model/graph.h>
 #include <csapex/model/node_state.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/parameter_factory.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

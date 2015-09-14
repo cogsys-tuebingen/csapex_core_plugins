@@ -7,8 +7,8 @@
 #include <csapex_core_plugins/vector_message.h>
 
 /// PROJECT
-#include <utils_param/range_parameter.h>
-#include <utils_param/parameter_factory.h>
+#include <csapex/param/range_parameter.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
