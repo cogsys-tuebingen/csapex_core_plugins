@@ -34,9 +34,9 @@ CropBox::CropBox()
 
 void CropBox::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareInterval("dx", -10.0, 10.0, -10.0, 10.0, 0.01));
-    parameters.addParameter(param::ParameterFactory::declareInterval("dy", -10.0, 10.0, -10.0, 10.0, 0.01));
-    parameters.addParameter(param::ParameterFactory::declareInterval("dz", -10.0, 10.0, -10.0, 10.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dx", -10.0, 10.0, -10.0, 10.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dy", -10.0, 10.0, -10.0, 10.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dz", -10.0, 10.0, -10.0, 10.0, 0.01));
 }
 
 void CropBox::setup(NodeModifier& node_modifier)

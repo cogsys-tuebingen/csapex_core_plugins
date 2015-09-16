@@ -23,8 +23,8 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        addParameter(param::ParameterFactory::declareBool("auto levels", false),
-                     [this](param::Parameter* p) {
+        addParameter(csapex::param::ParameterFactory::declareBool("auto levels", false),
+                     [this](csapex::param::Parameter* p) {
             automatic_ = p->as<bool>();
         });
     }
@@ -38,14 +38,14 @@ public:
 
         for(std::size_t ch = 0; ch < current_encoding_.channelCount(); ++ch) {
             auto channel = current_encoding_.getChannel(ch);
-            param::Parameter::Ptr p;
+            csapex::param::Parameter::Ptr p;
             if(channel.fp) {
                 throw std::logic_error("Levels for fp images is not yet implemented.");
-                //                p = param::ParameterFactory::declareInterval<double>(channel.name, channel.min_f, channel.max_f,channel.min_f, channel.max_f, 0.01);
+                //                p = csapex::param::ParameterFactory::declareInterval<double>(channel.name, channel.min_f, channel.max_f,channel.min_f, channel.max_f, 0.01);
             } else {
-                p = param::ParameterFactory::declareInterval(channel.name, channel.min_i, channel.max_i,channel.min_i, channel.max_i, 1);
+                p = csapex::param::ParameterFactory::declareInterval(channel.name, channel.min_i, channel.max_i,channel.min_i, channel.max_i, 1);
             }
-            addTemporaryParameter(p, [this](param::Parameter* p) {
+            addTemporaryParameter(p, [this](csapex::param::Parameter* p) {
                 if(!automatic_) {
                     updateLut();
                 }

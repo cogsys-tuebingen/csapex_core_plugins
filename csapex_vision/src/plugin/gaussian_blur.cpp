@@ -23,11 +23,11 @@ GaussianBlur::GaussianBlur() :
 
 void GaussianBlur::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("kernel", 1, 255, kernel_, 2),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("kernel", 1, 255, kernel_, 2),
                  std::bind(&GaussianBlur::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("sigma x", 0.1, 128.0, sigma_x_, 0.1),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("sigma x", 0.1, 128.0, sigma_x_, 0.1),
                  std::bind(&GaussianBlur::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("sigma y", 0.0, 128.0, sigma_y_, 0.1),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("sigma y", 0.0, 128.0, sigma_y_, 0.1),
                  std::bind(&GaussianBlur::update, this));
 }
 

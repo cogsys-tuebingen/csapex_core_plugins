@@ -26,14 +26,14 @@ void HoughCircle::setupParameters(Parameterizable &parameters)
     methods["CV_HOUGH_STANDARD"] = (int) CV_HOUGH_STANDARD;
     methods["CV_HOUGH_PROBABILISTIC"] = (int) CV_HOUGH_PROBABILISTIC;
     methods["CV_HOUGH_MULTI_SCALE"] = (int) CV_HOUGH_MULTI_SCALE;
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) CV_HOUGH_STANDARD));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) CV_HOUGH_STANDARD));
 
-    parameters.addParameter(param::ParameterFactory::declareRange<double>("dp", 0.01, 10.00, 1.0, 0.01));
-    parameters.addParameter(param::ParameterFactory::declareRange<double>("minDist", 0.0, 800.0, 100.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange<double>("param1", 0.00, 500.0, 200.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange<double>("param2", 0.00, 500.0, 100.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange<int>("minRadius", 0, 100, 0, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange<int>("maxRadius", 0, 100, 0, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("dp", 0.01, 10.00, 1.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("minDist", 0.0, 800.0, 100.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("param1", 0.00, 500.0, 200.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("param2", 0.00, 500.0, 100.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("minRadius", 0, 100, 0, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("maxRadius", 0, 100, 0, 1));
 }
 
 void HoughCircle::setup(NodeModifier& node_modifier)

@@ -39,18 +39,18 @@ void FindHomography::setup(NodeModifier& node_modifier)
 
 void FindHomography::setupParameters(Parameterizable &parameters)
 {
-    std::function<void(param::Parameter*)> update = std::bind(&FindHomography::update, this);
+    std::function<void(csapex::param::Parameter*)> update = std::bind(&FindHomography::update, this);
 
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("Regular", (int) 0)
             ("RANSAC", (int) CV_RANSAC)
             ("LMedS", (int) CV_LMEDS);
 
-    param::Parameter::Ptr method = param::ParameterFactory::declareParameterSet("method", methods, (int) 0);
+    csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) 0);
     parameters.addParameter(method, update);
     std::function<bool()> cond_ransac = [this]() { return method_ == CV_RANSAC; };
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("ransac/threshold", 0.5, 10., 3., 0.5), cond_ransac);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("ransac/threshold", 0.5, 10., 3., 0.5), cond_ransac);
 }
 
 void FindHomography::update()

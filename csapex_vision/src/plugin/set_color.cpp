@@ -47,7 +47,7 @@ void SetColor::setup(NodeModifier &node_modifier)
 
 void SetColor::setupParameters(Parameterizable &parameters)
 {
-    addParameter(param::ParameterFactory::declareColorParameter("color",
-                                                                param::ParameterDescription("Color to set."),
+    addParameter(csapex::param::ParameterFactory::declareColorParameter("color",
+                                                                csapex::param::ParameterDescription("Color to set."),
                                                                 0, 0 ,0));
 }

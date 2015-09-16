@@ -26,15 +26,15 @@ void StaticTransform::setupParameters(Parameterizable &parameters)
     double p = 3.2;
     double d = 5.0;
 
-    parameters.addParameter(param::ParameterFactory::declareText("frame", "/base_link"));
-    parameters.addParameter(param::ParameterFactory::declareText("child_frame", "/marlin"));
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("frame", "/base_link"));
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("child_frame", "/marlin"));
 
-    parameters.addParameter(param::ParameterFactory::declareRange("roll", -p, p, 0.0, 0.001));
-    parameters.addParameter(param::ParameterFactory::declareRange("pitch", -p, p, 0.0, 0.001));
-    parameters.addParameter(param::ParameterFactory::declareRange("yaw", -p, p, 0.0, 0.001));
-    parameters.addParameter(param::ParameterFactory::declareRange("dx", -d, d, 0.0, 0.01));
-    parameters.addParameter(param::ParameterFactory::declareRange("dy", -d, d, 0.0, 0.01));
-    parameters.addParameter(param::ParameterFactory::declareRange("dz", -d, d, 0.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("roll", -p, p, 0.0, 0.001));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("pitch", -p, p, 0.0, 0.001));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("yaw", -p, p, 0.0, 0.001));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dx", -d, d, 0.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dy", -d, d, 0.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dz", -d, d, 0.0, 0.01));
 }
 
 void StaticTransform::process()

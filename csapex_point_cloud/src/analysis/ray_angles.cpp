@@ -37,8 +37,8 @@ void RayAngles::setupParameters(csapex::Parameterizable &parameters)
             ("y", (int) Y)
             ("z", (int) Z);
 
-    addParameter(param::ParameterFactory::declareParameterSet("reference axis",
-                                                 param::ParameterDescription("Choose the reference axis."),
+    addParameter(csapex::param::ParameterFactory::declareParameterSet("reference axis",
+                                                 csapex::param::ParameterDescription("Choose the reference axis."),
                                                  reference_axis,
                                                  (int) X));
 }

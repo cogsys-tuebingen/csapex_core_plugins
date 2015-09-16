@@ -26,7 +26,7 @@ LabelPointCloud::LabelPointCloud()
 
 void LabelPointCloud::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("exclude default label", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("exclude default label", false));
 }
 
 void LabelPointCloud::process()

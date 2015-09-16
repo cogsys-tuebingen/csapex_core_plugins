@@ -120,7 +120,7 @@ void BFOptimizerAdapter::createParameter()
 
         ParameterDialog diag(next_type_);
         if(diag.exec() == QDialog::Accepted) {
-            param::Parameter::Ptr param = diag.getParameter();
+            csapex::param::Parameter::Ptr param = diag.getParameter();
             node->addPersistentParameter(param);
 
             progress_->setMaximum(node->stepsNecessary());

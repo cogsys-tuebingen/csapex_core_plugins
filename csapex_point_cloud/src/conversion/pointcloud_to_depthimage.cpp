@@ -24,8 +24,8 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("scale", 1.0, 1000.0, 1.0, 0.5));
-        parameters.addParameter(param::ParameterFactory::declareBool("fit", false));
+        parameters.addParameter(csapex::param::ParameterFactory::declareRange("scale", 1.0, 1000.0, 1.0, 0.5));
+        parameters.addParameter(csapex::param::ParameterFactory::declareBool("fit", false));
     }
 
     void setup(csapex::NodeModifier& node_modifier)

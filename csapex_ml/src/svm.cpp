@@ -26,8 +26,8 @@ void SVM::setup(NodeModifier& node_modifier)
 
 void SVM::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declarePath("svm path",
-                                                      param::ParameterDescription("Path to a saved svm."),
+    addParameter(csapex::param::ParameterFactory::declarePath("svm path",
+                                                      csapex::param::ParameterDescription("Path to a saved svm."),
                                                       true,
                                                       "",
                                                       "*.yaml *.tar.gz"),

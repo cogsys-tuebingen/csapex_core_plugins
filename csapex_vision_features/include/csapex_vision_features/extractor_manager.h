@@ -88,13 +88,13 @@ public:
      * @brief The ExtractorInitializer
      */
     struct ExtractorInitializer/* : public Constructor*/ {
-        typedef boost::function<void(Extractor*, const param::ParameterProvider&, bool)> Call;
+        typedef boost::function<void(Extractor*, const csapex::param::ParameterProvider&, bool)> Call;
 
-        void operator()(Extractor* r, const param::ParameterProvider& param, bool complete = false) const {
+        void operator()(Extractor* r, const csapex::param::ParameterProvider& param, bool complete = false) const {
             return construct(r, param, complete);
         }
 
-        void construct(Extractor* r, const param::ParameterProvider& param, bool complete = false) const {
+        void construct(Extractor* r, const csapex::param::ParameterProvider& param, bool complete = false) const {
             if(!constructor.empty()) {
                 constructor(r, param, complete);
             }
@@ -130,12 +130,12 @@ public:
 
     struct Params {
         template <typename T>
-        T read(const param::ParameterProvider& param, const std::string& name) {
+        T read(const csapex::param::ParameterProvider& param, const std::string& name) {
             try {
-                param::Parameter::Ptr p = param.getConstParameter(name);
+                csapex::param::Parameter::Ptr p = param.getConstParameter(name);
                 return p->as<T>();
             } catch(const std::exception& e) {
-                BOOST_FOREACH(const param::Parameter::Ptr& p, params) {
+                BOOST_FOREACH(const csapex::param::Parameter::Ptr& p, params) {
                     if(p->name() == name) {
                         return p->as<T>();
                     }
@@ -145,11 +145,11 @@ public:
             throw std::out_of_range(std::string("parameter ") + name + " doesn't exist.");
         }
 
-        void add(param::Parameter::Ptr param) {
+        void add(csapex::param::Parameter::Ptr param) {
             params.push_back(param);
         }
 
-        std::vector<param::Parameter::Ptr> params;
+        std::vector<csapex::param::Parameter::Ptr> params;
     };
 
     class KeypointInitializer : public ExtractorInitializer {};
@@ -158,7 +158,7 @@ public:
     typedef typename KeypointInitializer::Call KeypointInit;
     typedef typename DescriptorInitializer::Call DescriptorInit;
 
-    typedef boost::function<std::vector<param::Parameter::Ptr>() > ParameterFunction;
+    typedef boost::function<std::vector<csapex::param::Parameter::Ptr>() > ParameterFunction;
 
 private:
     /**
@@ -208,8 +208,8 @@ public:
         return available_keypoints;
     }
 
-    std::vector<param::Parameter::Ptr> featureDetectorParameters(const std::string& keypoint);
-    std::vector<param::Parameter::Ptr> featureDescriptorParameters(const std::string& keypoint);
+    std::vector<csapex::param::Parameter::Ptr> featureDetectorParameters(const std::string& keypoint);
+    std::vector<csapex::param::Parameter::Ptr> featureDescriptorParameters(const std::string& keypoint);
 
     /**
      * @brief descriptorExtractors get a container of all extractors
@@ -225,7 +225,7 @@ protected:
             : kc_(kc), dc_(dc), complete_(complete)
         {}
 
-        virtual void init(Extractor* e, const param::ParameterProvider& param) {
+        virtual void init(Extractor* e, const csapex::param::ParameterProvider& param) {
             if(complete_) {
                 kc_(e, param, true);
                 // dc_ == kc_

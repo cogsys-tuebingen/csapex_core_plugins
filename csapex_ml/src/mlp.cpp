@@ -31,14 +31,14 @@ void MLP::setup(NodeModifier& node_modifier)
 
 void MLP::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declarePath("MLP path",
-                                                      param::ParameterDescription("Path to a saved MLP."),
+    addParameter(csapex::param::ParameterFactory::declarePath("MLP path",
+                                                      csapex::param::ParameterDescription("Path to a saved MLP."),
                                                       true,
                                                       "",
                                                       "*.yaml"),
                  std::bind(&MLP::load, this));
-    addParameter(param::ParameterFactory::declarePath("normalization path",
-                                                      param::ParameterDescription("Path to a normalization file."),
+    addParameter(csapex::param::ParameterFactory::declarePath("normalization path",
+                                                      csapex::param::ParameterDescription("Path to a normalization file."),
                                                       true,
                                                       "",
                                                       "*.norm"),

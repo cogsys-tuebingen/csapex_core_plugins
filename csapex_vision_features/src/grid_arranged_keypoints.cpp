@@ -33,22 +33,22 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("dimension x", 1, 1000, 64, 1));
-        parameters.addParameter(param::ParameterFactory::declareRange("dimension y", 1, 1000, 48, 1));
-        parameters.addParameter(param::ParameterFactory::declareRange("size", 0.0, 120.0, 0.0, 0.1));
+        parameters.addParameter(csapex::param::ParameterFactory::declareRange("dimension x", 1, 1000, 64, 1));
+        parameters.addParameter(csapex::param::ParameterFactory::declareRange("dimension y", 1, 1000, 48, 1));
+        parameters.addParameter(csapex::param::ParameterFactory::declareRange("size", 0.0, 120.0, 0.0, 0.1));
 
-        param::Parameter::Ptr advanced = param::ParameterFactory::declareBool("advanced", false);
+        csapex::param::Parameter::Ptr advanced = csapex::param::ParameterFactory::declareBool("advanced", false);
         parameters.addParameter(advanced);
 
         std::function<bool()> cond_adv = [advanced]() { return advanced->as<bool>(); };
 
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("class id", -1, 255, -1, 1),
+        parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("class id", -1, 255, -1, 1),
                                            cond_adv);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("octave", 0, 12, 0, 1),
+        parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("octave", 0, 12, 0, 1),
                                            cond_adv);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("response", 0, 12, 0, 1),
+        parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("response", 0, 12, 0, 1),
                                            cond_adv);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("angle", -1.0, 2 * M_PI, -1.0, 0.1),
+        parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("angle", -1.0, 2 * M_PI, -1.0, 0.1),
                                            cond_adv);
     }
 

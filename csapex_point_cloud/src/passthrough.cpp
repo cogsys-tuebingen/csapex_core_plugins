@@ -33,12 +33,12 @@ PassThrough::PassThrough()
 
 void PassThrough::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareInterval("interval", -100.0, 100.0, 0.0, 100.0, 0.01));
-    parameters.addParameter(param::ParameterFactory::declareBool("keep organized", true));
+    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("interval", -100.0, 100.0, 0.0, 100.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("keep organized", true));
 
     std::vector<std::string> field;
     field.push_back("x");
-    parameters.addParameter(param::ParameterFactory::declareParameterStringSet("field", field), std::bind(&PassThrough::updateBorders, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterStringSet("field", field), std::bind(&PassThrough::updateBorders, this));
 }
 
 void PassThrough::setup(NodeModifier& node_modifier)

@@ -56,10 +56,10 @@ void Col::setup(NodeModifier& node_modifier)
 
 void Col::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("col",
-                                                       param::ParameterDescription("Col to extract."),
+    addParameter(csapex::param::ParameterFactory::declareRange("col",
+                                                       csapex::param::ParameterDescription("Col to extract."),
                                                        0, 1, 0, 1));
-    parameters.addParameter(param::ParameterFactory::declareTrigger("center"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("center"),
                  std::bind(&Col::requestCenter, this));
 
 }

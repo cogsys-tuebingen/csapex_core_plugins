@@ -30,17 +30,17 @@ void SVMTrainer::setup(NodeModifier& node_modifier)
 void SVMTrainer::setupParameters(Parameterizable& parameters)
 {
 
-    addParameter(param::ParameterFactory::declareFileOutputPath("path",
-                                                                param::ParameterDescription("File to write svm to."),
+    addParameter(csapex::param::ParameterFactory::declareFileOutputPath("path",
+                                                                csapex::param::ParameterDescription("File to write svm to."),
                                                                 "",
                                                                 "*.yaml *.tar.gz"));
 
-    addParameter(param::ParameterFactory::declareTrigger("train",
-                                                         param::ParameterDescription("Train using obtained data!")),
+    addParameter(csapex::param::ParameterFactory::declareTrigger("train",
+                                                         csapex::param::ParameterDescription("Train using obtained data!")),
                  std::bind(&SVMTrainer::train, this));
 
-    addParameter(param::ParameterFactory::declareTrigger("clear",
-                                                         param::ParameterDescription("Clear buffered data!")),
+    addParameter(csapex::param::ParameterFactory::declareTrigger("clear",
+                                                         csapex::param::ParameterDescription("Clear buffered data!")),
                  std::bind(&SVMTrainer::clear, this));
 
 
@@ -51,9 +51,9 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
             ("RBF", cv::SVM::RBF)
             ("SIGMOID", cv::SVM::SIGMOID);
 
-    param::Parameter::Ptr kernel_param =
-            param::ParameterFactory::declareParameterSet("kernel type",
-                                                         param::ParameterDescription("Kernel type to be trained."),
+    csapex::param::Parameter::Ptr kernel_param =
+            csapex::param::ParameterFactory::declareParameterSet("kernel type",
+                                                         csapex::param::ParameterDescription("Kernel type to be trained."),
                                                          kernel_types,
                                                          (int) cv::SVM::RBF);
     parameters.addParameter(kernel_param);
@@ -66,9 +66,9 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
             ("EPS_SVR", cv::SVM::EPS_SVR)
             ("NU_SVR", cv::SVM::NU_SVR);
 
-    param::Parameter::Ptr svm_param =
-            param::ParameterFactory::declareParameterSet("svm type",
-                                                         param::ParameterDescription("SVM type to be trained."),
+    csapex::param::Parameter::Ptr svm_param =
+            csapex::param::ParameterFactory::declareParameterSet("svm type",
+                                                         csapex::param::ParameterDescription("SVM type to be trained."),
                                                          svm_types,
                                                          (int) cv::SVM::C_SVC);
 
@@ -101,17 +101,17 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
     };
 
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, M_PI * 2, 0.0, 0.05),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("degree", 0.0, M_PI * 2, 0.0, 0.05),
                             deg_cond);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", -M_PI, M_PI, 1.0, 0.05),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("gamma", -M_PI, M_PI, 1.0, 0.05),
                             gamma_cond);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -M_PI, M_PI, 0.0, 0.05),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("coef0", -M_PI, M_PI, 0.0, 0.05),
                             coeff0_cond);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("C", -M_PI, M_PI, 1.0, 0.05),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("C", -M_PI, M_PI, 1.0, 0.05),
                             cvalue_cond);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("nu", 0.0, 1.0, 0.0, 0.05),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("nu", 0.0, 1.0, 0.0, 0.05),
                             nu_cond);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("p", -M_PI, M_PI, 0.0, 0.05),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("p", -M_PI, M_PI, 0.0, 0.05),
                             p_cond);
 }
 

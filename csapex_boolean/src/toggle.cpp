@@ -19,7 +19,7 @@ Toggle::Toggle()
 
 void Toggle::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("true", true),
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("true", true),
                  std::bind(&Toggle::setSignal, this));
 }
 

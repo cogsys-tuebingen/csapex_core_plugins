@@ -57,10 +57,10 @@ void Row::setup(NodeModifier& node_modifier)
 
 void Row::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("row",
-                                                       param::ParameterDescription("Row to extract."),
+    addParameter(csapex::param::ParameterFactory::declareRange("row",
+                                                       csapex::param::ParameterDescription("Row to extract."),
                                                        0, 1, 0, 1));
-    parameters.addParameter(param::ParameterFactory::declareTrigger("center"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("center"),
                  std::bind(&Row::requestCenter, this));
 
 }

@@ -168,10 +168,10 @@ struct ParameterInfoTestWrap
         }
     }
     template <typename P>
-    static param::ParameterPtr declareParameter(int index) {
+    static csapex::param::ParameterPtr declareParameter(int index) {
         switch(index) {
         case 1:
-            return param::ParameterFactory::declareRange<P>(getName(index), -1, 3, 0, 1);
+            return csapex::param::ParameterFactory::declareRange<P>(getName(index), -1, 3, 0, 1);
         default:
             return nullptr;
         }

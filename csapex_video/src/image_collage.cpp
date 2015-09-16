@@ -20,11 +20,11 @@ ImageCollage::ImageCollage()
 
 void ImageCollage::setupParameters(Parameterizable& parameters)
 {
-    param::Parameter::Ptr x = param::ParameterFactory::declareRange("x",
-                                                   param::ParameterDescription("x position of the overlay"),
+    csapex::param::Parameter::Ptr x = csapex::param::ParameterFactory::declareRange("x",
+                                                   csapex::param::ParameterDescription("x position of the overlay"),
                                                    0, 800, 0, 1);
-    param::Parameter::Ptr y = param::ParameterFactory::declareRange("y",
-                                                   param::ParameterDescription("y position of the overlay"),
+    csapex::param::Parameter::Ptr y = csapex::param::ParameterFactory::declareRange("y",
+                                                   csapex::param::ParameterDescription("y position of the overlay"),
                                                    0, 600, 0, 1);
 
     p_x_ = std::dynamic_pointer_cast<param::RangeParameter>(x);

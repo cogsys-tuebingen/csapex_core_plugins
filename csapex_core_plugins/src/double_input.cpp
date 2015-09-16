@@ -18,9 +18,9 @@ NumberInput<T>::NumberInput()
 template <typename T>
 void NumberInput<T>::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareValue<T>("value", (T) 0.0));
-    parameters.addParameter(param::ParameterFactory::declareTrigger("publish"), std::bind(&NumberInput::process, this));
-    parameters.addParameter(param::ParameterFactory::declareBool("tick", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareValue<T>("value", (T) 0.0));
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("publish"), std::bind(&NumberInput::process, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("tick", false));
 }
 
 template <typename T>

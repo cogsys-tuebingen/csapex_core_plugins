@@ -33,39 +33,39 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
 {
     CollectionNode<FeaturesMessage>::setupParameters(parameters);
 
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("classes",
-                  param::ParameterDescription("Number of classes to learn."),
+                  csapex::param::ParameterDescription("Number of classes to learn."),
                   0, 100, 2, 1),
                  std::bind(&RandomTreesTrainer::updatePriors, this));;
 
-    addParameter(param::ParameterFactory::declareFileOutputPath
+    addParameter(csapex::param::ParameterFactory::declareFileOutputPath
                  ("file", "rforest.yaml"));
 
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max depth",
-                  param::ParameterDescription("the depth of the tree. A low value will likely underfit and conversely a high value will likely overfit.\n"
+                  csapex::param::ParameterDescription("the depth of the tree. A low value will likely underfit and conversely a high value will likely overfit.\n"
                                               "The optimal value can be obtained using cross validation or other suitable methods."),
                   1, 64, 8, 1));;
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("min sample count",
-                  param::ParameterDescription("minimum samples required at a leaf node for it to be split.\n"
+                  csapex::param::ParameterDescription("minimum samples required at a leaf node for it to be split.\n"
                                               "A reasonable value is a small percentage of the total data e.g. 1%."),
                   0, 64, 10, 1));
-    addParameter(param::ParameterFactory::declareRange<double>
+    addParameter(csapex::param::ParameterFactory::declareRange<double>
                  ("regression accuracy",
-                  param::ParameterDescription("Termination criteria for regression trees. \n"
+                  csapex::param::ParameterDescription("Termination criteria for regression trees. \n"
                                               "If all absolute differences between an estimated value in a node and values of train samples in this node \n"
                                               "are less than this parameter then the node will not be split."),
                   0.0, 255.0, 0.0, 0.01));;
-    addParameter(param::ParameterFactory::declareBool
+    addParameter(csapex::param::ParameterFactory::declareBool
                  ("use surrogates",
-                  param::ParameterDescription("If true then surrogate splits will be built. \n"
+                  csapex::param::ParameterDescription("If true then surrogate splits will be built. \n"
                                               "These splits allow to work with missing data and compute variable importance correctly."),
                   true));;
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max categories",
-                  param::ParameterDescription("Cluster possible values of a categorical variable into K <= max_categories clusters to find a suboptimal split.\n"
+                  csapex::param::ParameterDescription("Cluster possible values of a categorical variable into K <= max_categories clusters to find a suboptimal split.\n"
                                               "If a discrete variable, on which the training procedure tries to make a split, takes more than max_categories values,\n"
                                               "the precise best subset estimation may take a very long time because the algorithm is exponential.\n"
                                               "Instead, many decision trees engines (including ML) try to find sub-optimal split in this case by clustering all\n"
@@ -76,25 +76,25 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
                                               "thus the parameter is not used in these cases."),
                   0, 100, 15, 1));;
 
-    addParameter(param::ParameterFactory::declareBool
+    addParameter(csapex::param::ParameterFactory::declareBool
                  ("calc_var_importance",
-                  param::ParameterDescription("If true then variable importance will be calculated and then it can be retrieved by CvRTrees::get_var_importance()."),
+                  csapex::param::ParameterDescription("If true then variable importance will be calculated and then it can be retrieved by CvRTrees::get_var_importance()."),
                   false));
 
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("nactive_vars",
-                  param::ParameterDescription("The size of the randomly selected subset of features at each tree node and that are used to find the best split(s).\n"
+                  csapex::param::ParameterDescription("The size of the randomly selected subset of features at each tree node and that are used to find the best split(s).\n"
                                               "If you set it to 0 then the size will be set to the square root of the total number of features."),
                   0, 100, 0, 1));
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max_num_of_trees_in_the_forest",
-                  param::ParameterDescription("The maximum number of trees in the forest (surprise, surprise). Typically the more trees you have the better the accuracy.\n"
+                  csapex::param::ParameterDescription("The maximum number of trees in the forest (surprise, surprise). Typically the more trees you have the better the accuracy.\n"
                                               "However, the improvement in accuracy generally diminishes and asymptotes pass a certain number of trees.\n"
                                               "Also to keep in mind, the number of tree increases the prediction time linearly."),
                   1, 1024, 16, 1));
-    addParameter(param::ParameterFactory::declareRange<double>
+    addParameter(csapex::param::ParameterFactory::declareRange<double>
                  ("forest_accuracy",
-                  param::ParameterDescription("Sufficient accuracy (OOB error)."),
+                  csapex::param::ParameterDescription("Sufficient accuracy (OOB error)."),
                   0.0, 1.0, 0.5, 0.01));
 
 
@@ -104,9 +104,9 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
             ("CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int) CV_TERMCRIT_ITER | CV_TERMCRIT_EPS);
 
 
-    param::Parameter::Ptr termcrit_type_p = param::ParameterFactory::declareParameterSet
+    csapex::param::Parameter::Ptr termcrit_type_p = csapex::param::ParameterFactory::declareParameterSet
             ("termcrit_type",
-             param::ParameterDescription("The type of the termination criteria:\n"
+             csapex::param::ParameterDescription("The type of the termination criteria:\n"
                                          "CV_TERMCRIT_ITER Terminate learning by the max_num_of_trees_in_the_forest;\n"
                                          "CV_TERMCRIT_EPS Terminate learning by the forest_accuracy;\n"
                                          "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS Use both termination criteria."),
@@ -123,7 +123,7 @@ void RandomTreesTrainer::updatePriors()
             for(int c = categories_; c < categories; ++c) {
                 std::stringstream name;
                 name << "~priors/" << c;
-                param::Parameter::Ptr p = param::ParameterFactory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
+                csapex::param::Parameter::Ptr p = csapex::param::ParameterFactory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
                 priors_params_.push_back(p);
                 addTemporaryParameter(p, std::bind(&RandomTreesTrainer::udpatePriorValues, this));
             }

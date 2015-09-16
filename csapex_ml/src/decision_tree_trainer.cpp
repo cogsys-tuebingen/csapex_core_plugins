@@ -32,40 +32,40 @@ void DecisionTreeTrainer::setupParameters(Parameterizable& parameters)
 {
     CollectionNode<FeaturesMessage>::setupParameters(parameters);
 
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("classes",
-                  param::ParameterDescription("Number of classes to learn."),
+                  csapex::param::ParameterDescription("Number of classes to learn."),
                   0, 100, 2, 1),
                  std::bind(&DecisionTreeTrainer::updatePriors, this));;
 
-    addParameter(param::ParameterFactory::declareFileOutputPath
+    addParameter(csapex::param::ParameterFactory::declareFileOutputPath
                  ("file", "dtree.yaml"));
 
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max depth",
-                  param::ParameterDescription("The maximum possible depth of the tree. \n"
+                  csapex::param::ParameterDescription("The maximum possible depth of the tree. \n"
                                               "That is the training algorithms attempts to split a node while its depth is less than max_depth. \n"
                                               "The actual depth may be smaller if the other termination criteria are met \n"
                                               "(see the outline of the training procedure in the beginning of the section), and/or if the tree is pruned."),
                   1, 64, 8, 1));;
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("min sample count",
-                  param::ParameterDescription("If the number of samples in a node is less than this parameter then the node will not be split."),
+                  csapex::param::ParameterDescription("If the number of samples in a node is less than this parameter then the node will not be split."),
                   0, 64, 10, 1));
-    addParameter(param::ParameterFactory::declareRange<double>
+    addParameter(csapex::param::ParameterFactory::declareRange<double>
                  ("regression accuracy",
-                  param::ParameterDescription("Termination criteria for regression trees. \n"
+                  csapex::param::ParameterDescription("Termination criteria for regression trees. \n"
                                               "If all absolute differences between an estimated value in a node and values of train samples in this node \n"
                                               "are less than this parameter then the node will not be split."),
                   0.0, 255.0, 0.0, 0.01));;
-    addParameter(param::ParameterFactory::declareBool
+    addParameter(csapex::param::ParameterFactory::declareBool
                  ("use surrogates",
-                  param::ParameterDescription("If true then surrogate splits will be built. \n"
+                  csapex::param::ParameterDescription("If true then surrogate splits will be built. \n"
                                               "These splits allow to work with missing data and compute variable importance correctly."),
                   true));;
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max categories",
-                  param::ParameterDescription("Cluster possible values of a categorical variable into K < max_categories clusters to find a suboptimal split. \n"
+                  csapex::param::ParameterDescription("Cluster possible values of a categorical variable into K < max_categories clusters to find a suboptimal split. \n"
                                               "If a discrete variable, on which the training procedure tries to make a split, \n"
                                               "takes more than max_categories values, the precise best subset estimation may take a very long time \n"
                                               "because the algorithm is exponential. \n"
@@ -76,19 +76,19 @@ void DecisionTreeTrainer::setupParameters(Parameterizable& parameters)
                                               "In case of regression and 2-class classification the optimal split can be found efficiently \n"
                                               "without employing clustering, thus the parameter is not used in these cases."),
                   0, 100, 15, 1));;
-    addParameter(param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("cv folds",
-                  param::ParameterDescription("If cv_folds > 1 then prune a tree with K-fold cross-validation where K is equal to cv_folds."),
+                  csapex::param::ParameterDescription("If cv_folds > 1 then prune a tree with K-fold cross-validation where K is equal to cv_folds."),
                   0, 100, 10, 1));;
-    addParameter(param::ParameterFactory::declareBool
+    addParameter(csapex::param::ParameterFactory::declareBool
                  ("use 1se rule",
-                  param::ParameterDescription("If true then a pruning will be harsher.\n"
+                  csapex::param::ParameterDescription("If true then a pruning will be harsher.\n"
                                               "This will make a tree more compact and more resistant to the training data \n"
                                               "noise but a bit less accurate."),
                   true));;
-    addParameter(param::ParameterFactory::declareBool
+    addParameter(csapex::param::ParameterFactory::declareBool
                  ("truncate pruned tree",
-                  param::ParameterDescription("If true then pruned branches are physically removed from the tree. \n"
+                  csapex::param::ParameterDescription("If true then pruned branches are physically removed from the tree. \n"
                                               "Otherwise they are retained and it is possible to get results from the \n"
                                               "original unpruned (or pruned less aggressively) tree by decreasing CvDTree::pruned_tree_idx parameter."),
                   true));;
@@ -103,7 +103,7 @@ void DecisionTreeTrainer::updatePriors()
             for(int c = categories_; c < categories; ++c) {
                 std::stringstream name;
                 name << "~priors/" << c;
-                param::Parameter::Ptr p = param::ParameterFactory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
+                csapex::param::Parameter::Ptr p = csapex::param::ParameterFactory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
                 priors_params_.push_back(p);
                 addTemporaryParameter(p, std::bind(&DecisionTreeTrainer::udpatePriorValues, this));
             }

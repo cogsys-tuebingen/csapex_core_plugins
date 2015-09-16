@@ -62,9 +62,9 @@ BilateralFilter::BilateralFilter() :
 
 void BilateralFilter::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("d", 1, 255, d_, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange("sigma color", -255.0, 255.0, sigma_color_, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("sigma space", -255.0, 255.0, sigma_space_, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("d", 1, 255, d_, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("sigma color", -255.0, 255.0, sigma_color_, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("sigma space", -255.0, 255.0, sigma_space_, 0.1));
 }
 
 void BilateralFilter::process()

@@ -31,10 +31,10 @@ RadiusOutlierRemoval::RadiusOutlierRemoval()
 
 void RadiusOutlierRemoval::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("min neighbours", 1, 1000, 2, 1));
-    parameters.addParameter(param::ParameterFactory::declareBool ("keep organized", false));
-    parameters.addParameter(param::ParameterFactory::declareBool ("negate", false));
-    parameters.addParameter(param::ParameterFactory::declareRange("search radius", 0.0, 30.0, 0.8, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("min neighbours", 1, 1000, 2, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool ("keep organized", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool ("negate", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("search radius", 0.0, 30.0, 0.8, 0.1));
 }
 
 void RadiusOutlierRemoval::setup(NodeModifier& node_modifier)

@@ -43,7 +43,7 @@ MLEvaluator::MLEvaluator()
 
 void MLEvaluator::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"), [&](param::Parameter*) { confusion_.reset(); });
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"), [&](csapex::param::Parameter*) { confusion_.reset(); });
 }
 
 void MLEvaluator::setup(NodeModifier& node_modifier)

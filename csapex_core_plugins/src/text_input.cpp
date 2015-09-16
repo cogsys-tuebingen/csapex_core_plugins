@@ -18,7 +18,7 @@ TextInput::TextInput()
 
 void TextInput::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareText("text", ""));
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("text", ""));
 }
 
 void TextInput::process()

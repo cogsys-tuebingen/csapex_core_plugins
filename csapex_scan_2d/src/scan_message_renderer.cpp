@@ -18,7 +18,7 @@ QImage ScanMessageRenderer::doRender(const connection_types::ScanMessage &msg)
     return QtCvImageConverter::Converter<QImage>::mat2QImage(mat);
 }
 
-std::vector<param::ParameterPtr> ScanMessageRenderer::getParameters() const
+std::vector<csapex::param::ParameterPtr> ScanMessageRenderer::getParameters() const
 {
     return renderer.getParameters();
 }
@@ -30,7 +30,7 @@ QImage LabeledScanMessageRenderer::doRender(const connection_types::LabeledScanM
     return QtCvImageConverter::Converter<QImage>::mat2QImage(mat);
 }
 
-std::vector<param::ParameterPtr> LabeledScanMessageRenderer::getParameters() const
+std::vector<csapex::param::ParameterPtr> LabeledScanMessageRenderer::getParameters() const
 {
     return renderer.getParameters();
 }

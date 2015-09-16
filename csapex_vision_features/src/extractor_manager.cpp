@@ -96,13 +96,13 @@ void ExtractorManager::registerDescriptorParameters(const std::string& des, Para
     param_des[descriptor_lower] = f;
 }
 
-std::vector<param::Parameter::Ptr> ExtractorManager::featureDetectorParameters(const std::string& keypoint) {
+std::vector<csapex::param::Parameter::Ptr> ExtractorManager::featureDetectorParameters(const std::string& keypoint) {
     std::string keypoint_lower = keypoint;
     std::transform(keypoint_lower.begin(), keypoint_lower.end(), keypoint_lower.begin(), ::tolower);
 
     return param_key[keypoint_lower]();
 }
-std::vector<param::Parameter::Ptr> ExtractorManager::featureDescriptorParameters(const std::string& descriptor) {
+std::vector<csapex::param::Parameter::Ptr> ExtractorManager::featureDescriptorParameters(const std::string& descriptor) {
     std::string descriptor_lower = descriptor;
     std::transform(descriptor_lower.begin(), descriptor_lower.end(), descriptor_lower.begin(), ::tolower);
 

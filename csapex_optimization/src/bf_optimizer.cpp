@@ -42,7 +42,7 @@ void BFOptimizer::tick()
     // initilization?
     if(!init_) {
         current_index_.clear();
-        for(param::Parameter::Ptr p : getParameters()) {
+        for(csapex::param::Parameter::Ptr p : getParameters()) {
             param::RangeParameter::Ptr dbl_range = std::dynamic_pointer_cast<param::RangeParameter>(p);
             if(!dbl_range || !dbl_range->is<double>()) {
                 continue;
@@ -69,7 +69,7 @@ void BFOptimizer::tick()
 int BFOptimizer::stepsNecessary()
 {
     int steps = 1;
-    for(param::Parameter::Ptr p : getParameters()) {
+    for(csapex::param::Parameter::Ptr p : getParameters()) {
         param::RangeParameter::Ptr dbl_range = std::dynamic_pointer_cast<param::RangeParameter>(p);
         if(!dbl_range || !dbl_range->is<double>()) {
             continue;
@@ -89,7 +89,7 @@ bool BFOptimizer::nextStep()
 
 bool BFOptimizer::increaseParameter(std::size_t i)
 {
-    std::vector<param::Parameter::Ptr> params = getParameters();
+    std::vector<csapex::param::Parameter::Ptr> params = getParameters();
     if(i > params.size()) {
         return false;
     }
@@ -125,8 +125,8 @@ void BFOptimizer::start()
 {
     ainfo << "starting optimization" << std::endl;
     init_ = false;
-    modifier_->setTickEnabled(true);
-    modifier_->setTickFrequency(100.);
+    setTickEnabled(true);
+    setTickFrequency(100.);
 }
 
 
@@ -134,5 +134,5 @@ void BFOptimizer::stop()
 {
     step(stepsNecessary());
     ainfo << "stopping optimization" << std::endl;
-    modifier_->setTickEnabled(false);
+    setTickEnabled(false);
 }

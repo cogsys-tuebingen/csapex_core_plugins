@@ -24,7 +24,7 @@ private:
 
 private:
     int categories_;
-    std::vector<param::ParameterPtr> priors_params_;
+    std::vector<csapex::param::ParameterPtr> priors_params_;
     std::vector<float> priors_;
 };
 

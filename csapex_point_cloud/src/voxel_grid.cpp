@@ -25,7 +25,7 @@ VoxelGrid::VoxelGrid()
 
 void VoxelGrid::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("resolution", 0.01, 1.0, 0.1, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("resolution", 0.01, 1.0, 0.1, 0.01));
 }
 
 void VoxelGrid::setup(NodeModifier& node_modifier)

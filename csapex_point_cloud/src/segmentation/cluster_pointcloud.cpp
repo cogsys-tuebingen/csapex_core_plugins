@@ -50,9 +50,9 @@ ClusterPointcloud::ClusterPointcloud()
 
 void ClusterPointcloud::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001));
-    parameters.addParameter(param::ParameterFactory::declareRange("MinClusterSize", 10, 20000, 100, 200));
-    parameters.addParameter(param::ParameterFactory::declareRange("MaxClusterSize", 10, 100000, 25000, 1000));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MinClusterSize", 10, 20000, 100, 200));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MaxClusterSize", 10, 100000, 25000, 1000));
 }
 
 void ClusterPointcloud::process()

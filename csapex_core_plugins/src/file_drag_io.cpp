@@ -56,7 +56,7 @@ class FileHandler : public DragIOHandler
 
                 NodeState::Ptr state(new NodeState(nullptr));
                 GenericState::Ptr child_state(new GenericState);
-                child_state->addParameter(param::ParameterFactory::declareFileInputPath("path", files.first().toLocalFile().toStdString()));
+                child_state->addParameter(csapex::param::ParameterFactory::declareFileInputPath("path", files.first().toLocalFile().toStdString()));
                 state->setParameterState(child_state);
 
                 std::string type("csapex::FileImporter");

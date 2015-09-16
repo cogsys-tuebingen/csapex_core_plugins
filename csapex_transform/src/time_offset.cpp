@@ -20,7 +20,7 @@ TimeOffset::TimeOffset()
 
 void TimeOffset::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange<double>("offset", -5000.0, 5000.0, 0.0, 0.5));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("offset", -5000.0, 5000.0, 0.0, 0.5));
 }
 
 

@@ -34,10 +34,10 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("dimension x", 1, 1000, 64, 1));
-        parameters.addParameter(param::ParameterFactory::declareRange("dimension y", 1, 1000, 48, 1));
-        parameters.addParameter(param::ParameterFactory::declareRange("class id", -1, 255, -1, 1));
-        parameters.addParameter(param::ParameterFactory::declareColorParameter("color", 255,0,0));
+        parameters.addParameter(csapex::param::ParameterFactory::declareRange("dimension x", 1, 1000, 64, 1));
+        parameters.addParameter(csapex::param::ParameterFactory::declareRange("dimension y", 1, 1000, 48, 1));
+        parameters.addParameter(csapex::param::ParameterFactory::declareRange("class id", -1, 255, -1, 1));
+        parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color", 255,0,0));
     }
 
     virtual void process() override

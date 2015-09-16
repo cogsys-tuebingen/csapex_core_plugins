@@ -27,14 +27,14 @@ ExportFile::ExportFile()
 
 void ExportFile::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareBool("yaml",
-                                                      param::ParameterDescription("Export message in cs::APEX-YAML format?"),
+    addParameter(csapex::param::ParameterFactory::declareBool("yaml",
+                                                      csapex::param::ParameterDescription("Export message in cs::APEX-YAML format?"),
                                                       true));
-    addParameter(param::ParameterFactory::declareText("filename",
-                                                      param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
+    addParameter(csapex::param::ParameterFactory::declareText("filename",
+                                                      csapex::param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
                                                       "msg"), std::bind(&ExportFile::setExportPath, this));
-    addParameter(param::ParameterFactory::declareDirectoryOutputPath("path",
-                                                                     param::ParameterDescription("Directory to write messages to"),
+    addParameter(csapex::param::ParameterFactory::declareDirectoryOutputPath("path",
+                                                                     csapex::param::ParameterDescription("Directory to write messages to"),
                                                                      "", ""), std::bind(&ExportFile::setExportPath, this));
 }
 

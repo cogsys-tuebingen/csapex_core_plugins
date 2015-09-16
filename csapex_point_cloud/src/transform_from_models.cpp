@@ -37,8 +37,8 @@ void TransformFromModels::setup(NodeModifier& node_modifier)
 
 void TransformFromModels::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("Apex height", 0.0, 2.0, 0.5, 0.01));
-    parameters.addParameter(param::ParameterFactory::declareRange("Cone angle", 0.0001, 3.2, 0.5, 0.001));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("Apex height", 0.0, 2.0, 0.5, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("Cone angle", 0.0001, 3.2, 0.5, 0.001));
 }
 
 void TransformFromModels::process()

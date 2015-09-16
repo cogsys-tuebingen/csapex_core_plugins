@@ -79,14 +79,14 @@ void Reshape::setup(NodeModifier& node_modifier)
 
 void Reshape::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("rows",
-                                                       param::ParameterDescription("New row count."),
+    addParameter(csapex::param::ParameterFactory::declareRange("rows",
+                                                       csapex::param::ParameterDescription("New row count."),
                                                        1, 1, 1, 1));
-    addParameter(param::ParameterFactory::declareRange("cols",
-                                                       param::ParameterDescription("New col count."),
+    addParameter(csapex::param::ParameterFactory::declareRange("cols",
+                                                       csapex::param::ParameterDescription("New col count."),
                                                        1, 1, 1, 1));
-    addParameter(param::ParameterFactory::declareTrigger("reset",
-                                                         param::ParameterDescription("Reset to default size.")),
+    addParameter(csapex::param::ParameterFactory::declareTrigger("reset",
+                                                         csapex::param::ParameterDescription("Reset to default size.")),
                                                          boost::bind(&Reshape::reset, this));
 }
 

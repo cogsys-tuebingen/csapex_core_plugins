@@ -24,16 +24,16 @@ OptimizationDummy::OptimizationDummy()
 
 void OptimizationDummy::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("a", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("b", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("c", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("d", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("e", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("f", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("g", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("h", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("i", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("j", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("a", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("b", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("c", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("d", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("e", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("f", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("g", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("h", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("i", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("j", -10.0, 10.0, 0.0, 0.1));
 }
 
 void OptimizationDummy::setup(NodeModifier& node_modifier)

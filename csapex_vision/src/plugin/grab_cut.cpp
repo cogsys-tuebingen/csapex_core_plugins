@@ -25,12 +25,12 @@ GrabCut::GrabCut()
 
 void GrabCut::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("iterations",
-                                                       param::ParameterDescription("Number of iterations of GrabCut"),
+    addParameter(csapex::param::ParameterFactory::declareRange("iterations",
+                                                       csapex::param::ParameterDescription("Number of iterations of GrabCut"),
                                                        1, 100, 1, 1));
 
-    addParameter(param::ParameterFactory::declareRange("threshold",
-                                                       param::ParameterDescription("Minimum value for a mask pixel to be used as non-zero"),
+    addParameter(csapex::param::ParameterFactory::declareRange("threshold",
+                                                       csapex::param::ParameterDescription("Minimum value for a mask pixel to be used as non-zero"),
                                                        0, 255, 128, 1));
 
     std::map<std::string, int> init_value = boost::assign::map_list_of
@@ -39,8 +39,8 @@ void GrabCut::setupParameters(Parameterizable& parameters)
             ("most probably background", (int) cv::GC_PR_BGD)
             ("most probably foreground", (int) cv::GC_PR_FGD);
 
-    addParameter(param::ParameterFactory::declareParameterSet<int>("initial value",
-                                                                   param::ParameterDescription("Initial mask value for unspecified pixels"),
+    addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("initial value",
+                                                                   csapex::param::ParameterDescription("Initial mask value for unspecified pixels"),
                                                                    init_value, cv::GC_BGD));
 }
 

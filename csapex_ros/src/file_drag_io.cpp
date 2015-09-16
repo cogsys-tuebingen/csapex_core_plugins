@@ -71,7 +71,7 @@ class RosIoHandler : public DragIOHandler
                     NodeState::Ptr state(new NodeState(nullptr));
 
                     GenericState::Ptr child_state(new GenericState);
-                    child_state->addParameter(param::ParameterFactory::declareFileInputPath("topic", cmd));
+                    child_state->addParameter(csapex::param::ParameterFactory::declareFileInputPath("topic", cmd));
                     state->setParameterState(child_state);
 
                     dispatcher->execute(Command::Ptr(new command::AddNode(type, Point(pos.x(), pos.y()), UUID::NONE, uuid, state)));

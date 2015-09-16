@@ -28,7 +28,7 @@ ExportRos::ExportRos()
 
 void ExportRos::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareText("topic", "export"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("topic", "export"),
                  std::bind(&ExportRos::updateTopic, this));
 }
 

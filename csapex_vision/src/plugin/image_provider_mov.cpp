@@ -22,7 +22,7 @@ void ImageProviderMov::load(const std::string& movie_file)
     fps_ = capture_.get(CV_CAP_PROP_FPS);
     frames_ = capture_.get(CV_CAP_PROP_FRAME_COUNT);
 
-    param::Parameter::Ptr p = state.getParameter("set/current_frame");
+    csapex::param::Parameter::Ptr p = state.getParameter("set/current_frame");
     param::RangeParameter::Ptr range_p = std::dynamic_pointer_cast<param::RangeParameter>(p);
 
     if(range_p) {

@@ -66,8 +66,8 @@ void HoldableBuffer::process()
 
 void HoldableBuffer::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("buffer size",1, 50, 1, 1));
-    parameters.addParameter(param::ParameterFactory::declareBool("hold", false));
-    parameters.addParameter(param::ParameterFactory::declareRange("out idx", 0, (int) buffer_.size() - 1, 0 , 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("buffer size",1, 50, 1, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("hold", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("out idx", 0, (int) buffer_.size() - 1, 0 , 1));
     setParameterEnabled("out idx", false);
 }

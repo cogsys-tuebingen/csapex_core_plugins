@@ -18,7 +18,7 @@ ImageProvider::ImageProvider()
 {
     setType(connection_types::makeEmpty<connection_types::CvMatMessage>());
 
-    state.addParameter(param::ParameterFactory::declareBool("playback/resend", false));
+    state.addParameter(csapex::param::ParameterFactory::declareBool("playback/resend", false));
 }
 
 ImageProvider::~ImageProvider()

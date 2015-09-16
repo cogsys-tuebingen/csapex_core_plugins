@@ -25,24 +25,24 @@ ArffFormatExport::ArffFormatExport()
 
 void ArffFormatExport::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::
+    addParameter(csapex::param::ParameterFactory::
                  declareFileOutputPath("path",
-                                       param::ParameterDescription("Directory to write messages to"),
+                                       csapex::param::ParameterDescription("Directory to write messages to"),
                                        "", ".arff"));
 
-    addParameter(param::ParameterFactory::
+    addParameter(csapex::param::ParameterFactory::
                  declareTrigger("save",
-                                param::ParameterDescription("Save the obtained data!")),
+                                csapex::param::ParameterDescription("Save the obtained data!")),
                  std::bind(&ArffFormatExport::save, this));
 
-    addParameter(param::ParameterFactory::
+    addParameter(csapex::param::ParameterFactory::
                  declareTrigger("clear",
-                                param::ParameterDescription("Clear buffered data!")),
+                                csapex::param::ParameterDescription("Clear buffered data!")),
                  std::bind(&ArffFormatExport::clear, this));
 
-    addParameter(param::ParameterFactory::
+    addParameter(csapex::param::ParameterFactory::
                  declareText("relation",
-                             param::ParameterDescription("Define a relation title for the arff format."),
+                             csapex::param::ParameterDescription("Define a relation title for the arff format."),
                              ""));
 }
 

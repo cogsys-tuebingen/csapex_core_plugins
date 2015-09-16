@@ -24,17 +24,17 @@ ImageToPointCloud::ImageToPointCloud()
 
 void ImageToPointCloud::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareText("frame", "/camera"));
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("frame", "/camera"));
 
-    parameters.addParameter(param::ParameterFactory::declareRange("fov/h", 30.0, 180.0, 90.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareRange("fov/v", 30.0, 180.0, 90.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("fov/h", 30.0, 180.0, 90.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("fov/v", 30.0, 180.0, 90.0, 0.1));
 
-    parameters.addParameter(param::ParameterFactory::declareInterval("intensity", 0, 255, 0, 255, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("intensity", 0, 255, 0, 255, 1));
 
-    parameters.addParameter(param::ParameterFactory::declareBool("experimental error compensation", true));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("experimental error compensation", true));
 
-    parameters.addParameter(param::ParameterFactory::declareRange("correct/start", 0, 255, 255, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange("correct/f", -0.2, 0.2, 0.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("correct/start", 0, 255, 255, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("correct/f", -0.2, 0.2, 0.0, 0.01));
 }
 
 void ImageToPointCloud::setup(NodeModifier& node_modifier)

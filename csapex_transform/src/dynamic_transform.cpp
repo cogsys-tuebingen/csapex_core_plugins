@@ -29,11 +29,11 @@ DynamicTransform::DynamicTransform()
 void DynamicTransform::setupParameters(Parameterizable& parameters)
 {
     std::vector<std::string> topics;
-    parameters.addParameter(param::ParameterFactory::declareParameterStringSet("source", topics), std::bind(&DynamicTransform::update, this));
-    parameters.addParameter(param::ParameterFactory::declareParameterStringSet("target", topics), std::bind(&DynamicTransform::update, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterStringSet("source", topics), std::bind(&DynamicTransform::update, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterStringSet("target", topics), std::bind(&DynamicTransform::update, this));
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("refresh"), std::bind(&DynamicTransform::refresh, this));
-    parameters.addParameter(param::ParameterFactory::declareTrigger("reset tf"), std::bind(&DynamicTransform::resetTf, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("refresh"), std::bind(&DynamicTransform::refresh, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset tf"), std::bind(&DynamicTransform::resetTf, this));
 
     source_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("source"));
     target_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("target"));

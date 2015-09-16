@@ -57,8 +57,8 @@ void ModelToMarker::setup(NodeModifier& node_modifier)
 
 void ModelToMarker::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("publish marker", true));
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/marker", 0xFF, 0xCC, 0x00));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("publish marker", true));
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/marker", 0xFF, 0xCC, 0x00));
 }
 
 

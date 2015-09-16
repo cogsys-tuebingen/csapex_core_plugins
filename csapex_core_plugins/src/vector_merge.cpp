@@ -25,7 +25,7 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("input count", 2, 10, 2, 1), std::bind(&VectorMerge::updateInputs, this));
+        parameters.addParameter(csapex::param::ParameterFactory::declareRange("input count", 2, 10, 2, 1), std::bind(&VectorMerge::updateInputs, this));
     }
 
     void process()

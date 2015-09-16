@@ -28,30 +28,30 @@ ImageRoi::~ImageRoi()
 
 void ImageRoi::setupParameters(Parameterizable& parameters)
 {
-    param::Parameter::Ptr method = param::ParameterFactory::declareBool("step",
-                                                                        param::ParameterDescription("Step by step submission."),
+    csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareBool("step",
+                                                                        csapex::param::ParameterDescription("Step by step submission."),
                                                                         true);
     addParameter(method,
                  std::bind(&ImageRoi::submit, this));
 
-    std::function<bool()> k_cond = (std::bind(&param::Parameter::as<bool>, method.get()));
-    parameters.addConditionalParameter(param::ParameterFactory::declareTrigger("submit"),
+    std::function<bool()> k_cond = (std::bind(&csapex::param::Parameter::as<bool>, method.get()));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareTrigger("submit"),
                             k_cond,
                             std::bind(&ImageRoi::submit, this));
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareTrigger("drop"),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareTrigger("drop"),
                             k_cond,
                             std::bind(&ImageRoi::drop, this));
 
-    addParameter(param::ParameterFactory::declareRange("roi width",
-                                                       param::ParameterDescription("Set the width of the roi."),
+    addParameter(csapex::param::ParameterFactory::declareRange("roi width",
+                                                       csapex::param::ParameterDescription("Set the width of the roi."),
                                                        0, 640, 640, 1));
-    addParameter(param::ParameterFactory::declareRange("roi height",
-                                                       param::ParameterDescription("Set the width of the roi."),
+    addParameter(csapex::param::ParameterFactory::declareRange("roi height",
+                                                       csapex::param::ParameterDescription("Set the width of the roi."),
                                                        0, 480, 480, 1));
 
-    addParameter(param::ParameterFactory::declareRange("class label",
-                                                       param::ParameterDescription("Assign a class label to roi."),
+    addParameter(csapex::param::ParameterFactory::declareRange("class label",
+                                                       csapex::param::ParameterDescription("Assign a class label to roi."),
                                                        -1, 255, -1, 1));
 }
 

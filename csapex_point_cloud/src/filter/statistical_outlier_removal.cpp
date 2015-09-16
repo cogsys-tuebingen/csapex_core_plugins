@@ -31,10 +31,10 @@ StatisticalOutlierRemoval::StatisticalOutlierRemoval()
 
 void StatisticalOutlierRemoval::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("mean k", 1, 100, 2, 1));
-    parameters.addParameter(param::ParameterFactory::declareBool ("keep organized", false));
-    parameters.addParameter(param::ParameterFactory::declareBool ("negate", false));
-    parameters.addParameter(param::ParameterFactory::declareRange("std dev threshold", 0.0, 10.0, 0.1, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("mean k", 1, 100, 2, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool ("keep organized", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool ("negate", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("std dev threshold", 0.0, 10.0, 0.1, 0.1));
 }
 
 void StatisticalOutlierRemoval::setup(NodeModifier& node_modifier)

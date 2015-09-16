@@ -67,5 +67,5 @@ void PointmatrixToPointcloud::setup(NodeModifier& node_modifier)
 
 void PointmatrixToPointcloud::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareText("frame", "/camera"));
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("frame", "/camera"));
 }

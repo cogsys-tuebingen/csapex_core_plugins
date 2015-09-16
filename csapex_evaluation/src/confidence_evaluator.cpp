@@ -23,14 +23,14 @@ ConfidenceEvaluator::ConfidenceEvaluator()
 
 void ConfidenceEvaluator::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"), [&](param::Parameter*) { confidence_.reset(); });
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"), [&](csapex::param::Parameter*) { confidence_.reset(); });
 
     std::map<std::string, int> eval_types =
             boost::assign::map_list_of
             ("mean", ConfidenceMatrix::MEAN)
             ("argmax", ConfidenceMatrix::ARGMAX);
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("evaluation",
-                                                                         param::ParameterDescription("Choose the evaluation type."),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("evaluation",
+                                                                         csapex::param::ParameterDescription("Choose the evaluation type."),
                                                                          eval_types,
                                                                          (int) ConfidenceMatrix::MEAN));
 }

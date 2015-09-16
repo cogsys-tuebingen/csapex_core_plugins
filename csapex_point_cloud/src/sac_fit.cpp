@@ -28,12 +28,12 @@ SacFit::SacFit()
 
 void SacFit::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("iterations", 1, 20000, 5000, 200));
-    parameters.addParameter(param::ParameterFactory::declareRange("min inliers", 5, 20000, 100, 100));
-    parameters.addParameter(param::ParameterFactory::declareRange("normal distance weight", 0.0, 2.0, 0.085, 0.001));
-    parameters.addParameter(param::ParameterFactory::declareRange("distance threshold", 0.0, 2.0, 0.009, 0.001));
-    parameters.addParameter(param::ParameterFactory::declareRange("sphere min radius", 0.0, 2.0, 0.02, 0.005));
-    parameters.addParameter(param::ParameterFactory::declareRange("sphere max radius", 0.0, 2.0, 0.8, 0.005));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("iterations", 1, 20000, 5000, 200));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("min inliers", 5, 20000, 100, 100));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("normal distance weight", 0.0, 2.0, 0.085, 0.001));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("distance threshold", 0.0, 2.0, 0.009, 0.001));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("sphere min radius", 0.0, 2.0, 0.02, 0.005));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("sphere max radius", 0.0, 2.0, 0.8, 0.005));
 
     std::map<std::string, int> models = boost::assign::map_list_of
             ("fit sphere", (int) pcl::SACMODEL_SPHERE)
@@ -42,7 +42,7 @@ void SacFit::setupParameters(Parameterizable &parameters)
             ("fit cone", (int) pcl::SACMODEL_CONE);
 
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("models", models, (int) pcl::SACMODEL_PLANE),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("models", models, (int) pcl::SACMODEL_PLANE),
                  std::bind(&SacFit::setParameters, this));
 
     cluster_indices_.reset(new std::vector<pcl::PointIndices>);

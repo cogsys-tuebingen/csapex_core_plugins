@@ -41,7 +41,7 @@ void TransformFilter::setup(NodeModifier& node_modifier)
 
 void TransformFilter::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("filter size", 1, 10000, 200, 100));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("filter size", 1, 10000, 200, 100));
 }
 
 void TransformFilter::process()

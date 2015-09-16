@@ -64,14 +64,14 @@ void ParameterDialog::makeUI()
     QObject::connect(buttons, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
-param::Parameter::Ptr ParameterDialog::getParameter()
+csapex::param::Parameter::Ptr ParameterDialog::getParameter()
 {
     return param_;
 }
 
 void ParameterDialog::finish()
 {
-    param_ = param::ParameterFactory::declareRange<double>(name->text().toStdString(),
+    param_ = csapex::param::ParameterFactory::declareRange<double>(name->text().toStdString(),
                 min->value(), max->value(), min->value(), step->value());
     if(param_) {
         Q_EMIT accept();

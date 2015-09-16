@@ -288,32 +288,32 @@ MatchDescriptors::MatchDescriptors()
 
 void MatchDescriptors::setupParameters(Parameterizable &parameters)
 {
-    std::function<void(param::Parameter*)> update = std::bind(&MatchDescriptors::update, this);
+    std::function<void(csapex::param::Parameter*)> update = std::bind(&MatchDescriptors::update, this);
 
     std::map<std::string, int> methods = boost::assign::map_list_of
             ("Simple", (int) SIMPLE)
             ("Peak", (int) PEAK)
             ("Robust", (int) ROBUST);
 
-    param::Parameter::Ptr method = param::ParameterFactory::declareParameterSet("method", methods, (int) ROBUST);
+    csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) ROBUST);
     parameters.addParameter(method, update);
 
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/match", 255,128,128));
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/single", 128,128,255));
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/match", 255,128,128));
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/single", 128,128,255));
 
     // simple
     std::function<bool()> cond_simple = [method]() { return method->as<int>() == SIMPLE; };
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("simple/min_points", 1, 32, 3, 1), cond_simple);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("simple/threshold", 0.0, 1.0, 0.8, 0.01), cond_simple);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("simple/min_points", 1, 32, 3, 1), cond_simple);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("simple/threshold", 0.0, 1.0, 0.8, 0.01), cond_simple);
 
     // peak
     std::function<bool()> cond_peak = [method]() { return method->as<int>() == PEAK; };
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("peak/cluster_count", 1, 32, 1, 1), cond_peak);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("peak/scaling", 1, 8, 1, 1), cond_peak);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("peak/octaves", 1, 12, 1, 1), cond_peak);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("peak/min_cluster_size", 1, 256, 1, 1), cond_peak);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("peak/cluster_count", 1, 32, 1, 1), cond_peak);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("peak/scaling", 1, 8, 1, 1), cond_peak);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("peak/octaves", 1, 12, 1, 1), cond_peak);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("peak/min_cluster_size", 1, 256, 1, 1), cond_peak);
 }
 
 void MatchDescriptors::update()

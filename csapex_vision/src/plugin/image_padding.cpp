@@ -20,9 +20,9 @@ ImagePadding::ImagePadding()
 
 void ImagePadding::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("border", 0, 1000, 0, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange("mask offset", 0, 100, 0, 1));
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("color", 0x00, 0x00, 0x00));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("border", 0, 1000, 0, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("mask offset", 0, 100, 0, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color", 0x00, 0x00, 0x00));
 }
 
 void ImagePadding::setup(NodeModifier& node_modifier)

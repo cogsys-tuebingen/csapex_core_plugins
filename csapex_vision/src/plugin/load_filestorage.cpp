@@ -69,14 +69,13 @@ bool LoadFilestorage::canTick()
 void LoadFilestorage::setup(NodeModifier &node_modifier)
 {
     output_ = node_modifier.addOutput<CvMatMessage>("Matrix");
-    node_modifier.setTickFrequency(30);
 }
 
 void LoadFilestorage::setupParameters(Parameterizable &parameters)
 {
     addParameter(
-    param::ParameterFactory::declarePath("file storage",
-                                         param::ParameterDescription("Load cv file storage containing name matrices."),
+    csapex::param::ParameterFactory::declarePath("file storage",
+                                         csapex::param::ParameterDescription("Load cv file storage containing name matrices."),
                                          true,
                                          "",
                                          "*",
@@ -85,20 +84,20 @@ void LoadFilestorage::setupParameters(Parameterizable &parameters)
 
     std::vector<std::string> empty;
     addParameter(
-    param::ParameterFactory::declareParameterStringSet("entry",
-                                                       param::ParameterDescription("All contained matrices"),
+    csapex::param::ParameterFactory::declareParameterStringSet("entry",
+                                                       csapex::param::ParameterDescription("All contained matrices"),
                                                        empty),
     boost::bind(&LoadFilestorage::entryChanged, this));
 
     addParameter(
-    param::ParameterFactory::declareBool("iterate",
-                                          param::ParameterDescription("Iterate all contained matrices."),
+    csapex::param::ParameterFactory::declareBool("iterate",
+                                          csapex::param::ParameterDescription("Iterate all contained matrices."),
                                           false),
     boost::bind(&LoadFilestorage::checkChanged, this));
 
     addParameter(
-    param::ParameterFactory::declareBool("resend",
-                                         param::ParameterDescription("Resend matrix / all matrices."),
+    csapex::param::ParameterFactory::declareBool("resend",
+                                         csapex::param::ParameterDescription("Resend matrix / all matrices."),
                                          true),
     boost::bind(&LoadFilestorage::checkChanged, this));
 }

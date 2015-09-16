@@ -24,25 +24,25 @@ ImportFile::ImportFile()
 
 void ImportFile::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareDirectoryInputPath("path",
-                                                                    param::ParameterDescription("Directory to read messages from"),
+    addParameter(csapex::param::ParameterFactory::declareDirectoryInputPath("path",
+                                                                    csapex::param::ParameterDescription("Directory to read messages from"),
                                                                     "", ""), std::bind(&ImportFile::setImportPath, this));
 
-    addParameter(param::ParameterFactory::declareText("filename",
-                                                      param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
+    addParameter(csapex::param::ParameterFactory::declareText("filename",
+                                                      csapex::param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
                                                       "msg"), std::bind(&ImportFile::setImportPrefix, this));
-    addParameter(param::ParameterFactory::declareBool("loop",
-                                                      param::ParameterDescription("When reaching the end of the directory, do a loop?"),
+    addParameter(csapex::param::ParameterFactory::declareBool("loop",
+                                                      csapex::param::ParameterDescription("When reaching the end of the directory, do a loop?"),
                                                       true));
-    addParameter(param::ParameterFactory::declareBool("buffer",
-                                                      param::ParameterDescription("Buffer messages for future rounds."),
-                                                      false), [this](param::Parameter* p) {
+    addParameter(csapex::param::ParameterFactory::declareBool("buffer",
+                                                      csapex::param::ParameterDescription("Buffer messages for future rounds."),
+                                                      false), [this](csapex::param::Parameter* p) {
         do_buffer_ = p->as<bool>();
     });
-    param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("immediate", false);
+    csapex::param::Parameter::Ptr immediate = csapex::param::ParameterFactory::declareBool("immediate", false);
     parameters.addParameter(immediate, std::bind(&ImportFile::changeMode, this));
 
-    addParameter(param::ParameterFactory::declareTrigger("restart"), [this](param::Parameter*) {
+    addParameter(csapex::param::ParameterFactory::declareTrigger("restart"), [this](csapex::param::Parameter*) {
         restart();
     });
 }
@@ -51,9 +51,9 @@ void ImportFile::setupParameters(Parameterizable& parameters)
 void ImportFile::changeMode()
 {
     if(readParameter<bool>("immediate")) {
-        modifier_->setTickFrequency(-1.0);
+        setTickFrequency(-1.0);
     } else {
-        modifier_->setTickFrequency(30.0);
+        setTickFrequency(30.0);
     }
 }
 

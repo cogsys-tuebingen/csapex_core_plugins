@@ -22,14 +22,14 @@ DisplayKeypoints::DisplayKeypoints()
 
 void DisplayKeypoints::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("color", 255,0,0));
-    parameters.addParameter(param::ParameterFactory::declareBool("random color", true));
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color", 255,0,0));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("random color", true));
 
     std::map<std::string, std::pair<int, bool> > flags;
     //    flags["DRAW_OVER_OUTIMG"] = (int) cv::DrawMatchesFlags::DRAW_OVER_OUTIMG;
     flags["NOT_DRAW_SINGLE_POINTS"] = std::make_pair((int) cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS, false);
     flags["DRAW_RICH_KEYPOINTS"] = std::make_pair((int) cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS, true);
-    parameters.addParameter(param::ParameterFactory::declareParameterBitSet("flags", flags));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterBitSet("flags", flags));
 }
 
 void DisplayKeypoints::process()

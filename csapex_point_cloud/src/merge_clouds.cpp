@@ -23,7 +23,7 @@ MergeClouds::MergeClouds()
 
 void MergeClouds::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("input count", 2, 8, 2, 1), [this](param::Parameter*) {
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("input count", 2, 8, 2, 1), [this](csapex::param::Parameter*) {
         updateInputs();
     });
 }

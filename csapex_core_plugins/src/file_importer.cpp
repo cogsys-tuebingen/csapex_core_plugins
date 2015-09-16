@@ -37,30 +37,30 @@ FileImporter::~FileImporter()
 
 void FileImporter::setupParameters(Parameterizable& parameters)
 {
-    param::Parameter::Ptr directory = param::ParameterFactory::declareBool("import directory", false);
+    csapex::param::Parameter::Ptr directory = csapex::param::ParameterFactory::declareBool("import directory", false);
     parameters.addParameter(directory);
 
     std::function<bool()> cond_file = [directory]() { return !directory->as<bool>(); };
     std::function<bool()> cond_dir = [directory]() { return directory->as<bool>(); };
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("recursive import", false), cond_dir);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("recursive import", false), cond_dir);
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
-    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/play", true), cond_dir);
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/latch", false), cond_dir);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("directory/play", true), cond_dir);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("directory/latch", false), cond_dir);
 
-    param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
+    csapex::param::Parameter::Ptr immediate = csapex::param::ParameterFactory::declareBool("playback/immediate", false);
     parameters.addParameter(immediate, std::bind(&FileImporter::changeMode, this));
 
-    std::function<void(param::Parameter*)> setf = std::bind(&NodeModifier::setTickFrequency, modifier_, std::bind(&param::Parameter::as<double>, std::placeholders::_1));
+    std::function<void(csapex::param::Parameter*)> setf = std::bind(&TickableNode::setTickFrequency, this, std::bind(&csapex::param::Parameter::as<double>, std::placeholders::_1));
     std::function<bool()> conditionf = [immediate]() { return !immediate->as<bool>(); };
-    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
+    addConditionalParameter(csapex::param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
 }
 
 void FileImporter::setup(NodeModifier& node_modifier)
@@ -74,9 +74,9 @@ void FileImporter::setup(NodeModifier& node_modifier)
 void FileImporter::changeMode()
 {
     if(readParameter<bool>("playback/immediate")) {
-        modifier_->setTickFrequency(-1.0);
+        setTickFrequency(-1.0);
     } else {
-        modifier_->setTickFrequency(readParameter<double>("playback/frequency"));
+        setTickFrequency(readParameter<double>("playback/frequency"));
     }
 }
 

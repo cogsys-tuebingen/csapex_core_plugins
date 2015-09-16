@@ -25,7 +25,7 @@ RandomTrees::RandomTrees()
 
 void RandomTrees::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareFileInputPath("file", "rforest.yaml"), std::bind(&RandomTrees::loadTree, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("file", "rforest.yaml"), std::bind(&RandomTrees::loadTree, this));
 }
 
 void RandomTrees::setup(NodeModifier& node_modifier)

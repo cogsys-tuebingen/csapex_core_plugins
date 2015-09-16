@@ -20,7 +20,7 @@ Indicator::Indicator()
 
 void Indicator::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("signal", true));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("signal", true));
 }
 
 void Indicator::setup(NodeModifier& node_modifier)

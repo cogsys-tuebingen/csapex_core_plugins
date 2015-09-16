@@ -21,10 +21,10 @@ StaticRoi::StaticRoi()
 
 void StaticRoi::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("h", 1, 4096, 100, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange("w", 1, 4096, 100, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange("x", 0, 4095, 0, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange("y", 0, 4095, 0, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("h", 1, 4096, 100, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("w", 1, 4096, 100, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("x", 0, 4095, 0, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("y", 0, 4095, 0, 1));
 }
 
 void StaticRoi::setup(NodeModifier& node_modifier)

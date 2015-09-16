@@ -17,7 +17,7 @@ class ParameterDialog : public QDialog
 public:
     ParameterDialog(const std::string &type, QWidget *parent = 0, Qt::WindowFlags f = 0);
 
-    param::ParameterPtr getParameter();
+    csapex::param::ParameterPtr getParameter();
 
 private Q_SLOTS:
     void finish();
@@ -33,7 +33,7 @@ private:
     QDoubleSpinBox* max;
     QDoubleSpinBox* step;
 
-    param::ParameterPtr param_;
+    csapex::param::ParameterPtr param_;
 };
 
 #endif // PARAMETER_DIALOG_H

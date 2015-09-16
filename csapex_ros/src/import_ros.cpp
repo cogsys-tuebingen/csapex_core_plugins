@@ -49,22 +49,22 @@ void ImportRos::setupParameters(Parameterizable& parameters)
 {
     std::vector<std::string> set;
     set.push_back(no_topic_);
-    parameters.addParameter(param::ParameterFactory::declareParameterStringSet("topic", set),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterStringSet("topic", set),
                  std::bind(&ImportRos::update, this));
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("refresh"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("refresh"),
                  std::bind(&ImportRos::refresh, this));
 
-    parameters.addParameter(param::ParameterFactory::declareRange("rate", 0.1, 100.0, 60.0, 0.1),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("rate", 0.1, 100.0, 60.0, 0.1),
                  std::bind(&ImportRos::updateRate, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
                  std::bind(&ImportRos::updateSubscriber, this));
-    parameters.addParameter(param::ParameterFactory::declareBool("latch", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("latch", false));
 
     std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
-    param::Parameter::Ptr buffer_p = param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
+    csapex::param::Parameter::Ptr buffer_p = csapex::param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
     parameters.addConditionalParameter(buffer_p, connected_condition);
-    param::Parameter::Ptr max_wait_p = param::ParameterFactory::declareRange("buffer/max_wait", 0.0, 10.0, 1.0, 0.1);
+    csapex::param::Parameter::Ptr max_wait_p = csapex::param::ParameterFactory::declareRange("buffer/max_wait", 0.0, 10.0, 1.0, 0.1);
     parameters.addConditionalParameter(max_wait_p, connected_condition);
 }
 
@@ -118,7 +118,7 @@ void ImportRos::update()
 
 void ImportRos::updateRate()
 {
-    modifier_->setTickFrequency(readParameter<double>("rate"));
+    setTickFrequency(readParameter<double>("rate"));
 }
 
 void ImportRos::updateSubscriber()

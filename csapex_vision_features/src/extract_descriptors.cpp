@@ -42,15 +42,15 @@ void ExtractDescriptors::setupParameters(Parameterizable &parameters)
         methods.push_back(key);
     }
 
-    param::Parameter::Ptr method = param::ParameterFactory::declareParameterStringSet("method", methods);
+    csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareParameterStringSet("method", methods);
     parameters.addParameter(method, std::bind(&ExtractDescriptors::update, this));
 
     for(Pair fc : manager.descriptorExtractors()) {
         std::string key = fc.second.getType();
         std::function<bool()> condition = [method, key]() { return method->as<std::string>() == key; };
 
-        for(param::Parameter::Ptr param : manager.featureDescriptorParameters(key)) {
-            param::Parameter::Ptr param_clone = param::ParameterFactory::clone(param);
+        for(csapex::param::Parameter::Ptr param : manager.featureDescriptorParameters(key)) {
+            csapex::param::Parameter::Ptr param_clone = csapex::param::ParameterFactory::clone(param);
             parameters.addConditionalParameter(param_clone, condition, std::bind(&ExtractDescriptors::update, this));
         }
     }
