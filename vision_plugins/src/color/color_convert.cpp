@@ -40,8 +40,8 @@ void ColorConvert::setupParameters(Parameterizable& parameters)
             ("HSV", (int) HSV)
             ("MONO", (int) MONO);
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("output", encodings, (int) MONO));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("output", encodings, (int) MONO));
 
     cs_pair_to_operation_.insert(csiPair(csPair(RGB, BGR), (int) CV_RGB2BGR));
     cs_pair_to_operation_.insert(csiPair(csPair(BGR, RGB), (int) CV_BGR2RGB));

@@ -23,7 +23,7 @@ public:
     void reset();
 
 private:
-    void update(const param::Parameter *);
+    void update(const csapex::param::Parameter *);
 
 private:
     Input* in_image_;

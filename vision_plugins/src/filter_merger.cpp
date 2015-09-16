@@ -18,7 +18,7 @@ Merger::Merger()
 
 void Merger::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), std::bind(&Merger::updateInputs, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), std::bind(&Merger::updateInputs, this));
 }
 
 void Merger::setup(NodeModifier& node_modifier)

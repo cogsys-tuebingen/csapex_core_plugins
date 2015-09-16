@@ -24,7 +24,7 @@ ExtractROI::ExtractROI()
 
 void ExtractROI::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
 }
 
 void ExtractROI::process()

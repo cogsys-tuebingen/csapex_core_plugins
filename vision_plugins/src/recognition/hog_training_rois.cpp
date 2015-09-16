@@ -26,8 +26,8 @@ HOGTrainingRois::HOGTrainingRois()
 void HOGTrainingRois::setupParameters(Parameterizable& parameters)
 {
 
-    addParameter(param::ParameterFactory::declareRange("overlap",
-                                                       param::ParameterDescription("Overlap in % of neg. training examples with \
+    addParameter(csapex::param::ParameterFactory::declareRange("overlap",
+                                                       csapex::param::ParameterDescription("Overlap in % of neg. training examples with \
                                                                                     pos. example in the middle."),
                                                        0, 100, 50, 1));
 }

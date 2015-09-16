@@ -100,11 +100,11 @@ void RenderHistogram::process()
 
 void RenderHistogram::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("width", 200, 1000, width_, 10),
                  std::bind(&RenderHistogram::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("height", 200, 1000, height_, 10),
                  std::bind(&RenderHistogram::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("line width", 1, 10, 1, 1));
 }
 
 void RenderHistogram::setup(NodeModifier& node_modifier)

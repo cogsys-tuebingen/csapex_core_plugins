@@ -55,19 +55,19 @@ void AdaptiveThreshold::setup(NodeModifier& node_modifier)
 
 void AdaptiveThreshold::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("maxValue", 1.0, 255.0, 100.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("maxValue", 1.0, 255.0, 100.0, 0.1));
 
     std::map<std::string, int > adaptiveMethod;
     adaptiveMethod["ADAPTIVE_THRESH_MEAN_C"] = (int) cv::ADAPTIVE_THRESH_MEAN_C;
     adaptiveMethod["ADAPTIVE_THRESH_GAUSSIAN_C"] = (int) cv::ADAPTIVE_THRESH_GAUSSIAN_C;
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("adaptiveMethod", adaptiveMethod, (int) cv::ADAPTIVE_THRESH_MEAN_C));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("adaptiveMethod", adaptiveMethod, (int) cv::ADAPTIVE_THRESH_MEAN_C));
 
     std::map<std::string, int> thresholdType;
     thresholdType["THRESH_BINARY"] = (int) cv::THRESH_BINARY;
     thresholdType["THRESH_BINARY_INV"] = (int) cv::THRESH_BINARY_INV;
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("thresholdType", thresholdType, (int) cv::THRESH_BINARY));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("thresholdType", thresholdType, (int) cv::THRESH_BINARY));
 
-    parameters.addParameter(param::ParameterFactory::declareRange("blockSize", 3, 1001, 3, 2));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("blockSize", 3, 1001, 3, 2));
 
-    parameters.addParameter(param::ParameterFactory::declareRange("C", -255.0, 255.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("C", -255.0, 255.0, 0.0, 0.1));
 }

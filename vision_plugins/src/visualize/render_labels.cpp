@@ -66,6 +66,6 @@ void RenderLabels::setup(NodeModifier& node_modifier)
 
 void RenderLabels::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("color occupancy", 0.1, 1.0, 0.25, 0.05));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("color occupancy", 0.1, 1.0, 0.25, 0.05));
 }
 

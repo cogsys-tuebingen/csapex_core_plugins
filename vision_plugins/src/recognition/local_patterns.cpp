@@ -195,8 +195,8 @@ void LocalPatterns::setupParameters(Parameterizable &parameters)
             ("WLD", WLD)("WLD_SHORT", WLD_SHORT)("WLD_ORIENTED", WLD_ORIENTED)
             ("HOMOGENITY", HOMOGENITY)("HOMOGENITY_TEX", HOMOGENITY_TEX);
 
-    param::Parameter::Ptr type =
-            param::ParameterFactory::declareParameterSet("descriptor",
+    csapex::param::Parameter::Ptr type =
+            csapex::param::ParameterFactory::declareParameterSet("descriptor",
                                                          types,
                                                          (int) LBP);
 
@@ -216,25 +216,25 @@ void LocalPatterns::setupParameters(Parameterizable &parameters)
     parameters.addParameter(type);
 
     parameters.addConditionalParameter(
-                param::ParameterFactory::declareRange("k",
-                                                      param::ParameterDescription("Center difference offset."),
+                csapex::param::ParameterFactory::declareRange("k",
+                                                      csapex::param::ParameterDescription("Center difference offset."),
                                                       -100.0, 100.0, 0.0, 0.1),
                 condition_threshold);
 
     parameters.addConditionalParameter(
-                param::ParameterFactory::declareRange("neighbours",
-                                                      param::ParameterDescription("Amount of neighbours."),
+                csapex::param::ParameterFactory::declareRange("neighbours",
+                                                      csapex::param::ParameterDescription("Amount of neighbours."),
                                                       2, 31, 8, 1),
                 condition_neighbours);
 
     parameters.addConditionalParameter(
-                param::ParameterFactory::declareRange("radius",
-                                                      param::ParameterDescription("Radius of neighbourhood."),
+                csapex::param::ParameterFactory::declareRange("radius",
+                                                      csapex::param::ParameterDescription("Radius of neighbourhood."),
                                                       1, 16, 8, 1),
                 condition_neighbours);
 
     parameters.addParameter(
-                param::ParameterFactory::declareBool("add border",
-                                                     param::ParameterDescription("Add boarder to adjust pattern analysis size to image size."),
+                csapex::param::ParameterFactory::declareBool("add border",
+                                                     csapex::param::ParameterDescription("Add boarder to adjust pattern analysis size to image size."),
                                                      false));
 }

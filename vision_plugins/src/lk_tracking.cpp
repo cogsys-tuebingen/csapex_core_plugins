@@ -25,14 +25,14 @@ LKTracking::LKTracking()
 
 void LKTracking::setupParameters(Parameterizable &parameters)
 {
-    std::function<void(param::Parameter*)> cb = std::bind(&LKTracking::update, this, std::placeholders::_1);
+    std::function<void(csapex::param::Parameter*)> cb = std::bind(&LKTracking::update, this, std::placeholders::_1);
 
-    parameters.addParameter(param::ParameterFactory::declareRange<int>("winSize", 10, 80, 31, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange<int>("subPixWinSize", 1, 40, 10, 1), cb);
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("winSize", 10, 80, 31, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("subPixWinSize", 1, 40, 10, 1), cb);
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"), cb);
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"), cb);
 
-    parameters.addParameter(param::ParameterFactory::declareRange<int>("debug/circlesize", 1, 15, 2, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("debug/circlesize", 1, 15, 2, 1));
 }
 
 void LKTracking::process()
@@ -119,7 +119,7 @@ void LKTracking::reset()
     init_ = true;
 }
 
-void LKTracking::update(const param::Parameter*)
+void LKTracking::update(const csapex::param::Parameter*)
 {
     reset();
 }

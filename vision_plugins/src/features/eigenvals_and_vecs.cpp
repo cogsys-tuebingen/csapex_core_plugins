@@ -49,11 +49,11 @@ void EigenValsAndVecs::setup(NodeModifier& node_modifier)
 
 void EigenValsAndVecs::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
                  std::bind(&EigenValsAndVecs::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
                  std::bind(&EigenValsAndVecs::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
                  std::bind(&EigenValsAndVecs::update, this));
 
     std::map<std::string, int> border_types = boost::assign::map_list_of
@@ -64,14 +64,14 @@ void EigenValsAndVecs::setupParameters(Parameterizable& parameters)
             ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
             ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("border type", border_types, (int) cv::BORDER_DEFAULT),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("border type", border_types, (int) cv::BORDER_DEFAULT),
                  std::bind(&EigenValsAndVecs::update, this));
 
     std::map<std::string, int> types = boost::assign::map_list_of
             ("MIN_EIGEN_VAL", (int) MIN_EIGEN_VAL)
             ("EIGEN_VALS_AND_VECS", (int) EIGEN_VALS_AND_VECS);
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("eigen type", types, (int) MIN_EIGEN_VAL),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("eigen type", types, (int) MIN_EIGEN_VAL),
                  std::bind(&EigenValsAndVecs::update, this));
 }
 

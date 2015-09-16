@@ -87,7 +87,7 @@ void MatrixToHeatmap::setupParameters(Parameterizable& parameters)
             ("BEZIER", (int) BEZIER)
             ("PARABOLA", (int) PARABOLA);
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("coloring", types, (int) BEZIER),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("coloring", types, (int) BEZIER),
                  std::bind(&MatrixToHeatmap::update, this));
 }
 

@@ -33,23 +33,23 @@ AssignClusterClass::~AssignClusterClass()
 
 void AssignClusterClass::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareTrigger("submit"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("submit"),
                             std::bind(&AssignClusterClass::submit, this));
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("drop"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("drop"),
                             std::bind(&AssignClusterClass::drop, this));
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("clear"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("clear"),
                             std::bind(&AssignClusterClass::clear, this));
 
-    parameters.addParameter(param::ParameterFactory::declareRange("class id",
-                                                                  param::ParameterDescription("The class id to be used!"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("class id",
+                                                                  csapex::param::ParameterDescription("The class id to be used!"),
                                                                   0, 255, 0, 1),
                                                                   std::bind(&AssignClusterClass::setClass, this));
 
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("class color", 0, 255, 0),
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("class color", 0, 255, 0),
                             std::bind(&AssignClusterClass::setColor, this));
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("border color", 0, 0, 0),
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("border color", 0, 0, 0),
                             std::bind(&AssignClusterClass::display, this));
 
     setColor();
@@ -64,7 +64,7 @@ void AssignClusterClass::setup(NodeModifier& node_modifier)
 
 void AssignClusterClass::setActiveClassColor(const int r, const int g, const int b)
 {
-    param::ParameterPtr ptr = getParameter("class color");
+    csapex::param::ParameterPtr ptr = getParameter("class color");
     param::ColorParameter *col = (param::ColorParameter*) ptr.get();
     std::vector<int> rgb = boost::assign::list_of(r)(g)(b);
     col->set(rgb);

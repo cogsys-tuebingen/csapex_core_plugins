@@ -29,7 +29,7 @@ void DistanceTransform::setupParameters(Parameterizable& parameters)
     distanceType["CV_DIST_L2"] = (int) CV_DIST_L2;
     distanceType["CV_DIST_C"] = (int) CV_DIST_C;
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("distanceType", distanceType, (int) CV_DIST_L1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("distanceType", distanceType, (int) CV_DIST_L1));
 
 
     std::map<std::string, int > maskSize;
@@ -37,14 +37,14 @@ void DistanceTransform::setupParameters(Parameterizable& parameters)
     maskSize["4"] = 5;
     maskSize["CV_DIST_MASK_PRECISE"] = (int) CV_DIST_MASK_PRECISE;
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("maskSize", maskSize, 3));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("maskSize", maskSize, 3));
 
 
     std::map<std::string, int > labelType;
     labelType["DIST_LABEL_CCOMP"] = (int) cv::DIST_LABEL_CCOMP;
     labelType["DIST_LABEL_PIXEL"] = (int) cv::DIST_LABEL_PIXEL;
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("labelType", labelType, (int) cv::DIST_LABEL_CCOMP));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("labelType", labelType, (int) cv::DIST_LABEL_CCOMP));
 }
 
 void DistanceTransform::setup(NodeModifier& node_modifier)

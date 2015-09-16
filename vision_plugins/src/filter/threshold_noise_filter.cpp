@@ -104,6 +104,6 @@ void ThresholdNoiseFilter::setup(NodeModifier& node_modifier)
 
 void ThresholdNoiseFilter::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
-    parameters.addParameter(param::ParameterFactory::declareBool("interpolate", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("interpolate", false));
 }

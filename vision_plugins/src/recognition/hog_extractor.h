@@ -20,7 +20,7 @@ private:
     csapex::Input                  *in_rois_;
     csapex::Output                 *out_;
 
-    param::RangeParameter::Ptr       overlap_;
+    csapex::param::RangeParameter::Ptr       overlap_;
     void updateOverlap();
 
 };

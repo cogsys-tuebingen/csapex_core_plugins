@@ -56,7 +56,7 @@ void Scharr::setupParameters(Parameterizable& parameters)
             ("DY1", DY1)
             ("Strength", STRENGTH);
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("derive", types, (int) DX1),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("derive", types, (int) DX1),
                  std::bind(&Scharr::update, this));
 }
 

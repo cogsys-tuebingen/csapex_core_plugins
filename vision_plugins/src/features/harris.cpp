@@ -45,11 +45,11 @@ void CornerHarris::setup(NodeModifier& node_modifier)
 
 void CornerHarris::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
                  std::bind(&CornerHarris::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
                  std::bind(&CornerHarris::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
                  std::bind(&CornerHarris::update, this));
 
     std::map<std::string, int> types = boost::assign::map_list_of
@@ -59,7 +59,7 @@ void CornerHarris::setupParameters(Parameterizable& parameters)
             ("BORDER_REFLECT101", (int) cv::BORDER_REFLECT101)
             ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
             ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("border type", types, (int)  cv::BORDER_DEFAULT),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("border type", types, (int)  cv::BORDER_DEFAULT),
                  std::bind(&CornerHarris::update, this));
 }
 

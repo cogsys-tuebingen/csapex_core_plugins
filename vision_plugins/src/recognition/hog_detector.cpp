@@ -28,38 +28,38 @@ HOGDetector::HOGDetector()
 
 void HOGDetector::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("thresh", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("thresh", -10.0, 10.0, 0.0, 0.1));
     std::map<std::string, int> det_types = boost::assign::map_list_of
             ("single scale", SINGLE_SCALE)
             ("multi scale", MULTI_SCALE);
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("detection type", det_types, (int) SINGLE_SCALE));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("detection type", det_types, (int) SINGLE_SCALE));
 
     std::map<std::string, int> svm_types = boost::assign::map_list_of
             ("default", DEFAULT)
             ("custom",  CUSTOM)
             ("daimler", DAIMLER);
 
-    param::Parameter::Ptr svm_param = param::ParameterFactory::declareParameterSet("svm type", svm_types, (int) DEFAULT);
+    csapex::param::Parameter::Ptr svm_param = csapex::param::ParameterFactory::declareParameterSet("svm type", svm_types, (int) DEFAULT);
     parameters.addParameter(svm_param);
 
 
     std::function<bool()> condition = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm path","", "*.yml *.yaml *.tar.gz"),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareFileInputPath("svm path","", "*.yml *.yaml *.tar.gz"),
                             condition, std::bind(&HOGDetector::load, this));
 
     setParameterEnabled("svm path", false);
 
-    addParameter(param::ParameterFactory::declareRange("window incrementations",
-                                                       param::ParameterDescription("Scale levels to observe."),
+    addParameter(csapex::param::ParameterFactory::declareRange("window incrementations",
+                                                       csapex::param::ParameterDescription("Scale levels to observe."),
                                                        1, 128, 64, 1));
 
-    addParameter(param::ParameterFactory::declareRange("gaussian sigma",
-                                                       param::ParameterDescription("Standard deviation for Gaussian blur."),
+    addParameter(csapex::param::ParameterFactory::declareRange("gaussian sigma",
+                                                       csapex::param::ParameterDescription("Standard deviation for Gaussian blur."),
                                                        0.0, 10.0, 0.0, 0.1));
 
-    addParameter(param::ParameterFactory::declareBool("gamma correction",
-                                                      param::ParameterDescription("Enable the gamma correction."),
+    addParameter(csapex::param::ParameterFactory::declareBool("gamma correction",
+                                                      csapex::param::ParameterDescription("Enable the gamma correction."),
                                                       true));
 }
 

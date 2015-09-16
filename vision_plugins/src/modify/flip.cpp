@@ -61,7 +61,7 @@ void Flip::setupParameters(Parameterizable& parameters)
             ("+90", 2)
             ("-90", 3)
             ("v+h", -1);
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("type", types, -1),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("type", types, -1),
                  std::bind(&Flip::update, this));
 }
 

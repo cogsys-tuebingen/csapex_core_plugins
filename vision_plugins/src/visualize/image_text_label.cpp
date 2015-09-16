@@ -36,13 +36,13 @@ void ImageTextLabel::setupParameters(Parameterizable& parameters)
             ("BOTTOM_RIGHT", BOTTOM_RIGHT)
             ("TOP_LEFT", TOP_LEFT)
             ("TOP_RIGHT", TOP_RIGHT);
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("position", positions, (int) TOP_LEFT));
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/label", 255, 255, 255));
-    parameters.addParameter(param::ParameterFactory::declareColorParameter("color/box", 0, 0, 0));
-    parameters.addParameter(param::ParameterFactory::declareBool("boxed", false));
-    parameters.addParameter(param::ParameterFactory::declareRange("thickness", 1, 10, 1, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange("scale", 1.0, 10.0, 1.0, 0.1));
-    parameters.addParameter(param::ParameterFactory::declareText("label", "label"));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("position", positions, (int) TOP_LEFT));
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/label", 255, 255, 255));
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/box", 0, 0, 0));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("boxed", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("thickness", 1, 10, 1, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("scale", 1.0, 10.0, 1.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("label", "label"));
 
 }
 

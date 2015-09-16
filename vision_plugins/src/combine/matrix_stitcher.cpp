@@ -104,6 +104,6 @@ void MatrixStitcher::setupParameters(Parameterizable& parameters)
     std::map<std::string, int> modes = boost::assign::map_list_of
             ("HORIZONTAL", HORIZONTAL)
             ("VERTICAL", VERTICAL);
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("mode", modes, (int) HORIZONTAL));
-    parameters.addParameter(param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("mode", modes, (int) HORIZONTAL));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
 }

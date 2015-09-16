@@ -27,35 +27,35 @@ HOGExtractor::HOGExtractor()
 
 void HOGExtractor::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("gaussian sigma",
-                                                       param::ParameterDescription("Standard deviation for Gaussian blur."),
+    addParameter(csapex::param::ParameterFactory::declareRange("gaussian sigma",
+                                                       csapex::param::ParameterDescription("Standard deviation for Gaussian blur."),
                                                        0.0, 10.0, 0.0, 0.1));
 
-    addParameter(param::ParameterFactory::declareBool("gamma correction",
-                                                      param::ParameterDescription("Enable the gamma correction."),
+    addParameter(csapex::param::ParameterFactory::declareBool("gamma correction",
+                                                      csapex::param::ParameterDescription("Enable the gamma correction."),
                                                       true));
 
-    addParameter(param::ParameterFactory::declareRange("orientation bins",
-                                                       param::ParameterDescription("Amount of histogram bins per block."),
+    addParameter(csapex::param::ParameterFactory::declareRange("orientation bins",
+                                                       csapex::param::ParameterDescription("Amount of histogram bins per block."),
                                                        2, 18, 9, 1));
 
-    addParameter(param::ParameterFactory::declareRange("cell size",
-                                                       param::ParameterDescription("Set the size of a cell"),
+    addParameter(csapex::param::ParameterFactory::declareRange("cell size",
+                                                       csapex::param::ParameterDescription("Set the size of a cell"),
                                                        8, 80, 8, 1));
 
 
-    param::Parameter::Ptr cells_per_block =
-            param::ParameterFactory::declareRange("cells per block",
-                                                  param::ParameterDescription("Set the amount of cells in each direction of block."),
+    csapex::param::Parameter::Ptr cells_per_block =
+            csapex::param::ParameterFactory::declareRange("cells per block",
+                                                  csapex::param::ParameterDescription("Set the amount of cells in each direction of block."),
                                                   2, 8, 2, 1);
 
     parameters.addParameter(cells_per_block, std::bind(&HOGExtractor::updateOverlap, this));
 
     std::function<bool()> k_cond = [cells_per_block]() { return cells_per_block->as<int>() > 2; };
 
-    param::ParameterPtr o = param::ParameterFactory::declareRange(
+    csapex::param::ParameterPtr o = csapex::param::ParameterFactory::declareRange(
                 "overlap",
-                param::ParameterDescription("Block overlap given in cells."),
+                csapex::param::ParameterDescription("Block overlap given in cells."),
                 1, 7, 1, 1);
     overlap_ = std::dynamic_pointer_cast<param::RangeParameter>(o);
 

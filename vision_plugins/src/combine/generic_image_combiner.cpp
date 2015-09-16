@@ -207,6 +207,6 @@ void GenericImageCombiner::setup(NodeModifier& node_modifier)
 
 void GenericImageCombiner::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareText("script", "$1 ^ $2"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("script", "$1 ^ $2"),
                  std::bind(&GenericImageCombiner::updateFormula, this));
 }

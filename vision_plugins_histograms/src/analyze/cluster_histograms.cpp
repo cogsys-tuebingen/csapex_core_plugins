@@ -276,19 +276,19 @@ void ClusterHistograms::setup(NodeModifier &node_modifier)
 
 void ClusterHistograms::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("min max norm", false));
-    parameters.addParameter(param::ParameterFactory::declareBool("append histograms", false));
-    parameters.addParameter(param::ParameterFactory::declareRange("bins", 2, 512, 256, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("min max norm", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("append histograms", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("bins", 2, 512, 256, 1));
 
-    param::Parameter::Ptr set_max = param::ParameterFactory::declareBool("set max", false);
+    csapex::param::Parameter::Ptr set_max = csapex::param::ParameterFactory::declareBool("set max", false);
     parameters.addParameter(set_max);
-    param::Parameter::Ptr set_min = param::ParameterFactory::declareBool("set min", false);
+    csapex::param::Parameter::Ptr set_min = csapex::param::ParameterFactory::declareBool("set min", false);
     parameters.addParameter(set_min);
 
     std::function<bool()> cond_max = [set_max]() { return set_max->as<bool>();};
     std::function<bool()> cond_min = [set_min]() { return set_min->as<bool>();};
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareValue("max", 255.0), cond_max);
-    parameters.addConditionalParameter(param::ParameterFactory::declareValue("min", 0.0), cond_min);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("max", 255.0), cond_max);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("min", 0.0), cond_min);
 }
 

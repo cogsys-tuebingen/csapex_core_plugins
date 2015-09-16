@@ -89,5 +89,5 @@ void DifferenceMaximum::process()
 
 void DifferenceMaximum::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("abs difference", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("abs difference", false));
 }

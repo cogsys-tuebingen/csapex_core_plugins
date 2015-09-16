@@ -78,5 +78,5 @@ void SetOperation::setupParameters(Parameterizable& parameters)
             ("Intersection", (int) INTERSECTION)
             ("Union", (int) UNION);
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("operation", methods, (int) UNION));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("operation", methods, (int) UNION));
 }

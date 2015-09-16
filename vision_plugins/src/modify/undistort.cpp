@@ -43,8 +43,8 @@ void Undistort::setup(NodeModifier& node_modifier)
 
 void Undistort::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareFileInputPath("file", ""), std::bind(&Undistort::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), std::bind(&Undistort::update, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("file", ""), std::bind(&Undistort::update, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), std::bind(&Undistort::update, this));
 
     std::map<std::string, int> modes;
     modes["nearest"] = (int) CV_INTER_NN;
@@ -52,7 +52,7 @@ void Undistort::setupParameters(Parameterizable& parameters)
     modes["area"] = (int) CV_INTER_AREA;
     modes["cubic"] = (int) CV_INTER_CUBIC;
     modes["lanczos4"] = (int) CV_INTER_LANCZOS4;
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), std::bind(&Undistort::update, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), std::bind(&Undistort::update, this));
 }
 
 bool Undistort::read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs)

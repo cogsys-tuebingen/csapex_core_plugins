@@ -33,10 +33,10 @@ void ColorAdjustment::setupParameters(Parameterizable& parameters)
             ("HSL", (int) HSL)
             ("STD", (int) STD);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("normalize", false));
-    parameters.addParameter(param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("normalize", false));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("preset", presets, (int) HSV),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("preset", presets, (int) HSV),
                  std::bind(&ColorAdjustment::setPreset, this));
 }
 
@@ -109,11 +109,11 @@ void ColorAdjustment::recompute()
         Channel c = current_encoding.getChannel(i);
 
         std::string name = channelName(i, c);
-        param::Parameter::Ptr p;
+        csapex::param::Parameter::Ptr p;
         if(c.fp) {
-            p = param::ParameterFactory::declareInterval<double>(name, c.min_f, c.max_f, c.min_f, c.max_f, 1.0);
+            p = csapex::param::ParameterFactory::declareInterval<double>(name, c.min_f, c.max_f, c.min_f, c.max_f, 1.0);
         } else {
-            p = param::ParameterFactory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
+            p = csapex::param::ParameterFactory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
         }
         addTemporaryParameter(p, std::bind(&ColorAdjustment::update, this));
     }

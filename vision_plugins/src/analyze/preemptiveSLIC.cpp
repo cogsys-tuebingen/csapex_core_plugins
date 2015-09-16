@@ -47,7 +47,7 @@ void PreemptiveSLIC::setup(NodeModifier &node_modifier)
 
 void PreemptiveSLIC::setupParameters(Parameterizable &parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("super pixels", 10, 2000, 50, 1));
-    addParameter(param::ParameterFactory::declareRange("compactness", 0.0, 200.0, 0.0, 0.1));
+    addParameter(csapex::param::ParameterFactory::declareRange("super pixels", 10, 2000, 50, 1));
+    addParameter(csapex::param::ParameterFactory::declareRange("compactness", 0.0, 200.0, 0.0, 0.1));
 
 }

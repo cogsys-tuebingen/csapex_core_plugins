@@ -166,14 +166,14 @@ void LocalPatternsHistogram::setupParameters(Parameterizable& parameters)
             boost::assign::map_list_of
             ("LBP", LBP)("LTP", LTP);
 
-    param::Parameter::Ptr type =
-            param::ParameterFactory::declareParameterSet("pattern",
+    csapex::param::Parameter::Ptr type =
+            csapex::param::ParameterFactory::declareParameterSet("pattern",
                                                          types,
                                                          (int) LBP);
     std::function<bool()> condition = [type]() { return type->as<int>() == LTP; };
 
     parameters.addParameter(type);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("k1", -100.0, 100.0, 0.0, 0.1),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("k1", -100.0, 100.0, 0.0, 0.1),
                             condition);
 
 }

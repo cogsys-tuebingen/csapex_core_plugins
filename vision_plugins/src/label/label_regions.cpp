@@ -48,7 +48,7 @@ void LabelRegions::setup(NodeModifier& node_modifier)
 
 void LabelRegions::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("edge value", 0, 255, 255, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange("area thresh", 0, 1000, 0, 10));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("edge value", 0, 255, 255, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("area thresh", 0, 1000, 0, 10));
 }
 

@@ -22,7 +22,7 @@ using namespace connection_types;
 VJDetector::VJDetector()
     : vj_detector(nullptr), image_scanner(nullptr)
 {
-    addParameter(param::ParameterFactory::declareFileInputPath("file", ""));
+    addParameter(csapex::param::ParameterFactory::declareFileInputPath("file", ""));
 }
 
 VJDetector::~VJDetector()

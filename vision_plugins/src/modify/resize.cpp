@@ -44,9 +44,9 @@ void Resize::setup(NodeModifier& node_modifier)
 
 void Resize::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("size width", 1, 10000, 640, 1),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("size width", 1, 10000, 640, 1),
                  std::bind(&Resize::update, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("size height", 1, 10000, 480, 1),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("size height", 1, 10000, 480, 1),
                  std::bind(&Resize::update, this));
 
     std::map<std::string, int> modes = boost::assign::map_list_of
@@ -55,7 +55,7 @@ void Resize::setupParameters(Parameterizable& parameters)
             ("area", (int) CV_INTER_AREA)
             ("cubic", (int) CV_INTER_CUBIC)
             ("lanczos4", (int) CV_INTER_LANCZOS4);
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) cv::INTER_NEAREST), std::bind(&Resize::update, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) cv::INTER_NEAREST), std::bind(&Resize::update, this));
 }
 
 void Resize::update()
