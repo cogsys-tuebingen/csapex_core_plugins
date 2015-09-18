@@ -12,7 +12,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <utils_laser_processing/data/segment.h>
-#include <csapex/utility/color.hpp>
+#include <csapex/view/utility/color.hpp>
 #include <csapex/model/node_modifier.h>
 #include <utils_laser_processing/common/yaml-io.hpp>
 #include <csapex_ros/yaml_io.hpp>

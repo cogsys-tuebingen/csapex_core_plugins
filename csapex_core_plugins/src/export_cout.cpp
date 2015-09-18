@@ -29,11 +29,11 @@ void ExportCout::process()
 {
     ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(connector_);
 
-    ainfo << "writing to cout: ";
+//    ainfo << "writing to cout: ";
 
     YAML::Node node = MessageSerializer::serializeMessage(*msg);
-    ainfo << node;
-    ainfo << std::endl;
+//    ainfo << node;
+//    ainfo << std::endl;
 
     StreamInterceptor::instance().cout << node << "\n---" << std::endl;
 }

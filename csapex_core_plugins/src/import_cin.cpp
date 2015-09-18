@@ -32,65 +32,61 @@ void ImportCin::setup(NodeModifier& node_modifier)
 
 void ImportCin::tick()
 {
+    readCin();
+
+    publishNextMessage();
+}
+
+void ImportCin::publishNextMessage()
+{
+    if(!message_buffer_.empty()) {
+        auto msg = message_buffer_.front();
+        message_buffer_.pop_front();
+
+        msg::publish(connector_, msg);
+    }
+}
+
+void ImportCin::readCin()
+{
     std::string in;
     in = StreamInterceptor::instance().getCin();
     buffer << in;
 
-    std::string unused = buffer.str();
+    readMessages();
+}
 
-    int pos = unused.find_first_of("---");
-    if(pos == -1 || unused.empty()) {
-        return;
-    }
 
-    std::stringstream docstream;
+void ImportCin::readMessages()
+{
+    std::string buffered = buffer.str();
+    int pos = buffered.find("---");
 
-    int iter = 0;
-    while(pos != -1) {
-        std::string sub = unused.substr(0, pos);
+    while(pos >= 0) {
+        std::string message = buffered.substr(0, pos);
+        buffered = buffered.substr(pos+3);
 
-        unused = unused.substr(pos+3);
+        try {
+            YAML::Node doc = YAML::Load(message);
 
-        if(pos != -1) {
-            if(!docstream.str().empty()) {
-                docstream << "\n---\n";
-            }
-            docstream << sub;
-        }
-
-        pos = unused.find_first_of("---");
-
-        if(iter++ >= 10) {
-            ainfo << "break out!" << std::endl;
-            break;
-        }
-    }
-
-    buffer.str(std::string());
-    buffer << unused;
-
-    try {
-        YAML::Parser parser(docstream);
-        YAML::NodeBuilder builder;
-        while(parser.HandleNextDocument(builder)) {
-            YAML::Node doc = builder.Root();
-
-            ConnectionType::Ptr msg;
             try {
-                msg = MessageSerializer::readYaml(doc);
+                ConnectionType::Ptr msg = MessageSerializer::readYaml(doc);
+                message_buffer_.push_back(msg);
 
             } catch(const MessageSerializer::DeserializationError& e) {
                 ainfo << "could not deserialize message: \n";
-                YAML::Emitter emitter;
-                emitter << doc;
-                ainfo << emitter.c_str() << std::endl;
-                continue;
+                ainfo << doc << std::endl;
+                ainfo << e.what();
             }
 
-            msg::publish(connector_, msg);
+
+        } catch(YAML::ParserException& e) {
+            ainfo << "YAML::ParserException: " << e.what() << ", node was: " << message << "\n";
         }
-    } catch(YAML::ParserException& e) {
-        ainfo << "YAML::ParserException: " << e.what() << "\n";
+
+        pos = buffered.find("---");
     }
 
+    buffer.str(std::string());
+    buffer << buffered;
 }

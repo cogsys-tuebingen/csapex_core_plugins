@@ -4,6 +4,9 @@
 /// PROJECT
 #include <csapex/model/tickable_node.h>
 
+/// SYSTEM
+#include <deque>
+
 namespace csapex {
 
 class ImportCin : public TickableNode
@@ -16,9 +19,16 @@ public:
     virtual void tick() override;
 
 private:
+    void readCin();
+    void publishNextMessage();
+    void readMessages();
+
+private:
     Output* connector_;
 
     std::stringstream buffer;
+
+    std::deque<ConnectionTypeConstPtr> message_buffer_;
 };
 
 }
