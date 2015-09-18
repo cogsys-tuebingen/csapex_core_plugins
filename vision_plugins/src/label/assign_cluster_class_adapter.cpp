@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
-#include <csapex/utility/color.hpp>
+#include <csapex/view/utility/color.hpp>
 #include <csapex/utility/assert.h>
 #include <utils_vision/utils/histogram.hpp>
 

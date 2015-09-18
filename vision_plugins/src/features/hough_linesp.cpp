@@ -9,7 +9,7 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_vision/yaml_io.hpp>
-#include <csapex/utility/color.hpp>
+#include <csapex/view/utility/color.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
