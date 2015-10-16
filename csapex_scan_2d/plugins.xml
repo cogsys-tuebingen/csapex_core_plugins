@@ -43,6 +43,38 @@
   <icon>:/picture.png</icon>
   <tags>Laser, Scan, Interactive</tags>
 </class>
+
+<class type="csapex::ScanCovariance" base_class_type="csapex::Node">
+  <description>Calculates the covariance of a laser scan</description>
+  <tags>Laser, Scan</tags>
+</class>
+<class type="csapex::ScanFilter" base_class_type="csapex::Node">
+  <description>Filter a laserscan by minimum, maximum angle and minimum, maximum range.</description>
+  <tags>Laser, Scan</tags>
+</class>
+<class type="csapex::P2PSegmentation" base_class_type="csapex::Node">
+  <description>Laser scan segmentation using point to point distance</description>
+  <tags>Laser, Scan</tags>
+</class>
+<class type="csapex::P2PSegmentationExpand" base_class_type="csapex::Node">
+  <description>Laser scan segmentation using point to point distance and an index expand check.</description>
+  <tags>Laser, Scan</tags>
+</class>
+<class type="csapex::P2PLineSegmentation" base_class_type="csapex::Node">
+  <description>Laser scan segmentation using point to point segmentation</description>
+  <tags>Laser, Scan</tags>
+</class>
+<class type="csapex::LineFitSegmentation" base_class_type="csapex::Node">
+  <description>Laser scan segmentation using line fitting</description>
+  <tags>Laser, Scan</tags>
+</class>
+<class type="csapex::LineFitSegmentationLSQ" base_class_type="csapex::Node">
+  <description>Laser scan segmentation using line fitting with least squares.</description>
+  <tags>Laser, Scan</tags>
+</class>
+
+
+
 </library>
 
 
