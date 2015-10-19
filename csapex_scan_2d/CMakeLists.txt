@@ -81,6 +81,8 @@ add_library(csapex_scan_2d_plugin_node
 
     src/covariance.cpp
     src/filter.cpp
+    src/plane_angle.cpp
+
     src/segmentation.cpp
     src/segmentation_p2p.cpp
     src/segmentation_p2p_expand.cpp

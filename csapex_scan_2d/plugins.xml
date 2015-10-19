@@ -52,6 +52,10 @@
   <description>Filter a laserscan by minimum, maximum angle and minimum, maximum range.</description>
   <tags>Laser, Scan</tags>
 </class>
+<class type="csapex::AngleToPlane" base_class_type="csapex::Node">
+  <description>Filter a laserscan by minimum, maximum angle and minimum, maximum range.</description>
+  <tags>Laser, Scan</tags>
+</class>
 <class type="csapex::P2PSegmentation" base_class_type="csapex::Node">
   <description>Laser scan segmentation using point to point distance</description>
   <tags>Laser, Scan</tags>
