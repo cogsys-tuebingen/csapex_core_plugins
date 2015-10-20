@@ -18,10 +18,10 @@ using namespace lib_laser_processing;
 using namespace boost::accumulators;
 using namespace connection_types;
 
-class AngleToPlane : public csapex::Node {
+class PitchAngle : public csapex::Node {
 public:
 
-    AngleToPlane()
+    PitchAngle()
     {
 
     }
@@ -29,14 +29,14 @@ public:
     virtual void setup(NodeModifier &node_modifier) override
     {
         input_  = node_modifier.addInput<ScanMessage>("filtered scan");
-        output_ = node_modifier.addOutput<double>("angle");
+        output_ = node_modifier.addOutput<double>("pitch");
     }
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
         parameters.addParameter(param::ParameterFactory::declareRange("height", 0.05, 1.0, 0.1, 0.001));
         parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
-                                std::bind(&AngleToPlane::reset, this));
+                                std::bind(&PitchAngle::reset, this));
         parameters.addParameter(param::ParameterFactory::declareBool("degrees", false));
     }
 
@@ -77,5 +77,5 @@ private:
 };
 }
 
-CSAPEX_REGISTER_CLASS(csapex::AngleToPlane, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::PitchAngle, csapex::Node)
 

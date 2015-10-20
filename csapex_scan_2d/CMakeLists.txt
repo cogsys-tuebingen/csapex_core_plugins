@@ -67,6 +67,13 @@ target_link_libraries(csapex_scan_2d_plugin_core
     yaml-cpp csapex_scan_2d ${catkin_LIBRARIES})
 
 
+find_package(Ceres QUIET)
+if(NOT "${CERES_LIBRARIES}" STREQUAL "")
+message("Building with Ceres support!")
+include_directories(${CERES_INCLUDE_DIRS})
+set(ADDITIONAL_SRCS "src/roll_pitch_angles.cpp")
+set(ADDITIONAL_LIBS "${CERES_LIBRARIES}")
+endif()
 
 add_library(csapex_scan_2d_plugin_node
     src/segment_labeler.cpp
@@ -81,7 +88,8 @@ add_library(csapex_scan_2d_plugin_node
 
     src/covariance.cpp
     src/filter.cpp
-    src/plane_angle.cpp
+    src/pitch_angle.cpp
+    ${ADDITIONAL_SRCS}
 
     src/segmentation.cpp
     src/segmentation_p2p.cpp
@@ -92,7 +100,11 @@ add_library(csapex_scan_2d_plugin_node
 )
 
 target_link_libraries(csapex_scan_2d_plugin_node
-    yaml-cpp csapex_scan_2d ${catkin_LIBRARIES})
+    yaml-cpp
+    csapex_scan_2d
+    ${catkin_LIBRARIES}
+    ${ADDITIONAL_LIBS}
+)
 
 
 
