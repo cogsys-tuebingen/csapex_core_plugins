@@ -13,6 +13,17 @@
 #include <boost/accumulators/statistics.hpp>
 
 
+namespace {
+double normalize(double angle)
+{
+    while (angle <= -M_PI)
+        angle += 2 * M_PI;
+    while (angle > M_PI)
+        angle -= 2 * M_PI;
+    return angle;
+}
+}
+
 namespace csapex {
 using namespace lib_laser_processing;
 using namespace boost::accumulators;
@@ -53,7 +64,7 @@ public:
                 mean_dist_(b.pos_x);
         }
 
-        out = asin(height / mean(mean_dist_));
+        out = normalize(asin(height / mean(mean_dist_)));
         if(deg)
             out *= 180.0 / M_PI;
 

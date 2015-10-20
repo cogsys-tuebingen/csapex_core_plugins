@@ -14,6 +14,17 @@
 #include <thread>
 #include <ceres/ceres.h>
 
+namespace {
+double normalize(double angle)
+{
+    while (angle <= -M_PI)
+        angle += 2 * M_PI;
+    while (angle > M_PI)
+        angle -= 2 * M_PI;
+    return angle;
+}
+}
+
 
 namespace csapex {
 using namespace lib_laser_processing;
@@ -87,12 +98,14 @@ public:
         }
 
         if(results_.load()) {
+            double pitch = normalize(pitch_);
+            double roll = normalize(roll_);
             if(deg) {
-                pitch_ *= 180.0 / M_PI;
-                roll_ *= 180.0 / M_PI;
+                pitch *= 180.0 / M_PI;
+                roll *= 180.0 / M_PI;
             }
-            msg::publish(pitch_output_, pitch_);
-            msg::publish(roll_output_, roll_);
+            msg::publish(pitch_output_, pitch);
+            msg::publish(roll_output_, roll);
         }
     }
 
