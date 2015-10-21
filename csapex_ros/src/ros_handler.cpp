@@ -143,6 +143,12 @@ void ROSHandler::checkMasterConnection()
             check_is_running = true;
         }
 
+        std::string host = ros::master::getHost();
+        if(host != "localhost") {
+            std::cerr << "checking connection to host " << host <<
+                         ", startup may block, if the host is not reachable!" << std::endl;
+        }
+
         std::async(std::launch::async, [this]() {
             bool c = ros::master::check();
             {
