@@ -60,7 +60,7 @@
   <description>Get the pitch angle of a laser to a plane.</description>
   <tags>Laser, Scan</tags>
 </class>
-<class type="csapex::HeightFromPitch" base_class_type="csapex::Node">
+<class type="csapex::HeightPitchAngle" base_class_type="csapex::Node">
   <description>Estimate the height using samples and a predefined pitch angle.</description>
   <tags>Laser, Scan</tags>
 </class>

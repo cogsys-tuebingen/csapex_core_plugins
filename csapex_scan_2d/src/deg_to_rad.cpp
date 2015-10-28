@@ -23,7 +23,8 @@ class DegToRad : public csapex::TickableNode {
 public:
 
     DegToRad() :
-        last_angle_(0.0)
+        angle_(0),
+        publish_(false)
     {
     }
 
@@ -34,32 +35,30 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("angle", -180.0, 180.0, 0.0, 0.01));
+        parameters.addParameter(param::ParameterFactory::declareRange("angle", -180.0, 180.0, 0.0, 0.01),
+                                std::bind(&DegToRad::publish, this));
     }
 
     virtual void tick() override
     {
-        msg::publish(output_, degToRad(last_angle_));
-    }
-
-    virtual bool canTick() override
-    {
-        double angle = readParameter<double>("angle");
-        if(angle != last_angle_) {
-            last_angle_ = angle;
-            return true;
+        if(publish_) {
+            msg::publish(output_, degToRad(angle_));
+            publish_ = false;
         }
-        return false;
-    }
-
-    virtual void process() override
-    {
     }
 
 
 private:
     Output *output_;
-    double last_angle_;
+    double  angle_;
+    bool    publish_;
+
+    void publish()
+    {
+        angle_ = readParameter<double>("angle");
+        publish_ = true;
+    }
+
 };
 }
 
