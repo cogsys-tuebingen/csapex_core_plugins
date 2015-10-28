@@ -52,8 +52,16 @@
   <description>Filter a laserscan by minimum, maximum angle and minimum, maximum range.</description>
   <tags>Laser, Scan</tags>
 </class>
+<class type="csapex::DegToRad" base_class_type="csapex::Node">
+  <description>Get the pitch angle of a laser to a plane.</description>
+  <tags>Laser, Scan</tags>
+</class>
 <class type="csapex::PitchAngle" base_class_type="csapex::Node">
   <description>Get the pitch angle of a laser to a plane.</description>
+  <tags>Laser, Scan</tags>
+</class>
+<class type="csapex::HeightFromPitch" base_class_type="csapex::Node">
+  <description>Estimate the height using samples and a predefined pitch angle.</description>
   <tags>Laser, Scan</tags>
 </class>
 <class type="csapex::RollPitchAngles" base_class_type="csapex::Node">

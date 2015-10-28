@@ -89,6 +89,8 @@ add_library(csapex_scan_2d_plugin_node
     src/covariance.cpp
     src/filter.cpp
     src/pitch_angle.cpp
+    src/height_pitch_angle.cpp
+    src/deg_to_rad.cpp
     ${ADDITIONAL_SRCS}
 
     src/segmentation.cpp
