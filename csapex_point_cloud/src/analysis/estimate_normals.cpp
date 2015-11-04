@@ -8,6 +8,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/param/parameter_factory.h>
 
 /// SYSTEM
 #include <pcl/point_types.h>
@@ -37,6 +38,24 @@ public:
     void setupParameters(Parameterizable& parameters)
     {
 
+        parameters.addParameter(param::ParameterFactory::declareRange("max_depth_change_factor",
+                                                                      0.0, 0.5, 0.02, 0.001),
+                                max_depth_change_factor);
+        parameters.addParameter(param::ParameterFactory::declareRange("normal_smoothing_size",
+                                                                      0.0, 50.0, 10.0, 0.1),
+                                normal_smoothing_size);
+
+        typedef pcl::IntegralImageNormalEstimation<pcl::PointXYZ, pcl::Normal> T;
+
+        std::map<std::string, int> methods {
+            {"COVARIANCE_MATRIX", T::COVARIANCE_MATRIX},
+            {"AVERAGE_3D_GRADIENT", T::AVERAGE_3D_GRADIENT},
+            {"AVERAGE_DEPTH_CHANGE", T::AVERAGE_DEPTH_CHANGE},
+            {"SIMPLE_3D_GRADIENT", T::SIMPLE_3D_GRADIENT}
+        };
+        parameters.addParameter(param::ParameterFactory::declareParameterSet("method", methods,
+                                                                             (int) T::AVERAGE_3D_GRADIENT),
+                                method);
     }
 
     virtual void process() override
@@ -70,10 +89,11 @@ public:
             ne.compute (*msg);
 
         }  else {
-            pcl::IntegralImageNormalEstimation<PointT, pcl::Normal> ne;
-            ne.setNormalEstimationMethod (ne.AVERAGE_3D_GRADIENT);
-            ne.setMaxDepthChangeFactor(0.02f);
-            ne.setNormalSmoothingSize(10.0f);
+            typedef pcl::IntegralImageNormalEstimation<PointT, pcl::Normal> N;
+            N ne;
+            ne.setNormalEstimationMethod (static_cast<typename N::NormalEstimationMethod>(method));
+            ne.setMaxDepthChangeFactor(max_depth_change_factor);
+            ne.setNormalSmoothingSize(normal_smoothing_size);
             ne.setInputCloud(cloud);
             ne.compute(*msg);
         }
@@ -85,7 +105,9 @@ private:
     Input*  input_;
     Output* output_;
 
-
+    int method;
+    double max_depth_change_factor;
+    double normal_smoothing_size;
 };
 
 }
