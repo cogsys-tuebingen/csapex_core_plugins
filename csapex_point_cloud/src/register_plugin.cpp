@@ -49,8 +49,8 @@ struct Sensor2Cloud
 
     struct try_convert
     {
-        try_convert(const sensor_msgs::PointCloud2::ConstPtr &ros_msg, typename connection_types::PointCloudMessage::Ptr& out, bool& success)
-            : ros_msg_(ros_msg), out_(out), success_(success)
+        try_convert(const sensor_msgs::PointCloud2::ConstPtr &ros_msg, typename connection_types::PointCloudMessage::Ptr& out, bool full_match, bool& success)
+            : ros_msg_(ros_msg), out_(out), full_match_(full_match), success_(success)
         {
             success_ = false;
         }
@@ -68,8 +68,10 @@ struct Sensor2Cloud
             const sensor_msgs::PointCloud2::_fields_type& available_fields = ros_msg_->fields;
 
 
-            if(fields.size() != available_fields.size()) {
-                return;
+            if(full_match_) {
+                if(fields.size() != available_fields.size()) {
+                    return;
+                }
             }
 
             for(size_t d = 0; d < fields.size (); ++d) {
@@ -96,6 +98,7 @@ struct Sensor2Cloud
         const sensor_msgs::PointCloud2::ConstPtr &ros_msg_;
         typename connection_types::PointCloudMessage::Ptr& out_;
 
+        bool full_match_;
         bool& success_;
     };
 
@@ -104,11 +107,20 @@ struct Sensor2Cloud
         connection_types::PointCloudMessage::Ptr out(new connection_types::PointCloudMessage(ros_msg->header.frame_id, stamp));
 
         bool success;
-        try_convert converter(ros_msg, out, success);
-        boost::mpl::for_each<connection_types::PointCloudPointTypes>( converter );
+        try_convert full_match_converter(ros_msg, out, true, success);
+        boost::mpl::for_each<connection_types::PointCloudPointTypes>( full_match_converter );
 
-        if(!converter.success_) {
-            std::cerr << "cannot convert message, type is not known" << std::endl;
+        if(!success) {
+            try_convert partial_converter(ros_msg, out, false, success);
+            boost::mpl::for_each<connection_types::PointCloudPointTypes>( partial_converter );
+        }
+
+        if(!success) {
+            std::cerr << "cannot convert message, type is not known. Fields:";
+            for(const sensor_msgs::PointField& field : ros_msg->fields) {
+                std::cerr << field.name << " ";
+            }
+            std::cerr << std::endl;
         }
 
         return out;

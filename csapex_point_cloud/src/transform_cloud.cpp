@@ -66,6 +66,8 @@ void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud
 
     frame = transform->frame_id;
 
+    out->header.frame_id = frame;
+
     PointCloudMessage::Ptr msg(new PointCloudMessage(frame, cloud->header.stamp));
     msg->value = out;
 

@@ -181,7 +181,7 @@ struct ParameterInfoTestWrap
 void RegisterPlugin::init(CsApexCore& core)
 {
     RosMessageConversion::registerConversion<sensor_msgs::Image, connection_types::CvMatMessage, Image2CvMat>();
-    RosMessageConversion::registerConversion<sensor_msgs::CompressedImage, connection_types::CvMatMessage, CompressedImage2CvMat>();
+//    RosMessageConversion::registerConversion<sensor_msgs::CompressedImage, connection_types::CvMatMessage, CompressedImage2CvMat>();
 
     auto cWrap = GenericNodeFactory::createConstructorFromFunction<ParameterInfoTestWrap>
             (testWrap, "TestWrap");

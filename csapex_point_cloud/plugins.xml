@@ -14,6 +14,11 @@
   <tags>PointCloud, Output</tags>
 </class>
 
+<class type="csapex::EstimateNormals" base_class_type="csapex::Node">
+  <description>Calculates the normal surface vectors.</description>
+  <tags>PointCloud, Normal</tags>
+</class>
+
 
 <class type="csapex::CloudRenderer" base_class_type="csapex::Node">
   <description>Displays a point cloud</description>
@@ -46,6 +51,10 @@
 </class>
 <class type="csapex::PointCloudToDepthImage" base_class_type="csapex::Node">
   <description>Converts a point cloud to a depth image</description>
+  <tags>PointCloud</tags>
+</class>
+<class type="csapex::PointCloudToColorImage" base_class_type="csapex::Node">
+  <description>Converts a colored point cloud to a color image</description>
   <tags>PointCloud</tags>
 </class>
 <class type="csapex::PointCloudToIntensityImage" base_class_type="csapex::Node">

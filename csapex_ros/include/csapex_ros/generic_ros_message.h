@@ -8,8 +8,6 @@
 #include <csapex/utility/type.h>
 
 /// SYSTEM
-#include <ros/time.h>
-#include <nav_msgs/Odometry.h>
 #include <ros/message_traits.h>
 #include <topic_tools/shape_shifter.h>
 
@@ -47,21 +45,6 @@ struct type<GenericRosMessage> {
 
 namespace msg
 {
-
-//template <typename R>
-//struct MessageCaster<R, connection_types::GenericRosMessage, void>
-//{
-//    static std::shared_ptr<R const> cast(const std::shared_ptr<connection_types::GenericRosMessage const>& msg)
-//    {
-//        std::abort();
-//        return std::dynamic_pointer_cast<R const>(msg);
-//    }
-//    static std::shared_ptr<R> cast(const std::shared_ptr<connection_types::GenericRosMessage>& msg)
-//    {
-//        std::abort();
-//        return std::dynamic_pointer_cast<R>(msg);
-//    }
-//};
 
 template <>
 template <typename R, typename S>

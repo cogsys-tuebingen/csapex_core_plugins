@@ -21,7 +21,7 @@ class SegmentMinCountFilter : public Node
 {
 public:
     SegmentMinCountFilter() :
-        max_size_(200)
+        max_size_(1024)
     {
     }
 
@@ -33,7 +33,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(csapex::param::ParameterFactory::declareRange("threshold", 2, (int) max_size_, 5, 1));
+        params.addParameter(csapex::param::ParameterFactory::declareInterval("threshold", 1, (int) max_size_, 1, (int) max_size_, 1));
     }
 
     void process()
@@ -42,7 +42,10 @@ public:
         std::shared_ptr< std::vector<Segment> > segments_out (new std::vector<Segment>());
 
         param::RangeParameter::Ptr p = std::dynamic_pointer_cast<param::RangeParameter>(getParameter("threshold"));
-        size_t threshold = (size_t) readParameter<int>("threshold");
+        auto threshold = readParameter<std::pair<int,int>>("threshold");
+
+        int min = threshold.first;
+        int max = threshold.second;
 
         for(auto it = segments_in->begin() ;
                  it != segments_in->end() ;
@@ -51,7 +54,8 @@ public:
                 max_size_ = it->rays.size();
                 p->setInterval<int>(2, max_size_);
             }
-            if(it->rays.size() >= threshold) {
+            int n = it->rays.size();
+            if(n >= min && n <= max) {
                 segments_out->push_back(*it);
             }
 

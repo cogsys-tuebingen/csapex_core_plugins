@@ -28,6 +28,7 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/kdtree/kdtree.h>
+#include <pcl/search/impl/kdtree.hpp>
 #include <pcl/sample_consensus/method_types.h>
 #include <pcl/sample_consensus/model_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
@@ -69,6 +70,8 @@ void ClusterPointcloud::process()
 void ClusterPointcloud::setup(NodeModifier& node_modifier)
 {
     in_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    in_indices_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
+
     out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
     out_debug_ = node_modifier.addOutput<std::string>("Debug Info");
 }
@@ -76,30 +79,83 @@ void ClusterPointcloud::setup(NodeModifier& node_modifier)
 template <class PointT>
 void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    // check for nans in cloud
-    typename pcl::PointCloud<PointT>::Ptr cloud_clean (new pcl::PointCloud<PointT>);
-    std::vector<int> nan_indices;
-    pcl::removeNaNFromPointCloud<PointT>(*cloud, *cloud_clean, nan_indices);
-    cloud_clean->is_dense = false;
+    typename pcl::PointCloud<PointT>::ConstPtr cloud_clean;
+
+    pcl::PointIndicesPtr indices;
+    if(msg::isConnected(in_indices_)) {
+        // NOTE: not using indices here directly, because that is way slower!
+        typename pcl::PointCloud<PointT>::Ptr cloud_clean_prime(new pcl::PointCloud<PointT>);
+        auto indices_msg = msg::getMessage<PointIndecesMessage>(in_indices_);
+        indices = indices_msg->value;
+
+        for(auto it = indices->indices.begin(); it != indices->indices.end();) {
+            auto& pt = cloud->points[*it];
+            if(std::isnan(pt.x) || std::isnan(pt.y) || std::isnan(pt.z)) {
+                it = indices->indices.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        pcl::ExtractIndices<PointT> extract;
+        extract.setInputCloud (cloud);
+        extract.setNegative(false);
+        extract.setIndices (indices);
+        extract.filter (*cloud_clean_prime);
+
+        cloud_clean = cloud_clean_prime;
+
+    } else {
+        // check for nans in cloud
+        typename pcl::PointCloud<PointT>::Ptr cloud_clean_prime(new pcl::PointCloud<PointT>);
+        std::vector<int> nan_indices;
+        pcl::removeNaNFromPointCloud<PointT>(*cloud, *cloud_clean_prime, nan_indices);
+        cloud_clean_prime->is_dense = false;
+
+        auto& pts = cloud_clean_prime->points;
+        for(auto it = pts.begin(); it != cloud_clean_prime->end();) {
+            auto& pt = *it;
+            if(std::isnan(pt.x) || std::isnan(pt.y) || std::isnan(pt.z)) {
+                it = pts.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        cloud_clean = cloud_clean_prime;
+    }
+
 
     // from http://www.pointclouds.org/documentation/tutorials/cluster_extraction.php
 
-      typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
-      tree->setInputCloud (cloud_clean);
+    typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
+    tree->setInputCloud (cloud_clean);
 
-      std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
-      typename pcl::EuclideanClusterExtraction<PointT> ec;
-      ec.setClusterTolerance (param_clusterTolerance_); // 2cm
-      ec.setMinClusterSize (param_clusterMinSize_);
-      ec.setMaxClusterSize (param_clusterMaxSize_);
-      ec.setSearchMethod (tree);
-      ec.setInputCloud (cloud_clean);
-      ec.extract (*cluster_indices);
+    std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
+    typename pcl::EuclideanClusterExtraction<PointT> ec;
+    ec.setClusterTolerance (param_clusterTolerance_); // 2cm
+    ec.setMinClusterSize (param_clusterMinSize_);
+    ec.setMaxClusterSize (param_clusterMaxSize_);
+    ec.setSearchMethod (tree);
+    ec.setInputCloud (cloud_clean);
+    // NOTE: not using indices here directly, because that is way slower!
+    // ec.setIndices(indices);
+    ec.extract (*cluster_indices);
 
-      std::stringstream stringstream;
-      stringstream << "Found clusters: " << cluster_indices->size();
-      std::string text_msg = stringstream.str();
-      msg::publish(out_debug_, text_msg);
-      msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, cluster_indices);
+
+    if(indices) {
+        const std::vector<int>& idx = indices->indices;
+        for(pcl::PointIndices& in : *cluster_indices) {
+            for(int& i : in.indices) {
+                i = idx[i];
+            }
+        }
+    }
+
+    std::stringstream stringstream;
+    stringstream << "Found clusters: " << cluster_indices->size();
+    std::string text_msg = stringstream.str();
+    msg::publish(out_debug_, text_msg);
+    msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, cluster_indices);
 
 }

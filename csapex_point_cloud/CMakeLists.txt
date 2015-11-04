@@ -46,6 +46,7 @@ include_directories(
 add_library(csapex_point_cloud
     src/msg/point_cloud_message.cpp
     src/msg/model_message.cpp
+    src/msg/normals_message.cpp
     src/msg/indeces_message.cpp
 )
 target_link_libraries(csapex_point_cloud
@@ -74,6 +75,7 @@ add_library(csapex_point_cloud_plugin_node
     src/passthrough.cpp
 
     src/conversion/pointcloud_to_depthimage.cpp
+    src/conversion/pointcloud_to_colorimage.cpp
     src/conversion/pointcloud_to_intensityimage.cpp
     src/conversion/pointcloud_to_pointmatrix.cpp
     src/conversion/pointmatrix_to_pointcloud.cpp
@@ -96,6 +98,7 @@ add_library(csapex_point_cloud_plugin_node
     src/segmentation/label_clustered_pointcloud.cpp
 
     src/analysis/ray_angles.cpp
+    src/analysis/estimate_normals.cpp
 
     src/pointcloud_generator.cpp
     src/sac_fit.cpp

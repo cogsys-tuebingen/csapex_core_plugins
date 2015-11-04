@@ -20,6 +20,7 @@ public:
 
 private:
     Input* in_cloud_;
+    Input* in_indices_;
     Output* out_;
     Output* out_debug_;
 
