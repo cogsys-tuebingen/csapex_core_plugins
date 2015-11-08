@@ -30,6 +30,9 @@ private:
     std::string base_;
 
     int suffix_;
+
+    bool oneshot_;
+    bool oneshot_allowed_;
 };
 
 }

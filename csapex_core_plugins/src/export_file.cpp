@@ -21,12 +21,26 @@ CSAPEX_REGISTER_CLASS(csapex::ExportFile, csapex::Node)
 using namespace csapex;
 
 ExportFile::ExportFile()
+    : oneshot_(false), oneshot_allowed_(false)
 {
     suffix_ = 0;
 }
 
 void ExportFile::setupParameters(Parameterizable& parameters)
 {
+    param::ParameterPtr one_by_one = csapex::param::ParameterFactory::declareBool(
+                "export one",
+                csapex::param::ParameterDescription("Export files one-by-one."),
+                false);
+    addParameter(one_by_one, oneshot_);
+    std::function<bool()> is_one = [one_by_one](){
+        return one_by_one->as<bool>();
+    };
+
+    addConditionalParameter(param::ParameterFactory::declareTrigger("save one message"), is_one, [this](param::Parameter* p) {
+        oneshot_allowed_ = true;
+    });
+
     addParameter(csapex::param::ParameterFactory::declareBool("yaml",
                                                       csapex::param::ParameterDescription("Export message in cs::APEX-YAML format?"),
                                                       true));
@@ -53,6 +67,14 @@ void ExportFile::process()
 {
     if(path_.empty()) {
         return;
+    }
+
+    if(oneshot_) {
+        if(!oneshot_allowed_) {
+            return;
+        } else {
+            oneshot_allowed_ = false;
+        }
     }
 
     ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(connector_);

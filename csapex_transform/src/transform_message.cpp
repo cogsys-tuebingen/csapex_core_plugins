@@ -63,7 +63,7 @@ bool convert<csapex::connection_types::TransformMessage>::decode(const Node& nod
     }
 
     std::vector<float> o = node["orientation"].as< std::vector<float> >();
-    std::vector<float> t = node["orientation"].as< std::vector<float> >();
+    std::vector<float> t = node["translation"].as< std::vector<float> >();
 
     if(o.size() != 4 || t.size() != 3) {
         return false;
