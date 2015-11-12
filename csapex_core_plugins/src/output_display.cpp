@@ -14,11 +14,17 @@ using namespace csapex;
 using namespace connection_types;
 
 OutputDisplay::OutputDisplay()
+    : adapted_(false)
 {
 }
 
 OutputDisplay::~OutputDisplay()
 {
+}
+
+void OutputDisplay::setAdapted()
+{
+    adapted_ = true;
 }
 
 void OutputDisplay::setup(NodeModifier& node_modifier)
@@ -28,6 +34,10 @@ void OutputDisplay::setup(NodeModifier& node_modifier)
 
 void OutputDisplay::process()
 {
+    if(!adapted_) {
+        return;
+    }
+
     ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
 
     MessageRenderer::Ptr renderer = MessageRendererManager::instance().createMessageRenderer(msg);

@@ -30,6 +30,8 @@ OutputDisplayAdapter::OutputDisplayAdapter(NodeWorkerWeakPtr worker, std::weak_p
 
     // translate to UI thread via Qt signal
     trackConnection(n->display_request.connect(std::bind(&OutputDisplayAdapter::displayRequest, this, std::placeholders::_1)));
+
+    n->setAdapted();
 }
 
 
