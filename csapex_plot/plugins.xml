@@ -1,0 +1,12 @@
+<library path="libcsapex_plot_node">
+<class type="csapex::TimePlot" base_class_type="csapex::Node">
+  <description>Plots a value over time.</description>
+</class>
+</library>
+
+
+<library path="libcsapex_plot_plugin_qt">
+<class type="csapex::TimePlotAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+</library>
