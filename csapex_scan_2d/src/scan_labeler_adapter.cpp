@@ -24,7 +24,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
-ScanLabelerAdapter::ScanLabelerAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ScanLabeler> node, WidgetController* widget_ctrl)
+ScanLabelerAdapter::ScanLabelerAdapter(NodeHandleWeakPtr worker, std::weak_ptr<ScanLabeler> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
@@ -66,9 +66,9 @@ void ScanLabelerAdapter::labelSelected(int label)
 
 void ScanLabelerAdapter::updateLabel(int label)
 {
-    NodeWorkerPtr node_worker = node_.lock();
-    if(node_worker) {
-        auto node = node_worker->getNode().lock();
+    NodeHandlePtr node_handle = node_.lock();
+    if(node_handle) {
+        auto node = node_handle->getNode().lock();
         if(node) {
             node->getParameter("label")->set(label);
         }
@@ -244,7 +244,7 @@ void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
 
 void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 {
-    NodeWorkerPtr node_worker = node_.lock();
+    NodeHandlePtr node_worker = node_.lock();
     if(!node_worker) {
         return;
     }

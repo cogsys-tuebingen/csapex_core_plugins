@@ -7,6 +7,8 @@ include(ExternalProject)
 ExternalProject_add(QWT
   SVN_REPOSITORY svn://svn.code.sf.net/p/qwt/code/trunk/qwt
   SVN_REVISION -r "2365"
+  PATCH_COMMAND ""
+  UPDATE_COMMAND ""
   SOURCE_DIR QWT
   BINARY_DIR QWT-build
   "${cmakeversion_external_update}"

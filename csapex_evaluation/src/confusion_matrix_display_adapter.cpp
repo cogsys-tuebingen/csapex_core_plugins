@@ -97,7 +97,7 @@ QVariant ConfusionMatrixTableModel::headerData(int section, Qt::Orientation orie
 
 
 
-ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ConfusionMatrixDisplay> node, WidgetController* widget_ctrl)
+ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<ConfusionMatrixDisplay> node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     auto n = wrapped_.lock();

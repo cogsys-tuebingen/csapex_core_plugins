@@ -85,7 +85,7 @@ QVariant ConfidenceMatrixTableModel::headerData(int section, Qt::Orientation ori
 
 
 
-ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ConfidenceMatrixDisplay> node, WidgetController* widget_ctrl)
+ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<ConfidenceMatrixDisplay> node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     auto n = wrapped_.lock();

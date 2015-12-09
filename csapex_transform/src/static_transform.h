@@ -18,6 +18,16 @@ public:
 
 private:
     Output* output_;
+
+    std::string frame;
+    std::string child_frame;
+
+    double roll;
+    double pitch;
+    double yaw;
+    double x;
+    double y;
+    double z;
 };
 
 }

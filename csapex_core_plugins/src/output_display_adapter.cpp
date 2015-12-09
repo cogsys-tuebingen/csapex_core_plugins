@@ -19,7 +19,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayAdapter::OutputDisplayAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<OutputDisplay> node, WidgetController* widget_ctrl)
+OutputDisplayAdapter::OutputDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<OutputDisplay> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(nullptr), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), down_(false)
 {
     auto n = wrapped_.lock();

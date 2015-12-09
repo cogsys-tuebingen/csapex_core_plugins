@@ -18,7 +18,7 @@ class ScanLabelerAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    ScanLabelerAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<ScanLabeler> node, WidgetController *widget_ctrl);
+    ScanLabelerAdapter(NodeHandleWeakPtr worker, std::weak_ptr<ScanLabeler> node, WidgetController *widget_ctrl);
 
     virtual Memento::Ptr getState() const;
     virtual void setParameterState(Memento::Ptr memento);

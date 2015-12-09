@@ -18,7 +18,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(MaskRefinementAdapter, csapex::MaskRefinement)
 
 
-MaskRefinementAdapter::MaskRefinementAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<MaskRefinement> node, WidgetController* widget_ctrl)
+MaskRefinementAdapter::MaskRefinementAdapter(NodeHandleWeakPtr worker, std::weak_ptr<MaskRefinement> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node),
       view_(new QGraphicsView),
       refresh_(false),

@@ -10,7 +10,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(TimePlotAdapter, csapex::TimePlot)
 
 
-TimePlotAdapter::TimePlotAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<TimePlot> node, WidgetController *widget_ctrl)
+TimePlotAdapter::TimePlotAdapter(NodeHandleWeakPtr worker, std::weak_ptr<TimePlot> node, WidgetController *widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     auto n = wrapped_.lock();

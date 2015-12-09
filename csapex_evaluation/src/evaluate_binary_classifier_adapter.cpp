@@ -135,7 +135,7 @@ QVariant EvaluateBinaryClassifierTableModel::headerData(int section, Qt::Orienta
 
 
 
-EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<EvaluateBinaryClassifier> node, WidgetController* widget_ctrl)
+EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeHandleWeakPtr worker, std::weak_ptr<EvaluateBinaryClassifier> node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     auto n = wrapped_.lock();

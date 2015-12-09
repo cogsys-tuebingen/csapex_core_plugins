@@ -9,7 +9,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(PointCountAdapter, csapex::PointCount)
 
-PointCountAdapter::PointCountAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<PointCount> node, WidgetController* widget_ctrl)
+PointCountAdapter::PointCountAdapter(NodeHandleWeakPtr worker, std::weak_ptr<PointCount> node, WidgetController* widget_ctrl)
     : NodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     auto n = wrapped_.lock();
