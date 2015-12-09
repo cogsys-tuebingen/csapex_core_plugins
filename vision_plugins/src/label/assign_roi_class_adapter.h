@@ -21,7 +21,7 @@ class AssignROIClassAdapter : public QObject, public csapex::DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    AssignROIClassAdapter(csapex::NodeWorkerWeakPtr worker,
+    AssignROIClassAdapter(csapex::NodeHandleWeakPtr worker,
                               std::weak_ptr<AssignROIClass> node,
                               csapex::WidgetController *widget_ctrl);
 

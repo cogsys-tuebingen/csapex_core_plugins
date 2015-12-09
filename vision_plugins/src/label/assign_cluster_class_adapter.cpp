@@ -22,7 +22,7 @@ using namespace vision_plugins;
 
 CSAPEX_REGISTER_NODE_ADAPTER_NS(vision_plugins, AssignClusterClassAdapter, vision_plugins::AssignClusterClass)
 
-AssignClusterClassAdapter::AssignClusterClassAdapter(NodeWorkerWeakPtr worker, std::weak_ptr<AssignClusterClass> node, WidgetController* widget_ctrl)
+AssignClusterClassAdapter::AssignClusterClassAdapter(NodeHandleWeakPtr worker, std::weak_ptr<AssignClusterClass> node, WidgetController* widget_ctrl)
     : DefaultNodeAdapter(worker, widget_ctrl),
       wrapped_(node),
       active_class_(0),
