@@ -5,6 +5,8 @@
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex_core_plugins/composite_message.h>
+#include <csapex/msg/any_message.h>
+#include <csapex/msg/no_message.h>
 
 namespace csapex
 {

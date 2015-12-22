@@ -9,6 +9,7 @@
 #include <csapex/core/settings.h>
 #include <csapex/factory/message_factory.h>
 #include <csapex/signal/trigger.h>
+#include <csapex/msg/any_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportFile, csapex::Node)
 

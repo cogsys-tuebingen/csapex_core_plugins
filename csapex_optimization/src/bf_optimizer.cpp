@@ -8,6 +8,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/param/range_parameter.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/any_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::BFOptimizer, csapex::Node)
 

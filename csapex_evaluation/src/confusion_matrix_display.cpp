@@ -8,6 +8,7 @@
 #include <csapex/factory/message_factory.h>
 #include <csapex/utility/timer.h>
 
+#include <csapex/msg/any_message.h>
 CSAPEX_REGISTER_CLASS(csapex::ConfusionMatrixDisplay, csapex::Node)
 
 using namespace csapex;

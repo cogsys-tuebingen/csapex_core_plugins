@@ -6,6 +6,7 @@
 #include <csapex_ros/time_stamp_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/msg/any_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractTimeStamp, csapex::Node)
 

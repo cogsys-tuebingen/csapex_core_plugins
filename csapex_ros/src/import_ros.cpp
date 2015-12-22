@@ -16,6 +16,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ros/time_stamp_message.h>
 #include <csapex/utility/timer.h>
+#include <csapex/msg/any_message.h>
 
 /// SYSTEM
 #include <yaml-cpp/eventhandler.h>

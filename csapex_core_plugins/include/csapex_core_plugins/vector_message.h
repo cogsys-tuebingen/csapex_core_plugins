@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/msg/message.h>
 #include <csapex/msg/message_traits.h>
+#include <csapex/msg/any_message.h>
 
 /// SYSTEM
 #include <string>

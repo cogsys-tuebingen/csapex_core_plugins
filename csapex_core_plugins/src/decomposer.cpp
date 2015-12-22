@@ -7,7 +7,7 @@
 #include <csapex_core_plugins/composite_message.h>
 #include <csapex/msg/output.h>
 #include <csapex/serialization/serialization.h>
-
+#include <csapex/msg/any_message.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;

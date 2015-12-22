@@ -5,6 +5,7 @@
 #include <csapex/msg/message_traits.h>
 #include <csapex/utility/register_msg.h>
 #include <csapex/serialization/yaml.h>
+#include <csapex/msg/no_message.h>
 
 CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::GenericVectorMessage, g_instance_generic_vector_)
 CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::VectorMessage, g_instance_vector_)

@@ -4,6 +4,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/msg/any_message.h>
 
 /// SYSTEM
 #include <ros/time.h>

@@ -11,6 +11,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/core/settings.h>
 #include <csapex/factory/message_factory.h>
+#include <csapex/msg/no_message.h>
 
 /// SYSTEM
 #include <fstream>

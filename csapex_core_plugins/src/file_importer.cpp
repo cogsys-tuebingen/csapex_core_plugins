@@ -11,6 +11,7 @@
 #include <csapex/utility/timer.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
+#include <csapex/msg/any_message.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>

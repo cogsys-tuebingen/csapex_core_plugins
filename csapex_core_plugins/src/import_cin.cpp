@@ -9,7 +9,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/serialization/message_serializer.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/utility/yaml_node_builder.h>
+#include <csapex/msg/any_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportCin, csapex::Node)
 

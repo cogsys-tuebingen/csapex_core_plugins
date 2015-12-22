@@ -10,6 +10,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/param/output_progress_parameter.h>
 #include <csapex/signal/trigger.h>
+#include <csapex/msg/any_message.h>
 
 /// SYSTEM
 #include <thread>
