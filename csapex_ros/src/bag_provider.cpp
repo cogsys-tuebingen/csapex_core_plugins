@@ -11,7 +11,6 @@
 #include <csapex/param/range_parameter.h>
 
 /// SYSTEM
-#include <boost/assign.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 #include <sensor_msgs/Image.h>
 #include <tf2_msgs/TFMessage.h>
@@ -126,7 +125,7 @@ void BagProvider::setTopic()
 
 std::vector<std::string> BagProvider::getExtensions() const
 {
-    return boost::assign::list_of<std::string> (".bag");
+    return { ".bag" };
 }
 
 bool BagProvider::hasNext()

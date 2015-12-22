@@ -21,12 +21,13 @@ public:
     void setupParameters(Parameterizable& parameters)
     {
         parameters.addParameter(csapex::param::ParameterFactory::declareRange("angle", -M_PI, M_PI, 0.0, 0.001));
-        std::map<std::string, int> modes = boost::assign::map_list_of
-                ("nearest", (int) cv::INTER_NEAREST)
-                ("linear", (int) cv::INTER_LINEAR)
-                ("area", (int) cv::INTER_AREA)
-                ("cubic", (int) cv::INTER_CUBIC)
-                ("lanczos4", (int) cv::INTER_LANCZOS4);
+        std::map<std::string, int> modes = {
+            {"nearest", (int) cv::INTER_NEAREST},
+            {"linear", (int) cv::INTER_LINEAR},
+            {"area", (int) cv::INTER_AREA},
+            {"cubic", (int) cv::INTER_CUBIC},
+            {"lanczos4", (int) cv::INTER_LANCZOS4},
+        };
         parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST));
     }
 
@@ -48,9 +49,9 @@ public:
     }
 
     void doProcess(const CvMatMessage::ConstPtr& src,
-                 double angle,
-                 int mode,
-                 CvMatMessage::Ptr& dst)
+                   double angle,
+                   int mode,
+                   CvMatMessage::Ptr& dst)
     {
         int dim = std::max(src->value.cols, src->value.rows);
 

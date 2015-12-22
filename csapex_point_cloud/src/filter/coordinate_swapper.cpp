@@ -11,8 +11,6 @@
 
 /// SYSTEM
 #include <pcl/point_types.h>
-#include <boost/assign/list_of.hpp>
-#include <boost/utility/enable_if.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::CoordinateSwapper, csapex::Node)
 

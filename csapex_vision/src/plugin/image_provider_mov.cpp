@@ -5,7 +5,6 @@
 #include <csapex/param/range_parameter.h>
 
 /// SYSTEM
-#include <boost/assign.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImageProviderMov, csapex::MessageProvider)
@@ -37,7 +36,7 @@ ImageProviderMov::~ImageProviderMov()
 
 std::vector<std::string> ImageProviderMov::getExtensions() const
 {
-    return boost::assign::list_of<std::string> (".avi")(".mpg")(".mp4")(".mov")(".flv");
+    return {".avi", ".mpg", ".mp4", ".mov", ".flv" };
 }
 
 bool ImageProviderMov::hasNext()

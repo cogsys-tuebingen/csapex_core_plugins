@@ -167,7 +167,6 @@ void EvaluateBinaryClassifierAdapter::display()
     if(!node) {
         return;
     }
-    assert(QThread::currentThread() == QApplication::instance()->thread());
 
     model_->update(node->getMetrics());
 

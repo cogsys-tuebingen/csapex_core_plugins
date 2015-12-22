@@ -46,7 +46,6 @@ struct type<GenericRosMessage> {
 namespace msg
 {
 
-template <>
 template <typename R, typename S>
 struct MessageCaster<connection_types::GenericPointerMessage<R>, S, void>
 {

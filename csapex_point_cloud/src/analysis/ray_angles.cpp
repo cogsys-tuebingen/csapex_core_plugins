@@ -8,9 +8,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-/// SYSTEM
-#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::RayAngles, csapex::Node)
 
 using namespace csapex;
@@ -31,16 +28,17 @@ void RayAngles::setup(NodeModifier& node_modifier)
 
 void RayAngles::setupParameters(csapex::Parameterizable &parameters)
 {
-    std::map<std::string, int> reference_axis =
-            boost::assign::map_list_of
-            ("x", (int) X)
-            ("y", (int) Y)
-            ("z", (int) Z);
+    std::map<std::string, int> reference_axis = {
+        {"x", (int) X},
+        {"y", (int) Y},
+        {"z", (int) Z}
+    };
 
-    addParameter(csapex::param::ParameterFactory::declareParameterSet("reference axis",
-                                                 csapex::param::ParameterDescription("Choose the reference axis."),
-                                                 reference_axis,
-                                                 (int) X));
+    addParameter(csapex::param::ParameterFactory::declareParameterSet(
+                     "reference axis",
+                     csapex::param::ParameterDescription("Choose the reference axis."),
+                     reference_axis,
+                     (int) X));
 }
 
 void RayAngles::process()
@@ -147,7 +145,7 @@ inline void processCloud(typename pcl::PointCloud<pcl::PointXY>::ConstPtr cloud,
 template<class PointT>
 struct Processor {
     static void invokeProcess(RayAngles *instance,
-                         typename pcl::PointCloud<PointT>::ConstPtr cloud)
+                              typename pcl::PointCloud<PointT>::ConstPtr cloud)
     {
         instance->doProcess3D<PointT>(cloud);
     }

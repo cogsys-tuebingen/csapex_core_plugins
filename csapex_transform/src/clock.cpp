@@ -11,9 +11,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-/// SYSTEM
-#include <boost/assign/list_of.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::Clock, csapex::Node)
 
 using namespace csapex;
@@ -24,9 +21,10 @@ Clock::Clock()
 
 void Clock::setupParameters(Parameterizable &parameters)
 {
-    std::map<std::string, int> methods = boost::assign::map_list_of
-            ("ros::Time::now()", (int) CURRENT)
-            ("ros::Time(0)", (int) ZERO);
+    std::map<std::string, int> methods = {
+        {"ros::Time::now()", (int) CURRENT},
+        {"ros::Time(0)", (int) ZERO}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) CURRENT));
 }
 

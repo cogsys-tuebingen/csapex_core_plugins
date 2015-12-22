@@ -12,7 +12,6 @@
 
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
-#include <boost/assign.hpp>
 #include <tf/tf.h>
 
 /// PCL

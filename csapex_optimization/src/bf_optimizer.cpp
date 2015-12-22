@@ -9,9 +9,6 @@
 #include <csapex/param/range_parameter.h>
 #include <csapex/msg/generic_value_message.hpp>
 
-/// SYSTEM
-//#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::BFOptimizer, csapex::Node)
 
 using namespace csapex;

@@ -10,9 +10,6 @@
 #include <csapex/signal/slot.h>
 #include <csapex_ml/features_message.h>
 
-/// SYSTEM
-//#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::ConfidenceClassToggle, csapex::Node)
 
 using namespace csapex;

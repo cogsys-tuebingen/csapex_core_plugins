@@ -10,9 +10,6 @@
 #include <csapex_vision/roi_message.h>
 #include <csapex/utility/timer.h>
 
-/// SYSTEM
-#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::GrabCut, csapex::Node)
 
 using namespace csapex;
@@ -25,23 +22,27 @@ GrabCut::GrabCut()
 
 void GrabCut::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareRange("iterations",
-                                                       csapex::param::ParameterDescription("Number of iterations of GrabCut"),
-                                                       1, 100, 1, 1));
+    addParameter(csapex::param::ParameterFactory::declareRange(
+                     "iterations",
+                     csapex::param::ParameterDescription("Number of iterations of GrabCut"),
+                     1, 100, 1, 1));
 
-    addParameter(csapex::param::ParameterFactory::declareRange("threshold",
-                                                       csapex::param::ParameterDescription("Minimum value for a mask pixel to be used as non-zero"),
-                                                       0, 255, 128, 1));
+    addParameter(csapex::param::ParameterFactory::declareRange(
+                     "threshold",
+                     csapex::param::ParameterDescription("Minimum value for a mask pixel to be used as non-zero"),
+                     0, 255, 128, 1));
 
-    std::map<std::string, int> init_value = boost::assign::map_list_of
-            ("background", (int) cv::GC_BGD)
-            ("foreground", (int) cv::GC_FGD)
-            ("most probably background", (int) cv::GC_PR_BGD)
-            ("most probably foreground", (int) cv::GC_PR_FGD);
+    std::map<std::string, int> init_value = {
+        {"background", (int) cv::GC_BGD},
+        {"foreground", (int) cv::GC_FGD},
+        {"most probably background", (int) cv::GC_PR_BGD},
+        {"most probably foreground", (int) cv::GC_PR_FGD},
+    };
 
-    addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("initial value",
-                                                                   csapex::param::ParameterDescription("Initial mask value for unspecified pixels"),
-                                                                   init_value, cv::GC_BGD));
+    addParameter(csapex::param::ParameterFactory::declareParameterSet<int>(
+                     "initial value",
+                     csapex::param::ParameterDescription("Initial mask value for unspecified pixels"),
+                     init_value, cv::GC_BGD));
 }
 
 void GrabCut::setup(NodeModifier& node_modifier)

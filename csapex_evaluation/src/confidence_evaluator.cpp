@@ -9,9 +9,6 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/signal/slot.h>
 
-/// SYSTEM
-#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::ConfidenceEvaluator, csapex::Node)
 
 using namespace csapex;
@@ -25,14 +22,14 @@ void ConfidenceEvaluator::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"), [&](csapex::param::Parameter*) { confidence_.reset(); });
 
-    std::map<std::string, int> eval_types =
-            boost::assign::map_list_of
-            ("mean", ConfidenceMatrix::MEAN)
-            ("argmax", ConfidenceMatrix::ARGMAX);
+    std::map<std::string, int> eval_types = {
+        {"mean", ConfidenceMatrix::MEAN},
+        {"argmax", ConfidenceMatrix::ARGMAX}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("evaluation",
-                                                                         csapex::param::ParameterDescription("Choose the evaluation type."),
-                                                                         eval_types,
-                                                                         (int) ConfidenceMatrix::MEAN));
+                                                                                 csapex::param::ParameterDescription("Choose the evaluation type."),
+                                                                                 eval_types,
+                                                                                 (int) ConfidenceMatrix::MEAN));
 }
 
 void ConfidenceEvaluator::setup(NodeModifier& node_modifier)

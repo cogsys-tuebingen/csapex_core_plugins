@@ -38,5 +38,5 @@ void BoxBlur::setup(NodeModifier& node_modifier)
 
 void BoxBlur::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("kernel", 1, 255, 2, 2));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("kernel", 1, 255, 1, 2));
 }

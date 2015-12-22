@@ -48,12 +48,12 @@ void CopyMakeBorder::setupParameters(Parameterizable &parameters)
      * BORDER_CONSTANT:      iiiiii|abcdefgh|iiiiiii  with some specified 'i'
      */
 
-    std::map<std::string, int> types =
-            boost::assign::map_list_of
-            ("REPLICATE",cv::BORDER_REPLICATE)
-            ("REFLECT",cv::BORDER_REFLECT)
-            ("REFLECT_101",cv::BORDER_REFLECT_101)
-            ("WRAP",cv::BORDER_WRAP);
+    std::map<std::string, int> types = {
+        {"REPLICATE",cv::BORDER_REPLICATE},
+        {"REFLECT",cv::BORDER_REFLECT},
+        {"REFLECT_101",cv::BORDER_REFLECT_101},
+        {"WRAP",cv::BORDER_WRAP}
+    };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("type", types, (int) cv::BORDER_REPLICATE));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("left", 1, 1000, 1, 1));

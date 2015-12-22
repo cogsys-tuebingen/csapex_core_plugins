@@ -20,7 +20,6 @@
 #if __clang__
 #pragma clang diagnostic pop
 #endif //__clang__
-#include <boost/assign/std.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::PassThrough, csapex::Node)
 

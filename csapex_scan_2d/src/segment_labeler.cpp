@@ -11,9 +11,6 @@
 #include <utils_laser_processing/common/yaml-io.hpp>
 #include <csapex_scan_2d/labeled_scan_message.h>
 
-/// SYSTEM
-//#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::SegmentLabeler, csapex::Node)
 
 using namespace csapex;

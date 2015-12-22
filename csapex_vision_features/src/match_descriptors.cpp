@@ -12,8 +12,6 @@
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
-#include <boost/assign/std.hpp>
-#include <boost/lambda/lambda.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::MatchDescriptors, csapex::Node)
 
@@ -290,10 +288,11 @@ void MatchDescriptors::setupParameters(Parameterizable &parameters)
 {
     std::function<void(csapex::param::Parameter*)> update = std::bind(&MatchDescriptors::update, this);
 
-    std::map<std::string, int> methods = boost::assign::map_list_of
-            ("Simple", (int) SIMPLE)
-            ("Peak", (int) PEAK)
-            ("Robust", (int) ROBUST);
+    std::map<std::string, int> methods = {
+        {"Simple", (int) SIMPLE},
+        {"Peak", (int) PEAK},
+        {"Robust", (int) ROBUST}
+    };
 
     csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) ROBUST);
     parameters.addParameter(method, update);

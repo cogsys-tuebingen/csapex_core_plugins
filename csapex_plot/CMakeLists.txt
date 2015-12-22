@@ -50,7 +50,7 @@ add_library(csapex_plot_node
 target_link_libraries(csapex_plot_node
     ${catkin_LIBRARIES} ${QWT_LIBRARY} ${QT_LIBRARIES}
 )
-add_dependencies(csapex_plot_node ${QWT_LIBRARY})
+add_dependencies(csapex_plot_node QWT)
 
 
 add_library(csapex_plot_plugin_qt
@@ -58,4 +58,4 @@ add_library(csapex_plot_plugin_qt
 )
 target_link_libraries(csapex_plot_plugin_qt
     yaml-cpp ${catkin_LIBRARIES})
-add_dependencies(csapex_plot_node ${QWT_LIBRARY})
+add_dependencies(csapex_plot_plugin_qt QWT)

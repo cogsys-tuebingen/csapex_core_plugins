@@ -138,8 +138,6 @@ void ConfusionMatrixDisplayAdapter::display()
         return;
     }
 
-    assert(QThread::currentThread() == QApplication::instance()->thread());
-
     model_->update(node->getConfusionMatrix());
 
     table_->resizeColumnsToContents();

@@ -8,9 +8,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_core_plugins/vector_message.h>
 
-/// SYSTEM
-#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::SVMTrainer, csapex::Node)
 
 using namespace csapex;
@@ -31,88 +28,88 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
 {
 
     addParameter(csapex::param::ParameterFactory::declareFileOutputPath("path",
-                                                                csapex::param::ParameterDescription("File to write svm to."),
-                                                                "",
-                                                                "*.yaml *.tar.gz"));
+                                                                        csapex::param::ParameterDescription("File to write svm to."),
+                                                                        "",
+                                                                        "*.yaml *.tar.gz"));
 
     addParameter(csapex::param::ParameterFactory::declareTrigger("train",
-                                                         csapex::param::ParameterDescription("Train using obtained data!")),
+                                                                 csapex::param::ParameterDescription("Train using obtained data!")),
                  std::bind(&SVMTrainer::train, this));
 
     addParameter(csapex::param::ParameterFactory::declareTrigger("clear",
-                                                         csapex::param::ParameterDescription("Clear buffered data!")),
+                                                                 csapex::param::ParameterDescription("Clear buffered data!")),
                  std::bind(&SVMTrainer::clear, this));
 
 
-    std::map<std::string, int> kernel_types =
-            boost::assign::map_list_of
-            ("LINEAR", cv::SVM::LINEAR)
-            ("POLY", cv::SVM::POLY)
-            ("RBF", cv::SVM::RBF)
-            ("SIGMOID", cv::SVM::SIGMOID);
+    std::map<std::string, int> kernel_types = {
+        {"LINEAR", cv::SVM::LINEAR},
+        {"POLY", cv::SVM::POLY},
+        {"RBF", cv::SVM::RBF},
+        {"SIGMOID", cv::SVM::SIGMOID}
+    };
 
     csapex::param::Parameter::Ptr kernel_param =
             csapex::param::ParameterFactory::declareParameterSet("kernel type",
-                                                         csapex::param::ParameterDescription("Kernel type to be trained."),
-                                                         kernel_types,
-                                                         (int) cv::SVM::RBF);
+                                                                 csapex::param::ParameterDescription("Kernel type to be trained."),
+                                                                 kernel_types,
+                                                                 (int) cv::SVM::RBF);
     parameters.addParameter(kernel_param);
 
-    std::map<std::string, int> svm_types =
-            boost::assign::map_list_of
-            ("C_SVC", cv::SVM::C_SVC)
-            ("NU_SVC", cv::SVM::NU_SVC)
-            ("ONE_CLASS", cv::SVM::ONE_CLASS)
-            ("EPS_SVR", cv::SVM::EPS_SVR)
-            ("NU_SVR", cv::SVM::NU_SVR);
+    std::map<std::string, int> svm_types = {
+        {"C_SVC", cv::SVM::C_SVC},
+        {"NU_SVC", cv::SVM::NU_SVC},
+        {"ONE_CLASS", cv::SVM::ONE_CLASS},
+        {"EPS_SVR", cv::SVM::EPS_SVR},
+        {"NU_SVR", cv::SVM::NU_SVR}
+    };
 
     csapex::param::Parameter::Ptr svm_param =
             csapex::param::ParameterFactory::declareParameterSet("svm type",
-                                                         csapex::param::ParameterDescription("SVM type to be trained."),
-                                                         svm_types,
-                                                         (int) cv::SVM::C_SVC);
+                                                                 csapex::param::ParameterDescription("SVM type to be trained."),
+                                                                 svm_types,
+                                                                 (int) cv::SVM::C_SVC);
 
     parameters.addParameter(svm_param);
 
     std::function<bool()> deg_cond    = [kernel_param]() -> bool {
             auto t = kernel_param->as<int>();
             return t == cv::SVM::POLY;
-    };
+};
     std::function<bool()> gamma_cond  = [kernel_param]() -> bool {
             auto t = kernel_param->as<int>();
             return t == cv::SVM::POLY || t == cv::SVM::RBF || cv::SVM::SIGMOID;
-    };
+};
 
     std::function<bool()> coeff0_cond = [kernel_param]() -> bool {
             auto t = kernel_param->as<int>();
             return t == cv::SVM::POLY || t == cv::SVM::SIGMOID;
-    };
+};
     std::function<bool()> cvalue_cond = [kernel_param]() -> bool {
             auto t = kernel_param->as<int>();
             return t == cv::SVM::C_SVC || t == cv::SVM::EPS_SVR || cv::SVM::NU_SVR;
-    };
+};
     std::function<bool()> nu_cond     = [kernel_param]() -> bool {
             auto t = kernel_param->as<int>();
             return t == cv::SVM::ONE_CLASS || t == cv::SVM::NU_SVR || cv::SVM::EPS_SVR;
-    };
+};
     std::function<bool()> p_cond      = [kernel_param]() -> bool {
             auto t = kernel_param->as<int>();
             return t == cv::SVM::EPS_SVR;
-    };
+};
 
 
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("degree", 0.0, M_PI * 2, 0.0, 0.05),
-                            deg_cond);
+                                       deg_cond);
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("gamma", -M_PI, M_PI, 1.0, 0.05),
-                            gamma_cond);
+                                       gamma_cond);
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("coef0", -M_PI, M_PI, 0.0, 0.05),
-                            coeff0_cond);
+                                       coeff0_cond);
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("C", -M_PI, M_PI, 1.0, 0.05),
-                            cvalue_cond);
+                                       cvalue_cond);
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("nu", 0.0, 1.0, 0.0, 0.05),
-                            nu_cond);
+                                       nu_cond);
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("p", -M_PI, M_PI, 0.0, 0.05),
-                            p_cond);
+                                       p_cond);
 }
 
 void SVMTrainer::process()

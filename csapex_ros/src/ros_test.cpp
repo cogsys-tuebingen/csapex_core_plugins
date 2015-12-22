@@ -30,7 +30,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
         std::shared_ptr<nav_msgs::Odometry const> img_in = msg::getMessage<nav_msgs::Odometry>(in_);
 

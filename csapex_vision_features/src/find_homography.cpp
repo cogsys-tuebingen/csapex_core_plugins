@@ -41,10 +41,11 @@ void FindHomography::setupParameters(Parameterizable &parameters)
 {
     std::function<void(csapex::param::Parameter*)> update = std::bind(&FindHomography::update, this);
 
-    std::map<std::string, int> methods = boost::assign::map_list_of
-            ("Regular", (int) 0)
-            ("RANSAC", (int) CV_RANSAC)
-            ("LMedS", (int) CV_LMEDS);
+    std::map<std::string, int> methods = {
+            {"Regular", (int) 0},
+            {"RANSAC", (int) CV_RANSAC},
+            {"LMedS", (int) CV_LMEDS}
+    };
 
     csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) 0);
     parameters.addParameter(method, update);

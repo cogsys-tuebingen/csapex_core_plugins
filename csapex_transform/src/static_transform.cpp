@@ -23,7 +23,7 @@ StaticTransform::StaticTransform()
 
 void StaticTransform::setupParameters(Parameterizable &parameters)
 {
-    double p = 3.2;
+//    double p = 3.2;
     double d = 5.0;
 
     parameters.addParameter(csapex::param::ParameterFactory::declareText("frame", "/base_link"), frame);

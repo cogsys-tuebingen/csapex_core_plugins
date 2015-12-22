@@ -8,9 +8,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_value_message.hpp>
 
-/// SYSTEM
-//#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::OptimizationDummy, csapex::Node)
 
 using namespace csapex;

@@ -2,7 +2,6 @@
 #include "image_provider_img.h"
 
 /// SYSTEM
-#include <boost/assign.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImageProviderImg, csapex::MessageProvider)
@@ -27,7 +26,7 @@ void ImageProviderImg::load(const std::string& path)
 
 std::vector<std::string> ImageProviderImg::getExtensions() const
 {
-    return boost::assign::list_of<std::string> (".jpg")(".jpeg")(".gif")(".png")(".tiff")(".pgm")(".ppm");
+    return { ".jpg", ".jpeg", ".gif", ".png", ".tiff", ".pgm", ".ppm" };
 }
 
 bool ImageProviderImg::checkIdentity(ImageProvider* other)

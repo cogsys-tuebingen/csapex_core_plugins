@@ -11,7 +11,7 @@
 #include <csapex/utility/assert.h>
 
 /// SYSTEM
-#include <boost/type_traits.hpp>
+#include <type_traits>
 
 CSAPEX_REGISTER_CLASS(csapex::ImageToPointCloud, csapex::Node)
 
@@ -81,7 +81,7 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
     int correction_start = readParameter<int>("correct/start");
     double correction_f = readParameter<double>("correct/f");
 
-    if(boost::is_same<PointT, pcl::PointXYZI>()) {
+    if(std::is_same<PointT, pcl::PointXYZI>()) {
         apex_assert(intensity.type() == CV_8UC1);
     }
     apex_assert(depth.type() == CV_32FC1);
@@ -94,7 +94,7 @@ PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const 
 
             double r = depth.at<float>(y,x);
 
-            if(boost::is_same<PointT, pcl::PointXYZI>()){
+            if(std::is_same<PointT, pcl::PointXYZI>()){
                 int i = intensity.at<uint8_t>(y, x);
                 set<PointT>(pt, i);
 

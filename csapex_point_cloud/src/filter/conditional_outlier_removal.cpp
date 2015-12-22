@@ -11,7 +11,6 @@
 /// SYSTEM
 #include <pcl/point_types.h>
 #include <pcl/filters/conditional_removal.h>
-#include <boost/assign/list_of.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ConditionalOutlierRemoval, csapex::Node)
 
@@ -30,32 +29,34 @@ ConditionalOutlierRemoval::ConditionalOutlierRemoval() :
 
 void ConditionalOutlierRemoval::setupParameters(Parameterizable &parameters)
 {
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("AND", (int) AND)
-            ("OR", (int) OR);
+    std::map<std::string, int> types = {
+        {"AND", (int) AND},
+        {"OR", (int) OR}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("type", types, (int) AND), std::bind(&ConditionalOutlierRemoval::update, this));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareBool ("keep organized", keep_organized_),
-                 std::bind(&ConditionalOutlierRemoval::update, this));
+                            std::bind(&ConditionalOutlierRemoval::update, this));
 
-    std::map<std::string, int> conditions = boost::assign::map_list_of
-            ("x", 1)
-            ("y", 2)
-            ("z", 4);
+    std::map<std::string, int> conditions = {
+        {"x", 1},
+        {"y", 2},
+        {"z", 4}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterBitSet("conditions", conditions),
-                 std::bind(&ConditionalOutlierRemoval::update, this));
+                            std::bind(&ConditionalOutlierRemoval::update, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("min x", -30.0, 30.0, x_range_.x(), 0.1),
-                 std::bind(&ConditionalOutlierRemoval::update, this));
+                            std::bind(&ConditionalOutlierRemoval::update, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("min y", -30.0, 30.0, y_range_.x(), 0.1),
-                 std::bind(&ConditionalOutlierRemoval::update, this));
+                            std::bind(&ConditionalOutlierRemoval::update, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("min z", -30.0, 30.0, z_range_.x(), 0.1),
-                 std::bind(&ConditionalOutlierRemoval::update, this));
+                            std::bind(&ConditionalOutlierRemoval::update, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("max x", -30.0, 30.0, x_range_.y(), 0.1),
-                 std::bind(&ConditionalOutlierRemoval::update, this));
+                            std::bind(&ConditionalOutlierRemoval::update, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("max y", -30.0, 30.0, y_range_.y(), 0.1),
-                 std::bind(&ConditionalOutlierRemoval::update, this));
+                            std::bind(&ConditionalOutlierRemoval::update, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("max z", -30.0, 30.0, z_range_.y(), 0.1),
-                 std::bind(&ConditionalOutlierRemoval::update, this));
+                            std::bind(&ConditionalOutlierRemoval::update, this));
 }
 
 void ConditionalOutlierRemoval::setup(NodeModifier& node_modifier)
@@ -91,21 +92,21 @@ void ConditionalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Con
 
         if((conditions_ & 1 & 3 & 5) == 1) {
             condition->addComparison (typename pcl::FieldComparison<PointT>::ConstPtr (
-                                           new pcl::FieldComparison<PointT> ("x", pcl::ComparisonOps::GT, x_range_.x())));
+                                          new pcl::FieldComparison<PointT> ("x", pcl::ComparisonOps::GT, x_range_.x())));
             condition->addComparison (typename pcl::FieldComparison<PointT>::ConstPtr (
-                                           new pcl::FieldComparison<PointT> ("x", pcl::ComparisonOps::LT, x_range_.y())));
+                                          new pcl::FieldComparison<PointT> ("x", pcl::ComparisonOps::LT, x_range_.y())));
         }
         if((conditions_ & 2 & 3 & 6) == 2) {
             condition->addComparison (typename pcl::FieldComparison<PointT>::ConstPtr (
-                                           new pcl::FieldComparison<PointT> ("y", pcl::ComparisonOps::GT, y_range_.x())));
+                                          new pcl::FieldComparison<PointT> ("y", pcl::ComparisonOps::GT, y_range_.x())));
             condition->addComparison (typename pcl::FieldComparison<PointT>::ConstPtr (
-                                           new pcl::FieldComparison<PointT> ("y", pcl::ComparisonOps::LT, y_range_.y())));
+                                          new pcl::FieldComparison<PointT> ("y", pcl::ComparisonOps::LT, y_range_.y())));
         }
         if((conditions_ & 4 & 5 & 6) == 4)  {
             condition->addComparison (typename pcl::FieldComparison<PointT>::ConstPtr (
-                                           new pcl::FieldComparison<PointT> ("z", pcl::ComparisonOps::GT, z_range_.x())));
+                                          new pcl::FieldComparison<PointT> ("z", pcl::ComparisonOps::GT, z_range_.x())));
             condition->addComparison (typename pcl::FieldComparison<PointT>::ConstPtr (
-                                           new pcl::FieldComparison<PointT> ("z", pcl::ComparisonOps::LT, z_range_.y())));
+                                          new pcl::FieldComparison<PointT> ("z", pcl::ComparisonOps::LT, z_range_.y())));
         }
         cloud_filtered.reset(new pcl::PointCloud<PointT>);
         pcl::ConditionalRemoval<PointT> cr (condition);

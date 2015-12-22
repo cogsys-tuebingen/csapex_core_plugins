@@ -7,9 +7,6 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 
-/// SYSTEM
-//#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::EvaluateBinaryClassifier, csapex::Node)
 
 using namespace csapex;

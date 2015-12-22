@@ -40,7 +40,7 @@ static bool decode(const YAML::Node& node, connection_types::GenericPointerMessa
 {
     // read the buffer
     auto vec = node["buf"].as<std::vector<uint8_t>>();
-    int num_bytes = vec.size();
+    std::size_t num_bytes = vec.size();
 
     // ros needs a shared array instead of a vector
     boost::shared_array<uint8_t> buf(new uint8_t[num_bytes]);

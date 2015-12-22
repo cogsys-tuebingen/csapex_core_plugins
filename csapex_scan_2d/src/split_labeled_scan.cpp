@@ -10,9 +10,6 @@
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex_core_plugins/vector_message.h>
 
-/// SYSTEM
-//#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::SplitLabeledScan, csapex::Node)
 
 using namespace csapex;

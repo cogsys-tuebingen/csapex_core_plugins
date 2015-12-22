@@ -8,9 +8,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 
-/// SYSTEM
-//#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::MergeClouds, csapex::Node)
 
 using namespace csapex;

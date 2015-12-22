@@ -4,7 +4,6 @@
 /// SYSTEM
 #include <string>
 #include <vector>
-#include <boost/assign/list_of.hpp>
 
 namespace csapex {
 
@@ -84,6 +83,12 @@ public:
     Encoding(Iterator begin, Iterator end)
         : channels_(begin, end)
     {}
+    Encoding(std::initializer_list<Channel> channels)
+        : channels_(channels)
+    {}
+    Encoding(const std::vector<Channel>& channels)
+        : channels_(channels)
+    {}
 
     Encoding();
 
@@ -123,28 +128,14 @@ static const Channel depth("d", 0.0f, 255.0f, g_channels);
 static const Channel unknown("?",0,1,  g_channels);
 }
 
-static const Encoding mono = boost::assign::list_of
-        (channel::gray);
-
-static const Encoding bgr = boost::assign::list_of
-        (channel::blue)(channel::green)(channel::red);
-
+static const Encoding mono = { channel::gray };
+static const Encoding bgr = { channel::blue, channel::green, channel::red };
 static const Encoding unknown = bgr;
-
-static const Encoding rgb = boost::assign::list_of
-        (channel::red)(channel::green)(channel::blue);
-
-static const Encoding hsv = boost::assign::list_of
-        (channel::hue)(channel::saturation)(channel::v);
-
-static const Encoding hsl = boost::assign::list_of
-        (channel::hue)(channel::saturation)(channel::l);
-
-static const Encoding yuv = boost::assign::list_of
-        (channel::y)(channel::u)(channel::v);
-
-static const Encoding depth = boost::assign::list_of
-        (channel::depth);
+static const Encoding rgb = { channel::red, channel::green, channel::blue };
+static const Encoding hsv = { channel::hue, channel::saturation, channel::v };
+static const Encoding hsl = { channel::hue, channel::saturation, channel::l };
+static const Encoding yuv = { channel::y, channel::u, channel::v };
+static const Encoding depth = { channel::depth };
 }
 
 }

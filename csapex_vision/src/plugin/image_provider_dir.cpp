@@ -2,7 +2,6 @@
 #include "image_provider_dir.h"
 
 /// SYSTEM
-#include <boost/assign.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImageProviderDir, csapex::MessageProvider)
@@ -46,7 +45,7 @@ ImageProviderDir::~ImageProviderDir()
 
 std::vector<std::string> ImageProviderDir::getExtensions() const
 {
-    return boost::assign::list_of<std::string> (".DIRECTORY");
+    return { ".DIRECTORY" };
 }
 
 bool ImageProviderDir::hasNext()

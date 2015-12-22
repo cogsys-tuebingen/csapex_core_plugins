@@ -11,7 +11,6 @@
 
 /// SYSTEM
 #include <opencv2/ml/ml.hpp>
-#include <boost/assign.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::RandomTreesTrainer, csapex::Node)
 
@@ -45,35 +44,35 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max depth",
                   csapex::param::ParameterDescription("the depth of the tree. A low value will likely underfit and conversely a high value will likely overfit.\n"
-                                              "The optimal value can be obtained using cross validation or other suitable methods."),
+                                                      "The optimal value can be obtained using cross validation or other suitable methods."),
                   1, 64, 8, 1));;
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("min sample count",
                   csapex::param::ParameterDescription("minimum samples required at a leaf node for it to be split.\n"
-                                              "A reasonable value is a small percentage of the total data e.g. 1%."),
+                                                      "A reasonable value is a small percentage of the total data e.g. 1%."),
                   0, 64, 10, 1));
     addParameter(csapex::param::ParameterFactory::declareRange<double>
                  ("regression accuracy",
                   csapex::param::ParameterDescription("Termination criteria for regression trees. \n"
-                                              "If all absolute differences between an estimated value in a node and values of train samples in this node \n"
-                                              "are less than this parameter then the node will not be split."),
+                                                      "If all absolute differences between an estimated value in a node and values of train samples in this node \n"
+                                                      "are less than this parameter then the node will not be split."),
                   0.0, 255.0, 0.0, 0.01));;
     addParameter(csapex::param::ParameterFactory::declareBool
                  ("use surrogates",
                   csapex::param::ParameterDescription("If true then surrogate splits will be built. \n"
-                                              "These splits allow to work with missing data and compute variable importance correctly."),
+                                                      "These splits allow to work with missing data and compute variable importance correctly."),
                   true));;
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max categories",
                   csapex::param::ParameterDescription("Cluster possible values of a categorical variable into K <= max_categories clusters to find a suboptimal split.\n"
-                                              "If a discrete variable, on which the training procedure tries to make a split, takes more than max_categories values,\n"
-                                              "the precise best subset estimation may take a very long time because the algorithm is exponential.\n"
-                                              "Instead, many decision trees engines (including ML) try to find sub-optimal split in this case by clustering all\n"
-                                              "the samples into max_categories clusters that is some categories are merged together.\n"
-                                              "The clustering is applied only in n>2-class classification problems for categorical variables\n"
-                                              "with N > max_categories possible values.\n"
-                                              "In case of regression and 2-class classification the optimal split can be found efficiently without employing clustering,\n"
-                                              "thus the parameter is not used in these cases."),
+                                                      "If a discrete variable, on which the training procedure tries to make a split, takes more than max_categories values,\n"
+                                                      "the precise best subset estimation may take a very long time because the algorithm is exponential.\n"
+                                                      "Instead, many decision trees engines (including ML) try to find sub-optimal split in this case by clustering all\n"
+                                                      "the samples into max_categories clusters that is some categories are merged together.\n"
+                                                      "The clustering is applied only in n>2-class classification problems for categorical variables\n"
+                                                      "with N > max_categories possible values.\n"
+                                                      "In case of regression and 2-class classification the optimal split can be found efficiently without employing clustering,\n"
+                                                      "thus the parameter is not used in these cases."),
                   0, 100, 15, 1));;
 
     addParameter(csapex::param::ParameterFactory::declareBool
@@ -84,13 +83,13 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("nactive_vars",
                   csapex::param::ParameterDescription("The size of the randomly selected subset of features at each tree node and that are used to find the best split(s).\n"
-                                              "If you set it to 0 then the size will be set to the square root of the total number of features."),
+                                                      "If you set it to 0 then the size will be set to the square root of the total number of features."),
                   0, 100, 0, 1));
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max_num_of_trees_in_the_forest",
                   csapex::param::ParameterDescription("The maximum number of trees in the forest (surprise, surprise). Typically the more trees you have the better the accuracy.\n"
-                                              "However, the improvement in accuracy generally diminishes and asymptotes pass a certain number of trees.\n"
-                                              "Also to keep in mind, the number of tree increases the prediction time linearly."),
+                                                      "However, the improvement in accuracy generally diminishes and asymptotes pass a certain number of trees.\n"
+                                                      "Also to keep in mind, the number of tree increases the prediction time linearly."),
                   1, 1024, 16, 1));
     addParameter(csapex::param::ParameterFactory::declareRange<double>
                  ("forest_accuracy",
@@ -98,18 +97,19 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
                   0.0, 1.0, 0.5, 0.01));
 
 
-    std::map<std::string, int> termcrit_type = boost::assign::map_list_of
-            ("CV_TERMCRIT_ITER", (int) CV_TERMCRIT_ITER)
-            ("CV_TERMCRIT_EPS", (int) CV_TERMCRIT_EPS)
-            ("CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int) CV_TERMCRIT_ITER | CV_TERMCRIT_EPS);
+    std::map<std::string, int> termcrit_type = {
+        {"CV_TERMCRIT_ITER", (int) CV_TERMCRIT_ITER},
+        {"CV_TERMCRIT_EPS", (int) CV_TERMCRIT_EPS},
+        {"CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int) CV_TERMCRIT_ITER | CV_TERMCRIT_EPS}
+    };
 
 
     csapex::param::Parameter::Ptr termcrit_type_p = csapex::param::ParameterFactory::declareParameterSet
             ("termcrit_type",
              csapex::param::ParameterDescription("The type of the termination criteria:\n"
-                                         "CV_TERMCRIT_ITER Terminate learning by the max_num_of_trees_in_the_forest;\n"
-                                         "CV_TERMCRIT_EPS Terminate learning by the forest_accuracy;\n"
-                                         "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS Use both termination criteria."),
+                                                 "CV_TERMCRIT_ITER Terminate learning by the max_num_of_trees_in_the_forest;\n"
+                                                 "CV_TERMCRIT_EPS Terminate learning by the forest_accuracy;\n"
+                                                 "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS Use both termination criteria."),
              termcrit_type, (int) (CV_TERMCRIT_ITER | CV_TERMCRIT_EPS));
     parameters.addParameter(termcrit_type_p);
 }

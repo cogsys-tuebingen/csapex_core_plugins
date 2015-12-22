@@ -9,9 +9,6 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/signal/slot.h>
 
-/// SYSTEM
-//#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::DecisionTree, csapex::Node)
 
 using namespace csapex;

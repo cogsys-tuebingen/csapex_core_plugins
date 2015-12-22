@@ -12,9 +12,9 @@ public:
     ExportRos();
 
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupROS();
-    virtual void processROS();
-    virtual void setupParameters(Parameterizable& parameters);
+    virtual void setupROS() override;
+    virtual void processROS() override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
     void updateTopic();

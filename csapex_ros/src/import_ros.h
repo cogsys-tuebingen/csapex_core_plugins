@@ -35,7 +35,7 @@ protected:
     bool doSetTopic();
     void setTopic(const ros::master::TopicInfo& topic);
 
-    virtual void setParameterState(Memento::Ptr memento);
+    virtual void setParameterState(Memento::Ptr memento) override;
 
     void waitForTopic();
     void publishLatestMessage();

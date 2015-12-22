@@ -13,7 +13,6 @@
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/tf.h>
 #include <boost/mpl/for_each.hpp>
-#include <boost/assign.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::SacFit, csapex::Node)
 
@@ -35,15 +34,16 @@ void SacFit::setupParameters(Parameterizable &parameters)
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("sphere min radius", 0.0, 2.0, 0.02, 0.005));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("sphere max radius", 0.0, 2.0, 0.8, 0.005));
 
-    std::map<std::string, int> models = boost::assign::map_list_of
-            ("fit sphere", (int) pcl::SACMODEL_SPHERE)
-            ("fit plane", (int) pcl::SACMODEL_PLANE)
-            //("fit cylinder", (int) pcl::SACMODEL_CYLINDER)
-            ("fit cone", (int) pcl::SACMODEL_CONE);
+    std::map<std::string, int> models = {
+        {"fit sphere", (int) pcl::SACMODEL_SPHERE},
+        {"fit plane", (int) pcl::SACMODEL_PLANE},
+        //{"fit cylinder", (int) pcl::SACMODEL_CYLINDER},
+        {"fit cone", (int) pcl::SACMODEL_CONE}
+    };
 
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("models", models, (int) pcl::SACMODEL_PLANE),
-                 std::bind(&SacFit::setParameters, this));
+                            std::bind(&SacFit::setParameters, this));
 
     cluster_indices_.reset(new std::vector<pcl::PointIndices>);
 
@@ -52,10 +52,10 @@ void SacFit::setupParameters(Parameterizable &parameters)
 
 void SacFit::process()
 {
-//    if (msg::isConnected(in_indices_)) {
-//    } else {
-//        setSynchronizedInputs(false);
-//    }
+    //    if (msg::isConnected(in_indices_)) {
+    //    } else {
+    //        setSynchronizedInputs(false);
+    //    }
     // Get indices from in_indices_
 
 
@@ -206,7 +206,7 @@ int SacFit::findModels(typename pcl::PointCloud<PointT>::ConstPtr  cloud_in,
     // Create data objects
     pcl::PointCloud<pcl::Normal>::Ptr normals (new pcl::PointCloud<pcl::Normal>);
     typename pcl::PointCloud<PointT>::Ptr cloud;
-     cloud = cloud_in;
+    cloud = cloud_in;
     typename pcl::PointCloud<PointT>::Ptr cloud_inliers (new pcl::PointCloud<PointT>);
 
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices);

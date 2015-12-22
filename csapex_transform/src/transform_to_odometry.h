@@ -16,7 +16,7 @@ class TransformToOdometry : public csapex::Node
 public:
     TransformToOdometry();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
 
