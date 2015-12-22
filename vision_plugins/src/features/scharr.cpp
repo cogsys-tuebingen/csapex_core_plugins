@@ -5,7 +5,6 @@
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <boost/assign.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -51,13 +50,14 @@ void Scharr::setupParameters(Parameterizable& parameters)
 {
     Operator::setupParameters(parameters);
 
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("DX1", DX1)
-            ("DY1", DY1)
-            ("Strength", STRENGTH);
+    std::map<std::string, int> types = {
+        {"DX1", DX1},
+        {"DY1", DY1},
+        {"Strength", STRENGTH}
+    };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("derive", types, (int) DX1),
-                 std::bind(&Scharr::update, this));
+                            std::bind(&Scharr::update, this));
 }
 
 void Scharr::update()

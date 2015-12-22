@@ -10,9 +10,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-/// SYSTEM
-#include <boost/assign/std.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::Morpholocial, csapex::Node)
 
 using namespace csapex;
@@ -26,21 +23,23 @@ void Morpholocial::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("size", 1, 20, 2, 1));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("iterations", 0, 10, 1, 1));
 
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("MORPH_ERODE", (int) cv::MORPH_ERODE)
-            ("MORPH_DILATE", (int) cv::MORPH_DILATE)
-            ("MORPH_OPEN", (int) cv::MORPH_OPEN)
-            ("MORPH_CLOSE", (int) cv::MORPH_CLOSE)
-            ("MORPH_GRADIENT", (int) cv::MORPH_GRADIENT)
-            ("MORPH_TOPHAT", (int) cv::MORPH_TOPHAT)
-            ("MORPH_BLACKHAT", (int) cv::MORPH_BLACKHAT);
+    std::map<std::string, int> types = {
+        {"MORPH_ERODE", (int) cv::MORPH_ERODE},
+        {"MORPH_DILATE", (int) cv::MORPH_DILATE},
+        {"MORPH_OPEN", (int) cv::MORPH_OPEN},
+        {"MORPH_CLOSE", (int) cv::MORPH_CLOSE},
+        {"MORPH_GRADIENT", (int) cv::MORPH_GRADIENT},
+        {"MORPH_TOPHAT", (int) cv::MORPH_TOPHAT},
+        {"MORPH_BLACKHAT", (int) cv::MORPH_BLACKHAT}
+    };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("type", types, (int) cv::MORPH_ERODE));
 
-    std::map<std::string, int> elem = boost::assign::map_list_of
-            ("MORPH_RECT", (int) cv::MORPH_RECT)
-            ("MORPH_CROSS", (int) cv::MORPH_CROSS)
-            ("MORPH_ELLIPSE", (int) cv::MORPH_ELLIPSE);
+    std::map<std::string, int> elem = {
+        {"MORPH_RECT", (int) cv::MORPH_RECT},
+        {"MORPH_CROSS", (int) cv::MORPH_CROSS},
+        {"MORPH_ELLIPSE", (int) cv::MORPH_ELLIPSE}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("elem", elem, (int) cv::MORPH_RECT));
 }
 

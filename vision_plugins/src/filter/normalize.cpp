@@ -10,7 +10,6 @@
 
 /// SYSTEM
 #include <opencv2/imgproc/imgproc.hpp>
-#include <boost/assign/list_of.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -52,11 +51,12 @@ void Normalize::setup(NodeModifier& node_modifier)
 
 void Normalize::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> norms = boost::assign::map_list_of
-            ("L2",     (int) cv::NORM_L2)
-            ("L1",     (int) cv::NORM_L1)
-            ("INF",    (int) cv::NORM_INF)
-            ("MINMAX", (int) cv::NORM_MINMAX);
+    std::map<std::string, int> norms = {
+        {"L2",     (int) cv::NORM_L2},
+        {"L1",     (int) cv::NORM_L1},
+        {"INF",    (int) cv::NORM_INF},
+        {"MINMAX", (int) cv::NORM_MINMAX}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("norm", norms, (int) cv::NORM_L2));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("lower bound scale", -255.0, 255.0, 1.0, 0.1));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("upper bound scale", -255.0, 255.0, 0.0, 0.1));

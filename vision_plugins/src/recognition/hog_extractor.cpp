@@ -13,7 +13,6 @@
 
 /// SYSTEM
 #include <opencv2/objdetect/objdetect.hpp>
-#include <boost/assign.hpp>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::HOGExtractor, csapex::Node)
 

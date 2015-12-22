@@ -8,9 +8,6 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 
-/// SYSTEM
-#include <boost/assign.hpp>
-
 using namespace csapex;
 using namespace connection_types;
 using namespace vision_plugins;
@@ -31,11 +28,12 @@ void ImageTextLabel::setup(NodeModifier& node_modifier)
 void ImageTextLabel::setupParameters(Parameterizable& parameters)
 {
 
-    std::map<std::string, int> positions = boost::assign::map_list_of
-            ("BOTTOM_LEFT", BOTTOM_LEFT)
-            ("BOTTOM_RIGHT", BOTTOM_RIGHT)
-            ("TOP_LEFT", TOP_LEFT)
-            ("TOP_RIGHT", TOP_RIGHT);
+    std::map<std::string, int> positions = {
+        {"BOTTOM_LEFT", BOTTOM_LEFT},
+        {"BOTTOM_RIGHT", BOTTOM_RIGHT},
+        {"TOP_LEFT", TOP_LEFT},
+        {"TOP_RIGHT", TOP_RIGHT}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("position", positions, (int) TOP_LEFT));
     parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/label", 255, 255, 255));
     parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/box", 0, 0, 0));
@@ -95,7 +93,7 @@ void ImageTextLabel::process()
         break;
     }
 
-     if(boxed) {
+    if(boxed) {
         cv::Rect rect(origin.x - 2, origin.y - text_size.height,
                       text_size.width + 2, basel_line + text_size.height + 2);
         cv::rectangle(output->value,rect,cv_color_box,CV_FILLED);

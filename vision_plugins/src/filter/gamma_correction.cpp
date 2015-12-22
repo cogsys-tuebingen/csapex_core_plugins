@@ -8,9 +8,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_vision/cv_mat_message.h>
 
-/// SYSTEM
-#include <boost/assign.hpp>
-
 CSAPEX_REGISTER_CLASS(csapex::GammaCorrection, csapex::Node)
 
 using namespace csapex;
@@ -23,22 +20,26 @@ GammaCorrection::GammaCorrection()
 
 void GammaCorrection::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("power law", (int) POWER_LAW)
-            ("logarithm", (int) LOGARITHM);
+    std::map<std::string, int> types = {
+        {"power law", (int) POWER_LAW},
+        {"logarithm", (int) LOGARITHM}
+    };
 
-    csapex::param::Parameter::Ptr type = csapex::param::ParameterFactory::declareParameterSet<int>("type",
-                                                                                   csapex::param::ParameterDescription("The type of transformation to apply"),
-                                                                                   types, POWER_LAW);
+    csapex::param::Parameter::Ptr type = csapex::param::ParameterFactory::declareParameterSet<int>(
+                "type",
+                csapex::param::ParameterDescription("The type of transformation to apply"),
+                types, POWER_LAW);
     parameters.addParameter(type);
 
-    addParameter(csapex::param::ParameterFactory::declareRange("c",
-                                                       csapex::param::ParameterDescription("Constant factor in  dst = c * log(src + 1)"),
-                                                       0.1, 255.0, 1.0, 0.01));
+    addParameter(csapex::param::ParameterFactory::declareRange(
+                     "c",
+                     csapex::param::ParameterDescription("Constant factor in  dst = c * log(src + 1)"),
+                     0.1, 255.0, 1.0, 0.01));
 
-    addConditionalParameter(csapex::param::ParameterFactory::declareRange("gamma",
-                                                                  csapex::param::ParameterDescription("Constant factor in  dst = c * (src ^ gamma)"),
-                                                                  0.001, 10.0, 1.0, 0.001),
+    addConditionalParameter(csapex::param::ParameterFactory::declareRange(
+                                "gamma",
+                                csapex::param::ParameterDescription("Constant factor in  dst = c * (src ^ gamma)"),
+                                0.001, 10.0, 1.0, 0.001),
                             [type]() { return type->as<int>() == POWER_LAW; });
 }
 

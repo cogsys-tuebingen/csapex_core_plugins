@@ -188,12 +188,12 @@ void LocalPatterns::setup(NodeModifier &node_modifier)
 
 void LocalPatterns::setupParameters(Parameterizable &parameters)
 {
-    std::map<std::string, int> types =
-            boost::assign::map_list_of
-            ("LBP", LBP)("LBP_EXT", LBP_EXT)("LBP_VAR", LBP_VAR)("LBP_CS", LBP_CS)
-            ("LTP", LTP)("LTP_EXT", LTP_EXT)("LTP_SHORT", LTP_SHORT)("LTP_CS", LTP_CS)
-            ("WLD", WLD)("WLD_SHORT", WLD_SHORT)("WLD_ORIENTED", WLD_ORIENTED)
-            ("HOMOGENITY", HOMOGENITY)("HOMOGENITY_TEX", HOMOGENITY_TEX);
+    std::map<std::string, int> types = {
+            {"LBP", LBP}, { "LBP_EXT", LBP_EXT}, { "LBP_VAR", LBP_VAR}, { "LBP_CS", LBP_CS},
+            {"LTP", LTP}, { "LTP_EXT", LTP_EXT}, { "LTP_SHORT", LTP_SHORT}, { "LTP_CS", LTP_CS},
+            {"WLD", WLD}, { "WLD_SHORT", WLD_SHORT}, { "WLD_ORIENTED", WLD_ORIENTED},
+            {"HOMOGENITY", HOMOGENITY}, { "HOMOGENITY_TEX", HOMOGENITY_TEX}
+    };
 
     csapex::param::Parameter::Ptr type =
             csapex::param::ParameterFactory::declareParameterSet("descriptor",

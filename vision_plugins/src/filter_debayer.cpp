@@ -9,7 +9,6 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
-#include <boost/assign/list_of.hpp>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::Debayer, csapex::Node)
 
@@ -29,13 +28,13 @@ void Debayer::setup(NodeModifier &node_modifier)
 
 void Debayer::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> methods = boost::assign::map_list_of
-            ("BayerBG2RGB", (int) CV_BayerBG2RGB)
-            ("BayerGB2RGB", (int) CV_BayerGB2RGB)
-            ("BayerRG2RGB", (int) CV_BayerRG2RGB)
-            ("BayerGR2RGB", (int) CV_BayerGR2RGB)
-            ("NNRG2RGB", 667);
-
+    std::map<std::string, int> methods = {
+        {"BayerBG2RGB", (int) CV_BayerBG2RGB},
+        {"BayerGB2RGB", (int) CV_BayerGB2RGB},
+        {"BayerRG2RGB", (int) CV_BayerRG2RGB},
+        {"BayerGR2RGB", (int) CV_BayerGR2RGB},
+        {"NNRG2RGB", 667}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
 }
 

@@ -9,9 +9,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/assert.h>
 
-/// SYSTEM
-#include <boost/assign.hpp>
-
 using namespace csapex;
 using namespace connection_types;
 using namespace vision_plugins;
@@ -101,9 +98,10 @@ void MatrixStitcher::setup(NodeModifier& node_modifier)
 
 void MatrixStitcher::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> modes = boost::assign::map_list_of
-            ("HORIZONTAL", HORIZONTAL)
-            ("VERTICAL", VERTICAL);
+    std::map<std::string, int> modes = {
+        {"HORIZONTAL", HORIZONTAL},
+        {"VERTICAL", VERTICAL}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("mode", modes, (int) HORIZONTAL));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
 }

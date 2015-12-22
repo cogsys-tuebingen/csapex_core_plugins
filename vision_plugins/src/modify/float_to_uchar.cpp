@@ -8,9 +8,6 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
 
-/// SYSTEM
-#include <boost/assign.hpp>
-
 using namespace csapex;
 using namespace csapex::connection_types;
 using namespace vision_plugins;

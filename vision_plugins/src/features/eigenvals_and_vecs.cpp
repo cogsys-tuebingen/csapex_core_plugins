@@ -6,7 +6,6 @@
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <boost/assign/std.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -33,9 +32,9 @@ void EigenValsAndVecs::process()
         tmp = in->value;
     }
     if(eigen_type_ == MIN_EIGEN_VAL)
-       cv::cornerMinEigenVal(tmp, tmp, block_size_, k_size_, border_type_);
+        cv::cornerMinEigenVal(tmp, tmp, block_size_, k_size_, border_type_);
     else
-       cv::cornerEigenValsAndVecs(tmp, tmp, block_size_, k_size_, border_type_);
+        cv::cornerEigenValsAndVecs(tmp, tmp, block_size_, k_size_, border_type_);
 
     out->value = tmp.clone();
     msg::publish(output_, out);
@@ -50,29 +49,31 @@ void EigenValsAndVecs::setup(NodeModifier& node_modifier)
 void EigenValsAndVecs::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
-                 std::bind(&EigenValsAndVecs::update, this));
+                            std::bind(&EigenValsAndVecs::update, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
-                 std::bind(&EigenValsAndVecs::update, this));
+                            std::bind(&EigenValsAndVecs::update, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
-                 std::bind(&EigenValsAndVecs::update, this));
+                            std::bind(&EigenValsAndVecs::update, this));
 
-    std::map<std::string, int> border_types = boost::assign::map_list_of
-            ("BORDER_DEFAULT", (int) cv::BORDER_DEFAULT)
-            ("BORDER_CONSTANT", (int) cv::BORDER_CONSTANT)
-            ("BORDER_REFLECT", (int) cv::BORDER_REFLECT)
-            ("BORDER_REFLECT101", (int) cv::BORDER_REFLECT101)
-            ("BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101)
-            ("BORDER_REPLICATE", (int) cv::BORDER_REPLICATE);
+    std::map<std::string, int> border_types = {
+        {"BORDER_DEFAULT", (int) cv::BORDER_DEFAULT},
+        {"BORDER_CONSTANT", (int) cv::BORDER_CONSTANT},
+        {"BORDER_REFLECT", (int) cv::BORDER_REFLECT},
+        {"BORDER_REFLECT101", (int) cv::BORDER_REFLECT101},
+        {"BORDER_REFLECT_101", (int) cv::BORDER_REFLECT_101},
+        {"BORDER_REPLICATE", (int) cv::BORDER_REPLICATE}
+    };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("border type", border_types, (int) cv::BORDER_DEFAULT),
-                 std::bind(&EigenValsAndVecs::update, this));
+                            std::bind(&EigenValsAndVecs::update, this));
 
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("MIN_EIGEN_VAL", (int) MIN_EIGEN_VAL)
-            ("EIGEN_VALS_AND_VECS", (int) EIGEN_VALS_AND_VECS);
+    std::map<std::string, int> types = {
+        {"MIN_EIGEN_VAL", (int) MIN_EIGEN_VAL},
+        {"EIGEN_VALS_AND_VECS", (int) EIGEN_VALS_AND_VECS}
+    };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("eigen type", types, (int) MIN_EIGEN_VAL),
-                 std::bind(&EigenValsAndVecs::update, this));
+                            std::bind(&EigenValsAndVecs::update, this));
 }
 
 void EigenValsAndVecs::update()

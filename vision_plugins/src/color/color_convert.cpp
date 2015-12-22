@@ -7,9 +7,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-/// SYSTEM
-#include <boost/assign/std.hpp>
-
 CSAPEX_REGISTER_CLASS(vision_plugins::ColorConvert, csapex::Node)
 
 using namespace vision_plugins;
@@ -32,13 +29,14 @@ void ColorConvert::setup(NodeModifier& node_modifier)
 
 void ColorConvert::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> encodings = boost::assign::map_list_of
-            ("YUV", (int) YUV)
-            ("RGB", (int) RGB)
-            ("BGR", (int) BGR)
-            ("HSL", (int) HSL)
-            ("HSV", (int) HSV)
-            ("MONO", (int) MONO);
+    std::map<std::string, int> encodings = {
+        {"YUV", (int) YUV},
+        {"RGB", (int) RGB},
+        {"BGR", (int) BGR},
+        {"HSL", (int) HSL},
+        {"HSV", (int) HSV},
+        {"MONO", (int) MONO}
+    };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("output", encodings, (int) MONO));

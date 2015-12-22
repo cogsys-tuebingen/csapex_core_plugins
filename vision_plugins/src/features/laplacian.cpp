@@ -5,7 +5,6 @@
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <boost/assign.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;

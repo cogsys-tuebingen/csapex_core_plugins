@@ -8,18 +8,11 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-/// SYSTEM
-#include <boost/assign/std.hpp>
-
 using namespace vision_plugins;
 using namespace csapex;
 using namespace connection_types;
 
 CSAPEX_REGISTER_CLASS(vision_plugins::SetOperation, csapex::Node)
-
-
-using namespace boost::assign;
-
 
 SetOperation::SetOperation()
 {
@@ -73,10 +66,11 @@ void SetOperation::setup(NodeModifier& node_modifier)
 
 void SetOperation::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> methods = map_list_of
-            ("Complement", (int) COMPLEMENT)
-            ("Intersection", (int) INTERSECTION)
-            ("Union", (int) UNION);
+    std::map<std::string, int> methods = {
+            {"Complement", (int) COMPLEMENT},
+            {"Intersection", (int) INTERSECTION},
+            {"Union", (int) UNION}
+    };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("operation", methods, (int) UNION));
 }

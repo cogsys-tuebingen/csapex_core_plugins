@@ -64,7 +64,7 @@ void AssignROIClass::setActiveClassColor(const int r, const int g, const int b)
 {
     csapex::param::ParameterPtr ptr = getParameter("class color");
     param::ColorParameter *col = (param::ColorParameter*) ptr.get();
-    std::vector<int> rgb = boost::assign::list_of(r)(g)(b);
+    std::vector<int> rgb = {r, g, b};
     col->set(rgb);
 }
 

@@ -8,9 +8,6 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
 
-/// SYSTEM
-#include <boost/assign.hpp>
-
 using namespace csapex;
 using namespace csapex::connection_types;
 using namespace vision_plugins;
@@ -55,14 +52,15 @@ void Flip::setup(NodeModifier& node_modifier)
 
 void Flip::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("v", 0)
-            ("h", 1)
-            ("+90", 2)
-            ("-90", 3)
-            ("v+h", -1);
+    std::map<std::string, int> types = {
+        {"v", 0},
+        {"h", 1},
+        {"+90", 2},
+        {"-90", 3},
+        {"v+h", -1}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("type", types, -1),
-                 std::bind(&Flip::update, this));
+                            std::bind(&Flip::update, this));
 }
 
 void Flip::update()

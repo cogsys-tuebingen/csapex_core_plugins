@@ -162,9 +162,10 @@ void LocalPatternsHistogram::setup(NodeModifier& node_modifier)
 
 void LocalPatternsHistogram::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> types =
-            boost::assign::map_list_of
-            ("LBP", LBP)("LTP", LTP);
+    std::map<std::string, int> types = {
+        {"LBP", LBP},
+        {"LTP", LTP}
+    };
 
     csapex::param::Parameter::Ptr type =
             csapex::param::ParameterFactory::declareParameterSet("pattern",

@@ -7,9 +7,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-/// SYSTEM
-#include <boost/assign/std.hpp>
-
 using namespace csapex;
 using namespace csapex::connection_types;
 using namespace vision_plugins;
@@ -95,20 +92,21 @@ void ConvertType::setup(NodeModifier& node_modifier)
 
 void ConvertType::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> types = boost::assign::map_list_of
-            (" 8 Bit unsigned", CV_8U)
-            (" 8 Bit signed",   CV_8S)
-            ("16 Bit usigned",  CV_16U)
-            ("16 Bit signed",   CV_16S)
-            ("32 Bit signed",   CV_32S)
-            ("32 Bit floating", CV_32F)
-            ("64 Bit floating", CV_64F);
+    std::map<std::string, int> types = {
+        {" 8 Bit unsigned", CV_8U},
+        {" 8 Bit signed",   CV_8S},
+        {"16 Bit usigned",  CV_16U},
+        {"16 Bit signed",   CV_16S},
+        {"32 Bit signed",   CV_32S},
+        {"32 Bit floating", CV_32F},
+        {"64 Bit floating", CV_64F}
+    };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("convert to", types, CV_8U),
-                 std::bind(&ConvertType::update, this));
+                            std::bind(&ConvertType::update, this));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareBool("normalize", false),
-                 std::bind(&ConvertType::update, this));
+                            std::bind(&ConvertType::update, this));
 }
 
 void ConvertType::update()

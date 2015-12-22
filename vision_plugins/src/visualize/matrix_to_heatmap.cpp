@@ -10,9 +10,7 @@
 #include <utils_vision/utils/heatmap.hpp>
 #include <utils_vision/utils/color_functions.hpp>
 
-
 /// SYSTEM
-#include <boost/assign/list_of.hpp>
 #include <functional>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::MatrixToHeatmap, csapex::Node)
@@ -83,12 +81,12 @@ void MatrixToHeatmap::setup(NodeModifier& node_modifier)
 
 void MatrixToHeatmap::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> types = boost::assign::map_list_of
-            ("BEZIER", (int) BEZIER)
-            ("PARABOLA", (int) PARABOLA);
-
+    std::map<std::string, int> types = {
+        {"BEZIER", (int) BEZIER},
+        {"PARABOLA", (int) PARABOLA}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("coloring", types, (int) BEZIER),
-                 std::bind(&MatrixToHeatmap::update, this));
+                            std::bind(&MatrixToHeatmap::update, this));
 }
 
 void MatrixToHeatmap::update()

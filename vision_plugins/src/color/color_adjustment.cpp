@@ -28,16 +28,16 @@ void ColorAdjustment::setup(NodeModifier& node_modifier)
 void ColorAdjustment::setupParameters(Parameterizable& parameters)
 {
 
-    std::map<std::string, int> presets = boost::assign::map_list_of
-            ("HSV", (int) HSV)
-            ("HSL", (int) HSL)
-            ("STD", (int) STD);
-
+    std::map<std::string, int> presets = {
+        {"HSV", (int) HSV},
+        {"HSL", (int) HSL},
+        {"STD", (int) STD}
+    };
     parameters.addParameter(csapex::param::ParameterFactory::declareBool("normalize", false));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("lightness", -255, 255, 0, 1));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("preset", presets, (int) HSV),
-                 std::bind(&ColorAdjustment::setPreset, this));
+                            std::bind(&ColorAdjustment::setPreset, this));
 }
 
 namespace {
