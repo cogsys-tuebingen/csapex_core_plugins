@@ -8,6 +8,7 @@
 #include <csapex/msg/output.h>
 #include <csapex/serialization/serialization.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/utility/yaml_io.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;

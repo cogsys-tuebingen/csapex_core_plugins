@@ -80,7 +80,6 @@ public:
     }
 
 private:
-    DynamicInput* input;
     Output* output;
 };
 

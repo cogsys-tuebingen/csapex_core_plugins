@@ -8,6 +8,7 @@
 #include <csapex/serialization/message_serializer.h>
 #include <csapex/utility/timer.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/utility/interlude.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)
 

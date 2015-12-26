@@ -12,6 +12,7 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QBitmap>
+#include <yaml-cpp/yaml.h>
 
 using namespace csapex;
 

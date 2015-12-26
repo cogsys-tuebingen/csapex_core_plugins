@@ -9,6 +9,7 @@
 
 /// SYSTEM
 #include <QGraphicsView>
+#include <yaml-cpp/yaml.h>
 
 namespace csapex {
 

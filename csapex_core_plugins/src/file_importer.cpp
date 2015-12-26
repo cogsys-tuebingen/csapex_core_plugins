@@ -12,6 +12,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/utility/interlude.hpp>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>
@@ -248,7 +249,7 @@ bool FileImporter::doImport(const QString& file_path)
         throw std::runtime_error(std::string("cannot load file ") + file_.toStdString() + ": " + e.what());
     }
 
-    return nullptr;
+    return false;
 }
 
 void FileImporter::updateProvider()

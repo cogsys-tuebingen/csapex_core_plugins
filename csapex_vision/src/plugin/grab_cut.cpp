@@ -9,6 +9,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
 #include <csapex/utility/timer.h>
+#include <csapex/utility/interlude.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::GrabCut, csapex::Node)
 

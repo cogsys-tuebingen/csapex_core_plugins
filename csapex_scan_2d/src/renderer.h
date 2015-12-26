@@ -7,6 +7,7 @@
 #include <csapex_scan_2d/labeled_scan_message.h>
 #include <csapex/utility/timable.h>
 #include <csapex/utility/timer.h>
+#include <csapex/utility/interlude.hpp>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>

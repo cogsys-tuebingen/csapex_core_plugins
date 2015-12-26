@@ -19,6 +19,7 @@ class OutputDisplayAdapter : public QObject, public DefaultNodeAdapter
 
 public:
     OutputDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<OutputDisplay> node, WidgetController *widget_ctrl);
+    ~OutputDisplayAdapter();
 
     virtual Memento::Ptr getState() const;
     virtual void setParameterState(Memento::Ptr memento);

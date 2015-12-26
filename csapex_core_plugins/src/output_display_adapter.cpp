@@ -34,6 +34,10 @@ OutputDisplayAdapter::OutputDisplayAdapter(NodeHandleWeakPtr worker, std::weak_p
     n->setAdapted();
 }
 
+OutputDisplayAdapter::~OutputDisplayAdapter()
+{
+
+}
 
 bool OutputDisplayAdapter::eventFilter(QObject *o, QEvent *e)
 {

@@ -42,6 +42,9 @@ void OutputDisplay::process()
     ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
 
     MessageRenderer::Ptr renderer = MessageRendererManager::instance().createMessageRenderer(msg);
+    if(!renderer) {
+        return;
+    }
 
     if(renderer != renderer_) {
         renderer_ = renderer;
