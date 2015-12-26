@@ -10,6 +10,7 @@
 /// SYSTEM
 #include <QGraphicsView>
 #include <QImage>
+#include <yaml-cpp/yaml.h>
 
 namespace vision_plugins {
 

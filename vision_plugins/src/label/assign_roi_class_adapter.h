@@ -11,6 +11,7 @@
 #include <QGraphicsView>
 #include <QGraphicsRectItem>
 #include <QImage>
+#include <yaml-cpp/yaml.h>
 
 namespace vision_plugins {
 

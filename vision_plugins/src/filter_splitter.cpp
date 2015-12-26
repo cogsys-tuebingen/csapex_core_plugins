@@ -9,6 +9,9 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/serialization/serialization.h>
 
+/// SYSTEM
+#include <yaml-cpp/yaml.h>
+
 CSAPEX_REGISTER_CLASS(csapex::Splitter, csapex::Node)
 
 using namespace csapex;

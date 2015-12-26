@@ -1,5 +1,6 @@
 #ifndef FLIP_H
 #define FLIP_H
+
 /// COMPONENT
 #include <csapex/model/node.h>
 
