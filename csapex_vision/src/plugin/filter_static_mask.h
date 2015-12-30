@@ -25,8 +25,8 @@ private:
     void showPainter();
 
 public:
-    boost::signals2::signal<void(cv::Mat&)> input;
-    boost::signals2::signal<void()> show_painter;
+    csapex::slim_signal::Signal<void(cv::Mat&)> input;
+    csapex::slim_signal::Signal<void()> show_painter;
 
 private:
     cv::Mat mask_;

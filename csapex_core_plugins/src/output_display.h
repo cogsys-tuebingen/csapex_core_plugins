@@ -31,7 +31,7 @@ protected:
     Input* input_;
 
 public:
-    boost::signals2::signal<void(QImage)> display_request;
+    csapex::slim_signal::Signal<void(QImage)> display_request;
     MessageRendererPtr renderer_;
 
     bool adapted_;

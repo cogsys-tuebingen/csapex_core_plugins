@@ -40,7 +40,7 @@ public:
     const Metrics& getMetrics() const;
 
 public:
-    boost::signals2::signal<void()> display_request;
+    csapex::slim_signal::Signal<void()> display_request;
 
 private:
     Input* in_;

@@ -80,26 +80,26 @@ void LoadFilestorage::setupParameters(Parameterizable &parameters)
                                          "",
                                          "*",
                                          true),
-    boost::bind(&LoadFilestorage::loadFile, this));
+    std::bind(&LoadFilestorage::loadFile, this));
 
     std::vector<std::string> empty;
     addParameter(
     csapex::param::ParameterFactory::declareParameterStringSet("entry",
                                                        csapex::param::ParameterDescription("All contained matrices"),
                                                        empty),
-    boost::bind(&LoadFilestorage::entryChanged, this));
+    std::bind(&LoadFilestorage::entryChanged, this));
 
     addParameter(
     csapex::param::ParameterFactory::declareBool("iterate",
                                           csapex::param::ParameterDescription("Iterate all contained matrices."),
                                           false),
-    boost::bind(&LoadFilestorage::checkChanged, this));
+    std::bind(&LoadFilestorage::checkChanged, this));
 
     addParameter(
     csapex::param::ParameterFactory::declareBool("resend",
                                          csapex::param::ParameterDescription("Resend matrix / all matrices."),
                                          true),
-    boost::bind(&LoadFilestorage::checkChanged, this));
+    std::bind(&LoadFilestorage::checkChanged, this));
 }
 
 void LoadFilestorage::loadFile()

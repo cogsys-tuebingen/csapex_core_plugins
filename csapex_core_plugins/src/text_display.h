@@ -15,7 +15,7 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
 
 public:
-    boost::signals2::signal<void(const std::string&)> display_request;
+    csapex::slim_signal::Signal<void(const std::string&)> display_request;
 
 private:
     void convert(std::stringstream& ss, const YAML::Node& node, const std::string &prefix);

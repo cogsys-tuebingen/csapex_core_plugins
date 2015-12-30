@@ -20,7 +20,7 @@ public:
     {}
 
     virtual void setupParameters(Parameterizable &parameters) {
-        addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType>::doProcessCollection, this, boost::ref(buffer_)));
+        addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType>::doProcessCollection, this, std::ref(buffer_)));
         addParameter(csapex::param::ParameterFactory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType>::clearCollection, this));
     }
 

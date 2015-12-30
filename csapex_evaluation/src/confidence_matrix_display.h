@@ -20,7 +20,7 @@ public:
     const ConfidenceMatrix& getConfidenceMatrix() const;
 
 public:
-    boost::signals2::signal<void()> display_request;
+    csapex::slim_signal::Signal<void()> display_request;
 
 private:
     Input*           connector_;

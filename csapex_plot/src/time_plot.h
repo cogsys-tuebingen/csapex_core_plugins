@@ -49,8 +49,8 @@ protected:
     void renderAndSend();
 
 public:
-    boost::signals2::signal<void()> update;
-    boost::signals2::signal<void()> display_request;
+    csapex::slim_signal::Signal<void()> update;
+    csapex::slim_signal::Signal<void()> display_request;
 
 private:
     Input* in_;

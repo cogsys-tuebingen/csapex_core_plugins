@@ -27,7 +27,7 @@ public:
     int stepsNecessary();
 
 public:
-    boost::signals2::signal<void(int)> step;
+    csapex::slim_signal::Signal<void(int)> step;
 
 private:
     void start();

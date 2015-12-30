@@ -87,7 +87,7 @@ void Reshape::setupParameters(Parameterizable& parameters)
                                                        1, 1, 1, 1));
     addParameter(csapex::param::ParameterFactory::declareTrigger("reset",
                                                          csapex::param::ParameterDescription("Reset to default size.")),
-                                                         boost::bind(&Reshape::reset, this));
+                                                         std::bind(&Reshape::reset, this));
 }
 
 void Reshape::reset()

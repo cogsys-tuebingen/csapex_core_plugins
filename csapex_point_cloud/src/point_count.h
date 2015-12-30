@@ -22,7 +22,7 @@ private:
     Input* input_;
 
 public:
-    boost::signals2::signal<void(int)> display_request;
+    csapex::slim_signal::Signal<void(int)> display_request;
 };
 
 }

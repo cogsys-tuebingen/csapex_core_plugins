@@ -7,8 +7,7 @@
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
-#include <boost/function.hpp>
-#include <boost/foreach.hpp>
+#include <type_traits>
 #include <map>
 #include <sys/types.h>
 
@@ -50,19 +49,19 @@ public:
     registerDescriptorConstructor<class_name>();\
     }\
     template <class T>\
-    static void registerKeypointConstructor(typename boost::enable_if_c<csapex::DetectorTraits<T>::HasKeypoint, T>::type* dummy = 0) {\
-    ExtractorManager::instance().registerKeypointConstructor(T::name, boost::bind(&T::keypoint, _1, _2, _3)); \
-    ExtractorManager::instance().registerKeypointParameters(T::name, boost::bind(&T::usedParameters)); \
+    static void registerKeypointConstructor(typename std::enable_if<csapex::DetectorTraits<T>::HasKeypoint, T>::type* dummy = 0) {\
+    ExtractorManager::instance().registerKeypointConstructor(T::name, std::bind(&T::keypoint, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)); \
+    ExtractorManager::instance().registerKeypointParameters(T::name, std::bind(&T::usedParameters)); \
     }\
     template <class T>\
-    static void registerKeypointConstructor(typename boost::disable_if_c<csapex::DetectorTraits<T>::HasKeypoint, T>::type* dummy = 0) {}\
+    static void registerKeypointConstructor(typename std::enable_if<!csapex::DetectorTraits<T>::HasKeypoint, T>::type* dummy = 0) {}\
     template <class T>\
-    static void registerDescriptorConstructor(typename boost::enable_if_c<csapex::DetectorTraits<T>::HasDescriptor, T>::type* dummy = 0) {\
-    ExtractorManager::instance().registerDescriptorConstructor(T::name, boost::bind(&T::descriptor, _1, _2)); \
-    ExtractorManager::instance().registerDescriptorParameters(T::name, boost::bind(&T::usedParameters)); \
+    static void registerDescriptorConstructor(typename std::enable_if<csapex::DetectorTraits<T>::HasDescriptor, T>::type* dummy = 0) {\
+    ExtractorManager::instance().registerDescriptorConstructor(T::name, std::bind(&T::descriptor, std::placeholders::_1, std::placeholders::_2)); \
+    ExtractorManager::instance().registerDescriptorParameters(T::name, std::bind(&T::usedParameters)); \
     }\
     template <class T>\
-    static void registerDescriptorConstructor(typename boost::disable_if_c<csapex::DetectorTraits<T>::HasDescriptor, T>::type* dummy = 0) {}\
+    static void registerDescriptorConstructor(typename std::enable_if<!csapex::DetectorTraits<T>::HasDescriptor, T>::type* dummy = 0) {}\
     };\
     _____##class_name##impname##_registrator _____##class_name##impname##_registrator::instance;\
     }
@@ -75,7 +74,7 @@ namespace csapex
  * @brief The ExtractorManager class manages all instances of feature detectors and descriptor extractors.
  *        It functions like a proxy to the underlying singleton classes.
  */
-class ExtractorManager : public boost::noncopyable
+class ExtractorManager
 {
 public:
     static ExtractorManager& instance() {
@@ -83,19 +82,22 @@ public:
         return inst;
     }
 
+    ExtractorManager(const ExtractorManager&) = delete;
+    ExtractorManager& operator = (const ExtractorManager&) = delete;
+
 public:
     /**
      * @brief The ExtractorInitializer
      */
     struct ExtractorInitializer/* : public Constructor*/ {
-        typedef boost::function<void(Extractor*, const csapex::param::ParameterProvider&, bool)> Call;
+        typedef std::function<void(Extractor*, const csapex::param::ParameterProvider&, bool)> Call;
 
         void operator()(Extractor* r, const csapex::param::ParameterProvider& param, bool complete = false) const {
             return construct(r, param, complete);
         }
 
         void construct(Extractor* r, const csapex::param::ParameterProvider& param, bool complete = false) const {
-            if(!constructor.empty()) {
+            if(constructor) {
                 constructor(r, param, complete);
             }
         }
@@ -135,7 +137,7 @@ public:
                 csapex::param::Parameter::Ptr p = param.getConstParameter(name);
                 return p->as<T>();
             } catch(const std::exception& e) {
-                BOOST_FOREACH(const csapex::param::Parameter::Ptr& p, params) {
+                for(const csapex::param::Parameter::Ptr& p : params) {
                     if(p->name() == name) {
                         return p->as<T>();
                     }
@@ -158,7 +160,7 @@ public:
     typedef typename KeypointInitializer::Call KeypointInit;
     typedef typename DescriptorInitializer::Call DescriptorInit;
 
-    typedef boost::function<std::vector<csapex::param::Parameter::Ptr>() > ParameterFunction;
+    typedef std::function<std::vector<csapex::param::Parameter::Ptr>() > ParameterFunction;
 
 private:
     /**

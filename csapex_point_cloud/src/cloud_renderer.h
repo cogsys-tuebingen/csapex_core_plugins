@@ -32,8 +32,8 @@ private:
     Output* output_;
 
 public:
-    boost::signals2::signal<void()> display_request;
-    boost::signals2::signal<void()> refresh_request;
+    csapex::slim_signal::Signal<void()> display_request;
+    csapex::slim_signal::Signal<void()> refresh_request;
 
 private:
     mutable std::mutex message_mutex_;
