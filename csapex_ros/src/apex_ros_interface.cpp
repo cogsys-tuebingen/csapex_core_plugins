@@ -119,4 +119,6 @@ void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd, bool global_
 void APEXRosInterface::shutdown()
 {
     ROSHandler::instance().stop();
+
+    RosMessageConversion::instance().shutdown();
 }

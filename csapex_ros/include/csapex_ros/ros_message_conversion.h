@@ -172,6 +172,8 @@ public:
 
     bool isTopicTypeRegistered(const ros::master::TopicInfo &topic);
 
+    void shutdown();
+
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output);
     ros::Publisher advertise(ConnectionType::ConstPtr, const std::string& topic,  int queue, bool latch = false);
     void publish(ros::Publisher& pub, ConnectionType::ConstPtr msg);

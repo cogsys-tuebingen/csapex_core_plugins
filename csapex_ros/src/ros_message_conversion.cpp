@@ -17,6 +17,13 @@ RosMessageConversion::RosMessageConversion()
 {
 }
 
+void RosMessageConversion::shutdown()
+{
+    ros_types_.clear();
+    converters_.clear();
+    converters_inv_.clear();
+}
+
 bool RosMessageConversion::isTopicTypeRegistered(const ros::master::TopicInfo &topic)
 {
     return converters_.find(topic.datatype) != converters_.end();
