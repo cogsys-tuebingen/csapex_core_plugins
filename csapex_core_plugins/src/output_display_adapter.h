@@ -9,9 +9,12 @@
 
 /// SYSTEM
 #include <QGraphicsView>
+#include <QLabel>
 #include <yaml-cpp/yaml.h>
 
 namespace csapex {
+
+class ImageWidget;
 
 class OutputDisplayAdapter : public QObject, public DefaultNodeAdapter
 {
@@ -21,10 +24,13 @@ public:
     OutputDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<OutputDisplay> node, WidgetController *widget_ctrl);
     ~OutputDisplayAdapter();
 
-    virtual Memento::Ptr getState() const;
-    virtual void setParameterState(Memento::Ptr memento);
+    virtual Memento::Ptr getState() const override;
+    virtual void setParameterState(Memento::Ptr memento) override;
 
-    virtual void setupUi(QBoxLayout* layout);
+    virtual void setupUi(QBoxLayout* layout) override;
+
+    virtual void setManualResize(bool manual) override;
+    virtual bool isResizable() const override;
 
 public Q_SLOTS:
     void display(const QImage& img);
@@ -35,6 +41,7 @@ Q_SIGNALS:
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);
+    void resize();
 
     std::weak_ptr<OutputDisplay> wrapped_;
 
@@ -43,7 +50,7 @@ protected:
         int height;
 
         State()
-            : width(300), height(300)
+            : width(100), height(100)
         {}
 
         virtual void writeYaml(YAML::Node& out) const {
@@ -61,15 +68,38 @@ private:
     QSize last_size_;
     State state;
 
-    QGraphicsPixmapItem* pixmap_;
+    ImageWidget* label_view_;
+};
 
-    QGraphicsView* view_;
 
-    QImage empty;
-    QPainter painter;
+class ImageWidget : public QWidget
+{
+    Q_OBJECT
 
-    bool down_;
-    QPoint last_pos_;
+public:
+    explicit ImageWidget(QWidget *parent = 0);
+    const QPixmap* pixmap() const;
+
+    void setManualResize(bool manual);
+
+    void setSize(const QSize& size);
+    void setSize(int w, int h);
+
+    virtual QSize sizeHint() const override;
+    virtual QSize minimumSizeHint() const override;
+
+public Q_SLOTS:
+    void setPixmap(const QPixmap&);
+
+protected:
+    void paintEvent(QPaintEvent *) override;
+    void resizeEvent(QResizeEvent*) override;
+
+private:
+    QPixmap pix;
+    QSize size;
+
+    bool manual_resize_;
 };
 
 }

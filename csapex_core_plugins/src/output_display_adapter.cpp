@@ -13,6 +13,7 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QBoxLayout>
+#include <QResizeEvent>
 
 using namespace csapex;
 
@@ -20,13 +21,9 @@ CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
 OutputDisplayAdapter::OutputDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<OutputDisplay> node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), pixmap_(nullptr), view_(new QGraphicsView), empty(32, 32, QImage::Format_RGB16), painter(&empty), down_(false)
+    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
 {
     auto n = wrapped_.lock();
-
-    painter.setPen(QPen(Qt::red));
-    painter.fillRect(QRect(0, 0, empty.width(), empty.height()), Qt::white);
-    painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
     trackConnection(n->display_request.connect(std::bind(&OutputDisplayAdapter::displayRequest, this, std::placeholders::_1)));
@@ -41,51 +38,29 @@ OutputDisplayAdapter::~OutputDisplayAdapter()
 
 bool OutputDisplayAdapter::eventFilter(QObject *o, QEvent *e)
 {
-    QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
-
-    switch(e->type()) {
-    case QEvent::GraphicsSceneMousePress:
-        down_ = true;
-        last_pos_ = me->screenPos();
-        e->accept();
-        return true;
-    case QEvent::GraphicsSceneMouseRelease:
-        down_ = false;
-        e->accept();
-        return true;
-    case QEvent::GraphicsSceneMouseMove:
-        if(down_) {
-            QPoint delta = me->screenPos() - last_pos_;
-
-            last_pos_ = me->screenPos();
-
-            state.width = std::max(32, view_->width() + delta.x());
-            state.height = std::max(32, view_->height() + delta.y());
-
-            view_->setFixedSize(QSize(state.width, state.height));
-        }
-        e->accept();
-        return true;
-
-    default:
-        break;
+    if (e->type() == QEvent::Resize){
+        QSize s = label_view_->sizeHint();
+        state.width = s.width();
+        state.height = s.height();
     }
 
     return false;
 }
 
+void OutputDisplayAdapter::resize()
+{
+    label_view_->setSize(state.width, state.height);
+}
+
+
 void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 {
-    view_->setFixedSize(QSize(state.width, state.height));
-    view_->setAcceptDrops(false);
-    QGraphicsScene* scene = view_->scene();
-    if(scene == nullptr) {
-        scene = new QGraphicsScene();
-        view_->setScene(scene);
-        scene->installEventFilter(this);
-    }
+    label_view_ = new ImageWidget;
+    label_view_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    layout->addWidget(view_);
+    label_view_->installEventFilter(this);
+
+    layout->addWidget(label_view_);
 
     QHBoxLayout* sub = new QHBoxLayout;
 
@@ -102,15 +77,22 @@ void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
     DefaultNodeAdapter::setupUi(layout);
 }
 
+void OutputDisplayAdapter::setManualResize(bool manual)
+{
+    label_view_->setManualResize(manual);
+}
+
+bool OutputDisplayAdapter::isResizable() const
+{
+    return true;
+}
+
 void OutputDisplayAdapter::fitInView()
 {
-    if(last_size_.isNull()) {
-        return;
-    }
-
     state.width = last_size_.width();
     state.height = last_size_.height();
-    view_->setFixedSize(QSize(state.width, state.height));
+
+    resize();
 }
 
 Memento::Ptr OutputDisplayAdapter::getState() const
@@ -125,30 +107,98 @@ void OutputDisplayAdapter::setParameterState(Memento::Ptr memento)
 
     state = *m;
 
-    view_->setFixedSize(QSize(state.width, state.height));
+    resize();
 }
 
 void OutputDisplayAdapter::display(const QImage& img)
 {
-    if(pixmap_ == nullptr) {
-        if(view_->scene()) {
-            delete view_->scene();
-        }
-        view_->setScene(new QGraphicsScene());
-        view_->scene()->installEventFilter(this);
-
-        pixmap_ = view_->scene()->addPixmap(QPixmap::fromImage(img));
-
-    } else {
-        pixmap_->setPixmap(QPixmap::fromImage(img));
-    }
-
     last_size_ = img.size();
-
-    view_->scene()->setSceneRect(img.rect());
-    view_->fitInView(view_->scene()->sceneRect(), Qt::KeepAspectRatio);
-    view_->scene()->update();
+    label_view_->setPixmap(QPixmap::fromImage(img));
+    label_view_->repaint();
 }
+
+
+
+
+
+
+
+ImageWidget::ImageWidget(QWidget *parent) :
+    QWidget(parent), size(100,100), manual_resize_(false)
+{
+}
+
+void ImageWidget::paintEvent(QPaintEvent *event)
+{
+    QWidget::paintEvent(event);
+
+    if (pix.isNull())
+        return;
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QSize pixSize = pix.size();
+    pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
+
+    QPixmap scaledPix = pix.scaled(pixSize,
+                                   Qt::KeepAspectRatio,
+                                   Qt::SmoothTransformation
+                                   );
+
+    int x = (width() - scaledPix.width()) / 2;
+    int y = (height() - scaledPix.height()) / 2;
+
+    painter.drawPixmap(QPoint(x,y), scaledPix);
+
+}
+
+void ImageWidget::resizeEvent(QResizeEvent * re)
+{
+    if(manual_resize_) {
+        setSize(re->size());
+    }
+}
+
+const QPixmap* ImageWidget::pixmap() const
+{
+    return &pix;
+}
+
+void ImageWidget::setPixmap (const QPixmap &pixmap)
+{
+    pix = pixmap;
+}
+
+void ImageWidget::setManualResize(bool manual)
+{
+    manual_resize_ = manual;
+    updateGeometry();
+}
+
+void ImageWidget::setSize(const QSize &s)
+{
+    size = s;
+    updateGeometry();
+}
+void ImageWidget::setSize(int w, int h)
+{
+    setSize(QSize(w,h));
+}
+
+QSize ImageWidget::sizeHint() const
+{
+    return size;
+}
+QSize ImageWidget::minimumSizeHint() const
+{
+    if(manual_resize_) {
+        return QSize(10, 10);
+    } else {
+        return size;
+    }
+}
+
 
 /// MOC
 #include "moc_output_display_adapter.cpp"
