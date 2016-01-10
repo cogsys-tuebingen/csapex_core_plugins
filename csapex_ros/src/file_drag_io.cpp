@@ -65,8 +65,9 @@ class RosIoHandler : public DragIOHandler
                 if(ROSHandler::instance().topicExists(cmd)) {
                     QPoint pos = e->pos();
 
+                    Graph* graph = dispatcher->getGraph();
                     std::string type("csapex::ImportRos");
-                    UUID uuid = UUID::make(dispatcher->getGraph()->makeUUIDPrefix(type));
+                    UUID uuid = graph->generateUUID(type);
 
                     NodeState::Ptr state(new NodeState(nullptr));
 

@@ -52,7 +52,8 @@ class FileHandler : public DragIOHandler
             std::cout << "file: " << files.first().toString().toStdString() << std::endl;
             QFile file(files.first().toLocalFile());
             if(file.exists()) {
-                UUID uuid = UUID::make(dispatcher->getGraph()->makeUUIDPrefix("csapex::FileImporter"));
+                Graph* graph = dispatcher->getGraph();
+                UUID uuid = graph->generateUUID("csapex::FileImporter");
 
                 NodeState::Ptr state(new NodeState(nullptr));
                 GenericState::Ptr child_state(new GenericState);
