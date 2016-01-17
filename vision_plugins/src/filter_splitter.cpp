@@ -51,7 +51,7 @@ void Splitter::process()
     if(esize != m->value.channels()) {
         std::stringstream error;
         error << "encoding size (" << m->getEncoding().channelCount() << ") != " << " image channels (" << m->value.channels() << ")";
-        modifier_->setWarning(error.str());
+        node_modifier_->setWarning(error.str());
     }
 
     std::vector<cv::Mat> channels;
@@ -79,7 +79,7 @@ void Splitter::process()
 
     bool enforce_mono = readParameter<bool>("enforce mono");
 
-    std::vector<Output*> outputs = modifier_->getMessageOutputs();
+    std::vector<Output*> outputs = node_modifier_->getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
         if(i < encoding_.channelCount()) {
@@ -100,15 +100,15 @@ void Splitter::process()
 
 void Splitter::updateOutputs()
 {
-    std::vector<Output*> outputs = modifier_->getMessageOutputs();
+    std::vector<Output*> outputs = node_modifier_->getMessageOutputs();
     int n = outputs.size();
 
     if(channel_count_ > n) {
         for(int i = n ; i < channel_count_ ; ++i) {
             if(i < (int) encoding_.channelCount()) {
-                modifier_->addOutput<CvMatMessage>(encoding_.getChannel(i).name);
+                node_modifier_->addOutput<CvMatMessage>(encoding_.getChannel(i).name);
             } else {
-                modifier_->addOutput<CvMatMessage>("unknown");
+                node_modifier_->addOutput<CvMatMessage>("unknown");
             }
         }
     } else {
@@ -120,7 +120,7 @@ void Splitter::updateOutputs()
             }
 
             if(del) {
-                modifier_->removeOutput(msg::getUUID(output));
+                node_modifier_->removeOutput(msg::getUUID(output));
             } else {
                 msg::disable(output);
             }
@@ -128,7 +128,7 @@ void Splitter::updateOutputs()
     }
 
 
-    outputs = modifier_->getMessageOutputs();
+    outputs = node_modifier_->getMessageOutputs();
     for(int i = 0, n = channel_count_; i < n; ++i) {
         Output* output = outputs[i];
         if(i < (int) encoding_.channelCount()) {

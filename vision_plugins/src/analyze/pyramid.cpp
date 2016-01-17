@@ -59,9 +59,9 @@ void Pyramid::update()
 
     if(out_level_idx_ >= out_levels_) {
         out_level_idx_ = out_levels_ - 1;
-        modifier_->setWarning("Not enough levels!");
-    } else if(modifier_->isError()) {
-        modifier_->setNoError();
+        node_modifier_->setWarning("Not enough levels!");
+    } else if(node_modifier_->isError()) {
+        node_modifier_->setNoError();
     }
 
 

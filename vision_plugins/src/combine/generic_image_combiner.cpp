@@ -129,7 +129,7 @@ void GenericImageCombiner::updateFormula()
     bool r = qi::phrase_parse(iter,end,p,ascii::space,e);
 
     if (r && iter == end) {
-        modifier_->setNoError();
+        node_modifier_->setNoError();
 
     } else {
         std::string rest(iter, end);

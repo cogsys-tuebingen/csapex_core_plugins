@@ -83,9 +83,9 @@ void LineSegmentDetector::process()
 
 void LineSegmentDetector::setup()
 {
-    input_ = modifier_->addInput<connection_types::CvMatMessage>("Image");
+    input_ = node_modifier_->addInput<connection_types::CvMatMessage>("Image");
 
-    output_ = modifier_->addOutput<connection_types::CvMatMessage>("Image");
+    output_ = node_modifier_->addOutput<connection_types::CvMatMessage>("Image");
 }
 
 

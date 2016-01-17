@@ -49,7 +49,7 @@ void Merger::updateInputs()
 {
     int input_count = readParameter<int>("input count");
 
-    std::vector<Input*> inputs = modifier_->getMessageInputs();
+    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
     int current_amount = inputs.size();
 
     if(current_amount > input_count) {
@@ -58,7 +58,7 @@ void Merger::updateInputs()
             if(msg::isConnected(in)) {
                 msg::disable(in);
             } else {
-                modifier_->removeInput(msg::getUUID(in));
+                node_modifier_->removeInput(msg::getUUID(in));
             }
         }
     } else {
@@ -67,7 +67,7 @@ void Merger::updateInputs()
             msg::enable(inputs[i]);
         }
         for(int i = 0 ; i < to_add ; i++) {
-            modifier_->addOptionalInput<CvMatMessage>("Channel");
+            node_modifier_->addOptionalInput<CvMatMessage>("Channel");
         }
     }
 
@@ -76,7 +76,7 @@ void Merger::updateInputs()
 void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
 {
     bool first = true;
-    std::vector<Input*> inputs = modifier_->getMessageInputs();
+    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
         Input *in = inputs[i];
         if(msg::hasMessage(in)) {

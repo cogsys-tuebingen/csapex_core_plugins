@@ -52,11 +52,11 @@ void LKTracking::process()
         points[1].clear();
 
         if(keypoints->value.empty()) {
-            modifier_->setWarning("No input points, cannot initialize LK Tracker");
+            node_modifier_->setWarning("No input points, cannot initialize LK Tracker");
             return;
         }
 
-        modifier_->setNoError();
+        node_modifier_->setNoError();
 
         int spws = readParameter<int>("subPixWinSize");
         cv::Size subPixWinSize (spws, spws);
