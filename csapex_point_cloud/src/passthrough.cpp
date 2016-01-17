@@ -70,7 +70,7 @@ void PassThrough::updateFields(const std::vector<std::string>& fields)
 
     param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("field"));
     if(setp) {
-        modifier_->setNoError();
+        node_modifier_->setNoError();
         std::string old_field = readParameter<std::string>("field");
         setp->setSet(fields);
         setp->set(old_field);

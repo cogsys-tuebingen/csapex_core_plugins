@@ -22,8 +22,8 @@ public:
     void setMask(const QImage &m);
 
 protected:
-    virtual void beginProcess() override;
-    virtual void finishProcess() override;
+    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters) override;
+    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters) override;
 
 private:
     void ok();

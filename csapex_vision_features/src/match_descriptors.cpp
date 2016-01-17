@@ -333,7 +333,7 @@ void MatchDescriptors::process()
 
 
     if(descriptors1->value.type() != descriptors2->value.type()) {
-        modifier_->setError("#types don't match");
+        node_modifier_->setError("#types don't match");
         return;
     }
 

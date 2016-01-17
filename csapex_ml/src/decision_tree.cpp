@@ -48,7 +48,7 @@ void DecisionTree::process()
 
     } else {
         *output = *input;
-        modifier_->setWarning("cannot classfiy, no tree loaded");
+        node_modifier_->setWarning("cannot classfiy, no tree loaded");
     }
 
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);

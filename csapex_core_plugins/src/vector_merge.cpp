@@ -33,7 +33,7 @@ public:
         connection_types::VectorMessage::Ptr result(new connection_types::VectorMessage);
 
         bool first = true;
-        std::vector<Input*> inputs = modifier_->getMessageInputs();
+        std::vector<Input*> inputs = node_modifier_->getMessageInputs();
         for(std::size_t i = 0 ; i < inputs.size() ; i++) {
             Input *in = inputs[i];
             if(msg::hasMessage(in)) {
@@ -55,7 +55,7 @@ public:
     {
         int input_count = readParameter<int>("input count");
 
-        std::vector<Input*> inputs = modifier_->getMessageInputs();
+        std::vector<Input*> inputs = node_modifier_->getMessageInputs();
         int current_amount = inputs.size();
 
         if(current_amount > input_count) {
@@ -64,7 +64,7 @@ public:
                 if(msg::isConnected(in)) {
                     msg::disable(in);
                 } else {
-                    modifier_->removeInput(msg::getUUID(in));
+                    node_modifier_->removeInput(msg::getUUID(in));
                 }
             }
         } else {
@@ -73,7 +73,7 @@ public:
                 msg::enable(inputs[i]);
             }
             for(int i = 0 ; i < to_add ; i++) {
-                modifier_->addOptionalInput<connection_types::VectorMessage>("Vector");
+                node_modifier_->addOptionalInput<connection_types::VectorMessage>("Vector");
             }
         }
 

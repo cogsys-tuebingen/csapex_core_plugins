@@ -77,11 +77,11 @@ void ExtractDescriptors::process()
     }
 
     if(!extractor) {
-        modifier_->setError("no extractor set");
+        node_modifier_->setError("no extractor set");
         return;
     }
 
-    modifier_->setNoError();
+    node_modifier_->setNoError();
 
     CvMatMessage::ConstPtr img_msg = msg::getMessage<CvMatMessage>(in_img);
 

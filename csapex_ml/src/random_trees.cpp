@@ -48,7 +48,7 @@ void RandomTrees::process()
 
     } else {
         *output = *input;
-        modifier_->setWarning("cannot classfiy, no forest loaded");
+        node_modifier_->setWarning("cannot classfiy, no forest loaded");
     }
 
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);

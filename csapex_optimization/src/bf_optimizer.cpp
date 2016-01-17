@@ -31,8 +31,8 @@ void BFOptimizer::setup(NodeModifier& node_modifier)
     out_ = node_modifier.addOutput<AnyMessage>("Trigger");
 
 
-    //    modifier_->setIsSource(true);
-    modifier_->setIsSink(true);
+    //    node_modifier_->setIsSource(true);
+    node_modifier_->setIsSink(true);
 }
 
 void BFOptimizer::tick()

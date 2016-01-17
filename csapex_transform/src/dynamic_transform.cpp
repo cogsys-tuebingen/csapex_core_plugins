@@ -60,7 +60,7 @@ void DynamicTransform::process()
         refresh();
     }
 
-    modifier_->setNoError();
+    node_modifier_->setNoError();
 
     try {
         if(msg::isConnected(time_in_) && msg::hasMessage(time_in_)) {
@@ -71,7 +71,7 @@ void DynamicTransform::process()
         }
     } catch(const std::exception& e) {
         aerr << "error: " << e.what() << std::endl;
-        modifier_->setWarning(e.what());
+        node_modifier_->setWarning(e.what());
     }
 }
 
@@ -106,19 +106,19 @@ void DynamicTransform::publishTransform(const ros::Time& time)
                 tfl.lookupTransform(target, source, time, t);
             } else {
                 if(tfl.canTransform(target, source, ros::Time(0))) {
-                    modifier_->setWarning("cannot transform, using latest transform");
+                    node_modifier_->setWarning("cannot transform, using latest transform");
                     tfl.lookupTransform(target, source, ros::Time(0), t);
                 } else {
-                    modifier_->setWarning("cannot transform at all...");
+                    node_modifier_->setWarning("cannot transform at all...");
                     return;
                 }
             }
-            modifier_->setNoError();
+            node_modifier_->setNoError();
         } else {
             return;
         }
     } catch(const tf2::TransformException& e) {
-        modifier_->setWarning(e.what());
+        node_modifier_->setWarning(e.what());
         return;
     }
 

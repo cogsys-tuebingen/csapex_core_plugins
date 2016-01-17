@@ -83,7 +83,7 @@ void MLP::process()
     std::unique_lock<std::mutex> lock(m_);
     if(mlp_input_size_ == 0 || mlp_output_size_ == 0) {
         *out = *in;
-        modifier_->setWarning("cannot classfiy, no mlp loaded");
+        node_modifier_->setWarning("cannot classfiy, no mlp loaded");
     } else {
         out->resize(in->size());
 
@@ -151,7 +151,7 @@ void MLP::load()
         mlp_class_labels_ = document["classes"].as<std::vector<int>>();
     } catch (const YAML::Exception &e) {
         std::cerr << e.what() << std::endl;
-        modifier_->setWarning(e.what());
+        node_modifier_->setWarning(e.what());
         return;
     }
 
@@ -176,11 +176,11 @@ void MLP::load()
     mlp_output_size_ = 0;
 
     if(layers.size() == 0 || weights.size() == 0) {
-        modifier_->setWarning("Couldn't load layers or weights!");
+        node_modifier_->setWarning("Couldn't load layers or weights!");
         return;
     }
     if(layers.size() < 3) {
-        modifier_->setWarning("MLP must have at least 3 layers!");
+        node_modifier_->setWarning("MLP must have at least 3 layers!");
         return;
     }
     if(mlp_class_labels_.size() != layers.back()) {
@@ -196,7 +196,7 @@ void MLP::load()
     }
 
     if(connections != (int) weights.size()) {
-        modifier_->setWarning(std::string("Net has ") + std::to_string(connections) + " connections but " + std::to_string(weights.size()) + " weights");
+        node_modifier_->setWarning(std::string("Net has ") + std::to_string(connections) + " connections but " + std::to_string(weights.size()) + " weights");
         return;
     }
 

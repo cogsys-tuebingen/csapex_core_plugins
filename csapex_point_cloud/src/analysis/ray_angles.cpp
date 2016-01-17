@@ -237,7 +237,7 @@ void RayAngles::doProcess2D(pcl::PointCloud<pcl::PointXY>::ConstPtr cloud)
     default: // Z || X
         ref_axis(0) = 1.0;
         ref_axis(1) = 0.0;
-        modifier_->setWarning("No 'z'-axis for 2D Pointclouds, treated as X!");
+        node_modifier_->setWarning("No 'z'-axis for 2D Pointclouds, treated as X!");
         break;
     }
 

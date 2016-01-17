@@ -33,7 +33,7 @@ void FilterStaticMask::showPainter()
 void FilterStaticMask::setMask(const cv::Mat &mask)
 {
     mask.copyTo(mask_);
-    modifier_->setNoError();
+    node_modifier_->setNoError();
 }
 
 cv::Mat FilterStaticMask::getMask() const
@@ -46,12 +46,12 @@ void FilterStaticMask::filter(cv::Mat& img, cv::Mat& mask)
     input(img);
 
     if(mask_.empty()) {
-        modifier_->setWarning("No mask existing");
+        node_modifier_->setWarning("No mask existing");
         return;
     }
 
     if(mask_.size != img.size) {
-        modifier_->setWarning("The mask has not the same size as the image size");
+        node_modifier_->setWarning("The mask has not the same size as the image size");
         return;
     }
 

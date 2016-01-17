@@ -38,7 +38,7 @@ void MergeClouds::process()
 
     std::string frame;
     uint64_t stamp = 0;
-    std::vector<Input*> inputs = modifier_->getMessageInputs();
+    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
         Input *in = inputs[i];
         if(msg::hasMessage(in)) {
@@ -63,7 +63,7 @@ void MergeClouds::updateInputs()
 {
     int input_count = readParameter<int>("input count");
 
-    std::vector<Input*> inputs = modifier_->getMessageInputs();
+    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
     int current_amount = inputs.size();
 
     if(current_amount > input_count) {
@@ -72,7 +72,7 @@ void MergeClouds::updateInputs()
             if(msg::isConnected(in)) {
                 msg::disable(in);
             } else {
-                modifier_->removeInput(msg::getUUID(in));
+                node_modifier_->removeInput(msg::getUUID(in));
             }
         }
     } else {
@@ -81,7 +81,7 @@ void MergeClouds::updateInputs()
             msg::enable(inputs[i]);
         }
         for(int i = 0 ; i < to_add ; i++) {
-            modifier_->addOptionalInput<PointCloudMessage>("Cloud");
+            node_modifier_->addOptionalInput<PointCloudMessage>("Cloud");
         }
     }
 
