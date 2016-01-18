@@ -19,9 +19,8 @@ class AssignClusterClassAdapter : public QObject, public csapex::DefaultNodeAdap
     Q_OBJECT
 
 public:
-    AssignClusterClassAdapter(csapex::NodeHandleWeakPtr worker,
-                              std::weak_ptr<AssignClusterClass> node,
-                              csapex::WidgetController *widget_ctrl);
+    AssignClusterClassAdapter(csapex::NodeHandleWeakPtr worker, csapex::NodeBox* parent,
+                              std::weak_ptr<AssignClusterClass> node);
 
     virtual csapex::Memento::Ptr getState() const;
     virtual void                 setParameterState(csapex::Memento::Ptr memento);

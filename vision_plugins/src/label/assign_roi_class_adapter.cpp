@@ -103,8 +103,8 @@ namespace vision_plugins {
 }
 
 
-AssignROIClassAdapter::AssignROIClassAdapter(NodeHandleWeakPtr worker, std::weak_ptr<AssignROIClass> node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl),
+AssignROIClassAdapter::AssignROIClassAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<AssignROIClass> node)
+    : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       active_class_(0),
       pixmap_(nullptr),
