@@ -20,8 +20,8 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayAdapter::OutputDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<OutputDisplay> node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
+OutputDisplayAdapter::OutputDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node)
+    : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 

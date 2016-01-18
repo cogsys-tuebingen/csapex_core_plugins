@@ -24,8 +24,8 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
-ScanLabelerAdapter::ScanLabelerAdapter(NodeHandleWeakPtr worker, std::weak_ptr<ScanLabeler> node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node), view_(new QGraphicsView),
+ScanLabelerAdapter::ScanLabelerAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node)
+    : DefaultNodeAdapter(worker, parent), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
     auto n = wrapped_.lock();

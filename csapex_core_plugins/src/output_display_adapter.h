@@ -21,7 +21,7 @@ class OutputDisplayAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    OutputDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<OutputDisplay> node, WidgetController *widget_ctrl);
+    OutputDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node);
     ~OutputDisplayAdapter();
 
     virtual Memento::Ptr getState() const override;

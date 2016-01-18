@@ -17,7 +17,7 @@ class PointCountAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    PointCountAdapter(NodeHandleWeakPtr worker, std::weak_ptr<PointCount> node, WidgetController *widget_ctrl);
+    PointCountAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<PointCount> node);
 
     virtual void setupUi(QBoxLayout* layout);
 

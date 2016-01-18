@@ -19,7 +19,7 @@ class TimePlotAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    TimePlotAdapter(NodeHandleWeakPtr worker, std::weak_ptr<TimePlot> node, WidgetController *widget_ctrl);
+    TimePlotAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<TimePlot> node);
 
     virtual void setupUi(QBoxLayout* layout);
 

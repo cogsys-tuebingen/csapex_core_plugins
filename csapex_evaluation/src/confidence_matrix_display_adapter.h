@@ -39,7 +39,7 @@ class ConfidenceMatrixDisplayAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    ConfidenceMatrixDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<ConfidenceMatrixDisplay> node, WidgetController *widget_ctrl);
+    ConfidenceMatrixDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ConfidenceMatrixDisplay> node);
 
     virtual void setupUi(QBoxLayout* layout);
 
