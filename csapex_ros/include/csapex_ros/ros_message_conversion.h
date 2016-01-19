@@ -79,6 +79,9 @@ public:
             throw std::runtime_error("trying to publish an empty message");
         }
         auto boost_ptr = shared_ptr_tools::to_boost_shared(msg->value);
+        if(!boost_ptr) {
+            throw std::runtime_error("cannot convert std shared ptr to boost shared ptr");
+        }
         return pub.publish(boost_ptr);
     }
 

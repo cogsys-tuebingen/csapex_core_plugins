@@ -89,6 +89,7 @@ add_library(csapex_point_cloud_plugin_node
     src/filter/coordinate_swapper.cpp
     src/filter/indexed_pointcloud.cpp
     src/filter/index_filter.cpp
+    src/filter/edge_filter.cpp
 
     src/segmentation/labeled_cloud_to_indices.cpp
     src/segmentation/label_pointcloud.cpp

@@ -182,7 +182,7 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
         r = rmc.instantiate(instance);
         setType(r->toType());
 
-        if(topic == main_topic_) {
+        //if(topic == main_topic_) {
             if(state.readParameter<bool>("bag/publish clock")) {
                 if(!pub_setup_) {
                     setupRosPublisher();
@@ -193,7 +193,7 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
                     pub_clock_.publish(clock);
                 }
             }
-        }
+        //}
     }
 
     return r;

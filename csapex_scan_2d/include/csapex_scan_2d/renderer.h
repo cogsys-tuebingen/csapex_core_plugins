@@ -22,8 +22,10 @@ public:
     template <typename ScanType>
     void render(ScanType& scan, cv::Mat& output)
     {
-        int w = readParameter<int>("width");
-        int h = readParameter<int>("height");
+        w = readParameter<int>("width");
+        h = readParameter<int>("height");
+        scale = readParameter<double>("scale") * 10.0;
+
         double radius = readParameter<double>("radius");
 
         const std::vector<int>& color = readParameter<std::vector<int> >("color/bg");
@@ -31,8 +33,7 @@ public:
 
         cv::Mat(h, w, CV_8UC3, bgColor).copyTo(output);
 
-        cv::Point2f origin(w/2, h/2);
-        double scale = readParameter<double>("scale") * 10.0;
+        cv::Point2f origin = getOrigin();
         double angle = readParameter<double>("rotation");
 
         if(readParameter<bool>("drawRays")) {
@@ -51,6 +52,9 @@ public:
         }
     }
 
+    cv::Point2f getOrigin() const;
+    double getScale() const;
+
 protected:
     void drawRays(const lib_laser_processing::Scan& scan, cv::Mat& img, const cv::Point2f& origin, cv::Scalar color,
                   double angle_offset, double scale, double radius);
@@ -59,6 +63,11 @@ protected:
                   double angle_offset, double scale, double radius);
     void drawHits(const lib_laser_processing::LabeledScan& scan, cv::Mat& img, const cv::Point2f& origin, cv::Scalar color, cv::Scalar marked,
                   double angle_offset, double scale, double radius);
+
+private:
+    int w;
+    int h;
+    double scale;
 };
 
 }

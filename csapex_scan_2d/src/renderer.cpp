@@ -1,5 +1,5 @@
 /// HEADER
-#include "renderer.h"
+#include <csapex_scan_2d/renderer.h>
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -17,6 +17,7 @@ using namespace lib_laser_processing;
 
 
 Renderer::Renderer()
+    : w(0), h(0), scale(1.0)
 {
     addParameter(csapex::param::ParameterFactory::declareRange("width", 100, 2000, 256, 1));
     addParameter(csapex::param::ParameterFactory::declareRange("height", 100, 2000, 256, 1));
@@ -73,12 +74,25 @@ void Renderer::drawHits(const LabeledScan& scan, cv::Mat& img, const cv::Point2f
     for(; range_it != scan.rays.end(); ++range_it, ++label_it) {
         const LaserBeam& range = *range_it;
 
-        int label = *label_it;
+        if(range.range > 1e-10) {
 
-        cv::Point2f pt(range.pos_x, range.pos_y);
+            int label = *label_it;
 
-        cv::circle(img, origin + pt * scale, radius, label != 0 ? marked : color, CV_FILLED, CV_AA);
+            cv::Point2f pt(range.pos_x, range.pos_y);
+
+            cv::circle(img, origin + pt * scale, radius, label != 0 ? marked : color, CV_FILLED, CV_AA);
+        }
 
         angle += angle_step;
     }
+}
+
+cv::Point2f Renderer::getOrigin() const
+{
+    return cv::Point2f(w/2, h/2);
+}
+
+double Renderer::getScale() const
+{
+    return scale;
 }

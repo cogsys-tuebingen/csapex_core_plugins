@@ -56,7 +56,7 @@ void PassThrough::updateBorders()
     if(field == "x" || field == "y" || field == "z") {
         interv->setInterval(-10.0, 10.0);
     } else {
-        interv->setInterval(0.0, 256.0);
+        interv->setInterval(0.0, 1024.0);
     }
 }
 

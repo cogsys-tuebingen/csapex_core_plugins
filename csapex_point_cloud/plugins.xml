@@ -148,6 +148,10 @@
   <description>Gets model messages with 3 points and trys to find the transformations between the points</description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::EdgeFilter" base_class_type="csapex::Node">
+  <description>Removes interpolation artifacts at the edges of objects</description>
+  <tags>PointCloud</tags>
+</class>
 <class type="csapex::ThresholdOutlierRemoval" base_class_type="csapex::Node">
   <description>Noise filtering done by thresholding.</description>
   <tags>PointCloud</tags>

@@ -7,7 +7,7 @@
 /// COMPONENT
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
-#include "renderer.h"
+#include <csapex_scan_2d/renderer.h>
 
 namespace csapex
 {

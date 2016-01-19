@@ -115,7 +115,9 @@ void ImportRos::refresh()
 void ImportRos::update()
 {
     retries_ = 5;
-    waitForTopic();
+    if(modifier_->isProcessingEnabled()) {
+        waitForTopic();
+    }
 }
 
 void ImportRos::updateRate()

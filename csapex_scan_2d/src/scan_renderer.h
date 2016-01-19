@@ -2,7 +2,7 @@
 #define SCAN_RENDERER_H
 
 /// COMPONENT
-#include "renderer.h"
+#include <csapex_scan_2d/renderer.h>
 
 /// PROJECT
 #include <csapex/model/node.h>
