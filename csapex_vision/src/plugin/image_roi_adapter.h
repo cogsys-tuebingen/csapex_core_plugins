@@ -18,7 +18,7 @@ class ImageRoiAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    ImageRoiAdapter(NodeHandleWeakPtr worker, std::weak_ptr<ImageRoi> node, WidgetController *widget_ctrl);
+    ImageRoiAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node);
 
     virtual Memento::Ptr getState() const;
     virtual void         setParameterState(Memento::Ptr memento);

@@ -73,7 +73,7 @@ void CloudRenderer::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<CvMatMessage>("Rendered Image");
 }
 
-void CloudRenderer::beginProcess()
+void CloudRenderer::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
 {
     if(!result_) {
         refresh_request();
@@ -94,7 +94,7 @@ void CloudRenderer::beginProcess()
     }
 }
 
-void CloudRenderer::finishProcess()
+void CloudRenderer::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
 {
     if(msg::isConnected(output_)) {
         if(result_) {

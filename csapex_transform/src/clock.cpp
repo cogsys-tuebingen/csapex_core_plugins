@@ -34,7 +34,7 @@ void Clock::tick()
     getRosHandler().waitForConnection();
 
     if(!getRosHandler().isConnected()) {
-        modifier_->setWarning("No ROS connection");
+        node_modifier_->setWarning("No ROS connection");
         return;
     }
 

@@ -21,8 +21,8 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(BFOptimizerAdapter, csapex::BFOptimizer)
 
 
-BFOptimizerAdapter::BFOptimizerAdapter(NodeHandleWeakPtr worker, std::weak_ptr<BFOptimizer> node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
+BFOptimizerAdapter::BFOptimizerAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node)
+    : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
     n->step.connect(std::bind(&BFOptimizerAdapter::triggerStep, this, std::placeholders::_1));

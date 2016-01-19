@@ -34,9 +34,9 @@ void TimeOffset::process()
     if(in->value.toNSec() != 0) {
         aerr << in->value.toNSec() << " + " << offset << " * " << 1e6 << " = " << (in->value.toNSec() + offset * 1e6) << std::endl,
                 time->value = time->value.fromNSec((in->value.toNSec() + offset * 1000000));
-        modifier_->setNoError();
+        node_modifier_->setNoError();
     } else {
-        modifier_->setWarning("Time is 0, using current time as base");
+        node_modifier_->setWarning("Time is 0, using current time as base");
         ros::Time now = ros::Time::now();
         time->value = now - ros::Duration(0, offset * 1000000);
     }

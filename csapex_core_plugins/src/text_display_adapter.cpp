@@ -13,8 +13,8 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
 
-TextDisplayAdapter::TextDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<TextDisplay> node, WidgetController* widget_ctrl)
-    : NodeAdapter(worker, widget_ctrl), wrapped_(node)
+TextDisplayAdapter::TextDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node)
+    : NodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 

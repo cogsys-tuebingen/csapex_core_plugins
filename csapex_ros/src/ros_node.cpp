@@ -40,7 +40,7 @@ void RosNode::tick()
 
     } else {
         ros_init_ = false;
-        modifier_->setWarning("[tick] no ROS connection");
+        node_modifier_->setWarning("[tick] no ROS connection");
     }
 }
 
@@ -62,6 +62,6 @@ void RosNode::process()
 
     } else {
         ros_init_ = false;
-        modifier_->setWarning("[process] no ROS connection");
+        node_modifier_->setWarning("[process] no ROS connection");
     }
 }

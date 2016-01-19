@@ -33,7 +33,7 @@ public:
     {
         auto composite = std::make_shared<connection_types::CompositeMessage>();
 
-        for(auto input : modifier_->getMessageInputs()) {
+        for(auto input : node_modifier_->getMessageInputs()) {
             ConnectionType::ConstPtr msg = msg::getMessage(input);
             if(std::dynamic_pointer_cast<connection_types::NoMessage const>(msg)) {
                 return;
@@ -48,7 +48,7 @@ public:
     {
         int input_count = readParameter<int>("inputs");
 
-        std::vector<Input*> inputs = modifier_->getMessageInputs();
+        std::vector<Input*> inputs = node_modifier_->getMessageInputs();
         int current_amount = inputs.size();
 
         if(current_amount > input_count) {
@@ -58,7 +58,7 @@ public:
 //                    msg::disable(in);
                     break;
                 } else {
-                    modifier_->removeInput(msg::getUUID(in));
+                    node_modifier_->removeInput(msg::getUUID(in));
                 }
             }
         } else {
@@ -67,7 +67,7 @@ public:
                 msg::enable(inputs[i]);
             }
             for(int i = 0 ; i < to_add ; i++) {
-                modifier_->addOptionalInput<connection_types::AnyMessage>("Message");
+                node_modifier_->addOptionalInput<connection_types::AnyMessage>("Message");
             }
         }
 

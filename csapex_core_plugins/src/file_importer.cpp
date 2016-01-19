@@ -89,7 +89,7 @@ void FileImporter::process()
 
 bool FileImporter::canTick()
 {
-    if(!modifier_->isSource()) {
+    if(!node_modifier_->isSource()) {
         return false;
     }
     if(directory_import_) {
@@ -195,7 +195,7 @@ bool FileImporter::doImport(const QString& file_path)
 {
     INTERLUDE("doImport");
     if(file_path.isEmpty()) {
-        modifier_->setWarning("no file selected");
+        node_modifier_->setWarning("no file selected");
         return false;
     }
     bool latch = readParameter<bool>("directory/latch");
@@ -214,13 +214,13 @@ bool FileImporter::doImport(const QString& file_path)
         if(urlfile.exists()) {
             path = urlfile.fileName();
         } else {
-            modifier_->setError(std::string("the file ") + file_path.toStdString() + " couldn't be opened");
+            node_modifier_->setError(std::string("the file ") + file_path.toStdString() + " couldn't be opened");
             return false;
         }
     }
 
     file_ = file_path;
-    modifier_->setNoError();
+    node_modifier_->setNoError();
 
     try {
         {
@@ -245,7 +245,7 @@ bool FileImporter::doImport(const QString& file_path)
         return provider_.get();
 
     } catch(const std::exception& e) {
-        modifier_->setNoError();
+        node_modifier_->setNoError();
         throw std::runtime_error(std::string("cannot load file ") + file_.toStdString() + ": " + e.what());
     }
 
@@ -267,7 +267,7 @@ void FileImporter::updateOutputs()
 
     if(slot_count > output_count) {
         for(std::size_t i = output_count ; i < slot_count ; ++i) {
-            outputs_.push_back(modifier_->addOutput<AnyMessage>("unknown"));
+            outputs_.push_back(node_modifier_->addOutput<AnyMessage>("unknown"));
         }
     } else {
         bool del = true;
@@ -278,7 +278,7 @@ void FileImporter::updateOutputs()
             }
 
             if(del) {
-                modifier_->removeOutput(msg::getUUID(output));
+                node_modifier_->removeOutput(msg::getUUID(output));
                 outputs_.erase(outputs_.begin() + i);
             } else {
                 msg::disable(output);

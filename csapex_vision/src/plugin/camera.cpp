@@ -60,7 +60,7 @@ void Camera::setup(NodeModifier& node_modifier)
 
 void Camera::update()
 {
-    modifier_->setNoError();
+    node_modifier_->setNoError();
 
 
     int dev = readParameter<int>("device");

@@ -21,8 +21,8 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
-ImageRoiAdapter::ImageRoiAdapter(NodeHandleWeakPtr worker, std::weak_ptr<ImageRoi> node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl),
+ImageRoiAdapter::ImageRoiAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node)
+    : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       pixmap_(nullptr),
       view_(new QGraphicsView),

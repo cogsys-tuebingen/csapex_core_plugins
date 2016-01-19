@@ -55,7 +55,7 @@ void MaskRefinement::drop()
 
 void MaskRefinement::setMask(const QImage &mask)
 {
-    modifier_->setNoError();
+    node_modifier_->setNoError();
 
     QtCvImageConverter::Converter<QImage>::QImage2Mat(mask).copyTo(mask_);
     result_->value = mask_;
@@ -64,7 +64,7 @@ void MaskRefinement::setMask(const QImage &mask)
 }
 
 
-void MaskRefinement::beginProcess()
+void MaskRefinement::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
 {
     auto in = msg::getMessage<connection_types::CvMatMessage>(in_mask_);
     mask_ = in->value;
@@ -83,11 +83,11 @@ void MaskRefinement::beginProcess()
     input(qmask, qmasked);
 
     if(has_img_ && mask_.size != img_.size) {
-        modifier_->setWarning("The mask has not the same size as the image size");
+        node_modifier_->setWarning("The mask has not the same size as the image size");
     }
 }
 
-void MaskRefinement::finishProcess()
+void MaskRefinement::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
 {
     if(result_) {
         msg::publish(out_, result_);

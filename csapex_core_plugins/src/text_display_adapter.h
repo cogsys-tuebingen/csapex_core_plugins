@@ -18,7 +18,7 @@ class TextDisplayAdapter : public QObject, public NodeAdapter
     Q_OBJECT
 
 public:
-    TextDisplayAdapter(NodeHandleWeakPtr worker, std::weak_ptr<TextDisplay> node, WidgetController *widget_ctrl);
+    TextDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node);
 
     virtual void setupUi(QBoxLayout* layout);
 

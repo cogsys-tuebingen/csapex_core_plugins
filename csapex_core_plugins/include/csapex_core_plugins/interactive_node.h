@@ -17,24 +17,27 @@ public:
     InteractiveNode();
 
     virtual void process() final override;
-    virtual void process(Parameterizable &parameters) final override;
+    virtual void process(csapex::NodeModifier& node_modifier, Parameterizable &parameters) final override;
 
-    virtual void process(Parameterizable &parameters, std::function<void(std::function<void ()>)> continuation) final override;
-    virtual void abort();
+    virtual void process(csapex::NodeModifier& node_modifier, Parameterizable &parameters,
+                         std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation) final override;
+    virtual void abort() override;
 
     virtual bool isAsynchronous() const override;
 
     void done();
 
 protected:
-    virtual void beginProcess() = 0;
-    virtual void finishProcess() = 0;
+    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters);
+    virtual void beginProcess();
+    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters);
+    virtual void finishProcess();
 
 protected:
     bool stopped_;
     bool done_;
 
-    std::function<void (std::function<void ()>)> continuation_;
+    std::function<void (std::function<void (csapex::NodeModifier& node_modifier, Parameterizable &parameters)>)> continuation_;
 };
 
 }

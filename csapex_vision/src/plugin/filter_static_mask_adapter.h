@@ -17,7 +17,7 @@ class FilterStaticMaskAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    FilterStaticMaskAdapter(NodeHandleWeakPtr worker, std::weak_ptr<FilterStaticMask> node, WidgetController *widget_ctrl);
+    FilterStaticMaskAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<FilterStaticMask> node);
     ~FilterStaticMaskAdapter();
 
 Q_SIGNALS:

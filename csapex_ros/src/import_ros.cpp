@@ -87,7 +87,7 @@ void ImportRos::refresh()
 
         param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
         if(setp) {
-            modifier_->setNoError();
+            node_modifier_->setNoError();
             bool found = false;
             std::vector<std::string> topics_str;
             topics_str.push_back(no_topic_);
@@ -109,7 +109,7 @@ void ImportRos::refresh()
         }
     }
 
-    modifier_->setWarning("no ROS connection");
+    node_modifier_->setWarning("no ROS connection");
 }
 
 void ImportRos::update()
@@ -137,7 +137,7 @@ bool ImportRos::doSetTopic()
     getRosHandler().refresh();
 
     if(!getRosHandler().isConnected()) {
-        modifier_->setError("no connection to ROS");
+        node_modifier_->setError("no connection to ROS");
         return false;
     }
 
@@ -165,7 +165,7 @@ bool ImportRos::doSetTopic()
     }
     ss << ".";
 
-    modifier_->setWarning(ss.str());
+    node_modifier_->setWarning(ss.str());
     return false;
 }
 
@@ -192,13 +192,13 @@ void ImportRos::processROS()
     }
 
     if(time->value == ros::Time(0)) {
-        modifier_->setWarning("incoming time is 0, using default behaviour");
+        node_modifier_->setWarning("incoming time is 0, using default behaviour");
         publishLatestMessage();
         return;
     }
 
     if(rosTime(msgs_.back()->stamp_micro_seconds) == ros::Time(0)) {
-        modifier_->setWarning("buffered time is 0, using default behaviour");
+        node_modifier_->setWarning("buffered time is 0, using default behaviour");
         publishLatestMessage();
         return;
     }
@@ -242,7 +242,7 @@ void ImportRos::processROS()
     }
 
     if(msgs_.empty()) {
-        modifier_->setWarning("No messages received");
+        node_modifier_->setWarning("No messages received");
         return;
     }
 
@@ -257,7 +257,7 @@ void ImportRos::processROS()
 
     } else if(first_after == msgs_.end()) {
         assert(false);
-        modifier_->setWarning("Should not happen.....");
+        node_modifier_->setWarning("Should not happen.....");
         return;
 
     } else {
@@ -386,13 +386,13 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
     current_subscriber.shutdown();
 
     //if(RosMessageConversion::instance().isTopicTypeRegistered(topic)) {
-        modifier_->setNoError();
+        node_modifier_->setNoError();
 
         current_topic_ = topic;
         updateSubscriber();
 
 //    } else {
-//        modifier_->setError(std::string("cannot import topic of type ") + topic.datatype);
+//        node_modifier_->setError(std::string("cannot import topic of type ") + topic.datatype);
 //        return;
 //    }
 

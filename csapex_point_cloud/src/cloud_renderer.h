@@ -16,8 +16,8 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);
 
-    virtual void beginProcess() override;
-    virtual void finishProcess() override;
+    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters) override;
+    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters) override;
 
     void publishImage(const cv::Mat &img);
 

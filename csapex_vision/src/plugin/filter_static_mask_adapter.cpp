@@ -20,8 +20,8 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(FilterStaticMaskAdapter, csapex::FilterStaticMask)
 
 
-FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeHandleWeakPtr worker, std::weak_ptr<FilterStaticMask> node, WidgetController* widget_ctrl)
-    : DefaultNodeAdapter(worker, widget_ctrl), wrapped_(node)
+FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<FilterStaticMask> node)
+    : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     qRegisterMetaType < cv::Mat > ("cv::Mat");
 

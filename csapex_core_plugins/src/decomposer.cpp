@@ -57,7 +57,7 @@ private:
     {
         if(count != outputs_.size()) {
             for(std::size_t i = outputs_.size(); i < count; ++i) {
-                outputs_.push_back(modifier_->addOutput<AnyMessage>("Part"));
+                outputs_.push_back(node_modifier_->addOutput<AnyMessage>("Part"));
             }
         }
     }
