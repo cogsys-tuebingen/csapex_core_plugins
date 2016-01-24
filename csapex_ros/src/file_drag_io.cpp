@@ -11,6 +11,8 @@
 #include <csapex/model/node_state.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/view/designer/graph_view.h>
+#include <csapex/model/graph_facade.h>
 
 /// SYSTEM
 #include <QStringList>
@@ -37,7 +39,7 @@ class RosIoHandler : public DragIOHandler
         return v[Qt::UserRole].toString().toStdString();
     }
 
-    virtual bool handleEnter(CommandDispatcher* dispatcher, QWidget *src, QDragEnterEvent* e) {
+    virtual bool handleEnter(GraphView* view, CommandDispatcher* dispatcher, QDragEnterEvent* e) {
         if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
             std::string cmd = getCmd(e);
 
@@ -52,10 +54,10 @@ class RosIoHandler : public DragIOHandler
         }
         return false;
     }
-    virtual bool handleMove(CommandDispatcher* dispatcher, QWidget *src, QDragMoveEvent* e){
+    virtual bool handleMove(GraphView* view, CommandDispatcher* dispatcher, QDragMoveEvent* e){
         return false;
     }
-    virtual bool handleDrop(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e, const QPointF& scene_pos) {
+    virtual bool handleDrop(GraphView* view, CommandDispatcher* dispatcher, QDropEvent* e, const QPointF& scene_pos) {
         if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
             std::string cmd = getCmd(e);
 
@@ -65,7 +67,8 @@ class RosIoHandler : public DragIOHandler
                 if(ROSHandler::instance().topicExists(cmd)) {
                     QPoint pos = e->pos();
 
-                    Graph* graph = dispatcher->getGraph();
+                    GraphFacade* gf = view->getGraphFacade();
+                    Graph* graph = gf->getGraph();
                     std::string type("csapex::ImportRos");
                     UUID uuid = graph->generateUUID(type);
 
@@ -75,7 +78,7 @@ class RosIoHandler : public DragIOHandler
                     child_state->addParameter(csapex::param::ParameterFactory::declareFileInputPath("topic", cmd));
                     state->setParameterState(child_state);
 
-                    dispatcher->execute(Command::Ptr(new command::AddNode(type, Point(pos.x(), pos.y()), UUID::NONE, uuid, state)));
+                    dispatcher->execute(Command::Ptr(new command::AddNode(gf->getAbsoluteUUID(), type, Point(pos.x(), pos.y()), uuid, state)));
 
                     return true;
                 }

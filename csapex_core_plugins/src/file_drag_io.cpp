@@ -8,6 +8,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/command/add_node.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/view/designer/graph_view.h>
+#include <csapex/model/graph_facade.h>
 
 /// SYSTEM
 #include <QMimeData>
@@ -19,7 +21,7 @@ namespace csapex
 
 class FileHandler : public DragIOHandler
 {
-    virtual bool handleEnter(CommandDispatcher* dispatcher, QWidget *src, QDragEnterEvent* e) {
+    virtual bool handleEnter(GraphView* view, CommandDispatcher* dispatcher, QDragEnterEvent* e) {
         if(e->mimeData()->hasUrls()) {
             e->acceptProposedAction();
             return true;
@@ -28,7 +30,7 @@ class FileHandler : public DragIOHandler
             return false;
         }
     }
-    virtual bool handleMove(CommandDispatcher* dispatcher, QWidget *src, QDragMoveEvent* e){
+    virtual bool handleMove(GraphView* view, CommandDispatcher* dispatcher, QDragMoveEvent* e){
         if(e->mimeData()->hasUrls()) {
             e->acceptProposedAction();
             return true;
@@ -37,7 +39,7 @@ class FileHandler : public DragIOHandler
             return false;
         }
     }
-    virtual bool handleDrop(CommandDispatcher* dispatcher, QWidget *src, QDropEvent* e, const QPointF& scene_pos) {
+    virtual bool handleDrop(GraphView* view, CommandDispatcher* dispatcher, QDropEvent* e, const QPointF& scene_pos) {
         if(e->mimeData()->hasUrls()) {
             QList<QUrl> files = e->mimeData()->urls();
 
@@ -52,7 +54,8 @@ class FileHandler : public DragIOHandler
             std::cout << "file: " << files.first().toString().toStdString() << std::endl;
             QFile file(files.first().toLocalFile());
             if(file.exists()) {
-                Graph* graph = dispatcher->getGraph();
+                GraphFacade* gf = view->getGraphFacade();
+                Graph* graph = gf->getGraph();
                 UUID uuid = graph->generateUUID("csapex::FileImporter");
 
                 NodeState::Ptr state(new NodeState(nullptr));
@@ -61,7 +64,7 @@ class FileHandler : public DragIOHandler
                 state->setParameterState(child_state);
 
                 std::string type("csapex::FileImporter");
-                dispatcher->execute(Command::Ptr(new command::AddNode(type, Point(scene_pos.x(), scene_pos.y()), UUID::NONE, uuid, state)));
+                dispatcher->execute(Command::Ptr(new command::AddNode(gf->getAbsoluteUUID(), type, Point(scene_pos.x(), scene_pos.y()), uuid, state)));
 
                 e->accept();
                 return true;
