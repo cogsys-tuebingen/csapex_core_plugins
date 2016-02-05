@@ -58,7 +58,7 @@ void MaskRefinement::setMask(const QImage &mask)
     node_modifier_->setNoError();
 
     QtCvImageConverter::Converter<QImage>::QImage2Mat(mask).copyTo(mask_);
-    result_->value = mask_;
+    cv::cvtColor(mask_, result_->value, CV_BGR2GRAY);
 
     done();
 }

@@ -24,6 +24,10 @@
   <description>Displays a point cloud</description>
   <tags>PointCloud, Output</tags>
 </class>
+<class type="csapex::CloudLabeler" base_class_type="csapex::Node">
+  <description>Allows the user to label a point cloud</description>
+  <tags>PointCloud, Labeling</tags>
+</class>
 
 <class type="csapex::TransformCloud" base_class_type="csapex::Node">
   <description>Transforms a point cloud by a given transformation</description>
@@ -183,6 +187,9 @@
   <description></description>
 </class>
 <class type="csapex::CloudRendererAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+<class type="csapex::CloudLabelerAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
 </library>

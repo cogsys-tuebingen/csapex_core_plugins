@@ -74,6 +74,8 @@ add_library(csapex_point_cloud_plugin_node
     src/crop_box.cpp
     src/passthrough.cpp
 
+    src/labeling/cloud_labeler.cpp
+
     src/conversion/pointcloud_to_depthimage.cpp
     src/conversion/pointcloud_to_colorimage.cpp
     src/conversion/pointcloud_to_intensityimage.cpp
@@ -115,6 +117,7 @@ target_link_libraries(csapex_point_cloud_plugin_node
 add_library(csapex_point_cloud_plugin_qt
     src/point_count_adapter.cpp
     src/cloud_renderer_adapter.cpp
+    src/labeling/cloud_labeler_adapter.cpp
 )
 
 target_link_libraries(csapex_point_cloud_plugin_qt
