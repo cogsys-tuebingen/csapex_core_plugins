@@ -36,7 +36,7 @@ void CloudLabeler::setupParameters(Parameterizable& parameters)
                                                        0, 9, 0, 1));
     addParameter(csapex::param::ParameterFactory::declareRange("radius",
                                                        csapex::param::ParameterDescription("The radius around the cursor to label in"),
-                                                       0.0, 1.0, 0.05, 0.001));
+                                                       0.02, 1.0, 0.05, 0.001));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/r", 0.01, 20.0, 10.0, 0.01), refresh);
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/theta", 0., M_PI, M_PI / 2, 0.001), refresh);
@@ -45,8 +45,8 @@ void CloudLabeler::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/dy", -d, d, 0., 0.01), refresh);
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/dz", -d, d, 0., 0.01), refresh);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~size/width", 10, 1024, 400, 1), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~size/height", 10, 1024, 400, 1), refresh);
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~size/width", 10, 4096, 400, 1), refresh);
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~size/height", 10, 4096, 400, 1), refresh);
 
     csapex::param::Parameter::Ptr sync = csapex::param::ParameterFactory::declareBool("~size/out/sync", true);
     parameters.addParameter(sync, refresh);

@@ -91,7 +91,14 @@ QVariant ConfusionMatrixTableModel::headerData(int section, Qt::Orientation orie
 {
     if (role != Qt::DisplayRole)
         return QVariant();
-    return confusion_.classes.at(section);
+
+    int c = confusion_.classes.at(section);
+    auto pos = confusion_.class_names.find(c);
+    if(pos == confusion_.class_names.end()) {
+        return c;
+    } else {
+        return QString::fromStdString(pos->second);
+    }
 }
 
 
@@ -143,6 +150,8 @@ void ConfusionMatrixDisplayAdapter::display()
     table_->resizeColumnsToContents();
     table_->resizeRowsToContents();
     table_->viewport()->update();
+
+    table_->adjustSize();
 }
 /// MOC
 #include "moc_confusion_matrix_display_adapter.cpp"

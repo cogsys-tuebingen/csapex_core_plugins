@@ -498,7 +498,7 @@ bool CloudLabelerAdapter::eventFilter(QObject * o, QEvent * e)
 
         if(Qt::Key_0 <= key && key <= Qt::Key_9) {
             updateLabel(ke->key() - Qt::Key_0);
-        } else if(key == Qt::Key_Space) {
+        } else if(key == Qt::Key_Enter) {
             done();
         } else if(key == Qt::Key_Escape) {
             updateLabel(0);

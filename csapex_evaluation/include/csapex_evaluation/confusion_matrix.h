@@ -19,6 +19,7 @@ public:
 
 public:
     std::vector<int> classes;
+    std::map<int, std::string> class_names;
     std::map<std::pair<int, int>, int> histogram;
 
 private:

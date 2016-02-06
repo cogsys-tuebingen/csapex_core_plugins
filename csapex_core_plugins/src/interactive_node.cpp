@@ -37,7 +37,9 @@ void InteractiveNode::done()
 {
     if(!done_){
         done_ = true;
-        continuation_([this](csapex::NodeModifier& node_modifier, Parameterizable &parameters){ finishProcess(node_modifier, parameters); });
+        continuation_([this](csapex::NodeModifier& node_modifier, Parameterizable &parameters){
+            finishProcess(node_modifier, parameters);
+        });
     }
 }
 
