@@ -40,6 +40,8 @@ private:
 private:
     MessageProvider::Ptr provider_;
 
+    Slot* play_;
+
     Trigger* begin_;
     Trigger* end_;
 
@@ -49,6 +51,9 @@ private:
     std::vector<std::string> dir_files_;
 
     std::vector<Output*> outputs_;
+
+    bool cache_enabled_;
+    std::map<std::string, MessageProvider::Ptr> cache_;
 };
 
 }

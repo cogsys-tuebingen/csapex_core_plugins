@@ -15,7 +15,9 @@
   <run_depend>csapex</run_depend>
 
   <build_depend>csapex_ml</build_depend>
+  <build_depend>csapex_plot</build_depend>
   <run_depend>csapex_ml</run_depend>
+  <run_depend>csapex_plot</run_depend>
 
   <export>
     <csapex plugin="${prefix}/plugins.xml" />

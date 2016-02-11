@@ -4,6 +4,7 @@ project(csapex_evaluation)
 find_package(catkin REQUIRED COMPONENTS
   csapex
   csapex_ml
+  csapex_plot
 )
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
@@ -31,6 +32,8 @@ target_link_libraries(csapex_evaluation
 
 
 add_library(csapex_evaluation_plugin_node
+    src/roc/roc_curve.cpp
+
     src/confusion_matrix_display.cpp
     src/confidence_matrix_display.cpp
     src/evaluate_binary_classifier.cpp
@@ -45,6 +48,8 @@ target_link_libraries(csapex_evaluation_plugin_node csapex_evaluation
 
 
 add_library(csapex_evaluation_plugin_qt
+    src/roc/roc_curve_adapter.cpp
+
     src/confusion_matrix_display_adapter.cpp
     src/confidence_matrix_display_adapter.cpp
     src/evaluate_binary_classifier_adapter.cpp

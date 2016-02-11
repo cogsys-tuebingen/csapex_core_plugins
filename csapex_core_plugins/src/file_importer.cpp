@@ -13,6 +13,7 @@
 #include <csapex/param/range_parameter.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/utility/interlude.hpp>
+#include <csapex/signal/slot.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>
@@ -63,6 +64,14 @@ void FileImporter::setupParameters(Parameterizable& parameters)
     std::function<void(csapex::param::Parameter*)> setf = std::bind(&TickableNode::setTickFrequency, this, std::bind(&csapex::param::Parameter::as<double>, std::placeholders::_1));
     std::function<bool()> conditionf = [immediate]() { return !immediate->as<bool>(); };
     addConditionalParameter(csapex::param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("cache", 0), [this](param::Parameter* p) {
+        cache_enabled_ = p->as<bool>();
+        if(!cache_enabled_) {
+            cache_.clear();
+        }
+    });
+
 }
 
 void FileImporter::setup(NodeModifier& node_modifier)
@@ -71,6 +80,22 @@ void FileImporter::setup(NodeModifier& node_modifier)
 
     begin_ = node_modifier.addTrigger("begin");
     end_ = node_modifier.addTrigger("end");
+
+    node_modifier.addSlot("restart", [this](){
+        if(directory_import_) {
+            setParameter("directory/current", -1);
+        }
+    });
+    play_ = node_modifier.addSlot("play", [this](){
+        setParameter("directory/play", true);
+    });
+    node_modifier.addSlot("stop", [this](){
+        setParameter("directory/current", -1);
+        setParameter("directory/play", false);
+    });
+    play_->connected.connect([this](){
+        setParameter("directory/play", false);
+    });
 }
 
 void FileImporter::changeMode()
@@ -137,7 +162,13 @@ void FileImporter::tick()
                 current = 0;
             } else if(latch && files > 0) {
                 current = files - 1;
+            } else {
+                setParameter("directory/play", false);
             }
+        }
+
+        if(current < 0) {
+            current = 0;
         }
 
         if(current < files) {
@@ -145,8 +176,10 @@ void FileImporter::tick()
                 begin_->trigger();
             }
 
-            if(doImport(QString::fromStdString(dir_files_[current]))) {
-                tick();
+            if(doImport(QString::fromStdString(dir_files_.at(current)))) {
+                if(canTick()) {
+                    //tick();
+                }
             }
 
             if(play) {
@@ -223,10 +256,18 @@ bool FileImporter::doImport(const QString& file_path)
     node_modifier_->setNoError();
 
     try {
-        {
+        std::string path_str = path.toStdString();
+        auto pos = cache_.find(path_str);
+        if(pos != cache_.end()) {
+            provider_ = pos->second;
+        } else {
             INTERLUDE("createMessageProvider");
             provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
+            if(cache_enabled_) {
+                cache_[path_str] = provider_;
+            }
         }
+
         provider_->slot_count_changed.connect(std::bind(&FileImporter::updateOutputs, this));
 
         if(!directory_import_) {
@@ -242,6 +283,7 @@ bool FileImporter::doImport(const QString& file_path)
         if(!directory_import_) {
             setTemporaryParameters(provider_->getParameters(), std::bind(&FileImporter::updateProvider, this));
         }
+
         return provider_.get();
 
     } catch(const std::exception& e) {

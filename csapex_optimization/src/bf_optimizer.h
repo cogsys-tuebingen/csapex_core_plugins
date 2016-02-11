@@ -25,6 +25,7 @@ public:
     virtual void tick() override;
 
     int stepsNecessary();
+    void restart();
 
 public:
     csapex::slim_signal::Signal<void(int)> step;
@@ -32,13 +33,24 @@ public:
 private:
     void start();
     void stop();
+    void doStop();
+
+    void finish();
 
     bool nextStep();
     bool increaseParameter(std::size_t i);
 
 private:
     Input* in_;
-    Output* out_;
+    Output* out_last_fitness_;
+    Output* out_best_fitness_;
+    Trigger* trigger_start_evaluation_;
+
+    param::TriggerParameterPtr stop_;
+
+    double fitness_;
+    double last_fitness_;
+    double best_fitness_;
 
     bool init_;
     bool running_;

@@ -37,6 +37,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
+    INCLUDE_DIRS ${QWT_INCLUDE_DIR}
+    LIBRARIES ${QWT_LIBRARY}
 )
 
 include_directories(

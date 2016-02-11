@@ -38,17 +38,6 @@ void BFOptimizerAdapter::setupUi(QBoxLayout* layout)
     layout->addWidget(btn_add_param);
     QObject::connect(btn_add_param, SIGNAL(clicked()), this, SLOT(createParameter()));
 
-
-    QPushButton* btn_start_optimization = new QPushButton("start");
-    layout->addWidget(btn_start_optimization);
-    QObject::connect(btn_start_optimization, SIGNAL(clicked()), this, SLOT(startOptimization()));
-
-
-    QPushButton* btn_stop_optimization = new QPushButton("stop");
-    layout->addWidget(btn_stop_optimization);
-    QObject::connect(btn_stop_optimization, SIGNAL(clicked()), this, SLOT(stopOptimization()));
-
-
     progress_ = new QProgressBar;
     layout->addWidget(progress_);
 }
@@ -124,6 +113,8 @@ void BFOptimizerAdapter::createParameter()
             node->addPersistentParameter(param);
 
             progress_->setMaximum(node->stepsNecessary());
+
+            node->restart();
         }
     }
 }
