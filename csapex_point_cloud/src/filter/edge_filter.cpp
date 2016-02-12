@@ -99,9 +99,9 @@ public:
                 }
 
                 if(min_diff > max_distance_) {
-                    out_pt->x = std::numeric_limits<double>::quiet_NaN ();
-                    out_pt->y = std::numeric_limits<double>::quiet_NaN ();
-                    out_pt->z = std::numeric_limits<double>::quiet_NaN ();
+                    out_pt->x = std::numeric_limits<float>::quiet_NaN ();
+                    out_pt->y = std::numeric_limits<float>::quiet_NaN ();
+                    out_pt->z = std::numeric_limits<float>::quiet_NaN ();
                 }
             }
 

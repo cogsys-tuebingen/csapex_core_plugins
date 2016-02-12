@@ -22,6 +22,8 @@ public:
 private:
     Input* input_cloud_;
     Output* output_;
+
+    bool remove_nan_;
 };
 
 }
