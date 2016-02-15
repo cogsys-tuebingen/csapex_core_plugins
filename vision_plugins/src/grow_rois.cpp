@@ -41,7 +41,7 @@ void GrowROIs::process()
                 std::dynamic_pointer_cast<RoiMessage const>(roi);
         RoiMessage::Ptr roi_out = roi_in->cloneAs<RoiMessage>();
         roi_out->value.grow(x_, y_);
-        rois_out->value.push_back(roi_out);
+        rois_out->value.emplace_back(roi_out);
     }
     msg::publish(output_, rois_out);
 }
