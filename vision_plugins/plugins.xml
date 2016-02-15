@@ -71,6 +71,10 @@
     <description>Change the size of a ROI</description>
     <tags>Vision, ROI</tags>
   </class>
+  <class type="csapex::GrowROIs" base_class_type="csapex::Node">
+    <description>Change the size of a ROI</description>
+    <tags>Vision, ROI</tags>
+  </class>
   <class type="csapex::ExtractROI" base_class_type="csapex::Node">
     <description>Extracts a subimage according to the given ROI</description>
     <tags>Vision, ROI</tags>

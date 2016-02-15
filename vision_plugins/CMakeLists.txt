@@ -51,6 +51,7 @@ add_library(vision_plugins_node
     src/visualize/render_rois.cpp
     src/merge_rois.cpp
     src/grow_roi.cpp
+    src/grow_rois.cpp
     src/extract_roi.cpp
     src/number_generator.cpp
 

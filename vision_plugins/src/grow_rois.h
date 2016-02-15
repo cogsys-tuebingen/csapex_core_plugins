@@ -7,10 +7,10 @@
 
 namespace csapex {
 
-class GrowROI : public csapex::Node
+class GrowROIs : public csapex::Node
 {
 public:
-    GrowROI();
+    GrowROIs();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
