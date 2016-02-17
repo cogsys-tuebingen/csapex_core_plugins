@@ -57,7 +57,7 @@ public:
             typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
             out->header = cloud->header;
             out->height = cloud->height;
-            out->width  = cloud->width;
+            out->width  = 1;
 
             for(std::size_t i = 0 ; i < cloud->height; ++i) {
                 out->points.push_back(cloud->at(selected, i));

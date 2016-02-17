@@ -41,6 +41,14 @@
   <description>Extracts all point from a point cloud that lie in a specified box</description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::Col" base_class_type="csapex::Node">
+  <description>Extract column from structured point cloud.</description>
+  <tags>PointCloud</tags>
+</class>
+<class type="csapex::Row" base_class_type="csapex::Node">
+  <description>Extract row from structured point cloud.</description>
+  <tags>PointCloud</tags>
+</class>
 <class type="csapex::StructuredRow" base_class_type="csapex::Node">
   <description>Extract row from structured point cloud.</description>
   <tags>PointCloud</tags>

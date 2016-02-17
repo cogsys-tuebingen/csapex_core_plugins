@@ -56,6 +56,8 @@ public:
         if(msg::isConnected(output_cloud_)) {
             typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
             out->header = cloud->header;
+            out->height = 1;
+            out->width  = cloud->width;
 
             for(std::size_t i = 0 ; i < cloud->width; ++i) {
                 out->points.push_back(cloud->at(i, selected));
@@ -69,6 +71,8 @@ public:
         if(msg::isConnected(output_cloud_complement_)) {
             typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
             out->header = cloud->header;
+            out->height = cloud->height;
+            out->width  = cloud->width;
 
             for(std::size_t i = 0 ; i < cloud->height ; ++i) {
                 for(std::size_t j = 0 ; j < cloud->width ; ++j) {
