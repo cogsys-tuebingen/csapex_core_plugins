@@ -37,43 +37,42 @@ void ConvertType::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
-    out->value = in->value.clone();
 
     switch (mode_) {
     case CV_8U:
         if(normalize_)
             normalize<unsigned char>(out->value);
-        out->value.convertTo(out->value,  CV_8UC(in->value.channels()));
+        in->value.convertTo(out->value,  CV_8UC(in->value.channels()));
         break;
     case CV_8S:
         if(normalize_)
             normalize<signed char>(out->value);
-        out->value.convertTo(out->value,  CV_8SC(in->value.channels()));
+        in->value.convertTo(out->value,  CV_8SC(in->value.channels()));
         break;
     case CV_16U:
         if(normalize_)
             normalize<unsigned short int>(out->value);
-        out->value.convertTo(out->value, CV_16UC(in->value.channels()));
+        in->value.convertTo(out->value, CV_16UC(in->value.channels()));
         break;
     case CV_16S:
         if(normalize_)
             normalize<signed short int>(out->value);
-        out->value.convertTo(out->value, CV_16SC(in->value.channels()));
+        in->value.convertTo(out->value, CV_16SC(in->value.channels()));
         break;
     case CV_32S:
         if(normalize_)
             normalize<signed int>(out->value);
-        out->value.convertTo(out->value, CV_32SC(in->value.channels()));
+        in->value.convertTo(out->value, CV_32SC(in->value.channels()));
         break;
     case CV_32F:
         if(normalize_)
             normalize<float>(out->value);
-        out->value.convertTo(out->value, CV_32FC(in->value.channels()));
+        in->value.convertTo(out->value, CV_32FC(in->value.channels()));
         break;
     case CV_64F:
         if(normalize_)
             normalize<double>(out->value);
-        out->value.convertTo(out->value, CV_64FC(in->value.channels()));
+        in->value.convertTo(out->value, CV_64FC(in->value.channels()));
         break;
     default:
         throw std::runtime_error("Unknown conversion goal type!");
