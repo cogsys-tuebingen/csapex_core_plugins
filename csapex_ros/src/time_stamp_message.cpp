@@ -8,19 +8,19 @@
 #include <boost/date_time.hpp>
 
 
-CSAPEX_REGISTER_MESSAGE(csapex::connection_types::TimeStampMessage)
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::RosTimeStampMessage)
 
 using namespace csapex;
 using namespace connection_types;
 
-TimeStampMessage::TimeStampMessage()
-    : MessageTemplate<ros::Time, TimeStampMessage> ("/")
+RosTimeStampMessage::RosTimeStampMessage()
+    : MessageTemplate<ros::Time, RosTimeStampMessage> ("/")
 {}
 
 
 /// YAML
 namespace YAML {
-Node convert<csapex::connection_types::TimeStampMessage>::encode(const csapex::connection_types::TimeStampMessage& rhs)
+Node convert<csapex::connection_types::RosTimeStampMessage>::encode(const csapex::connection_types::RosTimeStampMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
 
@@ -28,7 +28,7 @@ Node convert<csapex::connection_types::TimeStampMessage>::encode(const csapex::c
     return node;
 }
 
-bool convert<csapex::connection_types::TimeStampMessage>::decode(const Node& node, csapex::connection_types::TimeStampMessage& rhs)
+bool convert<csapex::connection_types::RosTimeStampMessage>::decode(const Node& node, csapex::connection_types::RosTimeStampMessage& rhs)
 {
     if(!node.IsMap()) {
         return false;

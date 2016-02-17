@@ -64,7 +64,7 @@ void DynamicTransform::process()
 
     try {
         if(msg::isConnected(time_in_) && msg::hasMessage(time_in_)) {
-            connection_types::TimeStampMessage::ConstPtr time_msg = msg::getMessage<connection_types::TimeStampMessage>(time_in_);
+            connection_types::RosTimeStampMessage::ConstPtr time_msg = msg::getMessage<connection_types::RosTimeStampMessage>(time_in_);
             publishTransform(time_msg->value);
         } else {
             publishTransform(ros::Time(0));
@@ -131,7 +131,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
 void DynamicTransform::setup(NodeModifier& node_modifier)
 {
-    time_in_ = node_modifier.addOptionalInput<connection_types::TimeStampMessage>("Time");
+    time_in_ = node_modifier.addOptionalInput<connection_types::RosTimeStampMessage>("Time");
 
     output_ = node_modifier.addOutput<connection_types::TransformMessage>("Transform");
 

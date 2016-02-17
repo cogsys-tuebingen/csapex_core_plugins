@@ -6,6 +6,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/utility/interlude.hpp>
+#include <csapex/utility/timer.h>
 
 /// SYSTEM
 
@@ -16,6 +18,7 @@ using namespace csapex;
 using namespace csapex::connection_types;
 
 ColorSegmentation::ColorSegmentation()
+    : loaded_(false)
 {
 }
 
@@ -35,14 +38,23 @@ void ColorSegmentation::process()
     CvMatMessage::Ptr out_mask(new CvMatMessage(enc::mono, img->stamp_micro_seconds));
 
     if(encoding_changed) {
-        recompute();
+        if(!loaded_) {
+            updateParameters();
 
-        if(loaded_state_) {
-            Node::setParameterState(loaded_state_);
-            loaded_state_.reset();
-            triggerParameterSetChanged();
-            update();
+            if(loaded_state_) {
+                Node::setParameterState(loaded_state_);
+                loaded_state_.reset();
+                triggerParameterSetChanged();
+                update();
+            }
+        } else {
+            loaded_ = false;
         }
+    }
+
+    {
+        INTERLUDE("update");
+        update();
     }
 
     cv::Mat bw;
@@ -81,7 +93,7 @@ void ColorSegmentation::update()
     }
 }
 
-void ColorSegmentation::recompute()
+void ColorSegmentation::updateParameters()
 {
     setParameterSetSilence(true);
     removeTemporaryParameters();
@@ -100,8 +112,6 @@ void ColorSegmentation::recompute()
 
     setParameterSetSilence(false);
     triggerParameterSetChanged();
-
-    update();
 }
 
 void ColorSegmentation::setup(NodeModifier& node_modifier)
@@ -109,4 +119,19 @@ void ColorSegmentation::setup(NodeModifier& node_modifier)
     input_img_ = node_modifier.addInput<CvMatMessage>("Image");
     input_mask_ = node_modifier.addOptionalInput<CvMatMessage>("Mask");
     output_mask_ = node_modifier.addOutput<CvMatMessage>("Mask");
+}
+
+void ColorSegmentation::setupParameters(Parameterizable &params)
+{
+    if(loaded_state_) {
+        for(auto it = loaded_state_->params.begin(); it != loaded_state_->params.end(); ++it) {
+            csapex::param::Parameter::Ptr p = it->second;
+            params.addParameter(param::ParameterFactory::clone(p));
+        }
+        Node::setParameterState(loaded_state_);
+        loaded_ = true;
+        loaded_state_.reset();
+        triggerParameterSetChanged();
+        update();
+    }
 }

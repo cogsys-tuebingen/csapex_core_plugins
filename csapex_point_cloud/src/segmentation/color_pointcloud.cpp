@@ -66,7 +66,7 @@ struct Impl {
         for(typename pcl::PointCloud<PointT>::const_iterator it = src->begin() ; it != src->end() ; ++it) {
             if(colors.find(it->label) == colors.end()) {
                 double r = 0.0, g = 0.0, b = 0.0;
-                color::fromCount(it->label, r,g,b);
+                color::fromCount(it->label+1, r,g,b);
                 colors.insert(std::make_pair(it->label,Color(r,g,b)));
             }
             Color c = colors.at(it->label);

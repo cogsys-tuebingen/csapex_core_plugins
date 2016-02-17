@@ -7,19 +7,19 @@
 /// SYSTEM
 #include <boost/date_time.hpp>
 
-CSAPEX_REGISTER_MESSAGE(csapex::connection_types::DurationMessage)
+CSAPEX_REGISTER_MESSAGE(csapex::connection_types::RosDurationMessage)
 
 using namespace csapex;
 using namespace connection_types;
 
-DurationMessage::DurationMessage()
-    : MessageTemplate<ros::Duration, DurationMessage> ("/")
+RosDurationMessage::RosDurationMessage()
+    : MessageTemplate<ros::Duration, RosDurationMessage> ("/")
 {}
 
 
 /// YAML
 namespace YAML {
-Node convert<csapex::connection_types::DurationMessage>::encode(const csapex::connection_types::DurationMessage& rhs)
+Node convert<csapex::connection_types::RosDurationMessage>::encode(const csapex::connection_types::RosDurationMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
 
@@ -27,7 +27,7 @@ Node convert<csapex::connection_types::DurationMessage>::encode(const csapex::co
     return node;
 }
 
-bool convert<csapex::connection_types::DurationMessage>::decode(const Node& node, csapex::connection_types::DurationMessage& rhs)
+bool convert<csapex::connection_types::RosDurationMessage>::decode(const Node& node, csapex::connection_types::RosDurationMessage& rhs)
 {
     if(!node.IsMap()) {
         return false;

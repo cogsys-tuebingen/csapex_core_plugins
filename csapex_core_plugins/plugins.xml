@@ -110,6 +110,14 @@
   <description>Measure delay between two signals</description>
   <tags>Time</tags>
 </class>
+<class type="csapex::CalculateDuration" base_class_type="csapex::Node">
+  <description>Calculates the duration between two time points</description>
+  <tags>Time</tags>
+</class>
+<class type="csapex::DurationConvertion" base_class_type="csapex::Node">
+  <description>Converts duration to double</description>
+  <tags>Time, Convertion</tags>
+</class>
 </library>
 
 

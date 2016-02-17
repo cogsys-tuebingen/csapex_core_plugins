@@ -21,14 +21,14 @@ void ExtractTimeStamp::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<AnyMessage>("Message");
 
-    output_ = node_modifier.addOutput<TimeStampMessage>("Time");
+    output_ = node_modifier.addOutput<RosTimeStampMessage>("Time");
 }
 
 void ExtractTimeStamp::process()
 {
     Message::ConstPtr msg = msg::getMessage<Message>(input_);
 
-    connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
+    connection_types::RosTimeStampMessage::Ptr time(new connection_types::RosTimeStampMessage);
     time->value = time->value.fromNSec(msg->stamp_micro_seconds * 1e3);
     time->stamp_micro_seconds = msg->stamp_micro_seconds;
     msg::publish(output_, time);

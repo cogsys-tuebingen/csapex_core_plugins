@@ -37,6 +37,10 @@ public:
                                 ("max distance",
                                  0.0, 0.1, 0.05, 0.0001),
                                 max_distance_);
+        parameters.addParameter(param::ParameterFactory::declareRange
+                                ("offset",
+                                 1, 16, 1, 1),
+                                offset_);
 
     }
 
@@ -55,6 +59,7 @@ public:
 
         bool dense = cloud->width > 1 && cloud->height > 1;
         apex_assert(dense);
+        apex_assert(cloud->width * cloud->height == cloud->points.size());
 
         filter<PointT>(*cloud, *out);
 
@@ -77,17 +82,17 @@ public:
         int h = in.height;
 
         int offset[] = {
-            -1, -w, 1, w
+            -offset_, -w*offset_, offset_, w*offset_
         };
 
-        PointT const* in_pt = &in.points[w];
-        PointT* out_pt = &out.points[w];
-        for(int row = 1, col = 0;
-            row < h - 1;
+        PointT const* in_pt = &in.points[w * offset_ + offset_];
+        PointT* out_pt = &out.points[w * offset_ + offset_];
+        for(int row = offset_, col = 0;
+            row < h - offset_;
             ++in_pt, ++out_pt) {
 
             // don't look at border
-            if(col > 0 && col < w - 1) {
+            if(col > offset_ && col < w - offset_) {
 
                 double min_diff = std::numeric_limits<double>::infinity();
                 for(std::size_t i = 0; i < 4; ++i) {
@@ -117,6 +122,7 @@ private:
     Output* output_;
 
     double max_distance_;
+    int offset_;
 };
 
 }

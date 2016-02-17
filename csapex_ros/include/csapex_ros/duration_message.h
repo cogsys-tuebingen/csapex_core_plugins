@@ -11,17 +11,17 @@ namespace csapex {
 namespace connection_types {
 
 
-struct DurationMessage : public MessageTemplate<ros::Duration, DurationMessage>
+struct RosDurationMessage : public MessageTemplate<ros::Duration, RosDurationMessage>
 {
-    DurationMessage();
+    RosDurationMessage();
 };
 
 
 /// TRAITS
 template <>
-struct type<DurationMessage> {
+struct type<RosDurationMessage> {
     static std::string name() {
-        return "Duration";
+        return "Duration (ROS)";
     }
 };
 
@@ -32,9 +32,9 @@ struct type<DurationMessage> {
 /// YAML
 namespace YAML {
 template<>
-struct convert<csapex::connection_types::DurationMessage> {
-  static Node encode(const csapex::connection_types::DurationMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::DurationMessage& rhs);
+struct convert<csapex::connection_types::RosDurationMessage> {
+  static Node encode(const csapex::connection_types::RosDurationMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::RosDurationMessage& rhs);
 };
 }
 

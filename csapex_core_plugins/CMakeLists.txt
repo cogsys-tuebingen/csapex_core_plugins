@@ -38,6 +38,8 @@ add_library(csapex_core_lib
     src/vector_message.cpp
     src/composite_message.cpp
     src/point_message.cpp
+    src/timestamp_message.cpp
+    src/duration_message.cpp
     src/interactive_node.cpp
     src/collection_node.cpp
 
@@ -72,6 +74,8 @@ add_library(csapex_core_plugins_node
 
     src/stamp_delay_measurement.cpp
     src/signal_delay_measurement.cpp
+    src/calculate_duration.cpp
+    src/duration_convertion.cpp
 
     src/demultiplexer.cpp
     src/multiplexer.cpp
@@ -101,7 +105,7 @@ add_library(csapex_core_plugins_qt
 )
 
 
-target_link_libraries(csapex_core_plugins_qt csapex_core_lib
+target_link_libraries(csapex_core_plugins_qt csapex_core_plugins_node csapex_core_lib
     ${catkin_LIBRARIES}
 )
 

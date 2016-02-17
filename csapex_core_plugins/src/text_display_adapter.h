@@ -22,6 +22,8 @@ public:
 
     virtual void setupUi(QBoxLayout* layout);
 
+    virtual bool isResizable() const override;
+
 public Q_SLOTS:
     void display(const std::string& txt);
 

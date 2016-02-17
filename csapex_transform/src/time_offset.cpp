@@ -26,8 +26,8 @@ void TimeOffset::setupParameters(Parameterizable &parameters)
 
 void TimeOffset::process()
 {
-    connection_types::TimeStampMessage::ConstPtr in = msg::getMessage<connection_types::TimeStampMessage>(input_);
-    connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
+    connection_types::RosTimeStampMessage::ConstPtr in = msg::getMessage<connection_types::RosTimeStampMessage>(input_);
+    connection_types::RosTimeStampMessage::Ptr time(new connection_types::RosTimeStampMessage);
 
     double offset = readParameter<double>("offset");
 
@@ -45,6 +45,6 @@ void TimeOffset::process()
 
 void TimeOffset::setup(NodeModifier& node_modifier)
 {
-    input_ = node_modifier.addInput<connection_types::TimeStampMessage>("Time");
-    output_ = node_modifier.addOutput<connection_types::TimeStampMessage>("Time");
+    input_ = node_modifier.addInput<connection_types::RosTimeStampMessage>("Time");
+    output_ = node_modifier.addOutput<connection_types::RosTimeStampMessage>("Time");
 }

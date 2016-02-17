@@ -15,7 +15,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS csapex csapex_ros tf)
+find_package(catkin REQUIRED COMPONENTS csapex csapex_core_plugins csapex_ros tf)
 
 catkin_package(
   INCLUDE_DIRS include
