@@ -268,7 +268,10 @@ bool FileImporter::doImport(const QString& file_path)
         if(pos != cache_.end()) {
             provider_ = pos->second;
         } else {
-            removeTemporaryParameters();
+
+            if(!directory_import_) {
+                removeTemporaryParameters();
+            }
 
             INTERLUDE("createMessageProvider");
             provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
