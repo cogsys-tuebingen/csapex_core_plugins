@@ -93,6 +93,13 @@ void FileImporter::setup(NodeModifier& node_modifier)
         setParameter("directory/current", -1);
         setParameter("directory/play", false);
     });
+    node_modifier.addSlot("abort", [this](){
+        setParameter("directory/current", (int) dir_files_.size());
+        setParameter("directory/play", false);
+        setParameter("directory/loop", false);
+        setParameter("directory/latch", false);
+        end_->trigger();
+    });
     play_->connected.connect([this](){
         setParameter("directory/play", false);
     });
