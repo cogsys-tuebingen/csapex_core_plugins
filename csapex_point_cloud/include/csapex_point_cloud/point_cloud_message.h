@@ -16,11 +16,11 @@ namespace connection_types {
 
 /// ALL SUPPORTED POINT TYPES
 typedef boost::mpl::vector<
-pcl::PointXYZ,
 pcl::PointXYZI,
 pcl::PointXYZRGB,
 pcl::PointXYZRGBL,
 pcl::PointXYZL,
+pcl::PointXYZ,
 pcl::PointNormal
 > PointCloudPointTypes;
 

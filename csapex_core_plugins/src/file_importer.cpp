@@ -29,7 +29,7 @@ using namespace connection_types;
 
 
 FileImporter::FileImporter()
-    :  directory_import_(false), last_directory_index_(-1)
+    :  directory_import_(false), last_directory_index_(-1), cache_enabled_(false)
 {
 }
 
@@ -268,6 +268,8 @@ bool FileImporter::doImport(const QString& file_path)
         if(pos != cache_.end()) {
             provider_ = pos->second;
         } else {
+            removeTemporaryParameters();
+
             INTERLUDE("createMessageProvider");
             provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
             if(cache_enabled_) {

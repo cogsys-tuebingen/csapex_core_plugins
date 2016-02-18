@@ -21,7 +21,7 @@ void ExtractTimeStampCloud::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
 
-    output_ = node_modifier.addOutput<TimeStampMessage>("Time");
+    output_ = node_modifier.addOutput<RosTimeStampMessage>("Time");
     output_frame_ = node_modifier.addOutput<std::string>("Target Frame");
 }
 
@@ -35,7 +35,7 @@ void ExtractTimeStampCloud::process()
 template <class PointT>
 void ExtractTimeStampCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    connection_types::TimeStampMessage::Ptr time(new connection_types::TimeStampMessage);
+    connection_types::RosTimeStampMessage::Ptr time(new connection_types::RosTimeStampMessage);
     time->value = time->value.fromNSec(cloud->header.stamp * 1000);
     msg::publish(output_, time);
 

@@ -11,7 +11,8 @@ class Clock : public RosNode
 private:
     enum Type {
         ZERO = 0,
-        CURRENT = 1
+        CURRENT = 1,
+        CHRONO = 2
     };
 
 public:    

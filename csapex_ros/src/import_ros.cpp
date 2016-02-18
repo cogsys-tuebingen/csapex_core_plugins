@@ -43,7 +43,7 @@ ImportRos::ImportRos()
 
 void ImportRos::setup(NodeModifier& node_modifier)
 {
-    input_time_ = node_modifier.addOptionalInput<connection_types::TimeStampMessage>("time");
+    input_time_ = node_modifier.addOptionalInput<connection_types::RosTimeStampMessage>("time");
     connector_ = node_modifier.addOutput<connection_types::AnyMessage>("Something");
 }
 
@@ -185,7 +185,7 @@ void ImportRos::processROS()
     }
 
     // INPUT CONNECTED
-    connection_types::TimeStampMessage::ConstPtr time = msg::getMessage<connection_types::TimeStampMessage>(input_time_);
+    connection_types::RosTimeStampMessage::ConstPtr time = msg::getMessage<connection_types::RosTimeStampMessage>(input_time_);
 
     if(msgs_.empty()) {
         return;

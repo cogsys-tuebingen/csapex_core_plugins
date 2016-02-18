@@ -16,12 +16,13 @@ public:
 public:
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& params) override;
 
 protected:
     virtual void setParameterState(Memento::Ptr memento);
 
 private:
-    void recompute();
+    void updateParameters();
     void update();
 
 private:
@@ -34,6 +35,7 @@ private:
 
     cv::Scalar min, max;
     Encoding current_encoding;
+    bool loaded_;
 };
 
 }

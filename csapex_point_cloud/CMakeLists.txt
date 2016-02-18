@@ -73,6 +73,8 @@ add_library(csapex_point_cloud_plugin_node
     src/set_timestamp.cpp
     src/crop_box.cpp
     src/passthrough.cpp
+    src/row.cpp
+    src/col.cpp
 
     src/labeling/cloud_labeler.cpp
 

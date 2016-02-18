@@ -11,7 +11,7 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_ros_core
-  CATKIN_DEPENDS pluginlib
+  CATKIN_DEPENDS pluginlib csapex_core_plugins
 )
 
 ###########

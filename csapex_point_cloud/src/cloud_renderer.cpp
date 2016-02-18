@@ -84,6 +84,7 @@ void CloudRenderer::beginProcess(csapex::NodeModifier& node_modifier, Parameteri
     {
         std::unique_lock<std::mutex> lock(message_mutex_);
         message_ = msg;
+
         result_.reset();
     }
 

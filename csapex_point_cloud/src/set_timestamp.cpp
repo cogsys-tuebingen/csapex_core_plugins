@@ -21,7 +21,7 @@ void SetTimeStamp::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<connection_types::PointCloudMessage>("PointCloud");
     input_frame_ = node_modifier.addOptionalInput<std::string>("Frame");
-    input_time_ = node_modifier.addInput<connection_types::TimeStampMessage>("Time");
+    input_time_ = node_modifier.addInput<connection_types::RosTimeStampMessage>("Time");
 
     output_ = node_modifier.addOutput<connection_types::PointCloudMessage>("PointCloud");
 }
@@ -36,7 +36,7 @@ void SetTimeStamp::process()
 template <class PointT>
 void SetTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    connection_types::TimeStampMessage::ConstPtr time = msg::getMessage<connection_types::TimeStampMessage>(input_time_);
+    connection_types::RosTimeStampMessage::ConstPtr time = msg::getMessage<connection_types::RosTimeStampMessage>(input_time_);
 
     connection_types::PointCloudMessage::Ptr msg(new connection_types::PointCloudMessage(cloud->header.frame_id, time->value.toNSec()));
 

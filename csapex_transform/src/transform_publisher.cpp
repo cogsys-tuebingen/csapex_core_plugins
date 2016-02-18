@@ -47,7 +47,7 @@ void TransformPublisher::processROS()
 
     ros::Time time;
     if(msg::hasMessage(input_time)) {
-        TimeStampMessage::ConstPtr time_msg = msg::getMessage<TimeStampMessage>(input_time);
+        RosTimeStampMessage::ConstPtr time_msg = msg::getMessage<RosTimeStampMessage>(input_time);
         time = time_msg->value;
     } else {
         time = ros::Time::now();
@@ -62,5 +62,5 @@ void TransformPublisher::processROS()
 void TransformPublisher::setup(NodeModifier& node_modifier)
 {
     input_transform = node_modifier.addInput<connection_types::TransformMessage>("T");
-    input_time = node_modifier.addOptionalInput<connection_types::TimeStampMessage>("time");
+    input_time = node_modifier.addOptionalInput<connection_types::RosTimeStampMessage>("time");
 }

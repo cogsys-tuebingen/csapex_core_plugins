@@ -29,7 +29,7 @@ void Delay::setupParameters(Parameterizable& parameters)
     addParameter(csapex::param::ParameterFactory::declareRange<double>
                  ("delay",
                   csapex::param::ParameterDescription("Delay <b><span style='color: red'>in seconds</style></b> to wait after each message."),
-                  0.0, 10.0, 1.0, 0.1));
+                  0.0, 10.0, 1.0, 0.01));
 
     csapex::param::Parameter::Ptr p = csapex::param::ParameterFactory::declareOutputProgress("delay progress");
     progress_ = dynamic_cast<param::OutputProgressParameter*>(p.get());

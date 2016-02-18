@@ -26,6 +26,7 @@ VoxelGrid::VoxelGrid()
 void VoxelGrid::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("resolution", 0.01, 1.0, 0.1, 0.01));
+    parameters.addParameter(param::ParameterFactory::declareBool("remove NAN", false), remove_nan_);
 }
 
 void VoxelGrid::setup(NodeModifier& node_modifier)
@@ -50,8 +51,25 @@ void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
     typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
 
+    typename pcl::PointCloud<PointT>::ConstPtr in;
+
+    if(remove_nan_) {
+        typename pcl::PointCloud<PointT>::Ptr tmp(new pcl::PointCloud<PointT>);
+        tmp->points.reserve(cloud->points.size());
+
+        for(auto it = cloud->begin(); it != cloud->end(); ++it) {
+            if(!isnan(it->x)) {
+                tmp->points.push_back(*it);
+            }
+        }
+        in = tmp;
+
+    } else {
+        in = cloud;
+    }
+
     pcl::VoxelGrid<PointT> voxel_f;
-    voxel_f.setInputCloud(cloud);
+    voxel_f.setInputCloud(in);
     voxel_f.setLeafSize(leaf);
     voxel_f.filter(*out);
 

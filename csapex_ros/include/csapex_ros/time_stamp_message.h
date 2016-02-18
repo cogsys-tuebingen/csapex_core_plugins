@@ -11,14 +11,14 @@ namespace csapex {
 namespace connection_types {
 
 
-struct TimeStampMessage : public MessageTemplate<ros::Time, TimeStampMessage>
+struct RosTimeStampMessage : public MessageTemplate<ros::Time, RosTimeStampMessage>
 {
-    TimeStampMessage();
+    RosTimeStampMessage();
 };
 
 /// TRAITS
 template <>
-struct type<TimeStampMessage> {
+struct type<RosTimeStampMessage> {
     static std::string name() {
         return "TimeStamp";
     }
@@ -31,9 +31,9 @@ struct type<TimeStampMessage> {
 /// YAML
 namespace YAML {
 template<>
-struct convert<csapex::connection_types::TimeStampMessage> {
-  static Node encode(const csapex::connection_types::TimeStampMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::TimeStampMessage& rhs);
+struct convert<csapex::connection_types::RosTimeStampMessage> {
+  static Node encode(const csapex::connection_types::RosTimeStampMessage& rhs);
+  static bool decode(const Node& node, csapex::connection_types::RosTimeStampMessage& rhs);
 };
 }
 

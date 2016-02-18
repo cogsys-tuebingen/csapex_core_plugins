@@ -5,12 +5,14 @@
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/msg/io.h>
+#include <csapex/param/set_parameter.h>
 
 /// SYSTEM
 #include <QtOpenGL>
 #include <csapex/view/utility/QtCvImageConverter.h>
 #include <pcl/for_each_type.h>
 #include <pcl/conversions.h>
+#include <pcl/point_types.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -659,6 +661,29 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
     auto node = wrapped_.lock();
     if(!node) {
         return;
+    }
+
+    std::vector<pcl::PCLPointField> fields;
+    std::vector<std::string> field_names;
+    pcl::for_each_type<typename pcl::traits::fieldList<PointT>::type>(pcl::detail::FieldAdder<PointT>(fields));
+
+    for(size_t d = 0; d < fields.size (); ++d) {
+        field_names.push_back(fields[d].name);
+    }
+
+    param::SetParameter::Ptr list = node->getParameter<param::SetParameter>("color/field");
+    apex_assert(list);
+
+    bool change = false;
+    for(std::size_t i = 0; i < field_names.size(); ++i) {
+        if(field_names[i] != list->getText(i)) {
+            change = true;
+            break;
+        }
+    }
+
+    if(change) {
+        list->setSet(field_names);
     }
 
     makeCurrent();
