@@ -41,6 +41,7 @@ private:
     MessageProvider::Ptr provider_;
 
     Slot* play_;
+    bool playing_;
 
     Trigger* begin_;
     Trigger* end_;
