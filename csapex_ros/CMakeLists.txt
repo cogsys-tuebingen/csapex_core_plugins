@@ -66,6 +66,7 @@ add_library(csapex_ros_plugin_node
     src/export_ros.cpp
     src/import_ros.cpp
     src/ros_test.cpp
+    src/ros_trigger.cpp
 )
 
 ## Specify libraries to link a library or executable target against

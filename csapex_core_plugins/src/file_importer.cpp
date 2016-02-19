@@ -94,10 +94,9 @@ void FileImporter::setup(NodeModifier& node_modifier)
         setParameter("directory/play", false);
     });
     node_modifier.addSlot("abort", [this](){
-        setParameter("directory/current", (int) dir_files_.size());
         setParameter("directory/play", false);
-        setParameter("directory/loop", false);
         setParameter("directory/latch", false);
+        setParameter("directory/current", (int) dir_files_.size());
         end_->trigger();
     });
     play_->connected.connect([this](){
@@ -149,7 +148,8 @@ void FileImporter::tick()
             }
         }
     } else if(directory_import_) {
-        bool play = readParameter<bool>("directory/play");
+        bool play = readParameter<bool>("directory/play") ||
+                play_->isConnected();
         bool latch = readParameter<bool>("directory/latch");
         bool loop = readParameter<bool>("directory/loop");
 
