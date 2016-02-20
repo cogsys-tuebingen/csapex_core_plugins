@@ -162,7 +162,7 @@ void FileImporter::tick()
         }
     } else if(directory_import_) {
         bool play = readParameter<bool>("directory/play") ||
-                play_->isConnected();
+                (play_->isConnected() && playing_);
         bool latch = readParameter<bool>("directory/latch");
         bool loop = readParameter<bool>("directory/loop");
 
