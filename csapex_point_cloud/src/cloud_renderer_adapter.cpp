@@ -727,7 +727,7 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
             RendererGradient<PointT, Y>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "z") {
             RendererGradient<PointT, Z>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "i") {
+        } else if(component == "intensity" || component == "i") {
             RendererGradient<PointT, I>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else {
             Renderer<PointT, AUTO>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
@@ -740,7 +740,7 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
             Renderer<PointT, Y>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "z") {
             Renderer<PointT, Z>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "i") {
+        } else if(component == "intensity" || component == "i") {
             Renderer<PointT, I>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else {
             Renderer<PointT, AUTO>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
