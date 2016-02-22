@@ -25,10 +25,12 @@ BFOptimizerAdapter::BFOptimizerAdapter(NodeHandleWeakPtr worker, NodeBox* parent
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
-    n->step.connect(std::bind(&BFOptimizerAdapter::triggerStep, this, std::placeholders::_1));
+    trackConnection(n->step.connect(std::bind(&BFOptimizerAdapter::triggerStep, this, std::placeholders::_1)));
 }
 
-
+BFOptimizerAdapter::~BFOptimizerAdapter()
+{
+}
 
 void BFOptimizerAdapter::setupUi(QBoxLayout* layout)
 {

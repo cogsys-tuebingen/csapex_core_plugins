@@ -239,6 +239,7 @@ void CloudRendererAdapter::paintGLImpl(bool request)
     glLoadMatrixf(lookat.data());
 
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+
     glCallList(list_cloud_);
 
     // grid
@@ -391,7 +392,8 @@ void CloudRendererAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
 
     }
     last_pos_ = pos;
-    paintGLImpl(false);
+
+    Q_EMIT repaintRequest();
 }
 
 void CloudRendererAdapter::wheelEventImpl(QGraphicsSceneWheelEvent *event)
@@ -404,8 +406,8 @@ void CloudRendererAdapter::wheelEventImpl(QGraphicsSceneWheelEvent *event)
 
     r_ += event->delta() * -0.0025;
     node->getParameter("~view/r")->set<double>(r_);
-    paintGLImpl(false);
 
+    Q_EMIT repaintRequest();
 }
 
 
@@ -491,7 +493,8 @@ namespace
 
 enum Component
 {
-    X, Y, Z, I
+    X, Y, Z, I,
+    AUTO
 };
 
 
@@ -529,6 +532,15 @@ struct Access<PointT, Z>
 
 template <class PointT>
 struct Access<PointT, I>
+{
+    static double access(typename pcl::PointCloud<PointT>::const_iterator it)
+    {
+        return 0;
+    }
+};
+
+template <class PointT>
+struct Access<PointT, AUTO>
 {
     static double access(typename pcl::PointCloud<PointT>::const_iterator it)
     {
@@ -639,8 +651,8 @@ struct Renderer
     }
 };
 
-template <int Component>
-struct Renderer<pcl::PointXYZRGB, Component>
+template <>
+struct Renderer<pcl::PointXYZRGB, AUTO>
 {
     static void render(typename pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud, bool, const QVector3D&, const QVector3D&)
     {
@@ -674,9 +686,15 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
     param::SetParameter::Ptr list = node->getParameter<param::SetParameter>("color/field");
     apex_assert(list);
 
+    std::vector<std::string> list_values = list->getSetTexts();
+
+
+    std::sort(field_names.begin(), field_names.end());
+    std::sort(list_values.begin(), list_values.end());
+
     bool change = false;
     for(std::size_t i = 0; i < field_names.size(); ++i) {
-        if(field_names[i] != list->getText(i)) {
+        if(field_names[i] != list_values[i]) {
             change = true;
             break;
         }
@@ -709,8 +727,10 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
             RendererGradient<PointT, Y>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "z") {
             RendererGradient<PointT, Z>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "i") {
+        } else if(component == "intensity" || component == "i") {
             RendererGradient<PointT, I>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
+        } else {
+            Renderer<PointT, AUTO>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         }
 
     } else {
@@ -720,8 +740,10 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
             Renderer<PointT, Y>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else if(component == "z") {
             Renderer<PointT, Z>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "i") {
+        } else if(component == "intensity" || component == "i") {
             Renderer<PointT, I>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
+        } else {
+            Renderer<PointT, AUTO>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         }
     }
 
@@ -729,7 +751,7 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
 
     glEndList();
 
-    paintGLImpl();
+    Q_EMIT repaintRequest();
 }
 
 

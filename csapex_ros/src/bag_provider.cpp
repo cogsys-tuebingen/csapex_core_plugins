@@ -128,6 +128,12 @@ std::vector<std::string> BagProvider::getExtensions() const
     return { ".bag" };
 }
 
+void BagProvider::restart()
+{
+    state.getParameter("bag/frame")->set(0);
+    state.getParameter("bag/play")->set(true);
+}
+
 bool BagProvider::hasNext()
 {
     bool has_next = false;

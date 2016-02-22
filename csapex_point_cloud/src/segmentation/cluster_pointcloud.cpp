@@ -51,19 +51,19 @@ ClusterPointcloud::ClusterPointcloud()
 void ClusterPointcloud::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MinClusterSize", 10, 20000, 100, 200));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MaxClusterSize", 10, 100000, 25000, 1000));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MinClusterSize", 0, 20000, 100, 200));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MaxClusterSize", 0, 100000, 25000, 1000));
 }
 
 void ClusterPointcloud::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_cloud_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointcloud>(this, msg), msg->value);
-
     param_clusterTolerance_ = readParameter<double>("ClusterTolerance");
     param_clusterMinSize_   = readParameter<int>("MinClusterSize");
     param_clusterMaxSize_   = readParameter<int>("MaxClusterSize");
+
+    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointcloud>(this, msg), msg->value);
 }
 
 void ClusterPointcloud::setup(NodeModifier& node_modifier)

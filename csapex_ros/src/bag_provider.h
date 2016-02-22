@@ -28,6 +28,8 @@ public:
     virtual connection_types::Message::Ptr next(std::size_t slot);
     virtual std::string getLabel(std::size_t slot) const;
 
+    virtual void restart() override;
+
     virtual std::vector<std::string> getExtensions() const;
 
     virtual Memento::Ptr getState() const;

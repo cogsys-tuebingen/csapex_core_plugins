@@ -54,13 +54,9 @@ struct Color {
 
 template<class PointT>
 struct Impl {
-    inline static void convert(const typename pcl::PointCloud<PointT>::ConstPtr src,
-                               typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr dst)
+    inline static void convert(const typename pcl::PointCloud<PointT>::ConstPtr& src,
+                               typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
     {
-        dst->height = src->height;
-        dst->header = src->header;
-        dst->width  = src->width;
-
         std::map<unsigned int, Color> colors;
         colors.insert(std::make_pair(FLOOD_DEFAULT_LABEL, Color()));
         for(typename pcl::PointCloud<PointT>::const_iterator it = src->begin() ; it != src->end() ; ++it) {
@@ -81,8 +77,8 @@ struct Impl {
 
 template<class PointT>
 struct Conversion {
-    static void apply(const typename pcl::PointCloud<PointT>::ConstPtr src,
-                      typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr dst)
+    static void apply(const typename pcl::PointCloud<PointT>::ConstPtr& src,
+                      typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
     {
         throw std::runtime_error("Type of pointcloud must be labeled!");
     }
@@ -90,8 +86,8 @@ struct Conversion {
 
 template<>
 struct Conversion<pcl::PointXYZL>{
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::ConstPtr src,
-                      typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr dst)
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::ConstPtr& src,
+                      typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
     {
         Impl<pcl::PointXYZL>::convert(src, dst);
     }
@@ -100,8 +96,8 @@ struct Conversion<pcl::PointXYZL>{
 
 template<>
 struct Conversion<pcl::PointXYZRGBL>{
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGBL>::ConstPtr src,
-                      typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr dst)
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGBL>::ConstPtr& src,
+                      typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
     {
         Impl<pcl::PointXYZRGBL>::convert(src, dst);
     }
@@ -115,6 +111,11 @@ void ColorPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr clou
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr out_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
     implementation::Conversion<PointT>::apply(cloud, out_cloud);
+
+    out_cloud->height = cloud->height;
+    out_cloud->header = cloud->header;
+    out_cloud->width  = cloud->width;
+    out_cloud->is_dense = cloud->is_dense;
 
     out->value = out_cloud;
     msg::publish(output_, out);

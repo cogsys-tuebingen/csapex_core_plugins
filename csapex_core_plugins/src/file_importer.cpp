@@ -29,7 +29,7 @@ using namespace connection_types;
 
 
 FileImporter::FileImporter()
-    :  directory_import_(false), last_directory_index_(-1), cache_enabled_(false)
+    :  playing_(false), directory_import_(false), last_directory_index_(-1), cache_enabled_(false)
 {
 }
 
@@ -84,23 +84,31 @@ void FileImporter::setup(NodeModifier& node_modifier)
     node_modifier.addSlot("restart", [this](){
         if(directory_import_) {
             setParameter("directory/current", -1);
+        } else {
+            if(provider_) {
+                provider_->restart();
+            }
         }
     });
     play_ = node_modifier.addSlot("play", [this](){
         setParameter("directory/play", true);
+        playing_ = true;
     });
     node_modifier.addSlot("stop", [this](){
         setParameter("directory/current", -1);
         setParameter("directory/play", false);
+        playing_ = false;
     });
     node_modifier.addSlot("abort", [this](){
         setParameter("directory/play", false);
         setParameter("directory/latch", false);
         setParameter("directory/current", (int) dir_files_.size());
+        playing_ = false;
         end_->trigger();
     });
     play_->connected.connect([this](){
         setParameter("directory/play", false);
+        playing_ = false;
     });
 }
 
@@ -128,6 +136,11 @@ bool FileImporter::canTick()
                 readParameter<bool>("directory/loop")  ||
                 readParameter<bool>("directory/latch");
     } else {
+        if(play_->isConnected()) {
+            if(!playing_) {
+                return false;
+            }
+        }
         return provider_ != nullptr;
     }
 }
@@ -149,7 +162,7 @@ void FileImporter::tick()
         }
     } else if(directory_import_) {
         bool play = readParameter<bool>("directory/play") ||
-                play_->isConnected();
+                (play_->isConnected() && playing_);
         bool latch = readParameter<bool>("directory/latch");
         bool loop = readParameter<bool>("directory/loop");
 

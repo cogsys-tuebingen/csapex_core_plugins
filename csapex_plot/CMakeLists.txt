@@ -36,6 +36,8 @@ find_package(catkin REQUIRED COMPONENTS
   csapex_vision
 )
 
+file(MAKE_DIRECTORY ${QWT_INCLUDE_DIR})
+
 catkin_package(
     INCLUDE_DIRS ${QWT_INCLUDE_DIR}
     LIBRARIES ${QWT_LIBRARY}

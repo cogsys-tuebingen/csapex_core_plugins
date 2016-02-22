@@ -76,7 +76,7 @@ void CloudRenderer::setup(NodeModifier& node_modifier)
 void CloudRenderer::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
 {
     if(!result_) {
-        refresh_request();
+        refresh();
     }
 
     PointCloudMessage::ConstPtr msg = msg::getMessage<PointCloudMessage>(input_);
