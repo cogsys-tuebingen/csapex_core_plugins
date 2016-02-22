@@ -76,6 +76,8 @@ add_library(csapex_point_cloud_plugin_node
     src/row.cpp
     src/col.cpp
 
+    src/cloud_test.cpp
+
     src/labeling/cloud_labeler.cpp
 
     src/conversion/pointcloud_to_depthimage.cpp
