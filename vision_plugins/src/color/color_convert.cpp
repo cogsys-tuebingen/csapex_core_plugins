@@ -35,7 +35,8 @@ void ColorConvert::setupParameters(Parameterizable& parameters)
         {"BGR", (int) BGR},
         {"HSL", (int) HSL},
         {"HSV", (int) HSV},
-        {"MONO", (int) MONO}
+        {"MONO", (int) MONO},
+        {"LAB",(int) LAB}
     };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
@@ -64,12 +65,18 @@ void ColorConvert::setupParameters(Parameterizable& parameters)
     cs_pair_to_operation_.insert(csiPair(csPair(MONO, RGB), (int) CV_GRAY2RGB));
     cs_pair_to_operation_.insert(csiPair(csPair(MONO, BGR), (int) CV_GRAY2BGR));
 
+    cs_pair_to_operation_.insert(csiPair(csPair(RGB, LAB), (int) CV_RGB2Lab));
+    cs_pair_to_operation_.insert(csiPair(csPair(BGR, LAB), (int) CV_BGR2Lab));
+    cs_pair_to_operation_.insert(csiPair(csPair(LAB, RGB), (int) CV_Lab2RGB));
+    cs_pair_to_operation_.insert(csiPair(csPair(LAB, BGR), (int) CV_Lab2BGR));
+
     cs_to_encoding_[YUV] = enc::yuv;
     cs_to_encoding_[RGB] = enc::rgb;
     cs_to_encoding_[BGR] = enc::bgr;
     cs_to_encoding_[HSL] = enc::hsl;
     cs_to_encoding_[HSV] = enc::hsv;
     cs_to_encoding_[MONO] = enc::mono;
+    cs_to_encoding_[LAB] = enc::lab;
 }
 
 void ColorConvert::process()
