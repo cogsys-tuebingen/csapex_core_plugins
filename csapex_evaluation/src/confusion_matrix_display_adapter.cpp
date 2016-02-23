@@ -24,27 +24,40 @@ ConfusionMatrixTableModel::ConfusionMatrixTableModel()
 
 void ConfusionMatrixTableModel::update(const ConfusionMatrix& confusion)
 {
+    confusion_ = confusion;
 
     int new_dim = confusion_.classes.size();
-    if(dim != new_dim) {
+
+    if(dim < new_dim) {
         beginInsertRows(QModelIndex(), dim, new_dim - 1);
         beginInsertColumns(QModelIndex(), dim, new_dim - 1);
 
-        dim = new_dim;
-
         endInsertRows();
         endInsertColumns();
+
+    } else if(new_dim < dim) {
+        beginRemoveRows(QModelIndex(), new_dim, dim - 1);
+        beginRemoveColumns(QModelIndex(), new_dim, dim - 1);
+
+        endRemoveRows();
+        endRemoveColumns();
     }
 
-    confusion_ = confusion;
+    dim = new_dim;
 
+    sum.clear();
     sum.resize(dim);
 
-    for(int col = 0; col < dim; ++col) {
-        sum[col] = 0;
-        for(int row = 0; row < dim; ++row) {
-            sum[col] += confusion.histogram.at(std::make_pair(confusion.classes[row], confusion.classes[col]));
+    try {
+        for(int col = 0; col < dim; ++col) {
+            sum[col] = 0;
+            for(int row = 0; row < dim; ++row) {
+                sum[col] += confusion.histogram.at(std::make_pair(confusion.classes[row], confusion.classes[col]));
+            }
         }
+    } catch(const std::exception& e) {
+        sum.clear();
+        dim = 0;
     }
 }
 
