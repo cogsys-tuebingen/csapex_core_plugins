@@ -23,6 +23,10 @@
   <description>Calculates the normal surface vectors.</description>
   <tags>PointCloud, Normal</tags>
 </class>
+<class type="csapex::ScaleIntensity" base_class_type="csapex::Node">
+  <description>Scales each intensity value in a point cloud</description>
+  <tags>PointCloud, Intensity</tags>
+</class>
 
 
 <class type="csapex::CloudRenderer" base_class_type="csapex::Node">

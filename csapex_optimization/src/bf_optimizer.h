@@ -22,7 +22,9 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
-    virtual void tick() override;
+
+    virtual bool canTick() override;
+    virtual bool tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
 
     int stepsNecessary();
     void restart();
@@ -54,6 +56,11 @@ private:
 
     bool init_;
     bool running_;
+    bool next_tick_;
+    bool finished_;
+
+    int sent_;
+
     int step_;
     std::vector<int> current_index_;
 };

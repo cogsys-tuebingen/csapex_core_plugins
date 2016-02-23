@@ -66,18 +66,23 @@ void ROCCurveAdapter::display()
         return;
     }
 
-    const std::map<double, ROCCurve::Entry>& entries = node->getEntries();
+    QVector<double> x;
+    QVector<double> y;
 
-    QVector<double> fpr;
-    QVector<double> tpr;
+    if(node->getType() == ROCCurve::Type::ROC) {
+        for(const ROCCurve::Entry& entry : node->getEntries()) {
+            y.push_back(entry.recall);
+            x.push_back(entry.specificity);
+        }
 
-    for(const auto& pair : entries) {
-        const ROCCurve::Entry& entry = pair.second;
-        tpr.push_back(entry.tpr);
-        fpr.push_back(entry.fpr);
+    } else if(node->getType() == ROCCurve::Type::PR) {
+        for(const ROCCurve::Entry& entry : node->getEntries()) {
+            y.push_back(entry.recall);
+            x.push_back(entry.precision);
+        }
     }
 
-    roc_curve_->setSamples(fpr, tpr);
+    roc_curve_->setSamples(x, y);
     plot_widget_->replot();
 }
 /// MOC

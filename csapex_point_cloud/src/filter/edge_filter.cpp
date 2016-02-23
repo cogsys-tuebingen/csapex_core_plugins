@@ -41,6 +41,10 @@ public:
                                 ("offset",
                                  1, 16, 1, 1),
                                 offset_);
+        parameters.addParameter(param::ParameterFactory::declareRange
+                                ("min height",
+                                 -5.0, 5.0, 0.0, 0.01),
+                                min_height_);
 
     }
 
@@ -91,22 +95,25 @@ public:
             row < h - offset_;
             ++in_pt, ++out_pt) {
 
-            // don't look at border
-            if(col > offset_ && col < w - offset_) {
+            // don't filter points below min_height
+            if(in_pt->z >= min_height_) {
+                // don't look at border
+                if(col > offset_ && col < w - offset_) {
 
-                double min_diff = std::numeric_limits<double>::infinity();
-                for(std::size_t i = 0; i < 4; ++i) {
-                    PointT const* neighbor = in_pt - offset[i];
-                    double diff = std::abs(neighbor->z - in_pt->z);
-                    if(diff < min_diff) {
-                        min_diff = diff;
+                    double min_diff = std::numeric_limits<double>::infinity();
+                    for(std::size_t i = 0; i < 4; ++i) {
+                        PointT const* neighbor = in_pt - offset[i];
+                        double diff = std::abs(neighbor->z - in_pt->z);
+                        if(diff < min_diff) {
+                            min_diff = diff;
+                        }
                     }
-                }
 
-                if(min_diff > max_distance_) {
-                    out_pt->x = std::numeric_limits<float>::quiet_NaN ();
-                    out_pt->y = std::numeric_limits<float>::quiet_NaN ();
-                    out_pt->z = std::numeric_limits<float>::quiet_NaN ();
+                    if(min_diff > max_distance_) {
+                        out_pt->x = std::numeric_limits<float>::quiet_NaN ();
+                        out_pt->y = std::numeric_limits<float>::quiet_NaN ();
+                        out_pt->z = std::numeric_limits<float>::quiet_NaN ();
+                    }
                 }
             }
 
@@ -123,6 +130,8 @@ private:
 
     double max_distance_;
     int offset_;
+
+    double min_height_;
 };
 
 }

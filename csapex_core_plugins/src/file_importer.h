@@ -23,11 +23,11 @@ public:
 
     void import();
 
-    virtual void process() override;
+    virtual void process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
     virtual bool canTick() override;
-    virtual void tick() override;
+    virtual bool tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
 
-    bool doImport(const QString& file_path);
+    bool createMessageProvider(const QString& file_path);
     void doImportDir(const QString& dir);
 
 private:
@@ -42,6 +42,7 @@ private:
 
     Slot* play_;
     bool playing_;
+    bool end_triggered_;
 
     Trigger* begin_;
     Trigger* end_;

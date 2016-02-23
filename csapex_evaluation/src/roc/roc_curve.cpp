@@ -34,6 +34,19 @@ void ROCCurve::setupParameters(Parameterizable& parameters)
         entries_.clear();
     });
 
+    std::map<std::string, int> type = {
+        {"ROC", (int) Type::ROC},
+        {"Precision/Recall", (int) Type::PR}
+    };
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("type",
+                                                                                 csapex::param::ParameterDescription("Diagram type."),
+                                                                                 type,
+                                                                                 (int) Type::ROC),
+                            [this](param::Parameter* p) {
+        type_ = static_cast<Type>(p->as<int>());
+    });
+
 
     parameters.addParameter(param::ParameterFactory::declareRange
                             ("width",
@@ -57,6 +70,12 @@ void ROCCurve::process()
             throw std::logic_error("needs a confusion matrix with exactly 2 classes");
         }
 
+        double threshold = msg::getValue<double>(in_threshold_);
+
+        if(!std::isnan(cm.threshold) && cm.threshold != threshold) {
+            throw std::logic_error("threshold is wrong...");
+        }
+
         int tp = cm.histogram.at(std::make_pair(1, 1));
         int tn = cm.histogram.at(std::make_pair(0, 0));
         int fp = cm.histogram.at(std::make_pair(0, 1));
@@ -65,9 +84,10 @@ void ROCCurve::process()
         int n = tn + fp;
 
         Entry entry;
-        entry.threshold = msg::getValue<double>(in_threshold_);
-        entry.tpr = tp / (double) p;
-        entry.fpr = fp / (double) n;
+        entry.threshold = threshold;
+        entry.recall = tp / (double) p;
+        entry.specificity = fp / (double) n;
+        entry.precision = tp / (double) (tp + fp);
 
         entries_[entry.threshold] = entry;
     }
@@ -75,9 +95,23 @@ void ROCCurve::process()
     display_request();
 }
 
-const std::map<double, ROCCurve::Entry>& ROCCurve::getEntries() const
+std::vector<ROCCurve::Entry> ROCCurve::getEntries() const
 {
     std::unique_lock<std::recursive_mutex> lock(mutex_);
-    return entries_;
+
+    std::vector<ROCCurve::Entry> res;
+    res.reserve(entries_.size());
+
+    for(const auto& p : entries_) {
+        res.push_back(p.second);
+    }
+
+    std::sort(res.begin(), res.end());
+
+    return res;
 }
 
+ROCCurve::Type ROCCurve::getType() const
+{
+    return type_;
+}

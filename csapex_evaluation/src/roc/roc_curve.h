@@ -17,8 +17,19 @@ class ROCCurve : public Node
 public:
     struct Entry {
         double threshold;
-        double tpr;
-        double fpr;
+        double recall;
+        double specificity;
+        double precision;
+
+        bool operator < (const Entry& rhs) const
+        {
+            return threshold < rhs.threshold;
+        }
+    };
+
+    enum class Type {
+        ROC = 1,
+        PR = 2
     };
 
 public:
@@ -28,7 +39,8 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters) override;
 
-    const std::map<double, Entry>& getEntries() const;
+    Type getType() const;
+    std::vector<Entry> getEntries() const;
 
 public:
     csapex::slim_signal::Signal<void()> display_request;
@@ -39,7 +51,7 @@ private:
 
     mutable std::recursive_mutex mutex_;
 
-
+    Type type_;
     std::map<double, Entry> entries_;
 };
 

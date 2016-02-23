@@ -29,7 +29,8 @@ using namespace connection_types;
 
 
 FileImporter::FileImporter()
-    :  playing_(false), directory_import_(false), last_directory_index_(-1), cache_enabled_(false)
+    : playing_(false), end_triggered_(false),
+      directory_import_(false), last_directory_index_(-1), cache_enabled_(false)
 {
 }
 
@@ -82,8 +83,12 @@ void FileImporter::setup(NodeModifier& node_modifier)
     end_ = node_modifier.addTrigger("end");
 
     node_modifier.addSlot("restart", [this](){
+        ainfo << "restart" << std::endl;
+        playing_ = true;
         if(directory_import_) {
-            setParameter("directory/current", -1);
+            setParameter("directory/current", 0);
+            int current = readParameter<int>("directory/current");
+            ainfo << "set current to "  << current << std::endl;
         } else {
             if(provider_) {
                 provider_->restart();
@@ -102,6 +107,7 @@ void FileImporter::setup(NodeModifier& node_modifier)
     node_modifier.addSlot("abort", [this](){
         setParameter("directory/play", false);
         setParameter("directory/latch", false);
+        ainfo << "abort" << std::endl;
         setParameter("directory/current", (int) dir_files_.size());
         playing_ = false;
         end_->trigger();
@@ -121,9 +127,9 @@ void FileImporter::changeMode()
     }
 }
 
-void FileImporter::process()
+void FileImporter::process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters)
 {
-    tick();
+    tick(node_modifier, parameters);
 }
 
 bool FileImporter::canTick()
@@ -131,7 +137,14 @@ bool FileImporter::canTick()
     if(!node_modifier_->isSource()) {
         return false;
     }
-    if(directory_import_) {
+    if(directory_import_) {        
+        if(play_->isConnected()) {
+            bool can_tick = playing_ && readParameter<int>("directory/current") <= (int) dir_files_.size();
+            if(!can_tick) {
+           //     ainfo << "cannot tick: " << playing_ << ", " << readParameter<int>("directory/current") << " <= " <<  (int) dir_files_.size()<< std::endl;
+            }
+            return can_tick;
+        }
         return (readParameter<int>("directory/current") < (int) dir_files_.size()) ||
                 readParameter<bool>("directory/loop")  ||
                 readParameter<bool>("directory/latch");
@@ -145,7 +158,7 @@ bool FileImporter::canTick()
     }
 }
 
-void FileImporter::tick()
+bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
 {
     if(provider_ && provider_->hasNext()) {
         for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
@@ -160,6 +173,8 @@ void FileImporter::tick()
                 }
             }
         }
+        return true;
+
     } else if(directory_import_) {
         bool play = readParameter<bool>("directory/play") ||
                 (play_->isConnected() && playing_);
@@ -170,14 +185,25 @@ void FileImporter::tick()
         bool index_changed = current != last_directory_index_;
 
         if(!play && !latch && !index_changed) {
-            return;
+            return false;
         }
         INTERLUDE("directory");
 
         int files = dir_files_.size();
 
+        ainfo << "current: " << current << std::endl;
         if(current >= files) {
-            end_->trigger();
+            if(!end_triggered_) {
+                end_->trigger();
+                ainfo << "end" << std::endl;
+            }
+
+            if((play_->isConnected() && playing_)) {
+                //playing_ = false; // it can happen that playing_ is set to true before we do this...
+                end_triggered_ = true;
+                return false;
+            }
+
             if(loop) {
                 current = 0;
             } else if(latch && files > 0) {
@@ -193,22 +219,27 @@ void FileImporter::tick()
 
         if(current < files) {
             if(current == 0) {
+                end_triggered_ = false;
                 begin_->trigger();
             }
 
-            if(doImport(QString::fromStdString(dir_files_.at(current)))) {
-                if(canTick()) {
-                    //tick();
-                }
-            }
+            createMessageProvider(QString::fromStdString(dir_files_.at(current)));
+
 
             if(play) {
                 ++current;
             }
+
+            ainfo << "set current " << current << std::endl;
+            setParameter("directory/current", current);
+            int current = readParameter<int>("directory/current");
+            ainfo << "have set current to "  << current << std::endl;
+            last_directory_index_ = current;
         }
-        setParameter("directory/current", current);
-        last_directory_index_ = current;
     }
+
+
+    return false;
 }
 
 void FileImporter::doImportDir(const QString &dir_string)
@@ -244,7 +275,7 @@ void FileImporter::doImportDir(const QString &dir_string)
     current->setMax<int>(dir_files_.size());
 }
 
-bool FileImporter::doImport(const QString& file_path)
+bool FileImporter::createMessageProvider(const QString& file_path)
 {
     INTERLUDE("doImport");
     if(file_path.isEmpty()) {
@@ -374,6 +405,6 @@ void FileImporter::import()
         doImportDir(QString::fromStdString(readParameter<std::string>("directory")));
         removeTemporaryParameters();
     } else {
-        doImport(QString::fromStdString(readParameter<std::string>("path")));
+        createMessageProvider(QString::fromStdString(readParameter<std::string>("path")));
     }
 }

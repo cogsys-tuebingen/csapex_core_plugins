@@ -90,6 +90,8 @@ add_library(csapex_core_plugins_node
 
     src/say_text.cpp
     src/text_convert.cpp
+
+    src/synchronizer.cpp
 )
 
 target_link_libraries(csapex_core_plugins_node csapex_core_lib

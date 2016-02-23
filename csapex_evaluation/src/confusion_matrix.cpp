@@ -1,9 +1,13 @@
 /// HEADER
 #include <csapex_evaluation/confusion_matrix.h>
 
+/// SYSTEM
+#include <limits>
+
 using namespace csapex;
 
 ConfusionMatrix::ConfusionMatrix()
+    : threshold(std::numeric_limits<double>::quiet_NaN())
 {
 //    initializeClass(0);
 //    initializeClass(1);

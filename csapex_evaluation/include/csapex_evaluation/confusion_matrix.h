@@ -22,6 +22,9 @@ public:
     std::map<int, std::string> class_names;
     std::map<std::pair<int, int>, int> histogram;
 
+
+    double threshold;
+
 private:
     void resetClass(int _class);
     void initializeClass(int _class);
