@@ -37,6 +37,7 @@ private:
     void updateProvider();
     void updateOutputs();
 
+    void signalBegin();
     void signalEnd();
 
 private:

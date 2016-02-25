@@ -136,7 +136,7 @@ bool FileImporter::canTick()
     if(!node_modifier_->isSource()) {
         return false;
     }
-    if(directory_import_) {        
+    if(directory_import_) {
         if(play_->isConnected()) {
             bool can_tick = playing_ && readParameter<int>("directory/current") <= (int) dir_files_.size();
             if(!can_tick) {
@@ -159,22 +159,30 @@ bool FileImporter::canTick()
 
 bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
 {
-    if(provider_ && provider_->hasNext()) {
-        for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
-            INTERLUDE_STREAM("slot " << slot);
+    if(provider_) {
+        if(provider_->hasNext()) {
+            for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
+                INTERLUDE_STREAM("slot " << slot);
 
-            Output* output = outputs_[slot];
+                Output* output = outputs_[slot];
 
-            if(msg::isConnected(output)) {
-                Message::Ptr msg = provider_->next(slot);
-                if(msg) {
-                    msg::publish(output, msg);
+                if(msg::isConnected(output)) {
+                    Message::Ptr msg = provider_->next(slot);
+                    if(msg) {
+                        msg::publish(output, msg);
+                    }
                 }
             }
-        }
-        return true;
+            return true;
 
-    } else if(directory_import_) {
+        } else if(!directory_import_) {
+            // the importer is done and we are only importing one file
+            // -> report tick as successful
+            return true;
+        }
+    }
+
+    if((!provider_ || !provider_->hasNext()) && directory_import_) {
         bool play = readParameter<bool>("directory/play") ||
                 (play_->isConnected() && playing_);
         bool latch = readParameter<bool>("directory/latch");
@@ -194,10 +202,6 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
         if(current >= files) {
             if(!end_triggered_) {
                 signalEnd();
-                auto end = connection_types::makeEmpty<EndOfSequenceMessage>();
-                for(auto& o : node_handle_->getAllOutputs()) {
-                    msg::publish(o.get(), end);
-                }
                 return true;
             }
 
@@ -220,8 +224,7 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
 
         if(current < files) {
             if(current == 0) {
-                end_triggered_ = false;
-                begin_->trigger();
+                signalBegin();
             }
 
             createMessageProvider(QString::fromStdString(dir_files_.at(current)));
@@ -326,8 +329,8 @@ bool FileImporter::createMessageProvider(const QString& file_path)
         provider_->slot_count_changed.connect(std::bind(&FileImporter::updateOutputs, this));
 
         if(!directory_import_) {
-            provider_->begin.connect(std::bind(&Trigger::trigger, begin_));
-            provider_->no_more_messages.connect(std::bind(&Trigger::trigger, end_));
+            provider_->begin.connect(std::bind(&FileImporter::signalBegin, this));
+            provider_->no_more_messages.connect(std::bind(&FileImporter::signalEnd, this));
         }
 
         {
@@ -356,11 +359,22 @@ void FileImporter::updateProvider()
     }
 }
 
+void FileImporter::signalBegin()
+{
+    end_triggered_ = false;
+    begin_->trigger();
+}
+
 void FileImporter::signalEnd()
 {
     if(!end_triggered_) {
         end_triggered_ = true;
         end_->trigger();
+
+        auto end = connection_types::makeEmpty<EndOfSequenceMessage>();
+        for(auto& o : node_handle_->getAllOutputs()) {
+            msg::publish(o.get(), end);
+        }
     }
 }
 
