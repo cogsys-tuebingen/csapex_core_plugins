@@ -14,6 +14,8 @@
 #include <csapex/msg/any_message.h>
 #include <csapex/utility/interlude.hpp>
 #include <csapex/signal/slot.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/msg/end_of_sequence_message.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>
@@ -83,12 +85,10 @@ void FileImporter::setup(NodeModifier& node_modifier)
     end_ = node_modifier.addTrigger("end");
 
     node_modifier.addSlot("restart", [this](){
-        ainfo << "restart" << std::endl;
         playing_ = true;
         if(directory_import_) {
             setParameter("directory/current", 0);
             int current = readParameter<int>("directory/current");
-            ainfo << "set current to "  << current << std::endl;
         } else {
             if(provider_) {
                 provider_->restart();
@@ -107,10 +107,9 @@ void FileImporter::setup(NodeModifier& node_modifier)
     node_modifier.addSlot("abort", [this](){
         setParameter("directory/play", false);
         setParameter("directory/latch", false);
-        ainfo << "abort" << std::endl;
         setParameter("directory/current", (int) dir_files_.size());
         playing_ = false;
-        end_->trigger();
+        signalEnd();
     });
     play_->connected.connect([this](){
         setParameter("directory/play", false);
@@ -145,7 +144,7 @@ bool FileImporter::canTick()
             }
             return can_tick;
         }
-        return (readParameter<int>("directory/current") < (int) dir_files_.size()) ||
+        return (readParameter<int>("directory/current") <= (int) dir_files_.size()) ||
                 readParameter<bool>("directory/loop")  ||
                 readParameter<bool>("directory/latch");
     } else {
@@ -191,16 +190,18 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
 
         int files = dir_files_.size();
 
-        ainfo << "current: " << current << std::endl;
+        //ainfo << "current: " << current << std::endl;
         if(current >= files) {
             if(!end_triggered_) {
-                end_->trigger();
-                ainfo << "end" << std::endl;
+                signalEnd();
+                auto end = connection_types::makeEmpty<EndOfSequenceMessage>();
+                for(auto& o : node_handle_->getAllOutputs()) {
+                    msg::publish(o.get(), end);
+                }
+                return true;
             }
 
             if((play_->isConnected() && playing_)) {
-                //playing_ = false; // it can happen that playing_ is set to true before we do this...
-                end_triggered_ = true;
                 return false;
             }
 
@@ -230,10 +231,8 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
                 ++current;
             }
 
-            ainfo << "set current " << current << std::endl;
             setParameter("directory/current", current);
             int current = readParameter<int>("directory/current");
-            ainfo << "have set current to "  << current << std::endl;
             last_directory_index_ = current;
         }
     }
@@ -354,6 +353,14 @@ void FileImporter::updateProvider()
 {
     if(provider_) {
         provider_->parameterChanged();
+    }
+}
+
+void FileImporter::signalEnd()
+{
+    if(!end_triggered_) {
+        end_triggered_ = true;
+        end_->trigger();
     }
 }
 

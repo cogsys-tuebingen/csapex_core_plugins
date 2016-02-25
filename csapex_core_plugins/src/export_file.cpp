@@ -11,7 +11,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/core/settings.h>
 #include <csapex/factory/message_factory.h>
-#include <csapex/msg/no_message.h>
+#include <csapex/msg/marker_message.h>
 
 /// SYSTEM
 #include <fstream>
@@ -96,7 +96,7 @@ void ExportFile::exportVector(const connection_types::VectorMessage::ConstPtr& v
 
 void ExportFile::exportSingle(const ConnectionType::ConstPtr& msg)
 {
-    if(std::dynamic_pointer_cast<connection_types::NoMessage const>(msg)) {
+    if(std::dynamic_pointer_cast<connection_types::MarkerMessage const>(msg)) {
         return;
     }
 

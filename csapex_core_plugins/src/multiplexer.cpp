@@ -40,7 +40,7 @@ public:
             connection_types::VectorMessage::Ptr composed(new connection_types::VectorMessage);
 //            composed->value = msg;
             for(auto& m : msg) {
-                if(std::dynamic_pointer_cast<connection_types::NoMessage const>(m) == nullptr) {
+                if(std::dynamic_pointer_cast<connection_types::MarkerMessage const>(m) == nullptr) {
                     composed->value.push_back(m);
                 }
             }

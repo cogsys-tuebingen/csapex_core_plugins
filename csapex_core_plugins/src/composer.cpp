@@ -6,7 +6,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex_core_plugins/composite_message.h>
 #include <csapex/msg/any_message.h>
-#include <csapex/msg/no_message.h>
+#include <csapex/msg/marker_message.h>
 
 namespace csapex
 {
@@ -35,7 +35,7 @@ public:
 
         for(auto input : node_modifier_->getMessageInputs()) {
             ConnectionType::ConstPtr msg = msg::getMessage(input);
-            if(std::dynamic_pointer_cast<connection_types::NoMessage const>(msg)) {
+            if(std::dynamic_pointer_cast<connection_types::MarkerMessage const>(msg)) {
                 return;
             }
             composite->value.push_back(msg);

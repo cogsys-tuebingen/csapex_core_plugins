@@ -37,6 +37,8 @@ private:
     void updateProvider();
     void updateOutputs();
 
+    void signalEnd();
+
 private:
     MessageProvider::Ptr provider_;
 
