@@ -44,6 +44,7 @@ private:
 
     Slot* play_;
     bool playing_;
+    bool abort_;
     bool end_triggered_;
 
     Trigger* begin_;

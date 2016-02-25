@@ -31,7 +31,7 @@ using namespace connection_types;
 
 
 FileImporter::FileImporter()
-    : playing_(false), end_triggered_(false),
+    : playing_(false), abort_(false), end_triggered_(false),
       directory_import_(false), last_directory_index_(-1), cache_enabled_(false)
 {
 }
@@ -105,11 +105,8 @@ void FileImporter::setup(NodeModifier& node_modifier)
         playing_ = false;
     });
     node_modifier.addSlot("abort", [this](){
-        setParameter("directory/play", false);
-        setParameter("directory/latch", false);
-        setParameter("directory/current", (int) dir_files_.size());
-        playing_ = false;
-        signalEnd();
+//        playing_ = false;
+        abort_ = true;
     });
     play_->connected.connect([this](){
         setParameter("directory/play", false);
@@ -159,6 +156,17 @@ bool FileImporter::canTick()
 
 bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
 {
+    if(abort_) {
+        abort_ = false;
+
+        setParameter("directory/play", false);
+        setParameter("directory/latch", false);
+        setParameter("directory/current", (int) dir_files_.size());
+        signalEnd();
+
+        return true;
+    }
+
     if(provider_ && provider_->hasNext()) {
         for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
             INTERLUDE_STREAM("slot " << slot);
@@ -194,10 +202,6 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
         if(current >= files) {
             if(!end_triggered_) {
                 signalEnd();
-                auto end = connection_types::makeEmpty<EndOfSequenceMessage>();
-                for(auto& o : node_handle_->getAllOutputs()) {
-                    msg::publish(o.get(), end);
-                }
                 return true;
             }
 
@@ -361,6 +365,11 @@ void FileImporter::signalEnd()
     if(!end_triggered_) {
         end_triggered_ = true;
         end_->trigger();
+
+        auto end = connection_types::makeEmpty<EndOfSequenceMessage>();
+        for(auto& o : node_handle_->getAllOutputs()) {
+            msg::publish(o.get(), end);
+        }
     }
 }
 
