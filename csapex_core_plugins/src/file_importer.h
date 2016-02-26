@@ -37,6 +37,9 @@ private:
     void updateProvider();
     void updateOutputs();
 
+    void triggerSignalBegin();
+    void triggerSignalEnd();
+
     void signalBegin();
     void signalEnd();
 
@@ -45,7 +48,11 @@ private:
 
     Slot* play_;
     bool playing_;
+    bool abort_;
     bool end_triggered_;
+
+    bool trigger_signal_begin_;
+    bool trigger_signal_end_;
 
     Trigger* begin_;
     Trigger* end_;

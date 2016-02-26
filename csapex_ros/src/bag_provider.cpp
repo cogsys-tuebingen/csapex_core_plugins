@@ -130,6 +130,7 @@ std::vector<std::string> BagProvider::getExtensions() const
 
 void BagProvider::restart()
 {
+    std::cerr << "restart bag file" << std::endl;
     state.getParameter("bag/frame")->set(0);
     state.getParameter("bag/play")->set(true);
 }
@@ -138,15 +139,15 @@ bool BagProvider::hasNext()
 {
     bool has_next = false;
     // check if the users wants to scroll in time
-    if(state.readParameter<int>("bag/frame") != frame_) {
+    if(state.readParameter<int>("bag/frame") < frames_) {
         has_next = initiated;
     }
     // check if we are at the end
     else if(frame_ == frames_) {
-        if(!end_signaled_) {
+        //if(!end_signaled_) {
             no_more_messages();
             end_signaled_ = true;
-        }
+        //}
 
         if(!state.readParameter<bool>("bag/loop")) {
             has_next = state.readParameter<bool>("bag/latch");
@@ -201,6 +202,8 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
             }
         //}
     }
+
+    end_signaled_ = false;
 
     return r;
 }
