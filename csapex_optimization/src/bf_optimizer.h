@@ -26,6 +26,8 @@ public:
     virtual bool canTick() override;
     virtual bool tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
 
+    virtual void endOfSequence();
+
     int stepsNecessary();
     void restart();
 
@@ -57,7 +59,6 @@ private:
     bool init_;
     bool running_;
     bool next_tick_;
-    bool finished_;
 
     int sent_;
 

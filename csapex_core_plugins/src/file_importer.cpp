@@ -86,10 +86,12 @@ void FileImporter::setup(NodeModifier& node_modifier)
     end_ = node_modifier.addTrigger("end");
 
     node_modifier.addSlot("restart", [this](){
+        ainfo << "restart" << std::endl;
         playing_ = true;
         if(directory_import_) {
             setParameter("directory/current", 0);
             int current = readParameter<int>("directory/current");
+            apex_assert_hard(current == 0);
         } else {
             if(provider_) {
                 provider_->restart();
@@ -141,7 +143,7 @@ bool FileImporter::canTick()
         if(play_->isConnected()) {
             bool can_tick = playing_ && readParameter<int>("directory/current") <= (int) dir_files_.size();
             if(!can_tick) {
-           //     ainfo << "cannot tick: " << playing_ << ", " << readParameter<int>("directory/current") << " <= " <<  (int) dir_files_.size()<< std::endl;
+                ainfo << "cannot tick: " << playing_ << ", " << readParameter<int>("directory/current") << " <= " <<  (int) dir_files_.size()<< std::endl;
             }
             return can_tick;
         }
@@ -256,6 +258,7 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
                 ++current;
             }
 
+            ainfo << "setting current to " << current << std::endl;
             setParameter("directory/current", current);
             int current = readParameter<int>("directory/current");
             last_directory_index_ = current;
@@ -360,9 +363,11 @@ bool FileImporter::createMessageProvider(const QString& file_path)
             provider_->load(path.toStdString());
         }
 
-        if(!directory_import_) {
-            setTemporaryParameters(provider_->getParameters(), std::bind(&FileImporter::updateProvider, this));
-        }
+        //if(!directory_import_) {
+        setTemporaryParameters(provider_->getParameters(), std::bind(&FileImporter::updateProvider, this));
+        //}
+
+        provider_->restart();
 
         return provider_.get();
 
@@ -464,8 +469,8 @@ void FileImporter::import()
     provider_.reset();
 
     if(directory_import_) {
-        doImportDir(QString::fromStdString(readParameter<std::string>("directory")));
         removeTemporaryParameters();
+        doImportDir(QString::fromStdString(readParameter<std::string>("directory")));
     } else {
         createMessageProvider(QString::fromStdString(readParameter<std::string>("path")));
     }

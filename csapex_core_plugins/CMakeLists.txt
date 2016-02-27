@@ -52,6 +52,8 @@ target_link_libraries(csapex_core_lib
 
 add_library(csapex_core_plugins_core
     src/register_core_plugins.cpp
+
+    src/file_drag_io.cpp
 )
 
 target_link_libraries(csapex_core_plugins_core csapex_core_lib
@@ -101,13 +103,12 @@ target_link_libraries(csapex_core_plugins_node csapex_core_lib
 
 
 add_library(csapex_core_plugins_qt
-    src/file_drag_io.cpp
     src/output_display_adapter.cpp
     src/text_display_adapter.cpp
 )
 
 
-target_link_libraries(csapex_core_plugins_qt csapex_core_plugins_node csapex_core_lib
+target_link_libraries(csapex_core_plugins_qt csapex_core_lib
     ${catkin_LIBRARIES}
 )
 

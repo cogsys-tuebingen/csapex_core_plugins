@@ -37,7 +37,7 @@ public:
     void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
 
-    const Metrics& getMetrics() const;
+    Metrics getMetrics() const;
 
 public:
     csapex::slim_signal::Signal<void()> display_request;

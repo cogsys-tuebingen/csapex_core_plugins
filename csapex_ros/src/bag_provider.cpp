@@ -26,7 +26,7 @@ BagProvider::BagProvider()
     std::vector<std::string> set;
 
     state.addParameter(csapex::param::ParameterFactory::declareBool("bag/play", true));
-    state.addParameter(csapex::param::ParameterFactory::declareBool("bag/loop", true));
+    state.addParameter(csapex::param::ParameterFactory::declareBool("bag/loop", false));
     state.addParameter(csapex::param::ParameterFactory::declareBool("bag/latch", false));
     state.addParameter(csapex::param::ParameterFactory::declareRange("bag/frame", 0, 1, 0, 1));
     state.addParameter(csapex::param::ParameterFactory::declareBool("bag/publish tf", false));
@@ -137,9 +137,15 @@ void BagProvider::restart()
 
 bool BagProvider::hasNext()
 {
+    if(!initiated) {
+        setTopic();
+    }
+
     bool has_next = false;
     // check if the users wants to scroll in time
-    if(state.readParameter<int>("bag/frame") < frames_) {
+    int f = state.readParameter<int>("bag/frame");
+
+    if(f < frames_) {
         has_next = initiated;
     }
     // check if we are at the end
@@ -174,10 +180,6 @@ bool BagProvider::hasNext()
 connection_types::Message::Ptr BagProvider::next(std::size_t slot)
 {
     connection_types::Message::Ptr r;
-
-    if(!initiated) {
-        setTopic();
-    }
 
     std::string topic = topics_[slot];
 

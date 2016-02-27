@@ -20,6 +20,7 @@ public:
 
 private:
     Input* input_;
+    Output* output_;
 
 public:
     csapex::slim_signal::Signal<void(int)> display_request;

@@ -49,6 +49,8 @@ private:
     Input* in_confusion_;
     Input* in_threshold_;
 
+    Output* out_auc_;
+
     mutable std::recursive_mutex mutex_;
 
     Type type_;

@@ -78,7 +78,7 @@ void EvaluateBinaryClassifier::process()
     display_request();
 }
 
-const EvaluateBinaryClassifier::Metrics& EvaluateBinaryClassifier::getMetrics() const
+EvaluateBinaryClassifier::Metrics EvaluateBinaryClassifier::getMetrics() const
 {
     std::unique_lock<std::recursive_mutex> lock(mutex_);
     return metrics_;

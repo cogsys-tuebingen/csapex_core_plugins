@@ -5,6 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
@@ -21,6 +22,7 @@ PointCount::PointCount()
 void PointCount::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    output_ = node_modifier.addOutput<double>("count");
 }
 
 void PointCount::process()
@@ -34,5 +36,6 @@ template <class PointT>
 void PointCount::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     int c = cloud->points.size();
+    msg::publish(output_, c);
     display_request(c);
 }

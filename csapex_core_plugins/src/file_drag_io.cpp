@@ -13,8 +13,9 @@
 
 /// SYSTEM
 #include <QMimeData>
+#include <QFile>
+#include <QDir>
 #include <iostream>
-#include <boost/regex.h>
 
 namespace csapex
 {
@@ -52,7 +53,10 @@ class FileHandler : public DragIOHandler
             }
 
             std::cout << "file: " << files.first().toString().toStdString() << std::endl;
-            QFile file(files.first().toLocalFile());
+
+            QString file_str = files.first().toLocalFile();
+            QFile file(file_str);
+
             if(file.exists()) {
                 GraphFacade* gf = view->getGraphFacade();
                 Graph* graph = gf->getGraph();
@@ -60,7 +64,14 @@ class FileHandler : public DragIOHandler
 
                 NodeState::Ptr state(new NodeState(nullptr));
                 GenericState::Ptr child_state(new GenericState);
-                child_state->addParameter(csapex::param::ParameterFactory::declareFileInputPath("path", files.first().toLocalFile().toStdString()));
+
+                QDir dir(file_str);
+                child_state->addParameter(csapex::param::ParameterFactory::declareBool("import directory", dir.exists()));
+                if(dir.exists()) {
+                    child_state->addParameter(csapex::param::ParameterFactory::declareFileInputPath("directory", file_str.toStdString()));
+                } else {
+                    child_state->addParameter(csapex::param::ParameterFactory::declareFileInputPath("path", file_str.toStdString()));
+                }
                 state->setParameterState(child_state);
 
                 std::string type("csapex::FileImporter");

@@ -2,6 +2,9 @@
 <class type="csapex::RegisterCorePlugins" base_class_type="csapex::CorePlugin">
   <description></description>
 </class>
+<class type="csapex::FileHandler" base_class_type="csapex::DragIOHandler">
+  <description></description>
+</class>
 </library>
 
 <library path="libcsapex_core_plugins_node">
@@ -128,9 +131,6 @@
 
 
 <library path="libcsapex_core_plugins_qt">
-<class type="csapex::FileHandler" base_class_type="csapex::DragIOHandler">
-  <description></description>
-</class>
 <class type="csapex::OutputDisplayAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>

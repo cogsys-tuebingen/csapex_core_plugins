@@ -16,9 +16,13 @@ public:
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 private:
     Input* connector_;
+
+    bool repeat_;
+    std::string last_;
 };
 
 }

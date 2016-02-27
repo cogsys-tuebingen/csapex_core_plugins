@@ -23,8 +23,7 @@ BFOptimizer::BFOptimizer()
       best_fitness_(std::numeric_limits<double>::infinity()),
       init_(false),
       running_(false),
-      next_tick_(false),
-      finished_(false)
+      next_tick_(false)
 {
 }
 
@@ -44,7 +43,7 @@ void BFOptimizer::setupParameters(Parameterizable& parameters)
 
 void BFOptimizer::setup(NodeModifier& node_modifier)
 {
-    in_  = node_modifier.addInput<double>("Fitness");
+    in_  = node_modifier.addOptionalInput<double>("Fitness");
     out_last_fitness_  = node_modifier.addOutput<double>("Last Fitness");
     out_best_fitness_  = node_modifier.addOutput<double>("Best Fitness");
 
@@ -58,56 +57,20 @@ void BFOptimizer::setup(NodeModifier& node_modifier)
 
 bool BFOptimizer::canTick()
 {
-    bool can_tick = running_ && (next_tick_ || finished_);
-    if(!can_tick) {
-        ainfo << "cannot tick: " << running_ << ", " << next_tick_ << ", " << finished_ << std::endl;
-    } else {
-        ainfo << "can tick" << std::endl;
-    }
+    bool can_tick = running_ && next_tick_;
     return can_tick;
 }
 
 bool BFOptimizer::tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters)
 {
-    if(next_tick_ && !finished_){
-        auto m = msg::getMessage(in_);
-        if(m) {
-            ainfo << "not finished, " << fitness_ << " after " << m->sequenceNumber() << std::endl;
-        } else {
-            ainfo << "not finished." << std::endl;
-        }
-        next_tick_ = false;
-
-        ainfo << "sent " << ++sent_ << std::endl;
-
-        return true;
-
-    } else if(finished_) {
-
-        ainfo << "got fitness: " << fitness_ << " after " << msg::getMessage(in_)->sequenceNumber() << std::endl;
-
-        last_fitness_ = fitness_;
-
-        if(fitness_ < best_fitness_) {
-            best_fitness_ = fitness_;
-        }
-
-        if(!nextStep()) {
-            stop();
-        }
-
-        finished_ = false;
-        next_tick_ = false;
-
-        ainfo << "sent " << ++sent_ << std::endl;
-
-        return true;
-
-    }  else {
-        ainfo << "neither next tick nor finished." << std::endl;
-
-        return false;
+    if(best_fitness_ != std::numeric_limits<double>::infinity()) {
+        msg::publish(out_best_fitness_, best_fitness_);
     }
+    if(last_fitness_ != std::numeric_limits<double>::infinity()) {
+        msg::publish(out_last_fitness_, last_fitness_);
+    }
+
+    return true;
 }
 
 int BFOptimizer::stepsNecessary()
@@ -175,19 +138,13 @@ void BFOptimizer::process()
         return;
     }
 
-    fitness_ = msg::getValue<double>(in_);
+    auto m = msg::getMessage(in_);
 
-    if(!finished_) {
-        ainfo << "allow another tick" << std::endl;
-        next_tick_ = true;
+    if(auto vm = std::dynamic_pointer_cast<connection_types::GenericValueMessage<double> const>(m)){
+        fitness_ = msg::getValue<double>(in_);
     }
 
-    if(best_fitness_ != std::numeric_limits<double>::infinity()) {
-        msg::publish(out_best_fitness_, best_fitness_);
-    }
-    if(last_fitness_ != std::numeric_limits<double>::infinity()) {
-        msg::publish(out_last_fitness_, last_fitness_);
-    }
+    next_tick_ = true;
 }
 
 void BFOptimizer::start()
@@ -196,9 +153,9 @@ void BFOptimizer::start()
     init_ = false;
     running_ = true;
     next_tick_ = true;
-    finished_ = false;
 
     sent_ = 0;
+    step_ = 0;
 
     setTickEnabled(true);
     setTickFrequency(100.);
@@ -218,6 +175,11 @@ void BFOptimizer::doStop()
     running_ = false;
 }
 
+void BFOptimizer::endOfSequence()
+{
+    finish();
+}
+
 void BFOptimizer::finish()
 {
     ainfo << "called finish" << std::endl;
@@ -226,5 +188,19 @@ void BFOptimizer::finish()
         return;
     }
 
-    finished_ = true;
+    ainfo << "got fitness: " << fitness_ << " after " << msg::getMessage(in_)->sequenceNumber() << std::endl;
+
+    last_fitness_ = fitness_;
+
+    if(fitness_ < best_fitness_) {
+        best_fitness_ = fitness_;
+    }
+
+    if(!nextStep()) {
+        stop();
+    }
+
+    next_tick_ = true;
+
+    ainfo << "sent " << ++sent_ << std::endl;
 }

@@ -25,6 +25,7 @@ void ROCCurve::setup(NodeModifier& node_modifier)
     in_confusion_ = node_modifier.addInput<connection_types::ConfusionMatrixMessage>("Anything");
     in_threshold_ = node_modifier.addInput<double>("Discriminization\nThreshold");
 
+    out_auc_ = node_modifier.addOutput<double>("AUC");
 }
 
 void ROCCurve::setupParameters(Parameterizable& parameters)
@@ -93,6 +94,11 @@ void ROCCurve::process()
     }
 
     display_request();
+
+    // TODO!
+    double auc = 1.0;
+
+    msg::publish(out_auc_, auc);
 }
 
 std::vector<ROCCurve::Entry> ROCCurve::getEntries() const
