@@ -201,5 +201,5 @@ QSize ImageWidget::minimumSizeHint() const
 
 
 /// MOC
-#include "moc_output_display_adapter.cpp"
+#include "../moc_output_display_adapter.cpp"
 

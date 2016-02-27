@@ -35,13 +35,13 @@ include_directories(include
 )
 
 add_library(csapex_core_lib
-    src/vector_message.cpp
-    src/composite_message.cpp
-    src/point_message.cpp
-    src/timestamp_message.cpp
-    src/duration_message.cpp
-    src/interactive_node.cpp
-    src/collection_node.cpp
+    src/core/vector_message.cpp
+    src/core/composite_message.cpp
+    src/core/point_message.cpp
+    src/core/timestamp_message.cpp
+    src/core/duration_message.cpp
+    src/core/interactive_node.cpp
+    src/core/collection_node.cpp
 
     ${QT_RESOURCES}
 )
@@ -51,9 +51,9 @@ target_link_libraries(csapex_core_lib
 )
 
 add_library(csapex_core_plugins_core
-    src/register_core_plugins.cpp
+    src/core/register_core_plugins.cpp
 
-    src/file_drag_io.cpp
+    src/core/file_drag_io.cpp
 )
 
 target_link_libraries(csapex_core_plugins_core csapex_core_lib
@@ -63,37 +63,39 @@ target_link_libraries(csapex_core_plugins_core csapex_core_lib
 
 
 add_library(csapex_core_plugins_node
-    src/import_file.cpp
-    src/relay.cpp
-    src/delay.cpp
-    src/holdable_buffer.cpp
-    src/export_cout.cpp
-    src/export_file.cpp
-    src/file_importer.cpp
-    src/import_cin.cpp
-    src/double_input.cpp
-    src/text_input.cpp
+    src/io/import_file.cpp
+    src/io/export_cout.cpp
+    src/io/export_file.cpp
+    src/io/file_importer.cpp
+    src/io/import_cin.cpp
 
-    src/stamp_delay_measurement.cpp
-    src/signal_delay_measurement.cpp
-    src/calculate_duration.cpp
-    src/duration_convertion.cpp
+    src/tools/relay.cpp
+    src/tools/delay.cpp
+    src/tools/holdable_buffer.cpp
+    src/text/text_input.cpp
 
-    src/demultiplexer.cpp
-    src/multiplexer.cpp
+    src/math/double_input.cpp
 
-    src/vector_merge.cpp
+    src/tools/stamp_delay_measurement.cpp
+    src/tools/signal_delay_measurement.cpp
+    src/tools/calculate_duration.cpp
+    src/tools/duration_convertion.cpp
 
-    src/composer.cpp
-    src/decomposer.cpp
+    src/tools/demultiplexer.cpp
+    src/tools/multiplexer.cpp
 
-    src/output_display.cpp
-    src/text_display.cpp
+    src/tools/vector_merge.cpp
 
-    src/say_text.cpp
-    src/text_convert.cpp
+    src/tools/composer.cpp
+    src/tools/decomposer.cpp
 
-    src/synchronizer.cpp
+    src/display/output_display.cpp
+    src/display/text_display.cpp
+
+    src/text/say_text.cpp
+    src/text/text_convert.cpp
+
+    src/tools/synchronizer.cpp
 )
 
 target_link_libraries(csapex_core_plugins_node csapex_core_lib
@@ -103,8 +105,8 @@ target_link_libraries(csapex_core_plugins_node csapex_core_lib
 
 
 add_library(csapex_core_plugins_qt
-    src/output_display_adapter.cpp
-    src/text_display_adapter.cpp
+    src/display/output_display_adapter.cpp
+    src/display/text_display_adapter.cpp
 )
 
 

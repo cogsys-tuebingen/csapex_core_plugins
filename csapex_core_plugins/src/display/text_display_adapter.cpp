@@ -63,5 +63,5 @@ bool TextDisplayAdapter::isResizable() const
 }
 
 /// MOC
-#include "moc_text_display_adapter.cpp"
+#include "../moc_text_display_adapter.cpp"
 

@@ -2,7 +2,7 @@
 #include "register_core_plugins.h"
 
 /// COMPONENT
-#include "file_importer.h"
+#include "../io/file_importer.h"
 
 /// PROJECT
 #include <csapex/factory/message_factory.h>
