@@ -10,7 +10,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(PointCountAdapter, csapex::PointCount)
 
 PointCountAdapter::PointCountAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<PointCount> node)
-    : NodeAdapter(worker, parent), wrapped_(node)
+    : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
@@ -25,6 +25,8 @@ void PointCountAdapter::setupUi(QBoxLayout* layout)
     layout->addWidget(number_);
 
     QObject::connect(this, SIGNAL(displayRequest(int)), number_, SLOT(display(int)));
+
+    DefaultNodeAdapter::setupUi(layout);
 }
 
 void PointCountAdapter::display(int img)

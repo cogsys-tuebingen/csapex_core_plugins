@@ -11,6 +11,7 @@
 #include <csapex/msg/any_message.h>
 #include <csapex/signal/trigger.h>
 #include <csapex/param/trigger_parameter.h>
+#include <csapex/msg/end_of_sequence_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::BFOptimizer, csapex::Node)
 
@@ -101,7 +102,7 @@ bool BFOptimizer::nextStep()
 
     bool p = increaseParameter(0);
 
-    ainfo << "trigger next" << std::endl;
+    //DEBUGainfo << "trigger next" << std::endl;
     trigger_start_evaluation_->trigger();
 
     return p;
@@ -175,20 +176,22 @@ void BFOptimizer::doStop()
     running_ = false;
 }
 
-void BFOptimizer::endOfSequence()
+void BFOptimizer::processMarker(const MessageConstPtr &marker)
 {
-    finish();
+    if(std::dynamic_pointer_cast<connection_types::EndOfSequenceMessage const>(marker)) {
+        finish();
+    }
 }
 
 void BFOptimizer::finish()
 {
-    ainfo << "called finish" << std::endl;
+    //DEBUGainfo << "called finish" << std::endl;
     if(!running_) {
         ainfo << "not finishing - not running" << std::endl;
         return;
     }
 
-    ainfo << "got fitness: " << fitness_ << " after " << msg::getMessage(in_)->sequenceNumber() << std::endl;
+    //DEBUGainfo << "got fitness: " << fitness_ << " after " << msg::getMessage(in_)->sequenceNumber() << std::endl;
 
     last_fitness_ = fitness_;
 
@@ -202,5 +205,5 @@ void BFOptimizer::finish()
 
     next_tick_ = true;
 
-    ainfo << "sent " << ++sent_ << std::endl;
+    //DEBUGainfo << "sent " << ++sent_ << std::endl;
 }

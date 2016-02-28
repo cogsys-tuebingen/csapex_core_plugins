@@ -26,7 +26,7 @@ public:
     virtual bool canTick() override;
     virtual bool tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
 
-    virtual void endOfSequence();
+    virtual void processMarker(const csapex::connection_types::MessageConstPtr &marker) override;
 
     int stepsNecessary();
     void restart();

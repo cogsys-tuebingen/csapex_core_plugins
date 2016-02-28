@@ -63,39 +63,37 @@ target_link_libraries(csapex_core_plugins_core csapex_core_lib
 
 
 add_library(csapex_core_plugins_node
-    src/io/import_file.cpp
+
     src/io/export_cout.cpp
     src/io/export_file.cpp
     src/io/file_importer.cpp
     src/io/import_cin.cpp
-
-    src/tools/relay.cpp
-    src/tools/delay.cpp
-    src/tools/holdable_buffer.cpp
-    src/text/text_input.cpp
+    src/io/import_file.cpp
 
     src/math/double_input.cpp
-
-    src/tools/stamp_delay_measurement.cpp
-    src/tools/signal_delay_measurement.cpp
-    src/tools/calculate_duration.cpp
-    src/tools/duration_convertion.cpp
-
-    src/tools/demultiplexer.cpp
-    src/tools/multiplexer.cpp
-
-    src/tools/vector_merge.cpp
-
-    src/tools/composer.cpp
-    src/tools/decomposer.cpp
-
-    src/display/output_display.cpp
-    src/display/text_display.cpp
+    src/math/statistics.cpp
 
     src/text/say_text.cpp
     src/text/text_convert.cpp
+    src/text/text_input.cpp
 
+    src/tools/calculate_duration.cpp
+    src/tools/composer.cpp
+    src/tools/decomposer.cpp
+    src/tools/delay.cpp
+    src/tools/demultiplexer.cpp
+    src/tools/duration_convertion.cpp
+    src/tools/holdable_buffer.cpp
+    src/tools/multiplexer.cpp
+    src/tools/relay.cpp
+    src/tools/shutdown.cpp
+    src/tools/signal_delay_measurement.cpp
+    src/tools/stamp_delay_measurement.cpp
     src/tools/synchronizer.cpp
+    src/tools/vector_merge.cpp
+
+    src/display/output_display.cpp
+    src/display/text_display.cpp
 )
 
 target_link_libraries(csapex_core_plugins_node csapex_core_lib

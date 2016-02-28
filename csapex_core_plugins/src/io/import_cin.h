@@ -16,12 +16,14 @@ public:
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& params) override;
     virtual void tick() override;
 
 private:
     void readCin();
     void publishNextMessage();
     void readMessages();
+    void readYAML(const std::string& message);
 
 private:
     Output* connector_;
@@ -29,6 +31,10 @@ private:
     std::stringstream buffer;
 
     std::deque<ConnectionTypeConstPtr> message_buffer_;
+    ConnectionTypeConstPtr last_message_;
+
+    bool import_yaml_;
+    bool latch_;
 };
 
 }

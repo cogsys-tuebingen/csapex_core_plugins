@@ -50,12 +50,14 @@ private:
     bool playing_;
     bool abort_;
     bool end_triggered_;
+    bool quit_on_end_;
 
     bool trigger_signal_begin_;
     bool trigger_signal_end_;
 
     Trigger* begin_;
     Trigger* end_;
+    Trigger* new_provider_;
 
     bool directory_import_;
     int last_directory_index_;

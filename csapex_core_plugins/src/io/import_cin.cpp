@@ -9,7 +9,9 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/serialization/message_serializer.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportCin, csapex::Node)
 
@@ -30,6 +32,13 @@ void ImportCin::setup(NodeModifier& node_modifier)
     connector_ = node_modifier.addOutput<connection_types::AnyMessage>("Anything");
 }
 
+void ImportCin::setupParameters(Parameterizable &params)
+{
+    params.addParameter(param::ParameterFactory::declareBool("import yaml", true), import_yaml_);
+    params.addParameter(param::ParameterFactory::declareBool("latch", false), latch_);
+}
+
+
 void ImportCin::tick()
 {
     readCin();
@@ -43,7 +52,12 @@ void ImportCin::publishNextMessage()
         auto msg = message_buffer_.front();
         message_buffer_.pop_front();
 
+        last_message_ = msg;
+
         msg::publish(connector_, msg);
+
+    } else if(latch_ && last_message_) {
+        msg::publish(connector_, last_message_);
     }
 }
 
@@ -56,7 +70,6 @@ void ImportCin::readCin()
     readMessages();
 }
 
-
 void ImportCin::readMessages()
 {
     std::string buffered = buffer.str();
@@ -66,22 +79,12 @@ void ImportCin::readMessages()
         std::string message = buffered.substr(0, pos);
         buffered = buffered.substr(pos+3);
 
-        try {
-            YAML::Node doc = YAML::Load(message);
-
-            try {
-                ConnectionType::Ptr msg = MessageSerializer::readYaml(doc);
-                message_buffer_.push_back(msg);
-
-            } catch(const MessageSerializer::DeserializationError& e) {
-                ainfo << "could not deserialize message: \n";
-                ainfo << doc << std::endl;
-                ainfo << e.what();
-            }
-
-
-        } catch(YAML::ParserException& e) {
-            ainfo << "YAML::ParserException: " << e.what() << ", node was: " << message << "\n";
+        if(import_yaml_) {
+            readYAML(message);
+        } else {
+            auto msg = connection_types::makeEmptyMessage<connection_types::GenericValueMessage<std::string>>();
+            msg->value = message;
+            message_buffer_.push_back(msg);
         }
 
         pos = buffered.find("---");
@@ -89,4 +92,27 @@ void ImportCin::readMessages()
 
     buffer.str(std::string());
     buffer << buffered;
+}
+
+
+
+void ImportCin::readYAML(const std::string& message)
+{
+    try {
+        YAML::Node doc = YAML::Load(message);
+
+        try {
+            ConnectionType::Ptr msg = MessageSerializer::readYaml(doc);
+            message_buffer_.push_back(msg);
+
+        } catch(const MessageSerializer::DeserializationError& e) {
+            ainfo << "could not deserialize message: \n";
+            ainfo << doc << std::endl;
+            ainfo << e.what();
+        }
+
+
+    } catch(YAML::ParserException& e) {
+        ainfo << "YAML::ParserException: " << e.what() << ", node was: " << message << "\n";
+    }
 }

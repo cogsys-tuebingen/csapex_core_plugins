@@ -16,6 +16,7 @@
 #include <csapex/signal/slot.h>
 #include <csapex/model/node_handle.h>
 #include <csapex/msg/end_of_sequence_message.h>
+#include <csapex/msg/end_of_program_message.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>
@@ -44,32 +45,35 @@ FileImporter::~FileImporter()
 
 void FileImporter::setupParameters(Parameterizable& parameters)
 {
-    csapex::param::Parameter::Ptr directory = csapex::param::ParameterFactory::declareBool("import directory", false);
+    param::Parameter::Ptr directory = param::ParameterFactory::declareBool("import directory", false);
     parameters.addParameter(directory);
 
     std::function<bool()> cond_file = [directory]() { return !directory->as<bool>(); };
     std::function<bool()> cond_dir = [directory]() { return directory->as<bool>(); };
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("recursive import", false), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("recursive import", false), cond_dir);
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
+    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
+    parameters.addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
+    parameters.addConditionalParameter(param::ParameterFactory::declareText("directory/current_file", ""), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/show parameters", false), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("directory/play", true), cond_dir);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("directory/latch", false), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/play", true), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/latch", false), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/quit on end", false), cond_dir, quit_on_end_);
 
-    csapex::param::Parameter::Ptr immediate = csapex::param::ParameterFactory::declareBool("playback/immediate", false);
+    param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
     parameters.addParameter(immediate, std::bind(&FileImporter::changeMode, this));
 
-    std::function<void(csapex::param::Parameter*)> setf = std::bind(&TickableNode::setTickFrequency, this, std::bind(&csapex::param::Parameter::as<double>, std::placeholders::_1));
+    std::function<void(param::Parameter*)> setf = std::bind(&TickableNode::setTickFrequency, this, std::bind(&param::Parameter::as<double>, std::placeholders::_1));
     std::function<bool()> conditionf = [immediate]() { return !immediate->as<bool>(); };
-    addConditionalParameter(csapex::param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
+    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, setf);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("cache", 0), [this](param::Parameter* p) {
+    parameters.addParameter(param::ParameterFactory::declareBool("cache", 0), [this](param::Parameter* p) {
         cache_enabled_ = p->as<bool>();
         if(!cache_enabled_) {
             cache_.clear();
@@ -85,8 +89,10 @@ void FileImporter::setup(NodeModifier& node_modifier)
     begin_ = node_modifier.addTrigger("begin");
     end_ = node_modifier.addTrigger("end");
 
+    new_provider_ = node_modifier.addTrigger("new\nprovider");
+
     node_modifier.addSlot("restart", [this](){
-        ainfo << "restart" << std::endl;
+        //DEBUGainfo << "restart" << std::endl;
         playing_ = true;
         if(directory_import_) {
             setParameter("directory/current", 0);
@@ -126,7 +132,7 @@ void FileImporter::changeMode()
     }
 }
 
-void FileImporter::process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters)
+void FileImporter::process(NodeModifier& node_modifier, Parameterizable& parameters)
 {
     tick(node_modifier, parameters);
 }
@@ -143,7 +149,7 @@ bool FileImporter::canTick()
         if(play_->isConnected()) {
             bool can_tick = playing_ && readParameter<int>("directory/current") <= (int) dir_files_.size();
             if(!can_tick) {
-                ainfo << "cannot tick: " << playing_ << ", " << readParameter<int>("directory/current") << " <= " <<  (int) dir_files_.size()<< std::endl;
+                ////DEBUGainfo << "cannot tick: " << playing_ << ", " << readParameter<int>("directory/current") << " <= " <<  (int) dir_files_.size()<< std::endl;
             }
             return can_tick;
         }
@@ -160,7 +166,7 @@ bool FileImporter::canTick()
     }
 }
 
-bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
+bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
 {
     if(trigger_signal_begin_) {
         signalBegin();
@@ -183,6 +189,10 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
         return true;
     }
 
+
+    bool play = readParameter<bool>("directory/play") ||
+            (play_->isConnected() && playing_);
+
     if(provider_) {
          if(provider_->hasNext()) {
             for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
@@ -199,16 +209,26 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
             }
             return true;
 
-        } else if(!directory_import_) {
-             // the importer is done and we are only importing one file
-             // -> report tick as successful
-             return true;
+        } else {
+             if(directory_import_) {
+                 if(play) {
+                     int current = readParameter<int>("directory/current");
+                     if(current == last_directory_index_) {
+                         ++current;
+
+                         //DEBUGainfo << "increasing current to " << current << std::endl;
+                         setParameter("directory/current", current);
+                     }
+                 }
+             } else {
+                // the importer is done and we are only importing one file
+                // -> report tick as successful
+                return true;
+             }
         }
     }
 
     if((!provider_ || !provider_->hasNext()) && directory_import_) {
-        bool play = readParameter<bool>("directory/play") ||
-                (play_->isConnected() && playing_);
         bool latch = readParameter<bool>("directory/latch");
         bool loop = readParameter<bool>("directory/loop");
 
@@ -222,7 +242,7 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
 
         int files = dir_files_.size();
 
-        //ainfo << "current: " << current << std::endl;
+        //DEBUGainfo << "current: " << current << std::endl;
         if(current >= files) {
             if(!end_triggered_) {
                 signalEnd();
@@ -252,16 +272,13 @@ bool FileImporter::tick(csapex::NodeModifier& nm, csapex::Parameterizable& p)
             }
 
             createMessageProvider(QString::fromStdString(dir_files_.at(current)));
+            new_provider_->trigger();
 
+            last_directory_index_ = current;
 
-            if(play) {
-                ++current;
-            }
-
-            ainfo << "setting current to " << current << std::endl;
+            //DEBUGainfo << "setting current to " << current << std::endl;
             setParameter("directory/current", current);
             int current = readParameter<int>("directory/current");
-            last_directory_index_ = current;
         }
     }
 
@@ -330,6 +347,10 @@ bool FileImporter::createMessageProvider(const QString& file_path)
         }
     }
 
+    if(directory_import_) {
+        setParameter("directory/current_file", file_path.toStdString());
+    }
+
     file_ = file_path;
     node_modifier_->setNoError();
 
@@ -338,12 +359,11 @@ bool FileImporter::createMessageProvider(const QString& file_path)
         auto pos = cache_.find(path_str);
         if(pos != cache_.end()) {
             provider_ = pos->second;
+            provider_->begin.disconnectAll();
+            provider_->slot_count_changed.disconnectAll();
+            provider_->no_more_messages.disconnectAll();
+
         } else {
-
-            if(!directory_import_) {
-                removeTemporaryParameters();
-            }
-
             INTERLUDE("createMessageProvider");
             provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
             if(cache_enabled_) {
@@ -363,9 +383,9 @@ bool FileImporter::createMessageProvider(const QString& file_path)
             provider_->load(path.toStdString());
         }
 
-        //if(!directory_import_) {
-        setTemporaryParameters(provider_->getParameters(), std::bind(&FileImporter::updateProvider, this));
-        //}
+        if(!directory_import_ || readParameter<bool>("directory/show parameters")) {
+            setTemporaryParameters(provider_->getParameters(), std::bind(&FileImporter::updateProvider, this));
+        }
 
         provider_->restart();
 
@@ -388,19 +408,17 @@ void FileImporter::updateProvider()
 
 void FileImporter::triggerSignalBegin()
 {
-    ainfo << "triggerSignalBegin" << std::endl;
+    //DEBUGainfo << "triggerSignalBegin" << std::endl;
     trigger_signal_begin_ = true;
 }
 
 void FileImporter::triggerSignalEnd()
 {
-    ainfo << "triggerSignalEnd" << std::endl;
     trigger_signal_end_ = true;
 }
 
 void FileImporter::signalBegin()
 {
-    ainfo << "signalBegin" << std::endl;
     trigger_signal_begin_ = false;
 
     end_triggered_ = false;
@@ -409,15 +427,20 @@ void FileImporter::signalBegin()
 
 void FileImporter::signalEnd()
 {
-    ainfo << "signalEnd" << std::endl;
     trigger_signal_end_ = false;
 
     if(!end_triggered_) {
-        ainfo << "signalEnd for real" << std::endl;
         end_triggered_ = true;
         end_->trigger();
 
-        auto end = connection_types::makeEmpty<EndOfSequenceMessage>();
+        ConnectionTypeConstPtr end;
+
+        if(quit_on_end_) {
+            end = connection_types::makeEmpty<EndOfProgramMessage>();
+        } else {
+            end = connection_types::makeEmpty<EndOfSequenceMessage>();
+        }
+
         for(auto& o : node_handle_->getAllOutputs()) {
             msg::publish(o.get(), end);
         }
