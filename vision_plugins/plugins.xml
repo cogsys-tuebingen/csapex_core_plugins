@@ -142,6 +142,12 @@
     </description>
     <tags>Vision, Histogram</tags>
   </class>
+  <class type="vision_plugins::ContrastBrightness" base_class_type="csapex::Node">
+    <description>
+        Adjust contrast and brightness.
+    </description>
+    <tags>Vision, Histogram</tags>
+  </class>
   <class type="vision_plugins::MonoFilter" base_class_type="csapex::Node">
     <description>
         Filter a value range an set other values to defined fix values.

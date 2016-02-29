@@ -70,6 +70,7 @@ add_library(vision_plugins_node
     src/color/color_convert.cpp
     src/color/color_adjustment.cpp
     src/color/yuv422_decoder.cpp
+    src/color/contrast_brightness.cpp
 
     src/features/corner_line_detection.cpp
     src/features/difference_maximum.cpp
