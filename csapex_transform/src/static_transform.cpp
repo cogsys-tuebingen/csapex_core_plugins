@@ -32,9 +32,9 @@ void StaticTransform::setupParameters(Parameterizable &parameters)
     parameters.addParameter(csapex::param::ParameterFactory::declareAngle("roll", 0.0), roll);
     parameters.addParameter(csapex::param::ParameterFactory::declareAngle("pitch", 0.0), pitch);
     parameters.addParameter(csapex::param::ParameterFactory::declareAngle("yaw", 0.0), yaw);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dx", -d, d, 0.0, 0.01), x);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dy", -d, d, 0.0, 0.01), y);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dz", -d, d, 0.0, 0.01), z);
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dx", -d, d, 0.0, 0.001), x);
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dy", -d, d, 0.0, 0.001), y);
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dz", -d, d, 0.0, 0.001), z);
 }
 
 void StaticTransform::process()
