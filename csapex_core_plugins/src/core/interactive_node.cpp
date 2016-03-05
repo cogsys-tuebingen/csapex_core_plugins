@@ -54,7 +54,7 @@ void InteractiveNode::abort()
 
 void InteractiveNode::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
 {
-    finishProcess();
+    beginProcess();
 }
 
 void InteractiveNode::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
