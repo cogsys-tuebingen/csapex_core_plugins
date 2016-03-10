@@ -6,6 +6,7 @@
 
 /// SYSTEM
 #include <deque>
+#include <sstream>
 
 namespace csapex {
 

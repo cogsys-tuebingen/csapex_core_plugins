@@ -32,6 +32,8 @@ void ScanFilter::process()
     ScanMessage::ConstPtr scan_msg = msg::getMessage<ScanMessage>(input_);
     ScanMessage::Ptr filtered_scan_msg(new ScanMessage);
     filtered_scan_msg->value = scan_msg->value;
+    filtered_scan_msg->frame_id = scan_msg->frame_id;
+    filtered_scan_msg->stamp_micro_seconds = scan_msg->stamp_micro_seconds;
 
     const Scan& scan = scan_msg->value;
     Scan& filtered_scan = filtered_scan_msg->value;
