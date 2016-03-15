@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex_transform/transform_message.h>
-#include <csapex_ros/time_stamp_message.h>
+#include <csapex_core_plugins/timestamp_message.h>
 #include <csapex_ros/tf_listener.h>
 
 /// PROJECT
@@ -64,8 +64,11 @@ void DynamicTransform::process()
 
     try {
         if(msg::isConnected(time_in_) && msg::hasMessage(time_in_)) {
-            connection_types::RosTimeStampMessage::ConstPtr time_msg = msg::getMessage<connection_types::RosTimeStampMessage>(time_in_);
-            publishTransform(time_msg->value);
+            connection_types::TimestampMessage::ConstPtr time_msg = msg::getMessage<connection_types::TimestampMessage>(time_in_);
+            auto nano = std::chrono::duration_cast<std::chrono::nanoseconds>(time_msg->value.time_since_epoch());
+            ros::Time time;
+            time.fromNSec(nano.count());
+            publishTransform(time);
         } else {
             publishTransform(ros::Time(0));
         }
@@ -131,7 +134,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
 void DynamicTransform::setup(NodeModifier& node_modifier)
 {
-    time_in_ = node_modifier.addOptionalInput<connection_types::RosTimeStampMessage>("Time");
+    time_in_ = node_modifier.addOptionalInput<connection_types::TimestampMessage>("Time");
 
     output_ = node_modifier.addOutput<connection_types::TransformMessage>("Transform");
 

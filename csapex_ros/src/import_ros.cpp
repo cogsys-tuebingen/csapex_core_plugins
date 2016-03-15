@@ -14,7 +14,7 @@
 #include <csapex/param/set_parameter.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_ros/time_stamp_message.h>
+#include <csapex_core_plugins/timestamp_message.h>
 #include <csapex/utility/timer.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/utility/interlude.hpp>
@@ -43,7 +43,7 @@ ImportRos::ImportRos()
 
 void ImportRos::setup(NodeModifier& node_modifier)
 {
-    input_time_ = node_modifier.addOptionalInput<connection_types::RosTimeStampMessage>("time");
+    input_time_ = node_modifier.addOptionalInput<connection_types::TimestampMessage>("time");
     connector_ = node_modifier.addOutput<connection_types::AnyMessage>("Something");
 }
 
@@ -185,13 +185,17 @@ void ImportRos::processROS()
     }
 
     // INPUT CONNECTED
-    connection_types::RosTimeStampMessage::ConstPtr time = msg::getMessage<connection_types::RosTimeStampMessage>(input_time_);
+    connection_types::TimestampMessage::ConstPtr time = msg::getMessage<connection_types::TimestampMessage>(input_time_);
 
     if(msgs_.empty()) {
         return;
     }
 
-    if(time->value == ros::Time(0)) {
+    ros::Time time_value;
+    auto nano = std::chrono::duration_cast<std::chrono::nanoseconds>(time->value.time_since_epoch());
+    time_value = time_value.fromNSec(nano.count());
+
+    if(time_value == ros::Time(0)) {
         node_modifier_->setWarning("incoming time is 0, using default behaviour");
         publishLatestMessage();
         return;
@@ -205,19 +209,19 @@ void ImportRos::processROS()
 
     // drop old messages
     ros::Duration keep_duration(readParameter<double>("buffer/length"));
-    while(!msgs_.empty() && rosTime(msgs_.front()->stamp_micro_seconds) + keep_duration < time->value) {
+    while(!msgs_.empty() && rosTime(msgs_.front()->stamp_micro_seconds) + keep_duration < time_value) {
         msgs_.pop_front();
     }
 
     if(!msgs_.empty()) {
-        if(rosTime(msgs_.front()->stamp_micro_seconds) > time->value) {
-            // aerr << "time stamp " << time->value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp_micro_seconds) << std::endl;
+        if(rosTime(msgs_.front()->stamp_micro_seconds) > time_value) {
+            // aerr << "time stamp " << time_value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp_micro_seconds) << std::endl;
             // return;
         }
 
         ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
-        if(rosTime(msgs_.front()->stamp_micro_seconds) + max_wait_duration < time->value) {
-            // aerr << "[1] time stamp " << time->value << " is too new" << std::endl;
+        if(rosTime(msgs_.front()->stamp_micro_seconds) + max_wait_duration < time_value) {
+            // aerr << "[1] time stamp " << time_value << " is too new" << std::endl;
             // return;
         }
     }
@@ -225,16 +229,16 @@ void ImportRos::processROS()
 
 
     // wait until we have a message
-    if(!isStampCovered(time->value)) {
+    if(!isStampCovered(time_value)) {
         ros::Rate r(10);
-        while(!isStampCovered(time->value) && running_) {
+        while(!isStampCovered(time_value) && running_) {
             r.sleep();
             ros::spinOnce();
 
             if(!msgs_.empty()) {
                 ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
-                if(rosTime(msgs_.back()->stamp_micro_seconds) + max_wait_duration < time->value) {
-                    aerr << "[2] time stamp " << time->value << " is too new, latest stamp is " << rosTime(msgs_.back()->stamp_micro_seconds) << std::endl;
+                if(rosTime(msgs_.back()->stamp_micro_seconds) + max_wait_duration < time_value) {
+                    aerr << "[2] time stamp " << time_value << " is too new, latest stamp is " << rosTime(msgs_.back()->stamp_micro_seconds) << std::endl;
                     return;
                 }
             }
@@ -247,7 +251,7 @@ void ImportRos::processROS()
     }
 
     std::deque<connection_types::Message::ConstPtr>::iterator first_after = msgs_.begin();
-    while(rosTime((*first_after)->stamp_micro_seconds) < time->value) {
+    while(rosTime((*first_after)->stamp_micro_seconds) < time_value) {
         ++first_after;
     }
 
@@ -263,8 +267,8 @@ void ImportRos::processROS()
     } else {
         std::deque<connection_types::Message::ConstPtr>::iterator last_before = first_after - 1;
 
-        ros::Duration diff1 = rosTime((*first_after)->stamp_micro_seconds) - time->value;
-        ros::Duration diff2 = rosTime((*last_before)->stamp_micro_seconds) - time->value;
+        ros::Duration diff1 = rosTime((*first_after)->stamp_micro_seconds) - time_value;
+        ros::Duration diff2 = rosTime((*last_before)->stamp_micro_seconds) - time_value;
 
         if(diff1 < diff2) {
             msg::publish(connector_, *first_after);

@@ -60,6 +60,8 @@ void Delay::doSleep()
         t -= 10;
     }
     progress_->setProgress(wait_time, wait_time);
+
+    apex_assert_hard(wait_time == readParameter<double>("delay") * 1000);
 }
 
 void Delay::process()

@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex_transform/transform_message.h>
-#include <csapex_ros/time_stamp_message.h>
+#include <csapex_core_plugins/timestamp_message.h>
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -47,8 +47,9 @@ void TransformPublisher::processROS()
 
     ros::Time time;
     if(msg::hasMessage(input_time)) {
-        RosTimeStampMessage::ConstPtr time_msg = msg::getMessage<RosTimeStampMessage>(input_time);
-        time = time_msg->value;
+        TimestampMessage::ConstPtr time_msg = msg::getMessage<TimestampMessage>(input_time);
+        auto nano = std::chrono::duration_cast<std::chrono::nanoseconds>(time_msg->value.time_since_epoch());
+        time.fromNSec(nano.count());
     } else {
         time = ros::Time::now();
     }
@@ -62,5 +63,5 @@ void TransformPublisher::processROS()
 void TransformPublisher::setup(NodeModifier& node_modifier)
 {
     input_transform = node_modifier.addInput<connection_types::TransformMessage>("T");
-    input_time = node_modifier.addOptionalInput<connection_types::RosTimeStampMessage>("time");
+    input_time = node_modifier.addOptionalInput<connection_types::TimestampMessage>("time");
 }

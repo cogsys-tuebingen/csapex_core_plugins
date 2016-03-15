@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex_ros/time_stamp_message.h>
+#include <csapex_core_plugins/timestamp_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
@@ -21,7 +21,7 @@ void ExtractTimeStampCloud::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
 
-    output_ = node_modifier.addOutput<RosTimeStampMessage>("Time");
+    output_ = node_modifier.addOutput<TimestampMessage>("Time");
     output_frame_ = node_modifier.addOutput<std::string>("Target Frame");
 }
 
@@ -35,8 +35,10 @@ void ExtractTimeStampCloud::process()
 template <class PointT>
 void ExtractTimeStampCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    connection_types::RosTimeStampMessage::Ptr time(new connection_types::RosTimeStampMessage);
-    time->value = time->value.fromNSec(cloud->header.stamp * 1000);
+    connection_types::TimestampMessage::Ptr time(new connection_types::TimestampMessage);
+    auto mis = std::chrono::microseconds(cloud->header.stamp);
+    time->value = connection_types::TimestampMessage::Tp(mis);
+    time->stamp_micro_seconds = cloud->header.stamp;
     msg::publish(output_, time);
 
     msg::publish(output_frame_, cloud->header.frame_id);

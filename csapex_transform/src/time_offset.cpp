@@ -2,7 +2,7 @@
 #include "time_offset.h"
 
 /// COMPONENT
-#include <csapex_ros/time_stamp_message.h>
+#include <csapex_core_plugins/timestamp_message.h>
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -26,25 +26,26 @@ void TimeOffset::setupParameters(Parameterizable &parameters)
 
 void TimeOffset::process()
 {
-    connection_types::RosTimeStampMessage::ConstPtr in = msg::getMessage<connection_types::RosTimeStampMessage>(input_);
-    connection_types::RosTimeStampMessage::Ptr time(new connection_types::RosTimeStampMessage);
+    connection_types::TimestampMessage::ConstPtr in = msg::getMessage<connection_types::TimestampMessage>(input_);
+    connection_types::TimestampMessage::Ptr time(new connection_types::TimestampMessage);
 
     double offset = readParameter<double>("offset");
 
-    if(in->value.toNSec() != 0) {
-        aerr << in->value.toNSec() << " + " << offset << " * " << 1e6 << " = " << (in->value.toNSec() + offset * 1e6) << std::endl,
-                time->value = time->value.fromNSec((in->value.toNSec() + offset * 1000000));
-        node_modifier_->setNoError();
-    } else {
+    auto t = in->value;
+
+    if(t.time_since_epoch().count() == 0) {
         node_modifier_->setWarning("Time is 0, using current time as base");
-        ros::Time now = ros::Time::now();
-        time->value = now - ros::Duration(0, offset * 1000000);
+        auto hires = std::chrono::high_resolution_clock::now();
+        t = std::chrono::time_point_cast<std::chrono::microseconds>(hires);
+    } else {
+        node_modifier_->setNoError();
     }
+    time->value = connection_types::TimestampMessage::Tp(t + std::chrono::microseconds(long(offset * 1e6)));
     msg::publish(output_, time);
 }
 
 void TimeOffset::setup(NodeModifier& node_modifier)
 {
-    input_ = node_modifier.addInput<connection_types::RosTimeStampMessage>("Time");
-    output_ = node_modifier.addOutput<connection_types::RosTimeStampMessage>("Time");
+    input_ = node_modifier.addInput<connection_types::TimestampMessage>("Time");
+    output_ = node_modifier.addOutput<connection_types::TimestampMessage>("Time");
 }

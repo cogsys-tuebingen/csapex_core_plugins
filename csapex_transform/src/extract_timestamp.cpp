@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex_ros/time_stamp_message.h>
+#include <csapex_core_plugins/timestamp_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/any_message.h>
@@ -21,15 +21,16 @@ void ExtractTimeStamp::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<AnyMessage>("Message");
 
-    output_ = node_modifier.addOutput<RosTimeStampMessage>("Time");
+    output_ = node_modifier.addOutput<TimestampMessage>("Time");
 }
 
 void ExtractTimeStamp::process()
 {
     Message::ConstPtr msg = msg::getMessage<Message>(input_);
 
-    connection_types::RosTimeStampMessage::Ptr time(new connection_types::RosTimeStampMessage);
-    time->value = time->value.fromNSec(msg->stamp_micro_seconds * 1e3);
+    connection_types::TimestampMessage::Ptr time(new connection_types::TimestampMessage);
+    auto mis = std::chrono::microseconds(msg->stamp_micro_seconds);
+    time->value = connection_types::TimestampMessage::Tp(mis);
     time->stamp_micro_seconds = msg->stamp_micro_seconds;
     msg::publish(output_, time);
 }
