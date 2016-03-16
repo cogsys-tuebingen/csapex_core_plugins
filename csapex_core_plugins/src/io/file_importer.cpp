@@ -115,7 +115,7 @@ void FileImporter::setup(NodeModifier& node_modifier)
     });
     node_modifier.addSlot("abort", [this](){
 //        playing_ = false;
-//        abort_ = true;
+        abort_ = true;
     });
     play_->connected.connect([this](){
         setParameter("directory/play", false);
@@ -181,10 +181,12 @@ bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
     if(abort_) {
         abort_ = false;
 
-        setParameter("directory/play", false);
-        setParameter("directory/latch", false);
+        //setParameter("directory/play", false);
+        //setParameter("directory/latch", false);
         setParameter("directory/current", (int) dir_files_.size());
-        //signalEnd();
+
+        end_triggered_ = false;
+        signalEnd();
 
         return true;
     }
