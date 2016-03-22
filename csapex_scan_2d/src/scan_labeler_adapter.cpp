@@ -49,8 +49,8 @@ void ScanLabelerAdapter::labelSelected()
 
 void ScanLabelerAdapter::labelSelected(int label)
 {
-    QBrush brush(color::fromCount(label), Qt::SolidPattern);
-    QPen pen(color::fromCount(label));
+    QBrush brush(color::fromCount<QColor>(label), Qt::SolidPattern);
+    QPen pen(color::fromCount<QColor>(label));
 
     for(QGraphicsItem* item : view_->scene()->selectedItems()) {
         result_->value.labels[item->data(0).toUInt()] = label;
@@ -264,7 +264,7 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
     result_->value.rays = scan->rays;
     result_->value.labels.resize(scan->rays.size(), 0);
 
-    QBrush brush(color::fromCount(0), Qt::SolidPattern);
+    QBrush brush(color::fromCount<QColor>(0), Qt::SolidPattern);
     for(std::size_t i = 0, n =  scan->rays.size(); i < n; ++i) {
         const lib_laser_processing::LaserBeam& beam = scan->rays[i];
         QGraphicsItem* item = scene->addRect(SCALE * beam.pos_x, SCALE * beam.pos_y, dim, dim, QPen(brush.color()), brush);
