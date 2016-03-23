@@ -26,19 +26,19 @@ HOGExtractor::HOGExtractor()
 
 void HOGExtractor::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareRange("gaussian sigma",
+    addParameter(param::ParameterFactory::declareRange("hog/gaussian sigma",
                                                        csapex::param::ParameterDescription("Standard deviation for Gaussian blur."),
                                                        0.0, 10.0, 0.0, 0.1));
 
-    addParameter(csapex::param::ParameterFactory::declareBool("gamma correction",
+    addParameter(param::ParameterFactory::declareBool("gamma correction",
                                                       csapex::param::ParameterDescription("Enable the gamma correction."),
                                                       true));
 
-    addParameter(csapex::param::ParameterFactory::declareRange("orientation bins",
+    addParameter(param::ParameterFactory::declareRange("orientation bins",
                                                        csapex::param::ParameterDescription("Amount of histogram bins per block."),
                                                        2, 18, 9, 1));
 
-    addParameter(csapex::param::ParameterFactory::declareRange("cell size",
+    addParameter(param::ParameterFactory::declareRange("cell size",
                                                        csapex::param::ParameterDescription("Set the size of a cell"),
                                                        8, 80, 8, 1));
 

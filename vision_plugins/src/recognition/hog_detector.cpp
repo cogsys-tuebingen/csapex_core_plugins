@@ -14,8 +14,6 @@
 /// https://github.com/DaHoC/trainHOG/wiki/trainHOG-Tutorial
 
 /// SYSTEM
-#include "hog.h"
-
 CSAPEX_REGISTER_CLASS(vision_plugins::HOGDetector, csapex::Node)
 
 using namespace csapex;
@@ -28,40 +26,52 @@ HOGDetector::HOGDetector()
 
 void HOGDetector::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("thresh", -10.0, 10.0, 0.0, 0.1));
-    std::map<std::string, int> det_types = {
+    /// scan mode
+    std::map<std::string, int> scan_modes = {
         {"single scale", SINGLE_SCALE},
         {"multi scale", MULTI_SCALE}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("detection type", det_types, (int) SINGLE_SCALE));
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("hog/scan_mode", scan_modes, (int) SINGLE_SCALE),
+                            scan_mode_);
+
+    addParameter(param::ParameterFactory::declareRange("hog/levels",
+                                                       param::ParameterDescription("Scale levels to observe."),
+                                                       1, 128, 64, 1),
+                 hog_.nlevels);
+
+    addParameter(param::ParameterFactory::declareRange("hog/sigma",
+                                                       param::ParameterDescription("Standard deviation for Gaussian blur."),
+                                                       0.0, 10.0, 0.0, 0.1),
+                 hog_.winSigma);
+
+    addParameter(param::ParameterFactory::declareBool("hog/gamma_correction",
+                                                      param::ParameterDescription("Enable the gamma correction."),
+                                                      true),
+                 hog_.gammaCorrection);
+    addParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
+                                                      param::ParameterDescription("Un-/directed gradients."),
+                                                      hog_.signedGradient),
+                 hog_.signedGradient);
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
+                            svm_thresh_);
 
     std::map<std::string, int> svm_types = {
         {"default", DEFAULT},
         {"custom",  CUSTOM},
         {"daimler", DAIMLER}
     };
-    csapex::param::Parameter::Ptr svm_param = csapex::param::ParameterFactory::declareParameterSet("svm type", svm_types, (int) DEFAULT);
-    parameters.addParameter(svm_param);
+    param::Parameter::Ptr svm_param =
+            param::ParameterFactory::declareParameterSet("svm/type", svm_types, (int) DEFAULT);
+    parameters.addParameter(svm_param,
+                            svm_type_);
 
 
-    std::function<bool()> condition = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
+    std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
+    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz"),
+                                       custom_active, std::bind(&HOGDetector::load, this));
+    setParameterEnabled("svm/path", false);
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareFileInputPath("svm path","", "*.yml *.yaml *.tar.gz"),
-                                       condition, std::bind(&HOGDetector::load, this));
-
-    setParameterEnabled("svm path", false);
-
-    addParameter(csapex::param::ParameterFactory::declareRange("window incrementations",
-                                                               csapex::param::ParameterDescription("Scale levels to observe."),
-                                                               1, 128, 64, 1));
-
-    addParameter(csapex::param::ParameterFactory::declareRange("gaussian sigma",
-                                                               csapex::param::ParameterDescription("Standard deviation for Gaussian blur."),
-                                                               0.0, 10.0, 0.0, 0.1));
-
-    addParameter(csapex::param::ParameterFactory::declareBool("gamma correction",
-                                                              csapex::param::ParameterDescription("Enable the gamma correction."),
-                                                              true));
 }
 
 void HOGDetector::setup(NodeModifier& node_modifier)
@@ -73,73 +83,62 @@ void HOGDetector::setup(NodeModifier& node_modifier)
 void HOGDetector::process()
 {
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_);
-    std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
+    VectorMessage::Ptr      out(VectorMessage::make<RoiMessage>());
 
-    HOGDescriptor h;
-
-    double        det_threshold = readParameter<double>("thresh");
-    DetectionType det_type      = (DetectionType) readParameter<int>("detection type");
-    SVMType       svm_type      = (SVMType) readParameter<int>("svm type");
-
-    switch(svm_type) {
+    switch(svm_type_) {
     case DEFAULT:
-        h.winSize.width  = 64;
-        h.winSize.height = 128;
-        h.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+        hog_.winSize.width  = 64;
+        hog_.winSize.height = 128;
+        hog_.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
         break;
     case DAIMLER:
-        h.winSize.width  = 48;
-        h.winSize.height = 96;
-        h.setSVMDetector(HOGDescriptor::getDaimlerPeopleDetector());
+        hog_.winSize.width  = 48;
+        hog_.winSize.height = 96;
+        hog_.setSVMDetector(HOGDescriptor::getDaimlerPeopleDetector());
         break;
     case CUSTOM:
         if(svm_.empty())
             return;
-        h.winSize.width  = svm_width_;
-        h.winSize.height = svm_height_;
-        h.setSVMDetector(svm_);
+        hog_.winSize.width  = hog_win_width_;
+        hog_.winSize.height = hog_win_height_;
+        hog_.setSVMDetector(svm_);
         break;
     default:
         throw std::runtime_error("Unkown SVM type!");
     }
 
-    std::cout << h.svmDetector.size() << std::endl;
-
-    h.gammaCorrection = readParameter<bool>("gamma correction");
-    h.nlevels         = readParameter<int>("window incrementations");
-    h.winSigma        = readParameter<double>("gaussian sigma");
-    if(h.winSigma == 0)
-        h.winSigma = -1;
+    if(hog_.winSigma == 0.0)
+        hog_.winSigma = -1.0;
 
     std::vector<cv::Rect>  loc_rects;
     std::vector<cv::Point> loc_points;
-    switch(det_type) {
+    switch(scan_mode_) {
     case SINGLE_SCALE:
-        h.detect(in->value, loc_points, det_threshold);
+        hog_.detect(in->value, loc_points, svm_thresh_);
         break;
     case MULTI_SCALE:
-        h.detectMultiScale(in->value, loc_rects, det_threshold);
+        hog_.detectMultiScale(in->value, loc_rects, svm_thresh_);
         break;
     default:
         throw std::runtime_error("Unknown detection type!");
     }
 
     for(unsigned int i = 0 ; i < loc_rects.size() ; ++i) {
-        RoiMessage roi;
+        RoiMessage::Ptr roi(new RoiMessage);
         cv::Scalar color(utils_vision::color::bezierColor<cv::Scalar>(i / (float) loc_rects.size()));
-        roi.value = Roi(loc_rects.at(i), color, 0);
-        out->push_back(roi);
+        roi->value = Roi(loc_rects.at(i), color, 0);
+        out->value.push_back(roi);
     }
 
     for(unsigned int i = 0 ; i < loc_points.size() ; ++i) {
-        RoiMessage roi;
+        RoiMessage::Ptr roi(new RoiMessage);
         cv::Scalar color(utils_vision::color::bezierColor<cv::Scalar>(i / (float) loc_points.size()));
         cv::Point &p = loc_points.at(i);
-        cv::Rect r(p.x, p.y, svm_width_, svm_height_);
-        roi.value = Roi(r, color, 0);
-        out->push_back(roi);
+        cv::Rect r(p.x, p.y, hog_win_width_, hog_win_height_);
+        roi->value = Roi(r, color, 0);
+        out->value.push_back(roi);
     }
-    msg::publish<GenericVectorMessage, RoiMessage>(out_, out);
+    msg::publish(out_, out);
 }
 
 void HOGDetector::load()
@@ -157,8 +156,8 @@ void HOGDetector::load()
 
     svm_.clear();
 
-    fs["width"]  >> svm_width_;
-    fs["height"] >> svm_height_;
+    fs["width"]  >> hog_win_width_;
+    fs["height"] >> hog_win_height_;
     fs["svm"]    >> svm_;
 
     if(svm_.empty())

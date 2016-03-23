@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex/param/range_parameter.h>
+#include "hog.h"
 
 namespace vision_plugins {
 class HOGExtractor : public csapex::Node
@@ -11,17 +12,22 @@ class HOGExtractor : public csapex::Node
 public:
     HOGExtractor();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void process() override;
 
 private:
-    csapex::Input                  *in_img_;
-    csapex::Input                  *in_rois_;
-    csapex::Output                 *out_;
+    enum ClassificationType {BACKGROUND = 0, HUMAN = 1, HUMAN_PART = 2, UNKNOWN = 3};
 
-    csapex::param::RangeParameter::Ptr       overlap_;
+    HOGDescriptor   hog_;
+    csapex::Input  *in_img_;
+    csapex::Input  *in_rois_;
+    csapex::Output *out_;
+
+    csapex::param::RangeParameter::Ptr overlap_;
     void updateOverlap();
+
+
 
 };
 }
