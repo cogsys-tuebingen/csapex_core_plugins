@@ -32,7 +32,7 @@ struct FeaturesMessage : public Message
 template <>
 struct type<FeaturesMessage> {
     static std::string name() {
-        return "Features";
+        return "FeaturesMessage";
     }
 };
 }

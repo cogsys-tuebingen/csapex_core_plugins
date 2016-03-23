@@ -11,7 +11,7 @@ using namespace csapex;
 using namespace connection_types;
 
 FeaturesMessage::FeaturesMessage(Message::Stamp stamp)
-    : Message("FeatureMessage", "/", stamp), classification(0)
+    : Message("FeaturesMessage", "/", stamp), classification(0)
 {}
 
 ConnectionType::Ptr FeaturesMessage::clone() const
