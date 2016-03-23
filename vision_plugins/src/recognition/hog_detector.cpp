@@ -11,8 +11,10 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <utils_vision/utils/color_functions.hpp>
 
+/// https://github.com/DaHoC/trainHOG/wiki/trainHOG-Tutorial
+
 /// SYSTEM
-#include <opencv2/objdetect/objdetect.hpp>
+#include "hog.h"
 
 CSAPEX_REGISTER_CLASS(vision_plugins::HOGDetector, csapex::Node)
 
@@ -73,10 +75,7 @@ void HOGDetector::process()
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_);
     std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
 
-    if(!in->hasChannels(1, CV_8U))
-        throw std::runtime_error("Image must be one channel grayscale!");
-
-    cv::HOGDescriptor h;
+    HOGDescriptor h;
 
     double        det_threshold = readParameter<double>("thresh");
     DetectionType det_type      = (DetectionType) readParameter<int>("detection type");
@@ -86,12 +85,12 @@ void HOGDetector::process()
     case DEFAULT:
         h.winSize.width  = 64;
         h.winSize.height = 128;
-        h.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
+        h.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
         break;
     case DAIMLER:
         h.winSize.width  = 48;
         h.winSize.height = 96;
-        h.setSVMDetector(cv::HOGDescriptor::getDaimlerPeopleDetector());
+        h.setSVMDetector(HOGDescriptor::getDaimlerPeopleDetector());
         break;
     case CUSTOM:
         if(svm_.empty())

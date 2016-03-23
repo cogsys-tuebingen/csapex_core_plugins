@@ -57,6 +57,7 @@
 namespace vision_plugins
 {
 
+#define CV_SSE2 0
 
 class MeanshiftGrouping
 {
