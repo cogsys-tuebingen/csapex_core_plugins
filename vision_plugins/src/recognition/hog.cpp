@@ -409,8 +409,8 @@ void HOGDescriptor::copyTo(HOGDescriptor& c) const
     c.signedGradient = signedGradient;
 }
 
-void HOGDescriptor::computeGradient(const cv::Mat& img, cv::Mat& grad, cv::Mat& qangle,
-    cv::Size paddingTL, cv::Size paddingBR) const
+void HOGDescriptor::computeGradientDefault(const cv::Mat& img, cv::Mat& grad, cv::Mat& qangle,
+                                           cv::Size paddingTL, cv::Size paddingBR) const
 {
     CV_Assert( img.type() == CV_8U || img.type() == CV_8UC3 );
 
@@ -660,6 +660,152 @@ void HOGDescriptor::computeGradient(const cv::Mat& img, cv::Mat& grad, cv::Mat& 
     }
 }
 
+template<typename T, bool gamma>
+void HOGDescriptor::computeGradientGeneric(const cv::Mat& img, cv::Mat& grad, cv::Mat& qangle,
+                                           cv::Size paddingTL, cv::Size paddingBR) const
+{
+
+    cv::Size gradsize(img.cols + paddingTL.width + paddingBR.width,
+                      img.rows + paddingTL.height + paddingBR.height);
+    grad.create(gradsize, CV_32FC2);  // <magnitude*(1-alpha), magnitude*alpha>
+    qangle.create(gradsize, CV_8UC2); // [0..nbins-1] - quantized gradient orientation
+
+    cv::Size  wholeSize;
+    cv::Point roiofs;
+    img.locateROI(wholeSize, roiofs);
+
+    int x, y;
+    int cn = img.channels();
+
+    cv::AutoBuffer<int> mapbuf(gradsize.width + gradsize.height + 4);
+    int* xmap = (int*) mapbuf + 1;
+    int* ymap = xmap + gradsize.width + 2;
+
+    const int borderType = (int)cv::BORDER_REFLECT_101;
+
+    for( x = -1; x < gradsize.width + 1; x++ )
+        xmap[x] = cv::borderInterpolate(x - paddingTL.width + roiofs.x,
+        wholeSize.width, borderType) - roiofs.x;
+    for( y = -1; y < gradsize.height + 1; y++ )
+        ymap[y] = cv::borderInterpolate(y - paddingTL.height + roiofs.y,
+        wholeSize.height, borderType) - roiofs.y;
+
+    // x- & y- derivatives for the whole row
+    int width = gradsize.width;
+    cv::AutoBuffer<float> _dbuf(width*4);
+    float* const dbuf = _dbuf;
+    cv::Mat Dx(1, width, CV_32F, dbuf);
+    cv::Mat Dy(1, width, CV_32F, dbuf + width);
+    cv::Mat Mag(1, width, CV_32F, dbuf + width*2);
+    cv::Mat Angle(1, width, CV_32F, dbuf + width*3);
+
+    if (cn == 3)
+    {
+        int end = gradsize.width + 2;
+        xmap -= 1, x = 0;
+        for ( ; x < end; ++x)
+            xmap[x] *= 3;
+        xmap += 1;
+    }
+
+    float angleScale = signedGradient ? (float)(nbins/(2.0*CV_PI)) : (float)(nbins/CV_PI);
+    for( y = 0; y < gradsize.height; y++ )
+    {
+        const T* imgPtr  = img.ptr<T>(ymap[y]);
+        //In case subimage is used ptr() generates an assert for next and prev rows
+        //(see http://code.opencv.org/issues/4149)
+        const T* prevPtr = img.ptr<T>() + img.cols*ymap[y-1];
+        const T* nextPtr = img.ptr<T>() + img.cols*ymap[y+1];
+
+        float* gradPtr = grad.ptr<float>(y);
+        uchar* qanglePtr = qangle.ptr(y);
+
+        if( cn == 1 )
+        {
+            for( x = 0; x < width; x++ )
+            {
+                int x1 = xmap[x];
+                dbuf[x] = (float)(GammaCorrection<gamma>::apply(imgPtr[xmap[x+1]]) -
+                                  GammaCorrection<gamma>::apply(imgPtr[xmap[x-1]]));
+                dbuf[width + x] = (float)(GammaCorrection<gamma>::apply(nextPtr[x1]) -
+                                          GammaCorrection<gamma>::apply(prevPtr[x1]));
+            }
+        }
+        else
+        {
+            x = 0;
+            for( ; x < width; x++ )
+            {
+                int x1 = xmap[x];
+                float dx0, dy0, dx, dy, mag0, mag;
+                const T* p2 = imgPtr + xmap[x+1];
+                const T* p0 = imgPtr + xmap[x-1];
+
+                dx0 = GammaCorrection<gamma>::apply(p2[2]) -
+                      GammaCorrection<gamma>::apply(p0[2]);
+                dy0 = GammaCorrection<gamma>::apply(nextPtr[x1+2]) -
+                      GammaCorrection<gamma>::apply(prevPtr[x1+2]);
+                mag0 = dx0*dx0 + dy0*dy0;
+
+                dx = GammaCorrection<gamma>::apply(p2[1]) -
+                     GammaCorrection<gamma>::apply(p0[1]);
+                dy = GammaCorrection<gamma>::apply(nextPtr[x1+1]) -
+                     GammaCorrection<gamma>::apply(prevPtr[x1+1]);
+
+                mag = dx*dx + dy*dy;
+
+                if( mag0 < mag )
+                {
+                    dx0 = dx;
+                    dy0 = dy;
+                    mag0 = mag;
+                }
+
+                dx = GammaCorrection<gamma>::apply(p2[0]) -
+                     GammaCorrection<gamma>::apply(p0[0]);
+                dy = GammaCorrection<gamma>::apply(nextPtr[x1]) -
+                     GammaCorrection<gamma>::apply(prevPtr[x1]);
+                mag = dx*dx + dy*dy;
+                if( mag0 < mag )
+                {
+                    dx0 = dx;
+                    dy0 = dy;
+                    mag0 = mag;
+                }
+
+                dbuf[x] = dx0;
+                dbuf[x+width] = dy0;
+            }
+        }
+
+        // computing angles and magnidutes
+        cartToPolar( Dx, Dy, Mag, Angle, false );
+
+        // filling the result matrix
+        x = 0;
+        for( ; x < width; x++ )
+        {
+            float mag = dbuf[x+width*2], angle = dbuf[x+width*3]*angleScale - 0.5f;
+            int hidx = cvFloor(angle);
+            angle -= hidx;
+            gradPtr[x*2] = mag*(1.f - angle);
+            gradPtr[x*2+1] = mag*angle;
+
+            if( hidx < 0 )
+                hidx += nbins;
+            else if( hidx >= nbins )
+                hidx -= nbins;
+
+            CV_Assert( (unsigned)hidx < (unsigned)nbins );
+
+            qanglePtr[x*2] = (uchar)hidx;
+            hidx++;
+            hidx &= hidx < nbins ? -1 : 0;
+            qanglePtr[x*2+1] = (uchar)hidx;
+        }
+    }
+}
+
 struct HOGCache
 {
     struct BlockData
@@ -735,7 +881,57 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
     cacheStride = _cacheStride;
     useCache = _useCache;
 
-    descriptor->computeGradient(_img, grad, qangle, _paddingTL, _paddingBR);
+    switch(_img.type()) {
+    case CV_8UC1:
+    case CV_8UC3:
+        descriptor->computeGradientDefault(_img, grad, qangle, _paddingTL, _paddingBR);
+        break;
+    case CV_8SC1:
+    case CV_8SC3:
+        if(descriptor->gammaCorrection)
+            descriptor->computeGradientGeneric<char, true>(_img, grad, qangle, _paddingTL, _paddingBR);
+        else
+            descriptor->computeGradientGeneric<char, false>(_img, grad, qangle, _paddingTL, _paddingBR);
+        break;
+    case CV_16UC1:
+    case CV_16UC3:
+        if(descriptor->gammaCorrection)
+            descriptor->computeGradientGeneric<ushort, true>(_img, grad, qangle, _paddingTL, _paddingBR);
+        else
+            descriptor->computeGradientGeneric<ushort, false>(_img, grad, qangle, _paddingTL, _paddingBR);
+        break;
+    case CV_16SC1:
+    case CV_16SC3:
+        if(descriptor->gammaCorrection)
+            descriptor->computeGradientGeneric<short, true>(_img, grad, qangle, _paddingTL, _paddingBR);
+        else
+            descriptor->computeGradientGeneric<short, false>(_img, grad, qangle, _paddingTL, _paddingBR);
+        break;
+    case CV_32SC1:
+    case CV_32SC3:
+        if(descriptor->gammaCorrection)
+            descriptor->computeGradientGeneric<int, true>(_img, grad, qangle, _paddingTL, _paddingBR);
+        else
+            descriptor->computeGradientGeneric<int, false>(_img, grad, qangle, _paddingTL, _paddingBR);
+        break;
+    case CV_32FC1:
+    case CV_32FC3:
+        if(descriptor->gammaCorrection)
+            descriptor->computeGradientGeneric<float, true>(_img, grad, qangle, _paddingTL, _paddingBR);
+        else
+            descriptor->computeGradientGeneric<float, false>(_img, grad, qangle, _paddingTL, _paddingBR);
+        break;
+    case CV_64FC1:
+    case CV_64FC3:
+        if(descriptor->gammaCorrection)
+            descriptor->computeGradientGeneric<double, true>(_img, grad, qangle, _paddingTL, _paddingBR);
+        else
+            descriptor->computeGradientGeneric<double, false>(_img, grad, qangle, _paddingTL, _paddingBR);
+        break;
+    default:
+        throw std::runtime_error("Type not supported!");
+    }
+
     imgoffset = _paddingTL;
 
     winSize = descriptor->winSize;
@@ -1282,7 +1478,7 @@ void HOGDescriptor::compute(const cv::Mat &_img, std::vector<float>& descriptors
     padding.height = (int)cv::alignSize(std::max(padding.height, 0), cacheStride.height);
     cv::Size paddedImgSize(imgSize.width + padding.width*2, imgSize.height + padding.height*2);
 
-    cv::Mat img = _img.clone();
+    cv::Mat img = _img;
     HOGCache cache(this, img, padding, padding, nwindows == 0, cacheStride);
 
     if( !nwindows )

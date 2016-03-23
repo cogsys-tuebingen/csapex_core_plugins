@@ -75,6 +75,31 @@ public:
     double eps;
 };
 
+template<bool doCorrect>
+struct GammaCorrection
+{
+};
+
+template<>
+struct GammaCorrection<false>
+{
+    template<typename T>
+    static inline T apply(const T value)
+    {
+        return value;
+    }
+};
+
+template<>
+struct GammaCorrection<true>
+{
+    template<typename T>
+    static inline T apply(const T value)
+    {
+        return sqrt(value);
+    }
+};
+
 struct HOGDescriptor
 {
 public:
@@ -166,8 +191,13 @@ public:
                                   double finalThreshold = 2.0,
                                   bool useMeanshiftGrouping = false) const;
 
-    virtual void computeGradient(const cv::Mat& img,  cv::Mat& grad,  cv::Mat& angleOfs,
+    virtual void computeGradientDefault(const cv::Mat& img,  cv::Mat& grad,  cv::Mat& angleOfs,
                                  cv::Size paddingTL = cv::Size(), cv::Size paddingBR = cv::Size()) const;
+
+
+    template<typename T, bool gamma>
+    void computeGradientGeneric(const cv::Mat& img,  cv::Mat& grad,  cv::Mat& angleOfs,
+                                cv::Size paddingTL = cv::Size(), cv::Size paddingBR = cv::Size()) const;
 
     static std::vector<float> getDefaultPeopleDetector();
     static std::vector<float> getDaimlerPeopleDetector();
