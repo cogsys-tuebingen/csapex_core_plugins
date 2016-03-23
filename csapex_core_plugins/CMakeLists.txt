@@ -77,6 +77,7 @@ add_library(csapex_core_plugins_node
     src/text/text_convert.cpp
     src/text/text_input.cpp
 
+    src/tools/cache.cpp
     src/tools/calculate_duration.cpp
     src/tools/composer.cpp
     src/tools/decomposer.cpp
