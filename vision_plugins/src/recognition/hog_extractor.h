@@ -6,6 +6,8 @@
 #include <csapex/param/range_parameter.h>
 #include "hog.h"
 
+/// EXTRACT HOG FEATURE
+
 namespace vision_plugins {
 class HOGExtractor : public csapex::Node
 {

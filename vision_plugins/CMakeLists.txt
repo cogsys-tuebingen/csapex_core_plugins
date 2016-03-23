@@ -118,6 +118,7 @@ add_library(vision_plugins_node
     src/recognition/hog_detector.cpp
     src/recognition/hog_extractor.cpp
     src/recognition/hog.cpp
+    src/recognition/hog_classifier.cpp
     src/recognition/local_patterns.cpp
     src/recognition/local_patterns_histogram.cpp
 
