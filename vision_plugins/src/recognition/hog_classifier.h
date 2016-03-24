@@ -20,8 +20,6 @@ private:
 
     HOGDescriptor hog_;
 
-    void updateHOG();
-
 };
 }
 #endif // HOGCLASSIFIER_H

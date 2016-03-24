@@ -1,4 +1,4 @@
-/// HEADER
+﻿/// HEADER
 #include "hog_extractor.h"
 
 /// PROJECT
@@ -15,6 +15,7 @@
 #include <opencv2/objdetect/objdetect.hpp>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::HOGExtractor, csapex::Node)
+/// TODO : L2HysThreshold - derivAperture
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -26,131 +27,68 @@ HOGExtractor::HOGExtractor()
 
 void HOGExtractor::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareRange("hog/gaussian sigma",
-                                                       csapex::param::ParameterDescription("Standard deviation for Gaussian blur."),
-                                                       0.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/sigma",
+                                                       param::ParameterDescription("Standard deviation for Gaussian blur."),
+                                                       0.0, 10.0, 0.0, 0.1),
+                 hog_.winSigma);
 
-    addParameter(param::ParameterFactory::declareBool("gamma correction",
-                                                      csapex::param::ParameterDescription("Enable the gamma correction."),
-                                                      true));
+    parameters.addParameter(param::ParameterFactory::declareBool("hog/gamma_correction",
+                                                      param::ParameterDescription("Enable the gamma correction."),
+                                                      true),
+                 hog_.gammaCorrection);
+    parameters.addParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
+                                                      param::ParameterDescription("Un-/directed gradients."),
+                                                      hog_.signedGradient),
+                 hog_.signedGradient);
 
-    addParameter(param::ParameterFactory::declareRange("orientation bins",
-                                                       csapex::param::ParameterDescription("Amount of histogram bins per block."),
-                                                       2, 18, 9, 1));
+    addParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
+                                                      param::ParameterDescription("Amount of gradient bins."),
+                                                      2, 18, hog_.nbins, 1),
+                 hog_.nbins);
 
-    addParameter(param::ParameterFactory::declareRange("cell size",
-                                                       csapex::param::ParameterDescription("Set the size of a cell"),
-                                                       8, 80, 8, 1));
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/cells_x",
+                                                                  param::ParameterDescription("Cells in x direction."),
+                                                                  2, 16, 8, 1),
+                            cells_x_);
 
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/cells_y",
+                                                                  param::ParameterDescription("Cells in x direction."),
+                                                                  2, 16, 16, 1),
+                            cells_y_);
 
-    csapex::param::Parameter::Ptr cells_per_block =
-            csapex::param::ParameterFactory::declareRange("cells per block",
-                                                  csapex::param::ParameterDescription("Set the amount of cells in each direction of block."),
-                                                  2, 8, 2, 1);
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/cell_size",
+                                                                  param::ParameterDescription("Size of the cells."),
+                                                                  4, 16, 8, 1),
+                            cell_size_);
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/block size",
+                                                                  param::ParameterDescription("Cell count in both dimension of a block."),
+                                                                  1, 4, 2, 1),
+                            block_size_);
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/bock_stride",
+                                                                  param::ParameterDescription("Overlap of each block in cells."),
+                                                                  1, 3, 1, 1),
+                            block_stride_);
 
-    parameters.addParameter(cells_per_block, std::bind(&HOGExtractor::updateOverlap, this));
-
-    std::function<bool()> k_cond = [cells_per_block]() { return cells_per_block->as<int>() > 2; };
-
-    csapex::param::ParameterPtr o = csapex::param::ParameterFactory::declareRange(
-                "overlap",
-                csapex::param::ParameterDescription("Block overlap given in cells."),
-                1, 7, 1, 1);
-    overlap_ = std::dynamic_pointer_cast<param::RangeParameter>(o);
-
-    parameters.addConditionalParameter(overlap_, k_cond);
 }
 
 void HOGExtractor::setup(NodeModifier& node_modifier)
 {
     in_img_     = node_modifier.addInput<CvMatMessage>("image");
-    in_rois_    = node_modifier.addOptionalInput<GenericVectorMessage, RoiMessage>("rois");
+    in_rois_    = node_modifier.addOptionalInput<VectorMessage, RoiMessage>("rois");
     out_        = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("features");
 }
 
 void HOGExtractor::process()
 {
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_img_);
-    std::shared_ptr<std::vector<FeaturesMessage> > out(new std::vector<FeaturesMessage>);
+    VectorMessage::Ptr      out(VectorMessage::make<FeaturesMessage>());
 
-    if(!in->hasChannels(1, CV_8U))
-        throw std::runtime_error("Image must be one channel grayscale!");
+    hog_.cellSize.width  = cell_size_;
+    hog_.cellSize.height = cell_size_;
+    hog_.winSize.height  = cell_size_ * cells_y_;
+    hog_.winSize.width   = cell_size_ * cells_x_;
+    hog_.blockSize       = hog_.cellSize * block_size_;
+    hog_.blockStride     = hog_.cellSize * block_stride_;
 
-    const cv::Mat &value = in->value;
-
-    double gauss            = readParameter<double>("gaussian sigma");
-    bool   gamma            = readParameter<bool>("gamma correction");
-    int    bins             = readParameter<int>("orientation bins");
-    int    cells_per_block  = readParameter<int>("cells per block");
-    int    cell_size        = readParameter<int>("cell size");
-    int    overlap          = readParameter<int>("overlap");
-
-    int    block_size_px = cells_per_block * cell_size;
-    int    overlap_px    = overlap * cell_size;
-
-    cv::HOGDescriptor d(cv::Size(value.cols, value.rows),
-                        cv::Size(block_size_px, block_size_px),
-                        cv::Size(overlap_px, overlap_px),
-                        cv::Size(cell_size, cell_size),
-                        bins,
-                        0.2,
-                        gauss == 0.0 ? -1 : gauss,
-                        gamma);
-
-    if(!msg::hasMessage(in_rois_)) {
-        if(value.rows < block_size_px)
-            throw std::runtime_error("Image must have at least block height in px.");
-        if(value.cols < block_size_px)
-            throw std::runtime_error("Image must have at least block width in px.");
-        if(value.rows % cell_size != 0)
-            throw std::runtime_error("Images have height as multiple of cell size!");
-        if(value.cols % cell_size != 0)
-            throw std::runtime_error("Images have width as multiple of cell size!");
-
-        FeaturesMessage feature_msg;
-
-        if(!value.empty())
-            d.compute(value, feature_msg.value);
-
-        feature_msg.classification = 0;
-
-        out->push_back(feature_msg);
-
-    } else {
-        std::shared_ptr<std::vector<RoiMessage> const> in_rois =
-                msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
-
-        for(std::vector<RoiMessage>::const_iterator
-            it = in_rois->begin() ;
-            it != in_rois->end() ;
-            ++it) {
-
-            FeaturesMessage feature_msg;
-            cv::Rect const &rect = it->value.rect();
-
-            d.winSize = cv::Size(rect.width, rect.height);
-
-            cv::Mat roi_mat = cv::Mat(value, rect);
-
-            if(!roi_mat.empty())
-                d.compute(roi_mat, feature_msg.value);
-
-            feature_msg.classification = it->value.classification();
-
-            out->push_back(feature_msg);
-        }
-    }
-
-    //    /// BLOCK STEPS X * BLOCK STEPS Y * BINS * CELLS (WITHIN BLOCK)
-
-    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
-}
-
-void HOGExtractor::updateOverlap()
-{
-    if(overlap_->isEnabled()) {
-        int cells_per_block = readParameter<int>("cells per block");
-        overlap_->setMax(cells_per_block - 1);
-        overlap_->set(1);
-    }
+    msg::publish(out_, out);
 }

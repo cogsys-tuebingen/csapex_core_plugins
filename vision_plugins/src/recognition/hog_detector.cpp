@@ -12,6 +12,7 @@
 #include <utils_vision/utils/color_functions.hpp>
 
 /// https://github.com/DaHoC/trainHOG/wiki/trainHOG-Tutorial
+/// TODO : L2HysThreshold - derivAperture
 
 /// SYSTEM
 CSAPEX_REGISTER_CLASS(vision_plugins::HOGDetector, csapex::Node)
@@ -52,6 +53,11 @@ void HOGDetector::setupParameters(Parameterizable& parameters)
                                                       param::ParameterDescription("Un-/directed gradients."),
                                                       hog_.signedGradient),
                  hog_.signedGradient);
+
+    addParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
+                                                      param::ParameterDescription("Amount of gradient bins."),
+                                                      2, 18, hog_.nbins, 1),
+                 hog_.nbins);
 
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
                             svm_thresh_);

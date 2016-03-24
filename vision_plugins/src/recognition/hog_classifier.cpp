@@ -6,8 +6,3 @@ HOGClassifier::HOGClassifier()
 {
 
 }
-
-HOGClassifier::updateHOG()
-{
-
-}
