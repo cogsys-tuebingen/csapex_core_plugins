@@ -19,6 +19,8 @@ public:
     void process() override;
 
 private:
+    enum AdaptionType {SCALE, TRY_GROW, GROW_STRICT};
+
     HOGDescriptor   hog_;
     csapex::Input  *in_img_;
     csapex::Input  *in_rois_;
@@ -29,7 +31,10 @@ private:
     int             cell_size_;
     int             block_size_;
     int             block_stride_;
+    int             adaption_type_;
+    double          ratio_hog_;
 
+    void getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst);
 };
 }
 #endif // HOG_EXTRACTOR_H
