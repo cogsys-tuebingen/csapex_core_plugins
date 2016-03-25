@@ -63,7 +63,7 @@ class MeanshiftGrouping
 {
 public:
     MeanshiftGrouping(const cv::Point3d& densKer, const std::vector<cv::Point3d>& posV,
-        const std::vector<double>& wV, double eps, int maxIter = 20)
+                      const std::vector<double>& wV, double eps, int maxIter = 20)
     {
         densityKernel = densKer;
         weightsV = wV;
@@ -240,7 +240,7 @@ static void groupRectangles_meanshift(std::vector<cv::Rect>& rectList, double de
         hitCenter.y = resultHits[i].y;
         cv::Size s( int(winDetSize.width * scale), int(winDetSize.height * scale) );
         cv::Rect resultRect( int(hitCenter.x-s.width/2), int(hitCenter.y-s.height/2),
-            int(s.width), int(s.height) );
+                             int(s.width), int(s.height) );
 
         if (resultWeights[i] > detectThreshold)
         {
@@ -260,31 +260,31 @@ static int numPartsWithin(int size, int part_size, int stride)
 }
 
 static cv::Size numPartsWithin(cv::Size size, cv::Size part_size,
-                                                cv::Size stride)
+                               cv::Size stride)
 {
     return cv::Size(numPartsWithin(size.width, part_size.width, stride.width),
-        numPartsWithin(size.height, part_size.height, stride.height));
+                    numPartsWithin(size.height, part_size.height, stride.height));
 }
 
 static size_t getBlockHistogramSize(cv::Size block_size, cv::Size cell_size, int nbins)
 {
     cv::Size cells_per_block = cv::Size(block_size.width / cell_size.width,
-        block_size.height / cell_size.height);
+                                        block_size.height / cell_size.height);
     return (size_t)(nbins * cells_per_block.area());
 }
 
 size_t HOGDescriptor::getDescriptorSize() const
 {
     CV_Assert(blockSize.width % cellSize.width == 0 &&
-        blockSize.height % cellSize.height == 0);
+              blockSize.height % cellSize.height == 0);
     CV_Assert((winSize.width - blockSize.width) % blockStride.width == 0 &&
-        (winSize.height - blockSize.height) % blockStride.height == 0 );
+              (winSize.height - blockSize.height) % blockStride.height == 0 );
 
     return (size_t)nbins*
-        (blockSize.width/cellSize.width)*
-        (blockSize.height/cellSize.height)*
-        ((winSize.width - blockSize.width)/blockStride.width + 1)*
-        ((winSize.height - blockSize.height)/blockStride.height + 1);
+            (blockSize.width/cellSize.width)*
+            (blockSize.height/cellSize.height)*
+            ((winSize.width - blockSize.width)/blockStride.width + 1)*
+            ((winSize.height - blockSize.height)/blockStride.height + 1);
 }
 
 double HOGDescriptor::getWinSigma() const
@@ -296,8 +296,8 @@ bool HOGDescriptor::checkDetectorSize() const
 {
     size_t detectorSize = svmDetector.size(), descriptorSize = getDescriptorSize();
     return detectorSize == 0 ||
-        detectorSize == descriptorSize ||
-        detectorSize == descriptorSize + 1;
+            detectorSize == descriptorSize ||
+            detectorSize == descriptorSize + 1;
 }
 
 void HOGDescriptor::setSVMDetector(const std::vector<float> &_svmDetector)
@@ -416,7 +416,7 @@ void HOGDescriptor::computeGradientDefault(const cv::Mat& img, cv::Mat& grad, cv
     CV_Assert( img.type() == CV_8U || img.type() == CV_8UC3 );
 
     cv::Size gradsize(img.cols + paddingTL.width + paddingBR.width,
-        img.rows + paddingTL.height + paddingBR.height);
+                      img.rows + paddingTL.height + paddingBR.height);
     grad.create(gradsize, CV_32FC2);  // <magnitude*(1-alpha), magnitude*alpha>
     qangle.create(gradsize, CV_8UC2); // [0..nbins-1] - quantized gradient orientation
 
@@ -464,10 +464,10 @@ void HOGDescriptor::computeGradientDefault(const cv::Mat& img, cv::Mat& grad, cv
 
     for( x = -1; x < gradsize.width + 1; x++ )
         xmap[x] = cv::borderInterpolate(x - paddingTL.width + roiofs.x,
-        wholeSize.width, borderType) - roiofs.x;
+                                        wholeSize.width, borderType) - roiofs.x;
     for( y = -1; y < gradsize.height + 1; y++ )
         ymap[y] = cv::borderInterpolate(y - paddingTL.height + roiofs.y,
-        wholeSize.height, borderType) - roiofs.y;
+                                        wholeSize.height, borderType) - roiofs.y;
 
     // x- & y- derivatives for the whole row
     int width = gradsize.width;
@@ -486,7 +486,7 @@ void HOGDescriptor::computeGradientDefault(const cv::Mat& img, cv::Mat& grad, cv
         __m128i ithree = _mm_set1_epi32(3);
         for ( ; x <= end - 4; x += 4)
             _mm_storeu_si128((__m128i*)(xmap + x), _mm_mullo_epi16(ithree,
-                _mm_loadu_si128((const __m128i*)(xmap + x))));
+                                                                   _mm_loadu_si128((const __m128i*)(xmap + x))));
 #endif
         for ( ; x < end; ++x)
             xmap[x] *= 3;
@@ -528,18 +528,18 @@ void HOGDescriptor::computeGradientDefault(const cv::Mat& img, cv::Mat& grad, cv
                 T p32 = imgPtr + xmap[x+4], p30 = p12;
 
                 __m128 _dx0 = _mm_sub_ps(_mm_set_ps(lut[p32[0]], lut[p22[0]], lut[p12[0]], lut[p02[0]]),
-                                         _mm_set_ps(lut[p30[0]], lut[p20[0]], lut[p10[0]], lut[p00[0]]));
+                        _mm_set_ps(lut[p30[0]], lut[p20[0]], lut[p10[0]], lut[p00[0]]));
                 __m128 _dx1 = _mm_sub_ps(_mm_set_ps(lut[p32[1]], lut[p22[1]], lut[p12[1]], lut[p02[1]]),
-                                         _mm_set_ps(lut[p30[1]], lut[p20[1]], lut[p10[1]], lut[p00[1]]));
+                        _mm_set_ps(lut[p30[1]], lut[p20[1]], lut[p10[1]], lut[p00[1]]));
                 __m128 _dx2 = _mm_sub_ps(_mm_set_ps(lut[p32[2]], lut[p22[2]], lut[p12[2]], lut[p02[2]]),
-                                         _mm_set_ps(lut[p30[2]], lut[p20[2]], lut[p10[2]], lut[p00[2]]));
+                        _mm_set_ps(lut[p30[2]], lut[p20[2]], lut[p10[2]], lut[p00[2]]));
 
                 __m128 _dy0 = _mm_sub_ps(_mm_set_ps(lut[nextPtr[x3]], lut[nextPtr[x2]], lut[nextPtr[x1]], lut[nextPtr[x0]]),
-                                         _mm_set_ps(lut[prevPtr[x3]], lut[prevPtr[x2]], lut[prevPtr[x1]], lut[prevPtr[x0]]));
+                        _mm_set_ps(lut[prevPtr[x3]], lut[prevPtr[x2]], lut[prevPtr[x1]], lut[prevPtr[x0]]));
                 __m128 _dy1 = _mm_sub_ps(_mm_set_ps(lut[nextPtr[x3+1]], lut[nextPtr[x2+1]], lut[nextPtr[x1+1]], lut[nextPtr[x0+1]]),
-                                         _mm_set_ps(lut[prevPtr[x3+1]], lut[prevPtr[x2+1]], lut[prevPtr[x1+1]], lut[prevPtr[x0+1]]));
+                        _mm_set_ps(lut[prevPtr[x3+1]], lut[prevPtr[x2+1]], lut[prevPtr[x1+1]], lut[prevPtr[x0+1]]));
                 __m128 _dy2 = _mm_sub_ps(_mm_set_ps(lut[nextPtr[x3+2]], lut[nextPtr[x2+2]], lut[nextPtr[x1+2]], lut[nextPtr[x0+2]]),
-                                         _mm_set_ps(lut[prevPtr[x3+2]], lut[prevPtr[x2+2]], lut[prevPtr[x1+2]], lut[prevPtr[x0+2]]));
+                        _mm_set_ps(lut[prevPtr[x3+2]], lut[prevPtr[x2+2]], lut[prevPtr[x1+2]], lut[prevPtr[x0+2]]));
 
                 __m128 _mag0 = _mm_add_ps(_mm_mul_ps(_dx0, _dx0), _mm_mul_ps(_dy0, _dy0));
                 __m128 _mag1 = _mm_add_ps(_mm_mul_ps(_dx1, _dx1), _mm_mul_ps(_dy1, _dy1));
@@ -686,10 +686,10 @@ void HOGDescriptor::computeGradientGeneric(const cv::Mat& img, cv::Mat& grad, cv
 
     for( x = -1; x < gradsize.width + 1; x++ )
         xmap[x] = cv::borderInterpolate(x - paddingTL.width + roiofs.x,
-        wholeSize.width, borderType) - roiofs.x;
+                                        wholeSize.width, borderType) - roiofs.x;
     for( y = -1; y < gradsize.height + 1; y++ )
         ymap[y] = cv::borderInterpolate(y - paddingTL.height + roiofs.y,
-        wholeSize.height, borderType) - roiofs.y;
+                                        wholeSize.height, borderType) - roiofs.y;
 
     // x- & y- derivatives for the whole row
     int width = gradsize.width;
@@ -727,7 +727,7 @@ void HOGDescriptor::computeGradientGeneric(const cv::Mat& img, cv::Mat& grad, cv
             {
                 int x1 = xmap[x];
                 dbuf[x] = (float)(GammaCorrection<gamma>::apply(imgPtr[xmap[x+1]]) -
-                                  GammaCorrection<gamma>::apply(imgPtr[xmap[x-1]]));
+                        GammaCorrection<gamma>::apply(imgPtr[xmap[x-1]]));
                 dbuf[width + x] = (float)(GammaCorrection<gamma>::apply(nextPtr[x1]) -
                                           GammaCorrection<gamma>::apply(prevPtr[x1]));
             }
@@ -743,15 +743,15 @@ void HOGDescriptor::computeGradientGeneric(const cv::Mat& img, cv::Mat& grad, cv
                 const T* p0 = imgPtr + xmap[x-1];
 
                 dx0 = GammaCorrection<gamma>::apply(p2[2]) -
-                      GammaCorrection<gamma>::apply(p0[2]);
+                        GammaCorrection<gamma>::apply(p0[2]);
                 dy0 = GammaCorrection<gamma>::apply(nextPtr[x1+2]) -
-                      GammaCorrection<gamma>::apply(prevPtr[x1+2]);
+                        GammaCorrection<gamma>::apply(prevPtr[x1+2]);
                 mag0 = dx0*dx0 + dy0*dy0;
 
                 dx = GammaCorrection<gamma>::apply(p2[1]) -
-                     GammaCorrection<gamma>::apply(p0[1]);
+                        GammaCorrection<gamma>::apply(p0[1]);
                 dy = GammaCorrection<gamma>::apply(nextPtr[x1+1]) -
-                     GammaCorrection<gamma>::apply(prevPtr[x1+1]);
+                        GammaCorrection<gamma>::apply(prevPtr[x1+1]);
 
                 mag = dx*dx + dy*dy;
 
@@ -763,9 +763,9 @@ void HOGDescriptor::computeGradientGeneric(const cv::Mat& img, cv::Mat& grad, cv
                 }
 
                 dx = GammaCorrection<gamma>::apply(p2[0]) -
-                     GammaCorrection<gamma>::apply(p0[0]);
+                        GammaCorrection<gamma>::apply(p0[0]);
                 dy = GammaCorrection<gamma>::apply(nextPtr[x1]) -
-                     GammaCorrection<gamma>::apply(prevPtr[x1]);
+                        GammaCorrection<gamma>::apply(prevPtr[x1]);
                 mag = dx*dx + dy*dy;
                 if( mag0 < mag )
                 {
@@ -829,12 +829,12 @@ struct HOGCache
 
     HOGCache();
     HOGCache(const HOGDescriptor* descriptor,
-        const cv::Mat& img, const cv::Size& paddingTL, const cv::Size& paddingBR,
-        bool useCache, const cv::Size& cacheStride);
+             const cv::Mat& img, const cv::Size& paddingTL, const cv::Size& paddingBR,
+             bool useCache, const cv::Size& cacheStride);
     virtual ~HOGCache() { }
     virtual void init(const HOGDescriptor* descriptor,
-        const cv::Mat& img, const cv::Size& paddingTL, const cv::Size& paddingBR,
-        bool useCache, const cv::Size& cacheStride);
+                      const cv::Mat& img, const cv::Size& paddingTL, const cv::Size& paddingBR,
+                      bool useCache, const cv::Size& cacheStride);
 
     cv::Size windowsInImage(const cv::Size& imageSize, const cv::Size& winStride) const;
     cv::Rect getWindow(const cv::Size& imageSize, const cv::Size& winStride, int idx) const;
@@ -868,15 +868,15 @@ HOGCache::HOGCache() :
 }
 
 HOGCache::HOGCache(const HOGDescriptor* _descriptor,
-    const cv::Mat& _img, const cv::Size& _paddingTL, const cv::Size& _paddingBR,
-    bool _useCache, const cv::Size& _cacheStride)
+                   const cv::Mat& _img, const cv::Size& _paddingTL, const cv::Size& _paddingBR,
+                   bool _useCache, const cv::Size& _cacheStride)
 {
     init(_descriptor, _img, _paddingTL, _paddingBR, _useCache, _cacheStride);
 }
 
 void HOGCache::init(const HOGDescriptor* _descriptor,
-    const cv::Mat& _img, const cv::Size& _paddingTL, const cv::Size& _paddingBR,
-    bool _useCache, const cv::Size& _cacheStride)
+                    const cv::Mat& _img, const cv::Size& _paddingTL, const cv::Size& _paddingBR,
+                    bool _useCache, const cv::Size& _cacheStride)
 {
     descriptor = _descriptor;
     cacheStride = _cacheStride;
@@ -943,14 +943,14 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
     int rawBlockSize = blockSize.width*blockSize.height;
 
     nblocks = cv::Size((winSize.width - blockSize.width)/blockStride.width + 1,
-        (winSize.height - blockSize.height)/blockStride.height + 1);
+                       (winSize.height - blockSize.height)/blockStride.height + 1);
     ncells = cv::Size(blockSize.width/cellSize.width, blockSize.height/cellSize.height);
     blockHistogramSize = ncells.width*ncells.height*nbins;
 
     if( useCache )
     {
         cv::Size cacheSize((grad.cols - blockSize.width)/cacheStride.width+1,
-            (winSize.height/cacheStride.height)+1);
+                           (winSize.height/cacheStride.height)+1);
 
         blockCache.create(cacheSize.height, cacheSize.width*blockHistogramSize);
         blockCacheFlags.create(cacheSize);
@@ -971,7 +971,7 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
         float bh = blockSize.height * 0.5f, bw = blockSize.width * 0.5f;
 
         i = 0;
-    #if CV_SSE2
+#if CV_SSE2
         const int a[] = { 0, 1, 2, 3 };
         __m128i idx = _mm_loadu_si128((__m128i*)a);
         __m128 _bw = _mm_set1_ps(bw), _bh = _mm_set1_ps(bh);
@@ -984,7 +984,7 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
             idx = _mm_add_epi32(idx, ifour);
             _mm_storeu_ps(_di + i, t);
         }
-    #endif
+#endif
         for ( ; i < blockSize.height; ++i)
         {
             _di[i] = i - bh;
@@ -992,7 +992,7 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
         }
 
         j = 0;
-    #if CV_SSE2
+#if CV_SSE2
         idx = _mm_loadu_si128((__m128i*)a);
         for (; j <= blockSize.width - 4; j += 4)
         {
@@ -1001,7 +1001,7 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
             idx = _mm_add_epi32(idx, ifour);
             _mm_storeu_ps(_dj + j, t);
         }
-    #endif
+#endif
         for ( ; j < blockSize.width; ++j)
         {
             _dj[j] = j - bw;
@@ -1055,10 +1055,10 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
             cellY -= icellY0;
 
             if( (unsigned)icellX0 < (unsigned)ncells.width &&
-               (unsigned)icellX1 < (unsigned)ncells.width )
+                    (unsigned)icellX1 < (unsigned)ncells.width )
             {
                 if( (unsigned)icellY0 < (unsigned)ncells.height &&
-                   (unsigned)icellY1 < (unsigned)ncells.height )
+                        (unsigned)icellY1 < (unsigned)ncells.height )
                 {
                     data = &pixData[rawBlockSize*2 + (count4++)];
                     data->histOfs[0] = (icellX0*ncells.height + icellY0)*nbins;
@@ -1095,7 +1095,7 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
                 }
 
                 if( (unsigned)icellY0 < (unsigned)ncells.height &&
-                   (unsigned)icellY1 < (unsigned)ncells.height )
+                        (unsigned)icellY1 < (unsigned)ncells.height )
                 {
                     data = &pixData[rawBlockSize + (count2++)];
                     data->histOfs[0] = (icellX1*ncells.height + icellY0)*nbins;
@@ -1148,18 +1148,18 @@ const float* HOGCache::getBlock(cv::Point pt, float* buf)
     float* blockHist = buf;
     assert(descriptor != 0);
 
-//    Size blockSize = descriptor->blockSize;
+    //    Size blockSize = descriptor->blockSize;
     pt += imgoffset;
 
-//    CV_Assert( (unsigned)pt.x <= (unsigned)(grad.cols - blockSize.width) &&
-//        (unsigned)pt.y <= (unsigned)(grad.rows - blockSize.height) );
+    //    CV_Assert( (unsigned)pt.x <= (unsigned)(grad.cols - blockSize.width) &&
+    //        (unsigned)pt.y <= (unsigned)(grad.rows - blockSize.height) );
 
     if( useCache )
     {
         CV_Assert( pt.x % cacheStride.width == 0 &&
                    pt.y % cacheStride.height == 0 );
         cv::Point cacheIdx(pt.x/cacheStride.width,
-                       (pt.y/cacheStride.height) % blockCache.rows);
+                           (pt.y/cacheStride.height) % blockCache.rows);
         if( pt.y != ymaxCached[cacheIdx.y] )
         {
             cv::Mat_<uchar> cacheRow = blockCacheFlags.row(cacheIdx.y);
@@ -1178,7 +1178,7 @@ const float* HOGCache::getBlock(cv::Point pt, float* buf)
     const float* gradPtr = grad.ptr<float>(pt.y) + pt.x*2;
     const uchar* qanglePtr = qangle.ptr(pt.y) + pt.x*2;
 
-//    CV_Assert( blockHist != 0 );
+    //    CV_Assert( blockHist != 0 );
     memset(blockHist, 0, sizeof(float) * blockHistogramSize);
 
     const PixData* _pixData = &pixData[0];
@@ -1281,26 +1281,26 @@ const float* HOGCache::getBlock(cv::Point pt, float* buf)
         t1 = hist[h1] + hist1[3];
         hist[h0] = t0; hist[h1] = t1;
 
-//        __m128 _hist0 = _mm_set_ps((blockHist + pk.histOfs[3])[h0], (blockHist + pk.histOfs[2])[h0],
-//            (blockHist + pk.histOfs[1])[h0], (blockHist + pk.histOfs[0])[h0]);
-//        __m128 _hist1 = _mm_set_ps((blockHist + pk.histOfs[3])[h1], (blockHist + pk.histOfs[2])[h1],
-//            (blockHist + pk.histOfs[1])[h1], (blockHist + pk.histOfs[0])[h1]);
-//
-//        _hist0 = _mm_add_ps(_t0, _hist0);
-//        _hist1 = _mm_add_ps(_t1, _hist1);
-//
-//        _mm_storeu_ps(hist0, _hist0);
-//        _mm_storeu_ps(hist1, _hist1);
-//
-//        (pk.histOfs[0] + blockHist)[h0] = hist0[0];
-//        (pk.histOfs[1] + blockHist)[h0] = hist0[1];
-//        (pk.histOfs[2] + blockHist)[h0] = hist0[2];
-//        (pk.histOfs[3] + blockHist)[h0] = hist0[3];
-//
-//        (pk.histOfs[0] + blockHist)[h1] = hist1[0];
-//        (pk.histOfs[1] + blockHist)[h1] = hist1[1];
-//        (pk.histOfs[2] + blockHist)[h1] = hist1[2];
-//        (pk.histOfs[3] + blockHist)[h1] = hist1[3];
+        //        __m128 _hist0 = _mm_set_ps((blockHist + pk.histOfs[3])[h0], (blockHist + pk.histOfs[2])[h0],
+        //            (blockHist + pk.histOfs[1])[h0], (blockHist + pk.histOfs[0])[h0]);
+        //        __m128 _hist1 = _mm_set_ps((blockHist + pk.histOfs[3])[h1], (blockHist + pk.histOfs[2])[h1],
+        //            (blockHist + pk.histOfs[1])[h1], (blockHist + pk.histOfs[0])[h1]);
+        //
+        //        _hist0 = _mm_add_ps(_t0, _hist0);
+        //        _hist1 = _mm_add_ps(_t1, _hist1);
+        //
+        //        _mm_storeu_ps(hist0, _hist0);
+        //        _mm_storeu_ps(hist1, _hist1);
+        //
+        //        (pk.histOfs[0] + blockHist)[h0] = hist0[0];
+        //        (pk.histOfs[1] + blockHist)[h0] = hist0[1];
+        //        (pk.histOfs[2] + blockHist)[h0] = hist0[2];
+        //        (pk.histOfs[3] + blockHist)[h0] = hist0[3];
+        //
+        //        (pk.histOfs[0] + blockHist)[h1] = hist1[0];
+        //        (pk.histOfs[1] + blockHist)[h1] = hist1[1];
+        //        (pk.histOfs[2] + blockHist)[h1] = hist1[2];
+        //        (pk.histOfs[3] + blockHist)[h1] = hist1[3];
     }
 #else
     for( ; k < C4; k++ )
@@ -1440,7 +1440,7 @@ void HOGCache::normalizeBlockHistogram(float* _hist) const
 cv::Size HOGCache::windowsInImage(const cv::Size& imageSize, const cv::Size& winStride) const
 {
     return cv::Size((imageSize.width - winSize.width)/winStride.width + 1,
-        (imageSize.height - winSize.height)/winStride.height + 1);
+                    (imageSize.height - winSize.height)/winStride.height + 1);
 }
 
 cv::Rect HOGCache::getWindow(const cv::Size& imageSize, const cv::Size& winStride, int idx) const
@@ -1464,13 +1464,45 @@ static inline int gcd(int a, int b)
     return a;
 }
 
+void HOGDescriptor::computeSingle(const cv::Mat &img,
+                                  std::vector<float> &descriptors)
+{
+    cv::Size winStride = cellSize;
+    cv::Size cacheStride(gcd(winStride.width, blockStride.width),
+                         gcd(winStride.height, blockStride.height));
+    cv::Size padding;
+    padding.width = (int)cv::alignSize(0, cacheStride.width);
+    padding.height = (int)cv::alignSize(0, cacheStride.height);
+    HOGCache cache(this, img, padding, padding, true, cacheStride);
+    const HOGCache::BlockData* blockData = &cache.blockData[0];
+
+    int nblocks = cache.nblocks.area();
+    int blockHistogramSize = cache.blockHistogramSize;
+    size_t dsize = getDescriptorSize();
+    descriptors.resize(dsize);
+    // for each window
+    float* descriptor = descriptors.data();
+
+    cv::Point pt0 = cache.getWindow(img.size(), winStride, 0).tl() - cv::Point(padding);
+    for( int j = 0; j < nblocks; j++ )
+    {
+        const HOGCache::BlockData& bj = blockData[j];
+        cv::Point pt = pt0 + bj.imgOffset;
+
+        float* dst = descriptor + bj.histOfs;
+        const float* src = cache.getBlock(pt, dst);
+        if( src != dst )
+            memcpy(dst, src, blockHistogramSize * sizeof(float));
+    }
+}
+
 void HOGDescriptor::compute(const cv::Mat &_img, std::vector<float>& descriptors,
-    cv::Size winStride, cv::Size padding, const std::vector<cv::Point>& locations) const
+                            cv::Size winStride, cv::Size padding, const std::vector<cv::Point>& locations) const
 {
     if( winStride == cv::Size() )
         winStride = cellSize;
     cv::Size cacheStride(gcd(winStride.width, blockStride.width),
-                     gcd(winStride.height, blockStride.height));
+                         gcd(winStride.height, blockStride.height));
 
     cv::Size imgSize = _img.size();
 
@@ -1502,7 +1534,7 @@ void HOGDescriptor::compute(const cv::Mat &_img, std::vector<float>& descriptors
         {
             pt0 = locations[i];
             if( pt0.x < -padding.width || pt0.x > img.cols + padding.width - winSize.width ||
-                pt0.y < -padding.height || pt0.y > img.rows + padding.height - winSize.height )
+                    pt0.y < -padding.height || pt0.y > img.rows + padding.height - winSize.height )
                 continue;
         }
         else
@@ -1523,9 +1555,63 @@ void HOGDescriptor::compute(const cv::Mat &_img, std::vector<float>& descriptors
     }
 }
 
+bool HOGDescriptor::classify(const cv::Mat &img,
+                             const double hitThreshold,
+                             double &weight,
+                             std::vector<float> &descriptor)
+{
+    assert(img.rows == winSize.height);
+    assert(img.cols == winSize.width);
+
+    if( svmDetector.empty() )
+        return false;
+
+    cv::Size winStride = cellSize;
+    cv::Size cacheStride(gcd(winStride.width, blockStride.width),
+                         gcd(winStride.height, blockStride.height));
+    cv::Size padding;
+    padding.width = (int)cv::alignSize(0, cacheStride.width);
+    padding.height = (int)cv::alignSize(0, cacheStride.height);
+    HOGCache cache(this, img, padding, padding, true, cacheStride);
+    const HOGCache::BlockData* blockData = &cache.blockData[0];
+
+    int nblocks = cache.nblocks.area();
+    int blockHistogramSize = cache.blockHistogramSize;
+    size_t dsize = getDescriptorSize();
+    descriptor.resize(dsize);
+
+    double rho = svmDetector.size() > dsize ? svmDetector[dsize] : 0;
+    std::vector<float> blockHist(blockHistogramSize);
+
+    cv::Point pt0;
+    pt0 = cache.getWindow(img.size(), winStride, 0).tl() - cv::Point(padding);
+    double s = rho;
+    const float* svmVec = &svmDetector[0];
+    int j, k;
+    for( j = 0; j < nblocks; ++j, svmVec += blockHistogramSize )
+    {
+        const HOGCache::BlockData& bj = blockData[j];
+        cv::Point pt = pt0 + bj.imgOffset;
+
+        const float* vec = cache.getBlock(pt, &blockHist[0]);
+
+        for( k = 0; k <= blockHistogramSize - 4; k += 4 )
+            s += vec[k]*svmVec[k] + vec[k+1]*svmVec[k+1] +
+                    vec[k+2]*svmVec[k+2] + vec[k+3]*svmVec[k+3];
+        for( ; k < blockHistogramSize; k++ )
+            s += vec[k]*svmVec[k];
+    }
+    if( s >= hitThreshold )
+    {
+        weight = s;
+        return true;
+    }
+    return false;
+}
+
 void HOGDescriptor::detect(const cv::Mat& img,
-    std::vector<cv::Point>& hits, std::vector<double>& weights, double hitThreshold,
-    cv::Size winStride, cv::Size padding, const std::vector<cv::Point>& locations) const
+                           std::vector<cv::Point>& hits, std::vector<double>& weights, double hitThreshold,
+                           cv::Size winStride, cv::Size padding, const std::vector<cv::Point>& locations) const
 {
     hits.clear();
     weights.clear();
@@ -1535,7 +1621,7 @@ void HOGDescriptor::detect(const cv::Mat& img,
     if( winStride == cv::Size() )
         winStride = cellSize;
     cv::Size cacheStride(gcd(winStride.width, blockStride.width),
-        gcd(winStride.height, blockStride.height));
+                         gcd(winStride.height, blockStride.height));
 
     size_t nwindows = locations.size();
     padding.width = (int)cv::alignSize(std::max(padding.width, 0), cacheStride.width);
@@ -1605,7 +1691,7 @@ void HOGDescriptor::detect(const cv::Mat& img,
 #else
             for( k = 0; k <= blockHistogramSize - 4; k += 4 )
                 s += vec[k]*svmVec[k] + vec[k+1]*svmVec[k+1] +
-                    vec[k+2]*svmVec[k+2] + vec[k+3]*svmVec[k+3];
+                        vec[k+2]*svmVec[k+2] + vec[k+3]*svmVec[k+3];
 #endif
             for( ; k < blockHistogramSize; k++ )
                 s += vec[k]*svmVec[k];
@@ -1619,20 +1705,20 @@ void HOGDescriptor::detect(const cv::Mat& img,
 }
 
 void HOGDescriptor::detect(const cv::Mat& img, std::vector<cv::Point>& hits, double hitThreshold,
-    cv::Size winStride, cv::Size padding, const std::vector<cv::Point>& locations) const
+                           cv::Size winStride, cv::Size padding, const std::vector<cv::Point>& locations) const
 {
     std::vector<double> weightsV;
     detect(img, hits, weightsV, hitThreshold, winStride, padding, locations);
 }
 
 class HOGInvoker :
-    public cv::ParallelLoopBody
+        public cv::ParallelLoopBody
 {
 public:
     HOGInvoker( const HOGDescriptor* _hog, const cv::Mat& _img,
-        double _hitThreshold, const cv::Size& _winStride, const cv::Size& _padding,
-        const double* _levelScale, std::vector<cv::Rect> * _vec, cv::Mutex* _mtx,
-        std::vector<double>* _weights=0, std::vector<double>* _scales=0 )
+                double _hitThreshold, const cv::Size& _winStride, const cv::Size& _padding,
+                const double* _levelScale, std::vector<cv::Rect> * _vec, cv::Mutex* _mtx,
+                std::vector<double>* _weights=0, std::vector<double>* _scales=0 )
     {
         hog = _hog;
         img = _img;
@@ -1702,8 +1788,8 @@ private:
 };
 
 void HOGDescriptor::detectMultiScale(const cv::Mat &_img, std::vector<cv::Rect>& foundLocations, std::vector<double>& foundWeights,
-    double hitThreshold, cv::Size winStride, cv::Size padding,
-    double scale0, double finalThreshold, bool useMeanshiftGrouping) const
+                                     double hitThreshold, cv::Size winStride, cv::Size padding,
+                                     double scale0, double finalThreshold, bool useMeanshiftGrouping) const
 {
     double scale = 1.;
     int levels = 0;
@@ -1714,7 +1800,7 @@ void HOGDescriptor::detectMultiScale(const cv::Mat &_img, std::vector<cv::Rect>&
     {
         levelScale.push_back(scale);
         if( cvRound(imgSize.width/scale) < winSize.width ||
-            cvRound(imgSize.height/scale) < winSize.height ||
+                cvRound(imgSize.height/scale) < winSize.height ||
                 scale0 <= 1 )
             break;
         scale *= scale0;
@@ -1750,12 +1836,12 @@ void HOGDescriptor::detectMultiScale(const cv::Mat &_img, std::vector<cv::Rect>&
 }
 
 void HOGDescriptor::detectMultiScale(const cv::Mat &img, std::vector<cv::Rect>& foundLocations,
-    double hitThreshold, cv::Size winStride, cv::Size padding,
-    double scale0, double finalThreshold, bool useMeanshiftGrouping) const
+                                     double hitThreshold, cv::Size winStride, cv::Size padding,
+                                     double scale0, double finalThreshold, bool useMeanshiftGrouping) const
 {
     std::vector<double> foundWeights;
     detectMultiScale(img, foundLocations, foundWeights, hitThreshold, winStride,
-                padding, scale0, finalThreshold, useMeanshiftGrouping);
+                     padding, scale0, finalThreshold, useMeanshiftGrouping);
 }
 
 template<typename _ClsName> struct RTTIImpl
@@ -1812,7 +1898,7 @@ public:
 typedef RTTIImpl<HOGDescriptor> HOGRTTI;
 
 CvType hog_type( CV_TYPE_NAME_HOG_DESCRIPTOR, HOGRTTI::isInstance,
-    HOGRTTI::release, HOGRTTI::read, HOGRTTI::write, HOGRTTI::clone);
+                 HOGRTTI::release, HOGRTTI::read, HOGRTTI::write, HOGRTTI::clone);
 
 std::vector<float> HOGDescriptor::getDefaultPeopleDetector()
 {
@@ -3130,13 +3216,13 @@ std::vector<float> HOGDescriptor::getDaimlerPeopleDetector()
 }
 
 class HOGConfInvoker :
-    public cv::ParallelLoopBody
+        public cv::ParallelLoopBody
 {
 public:
     HOGConfInvoker( const HOGDescriptor* _hog, const cv::Mat& _img,
-        double _hitThreshold, const cv::Size& _padding,
-        std::vector<DetectionROI>* locs,
-        std::vector<cv::Rect>* _vec, cv::Mutex* _mtx )
+                    double _hitThreshold, const cv::Size& _padding,
+                    std::vector<DetectionROI>* locs,
+                    std::vector<cv::Rect>* _vec, cv::Mutex* _mtx )
     {
         hog = _hog;
         img = _img;
@@ -3172,8 +3258,8 @@ public:
             mtx->lock();
             for( size_t j = 0; j < dets.size(); j++ )
                 vec->push_back(cv::Rect(cvRound(dets[j].x*scale),
-                                    cvRound(dets[j].y*scale),
-                                    scaledWinSize.width, scaledWinSize.height));
+                                        cvRound(dets[j].y*scale),
+                                        scaledWinSize.width, scaledWinSize.height));
             mtx->unlock();
         }
     }
@@ -3188,8 +3274,8 @@ public:
 };
 
 void HOGDescriptor::detectROI(const cv::Mat& img, const std::vector<cv::Point> &locations,
-    CV_OUT std::vector<cv::Point>& foundLocations, CV_OUT std::vector<double>& confidences,
-    double hitThreshold, cv::Size winStride, cv::Size padding) const
+                              CV_OUT std::vector<cv::Point>& foundLocations, CV_OUT std::vector<double>& confidences,
+                              double hitThreshold, cv::Size winStride, cv::Size padding) const
 {
     foundLocations.clear();
     confidences.clear();
@@ -3281,8 +3367,8 @@ void HOGDescriptor::detectROI(const cv::Mat& img, const std::vector<cv::Point> &
 }
 
 void HOGDescriptor::detectMultiScaleROI(const cv::Mat& img,
-    CV_OUT std::vector<cv::Rect>& foundLocations, std::vector<DetectionROI>& locations,
-    double hitThreshold, int groupThreshold) const
+                                        CV_OUT std::vector<cv::Rect>& foundLocations, std::vector<DetectionROI>& locations,
+                                        double hitThreshold, int groupThreshold) const
 {
     std::vector<cv::Rect> allCandidates;
     cv::Mutex mtx;
@@ -3422,9 +3508,9 @@ void HOGDescriptor::groupRectangles(std::vector<cv::Rect>& rectList, std::vector
         cv::Rect_<double> r = rrects[i];
         double s = 1.0/numInClass[i];
         rrects[i] = cv::Rect_<double>(cv::saturate_cast<double>(r.x*s),
-            cv::saturate_cast<double>(r.y*s),
-            cv::saturate_cast<double>(r.width*s),
-            cv::saturate_cast<double>(r.height*s));
+                                      cv::saturate_cast<double>(r.y*s),
+                                      cv::saturate_cast<double>(r.width*s),
+                                      cv::saturate_cast<double>(r.height*s));
     }
 
     rectList.clear();
@@ -3451,10 +3537,10 @@ void HOGDescriptor::groupRectangles(std::vector<cv::Rect>& rectList, std::vector
             int dy = cv::saturate_cast<int>( r2.height * eps );
 
             if( r1.x >= r2.x - dx &&
-                r1.y >= r2.y - dy &&
-                r1.x + r1.width <= r2.x + r2.width + dx &&
-                r1.y + r1.height <= r2.y + r2.height + dy &&
-                (n2 > std::max(3, n1) || n1 < 3) )
+                    r1.y >= r2.y - dy &&
+                    r1.x + r1.width <= r2.x + r2.width + dx &&
+                    r1.y + r1.height <= r2.y + r2.height + dy &&
+                    (n2 > std::max(3, n1) || n1 < 3) )
                 break;
         }
 
@@ -3502,7 +3588,7 @@ void HOGDescriptor::groupRectangles_meanshift(std::vector<cv::Rect>& rectList,
         hitCenter.y = resultHits[i].y;
         cv::Size s( int(winDetSize.width * scale), int(winDetSize.height * scale) );
         cv::Rect resultRect( int(hitCenter.x-s.width/2), int(hitCenter.y-s.height/2),
-            int(s.width), int(s.height) );
+                             int(s.width), int(s.height) );
 
         if (resultWeights[i] > detectThreshold)
         {
@@ -3513,7 +3599,7 @@ void HOGDescriptor::groupRectangles_meanshift(std::vector<cv::Rect>& rectList,
 }
 
 void HOGDescriptor::clipObjects(cv::Size sz, std::vector<cv::Rect>& objects,
-                 std::vector<int>* a, std::vector<double>* b)
+                                std::vector<int>* a, std::vector<double>* b)
 {
     size_t i, j = 0, n = objects.size();
     cv::Rect win0 = cv::Rect(0, 0, sz.width, sz.height);
@@ -3607,9 +3693,9 @@ void groupRectangles(std::vector<cv::Rect>& rectList, int groupThreshold, double
         cv::Rect r = rrects[i];
         float s = 1.f/rweights[i];
         rrects[i] = cv::Rect(cv::saturate_cast<int>(r.x*s),
-             cv::saturate_cast<int>(r.y*s),
-             cv::saturate_cast<int>(r.width*s),
-             cv::saturate_cast<int>(r.height*s));
+                             cv::saturate_cast<int>(r.y*s),
+                             cv::saturate_cast<int>(r.width*s),
+                             cv::saturate_cast<int>(r.height*s));
     }
 
     rectList.clear();
@@ -3641,11 +3727,11 @@ void groupRectangles(std::vector<cv::Rect>& rectList, int groupThreshold, double
             int dy = cv::saturate_cast<int>( r2.height * eps );
 
             if( i != j &&
-                r1.x >= r2.x - dx &&
-                r1.y >= r2.y - dy &&
-                r1.x + r1.width <= r2.x + r2.width + dx &&
-                r1.y + r1.height <= r2.y + r2.height + dy &&
-                (n2 > std::max(3, n1) || n1 < 3) )
+                    r1.x >= r2.x - dx &&
+                    r1.y >= r2.y - dy &&
+                    r1.x + r1.width <= r2.x + r2.width + dx &&
+                    r1.y + r1.height <= r2.y + r2.height + dy &&
+                    (n2 > std::max(3, n1) || n1 < 3) )
                 break;
         }
 

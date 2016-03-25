@@ -10,9 +10,9 @@
 #include <csapex_vision/roi_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_ml/features_message.h>
-#include <boost/assign.hpp>
 
 /// SYSTEM
+#include <boost/assign.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::HOGExtractor, csapex::Node)
@@ -83,7 +83,7 @@ void HOGExtractor::setup(NodeModifier& node_modifier)
 {
     in_img_     = node_modifier.addInput<CvMatMessage>("image");
     in_rois_    = node_modifier.addOptionalInput<VectorMessage, RoiMessage>("rois");
-    out_        = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("features");
+    out_        = node_modifier.addOutput<VectorMessage, FeaturesMessage>("features");
 }
 
 void HOGExtractor::process()

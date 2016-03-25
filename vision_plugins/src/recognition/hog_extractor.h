@@ -3,7 +3,6 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/param/range_parameter.h>
 #include "hog.h"
 
 /// EXTRACT HOG FEATURE

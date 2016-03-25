@@ -150,10 +150,17 @@ public:
     virtual void save(const std::string& filename, const std::string& objname = "") const;
     virtual void copyTo(HOGDescriptor& c) const;
 
+    virtual void computeSingle(const cv::Mat &img,
+                               std::vector<float> &descriptors);
+
     virtual void compute(const cv::Mat &img,
                          std::vector<float>& descriptors,
                          cv::Size winStride = cv::Size(), cv::Size padding = cv::Size(),
                          const std::vector<cv::Point>& locations = std::vector<cv::Point>()) const;
+
+    virtual bool classify(const cv::Mat &img,
+                          const double hitThreshold, double &weight,
+                          std::vector<float> &descriptor);
 
     //! with found weights output
     virtual void detect(const cv::Mat& img,
