@@ -19,13 +19,17 @@ public:
     void process() override;
 
 private:
+    enum SVMType  {DEFAULT = 0, DAIMLER, CUSTOM};
     enum AdaptionType {SCALE, TRY_GROW, GROW_STRICT};
-
-    HOGDescriptor   hog_;
+    enum ClassificationType {BACKGROUND = 0, HUMAN = 1, HUMAN_PART = 2, UNKNOWN = 3};
 
     csapex::Input  *in_img_;
     csapex::Input  *in_rois_;
     csapex::Output *out_rois_;
+
+    HOGDescriptor   hog_;
+    int             hog_win_width_;
+    int             hog_win_height_;
 
     bool            mirror_;
     int             cells_x_;
@@ -36,8 +40,12 @@ private:
     int             adaption_type_;
     double          ratio_hog_;
 
-    void getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst);
+    std::vector<float> svm_;
+    int                svm_type_;
+    double             svm_thresh_;
 
+    void getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst);
+    void load();
 };
 }
 #endif // HOGCLASSIFIER_H

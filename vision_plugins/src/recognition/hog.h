@@ -159,8 +159,7 @@ public:
                          const std::vector<cv::Point>& locations = std::vector<cv::Point>()) const;
 
     virtual bool classify(const cv::Mat &img,
-                          const double hitThreshold, double &weight,
-                          std::vector<float> &descriptor);
+                          const double hitThreshold, double &weight);
 
     //! with found weights output
     virtual void detect(const cv::Mat& img,

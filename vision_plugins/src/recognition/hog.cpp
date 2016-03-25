@@ -1557,8 +1557,7 @@ void HOGDescriptor::compute(const cv::Mat &_img, std::vector<float>& descriptors
 
 bool HOGDescriptor::classify(const cv::Mat &img,
                              const double hitThreshold,
-                             double &weight,
-                             std::vector<float> &descriptor)
+                             double &weight)
 {
     assert(img.rows == winSize.height);
     assert(img.cols == winSize.width);
@@ -1578,7 +1577,6 @@ bool HOGDescriptor::classify(const cv::Mat &img,
     int nblocks = cache.nblocks.area();
     int blockHistogramSize = cache.blockHistogramSize;
     size_t dsize = getDescriptorSize();
-    descriptor.resize(dsize);
 
     double rho = svmDetector.size() > dsize ? svmDetector[dsize] : 0;
     std::vector<float> blockHist(blockHistogramSize);

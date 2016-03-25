@@ -76,6 +76,27 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
                                                                          adpation_types,
                                                                          (int) SCALE),
                             adaption_type_);
+
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
+                            svm_thresh_);
+
+    std::map<std::string, int> svm_types = {
+        {"default", DEFAULT},
+        {"custom",  CUSTOM},
+        {"daimler", DAIMLER}
+    };
+    param::Parameter::Ptr svm_param =
+            param::ParameterFactory::declareParameterSet("svm/type", svm_types, (int) DEFAULT);
+    parameters.addParameter(svm_param,
+                            svm_type_);
+
+
+    std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
+    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz"),
+                                       custom_active, std::bind(&HOGClassifier::load, this));
+    setParameterEnabled("svm/path", false);
+
 }
 
 void HOGClassifier::setup(NodeModifier& node_modifier)
@@ -91,6 +112,10 @@ void HOGClassifier::process()
     VectorMessage::ConstPtr in_rois = msg::getMessage<VectorMessage>(in_rois_);
     VectorMessage::Ptr      out(VectorMessage::make<RoiMessage>());
 
+    if(in->value.channels() != 1 || in->value.channels() != 3) {
+        throw std::runtime_error("Only 1 or 3 channel matrices supported!");
+    }
+
     /// update HOG parameters
     hog_.cellSize.width  = cell_size_;
     hog_.cellSize.height = cell_size_;
@@ -100,9 +125,30 @@ void HOGClassifier::process()
     hog_.blockStride     = hog_.cellSize * block_stride_;
     ratio_hog_ = hog_.winSize.width / (double) hog_.winSize.height;
 
-    if(in->value.channels() != 1 || in->value.channels() != 3) {
-        throw std::runtime_error("Only 1 or 3 channel matrices supported!");
+    switch(svm_type_) {
+    case DEFAULT:
+        hog_.winSize.width  = 64;
+        hog_.winSize.height = 128;
+        hog_.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+        break;
+    case DAIMLER:
+        hog_.winSize.width  = 48;
+        hog_.winSize.height = 96;
+        hog_.setSVMDetector(HOGDescriptor::getDaimlerPeopleDetector());
+        break;
+    case CUSTOM:
+        if(svm_.empty())
+            return;
+        hog_.winSize.width  = hog_win_width_;
+        hog_.winSize.height = hog_win_height_;
+        hog_.setSVMDetector(svm_);
+        break;
+    default:
+        throw std::runtime_error("Unkown SVM type!");
     }
+
+    if(hog_.winSigma == 0.0)
+        hog_.winSigma = -1.0;
 
     for(auto &entry : in_rois->value) {
         RoiMessage::ConstPtr roi  = std::dynamic_pointer_cast<RoiMessage const>(entry);
@@ -116,16 +162,20 @@ void HOGClassifier::process()
         assert(data.rows == hog_.winSize.height);
         assert(data.cols == hog_.winSize.width);
 
-        FeaturesMessage::Ptr feature(new FeaturesMessage);
-        feature->classification = roi->value.classification();
-        hog_.compute(data, feature->value);
-        out->value.push_back(feature);
+        double weight = 0.0;
+        if(!hog_.classify(data, svm_thresh_, weight))
+            continue;
+
+        RoiMessage::Ptr roi_out(new RoiMessage);
+        roi_out->value.setRect(roi->value.rect());
+        roi_out->value.setClassification(HUMAN);
+        out->value.push_back(roi_out);
         if(mirror_) {
-            feature.reset(new FeaturesMessage);
-            feature->classification = roi->value.classification();
-            cv::flip(data, data, 1);
-            hog_.compute(data, feature->value);
-            out->value.push_back(feature);
+//            feature.reset(new FeaturesMessage);
+//            feature->classification = roi->value.classification();
+//            cv::flip(data, data, 1);
+//            hog_.compute(data, feature->value);
+//            out->value.push_back(feature);
         }
     }
     msg::publish(out_rois_, out);
@@ -184,5 +234,29 @@ void HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &ds
 
     window = cv::Mat(src, roi_adapted);
     cv::resize(window, dst, hog_.winSize);
+}
+
+void HOGClassifier::load()
+{
+    std::string     path = readParameter<std::string>("svm path");
+
+    if(path == "")
+        return;
+
+    cv::FileStorage fs(path,cv::FileStorage::READ);
+
+    if(!fs.isOpened()) {
+        throw std::runtime_error("Couldn't open file '" + path + "'!");
+    }
+
+    svm_.clear();
+
+    fs["width"]  >> hog_win_width_;
+    fs["height"] >> hog_win_height_;
+    fs["svm"]    >> svm_;
+
+    if(svm_.empty())
+        throw std::runtime_error("Couldn't load svm!");
+    fs.release();
 
 }
