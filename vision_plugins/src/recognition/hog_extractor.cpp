@@ -100,6 +100,8 @@ void HOGExtractor::process()
     hog_.blockSize       = hog_.cellSize * block_size_;
     hog_.blockStride     = hog_.cellSize * block_stride_;
     ratio_hog_ = hog_.winSize.width / (double) hog_.winSize.height;
+    if(hog_.winSigma == 0)
+        hog_.winSigma = -1;
 
     if(in->value.channels() != 1 && in->value.channels() != 3) {
         throw std::runtime_error("Only 1 or 3 channel matrices supported!");
