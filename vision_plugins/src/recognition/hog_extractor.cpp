@@ -101,7 +101,7 @@ void HOGExtractor::process()
     hog_.blockStride     = hog_.cellSize * block_stride_;
     ratio_hog_ = hog_.winSize.width / (double) hog_.winSize.height;
 
-    if(in->value.channels() != 1 || in->value.channels() != 3) {
+    if(in->value.channels() != 1 && in->value.channels() != 3) {
         throw std::runtime_error("Only 1 or 3 channel matrices supported!");
     }
 
@@ -119,7 +119,7 @@ void HOGExtractor::process()
 
         FeaturesMessage::Ptr feature(new FeaturesMessage);
         feature->classification = roi->value.classification();
-        hog_.compute(data, feature->value);
+        hog_.computeSingle(data, feature->value);
         out->value.push_back(feature);
         if(mirror_) {
             feature.reset(new FeaturesMessage);

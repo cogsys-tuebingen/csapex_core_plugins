@@ -83,7 +83,7 @@ void HOGDetector::setupParameters(Parameterizable& parameters)
 void HOGDetector::setup(NodeModifier& node_modifier)
 {
     in_  = node_modifier.addInput<CvMatMessage>("image");
-    out_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("detections");
+    out_ = node_modifier.addOutput<VectorMessage, RoiMessage>("detections");
 }
 
 void HOGDetector::process()
@@ -132,7 +132,7 @@ void HOGDetector::process()
     for(unsigned int i = 0 ; i < loc_rects.size() ; ++i) {
         RoiMessage::Ptr roi(new RoiMessage);
         cv::Scalar color(utils_vision::color::bezierColor<cv::Scalar>(i / (float) loc_rects.size()));
-        roi->value = Roi(loc_rects.at(i), color, 0);
+        roi->value = Roi(loc_rects.at(i), color, HUMAN);
         out->value.push_back(roi);
     }
 
@@ -141,7 +141,7 @@ void HOGDetector::process()
         cv::Scalar color(utils_vision::color::bezierColor<cv::Scalar>(i / (float) loc_points.size()));
         cv::Point &p = loc_points.at(i);
         cv::Rect r(p.x, p.y, hog_win_width_, hog_win_height_);
-        roi->value = Roi(r, color, 0);
+        roi->value = Roi(r, color, HUMAN);
         out->value.push_back(roi);
     }
     msg::publish(out_, out);

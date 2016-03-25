@@ -301,6 +301,12 @@
     </description>
     <tags>Vision</tags>
   </class>
+  <class type="vision_plugins::HOGClassifier" base_class_type="csapex::Node">
+    <description>
+        Classifiy predefined windows.
+    </description>
+    <tags>Vision</tags>
+  </class>
   <class type="vision_plugins::ClusterBoundaryMask" base_class_type="csapex::Node">
     <description>
         Retrieve the boundaries of clusters as a mask.

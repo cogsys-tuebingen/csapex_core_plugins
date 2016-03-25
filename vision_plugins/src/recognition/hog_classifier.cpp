@@ -112,7 +112,7 @@ void HOGClassifier::process()
     VectorMessage::ConstPtr in_rois = msg::getMessage<VectorMessage>(in_rois_);
     VectorMessage::Ptr      out(VectorMessage::make<RoiMessage>());
 
-    if(in->value.channels() != 1 || in->value.channels() != 3) {
+    if(in->value.channels() != 1 && in->value.channels() != 3) {
         throw std::runtime_error("Only 1 or 3 channel matrices supported!");
     }
 
@@ -167,7 +167,7 @@ void HOGClassifier::process()
             continue;
 
         RoiMessage::Ptr roi_out(new RoiMessage);
-        roi_out->value.setRect(roi->value.rect());
+        roi_out->value = roi->value;
         roi_out->value.setClassification(HUMAN);
         out->value.push_back(roi_out);
         if(mirror_) {

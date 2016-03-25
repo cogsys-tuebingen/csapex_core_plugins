@@ -18,6 +18,7 @@ public:
 private:
     enum SVMType  {DEFAULT = 0, DAIMLER, CUSTOM};
     enum ScanMode {SINGLE_SCALE = 0, MULTI_SCALE};
+    enum ClassificationType {BACKGROUND = 0, HUMAN = 1, HUMAN_PART = 2, UNKNOWN = 3};
 
     csapex::Input*  in_;
     csapex::Output* out_;
