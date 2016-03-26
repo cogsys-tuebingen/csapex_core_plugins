@@ -25,9 +25,8 @@ private:
     Input  *in_;
     Output *out_;
 
-    std::mutex m_;
-    bool         loaded_;
-    cv::SVM      svm_;
+    bool loaded_;
+    cv::SVM svm_;
 
     void load();
 };

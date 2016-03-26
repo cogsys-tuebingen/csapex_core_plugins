@@ -15,6 +15,8 @@ namespace csapex {
 class SVMTrainer : public Node
 {
 public:
+    typedef csapex::connection_types::FeaturesMessage::ConstPtr FeaturePtr;
+
     SVMTrainer();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
@@ -22,12 +24,13 @@ public:
     virtual void process() override;
 
 private:
-    Input*                                              in_;
-    Input*                                              in_vector_;
+    Input*                       in_vector_;
 
-    std::mutex                                        m_;
-    unsigned int                                        step_;
-    std::vector<connection_types::FeaturesMessage>      msgs_;
+    std::size_t                  step_;
+    std::vector<FeaturePtr>      msgs_;
+
+    std::string  path_;
+    bool         save_for_hog_;
 
     void train();
     void clear();

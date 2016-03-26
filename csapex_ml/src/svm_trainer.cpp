@@ -13,6 +13,25 @@ CSAPEX_REGISTER_CLASS(csapex::SVMTrainer, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
+struct ExtendedSVM : cv::SVM {
+    CvSVMDecisionFunc* get_decision_function()
+    {
+        return decision_func;
+    }
+
+    void print_decision_func()
+    {
+        std::cout << "alpha: [";
+        for(int i = 0 ; i < decision_func->sv_count - 1; ++i) {
+            std::cout << decision_func->alpha[i] << ", ";
+        }
+        std::cout << decision_func->alpha[decision_func->sv_count - 1]
+                  << "]" << std::endl;
+        std::cout << "rho: " << decision_func->rho << std::endl;
+    }
+
+};
+
 SVMTrainer::SVMTrainer() :
     step_(0)
 {
@@ -20,8 +39,7 @@ SVMTrainer::SVMTrainer() :
 
 void SVMTrainer::setup(NodeModifier& node_modifier)
 {
-    in_        = node_modifier.addOptionalInput<FeaturesMessage>("Feature");
-    in_vector_ = node_modifier.addOptionalInput<GenericVectorMessage, FeaturesMessage>("Features");
+    in_vector_ = node_modifier.addOptionalInput<VectorMessage, FeaturesMessage>("Features");
 }
 
 void SVMTrainer::setupParameters(Parameterizable& parameters)
@@ -30,7 +48,13 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
     addParameter(csapex::param::ParameterFactory::declareFileOutputPath("path",
                                                                         csapex::param::ParameterDescription("File to write svm to."),
                                                                         "",
-                                                                        "*.yaml *.tar.gz"));
+                                                                        "*.yaml *.tar.gz"),
+                 path_);
+
+    addParameter(param::ParameterFactory::declareBool("save for HOG",
+                                                      param::ParameterDescription("Save precomputed vector for HOG."),
+                                                      false),
+                 save_for_hog_);
 
     addParameter(csapex::param::ParameterFactory::declareTrigger("train",
                                                                  csapex::param::ParameterDescription("Train using obtained data!")),
@@ -114,43 +138,24 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
 
 void SVMTrainer::process()
 {
-    if(msg::hasMessage(in_)) {
-        FeaturesMessage::ConstPtr msg = msg::getMessage<FeaturesMessage>(in_);
-        m_.lock();
+    VectorMessage::ConstPtr in =
+            msg::getMessage<VectorMessage>(in_vector_);
+
+    for(auto entry : in->value) {
+        FeaturesMessage::ConstPtr feature = std::dynamic_pointer_cast<FeaturesMessage const>(entry);
 
         if(step_ == 0)
-            step_ = msg->value.size();
-        if(step_ != msg->value.size())
+            step_ = feature->value.size();
+        if(step_ != feature->value.size())
             throw std::runtime_error("Inconsistent feature length!");
 
-        msgs_.push_back(*msg);
-        m_.unlock();
-    }
-
-    if(msg::hasMessage(in_vector_)) {
-        std::shared_ptr<std::vector<FeaturesMessage> const> in =
-                msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_vector_);
-
-        m_.lock();
-        for(unsigned int i = 0 ; i < in->size() ; ++i) {
-            if(step_ == 0)
-                step_ = in->at(i).value.size();
-            if(step_ != in->at(i).value.size())
-                throw std::runtime_error("Inconsistent feature length!");
-        }
-
-        msgs_.insert(msgs_.end(), in->begin(), in->end());
-        m_.unlock();
+        msgs_.push_back(feature);
     }
 }
 
 void SVMTrainer::train()
 {
-    m_.lock();
-    std::vector<FeaturesMessage> data = msgs_;
-    m_.unlock();
-
-    cv::SVM         svm;
+    ExtendedSVM     svm;
     cv::SVMParams   parameters;
     parameters.kernel_type = readParameter<int>("kernel type");
     parameters.svm_type    = readParameter<int>("svm type");
@@ -161,18 +166,34 @@ void SVMTrainer::train()
     parameters.nu          = readParameter<double>("nu");
     parameters.p           = readParameter<double>("p");
 
-    cv::Mat samples(data.size(), step_, CV_32FC1, cv::Scalar::all(0));
-    cv::Mat labels (data.size(), 1, CV_32FC1, cv::Scalar::all(0));
+    cv::Mat samples(msgs_.size(), step_, CV_32FC1, cv::Scalar::all(0));
+    cv::Mat labels (msgs_.size(), 1, CV_32FC1, cv::Scalar::all(0));
     for(int i = 0 ; i < samples.rows ; ++i) {
         for(int j = 0 ; j < samples.cols ; ++j) {
-            samples.at<float>(i,j) = data.at(i).value.at(j);
-            labels.at<float>(i)    = data.at(i).classification;
+            samples.at<float>(i,j) = msgs_.at(i)->value.at(j);
+            labels.at<float>(i)    = i % 2 ;// msgs_.at(i)->classification;
         }
     }
 
+    std::cout << "started training" << std::endl;
     if(svm.train(samples, labels, cv::Mat(), cv::Mat(), parameters)) {
-        std::string path = readParameter<std::string>("path");
-        svm.save(path.c_str());
+        std::cout << "finished trainding" << std::endl;
+        if(save_for_hog_) {
+            cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+            CvSVMDecisionFunc *df = svm.get_decision_function();
+            std::vector<float> coeffs(svm.get_var_count(), 0.f);
+            for(int i = 0 ; i < df->sv_count ; ++i) {
+                const float *sv = svm.get_support_vector(i);
+                for(int j = 0 ; j < svm.get_var_count() ; ++j) {
+                    coeffs[j] += df->alpha[i] * sv[j];
+                }
+            }
+            fs << "coeffs" << coeffs;
+            fs << "rho" << df->rho;
+            fs.release();
+        } else {
+            svm.save(path_.c_str(), "svm");
+        }
     } else {
         throw std::runtime_error("Training failed!");
     }
@@ -181,8 +202,6 @@ void SVMTrainer::train()
 
 void SVMTrainer::clear()
 {
-    m_.lock();
     msgs_.clear();
     step_ = 0;
-    m_.unlock();
 }

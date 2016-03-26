@@ -39,7 +39,6 @@ void SVM::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> in = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
     std::shared_ptr<std::vector<FeaturesMessage> >      out(new std::vector<FeaturesMessage>(in->size()));
-    m_.lock();
 
     if(!loaded_) {
         throw std::runtime_error("No SVM is loaded!");
@@ -51,8 +50,6 @@ void SVM::process()
         out->at(i).classification = svm_.predict(sample);
     }
 
-    m_.unlock();
-
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
@@ -62,8 +59,6 @@ void SVM::load()
     if(path == "")
         return;
 
-    m_.lock();
-    svm_.load(path.c_str());
+    svm_.load(path.c_str(), "svm");
     loaded_ = true;
-    m_.unlock();
 }
