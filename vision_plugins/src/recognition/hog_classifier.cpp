@@ -44,7 +44,7 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
     addParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
                                                        param::ParameterDescription("Amount of gradient bins."),
                                                        2, 18, hog_.nbins, 1),
-                 hog_.nbins);
+                            hog_.nbins);
 
     parameters.addParameter(param::ParameterFactory::declareRange("hog/cells_x",
                                                                   param::ParameterDescription("Cells in x direction."),
