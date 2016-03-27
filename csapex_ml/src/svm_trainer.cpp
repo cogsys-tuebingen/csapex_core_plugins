@@ -171,7 +171,7 @@ void SVMTrainer::train()
     for(int i = 0 ; i < samples.rows ; ++i) {
         for(int j = 0 ; j < samples.cols ; ++j) {
             samples.at<float>(i,j) = msgs_.at(i)->value.at(j);
-            labels.at<float>(i)    = i % 2 ;// msgs_.at(i)->classification;
+            labels.at<float>(i)    = msgs_.at(i)->classification; //  i % 2
         }
     }
 
