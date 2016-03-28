@@ -21,7 +21,8 @@ using namespace csapex;
 using namespace csapex::connection_types;
 using namespace vision_plugins;
 
-HOGClassifier::HOGClassifier()
+HOGClassifier::HOGClassifier() :
+    prev_svm_type_(NONE)
 {
 }
 
@@ -71,13 +72,13 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
                                        param::ParameterDescription("Un-/directed gradients."),
                                        hog_.signedGradient),
                                        custom_active,
-                                       hog_.signedGradient);
+                                       signed_gradient_);
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
                                        param::ParameterDescription("Amount of gradient bins."),
                                        2, 18, hog_.nbins, 1),
                                        custom_active,
-                                       hog_.nbins);
+                                       n_bins_);
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cells_x",
                                        param::ParameterDescription("Cells in x direction."),
@@ -132,35 +133,24 @@ void HOGClassifier::process()
 
     switch(svm_type_) {
     case DEFAULT:
-        hog_.winSize.width  = 64;
-        hog_.winSize.height = 128;
-        hog_.signedGradient = false;
-        hog_.blockSize = cv::Size(16,16);
-        hog_.blockStride = cv::Size(8,8);
-        hog_.cellSize = cv::Size(8,8);
-        hog_.nbins = 9;
-        hog_.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+        setParameters(8, 8, 16, 2, 1, 9, false);
+        if(prev_svm_type_ != DEFAULT)
+            hog_.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+        prev_svm_type_ = DEFAULT;
         break;
     case DAIMLER:
-        hog_.winSize.width  = 48;
-        hog_.winSize.height = 96;
-        hog_.signedGradient = false;
-        hog_.blockSize = cv::Size(16,16);
-        hog_.blockStride = cv::Size(8,8);
-        hog_.cellSize = cv::Size(8,8);
-        hog_.nbins = 9;
-        hog_.setSVMDetector(HOGDescriptor::getDaimlerPeopleDetector());
+        setParameters(8, 6, 12, 2, 1, 9, false);
+        if(prev_svm_type_ != DAIMLER)
+            hog_.setSVMDetector(HOGDescriptor::getDaimlerPeopleDetector());
+        prev_svm_type_ = DAIMLER;
         break;
     case CUSTOM:
         if(svm_.empty())
             return;
-        hog_.cellSize.width  = cell_size_;
-        hog_.cellSize.height = cell_size_;
-        hog_.winSize.height  = cell_size_ * cells_y_;
-        hog_.winSize.width   = cell_size_ * cells_x_;
-        hog_.blockSize       = hog_.cellSize * block_size_;
-        hog_.blockStride     = hog_.cellSize * block_stride_;
-        hog_.setSVMDetector(svm_);
+        setParameters(cell_size_, cells_x_, cells_y_, block_size_, block_stride_, n_bins_, signed_gradient_);
+        if(prev_svm_type_ != CUSTOM)
+            hog_.setSVMDetector(svm_);
+        prev_svm_type_ = CUSTOM;
         break;
     default:
         throw std::runtime_error("Unkown SVM type!");
@@ -277,5 +267,57 @@ void HOGClassifier::load()
     if(svm_.empty())
         throw std::runtime_error("Couldn't load svm!");
     fs.release();
+}
 
+void HOGClassifier::setParameters(const int cell_size,
+                                const int cells_x, const int cells_y,
+                                const int block_size,
+                                const int block_stride,
+                                const int bins,
+                                const bool signed_gradient)
+{
+    if(hog_.cellSize.width != cell_size || hog_.cellSize.height != cell_size) {
+        setParameter<int>("hog/cell_size", cell_size);
+        hog_.cellSize.width  = cell_size;
+        hog_.cellSize.height = cell_size;
+    }
+
+    int window_height = cell_size * cells_y;
+    if(hog_.winSize.height != window_height) {
+        setParameter<int>("hog/cells_y", cells_y);
+        hog_.winSize.height = window_height;
+    }
+
+    int window_width = cell_size * cells_x;
+    if(hog_.winSize.width !=  window_width) {
+        hog_.winSize.width = window_width;
+        setParameter<int>("hog/cells_x", cells_x);
+    }
+
+    int block_size_px = cell_size * block_size;
+    if(hog_.blockSize.width != block_size_px ||
+            hog_.blockSize.height != block_size_px) {
+        hog_.blockSize.width = block_size_px;
+        hog_.blockSize.height = block_size_px;
+        setParameter<int>("hog/block_size", block_size);
+    }
+
+    int block_stride_px = cell_size * block_stride;
+    if(hog_.blockStride.width != block_stride_px ||
+            hog_.blockStride.height != block_stride_px) {
+        hog_.blockStride.height = block_stride_px;
+        hog_.blockStride.width = block_stride_px;
+        setParameter<int>("hog/bock_stride", block_stride);
+    }
+
+
+    if(hog_.nbins != bins) {
+        hog_.nbins = bins;
+        setParameter<int>("hog/gradient_bins", bins);
+    }
+
+    if(hog_.signedGradient |= signed_gradient) {
+        hog_.signedGradient = signed_gradient;
+        setParameter<bool>("hog/signed_gradient", signed_gradient);
+    }
 }
