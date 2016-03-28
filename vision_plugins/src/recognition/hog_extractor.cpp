@@ -82,7 +82,7 @@ void HOGExtractor::setupParameters(Parameterizable& parameters)
 void HOGExtractor::setup(NodeModifier& node_modifier)
 {
     in_img_     = node_modifier.addInput<CvMatMessage>("image");
-    in_rois_    = node_modifier.addOptionalInput<VectorMessage, RoiMessage>("rois");
+    in_rois_    = node_modifier.addInput<VectorMessage, RoiMessage>("rois");
     out_        = node_modifier.addOutput<VectorMessage, FeaturesMessage>("features");
 }
 

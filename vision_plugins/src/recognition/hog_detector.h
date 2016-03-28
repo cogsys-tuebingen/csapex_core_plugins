@@ -24,8 +24,12 @@ private:
     csapex::Output* out_;
 
     HOGDescriptor         hog_;
-    int                   hog_win_width_;
-    int                   hog_win_height_;
+    int             cells_x_;
+    int             cells_y_;
+    int             cell_size_;
+    int             block_size_;
+    int             block_stride_;
+    int             adaption_type_;
     int                   scan_mode_;
     std::vector<float>    svm_;
     int                   svm_type_;

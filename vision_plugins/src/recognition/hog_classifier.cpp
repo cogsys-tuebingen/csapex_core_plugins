@@ -27,47 +27,6 @@ HOGClassifier::HOGClassifier()
 
 void HOGClassifier::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/sigma",
-                                                                  param::ParameterDescription("Standard deviation for Gaussian blur."),
-                                                                  0.0, 10.0, 0.0, 0.1),
-                            hog_.winSigma);
-
-    parameters.addParameter(param::ParameterFactory::declareBool("hog/gamma_correction",
-                                                                 param::ParameterDescription("Enable the gamma correction."),
-                                                                 true),
-                            hog_.gammaCorrection);
-    parameters.addParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
-                                                                 param::ParameterDescription("Un-/directed gradients."),
-                                                                 hog_.signedGradient),
-                            hog_.signedGradient);
-
-    addParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
-                                                       param::ParameterDescription("Amount of gradient bins."),
-                                                       2, 18, hog_.nbins, 1),
-                            hog_.nbins);
-
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/cells_x",
-                                                                  param::ParameterDescription("Cells in x direction."),
-                                                                  2, 16, 8, 1),
-                            cells_x_);
-
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/cells_y",
-                                                                  param::ParameterDescription("Cells in x direction."),
-                                                                  2, 16, 16, 1),
-                            cells_y_);
-
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/cell_size",
-                                                                  param::ParameterDescription("Size of the cells."),
-                                                                  4, 16, 8, 1),
-                            cell_size_);
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/block size",
-                                                                  param::ParameterDescription("Cell count in both dimension of a block."),
-                                                                  1, 4, 2, 1),
-                            block_size_);
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/bock_stride",
-                                                                  param::ParameterDescription("Overlap of each block in cells."),
-                                                                  1, 3, 1, 1),
-                            block_stride_);
 
     std::map<std::string, int> adpation_types =
             boost::assign::map_list_of("Scale", SCALE)("TryGrow", TRY_GROW)("GrowStrict", GROW_STRICT);
@@ -76,10 +35,6 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
                                                                          adpation_types,
                                                                          (int) SCALE),
                             adaption_type_);
-
-
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
-                            svm_thresh_);
 
     std::map<std::string, int> svm_types = {
         {"default", DEFAULT},
@@ -97,12 +52,68 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
                                        custom_active, std::bind(&HOGClassifier::load, this));
     setParameterEnabled("svm/path", false);
 
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
+                            svm_thresh_);
+
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/sigma",
+                                                                  param::ParameterDescription("Standard deviation for Gaussian blur."),
+                                                                  0.0, 10.0, 0.0, 0.1),
+                            hog_.winSigma);
+
+    parameters.addParameter(param::ParameterFactory::declareBool("hog/gamma_correction",
+                                                                 param::ParameterDescription("Enable the gamma correction."),
+                                                                 true),
+                            hog_.gammaCorrection);
+
+    /// paramters only applicable if custom mode is active
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
+                                       param::ParameterDescription("Un-/directed gradients."),
+                                       hog_.signedGradient),
+                                       custom_active,
+                                       hog_.signedGradient);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
+                                       param::ParameterDescription("Amount of gradient bins."),
+                                       2, 18, hog_.nbins, 1),
+                                       custom_active,
+                                       hog_.nbins);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cells_x",
+                                       param::ParameterDescription("Cells in x direction."),
+                                       2, 16, 8, 1),
+                                       custom_active,
+                                       cells_x_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cells_y",
+                                       param::ParameterDescription("Cells in x direction."),
+                                       2, 16, 16, 1),
+                                       custom_active,
+                                       cells_y_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cell_size",
+                                       param::ParameterDescription("Size of the cells."),
+                                       4, 16, 8, 1),
+                                       custom_active,
+                                       cell_size_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/block size",
+                                       param::ParameterDescription("Cell count in both dimension of a block."),
+                                       1, 4, 2, 1),
+                                       custom_active,
+                                       block_size_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/bock_stride",
+                                       param::ParameterDescription("Overlap of each block in cells."),
+                                       1, 3, 1, 1),
+                                       custom_active,
+                                       block_stride_);
+
 }
 
 void HOGClassifier::setup(NodeModifier& node_modifier)
 {
     in_img_     = node_modifier.addInput<CvMatMessage>("image");
-    in_rois_    = node_modifier.addOptionalInput<VectorMessage, RoiMessage>("rois");
+    in_rois_    = node_modifier.addInput<VectorMessage, RoiMessage>("rois");
     out_rois_   = node_modifier.addOutput<VectorMessage, RoiMessage>("filtered rois");
 }
 
@@ -117,30 +128,38 @@ void HOGClassifier::process()
     }
 
     /// update HOG parameters
-    hog_.cellSize.width  = cell_size_;
-    hog_.cellSize.height = cell_size_;
-    hog_.winSize.height  = cell_size_ * cells_y_;
-    hog_.winSize.width   = cell_size_ * cells_x_;
-    hog_.blockSize       = hog_.cellSize * block_size_;
-    hog_.blockStride     = hog_.cellSize * block_stride_;
     ratio_hog_ = hog_.winSize.width / (double) hog_.winSize.height;
 
     switch(svm_type_) {
     case DEFAULT:
         hog_.winSize.width  = 64;
         hog_.winSize.height = 128;
+        hog_.signedGradient = false;
+        hog_.blockSize = cv::Size(16,16);
+        hog_.blockStride = cv::Size(8,8);
+        hog_.cellSize = cv::Size(8,8);
+        hog_.nbins = 9;
         hog_.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
         break;
     case DAIMLER:
         hog_.winSize.width  = 48;
         hog_.winSize.height = 96;
+        hog_.signedGradient = false;
+        hog_.blockSize = cv::Size(16,16);
+        hog_.blockStride = cv::Size(8,8);
+        hog_.cellSize = cv::Size(8,8);
+        hog_.nbins = 9;
         hog_.setSVMDetector(HOGDescriptor::getDaimlerPeopleDetector());
         break;
     case CUSTOM:
         if(svm_.empty())
             return;
-        hog_.winSize.width  = hog_win_width_;
-        hog_.winSize.height = hog_win_height_;
+        hog_.cellSize.width  = cell_size_;
+        hog_.cellSize.height = cell_size_;
+        hog_.winSize.height  = cell_size_ * cells_y_;
+        hog_.winSize.width   = cell_size_ * cells_x_;
+        hog_.blockSize       = hog_.cellSize * block_size_;
+        hog_.blockStride     = hog_.cellSize * block_stride_;
         hog_.setSVMDetector(svm_);
         break;
     default:
@@ -250,10 +269,10 @@ void HOGClassifier::load()
     }
 
     svm_.clear();
-
-    fs["width"]  >> hog_win_width_;
-    fs["height"] >> hog_win_height_;
-    fs["svm"]    >> svm_;
+    fs["svm_coeffs"]    >> svm_;
+    double rho;
+    fs["svm_rho"] >> rho;
+    setParameter<double>("svm/thresh", rho);
 
     if(svm_.empty())
         throw std::runtime_error("Couldn't load svm!");

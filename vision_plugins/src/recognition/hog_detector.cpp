@@ -27,41 +27,6 @@ HOGDetector::HOGDetector()
 
 void HOGDetector::setupParameters(Parameterizable& parameters)
 {
-    /// scan mode
-    std::map<std::string, int> scan_modes = {
-        {"single scale", SINGLE_SCALE},
-        {"multi scale", MULTI_SCALE}
-    };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("hog/scan_mode", scan_modes, (int) SINGLE_SCALE),
-                            scan_mode_);
-
-    addParameter(param::ParameterFactory::declareRange("hog/levels",
-                                                       param::ParameterDescription("Scale levels to observe."),
-                                                       1, 128, 64, 1),
-                 hog_.nlevels);
-
-    addParameter(param::ParameterFactory::declareRange("hog/sigma",
-                                                       param::ParameterDescription("Standard deviation for Gaussian blur."),
-                                                       0.0, 10.0, 0.0, 0.1),
-                 hog_.winSigma);
-
-    addParameter(param::ParameterFactory::declareBool("hog/gamma_correction",
-                                                      param::ParameterDescription("Enable the gamma correction."),
-                                                      true),
-                 hog_.gammaCorrection);
-    addParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
-                                                      param::ParameterDescription("Un-/directed gradients."),
-                                                      hog_.signedGradient),
-                 hog_.signedGradient);
-
-    addParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
-                                                      param::ParameterDescription("Amount of gradient bins."),
-                                                      2, 18, hog_.nbins, 1),
-                 hog_.nbins);
-
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
-                            svm_thresh_);
-
     std::map<std::string, int> svm_types = {
         {"default", DEFAULT},
         {"custom",  CUSTOM},
@@ -72,12 +37,79 @@ void HOGDetector::setupParameters(Parameterizable& parameters)
     parameters.addParameter(svm_param,
                             svm_type_);
 
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
+                            svm_thresh_);
 
     std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
     parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz"),
                                        custom_active, std::bind(&HOGDetector::load, this));
     setParameterEnabled("svm/path", false);
 
+    /// scan mode
+    std::map<std::string, int> scan_modes = {
+        {"single scale", SINGLE_SCALE},
+        {"multi scale", MULTI_SCALE}
+    };
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("hog/scan_mode", scan_modes, (int) SINGLE_SCALE),
+                            scan_mode_);
+
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/levels",
+                                                                   param::ParameterDescription("Scale levels to observe."),
+                                                                   1, 128, 64, 1),
+                 hog_.nlevels);
+
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/sigma",
+                                                       param::ParameterDescription("Standard deviation for Gaussian blur."),
+                                                       0.0, 10.0, 0.0, 0.1),
+                 hog_.winSigma);
+
+    parameters.addParameter(param::ParameterFactory::declareBool("hog/gamma_correction",
+                                                      param::ParameterDescription("Enable the gamma correction."),
+                                                      true),
+                 hog_.gammaCorrection);
+
+
+    /// paramters only applicable if custom mode is active
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
+                                                                            param::ParameterDescription("Un-/directed gradients."),
+                                                                            hog_.signedGradient),
+                                       custom_active,
+                                       hog_.signedGradient);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
+                                                                             param::ParameterDescription("Amount of gradient bins."),
+                                                                             2, 18, hog_.nbins, 1),
+                                       custom_active,
+                                       hog_.nbins);
+
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cells_x",
+                                                                  param::ParameterDescription("Cells in x direction."),
+                                                                  2, 16, 8, 1),
+                                       custom_active,
+                                       cells_x_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cells_y",
+                                                                              param::ParameterDescription("Cells in x direction."),
+                                                                              2, 16, 16, 1),
+                                       custom_active,
+                                       cells_y_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cell_size",
+                                                                             param::ParameterDescription("Size of the cells."),
+                                                                             4, 16, 8, 1),
+                                       custom_active,
+                                       cell_size_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/block size",
+                                                                              param::ParameterDescription("Cell count in both dimension of a block."),
+                                                                              1, 4, 2, 1),
+                                       custom_active,
+                                       block_size_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/bock_stride",
+                                                                              param::ParameterDescription("Overlap of each block in cells."),
+                                                                              1, 3, 1, 1),
+                                       custom_active,
+                                       block_stride_);
 }
 
 void HOGDetector::setup(NodeModifier& node_modifier)
@@ -90,23 +122,42 @@ void HOGDetector::process()
 {
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_);
     VectorMessage::Ptr      out(VectorMessage::make<RoiMessage>());
+//    HOGDescriptor() : winSize(64,128), blockSize(16,16), blockStride(8,8),
+//        cellSize(8,8), nbins(9), derivAperture(1), winSigma(-1),
+//        histogramNormType(HOGDescriptor::L2Hys), L2HysThreshold(0.2), gammaCorrection(true),
+//        free_coef(-1.f), nlevels(HOGDescriptor::DEFAULT_NLEVELS), signedGradient(false)
+//    {}
 
     switch(svm_type_) {
     case DEFAULT:
         hog_.winSize.width  = 64;
         hog_.winSize.height = 128;
+        hog_.signedGradient = false;
+        hog_.blockSize = cv::Size(16,16);
+        hog_.blockStride = cv::Size(8,8);
+        hog_.cellSize = cv::Size(8,8);
+        hog_.nbins = 9;
         hog_.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
         break;
     case DAIMLER:
         hog_.winSize.width  = 48;
         hog_.winSize.height = 96;
+        hog_.signedGradient = false;
+        hog_.blockSize = cv::Size(16,16);
+        hog_.blockStride = cv::Size(8,8);
+        hog_.cellSize = cv::Size(8,8);
+        hog_.nbins = 9;
         hog_.setSVMDetector(HOGDescriptor::getDaimlerPeopleDetector());
         break;
     case CUSTOM:
         if(svm_.empty())
             return;
-        hog_.winSize.width  = hog_win_width_;
-        hog_.winSize.height = hog_win_height_;
+        hog_.cellSize.width  = cell_size_;
+        hog_.cellSize.height = cell_size_;
+        hog_.winSize.height  = cell_size_ * cells_y_;
+        hog_.winSize.width   = cell_size_ * cells_x_;
+        hog_.blockSize       = hog_.cellSize * block_size_;
+        hog_.blockStride     = hog_.cellSize * block_stride_;
         hog_.setSVMDetector(svm_);
         break;
     default:
@@ -140,7 +191,7 @@ void HOGDetector::process()
         RoiMessage::Ptr roi(new RoiMessage);
         cv::Scalar color(utils_vision::color::bezierColor<cv::Scalar>(i / (float) loc_points.size()));
         cv::Point &p = loc_points.at(i);
-        cv::Rect r(p.x, p.y, hog_win_width_, hog_win_height_);
+        cv::Rect r(p.x, p.y, hog_.winSize.width, hog_.winSize.height);
         roi->value = Roi(r, color, HUMAN);
         out->value.push_back(roi);
     }
@@ -161,10 +212,7 @@ void HOGDetector::load()
     }
 
     svm_.clear();
-
-    fs["width"]  >> hog_win_width_;
-    fs["height"] >> hog_win_height_;
-    fs["svm"]    >> svm_;
+    fs["svm_coeffs"]    >> svm_;
 
     if(svm_.empty())
         throw std::runtime_error("Couldn't load svm!");

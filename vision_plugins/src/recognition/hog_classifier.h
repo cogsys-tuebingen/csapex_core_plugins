@@ -28,9 +28,6 @@ private:
     csapex::Output *out_rois_;
 
     HOGDescriptor   hog_;
-    int             hog_win_width_;
-    int             hog_win_height_;
-
     bool            mirror_;
     int             cells_x_;
     int             cells_y_;
