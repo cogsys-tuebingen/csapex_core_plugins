@@ -39,7 +39,7 @@ SVMTrainer::SVMTrainer() :
 
 void SVMTrainer::setup(NodeModifier& node_modifier)
 {
-    in_vector_ = node_modifier.addOptionalInput<VectorMessage, FeaturesMessage>("Features");
+    in_vector_ = node_modifier.addInput<VectorMessage, FeaturesMessage>("Features");
 }
 
 void SVMTrainer::setupParameters(Parameterizable& parameters)
@@ -188,8 +188,8 @@ void SVMTrainer::train()
                     coeffs[j] += df->alpha[i] * sv[j];
                 }
             }
-            fs << "coeffs" << coeffs;
-            fs << "rho" << df->rho;
+            fs << "svm_coeffs" << coeffs;
+            fs << "svm_rho" << df->rho;
             fs.release();
         } else {
             svm.save(path_.c_str(), "svm");
