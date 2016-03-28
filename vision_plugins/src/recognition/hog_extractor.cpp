@@ -145,47 +145,41 @@ void HOGExtractor::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst
         break;
     case TRY_GROW:
     case GROW_STRICT:
-    {
-
         if(ratio_roi < ratio_hog_) {
             /// scale the width
             double scale_width = ratio_roi / ratio_hog_;
             roi_adapted.width *= scale_width;
-            roi_adapted.width += (roi_adapted.height % roi_adapted.width);
             roi_adapted.x -= (roi_adapted.width - roi.width) / 2;
+            /// move to fit into image
+            if(roi_adapted.x < 0) {
+                roi_adapted.x = 0;
+            } else {
+                int overshoot = (src.cols - 1) - (roi_adapted.x + roi.width);
+                if(overshoot < 0) {
+                    roi_adapted.x += overshoot;
+                }
+            }
         } else if(ratio_roi > ratio_hog_) {
             /// scale the height
             double scale_height = ratio_hog_ / ratio_roi;
             roi_adapted.height *= scale_height;
-            roi_adapted.width += (roi_adapted.height % roi_adapted.width);
             roi_adapted.y -= (roi_adapted.height - roi.height) / 2;
-        }
-
-        /// move to fit into image
-        if(roi_adapted.x < 0) {
-            roi_adapted.x = 0;
-        } else {
-            int overshoot = (src.cols - 1) - (roi_adapted.x + roi.width);
-            if(overshoot < 0) {
-                roi_adapted.x += overshoot;
+            /// move to fit into image
+            if(roi_adapted.y < 0) {
+                roi_adapted.y = 0;
+            } else {
+                int overshoot = (src.rows - 1) - (roi_adapted.y + roi.height);
+                if(overshoot < 0) {
+                    roi_adapted.y += overshoot;
+                }
             }
         }
-        if(roi_adapted.y < 0) {
-            roi_adapted.y = 0;
-        } else {
-            int overshoot = (src.rows - 1) - (roi_adapted.y + roi.height);
-            if(overshoot < 0) {
-                roi_adapted.y += overshoot;
-            }
-        }
-
         if(roi.height > src.rows || roi.width > src.cols) {
             /// go back to scaling as failsafe
             roi_adapted = roi;
             if(adaption_type_ == GROW_STRICT)
                 return;
         }
-    }
         break;
     default:
         throw std::runtime_error("Unknown adaption type!");

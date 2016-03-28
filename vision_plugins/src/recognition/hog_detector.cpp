@@ -44,7 +44,6 @@ void HOGDetector::setupParameters(Parameterizable& parameters)
     std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
     parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz"),
                                        custom_active, std::bind(&HOGDetector::load, this));
-    setParameterEnabled("svm/path", false);
 
     /// scan mode
     std::map<std::string, int> scan_modes = {
@@ -186,7 +185,7 @@ void HOGDetector::process()
 
 void HOGDetector::load()
 {
-    std::string     path = readParameter<std::string>("svm path");
+    std::string     path = readParameter<std::string>("svm/path");
 
     if(path == "")
         return;
@@ -207,6 +206,7 @@ void HOGDetector::load()
         throw std::runtime_error("Couldn't load svm!");
     fs.release();
 
+    hog_.setSVMDetector(svm_);
 }
 
 void HOGDetector::setParameters(const int cell_size,

@@ -51,11 +51,15 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
     std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
     parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz"),
                                        custom_active, std::bind(&HOGClassifier::load, this));
-    setParameterEnabled("svm/path", false);
 
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
                             svm_thresh_);
+
+    parameters.addParameter(param::ParameterFactory::declareBool("hog/mirror",
+                                                                 param::ParameterDescription("Mirror for classification."),
+                                                                 false),
+                            mirror_);
 
     parameters.addParameter(param::ParameterFactory::declareRange("hog/sigma",
                                                                   param::ParameterDescription("Standard deviation for Gaussian blur."),
@@ -172,20 +176,22 @@ void HOGClassifier::process()
         assert(data.cols == hog_.winSize.width);
 
         double weight = 0.0;
-        if(!hog_.classify(data, svm_thresh_, weight))
-            continue;
+        if(mirror_) {
+            cv::Mat data_mirrored;
+            cv::flip(data, data_mirrored, 1);
+            bool original = hog_.classify(data, svm_thresh_, weight);
+            bool mirrored = hog_.classify(data_mirrored, svm_thresh_, weight);
+            if(!original && !mirrored)
+                continue;
+        } else {
+            if(!hog_.classify(data, svm_thresh_, weight))
+                continue;
+        }
 
         RoiMessage::Ptr roi_out(new RoiMessage);
         roi_out->value = roi->value;
         roi_out->value.setClassification(HUMAN);
         out->value.push_back(roi_out);
-        if(mirror_) {
-//            feature.reset(new FeaturesMessage);
-//            feature->classification = roi->value.classification();
-//            cv::flip(data, data, 1);
-//            hog_.compute(data, feature->value);
-//            out->value.push_back(feature);
-        }
     }
     msg::publish(out_rois_, out);
 }
@@ -247,7 +253,7 @@ void HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &ds
 
 void HOGClassifier::load()
 {
-    std::string     path = readParameter<std::string>("svm path");
+    std::string     path = readParameter<std::string>("svm/path");
 
     if(path == "")
         return;
