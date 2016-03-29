@@ -30,6 +30,15 @@ struct ExtendedSVM : cv::SVM {
         std::cout << "rho: " << decision_func->rho << std::endl;
     }
 
+    void export_decision_func(cv::FileStorage &fs)
+    {
+        fs << "svm_alpha" << "[";
+        for(int i = 0 ; i < decision_func->sv_count ; ++i)
+            fs << decision_func->alpha[i];
+        fs << "]";
+        fs << "svm_rho" << decision_func->rho;
+    }
+
 };
 
 SVMTrainer::SVMTrainer() :
@@ -165,6 +174,7 @@ void SVMTrainer::train()
     parameters.C           = readParameter<double>("C");
     parameters.nu          = readParameter<double>("nu");
     parameters.p           = readParameter<double>("p");
+    parameters.term_crit   = cv::TermCriteria(cv::TermCriteria::EPS, 100, 1e-6);;
 
     cv::Mat samples(msgs_.size(), step_, CV_32FC1, cv::Scalar::all(0));
     cv::Mat labels (msgs_.size(), 1, CV_32FC1, cv::Scalar::all(0));
@@ -177,7 +187,8 @@ void SVMTrainer::train()
 
     std::cout << "started training" << std::endl;
     if(svm.train(samples, labels, cv::Mat(), cv::Mat(), parameters)) {
-        std::cout << "finished trainding" << std::endl;
+        std::cout << "finished training" << std::endl;
+        svm.print_decision_func();
         if(save_for_hog_) {
             cv::FileStorage fs(path_, cv::FileStorage::WRITE);
             CvSVMDecisionFunc *df = svm.get_decision_function();
@@ -189,7 +200,7 @@ void SVMTrainer::train()
                 }
             }
             fs << "svm_coeffs" << coeffs;
-            fs << "svm_rho" << df->rho;
+            svm.export_decision_func(fs);
             fs.release();
         } else {
             svm.save(path_.c_str(), "svm");

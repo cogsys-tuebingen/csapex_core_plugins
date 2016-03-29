@@ -12,9 +12,12 @@ catkin_package(
   CATKIN_DEPENDS csapex csapex_core_plugins
 )
 
+find_package(OpenCV REQUIRED)
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUED_DIRS}
 )
 add_library(csapex_ml
     src/features_message.cpp
@@ -42,7 +45,7 @@ add_library(csapex_ml_plugin
 )
 
 target_link_libraries(csapex_ml_plugin
-    yaml-cpp csapex_ml ${catkin_LIBRARIES})
+    yaml-cpp csapex_ml ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 #
 # INSTALL
