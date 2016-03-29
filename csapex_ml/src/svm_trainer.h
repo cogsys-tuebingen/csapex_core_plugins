@@ -28,9 +28,9 @@ private:
 
     std::size_t                  step_;
     std::vector<FeaturePtr>      msgs_;
-
     std::string  path_;
     bool         save_for_hog_;
+    cv::SVMParams svm_params_;
 
     void train();
     void clear();
