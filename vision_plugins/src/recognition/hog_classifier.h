@@ -12,6 +12,7 @@ namespace vision_plugins {
 class HOGClassifier : public csapex::Node
 {
 public:
+
     HOGClassifier();
 
     void setupParameters(Parameterizable& parameters) override;
@@ -19,6 +20,7 @@ public:
     void process() override;
 
 private:
+    enum ThresholdType { GREATER = 0, LESS, LESS_EQUAL, GREATER_EQUAL};
     enum SVMType  {DEFAULT = 0, DAIMLER, CUSTOM, NONE};
     enum AdaptionType {SCALE, TRY_GROW, GROW_STRICT};
     enum ClassificationType {BACKGROUND = 0, HUMAN = 1, HUMAN_PART = 2, UNKNOWN = 3};
@@ -43,6 +45,7 @@ private:
     std::vector<float> svm_;
     int                svm_type_;
     double             svm_thresh_;
+    int                svm_thresh_type_;
 
     void getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst);
     void load();

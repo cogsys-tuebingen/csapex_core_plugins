@@ -22,6 +22,7 @@ using namespace csapex::connection_types;
 using namespace vision_plugins;
 
 HOGDetector::HOGDetector() :
+    prev_svm_type_(NONE),
     svm_type_(NONE)
 {
 }
@@ -126,8 +127,10 @@ void HOGDetector::process()
     switch(svm_type_) {
     case DEFAULT:
         setParameters(8, 8, 16, 2, 1, 9, false);
-        if(prev_svm_type_ != DEFAULT)
+        if(prev_svm_type_ != DEFAULT) {
             hog_.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+            std::cout << "default" << std::endl;
+        }
         prev_svm_type_ = DEFAULT;
         break;
     case DAIMLER:

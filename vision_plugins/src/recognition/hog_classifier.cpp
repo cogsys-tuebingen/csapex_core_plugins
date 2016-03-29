@@ -47,13 +47,22 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
     parameters.addParameter(svm_param,
                             svm_type_);
 
+    std::map<std::string, int> svm_thresh_types = {
+        {">", GREATER},
+        {"<" , LESS},
+        {">=", GREATER_EQUAL},
+        {"<=", LESS_EQUAL}
+    };
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("svm/thershold_type", svm_thresh_types, (int) GREATER),
+                            svm_thresh_type_);
+
 
     std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
     parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz"),
                                        custom_active, std::bind(&HOGClassifier::load, this));
 
 
-    parameters.addParameter(param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("svm/thresh", -10000.0, 10000.0, 0.0, 0.1),
                             svm_thresh_);
 
     parameters.addParameter(param::ParameterFactory::declareBool("hog/mirror",
@@ -134,7 +143,6 @@ void HOGClassifier::process()
 
     /// update HOG parameters
     ratio_hog_ = hog_.winSize.width / (double) hog_.winSize.height;
-
     switch(svm_type_) {
     case DEFAULT:
         setParameters(8, 8, 16, 2, 1, 9, false);
@@ -176,19 +184,38 @@ void HOGClassifier::process()
         assert(data.cols == hog_.winSize.width);
 
         double weight = 0.0;
+        double weight_mirrored = 0.0;
+        bool accepted = false;
+        hog_.classify(data, svm_thresh_, weight);
         if(mirror_) {
             cv::Mat data_mirrored;
             cv::flip(data, data_mirrored, 1);
-            bool original = hog_.classify(data, svm_thresh_, weight);
-            bool mirrored = hog_.classify(data_mirrored, svm_thresh_, weight);
-            if(!original && !mirrored) {
-                continue;
-            }
-        } else {
-            if(!hog_.classify(data, svm_thresh_, weight)) {
-                continue;
-            }
+            hog_.classify(data_mirrored, svm_thresh_, weight_mirrored);
+
         }
+        switch(svm_thresh_type_) {
+        case GREATER:
+            accepted |= weight > svm_thresh_ || weight_mirrored > svm_thresh_;
+            break;
+        case LESS:
+            accepted |= weight < svm_thresh_ || weight_mirrored < svm_thresh_;
+            break;
+        case GREATER_EQUAL:
+            accepted |= weight >= svm_thresh_ || weight_mirrored >= svm_thresh_;
+            break;
+        case LESS_EQUAL:
+            accepted |= weight <= svm_thresh_ || weight_mirrored <= svm_thresh_;
+            break;
+        default:
+            throw std::runtime_error("Unknown threshold type!");
+        }
+
+        std::cout << roi->value.classification() <<
+                     " " << weight <<
+                     " " << weight_mirrored << std::endl;
+
+        if(!accepted)
+            continue;
 
         RoiMessage::Ptr roi_out(new RoiMessage);
         roi_out->value = roi->value;

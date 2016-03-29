@@ -19,6 +19,7 @@ public:
 
 private:
     enum AdaptionType {SCALE, TRY_GROW, GROW_STRICT};
+    enum ClassificationType {BACKGROUND = 0, HUMAN = 1, HUMAN_PART = 2, UNKNOWN = 3};
 
     HOGDescriptor   hog_;
     csapex::Input  *in_img_;

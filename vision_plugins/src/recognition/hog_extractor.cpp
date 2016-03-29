@@ -126,6 +126,7 @@ void HOGExtractor::process()
         if(mirror_) {
             feature.reset(new FeaturesMessage);
             feature->classification = roi->value.classification();
+
             cv::flip(data, data, 1);
             hog_.compute(data, feature->value);
             out->value.push_back(feature);
