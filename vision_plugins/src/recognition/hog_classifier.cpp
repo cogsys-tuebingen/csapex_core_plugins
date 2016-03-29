@@ -73,43 +73,43 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
 
     /// paramters only applicable if custom mode is active
     parameters.addConditionalParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
-                                       param::ParameterDescription("Un-/directed gradients."),
-                                       hog_.signedGradient),
+                                                                            param::ParameterDescription("Un-/directed gradients."),
+                                                                            hog_.signedGradient),
                                        custom_active,
                                        signed_gradient_);
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
-                                       param::ParameterDescription("Amount of gradient bins."),
-                                       2, 18, hog_.nbins, 1),
+                                                                             param::ParameterDescription("Amount of gradient bins."),
+                                                                             2, 18, hog_.nbins, 1),
                                        custom_active,
                                        n_bins_);
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cells_x",
-                                       param::ParameterDescription("Cells in x direction."),
-                                       2, 16, 8, 1),
+                                                                             param::ParameterDescription("Cells in x direction."),
+                                                                             2, 16, 8, 1),
                                        custom_active,
                                        cells_x_);
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cells_y",
-                                       param::ParameterDescription("Cells in x direction."),
-                                       2, 16, 16, 1),
+                                                                             param::ParameterDescription("Cells in x direction."),
+                                                                             2, 16, 16, 1),
                                        custom_active,
                                        cells_y_);
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cell_size",
-                                       param::ParameterDescription("Size of the cells."),
-                                       4, 16, 8, 1),
+                                                                             param::ParameterDescription("Size of the cells."),
+                                                                             4, 16, 8, 1),
                                        custom_active,
                                        cell_size_);
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/block size",
-                                       param::ParameterDescription("Cell count in both dimension of a block."),
-                                       1, 4, 2, 1),
+                                                                             param::ParameterDescription("Cell count in both dimension of a block."),
+                                                                             1, 4, 2, 1),
                                        custom_active,
                                        block_size_);
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/bock_stride",
-                                       param::ParameterDescription("Overlap of each block in cells."),
-                                       1, 3, 1, 1),
+                                                                             param::ParameterDescription("Overlap of each block in cells."),
+                                                                             1, 3, 1, 1),
                                        custom_active,
                                        block_stride_);
 
@@ -181,11 +181,13 @@ void HOGClassifier::process()
             cv::flip(data, data_mirrored, 1);
             bool original = hog_.classify(data, svm_thresh_, weight);
             bool mirrored = hog_.classify(data_mirrored, svm_thresh_, weight);
-            if(!original && !mirrored)
+            if(!original && !mirrored) {
                 continue;
+            }
         } else {
-            if(!hog_.classify(data, svm_thresh_, weight))
+            if(!hog_.classify(data, svm_thresh_, weight)) {
                 continue;
+            }
         }
 
         RoiMessage::Ptr roi_out(new RoiMessage);
@@ -268,19 +270,21 @@ void HOGClassifier::load()
     fs["svm_coeffs"]    >> svm_;
     double rho;
     fs["svm_rho"] >> rho;
-    setParameter<double>("svm/thresh", rho);
+    svm_.push_back(-rho);
+    //    setParameter<double>("svm/thresh", rho);
 
     if(svm_.empty())
         throw std::runtime_error("Couldn't load svm!");
     fs.release();
 }
 
+
 void HOGClassifier::setParameters(const int cell_size,
-                                const int cells_x, const int cells_y,
-                                const int block_size,
-                                const int block_stride,
-                                const int bins,
-                                const bool signed_gradient)
+                                  const int cells_x, const int cells_y,
+                                  const int block_size,
+                                  const int block_stride,
+                                  const int bins,
+                                  const bool signed_gradient)
 {
     if(hog_.cellSize.width != cell_size || hog_.cellSize.height != cell_size) {
         setParameter<int>("hog/cell_size", cell_size);

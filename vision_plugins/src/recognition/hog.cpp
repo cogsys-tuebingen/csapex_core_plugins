@@ -1599,11 +1599,13 @@ bool HOGDescriptor::classify(const cv::Mat &img,
         for( ; k < blockHistogramSize; k++ )
             s += vec[k]*svmVec[k];
     }
+    weight = s;
+
     if( s >= hitThreshold )
     {
-        weight = s;
         return true;
     }
+
     return false;
 }
 
