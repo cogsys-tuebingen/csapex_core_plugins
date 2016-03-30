@@ -175,8 +175,9 @@ void HOGExtractor::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst
             }
         }
         if(roi.height > src.rows || roi.width > src.cols) {
-            /// go back to scaling as failsafe
-            roi_adapted = roi;
+            cv::Rect img_rect(0,0,src.cols, src.rows);
+            roi_adapted = roi_adapted & img_rect;
+
             if(adaption_type_ == GROW_STRICT)
                 return;
         }
