@@ -129,7 +129,6 @@ void HOGDetector::process()
         setParameters(8, 8, 16, 2, 1, 9, false);
         if(prev_svm_type_ != DEFAULT) {
             hog_.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
-            std::cout << "default" << std::endl;
         }
         prev_svm_type_ = DEFAULT;
         break;

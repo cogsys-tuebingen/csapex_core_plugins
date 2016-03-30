@@ -210,9 +210,9 @@ void HOGClassifier::process()
             throw std::runtime_error("Unknown threshold type!");
         }
 
-        std::cout << roi->value.classification() <<
-                     " " << weight <<
-                     " " << weight_mirrored << std::endl;
+//        std::cout << roi->value.classification() <<
+//                     " " << weight <<
+//                     " " << weight_mirrored << std::endl;
 
         if(!accepted)
             continue;
@@ -228,7 +228,7 @@ void HOGClassifier::process()
 void HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst)
 {
     cv::Mat window;
-    double ratio_roi = roi.width / roi.height;
+    double ratio_roi = roi.width / (double) roi.height;
     cv::Rect roi_adapted = roi;
 
     switch(adaption_type_) {
