@@ -55,6 +55,10 @@ private:
 
     Type type_;
     std::map<double, Entry> entries_;
+
+    std::string out_path_;
+
+    void saveData();
 };
 
 }
