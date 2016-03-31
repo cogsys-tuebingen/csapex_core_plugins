@@ -214,12 +214,15 @@ void HOGClassifier::process()
 //                     " " << weight <<
 //                     " " << weight_mirrored << std::endl;
 
-        if(!accepted)
-            continue;
 
         RoiMessage::Ptr roi_out(new RoiMessage);
         roi_out->value = roi->value;
-        roi_out->value.setClassification(HUMAN);
+        if(accepted) {
+            roi_out->value.setClassification(HUMAN);
+            roi_out->value.setColor(cv::Scalar(0,200,0));
+        } else {
+            roi_out->value.setClassification(BACKGROUND);
+        }
         out->value.push_back(roi_out);
     }
     msg::publish(out_rois_, out);
@@ -266,8 +269,6 @@ void HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &ds
             }
         }
         if(roi.height > src.rows || roi.width > src.cols) {
-            cv::Rect img_rect(0,0,src.cols, src.rows);
-            roi_adapted = roi_adapted & img_rect;
 
             if(adaption_type_ == GROW_STRICT)
                 return;
@@ -276,6 +277,9 @@ void HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &ds
     default:
         throw std::runtime_error("Unknown adaption type!");
     }
+
+    cv::Rect img_rect(0,0,src.cols, src.rows);
+    roi_adapted = roi_adapted & img_rect;
 
     window = cv::Mat(src, roi_adapted);
     cv::resize(window, dst, hog_.winSize);
