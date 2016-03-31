@@ -23,7 +23,7 @@ ROCCurve::ROCCurve()
 void ROCCurve::setup(NodeModifier& node_modifier)
 {
     in_confusion_ = node_modifier.addInput<connection_types::ConfusionMatrixMessage>("Anything");
-    in_threshold_ = node_modifier.addInput<double>("Discriminization\nThreshold");
+    in_threshold_ = node_modifier.addOptionalInput<double>("Discriminization\nThreshold");
 
     out_auc_ = node_modifier.addOutput<double>("AUC");
 }
@@ -65,16 +65,17 @@ void ROCCurve::process()
 
     {
         std::unique_lock<std::recursive_mutex> lock(mutex_);
-        const ConfusionMatrix& cm = message->confusion;
+        ConfusionMatrix cm = message->confusion;
 
         if(cm.classes.size() != 2) {
-            throw std::logic_error("needs a confusion matrix with exactly 2 classes");
+            throw std::logic_error(std::string("needs a confusion matrix with exactly 2 classes, has ") + std::to_string(cm.classes.size()));
         }
 
-        double threshold = msg::getValue<double>(in_threshold_);
 
-        if(!std::isnan(cm.threshold) && cm.threshold != threshold) {
-            throw std::logic_error("threshold is wrong...");
+        double threshold = cm.threshold;
+        if(msg::hasMessage(in_threshold_)) {
+            threshold = msg::getValue<double>(in_threshold_);
+            cm.threshold = threshold;
         }
 
         int tp = cm.histogram.at(std::make_pair(1, 1));
@@ -84,6 +85,9 @@ void ROCCurve::process()
         int p = tp + fn;
         int n = tn + fp;
 
+        if(n == 0) n = 1;
+        if(p == 0) p = 1;
+
         Entry entry;
         entry.threshold = threshold;
         entry.recall = tp / (double) p;
@@ -92,6 +96,7 @@ void ROCCurve::process()
 
         entries_[entry.threshold] = entry;
     }
+
 
     display_request();
 
