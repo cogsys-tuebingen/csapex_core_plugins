@@ -21,7 +21,7 @@ public:
 
     virtual void process(csapex::NodeModifier& node_modifier, Parameterizable &parameters,
                          std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation) final override;
-    virtual void abort() override;
+    virtual void reset() override;
 
     virtual bool isAsynchronous() const override;
 
