@@ -25,7 +25,7 @@ void Merger::setup(NodeModifier& node_modifier)
 {
     output_ = node_modifier.addOutput<CvMatMessage>("Merged Image");
 
-    updateInputs();
+    node_modifier.setVariadicInputs(true);
 }
 
 void Merger::process()
@@ -90,9 +90,4 @@ void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
             encoding.append(msg->getEncoding());
         }
     }
-}
-
-void Merger::stateChanged()
-{
-    updateInputs();
 }

@@ -30,8 +30,9 @@ public:
     virtual void setupParameters(Parameterizable &parameters) override;
 
     virtual void process() override;
+
+private:
     void updateInputs();
-    virtual void stateChanged() override;
 
 private:
     Output *output_;
