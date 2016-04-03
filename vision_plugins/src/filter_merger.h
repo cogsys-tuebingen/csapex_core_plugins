@@ -31,6 +31,8 @@ public:
 
     virtual void process() override;
 
+    virtual Connectable* createVariadicPort(bool output, ConnectionTypeConstPtr type, const std::string& label, bool optional) override;
+
 private:
     Output *output_;
 

@@ -19,14 +19,19 @@ Merger::Merger()
 
 void Merger::setupParameters(Parameterizable &parameters)
 {
-    VariadicInputs::setupParameters(parameters);
+    setupVariadicParameters(parameters);
 }
 
 void Merger::setup(NodeModifier& node_modifier)
 {
-    VariadicInputs::setup(node_modifier);
+    setupVariadic(node_modifier);
 
     output_ = node_modifier.addOutput<CvMatMessage>("Merged Image");
+}
+
+Connectable* Merger::createVariadicPort(bool output, ConnectionTypeConstPtr type, const std::string& label, bool optional)
+{
+    return VariadicInputs::createVariadicPort(output, type, label.empty() ? "Channel" : label, true);
 }
 
 void Merger::process()
