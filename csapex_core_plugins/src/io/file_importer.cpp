@@ -280,7 +280,7 @@ bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
 
             //DEBUGainfo << "setting current to " << current << std::endl;
             setParameter("directory/current", current);
-            int current = readParameter<int>("directory/current");
+//            int current = readParameter<int>("directory/current");
         }
     }
 

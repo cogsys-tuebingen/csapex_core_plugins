@@ -408,7 +408,7 @@ void ImportRos::setParameterState(Memento::Ptr memento)
     Node::setParameterState(memento);
 }
 
-void ImportRos::abort()
+void ImportRos::reset()
 {
     running_ = false;
 }
