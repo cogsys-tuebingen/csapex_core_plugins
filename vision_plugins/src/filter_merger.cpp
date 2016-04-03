@@ -13,19 +13,20 @@ using namespace csapex;
 using namespace connection_types;
 
 Merger::Merger()
+    : VariadicInputs(connection_types::makeEmpty<CvMatMessage>())
 {
 }
 
 void Merger::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("input count", 2, MERGER_INPUT_MAX, 2, 1), std::bind(&Merger::updateInputs, this));
+    VariadicInputs::setupParameters(parameters);
 }
 
 void Merger::setup(NodeModifier& node_modifier)
 {
-    output_ = node_modifier.addOutput<CvMatMessage>("Merged Image");
+    VariadicInputs::setup(node_modifier);
 
-    node_modifier.setVariadicInputs(true);
+    output_ = node_modifier.addOutput<CvMatMessage>("Merged Image");
 }
 
 void Merger::process()
@@ -43,34 +44,6 @@ void Merger::process()
     CvMatMessage::Ptr out_msg(new CvMatMessage(encoding, stamp_));
     out_msg->value = out_img;
     msg::publish(output_, out_msg);
-}
-
-void Merger::updateInputs()
-{
-    int input_count = readParameter<int>("input count");
-
-    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
-    int current_amount = inputs.size();
-
-    if(current_amount > input_count) {
-        for(int i = current_amount; i > input_count ; i--) {
-            Input* in = inputs[i - 1];
-            if(msg::isConnected(in)) {
-                msg::disable(in);
-            } else {
-                node_modifier_->removeInput(msg::getUUID(in));
-            }
-        }
-    } else {
-        int to_add = input_count - current_amount;
-        for(int i = 0 ; i < current_amount; i++) {
-            msg::enable(inputs[i]);
-        }
-        for(int i = 0 ; i < to_add ; i++) {
-            node_modifier_->addOptionalInput<CvMatMessage>("Channel");
-        }
-    }
-
 }
 
 void Merger::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
