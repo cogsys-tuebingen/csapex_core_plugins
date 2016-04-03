@@ -14,6 +14,18 @@
 
 using namespace csapex::connection_types;
 
+namespace {
+
+template <typename PointT>
+double distance(const PointT& a)
+{
+    auto dx = a.x;
+    auto dy = a.y;
+    auto dz = a.z;
+    return std::sqrt(dx*dx + dy*dy + dz*dz);
+}
+}
+
 namespace csapex
 {
 
@@ -45,6 +57,11 @@ public:
                                 ("min height",
                                  -5.0, 5.0, 0.0, 0.01),
                                 min_height_);
+
+        parameters.addParameter(param::ParameterFactory::declareRange
+                                ("distance factor",
+                                 0.0, 1.0, 1.0, 0.001),
+                                distance_factor_);
 
     }
 
@@ -100,10 +117,15 @@ public:
                 // don't look at border
                 if(col > offset_ && col < w - offset_) {
 
+                    //                    double factor = distance_factor_ * distanceSqr(mean2);
+
                     double min_diff = std::numeric_limits<double>::infinity();
                     for(std::size_t i = 0; i < 4; ++i) {
                         PointT const* neighbor = in_pt - offset[i];
-                        double diff = std::abs(neighbor->z - in_pt->z);
+
+                        double d = distance(*in_pt);
+                        double factor = distance_factor_ == 0 ? 1.0 : distance_factor_ * d;
+                        double diff = factor * std::abs(distance(*neighbor) - d);
                         if(diff < min_diff) {
                             min_diff = diff;
                         }
@@ -132,6 +154,7 @@ private:
     int offset_;
 
     double min_height_;
+    double distance_factor_;
 };
 
 }

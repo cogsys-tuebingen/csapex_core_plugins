@@ -34,6 +34,10 @@ QImage ImageRenderer::doRender(const connection_types::CvMatMessage &msg)
 {
     Encoding encoding = msg.getEncoding();
 
+    if(msg.value.empty()) {
+        return QImage();
+    }
+
     if(encoding.matches(enc::rgb)) {
         cv::Mat mat = msg.value;
         return QImage((uchar*) mat.data,

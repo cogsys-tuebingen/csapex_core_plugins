@@ -103,6 +103,7 @@ add_library(csapex_point_cloud_plugin_node
     src/segmentation/color_pointcloud.cpp
     src/segmentation/split_clustered_cloud.cpp
     src/segmentation/label_clustered_pointcloud.cpp
+    src/segmentation/merge_clusters.cpp
 
     src/analysis/ray_angles.cpp
     src/analysis/estimate_normals.cpp

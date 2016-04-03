@@ -44,7 +44,7 @@ void BFOptimizer::setupParameters(Parameterizable& parameters)
 
 void BFOptimizer::setup(NodeModifier& node_modifier)
 {
-    in_  = node_modifier.addOptionalInput<double>("Fitness");
+    in_  = node_modifier.addInput<double>("Fitness");
     out_last_fitness_  = node_modifier.addOutput<double>("Last Fitness");
     out_best_fitness_  = node_modifier.addOutput<double>("Best Fitness");
 

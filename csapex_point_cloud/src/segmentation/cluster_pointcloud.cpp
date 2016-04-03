@@ -51,8 +51,8 @@ ClusterPointcloud::ClusterPointcloud()
 void ClusterPointcloud::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MinClusterSize", 0, 20000, 100, 200));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MaxClusterSize", 0, 100000, 25000, 1000));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MinClusterSize", 0, 20000, 100, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MaxClusterSize", 0, 100000, 25000, 1));
 }
 
 void ClusterPointcloud::process()
@@ -133,6 +133,7 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
     std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
     typename pcl::EuclideanClusterExtraction<PointT> ec;
     ec.setClusterTolerance (param_clusterTolerance_); // 2cm
+
     ec.setMinClusterSize (param_clusterMinSize_);
     ec.setMaxClusterSize (param_clusterMaxSize_);
     ec.setSearchMethod (tree);
