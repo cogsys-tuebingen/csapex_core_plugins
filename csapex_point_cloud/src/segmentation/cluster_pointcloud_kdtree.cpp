@@ -9,7 +9,7 @@
 #include <csapex_point_cloud/indeces_message.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <kdtree/kdtree.hpp>
-#include <kdtree/kdtree_clustering.hpp>
+#include <kdtree/kdtree_cluster_mask.hpp>
 
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
@@ -150,6 +150,65 @@ struct PCLKDTreeNodeIndex {
     }
 };
 
+/// TODO: calculate mean of kd tree voxel -> insert eucl. distance thresh
+
+template<typename T, int Dim>
+struct KDTreeClustering {
+    typedef kdtree::KDTree<T, Dim>           KDTreeType;
+    typedef typename KDTreeType::NodeIndex   NodeIndex;
+    typedef typename KDTreeType::NodePtr     NodePtr;
+    typename KDTreeType::Ptr         kdtree;
+    kdtree::KDTreeClusterMask<Dim>   cluster_mask;
+    std::vector<NodePtr>             queue;
+    std::size_t                      cluster_count;
+    double                           distance_threhold;
+
+    KDTreeClustering(const typename KDTreeType::Ptr &kdtree) :
+        kdtree(kdtree),
+        cluster_count(0)
+    {
+    }
+
+    int getCluster(const NodeIndex &index) {
+        NodePtr node;
+        if(!kdtree->find(index, node))
+            return -1;
+        return node->cluster;
+    }
+
+    inline void cluster()
+    {
+        queue.reserve(kdtree->leafCount());
+        kdtree->getLeaves(queue, true);
+        for(NodePtr &node : queue) {
+            if(node->cluster > -1)
+                continue;
+            node->cluster = cluster_count;
+            ++cluster_count;
+            clusterNode(node);
+        }
+    }
+
+    inline void clusterNode(const NodePtr &node)
+    {
+        /// check surrounding indeces
+        NodeIndex index;
+        for(std::size_t i = 0 ; i < cluster_mask.rows ; ++i) {
+            cluster_mask.applyToIndex(node->index, i, index);
+            NodePtr neighbour;
+            if(!kdtree->find(index, neighbour))
+                continue;
+            if(neighbour->cluster > -1)
+                continue;
+
+            PCLKDTreeNode *n = (PCLKDTreeNode*) neighbour.get();
+            n->cluster = node->cluster;
+            clusterNode(neighbour);
+        }
+
+    }
+};
+
 template<typename PointT>
 void cluster(const typename pcl::PointCloud<PointT>::ConstPtr &cloud,
              const pcl::PointIndicesPtr &cloud_indeces,
@@ -174,7 +233,7 @@ void cluster(const typename pcl::PointCloud<PointT>::ConstPtr &cloud,
         }
     }
 
-    kdtree::KDTreeClustering<int,3> clustering(tree);
+    KDTreeClustering<int,3> clustering(tree);
     clustering.cluster();
 
     std::vector<PCLKDTreeNode::Ptr> leaves;
