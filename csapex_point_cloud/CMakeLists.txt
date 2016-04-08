@@ -11,12 +11,15 @@ ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
 #set(ROS_BUILD_TYPE RelWithDebInfo)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+add_definitions("-O3")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_vision)
 find_package(pcl_ros REQUIRED)
+
+find_package(kdtree QUIET)
 
 find_package(Qt5 COMPONENTS Core OpenGL Gui Widgets REQUIRED)
 
@@ -61,6 +64,13 @@ target_link_libraries(csapex_point_cloud_plugin_core
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
     csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
 )
+
+if(${kdtree_FOUND})
+    set(clustering_kd_tree_SRCS
+        src/segmentation/cluster_pointcloud_kdtree.cpp
+    )
+    include_directories(${kdtree_INCLUDE_DIRS})
+endif()
 
 
 add_library(csapex_point_cloud_plugin_node
@@ -113,6 +123,8 @@ add_library(csapex_point_cloud_plugin_node
     src/model_to_marker.cpp
     src/transform_from_models.cpp
     src/scale_intensity.cpp
+
+    ${clustering_kd_tree_SRCS}
 )
 
 target_link_libraries(csapex_point_cloud_plugin_node
