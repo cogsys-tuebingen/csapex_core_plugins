@@ -29,9 +29,9 @@ void Merger::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<CvMatMessage>("Merged Image");
 }
 
-Connectable* Merger::createVariadicPort(bool output, ConnectionTypeConstPtr type, const std::string& label, bool optional)
+Input* Merger::createVariadicInput(ConnectionTypeConstPtr type, const std::string& label, bool /*optional*/)
 {
-    return VariadicInputs::createVariadicPort(output, type, label.empty() ? "Channel" : label, true);
+    return VariadicInputs::createVariadicInput(type, label.empty() ? "Channel" : label, true);
 }
 
 void Merger::process()
