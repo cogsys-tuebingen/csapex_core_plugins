@@ -23,7 +23,7 @@ public:
     virtual void processROS() override;
     virtual bool canTick() override;
     virtual void tickROS() override;
-    virtual void abort() override;
+    virtual void reset() override;
 
     void callback(ConnectionTypeConstPtr message);
 

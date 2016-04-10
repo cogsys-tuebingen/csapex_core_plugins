@@ -43,7 +43,7 @@ void InteractiveNode::done()
     }
 }
 
-void InteractiveNode::abort()
+void InteractiveNode::reset()
 {
     stopped_ = true;
 
