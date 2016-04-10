@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex/utility/assert.h>
+#include <csapex/model/variadic_io.h>
 
 /// SYSTEM
 #if ((BOOST_VERSION >> 20) & 0xF) >= 1 && ((BOOST_VERSION >> 8) & 0xFFF) >= 49
@@ -293,7 +294,7 @@ struct VariableExpression : AbstractExpression {
     { return os << "VariableExpression('" << name_ << "')"; }
 };
 
-class GenericImageCombiner : public csapex::Node
+class GenericImageCombiner : public csapex::Node, public csapex::VariadicInputs
 {
 public:
     GenericImageCombiner();
@@ -302,12 +303,12 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
+    virtual csapex::Input* createVariadicInput(csapex::ConnectionTypeConstPtr type, const std::string& label, bool optional) override;
+
 private:
     void updateFormula();
 
 private:
-    csapex::Input* i1_;
-    csapex::Input* i2_;
     csapex::Output* out_;
 
     Expression e;

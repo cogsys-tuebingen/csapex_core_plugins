@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <csapex/model/node.h>
+#include <csapex/model/variadic_io.h>
 #include <csapex_vision/encoding.h>
 
 /// SYSTEM
@@ -10,12 +11,11 @@
 
 namespace csapex {
 
-const static int MERGER_INPUT_MAX = 10;
 /**
  * @brief The Merger class can be used to merge a certain amount of
  *        images.
  */
-class Merger : public Node
+class Merger : public Node, public VariadicInputs
 {
 public:
     /**
@@ -30,8 +30,8 @@ public:
     virtual void setupParameters(Parameterizable &parameters) override;
 
     virtual void process() override;
-    void updateInputs();
-    virtual void stateChanged() override;
+
+    virtual Input* createVariadicInput(ConnectionTypeConstPtr type, const std::string& label, bool optional) override;
 
 private:
     Output *output_;
