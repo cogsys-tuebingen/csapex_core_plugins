@@ -143,70 +143,80 @@ void GenericImageCombiner::process()
         return;
     }
 
-
-    CvMatMessage::ConstPtr img1 = msg::getMessage<CvMatMessage>(i1_);
-
-    cv::Mat f1;
-    img1->value.copyTo(f1);
-
-    if(f1.channels() == 1) {
-        f1.convertTo(f1, CV_32FC1);
-    } else if(f1.channels() == 3) {
-        f1.convertTo(f1, CV_32FC3);
-    } else {
-        std::stringstream msg;
-        msg << "Image 1: images with " << f1.channels() << " channels not yet supported";
-        throw std::runtime_error(msg.str());
+    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
+    if(inputs.empty()) {
+        return;
     }
 
     VariableMap vm;
-    vm.get("1") = f1;
 
-    // handle optional second image
-    if(msg::hasMessage(i2_)) {
-        cv::Mat f2;
-        CvMatMessage::ConstPtr img2 = msg::getMessage<CvMatMessage>(i2_);
-        img2->value.copyTo(f2);
+    CvMatMessage::ConstPtr img_0;
 
-        if(f1.channels() != f2.channels()) {
-            throw std::runtime_error("images have different number of channels.");
+    for(std::size_t i = 0 ; i < inputs.size() ; i++) {
+        Input *in = inputs[i];
+
+        if(!msg::hasMessage(in)) {
+            vm.get(std::to_string(i+1)) = cv::Mat();
+            continue;
         }
 
-        if(f2.channels() == 1) {
-            f2.convertTo(f2, CV_32FC1);
-        } else if(f2.channels() == 3) {
-            f2.convertTo(f2, CV_32FC3);
+        CvMatMessage::ConstPtr img_i = msg::getMessage<CvMatMessage>(in);
+
+        if(!img_0) {
+            img_0 = img_i;
+        }
+
+        cv::Mat f_i;
+        img_i->value.copyTo(f_i);
+
+        if(f_i.channels() == 1) {
+            f_i.convertTo(f_i, CV_32FC1);
+        } else if(f_i.channels() == 3) {
+            f_i.convertTo(f_i, CV_32FC3);
         } else {
             std::stringstream msg;
-            msg << "Image 2: images with " << f2.channels() << " channels not yet supported";
+            msg << "Image " << i << ": images with " << f_i.channels() << " channels not yet supported";
             throw std::runtime_error(msg.str());
         }
 
-        vm.get("2") = f2;
-    } else {
-        vm.get("2") = cv::Mat();
+        vm.get(std::to_string(i+1)) = f_i;
+
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp_micro_seconds));
+    if(img_0) {
+        CvMatMessage::Ptr out(new CvMatMessage(img_0->getEncoding(), img_0->stamp_micro_seconds));
 
-    cv::Mat r = e.evaluate(vm);
-    if(f1.channels() == 1) {
-        r.convertTo(out->value, CV_8UC1);
-    } else if(f1.channels() == 3) {
-        r.convertTo(out->value, CV_8UC3);
+        cv::Mat r = e.evaluate(vm);
+        if(img_0->value.channels() == 1) {
+            r.convertTo(out->value, CV_8UC1);
+        } else if(img_0->value.channels() == 3) {
+            r.convertTo(out->value, CV_8UC3);
+        }
+        msg::publish(out_, out);
     }
-    msg::publish(out_, out);
 }
 
 void GenericImageCombiner::setup(NodeModifier& node_modifier)
 {
-    i1_ = node_modifier.addInput<CvMatMessage>("image 1");
-    i2_ = node_modifier.addOptionalInput<CvMatMessage>("image 2");
+    setupVariadic(node_modifier);
+
     out_ = node_modifier.addOutput<CvMatMessage>("combined");
 }
 
 void GenericImageCombiner::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("script", "$1 ^ $2"),
+    setupVariadicParameters(parameters);
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("script",
+                                                                         csapex::param::ParameterDescription("An opencv-style script to combine the images.\n"
+                                                                                                             "Inputs are mapped to variables $1 ... $n\n"
+                                                                                                             "Valid operators are +, -, *, /, ^, &, |\n"
+                                                                                                             "Functions: abs, min, max, exp, log, pow, sqrt"),
+                                                                         "$1 ^ $2"),
                  std::bind(&GenericImageCombiner::updateFormula, this));
+}
+
+Input* GenericImageCombiner::createVariadicInput(ConnectionTypeConstPtr type, const std::string& label, bool /*optional*/)
+{
+    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<CvMatMessage>(), label.empty() ? "Image" : label, getVariadicInputCount() == 0 ? false : true);
 }
