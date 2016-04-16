@@ -37,7 +37,7 @@ ros::Time rosTime(u_int64_t stamp_micro_seconds) {
 }
 
 ImportRos::ImportRos()
-    : connector_(nullptr), retries_(0), buffer_size_(1024), running_(true)
+    : connector_(nullptr), buffer_size_(1024), running_(true)
 {
 }
 
@@ -114,10 +114,6 @@ void ImportRos::refresh()
 
 void ImportRos::update()
 {
-    retries_ = 5;
-    if(node_modifier_->isProcessingEnabled()) {
-        waitForTopic();
-    }
 }
 
 void ImportRos::updateRate()
@@ -153,19 +149,15 @@ bool ImportRos::doSetTopic()
     for(ros::master::V_TopicInfo::iterator it = topics.begin(); it != topics.end(); ++it) {
         if(it->name == topic) {
             setTopic(*it);
-            retries_ = 0;
             return true;
         }
     }
 
-    std::stringstream ss;
-    ss << "cannot set topic, " << topic << " doesn't exist";
-    if(retries_ > 0) {
-        ss << ", " << retries_ << " retries left";
+    if(!node_modifier_->isError()) {
+        std::stringstream ss;
+        ss << "cannot set topic, " << topic << " doesn't exist";
+        node_modifier_->setWarning(ss.str());
     }
-    ss << ".";
-
-    node_modifier_->setWarning(ss.str());
     return false;
 }
 
@@ -284,38 +276,27 @@ bool ImportRos::isStampCovered(const ros::Time &stamp)
     return rosTime(msgs_.back()->stamp_micro_seconds) >= stamp;
 }
 
-void ImportRos::waitForTopic()
-{
-    INTERLUDE("wait");
-    ros::WallDuration poll_wait(0.5);
-    while(retries_ --> 0) {
-        bool topic_exists = doSetTopic();
-
-        if(topic_exists) {
-            return;
-        } else {
-            ROS_WARN_STREAM("waiting for topic " << readParameter<std::string>("topic"));
-            poll_wait.sleep();
-        }
-    }
-}
 
 bool ImportRos::canTick()
 {
     std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
-    return !msg::isConnected(input_time_) && !msgs_.empty();
+    return current_topic_.name.empty() || (!msg::isConnected(input_time_) && !msgs_.empty());
 }
 
-void ImportRos::tickROS()
+bool ImportRos::tickROS()
 {
     INTERLUDE("tick");
 
-    if(retries_ > 0) {
-        waitForTopic();
+    if(current_topic_.name.empty()) {
+        doSetTopic();
+    }
+
+    if(current_topic_.name.empty()) {
+        return false;
     }
 
     if(msg::isConnected(input_time_)) {
-        return;
+        return false;
     }
 
     // NO INPUT CONNECTED -> ONLY KEEP CURRENT MESSAGE
@@ -329,6 +310,9 @@ void ImportRos::tickROS()
     if(!current_topic_.name.empty()) {
         publishLatestMessage();
     }
+
+    node_modifier_->setNoError();
+    return true;
 }
 
 void ImportRos::publishLatestMessage()
@@ -341,8 +325,10 @@ void ImportRos::publishLatestMessage()
         INTERLUDE("wait for message");
         ros::WallRate r(10);
         while(msgs_.empty() && running_) {
+            lock.unlock();
             r.sleep();
             ros::spinOnce();
+            lock.lock();
         }
 
         if(!running_) {

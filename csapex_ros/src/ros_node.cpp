@@ -44,9 +44,9 @@ void RosNode::tick()
     }
 }
 
-void RosNode::tickROS()
+bool RosNode::tickROS()
 {
-
+    return false;
 }
 
 void RosNode::process()

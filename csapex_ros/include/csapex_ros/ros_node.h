@@ -26,7 +26,7 @@ protected:
 
     virtual bool canTick() override;
     virtual void tick() override;
-    virtual void tickROS();
+    virtual bool tickROS();
 
     ROSHandler& getRosHandler();
 

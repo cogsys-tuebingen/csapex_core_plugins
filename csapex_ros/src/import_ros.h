@@ -22,7 +22,7 @@ public:
     virtual void setupROS() override;
     virtual void processROS() override;
     virtual bool canTick() override;
-    virtual void tickROS() override;
+    virtual bool tickROS() override;
     virtual void reset() override;
 
     void callback(ConnectionTypeConstPtr message);
@@ -37,7 +37,6 @@ protected:
 
     virtual void setParameterState(Memento::Ptr memento) override;
 
-    void waitForTopic();
     void publishLatestMessage();
     bool isStampCovered(const ros::Time& stamp);
 
@@ -52,8 +51,6 @@ private:
 
     static const std::string no_topic_;
     ros::master::TopicInfo current_topic_;
-
-    int retries_;
 
     int buffer_size_;
     bool running_;

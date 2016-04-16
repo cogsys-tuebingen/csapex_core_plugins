@@ -11,6 +11,9 @@
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex_ros/yaml_io.hpp>
+#include <csapex/model/graph_facade.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/model/node.h>
 
 /// SYSTEM
 #include <boost/regex.hpp>
@@ -66,6 +69,129 @@ void APEXRosInterface::init(CsApexCore &core)
     RosMessageConversion::registerConversion<std_msgs::Int32, connection_types::GenericValueMessage<int>, ConvertIntegral<std_msgs::Int32, int> >();
     RosMessageConversion::registerConversion<std_msgs::Float64, connection_types::GenericValueMessage<double>, ConvertIntegral<std_msgs::Float64, double> >();
     RosMessageConversion::registerConversion<std_msgs::String, connection_types::GenericValueMessage<std::string>, ConvertIntegral<std_msgs::String, std::string> >();
+
+    core_->loaded.connect([this](){
+        if(ROSHandler::instance().isConnected()) {
+            XmlRpc::XmlRpcValue params, result, payload;
+            params[0] = ros::this_node::getName();
+
+            std::string prefix = ros::this_node::getName();
+
+            if (ros::master::execute("getParamNames", params, result, payload, true)) {
+                if(result.getType() != XmlRpc::XmlRpcValue::TypeArray) {
+                    return;
+                }
+
+                std::string name = result[1];
+                if(name != "Parameter names") {
+                    return;
+                }
+
+
+                XmlRpc::XmlRpcValue data = result[2];
+                for(std::size_t i = 0, total = data.size(); i < total; ++i) {
+                    std::string parameter_name = data[i];
+
+                    if(parameter_name.substr(0, prefix.size()) != prefix) {
+                        continue;
+                    }
+
+                    XmlRpc::XmlRpcValue parameter_value;
+                    ros::param::getCached(parameter_name, parameter_value);
+
+                    loadParameterValue(prefix, parameter_name, parameter_value);
+                }
+            }
+        }
+    });
+}
+
+void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::string& parameter_name, const XmlRpc::XmlRpcValue& parameter_value)
+{
+    std::string apex_name = parameter_name.substr(prefix.size());
+
+    Graph* graph = core_->getRoot()->getGraph();
+
+    std::vector<std::string> levels;
+
+    std::size_t delim = 0;
+    while(delim != std::string::npos) {
+        delim = apex_name.find('/');
+        std::string subname = apex_name.substr(0, delim);
+        if(!subname.empty()) {
+            levels.push_back(subname);
+        }
+        apex_name = apex_name.substr(delim+1);
+    }
+
+    if(levels.empty()) {
+        return;
+    }
+
+
+    NodeHandle* nh = nullptr;
+    for(std::size_t i = 0, n = levels.size(); i < n - 1; ++i) {
+        const std::string subname = levels.at(i);
+        std::cerr << "searching for " << subname << std::endl;
+        nh = graph->findNodeHandleWithLabel(subname);
+        if(!nh) {
+            std::cerr << "no parameter for " << parameter_name << ", label " << subname << " non-existent" << std::endl;
+            return;
+        }
+        if(i < n- 2) {
+            graph = dynamic_cast<Graph*>(nh->getNode().lock().get());
+            if(!graph) {
+                std::cerr << "no parameter for " << parameter_name << ", child " << subname << " is not a graph" << std::endl;
+            }
+        }
+
+    }
+    if(!nh) {
+        return;
+    }
+
+    NodePtr node = nh->getNode().lock();
+    if(!node) {
+        return;
+    }
+
+    std::string param_name = levels.back();
+    if(!node->hasParameter(param_name)) {
+        std::cerr << "node " << nh->getUUID() << " doesn't have a parameter called " << param_name << std::endl;
+        return;
+    }
+
+    param::ParameterPtr p = node->getParameter(param_name);
+
+    switch(parameter_value.getType()) {
+    case XmlRpc::XmlRpcValue::TypeInt: {
+        int val;
+        ros::param::get(parameter_name, val);
+        p->set(val);
+    }
+        break;
+    case XmlRpc::XmlRpcValue::TypeDouble: {
+        double val;
+        ros::param::get(parameter_name, val);
+        p->set(val);
+    }
+        break;
+    case XmlRpc::XmlRpcValue::TypeBoolean: {
+        bool val;
+        ros::param::get(parameter_name, val);
+        p->set(val);
+    }
+        break;
+    case XmlRpc::XmlRpcValue::TypeString: {
+        std::string val;
+        ros::param::get(parameter_name, val);
+        p->set(val);
+    }
+        break;
+
+    default:
+        break;
+    }
 }
 
 void APEXRosInterface::registerCommandListener()

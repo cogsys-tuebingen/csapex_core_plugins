@@ -27,6 +27,7 @@ public:
 private:
     void registerCommandListener();
     void command(const std_msgs::StringConstPtr &cmd, bool global_cmd);
+    void loadParameterValue(const std::string &prefix, const std::string &parameter_name, const XmlRpc::XmlRpcValue &parameter_value);
 
 private:
     ros::Subscriber global_command_sub_;
