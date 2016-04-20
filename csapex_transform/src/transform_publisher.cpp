@@ -45,6 +45,18 @@ void TransformPublisher::processROS()
         tfb_ = new tf::TransformBroadcaster;
     }
 
+    TransformMessage::ConstPtr trafo_msg = msg::getMessage<TransformMessage>(input_transform);
+
+    std::string from = readParameter<std::string>("from");
+    if(from == "/" || from.empty()) {
+        from = trafo_msg->frame_id;
+    }
+
+    std::string to = readParameter<std::string>("to");
+    if(to == "/" || to.empty()) {
+        to = trafo_msg->child_frame;
+    }
+
     ros::Time time;
     if(msg::hasMessage(input_time)) {
         TimestampMessage::ConstPtr time_msg = msg::getMessage<TimestampMessage>(input_time);
@@ -54,9 +66,8 @@ void TransformPublisher::processROS()
         time = ros::Time::now();
     }
 
-    TransformMessage::ConstPtr trafo_msg = msg::getMessage<TransformMessage>(input_transform);
 
-    tfb_->sendTransform(tf::StampedTransform(trafo_msg->value, time, readParameter<std::string>("from"), readParameter<std::string>("to")));
+    tfb_->sendTransform(tf::StampedTransform(trafo_msg->value, time, from, to));
 }
 
 
