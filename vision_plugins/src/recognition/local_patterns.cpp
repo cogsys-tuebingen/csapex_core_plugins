@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 
-#include <csapex/model/connection_type.h>
+#include <csapex/model/token.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>

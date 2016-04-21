@@ -216,7 +216,7 @@ void GenericImageCombiner::setupParameters(Parameterizable& parameters)
                  std::bind(&GenericImageCombiner::updateFormula, this));
 }
 
-Input* GenericImageCombiner::createVariadicInput(ConnectionTypeConstPtr type, const std::string& label, bool /*optional*/)
+Input* GenericImageCombiner::createVariadicInput(TokenConstPtr type, const std::string& label, bool /*optional*/)
 {
     return VariadicInputs::createVariadicInput(connection_types::makeEmpty<CvMatMessage>(), label.empty() ? "Image" : label, getVariadicInputCount() == 0 ? false : true);
 }

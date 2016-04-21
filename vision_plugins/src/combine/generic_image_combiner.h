@@ -303,7 +303,7 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
-    virtual csapex::Input* createVariadicInput(csapex::ConnectionTypeConstPtr type, const std::string& label, bool optional) override;
+    virtual csapex::Input* createVariadicInput(csapex::TokenConstPtr type, const std::string& label, bool optional) override;
 
 private:
     void updateFormula();
