@@ -28,7 +28,7 @@ void ExportCout::setup(NodeModifier& node_modifier)
 
 void ExportCout::process()
 {
-    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(connector_);
+    Token::ConstPtr msg = msg::getMessage<Token>(connector_);
 
 //    ainfo << "writing to cout: ";
 

@@ -14,14 +14,14 @@ ConfidenceMatrixMessage::ConfidenceMatrixMessage(Message::Stamp stamp)
     : Message(type<ConfidenceMatrixMessage>::name(), "/", stamp)
 {}
 
-ConnectionType::Ptr ConfidenceMatrixMessage::clone() const
+Token::Ptr ConfidenceMatrixMessage::clone() const
 {
     Ptr new_msg(new ConfidenceMatrixMessage);
     new_msg->confidence = confidence;
     return new_msg;
 }
 
-ConnectionType::Ptr ConfidenceMatrixMessage::toType() const
+Token::Ptr ConfidenceMatrixMessage::toType() const
 {
     Ptr new_msg(new ConfidenceMatrixMessage);
     return new_msg;

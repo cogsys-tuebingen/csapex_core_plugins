@@ -18,24 +18,24 @@ GenericVectorMessage::GenericVectorMessage(EntryInterface::Ptr impl, const std::
 {
 }
 
-ConnectionType::Ptr GenericVectorMessage::clone() const
+Token::Ptr GenericVectorMessage::clone() const
 {
     Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id, impl->stamp_micro_seconds));
     return new_msg;
 }
 
-ConnectionType::Ptr GenericVectorMessage::toType() const
+Token::Ptr GenericVectorMessage::toType() const
 {
     Ptr new_msg(new GenericVectorMessage(impl->cloneEntry(), frame_id, 0));
     return new_msg;
 }
 
-bool GenericVectorMessage::canConnectTo(const ConnectionType *other_side) const
+bool GenericVectorMessage::canConnectTo(const Token *other_side) const
 {
     return impl->canConnectTo(other_side);
 }
 
-bool GenericVectorMessage::acceptsConnectionFrom(const ConnectionType *other_side) const
+bool GenericVectorMessage::acceptsConnectionFrom(const Token *other_side) const
 {
     return impl->acceptsConnectionFrom(other_side);
 }
@@ -76,14 +76,14 @@ VectorMessage::VectorMessage(const std::string& frame_id, Message::Stamp stamp)
 {
     type_ = connection_types::makeEmpty<AnyMessage>();
 }
-VectorMessage::VectorMessage(ConnectionType::Ptr type, const std::string& frame_id, Message::Stamp stamp)
+VectorMessage::VectorMessage(Token::Ptr type, const std::string& frame_id, Message::Stamp stamp)
     : Message ("MessageVector", frame_id, stamp)
 {
     setDescriptiveName(std::string("std::vector<") + type->typeName()  + "::Ptr>");
     type_ = type;
 }
 
-ConnectionType::Ptr VectorMessage::getSubType() const
+Token::Ptr VectorMessage::getSubType() const
 {
     return type_;
 }
@@ -93,19 +93,19 @@ VectorMessage::Ptr VectorMessage::make(){
     return new_msg;
 }
 
-ConnectionType::Ptr VectorMessage::clone() const
+Token::Ptr VectorMessage::clone() const
 {
     Ptr new_msg(new VectorMessage(frame_id));
     new_msg->value = value;
     return new_msg;
 }
 
-ConnectionType::Ptr VectorMessage::toType() const
+Token::Ptr VectorMessage::toType() const
 {
     return make();
 }
 
-bool VectorMessage::canConnectTo(const ConnectionType *other_side) const
+bool VectorMessage::canConnectTo(const Token *other_side) const
 {
     const VectorMessage* vec = dynamic_cast<const VectorMessage*> (other_side);
     if(vec != 0 && type_->canConnectTo(vec->getSubType().get())) {
@@ -115,7 +115,7 @@ bool VectorMessage::canConnectTo(const ConnectionType *other_side) const
     }
 }
 
-bool VectorMessage::acceptsConnectionFrom(const ConnectionType *other_side) const
+bool VectorMessage::acceptsConnectionFrom(const Token *other_side) const
 {
     const VectorMessage* vec = dynamic_cast<const VectorMessage*> (other_side);
     if(vec != 0 && type_->acceptsConnectionFrom(vec->getSubType().get())) {
@@ -130,12 +130,12 @@ bool VectorMessage::isContainer() const
     return true;
 }
 
-ConnectionType::Ptr VectorMessage::nestedType() const
+Token::Ptr VectorMessage::nestedType() const
 {
     return value.empty() ? connection_types::makeEmpty<connection_types::NoMessage>() : value.front()->toType();
 }
 
-ConnectionType::ConstPtr VectorMessage::nestedValue(std::size_t i) const
+Token::ConstPtr VectorMessage::nestedValue(std::size_t i) const
 {
     return  value.at(i);
 }
@@ -143,7 +143,7 @@ std::size_t VectorMessage::nestedValueCount() const
 {
     return value.size();
 }
-void VectorMessage::addNestedValue(const ConnectionType::ConstPtr &msg)
+void VectorMessage::addNestedValue(const Token::ConstPtr &msg)
 {
     value.push_back(msg);
 }
@@ -164,7 +164,7 @@ bool convert<csapex::connection_types::VectorMessage>::decode(const Node& node, 
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
-    rhs.value = node["values"].as<std::vector<ConnectionTypeConstPtr>>();
+    rhs.value = node["values"].as<std::vector<TokenConstPtr>>();
     return true;
 }
 }

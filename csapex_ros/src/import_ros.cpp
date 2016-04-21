@@ -344,7 +344,7 @@ void ImportRos::publishLatestMessage()
 }
 
 // FIXME: this can be still called after the object is destroyed!
-void ImportRos::callback(ConnectionTypeConstPtr message)
+void ImportRos::callback(TokenConstPtr message)
 {
     connection_types::Message::ConstPtr msg = std::dynamic_pointer_cast<connection_types::Message const>(message);
     if(msg) {

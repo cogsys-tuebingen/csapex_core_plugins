@@ -135,7 +135,7 @@ void ImportFile::tick()
                 bfs::path path = current_file_->path();
                 if(path.filename().string().substr(0, prefix_.size()) == prefix_) {
                     if(path.extension() == Settings::message_extension) {
-                        ConnectionType::ConstPtr msg;
+                        Token::ConstPtr msg;
 
                         bool buffered = false;
                         if(do_buffer_) {

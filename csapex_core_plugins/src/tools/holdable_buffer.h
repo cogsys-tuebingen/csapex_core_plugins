@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/model/connection_type.h>
+#include <csapex/model/token.h>
 
 /// SYSTEM
 #include <deque>
@@ -22,7 +22,7 @@ private:
     Input  *in_;
     Output *out_;
 
-    std::deque<ConnectionType::ConstPtr> buffer_;
+    std::deque<Token::ConstPtr> buffer_;
 };
 }
 

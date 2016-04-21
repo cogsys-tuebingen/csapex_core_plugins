@@ -22,7 +22,7 @@ struct VectorMessage : public Message
 
     VectorMessage(const std::string& frame_id = "/", Stamp stamp_micro_seconds = 0);
 
-    ConnectionType::Ptr getSubType() const;
+    Token::Ptr getSubType() const;
 
     template <typename T>
     static void registerType()
@@ -37,34 +37,34 @@ struct VectorMessage : public Message
         return VectorMessage::Ptr (new VectorMessage(connection_types::makeEmpty<T>(), "/", 0));
     }
 
-    static VectorMessage::Ptr make(ConnectionType::Ptr type)
+    static VectorMessage::Ptr make(Token::Ptr type)
     {
         return VectorMessage::Ptr (new VectorMessage(type->toType(), "/", 0));
     }
 
     static VectorMessage::Ptr make();
 
-    virtual ConnectionType::Ptr clone() const override;
-    virtual ConnectionType::Ptr toType() const override;
+    virtual Token::Ptr clone() const override;
+    virtual Token::Ptr toType() const override;
 
-    virtual bool canConnectTo(const ConnectionType* other_side) const override;
-    virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const override;
+    virtual bool canConnectTo(const Token* other_side) const override;
+    virtual bool acceptsConnectionFrom(const Token *other_side) const override;
 
 
     bool isContainer() const override;
-    ConnectionType::Ptr nestedType() const override;
-    virtual void addNestedValue(const ConnectionType::ConstPtr &msg) override;
-    virtual ConnectionType::ConstPtr nestedValue(std::size_t i) const override;
+    Token::Ptr nestedType() const override;
+    virtual void addNestedValue(const Token::ConstPtr &msg) override;
+    virtual Token::ConstPtr nestedValue(std::size_t i) const override;
     virtual std::size_t nestedValueCount() const override;
 
 private:
-    VectorMessage(ConnectionType::Ptr type, const std::string& frame_id, Stamp stamp_micro_seconds);
+    VectorMessage(Token::Ptr type, const std::string& frame_id, Stamp stamp_micro_seconds);
 
 public:
-    std::vector<ConnectionType::ConstPtr> value;
+    std::vector<Token::ConstPtr> value;
 
 private:
-    ConnectionType::Ptr type_;
+    Token::Ptr type_;
 
 };
 
@@ -89,7 +89,7 @@ private:
         {
         }
 
-        virtual ConnectionType::Ptr clone() const override
+        virtual Token::Ptr clone() const override
         {
             return cloneEntry();
         }
@@ -128,13 +128,13 @@ private:
             return r;
         }
 
-        virtual ConnectionType::Ptr toType() const override
+        virtual Token::Ptr toType() const override
         {
             Self::Ptr r(new Self);
             return r;
         }
 
-        virtual bool canConnectTo(const ConnectionType* other_side) const override
+        virtual bool canConnectTo(const Token* other_side) const override
         {
             const Self* vec = dynamic_cast<const Self*> (other_side);
             const VectorMessage* vec_deprecated =  dynamic_cast<const VectorMessage*> (other_side);
@@ -152,7 +152,7 @@ private:
                 }
             }
         }
-        virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const override
+        virtual bool acceptsConnectionFrom(const Token *other_side) const override
         {
             const Self* vec = dynamic_cast<const Self*> (other_side);
             return vec != 0;
@@ -231,14 +231,14 @@ public:
     }
 
     template <typename T>
-    static GenericVectorMessage::Ptr make(typename std::enable_if<std::is_base_of<ConnectionType, T>::value >::type* dummy = 0)
+    static GenericVectorMessage::Ptr make(typename std::enable_if<std::is_base_of<Token, T>::value >::type* dummy = 0)
     {
         registerType<T>();
         return GenericVectorMessage::Ptr(new GenericVectorMessage(MessageImplementation<T>::make(), "/", 0));
     }
 
     template <typename T>
-    static GenericVectorMessage::Ptr make(typename std::enable_if<!std::is_base_of<ConnectionType, T>::value >::type* dummy = 0)
+    static GenericVectorMessage::Ptr make(typename std::enable_if<!std::is_base_of<Token, T>::value >::type* dummy = 0)
     {
         registerType<T>();
         return GenericVectorMessage::Ptr(new GenericVectorMessage(Implementation<T>::make(), "/", 0));
@@ -270,11 +270,11 @@ public:
     }
 
 
-    virtual ConnectionType::Ptr clone() const override;
-    virtual ConnectionType::Ptr toType() const override;
+    virtual Token::Ptr clone() const override;
+    virtual Token::Ptr toType() const override;
 
-    virtual bool canConnectTo(const ConnectionType* other_side) const override;
-    virtual bool acceptsConnectionFrom(const ConnectionType *other_side) const override;
+    virtual bool canConnectTo(const Token* other_side) const override;
+    virtual bool acceptsConnectionFrom(const Token *other_side) const override;
 
     virtual std::string descriptiveName() const override;
 

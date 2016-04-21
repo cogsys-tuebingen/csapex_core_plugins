@@ -31,7 +31,7 @@ public:
 
     void process()
     {
-        std::vector<ConnectionTypeConstPtr> msg = input->getMessageParts();
+        std::vector<TokenConstPtr> msg = input->getMessageParts();
 //        aerr << "size is " << msg.size() << std::endl;
 
         if(msg.empty()) {

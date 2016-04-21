@@ -102,7 +102,7 @@ void ImportCin::readYAML(const std::string& message)
         YAML::Node doc = YAML::Load(message);
 
         try {
-            ConnectionType::Ptr msg = MessageSerializer::readYaml(doc);
+            Token::Ptr msg = MessageSerializer::readYaml(doc);
             message_buffer_.push_back(msg);
 
         } catch(const MessageSerializer::DeserializationError& e) {

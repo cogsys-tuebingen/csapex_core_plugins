@@ -435,7 +435,7 @@ void FileImporter::signalEnd()
         end_triggered_ = true;
         end_->trigger();
 
-        ConnectionTypeConstPtr end;
+        TokenConstPtr end;
 
         if(quit_on_end_) {
             end = connection_types::makeEmpty<EndOfProgramMessage>();

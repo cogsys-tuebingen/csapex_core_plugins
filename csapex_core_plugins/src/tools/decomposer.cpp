@@ -42,7 +42,7 @@ public:
         updateOutputs(n);
 
         std::size_t i = 0;
-        for(ConnectionTypeConstPtr part : message->value) {
+        for(TokenConstPtr part : message->value) {
             Output* o = outputs_[i++];
 
             msg::setLabel(o, part->typeName());

@@ -28,14 +28,14 @@ NormalsMessage::NormalsMessage()
 }
 
 
-ConnectionType::Ptr NormalsMessage::clone() const
+Token::Ptr NormalsMessage::clone() const
 {
     Ptr new_msg(new NormalsMessage(frame_id, stamp_micro_seconds));
     new_msg->value = value;
     return new_msg;
 }
 
-ConnectionType::Ptr NormalsMessage::toType() const
+Token::Ptr NormalsMessage::toType() const
 {
     Ptr new_msg(new NormalsMessage("/", 0));
     return new_msg;
@@ -46,7 +46,7 @@ std::string NormalsMessage::descriptiveName() const
     return Message::descriptiveName();
 }
 
-bool NormalsMessage::acceptsConnectionFrom(const ConnectionType* other_side) const
+bool NormalsMessage::acceptsConnectionFrom(const Token* other_side) const
 {
     return dynamic_cast<const NormalsMessage*> (other_side);
 }

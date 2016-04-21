@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex/model/connection_type.h>
+#include <csapex/model/token.h>
 #include <csapex/msg/message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/path_parameter.h>
@@ -78,7 +78,7 @@ void ExportFile::process()
         }
     }
 
-    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(connector_);
+    Token::ConstPtr msg = msg::getMessage<Token>(connector_);
     connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<const connection_types::VectorMessage>(msg);
     if(vector) {
         exportVector(vector);
@@ -94,7 +94,7 @@ void ExportFile::exportVector(const connection_types::VectorMessage::ConstPtr& v
     }
 }
 
-void ExportFile::exportSingle(const ConnectionType::ConstPtr& msg)
+void ExportFile::exportSingle(const Token::ConstPtr& msg)
 {
     if(std::dynamic_pointer_cast<connection_types::MarkerMessage const>(msg)) {
         return;

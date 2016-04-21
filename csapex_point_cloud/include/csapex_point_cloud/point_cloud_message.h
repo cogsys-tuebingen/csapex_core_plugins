@@ -74,13 +74,13 @@ struct PointCloudMessage : public Message
 
     PointCloudMessage(const std::string& frame_id, Stamp stamp_micro_seconds);
 
-    virtual ConnectionType::Ptr clone() const override;
+    virtual Token::Ptr clone() const override;
 
-    virtual ConnectionType::Ptr toType() const override;
+    virtual Token::Ptr toType() const override;
 
     virtual std::string descriptiveName() const override;
 
-    bool acceptsConnectionFrom(const ConnectionType* other_side) const override;
+    bool acceptsConnectionFrom(const Token* other_side) const override;
 
     variant value;
 

@@ -25,7 +25,7 @@ public:
     virtual bool tickROS() override;
     virtual void reset() override;
 
-    void callback(ConnectionTypeConstPtr message);
+    void callback(TokenConstPtr message);
 
 protected:
     void refresh();

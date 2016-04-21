@@ -25,7 +25,7 @@ CvMatMessage::~CvMatMessage()
 {
 }
 
-ConnectionType::Ptr CvMatMessage::clone() const
+Token::Ptr CvMatMessage::clone() const
 {
     Ptr new_msg(new CvMatMessage(encoding, stamp_micro_seconds));
     value.copyTo(new_msg->value);

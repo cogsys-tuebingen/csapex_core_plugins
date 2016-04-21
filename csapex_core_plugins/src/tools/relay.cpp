@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex/model/connection_type.h>
+#include <csapex/model/token.h>
 #include <csapex/msg/message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -26,7 +26,7 @@ void Relay::setup(NodeModifier& node_modifier)
 
 void Relay::process()
 {
-    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
+    Token::ConstPtr msg = msg::getMessage<Token>(input_);
 
     msg::publish(output_, msg);
 }

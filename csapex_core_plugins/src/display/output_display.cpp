@@ -39,7 +39,7 @@ void OutputDisplay::process()
         return;
     }
 
-    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(input_);
+    Token::ConstPtr msg = msg::getMessage<Token>(input_);
 
     MessageRenderer::Ptr renderer = MessageRendererManager::instance().createMessageRenderer(msg);
     if(!renderer) {

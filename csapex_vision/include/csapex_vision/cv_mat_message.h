@@ -25,7 +25,7 @@ struct CvMatMessage : public MessageTemplate<cv::Mat, CvMatMessage>
 public:
     CvMatMessage(const Encoding& encoding, Stamp stamp_micro_seconds);
     ~CvMatMessage();
-    virtual ConnectionType::Ptr clone() const override;
+    virtual Token::Ptr clone() const override;
 
     virtual void writeRaw(const std::string &file, const std::string &base, const std::string &suffix) const override;
 

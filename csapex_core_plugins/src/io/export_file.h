@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/model/connection_type.h>
+#include <csapex/model/token.h>
 #include <csapex_core_plugins/vector_message.h>
 
 namespace csapex {
@@ -21,7 +21,7 @@ protected:
     void setExportPath();
 
     void exportVector(const connection_types::VectorMessage::ConstPtr& vector);
-    void exportSingle(const ConnectionType::ConstPtr& msg);
+    void exportSingle(const Token::ConstPtr& msg);
 
 private:
     Input* connector_;

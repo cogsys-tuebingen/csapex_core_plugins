@@ -21,7 +21,7 @@ TransformMessage::TransformMessage()
     : MessageTemplate<tf::Transform, TransformMessage> ("/"), child_frame("/")
 {}
 
-ConnectionType::Ptr TransformMessage::clone() const
+Token::Ptr TransformMessage::clone() const
 {
     Ptr new_msg(new TransformMessage(frame_id, child_frame));
     new_msg->value = value;
