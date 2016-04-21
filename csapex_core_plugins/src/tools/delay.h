@@ -22,7 +22,7 @@ private:
     Output* output_;
 
     Slot* delayed_slot_;
-    Trigger* delayed_forward_;
+    Event* delayed_forward_;
 
     param::OutputProgressParameter* progress_;
 };

@@ -25,7 +25,7 @@ private:
 
 private:
     Slot* in_;
-    Trigger* done_;
+    Event* done_;
 };
 
 

@@ -6,7 +6,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
-#include <csapex/signal/trigger.h>
+#include <csapex/signal/event.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/timer.h>
 #include <csapex/param/parameter_factory.h>
@@ -86,10 +86,10 @@ void FileImporter::setup(NodeModifier& node_modifier)
 {
     outputs_.push_back(node_modifier.addOutput<connection_types::AnyMessage>("Unknown"));
 
-    begin_ = node_modifier.addTrigger("begin");
-    end_ = node_modifier.addTrigger("end");
+    begin_ = node_modifier.addEvent("begin");
+    end_ = node_modifier.addEvent("end");
 
-    new_provider_ = node_modifier.addTrigger("new\nprovider");
+    new_provider_ = node_modifier.addEvent("new\nprovider");
 
     node_modifier.addSlot("restart", [this](){
         //DEBUGainfo << "restart" << std::endl;

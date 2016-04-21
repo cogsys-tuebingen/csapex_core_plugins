@@ -8,7 +8,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/core/settings.h>
 #include <csapex/factory/message_factory.h>
-#include <csapex/signal/trigger.h>
+#include <csapex/signal/event.h>
 #include <csapex/msg/any_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportFile, csapex::Node)
@@ -85,8 +85,8 @@ void ImportFile::setup(NodeModifier& node_modifier)
 {
     out_ = node_modifier.addOutput<connection_types::AnyMessage>("?");
 
-    begin_ = node_modifier.addTrigger("begin");
-    end_ = node_modifier.addTrigger("end");
+    begin_ = node_modifier.addEvent("begin");
+    end_ = node_modifier.addEvent("end");
 }
 
 void ImportFile::process()

@@ -9,7 +9,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/param/output_progress_parameter.h>
-#include <csapex/signal/trigger.h>
+#include <csapex/signal/event.h>
 #include <csapex/msg/any_message.h>
 
 /// SYSTEM
@@ -41,7 +41,7 @@ void Delay::setup(NodeModifier& node_modifier)
     input_ = node_modifier.addInput<connection_types::AnyMessage>("Input");
     output_ = node_modifier.addOutput<connection_types::AnyMessage>("Delayed Input");
 
-    delayed_forward_ = node_modifier.addTrigger("delayed forwarded signal");
+    delayed_forward_ = node_modifier.addEvent("delayed forwarded signal");
     delayed_slot_ = node_modifier.addSlot("delayed slot", [this]() {
         doSleep();
         delayed_forward_->trigger();

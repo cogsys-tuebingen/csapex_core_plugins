@@ -34,7 +34,7 @@ private:
 
     Input* time_in_;
 
-    Trigger* reset_;
+    Event* reset_;
 
     bool init_;
     int initial_retries_;

@@ -9,7 +9,7 @@
 #include <csapex/param/range_parameter.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/any_message.h>
-#include <csapex/signal/trigger.h>
+#include <csapex/signal/event.h>
 #include <csapex/param/trigger_parameter.h>
 #include <csapex/msg/end_of_sequence_message.h>
 
@@ -48,7 +48,7 @@ void BFOptimizer::setup(NodeModifier& node_modifier)
     out_last_fitness_  = node_modifier.addOutput<double>("Last Fitness");
     out_best_fitness_  = node_modifier.addOutput<double>("Best Fitness");
 
-    trigger_start_evaluation_ = node_modifier.addTrigger("Evaluate");
+    trigger_start_evaluation_ = node_modifier.addEvent("Evaluate");
 
     node_modifier_->setIsSource(true);
     node_modifier_->setIsSink(true);

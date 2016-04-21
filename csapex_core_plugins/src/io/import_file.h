@@ -29,8 +29,8 @@ protected:
 private:
     Output* out_;
 
-    Trigger* begin_;
-    Trigger* end_;
+    Event* begin_;
+    Event* end_;
 
     std::string prefix_;
     std::string path_;

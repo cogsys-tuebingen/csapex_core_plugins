@@ -11,7 +11,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_core_plugins/vector_message.h>
-#include <csapex/signal/trigger.h>
+#include <csapex/signal/event.h>
 
 namespace csapex {
 
@@ -25,7 +25,7 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier) override
     {
-        trigger_ = node_modifier.addTrigger("signalled");
+        trigger_ = node_modifier.addEvent("signalled");
     }
     virtual void setupROS() override
     {
@@ -61,7 +61,7 @@ protected:
     }
 
 private:
-    Trigger* trigger_;
+    Event* trigger_;
     ros::Subscriber sub;
 
     std::string current_topic_;
