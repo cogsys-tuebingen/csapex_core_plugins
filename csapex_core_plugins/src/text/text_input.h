@@ -20,7 +20,10 @@ protected:
     void publish();
 
 private:
-    Output* connector_;
+    Output* output_;
+    Event* event_;
+
+    std::string text_;
 };
 
 }

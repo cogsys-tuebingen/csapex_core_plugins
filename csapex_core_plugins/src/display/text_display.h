@@ -17,11 +17,13 @@ public:
 public:
     csapex::slim_signal::Signal<void(const std::string&)> display_request;
 
-private:
+protected:
+    void display(const TokenConstPtr msg);
     void convert(std::stringstream& ss, const YAML::Node& node, const std::string &prefix);
 
 private:
-    Input* connector_;
+    Input* input_;
+    Slot* slot_;
 };
 
 }
