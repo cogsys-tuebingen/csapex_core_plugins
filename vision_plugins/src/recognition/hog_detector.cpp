@@ -39,7 +39,7 @@ void HOGDetector::setupParameters(Parameterizable& parameters)
     parameters.addParameter(svm_param,
                             svm_type_);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10.0, 10.0, 0.0, 0.1),
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("svm/thresh", -10000.0, 10000.0, 0.0, 0.1),
                             svm_thresh_);
 
     std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };

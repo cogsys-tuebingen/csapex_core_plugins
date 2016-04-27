@@ -195,16 +195,16 @@ void HOGClassifier::process()
         }
         switch(svm_thresh_type_) {
         case GREATER:
-            accepted |= weight > svm_thresh_ || weight_mirrored > svm_thresh_;
+            accepted |= weight > svm_thresh_ || (mirror_ && weight_mirrored > svm_thresh_);
             break;
         case LESS:
-            accepted |= weight < svm_thresh_ || weight_mirrored < svm_thresh_;
+            accepted |= weight < svm_thresh_ || (mirror_ && weight_mirrored < svm_thresh_);
             break;
         case GREATER_EQUAL:
-            accepted |= weight >= svm_thresh_ || weight_mirrored >= svm_thresh_;
+            accepted |= weight >= svm_thresh_ ||(mirror_ &&  weight_mirrored >= svm_thresh_);
             break;
         case LESS_EQUAL:
-            accepted |= weight <= svm_thresh_ || weight_mirrored <= svm_thresh_;
+            accepted |= weight <= svm_thresh_ || (mirror_ && weight_mirrored <= svm_thresh_);
             break;
         default:
             throw std::runtime_error("Unknown threshold type!");
