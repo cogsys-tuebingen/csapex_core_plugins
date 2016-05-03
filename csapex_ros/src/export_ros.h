@@ -27,6 +27,7 @@ private:
     ros::Publisher pub;
 
     std::string topic_;
+    int queue_;
 };
 
 }
