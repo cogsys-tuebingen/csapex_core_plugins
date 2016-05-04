@@ -19,6 +19,7 @@ ConnectionType::Ptr FeaturesMessage::clone() const
     Ptr new_msg(new FeaturesMessage);
     new_msg->value = value;
     new_msg->classification = classification;
+    new_msg->confidence = confidence;
     return new_msg;
 }
 
