@@ -190,6 +190,9 @@ void HOGExtractor::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst
         throw std::runtime_error("Unknown adaption type!");
     }
 
+    cv::Rect img_rect(0,0,src.cols, src.rows);
+    roi_adapted = roi_adapted & img_rect;
+
     window = cv::Mat(src, roi_adapted);
     cv::resize(window, dst, hog_.winSize);
 
