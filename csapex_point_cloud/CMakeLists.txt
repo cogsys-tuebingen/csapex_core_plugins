@@ -70,6 +70,8 @@ if(${kdtree_FOUND})
         src/segmentation/cluster_pointcloud_kdtree.cpp
     )
     include_directories(${kdtree_INCLUDE_DIRS})
+else()
+    message("Building without kdtree clustering!")
 endif()
 
 

@@ -8,6 +8,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/param/range_parameter.h>
 #include <csapex/msg/io.h>
 
 /// SYSTEM
@@ -23,18 +24,15 @@ StaticTransform::StaticTransform()
 
 void StaticTransform::setupParameters(Parameterizable &parameters)
 {
-//    double p = 3.2;
-    double d = 5.0;
-
     parameters.addParameter(csapex::param::ParameterFactory::declareText("frame", "/base_link"), frame);
     parameters.addParameter(csapex::param::ParameterFactory::declareText("child_frame", "/marlin"), child_frame);
 
     parameters.addParameter(csapex::param::ParameterFactory::declareAngle("roll", 0.0), roll);
     parameters.addParameter(csapex::param::ParameterFactory::declareAngle("pitch", 0.0), pitch);
     parameters.addParameter(csapex::param::ParameterFactory::declareAngle("yaw", 0.0), yaw);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dx", -d, d, 0.0, 0.001), x);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dy", -d, d, 0.0, 0.001), y);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dz", -d, d, 0.0, 0.001), z);
+    parameters.addParameter(csapex::param::ParameterFactory::declareValue("dx", 0.0), x);
+    parameters.addParameter(csapex::param::ParameterFactory::declareValue("dy", 0.0), y);
+    parameters.addParameter(csapex::param::ParameterFactory::declareValue("dz", 0.0), z);
 }
 
 void StaticTransform::process()
