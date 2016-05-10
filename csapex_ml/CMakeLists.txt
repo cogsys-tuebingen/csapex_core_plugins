@@ -39,6 +39,9 @@ add_library(csapex_ml_plugin
     src/mlp.cpp
     src/mlp/mlp.cpp
 
+    src/mlp_cv.cpp
+    src/mlp_cv_trainer.cpp
+
     src/arff_format_export.cpp
 
     src/assign_class.cpp
