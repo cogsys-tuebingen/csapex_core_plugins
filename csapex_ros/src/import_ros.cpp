@@ -52,15 +52,15 @@ void ImportRos::setupParameters(Parameterizable& parameters)
     std::vector<std::string> set;
     set.push_back(no_topic_);
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterStringSet("topic", set),
-                 std::bind(&ImportRos::update, this));
+                            std::bind(&ImportRos::update, this));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("refresh"),
-                 std::bind(&ImportRos::refresh, this));
+                            std::bind(&ImportRos::refresh, this));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("rate", 0.1, 100.0, 60.0, 0.1),
-                 std::bind(&ImportRos::updateRate, this));
+                            std::bind(&ImportRos::updateRate, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
-                 std::bind(&ImportRos::updateSubscriber, this));
+                            std::bind(&ImportRos::updateSubscriber, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareBool("latch", false));
 
     std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
@@ -201,7 +201,8 @@ void ImportRos::processROS()
         return;
     }
 
-    if(rosTime(msgs_.back()->stamp_micro_seconds) == ros::Time(0)) {
+    if(msgs_.back()->stamp_micro_seconds == 0) {
+        ainfo << msgs_.back()->stamp_micro_seconds << std::endl;
         node_modifier_->setWarning("buffered time is 0, using default behaviour");
         publishLatestMessage();
         return;
@@ -213,13 +214,14 @@ void ImportRos::processROS()
         msgs_.pop_front();
     }
 
+    ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
+
     if(!msgs_.empty()) {
         if(rosTime(msgs_.front()->stamp_micro_seconds) > time_value) {
-            // aerr << "time stamp " << time_value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp_micro_seconds) << std::endl;
-            // return;
+            aerr << "time stamp " << time_value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp_micro_seconds) << std::endl;
+            return;
         }
 
-        ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
         if(rosTime(msgs_.front()->stamp_micro_seconds) + max_wait_duration < time_value) {
             // aerr << "[1] time stamp " << time_value << " is too new" << std::endl;
             // return;
@@ -229,18 +231,15 @@ void ImportRos::processROS()
 
 
     // wait until we have a message
+    ros::Time start = ros::Time::now();
     if(!isStampCovered(time_value)) {
         ros::Rate r(10);
         while(!isStampCovered(time_value) && running_) {
             r.sleep();
             ros::spinOnce();
 
-            if(!msgs_.empty()) {
-                ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
-                if(rosTime(msgs_.back()->stamp_micro_seconds) + max_wait_duration < time_value) {
-                    aerr << "[2] time stamp " << time_value << " is too new, latest stamp is " << rosTime(msgs_.back()->stamp_micro_seconds) << std::endl;
-                    return;
-                }
+            if(start + max_wait_duration < ros::Time::now()) {
+                break;
             }
         }
     }
@@ -281,6 +280,9 @@ void ImportRos::processROS()
 bool ImportRos::isStampCovered(const ros::Time &stamp)
 {
     std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
+    if(msgs_.empty()) {
+        return false;
+    }
     return rosTime(msgs_.back()->stamp_micro_seconds) >= stamp;
 }
 
@@ -390,15 +392,15 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
     current_subscriber.shutdown();
 
     //if(RosMessageConversion::instance().isTopicTypeRegistered(topic)) {
-        node_modifier_->setNoError();
+    node_modifier_->setNoError();
 
-        current_topic_ = topic;
-        updateSubscriber();
+    current_topic_ = topic;
+    updateSubscriber();
 
-//    } else {
-//        node_modifier_->setError(std::string("cannot import topic of type ") + topic.datatype);
-//        return;
-//    }
+    //    } else {
+    //        node_modifier_->setError(std::string("cannot import topic of type ") + topic.datatype);
+    //        return;
+    //    }
 
 }
 

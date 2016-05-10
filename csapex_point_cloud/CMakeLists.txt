@@ -98,6 +98,7 @@ add_library(csapex_point_cloud_plugin_node
     src/conversion/pointcloud_to_pointmatrix.cpp
     src/conversion/pointmatrix_to_pointcloud.cpp
     src/conversion/image_to_point_cloud.cpp
+    src/conversion/pointcloud_to_xyz.cpp
 
     src/filter/conditional_outlier_removal.cpp
     src/filter/statistical_outlier_removal.cpp
