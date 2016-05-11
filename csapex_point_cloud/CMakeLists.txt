@@ -121,6 +121,7 @@ add_library(csapex_point_cloud_plugin_node
 
     src/analysis/ray_angles.cpp
     src/analysis/estimate_normals.cpp
+    src/analysis/estimate_center.cpp
 
     src/pointcloud_generator.cpp
     src/sac_fit.cpp

@@ -221,6 +221,10 @@
   <description>Extracts ROIs in a point clouds</description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::EstimateCenter" base_class_type="csapex::Node">
+  <description>Calculates center positions from point clouds</description>
+  <tags>PointCloud</tags>
+</class>
 </library>
 
 <library path="libcsapex_point_cloud_plugin_qt">
