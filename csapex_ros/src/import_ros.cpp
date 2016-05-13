@@ -252,6 +252,9 @@ void ImportRos::processROS()
     std::deque<connection_types::Message::ConstPtr>::iterator first_after = msgs_.begin();
     while(rosTime((*first_after)->stamp_micro_seconds) < time_value) {
         ++first_after;
+        if(first_after == msgs_.end()) {
+            break;
+        }
     }
 
     if(first_after == msgs_.begin()) {
@@ -259,8 +262,7 @@ void ImportRos::processROS()
         return;
 
     } else if(first_after == msgs_.end()) {
-        assert(false);
-        node_modifier_->setWarning("Should not happen.....");
+        msg::publish(connector_, msgs_.back());
         return;
 
     } else {
