@@ -28,8 +28,10 @@ ExportRos::ExportRos()
 
 void ExportRos::setupParameters(Parameterizable& parameters)
 {
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("queue", 1, 32, 1, 1),
+                            std::bind(&ExportRos::updateTopic, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareText("topic", "export"),
-                 std::bind(&ExportRos::updateTopic, this));
+                            std::bind(&ExportRos::updateTopic, this));
 }
 
 void ExportRos::setup(NodeModifier& node_modifier)
@@ -60,7 +62,7 @@ void ExportRos::processROS()
     }
 
     if(create_pub) {
-        pub = RosMessageConversion::instance().advertise(type, topic_, 1, true);
+        pub = RosMessageConversion::instance().advertise(type, topic_, queue_, true);
         create_pub = false;
 
         msg::setLabel(connector_, pub.getTopic());
@@ -80,5 +82,6 @@ void ExportRos::processROS()
 void ExportRos::updateTopic()
 {
     topic_ = readParameter<std::string>("topic");
+    queue_ = readParameter<int>("queue");
     create_pub = true;
 }

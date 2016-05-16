@@ -136,10 +136,10 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, 9.0, 3.0, 1.0),
                                        deg_cond,
                                        svm_params_.degree);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", 0.0, 10.0, 0.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", 0.0, 10.0, 0.0, 0.01),
                                        gamma_cond,
                                        svm_params_.gamma);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -10.0, 10.0, 0.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -10.0, 10.0, 0.0, 0.01),
                                        coeff0_cond,
                                        svm_params_.coef0);
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("C", 0.0, 10.0, 0.01, 0.01),
@@ -176,11 +176,17 @@ void SVMTrainer::train()
     cv::Mat samples(msgs_.size(), step_, CV_32FC1, cv::Scalar::all(0));
     cv::Mat labels (msgs_.size(), 1, CV_32FC1, cv::Scalar::all(0));
     for(int i = 0 ; i < samples.rows ; ++i) {
+        labels.at<float>(i)    = msgs_.at(i)->classification; //  i % 2
         for(int j = 0 ; j < samples.cols ; ++j) {
             samples.at<float>(i,j) = msgs_.at(i)->value.at(j);
-            labels.at<float>(i)    = msgs_.at(i)->classification; //  i % 2
         }
     }
+
+    if (svm_params_.gamma == 0) {
+        svm_params_.gamma = 1.0 / labels.rows;
+        getParameter("gamma")->set(svm_params_.gamma);
+    }
+
     std::cout << "started training" << std::endl;
     if(svm.train(samples, labels,cv::Mat(), cv::Mat(), svm_params_)) {
         std::cout << "finished training" << std::endl;

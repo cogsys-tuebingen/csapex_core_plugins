@@ -26,15 +26,23 @@ public:
 
     virtual void setup(NodeModifier& modifier) override
     {
-        in_vector  = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
+        in_vector_generic  = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
+        in_vector  = modifier.addOptionalInput<connection_types::VectorMessage, MessageType>("messages to collect");
         in_single  = modifier.addOptionalInput<MessageType>("message to collect");
     }
 
     virtual void process() override
     {
-        if(msg::hasMessage(in_vector)) {
-            std::shared_ptr<std::vector<MessageType> const> input = msg::getMessage<connection_types::GenericVectorMessage, MessageType>(in_vector);
+        if(msg::hasMessage(in_vector_generic)) {
+            std::shared_ptr<std::vector<MessageType> const> input = msg::getMessage<connection_types::GenericVectorMessage, MessageType>(in_vector_generic);
             buffer_.insert(buffer_.end(), input->begin(), input->end());
+        }
+        if (msg::hasMessage(in_vector)) {
+            connection_types::VectorMessage::ConstPtr input = msg::getMessage<connection_types::VectorMessage>(in_vector);
+            for (auto&& msg : input->value) {
+                if (auto casted = std::dynamic_pointer_cast<MessageType const>(msg))
+                    buffer_.push_back(*casted);
+            }
         }
         if(msg::hasMessage(in_single)) {
             std::shared_ptr<MessageType const> input = msg::getMessage<MessageType>(in_single);
@@ -56,6 +64,7 @@ protected:
     }
 
 protected:
+    Input* in_vector_generic;
     Input* in_vector;
     Input* in_single;
 
