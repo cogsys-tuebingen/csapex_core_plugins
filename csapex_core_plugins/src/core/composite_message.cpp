@@ -18,14 +18,14 @@ CompositeMessage::CompositeMessage(const std::string& frame_id, Message::Stamp s
 {
     type_ = connection_types::makeEmpty<AnyMessage>();
 }
-CompositeMessage::CompositeMessage(Token::Ptr type, const std::string& frame_id, Message::Stamp stamp)
+CompositeMessage::CompositeMessage(TokenData::Ptr type, const std::string& frame_id, Message::Stamp stamp)
     : Message ("MessageComposite", frame_id, stamp)
 {
     setDescriptiveName("Composite");
     type_ = type;
 }
 
-Token::Ptr CompositeMessage::getSubType() const
+TokenData::Ptr CompositeMessage::getSubType() const
 {
     return type_;
 }
@@ -35,19 +35,19 @@ CompositeMessage::Ptr CompositeMessage::make(){
     return new_msg;
 }
 
-Token::Ptr CompositeMessage::clone() const
+TokenData::Ptr CompositeMessage::clone() const
 {
     Ptr new_msg(new CompositeMessage(frame_id));
     new_msg->value = value;
     return new_msg;
 }
 
-Token::Ptr CompositeMessage::toType() const
+TokenData::Ptr CompositeMessage::toType() const
 {
     return make();
 }
 
-bool CompositeMessage::canConnectTo(const Token *other_side) const
+bool CompositeMessage::canConnectTo(const TokenData *other_side) const
 {
     const CompositeMessage* vec = dynamic_cast<const CompositeMessage*> (other_side);
     if(vec != 0 && type_->canConnectTo(vec->getSubType().get())) {
@@ -57,7 +57,7 @@ bool CompositeMessage::canConnectTo(const Token *other_side) const
     }
 }
 
-bool CompositeMessage::acceptsConnectionFrom(const Token *other_side) const
+bool CompositeMessage::acceptsConnectionFrom(const TokenData *other_side) const
 {
     const CompositeMessage* vec = dynamic_cast<const CompositeMessage*> (other_side);
     if(vec != 0 && type_->acceptsConnectionFrom(vec->getSubType().get())) {
@@ -83,7 +83,7 @@ bool convert<csapex::connection_types::CompositeMessage>::decode(const Node& nod
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
-    rhs.value = node["values"].as<std::vector<TokenConstPtr>>();
+    rhs.value = node["values"].as<std::vector<TokenDataConstPtr>>();
     return true;
 }
 }

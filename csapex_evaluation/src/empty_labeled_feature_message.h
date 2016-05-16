@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/tickable_node.h>
-#include <csapex/model/token.h>
+#include <csapex/model/token_data.h>
 #include <csapex_core_plugins/vector_message.h>
 
 namespace csapex {

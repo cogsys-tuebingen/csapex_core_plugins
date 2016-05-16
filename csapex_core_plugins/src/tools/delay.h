@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/model/token.h>
+#include <csapex/model/token_data.h>
 
 namespace csapex {
 

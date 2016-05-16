@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
 #include <csapex/factory/message_factory.h>
-#include <csapex/model/token.h>
+#include <csapex/model/token_data.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>

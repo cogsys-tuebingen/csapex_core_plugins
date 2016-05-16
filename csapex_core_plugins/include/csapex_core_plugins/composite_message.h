@@ -20,7 +20,7 @@ struct CompositeMessage : public Message
 
     CompositeMessage(const std::string& frame_id = "/", Stamp stamp_micro_seconds = 0);
 
-    Token::Ptr getSubType() const;
+    TokenData::Ptr getSubType() const;
 
     template <typename T>
     static void registerType()
@@ -35,27 +35,27 @@ struct CompositeMessage : public Message
         return CompositeMessage::Ptr (new CompositeMessage(connection_types::makeEmpty<T>(), "/", 0));
     }
 
-    static CompositeMessage::Ptr make(Token::Ptr type)
+    static CompositeMessage::Ptr make(TokenData::Ptr type)
     {
         return CompositeMessage::Ptr (new CompositeMessage(type->toType(), "/", 0));
     }
 
     static CompositeMessage::Ptr make();
 
-    virtual Token::Ptr clone() const override;
-    virtual Token::Ptr toType() const override;
+    virtual TokenData::Ptr clone() const override;
+    virtual TokenData::Ptr toType() const override;
 
-    virtual bool canConnectTo(const Token* other_side) const override;
-    virtual bool acceptsConnectionFrom(const Token *other_side) const override;
+    virtual bool canConnectTo(const TokenData* other_side) const override;
+    virtual bool acceptsConnectionFrom(const TokenData *other_side) const override;
 
 private:
-    CompositeMessage(Token::Ptr type, const std::string& frame_id, Stamp stamp_micro_seconds);
+    CompositeMessage(TokenData::Ptr type, const std::string& frame_id, Stamp stamp_micro_seconds);
 
 public:
-    std::vector<Token::ConstPtr> value;
+    std::vector<TokenData::ConstPtr> value;
 
 private:
-    Token::Ptr type_;
+    TokenData::Ptr type_;
 
 };
 

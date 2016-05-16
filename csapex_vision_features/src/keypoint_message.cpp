@@ -22,12 +22,12 @@ bool KeypointMessage::isContainer() const
     return true;
 }
 
-Token::Ptr KeypointMessage::nestedType() const
+TokenData::Ptr KeypointMessage::nestedType() const
 {
     return makeEmpty<GenericValueMessage<cv::KeyPoint>>();
 }
 
-Token::ConstPtr KeypointMessage::nestedValue(std::size_t i) const
+TokenData::ConstPtr KeypointMessage::nestedValue(std::size_t i) const
 {
     GenericValueMessage<cv::KeyPoint>::Ptr v(new GenericValueMessage<cv::KeyPoint>);
     v->value = value.at(i);
@@ -37,7 +37,7 @@ std::size_t KeypointMessage::nestedValueCount() const
 {
     return value.size();
 }
-void KeypointMessage::addNestedValue(const Token::ConstPtr &msg)
+void KeypointMessage::addNestedValue(const TokenData::ConstPtr &msg)
 {
     auto v = std::dynamic_pointer_cast<GenericValueMessage<cv::KeyPoint> const> (msg);
     if(v) {

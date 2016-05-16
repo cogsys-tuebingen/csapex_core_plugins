@@ -48,11 +48,11 @@ void ExportRos::processROS()
         return;
     }
 
-    Token::ConstPtr msg = msg::getMessage<Token>(connector_);
+    TokenData::ConstPtr msg = msg::getMessage<TokenData>(connector_);
 
     connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
 
-    Token::ConstPtr type;
+    TokenData::ConstPtr type;
     if(vector) {
         type = vector->getSubType();
     } else {

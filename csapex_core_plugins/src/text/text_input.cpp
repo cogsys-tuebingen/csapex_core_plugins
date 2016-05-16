@@ -8,6 +8,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/signal/event.h>
+#include <csapex/model/token.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TextInput, csapex::Node)
 
@@ -24,9 +25,9 @@ void TextInput::setupParameters(Parameterizable &parameters)
         if(txt != text_) {
             text_ = txt;
 
-            auto token = std::make_shared<connection_types::GenericValueMessage<std::string>>();
-            token->value = text_;
-            event_->triggerWith(token);
+            auto text_message = std::make_shared<connection_types::GenericValueMessage<std::string>>();
+            text_message->value = text_;
+            event_->triggerWith(std::make_shared<Token>(text_message));
         }
     });
 }

@@ -22,12 +22,12 @@ bool MatchMessage::isContainer() const
     return true;
 }
 
-Token::Ptr MatchMessage::nestedType() const
+TokenData::Ptr MatchMessage::nestedType() const
 {
     return makeEmpty<GenericValueMessage<cv::DMatch>>();
 }
 
-Token::ConstPtr MatchMessage::nestedValue(std::size_t i) const
+TokenData::ConstPtr MatchMessage::nestedValue(std::size_t i) const
 {
     GenericValueMessage<cv::DMatch>::Ptr v(new GenericValueMessage<cv::DMatch>);
     v->value = value.at(i);
@@ -37,7 +37,7 @@ std::size_t MatchMessage::nestedValueCount() const
 {
     return value.size();
 }
-void MatchMessage::addNestedValue(const Token::ConstPtr &msg)
+void MatchMessage::addNestedValue(const TokenData::ConstPtr &msg)
 {
     auto v = std::dynamic_pointer_cast<GenericValueMessage<cv::DMatch> const> (msg);
     if(v) {

@@ -60,7 +60,7 @@ ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &to
     }
 }
 
-ros::Publisher RosMessageConversion::advertise(Token::ConstPtr type, const std::string &topic, int queue, bool latch)
+ros::Publisher RosMessageConversion::advertise(TokenData::ConstPtr type, const std::string &topic, int queue, bool latch)
 {
     auto gen_ros = std::dynamic_pointer_cast<connection_types::GenericRosMessage const>(type);
     if(gen_ros) {
@@ -89,7 +89,7 @@ ros::Publisher RosMessageConversion::advertiseGenericRos(const connection_types:
     return gen_ros->value->advertise(*nh, topic, queue, latch);
 }
 
-void RosMessageConversion::publish(ros::Publisher &pub, Token::ConstPtr msg)
+void RosMessageConversion::publish(ros::Publisher &pub, TokenData::ConstPtr msg)
 {
 
     auto gen_ros = std::dynamic_pointer_cast<connection_types::GenericRosMessage const>(msg);
@@ -127,7 +127,7 @@ connection_types::Message::Ptr RosMessageConversion::instantiate(const rosbag::M
 //    return ros_types_;
 //}
 
-void Convertor::publish_apex(Callback callback, Token::ConstPtr msg)
+void Convertor::publish_apex(Callback callback, TokenData::ConstPtr msg)
 {
     callback(msg);
 }

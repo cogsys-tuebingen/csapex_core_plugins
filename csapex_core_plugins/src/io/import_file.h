@@ -38,7 +38,7 @@ private:
     boost::filesystem::directory_iterator current_file_;
 
     bool do_buffer_;
-    std::map<std::string, TokenConstPtr> buffer_;
+    std::map<std::string, TokenDataConstPtr> buffer_;
 
     bool at_end_;
     bool next_is_first_;

@@ -135,7 +135,7 @@ void ROSHandler::checkMasterConnection()
         char** argv = (char**) additional_args.data();
         ros::init(argc, argv, "csapex");
     }
-    //initialized_ = true;
+    initialized_ = true;
 
     if(!check_is_running) {
         {

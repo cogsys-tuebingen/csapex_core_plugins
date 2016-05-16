@@ -18,7 +18,7 @@ public:
     csapex::slim_signal::Signal<void(const std::string&)> display_request;
 
 protected:
-    void display(const TokenConstPtr msg);
+    void display(const TokenDataConstPtr msg);
     void convert(std::stringstream& ss, const YAML::Node& node, const std::string &prefix);
 
 private:

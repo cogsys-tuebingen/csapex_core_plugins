@@ -21,12 +21,12 @@ class GenericRosMessage : public MessageTemplate<std::shared_ptr<topic_tools::Sh
 public:
     GenericRosMessage();
 
-    bool canConnectTo(const Token *other_side) const override
+    bool canConnectTo(const TokenData *other_side) const override
     {
         return true;
     }
 
-    bool acceptsConnectionFrom(const Token* other_side) const override
+    bool acceptsConnectionFrom(const TokenData* other_side) const override
     {
         return true;
     }

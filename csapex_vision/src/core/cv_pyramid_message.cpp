@@ -19,7 +19,7 @@ CvPyramidMessage::CvPyramidMessage(const Encoding& encoding)
     : encoding(encoding)
 {}
 
-Token::Ptr CvPyramidMessage::clone() const
+TokenData::Ptr CvPyramidMessage::clone() const
 {
     Ptr new_msg(new CvPyramidMessage(encoding));
     new_msg->value.assign(value.begin(), value.end());

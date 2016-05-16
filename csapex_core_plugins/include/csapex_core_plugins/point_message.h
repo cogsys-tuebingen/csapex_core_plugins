@@ -15,8 +15,8 @@ public:
 
     PointMessage(Message::Stamp stamp_micro_seconds = 0);
 
-    virtual Token::Ptr clone() const override;
-    virtual Token::Ptr toType() const override;
+    virtual TokenData::Ptr clone() const override;
+    virtual TokenData::Ptr toType() const override;
 
 public:
     float x;

@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex/model/token.h>
+#include <csapex/model/token_data.h>
 #include <csapex/msg/message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/path_parameter.h>

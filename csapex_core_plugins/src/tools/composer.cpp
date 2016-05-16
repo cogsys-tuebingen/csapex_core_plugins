@@ -34,7 +34,7 @@ public:
         auto composite = std::make_shared<connection_types::CompositeMessage>();
 
         for(auto input : node_modifier_->getMessageInputs()) {
-            Token::ConstPtr msg = msg::getMessage(input);
+            TokenData::ConstPtr msg = msg::getMessage(input);
             if(std::dynamic_pointer_cast<connection_types::MarkerMessage const>(msg)) {
                 return;
             }

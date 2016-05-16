@@ -53,7 +53,7 @@ protected:
             ti.name = current_topic_;
             ti.datatype = "std_msgs::String";
             ainfo << "subscribing to " << ti.name << std::endl;
-            sub = RosMessageConversion::instance().subscribe(ti, 1, [this](const TokenConstPtr& msg){
+            sub = RosMessageConversion::instance().subscribe(ti, 1, [this](const TokenDataConstPtr& msg){
                 ainfo << "trigger" << std::endl;
                 trigger_->trigger();
             });

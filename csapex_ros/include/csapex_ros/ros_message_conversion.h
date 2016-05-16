@@ -26,20 +26,20 @@ class Convertor
 {
 public:
     typedef std::shared_ptr<Convertor> Ptr;
-    typedef std::function<void(TokenConstPtr)> Callback;
+    typedef std::function<void(TokenDataConstPtr)> Callback;
 
 public:
     virtual ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) = 0;
     virtual ros::Publisher advertise(const std::string& topic,  int queue, bool latch = false) = 0;
 
-    virtual void publish(ros::Publisher& pub, Token::ConstPtr msg) = 0;
+    virtual void publish(ros::Publisher& pub, TokenData::ConstPtr msg) = 0;
     virtual connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source) = 0;
 
     virtual std::string rosType() = 0;
     virtual std::string apexType() = 0;
 
 protected:
-    void publish_apex(Callback callback, Token::ConstPtr msg);
+    void publish_apex(Callback callback, TokenData::ConstPtr msg);
 };
 
 
@@ -72,7 +72,7 @@ public:
 
         return nh->advertise<T>(topic, queue, latch);
     }
-    void publish(ros::Publisher& pub, Token::ConstPtr apex_msg_raw) {
+    void publish(ros::Publisher& pub, TokenData::ConstPtr apex_msg_raw) {
         typename connection_types::GenericPointerMessage<T>::ConstPtr msg =
                 std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const> (apex_msg_raw);
         if(!msg) {
@@ -131,7 +131,7 @@ public:
 
         return nh->advertise<ROS>(topic, queue, latch);
     }
-    void publish(ros::Publisher& pub, Token::ConstPtr apex_msg_raw) {
+    void publish(ros::Publisher& pub, TokenData::ConstPtr apex_msg_raw) {
         typename APEX::ConstPtr apex_msg = std::dynamic_pointer_cast<APEX const> (apex_msg_raw);
         if(!apex_msg->isValid()) {
             throw std::runtime_error("trying to publish an empty message");
@@ -161,7 +161,7 @@ class RosMessageConversion : public Singleton<RosMessageConversion>
     friend class RosMessageConversionT;
 
 public:
-    typedef std::function<void(TokenConstPtr)> Callback;
+    typedef std::function<void(TokenDataConstPtr)> Callback;
 
 private:
     RosMessageConversion();
@@ -178,8 +178,8 @@ public:
     void shutdown();
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output);
-    ros::Publisher advertise(Token::ConstPtr, const std::string& topic,  int queue, bool latch = false);
-    void publish(ros::Publisher& pub, Token::ConstPtr msg);
+    ros::Publisher advertise(TokenData::ConstPtr, const std::string& topic,  int queue, bool latch = false);
+    void publish(ros::Publisher& pub, TokenData::ConstPtr msg);
 
     connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source);
 

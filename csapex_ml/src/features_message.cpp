@@ -14,7 +14,7 @@ FeaturesMessage::FeaturesMessage(Message::Stamp stamp)
     : Message("FeaturesMessage", "/", stamp), classification(0)
 {}
 
-Token::Ptr FeaturesMessage::clone() const
+TokenData::Ptr FeaturesMessage::clone() const
 {
     Ptr new_msg(new FeaturesMessage);
     new_msg->value = value;
@@ -22,7 +22,7 @@ Token::Ptr FeaturesMessage::clone() const
     return new_msg;
 }
 
-Token::Ptr FeaturesMessage::toType() const
+TokenData::Ptr FeaturesMessage::toType() const
 {
     Ptr new_msg(new FeaturesMessage);
     return new_msg;

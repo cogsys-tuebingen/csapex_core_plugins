@@ -16,9 +16,9 @@ struct MatchMessage : public MessageTemplate<std::vector<cv::DMatch>, MatchMessa
     MatchMessage();
 
     bool isContainer() const override;
-    Token::Ptr nestedType() const override;
-    virtual void addNestedValue(const Token::ConstPtr &msg) override;
-    virtual Token::ConstPtr nestedValue(std::size_t i) const override;
+    TokenData::Ptr nestedType() const override;
+    virtual void addNestedValue(const TokenData::ConstPtr &msg) override;
+    virtual TokenData::ConstPtr nestedValue(std::size_t i) const override;
     virtual std::size_t nestedValueCount() const override;
 };
 

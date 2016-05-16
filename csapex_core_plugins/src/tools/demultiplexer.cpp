@@ -20,12 +20,12 @@ public:
 
     void process()
     {
-        TokenConstPtr msg = msg::getMessage(input);
+        TokenDataConstPtr msg = msg::getMessage(input);
         if(msg->isContainer()) {
             std::size_t size = msg->nestedValueCount();
 
             for(std::size_t i = 0; i < size; ++i) {
-                TokenConstPtr nested = msg->nestedValue(i);
+                TokenDataConstPtr nested = msg->nestedValue(i);
                 msg::publish(output, nested);
             }
 

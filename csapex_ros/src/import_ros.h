@@ -25,7 +25,7 @@ public:
     virtual bool tickROS() override;
     virtual void reset() override;
 
-    void callback(TokenConstPtr message);
+    void callback(TokenDataConstPtr message);
 
 protected:
     void refresh();

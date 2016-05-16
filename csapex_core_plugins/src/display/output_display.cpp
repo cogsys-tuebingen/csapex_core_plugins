@@ -39,7 +39,7 @@ void OutputDisplay::process()
         return;
     }
 
-    Token::ConstPtr msg = msg::getMessage<Token>(input_);
+    TokenData::ConstPtr msg = msg::getMessage<TokenData>(input_);
 
     MessageRenderer::Ptr renderer = MessageRendererManager::instance().createMessageRenderer(msg);
     if(!renderer) {

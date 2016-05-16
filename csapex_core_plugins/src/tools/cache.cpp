@@ -122,7 +122,7 @@ private:
     Output* output;
 
     std::size_t buffer_size_;
-    std::deque<TokenConstPtr> msgs;
+    std::deque<TokenDataConstPtr> msgs;
 
     bool playback_;
     bool playing_;

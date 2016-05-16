@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex/model/token.h>
+#include <csapex/model/token_data.h>
 #include <csapex/msg/message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
@@ -66,7 +66,7 @@ void Delay::doSleep()
 
 void Delay::process()
 {
-    Token::ConstPtr msg = msg::getMessage<Token>(input_);
+    TokenData::ConstPtr msg = msg::getMessage<TokenData>(input_);
 
     doSleep();
 

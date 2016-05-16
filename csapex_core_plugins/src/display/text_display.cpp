@@ -9,6 +9,7 @@
 #include <csapex/utility/timer.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/utility/interlude.hpp>
+#include <csapex/model/token.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)
 
@@ -24,7 +25,7 @@ void TextDisplay::setup(NodeModifier& node_modifier)
     input_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
 
     slot_ = node_modifier.addTypedSlot("Display", [this](const TokenConstPtr& token){
-        display(token);
+        display(token->getTokenData());
     });
 }
 
@@ -35,7 +36,7 @@ void TextDisplay::process()
     display(msg);
 }
 
-void TextDisplay::display(TokenConstPtr msg)
+void TextDisplay::display(TokenDataConstPtr msg)
 {
     YAML::Node node;
     {
@@ -81,7 +82,7 @@ void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node, const s
             ss << "...\n";
         }
 
-    } else {
+    } else if(node.Type() != YAML::NodeType::Null) {
         ss << prefix << node.as<std::string>().substr(0, 1000);
     }
 }
