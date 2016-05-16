@@ -9,7 +9,7 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex_vision/roi_message.h>
 
-#include <csapex/model/token.h>
+#include <csapex/model/token_data.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>

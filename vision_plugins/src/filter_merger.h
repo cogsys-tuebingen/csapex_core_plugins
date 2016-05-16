@@ -31,7 +31,7 @@ public:
 
     virtual void process() override;
 
-    virtual Input* createVariadicInput(TokenConstPtr type, const std::string& label, bool optional) override;
+    virtual Input* createVariadicInput(TokenDataConstPtr type, const std::string& label, bool optional) override;
 
 private:
     Output *output_;

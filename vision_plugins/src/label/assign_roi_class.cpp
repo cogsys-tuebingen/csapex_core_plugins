@@ -116,7 +116,7 @@ void AssignROIClass::beginProcess()
 
     /// COPY INPUT DATA
     rois_.clear();
-    for(std::vector<Token::ConstPtr>::const_iterator it = in_rois->value.begin(); it != in_rois->value.end(); ++it) {
+    for(std::vector<TokenData::ConstPtr>::const_iterator it = in_rois->value.begin(); it != in_rois->value.end(); ++it) {
         RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(*it);
         RoiMessage::Ptr roi_msg(new RoiMessage);
         roi_msg->value = roi->value;

@@ -28,7 +28,7 @@ void MergeROIs::process()
     VectorMessage::ConstPtr rois = msg::getMessage<VectorMessage>(input_);
 
     RectangleCluster cluster;
-    for(std::vector<Token::ConstPtr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
+    for(std::vector<TokenData::ConstPtr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
         RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(*it);
         const Roi& r = roi->value;
         cluster.integrate(r.rect());

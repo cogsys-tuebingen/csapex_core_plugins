@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
 #include <csapex/factory/message_factory.h>
-#include <csapex/model/token.h>
+#include <csapex/model/token_data.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/path_parameter.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -94,7 +94,7 @@ inline void doProcessSingle(const typename DescriptorMessage::ConstPtr &src,
     }
 }
 
-inline void processSingle(const Token::ConstPtr                    &src,
+inline void processSingle(const TokenData::ConstPtr                    &src,
                           std::shared_ptr< std::vector<FeaturesMessage> > &dst,
                           const int                                         label)
 {
@@ -127,7 +127,7 @@ inline void processVector(const connection_types::VectorMessage::ConstPtr    &sr
 
 void ToFeature::process()
 {
-    Token::ConstPtr msg = msg::getMessage<Token>(input_);
+    TokenData::ConstPtr msg = msg::getMessage<TokenData>(input_);
     std::shared_ptr< std::vector<FeaturesMessage> > out (new std::vector<FeaturesMessage>);
 
 

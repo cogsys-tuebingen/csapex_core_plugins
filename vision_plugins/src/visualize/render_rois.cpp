@@ -55,7 +55,7 @@ void RenderROIs::process()
     bool ignore_uc = readParameter<bool>("ignore unclassified");
     if(msg::hasMessage(input_rois_)) {
         VectorMessage::ConstPtr rois = msg::getMessage<VectorMessage>(input_rois_);
-        for(const Token::ConstPtr& e : rois->value) {
+        for(const TokenData::ConstPtr& e : rois->value) {
             RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(e);
 
             if(ignore_uc && roi->value.classification() == -1) {

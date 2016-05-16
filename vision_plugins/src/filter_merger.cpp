@@ -29,7 +29,7 @@ void Merger::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<CvMatMessage>("Merged Image");
 }
 
-Input* Merger::createVariadicInput(TokenConstPtr type, const std::string& label, bool /*optional*/)
+Input* Merger::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)
 {
     return VariadicInputs::createVariadicInput(type, label.empty() ? "Channel" : label, true);
 }
