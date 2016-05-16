@@ -121,6 +121,8 @@ public:
         params.addParameter(param::ParameterFactory::declareRange("max mean distance", 0.0, 3.0, 1.0, 0.01),
                             cluster_max_mean_xyz_);
 
+        params.addParameter(param::ParameterFactory::declareRange("min cluster size", 0, 1000, 100, 1),
+                            cluster_min_size_);
     }
 
     void process()
@@ -188,7 +190,7 @@ public:
 
         for(auto it = merged_indices.begin(); it != merged_indices.end();) {
             pcl::PointIndices& c = *it;
-            if(c.indices.empty()) {
+            if(c.indices.size() < cluster_min_size_) {
                 it = merged_indices.erase(it);
             } else {
                 ++it;
@@ -210,6 +212,7 @@ private:
     double cluster_distance_xy_distance_factor_;
     double cluster_distance_z_;
     double cluster_max_mean_xyz_;
+    int    cluster_min_size_;
 };
 
 

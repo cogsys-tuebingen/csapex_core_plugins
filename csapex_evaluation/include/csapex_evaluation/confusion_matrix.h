@@ -16,6 +16,7 @@ public:
     void reportClassification(int truth, int estimation);
 
     void reset();
+    void initializeClass(int _class);
 
 public:
     std::vector<int> classes;
@@ -27,7 +28,6 @@ public:
 
 private:
     void resetClass(int _class);
-    void initializeClass(int _class);
 
 private:
     std::set<int> classes_set;

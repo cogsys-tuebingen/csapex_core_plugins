@@ -52,7 +52,7 @@ void ConfusionMatrixTableModel::update(const ConfusionMatrix& confusion)
         for(int col = 0; col < dim; ++col) {
             sum[col] = 0;
             for(int row = 0; row < dim; ++row) {
-                sum[col] += confusion.histogram.at(std::make_pair(confusion.classes[row], confusion.classes[col]));
+                sum[col] += confusion_.histogram[std::make_pair(confusion_.classes[row], confusion_.classes[col])];
             }
         }
     } catch(const std::exception& e) {
