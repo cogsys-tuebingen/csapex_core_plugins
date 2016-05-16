@@ -77,6 +77,9 @@ void HOGExtractor::setupParameters(Parameterizable& parameters)
                                                                          adpation_types,
                                                                          (int) SCALE),
                             adaption_type_);
+    parameters.addParameter(param::ParameterFactory::declareBool("mirror", true),
+                            mirror_);
+
 }
 
 void HOGExtractor::setup(NodeModifier& node_modifier)
