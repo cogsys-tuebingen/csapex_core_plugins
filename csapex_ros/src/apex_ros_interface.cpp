@@ -14,6 +14,9 @@
 #include <csapex/model/graph_facade.h>
 #include <csapex/model/node_handle.h>
 #include <csapex/model/node.h>
+#include <csapex/signal/event.h>
+#include <csapex/msg/no_message.h>
+#include <csapex/model/token.h>
 
 /// SYSTEM
 #include <boost/regex.hpp>
@@ -48,6 +51,7 @@ struct ConvertIntegral
 APEXRosInterface::APEXRosInterface()
     : core_(nullptr), disabled_(false)
 {
+    last_clock_ = ros::Time(0);
 }
 
 APEXRosInterface::~APEXRosInterface()
@@ -63,7 +67,10 @@ void APEXRosInterface::init(CsApexCore &core)
 {
     core_ = &core;
 
-    ROSHandler::instance().registerConnectionCallback(std::bind(&APEXRosInterface::registerCommandListener, this));
+    ROSHandler::instance().registerConnectionCallback([this]() {
+        registerCommandListener();
+        registerClockWatchdog();
+    });
 
     RosMessageConversion::registerConversion<std_msgs::Bool, connection_types::GenericValueMessage<bool>, ConvertIntegral<std_msgs::Bool, bool> >();
     RosMessageConversion::registerConversion<std_msgs::Int32, connection_types::GenericValueMessage<int>, ConvertIntegral<std_msgs::Int32, int> >();
@@ -104,6 +111,11 @@ void APEXRosInterface::init(CsApexCore &core)
             }
         }
     });
+}
+
+void APEXRosInterface::setupGraph(Graph *graph)
+{
+    clock_reset_event_ = graph->createInternalEvent(graph->makeUUID("event_ros_time_reset"), "ros time reset");
 }
 
 void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::string& parameter_name, const XmlRpc::XmlRpcValue& parameter_value)
@@ -240,6 +252,27 @@ void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd, bool global_
             core_->setPause(false);
         }
     }
+}
+
+void APEXRosInterface::registerClockWatchdog()
+{
+    clock_sub_ = ROSHandler::instance().nh()->subscribe
+            <rosgraph_msgs::Clock>("/clock", 10, std::bind(&APEXRosInterface::clock, this, std::placeholders::_1));
+}
+
+void APEXRosInterface::clock(const rosgraph_msgs::ClockConstPtr &clock)
+{
+    ros::Time now = clock->clock;
+    if(now < last_clock_) {
+        std::cerr << "time reset" << std::endl;
+
+        TokenDataConstPtr data(new connection_types::NoMessage);
+        TokenPtr token = std::make_shared<Token>(data);
+        token->setActive(true);
+        clock_reset_event_->triggerWith(token);
+    }
+
+    last_clock_ = now;
 }
 
 void APEXRosInterface::shutdown()
