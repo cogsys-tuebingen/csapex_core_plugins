@@ -51,8 +51,8 @@ void ScanCovariance::process()
     for(int i = 0; i < n; ++i) {
         const Segment& segment = segments[i];
 
-        const Eigen::Vector2d from(segment.rays.front().pos_x, segment.rays.front().pos_y);
-        const Eigen::Vector2d to(segment.rays.back().pos_x, segment.rays.back().pos_y);
+        const Eigen::Vector2d from(segment.rays.front().posX(), segment.rays.front().posY());
+        const Eigen::Vector2d to(segment.rays.back().posX(), segment.rays.back().posY());
 
         Eigen::Vector2d delta = to - from;
 

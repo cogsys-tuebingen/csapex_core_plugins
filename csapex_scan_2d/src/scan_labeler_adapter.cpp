@@ -267,7 +267,7 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
     QBrush brush(color::fromCount<QColor>(0), Qt::SolidPattern);
     for(std::size_t i = 0, n =  scan->rays.size(); i < n; ++i) {
         const lib_laser_processing::LaserBeam& beam = scan->rays[i];
-        QGraphicsItem* item = scene->addRect(SCALE * beam.pos_x, SCALE * beam.pos_y, dim, dim, QPen(brush.color()), brush);
+        QGraphicsItem* item = scene->addRect(SCALE * beam.posX(), SCALE * beam.posY(), dim, dim, QPen(brush.color()), brush);
 
         item->setData(0, QVariant::fromValue(i));
 

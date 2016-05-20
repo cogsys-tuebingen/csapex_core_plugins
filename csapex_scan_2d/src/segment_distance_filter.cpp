@@ -41,7 +41,7 @@ public:
         std::vector<Segment> result;
         for(const Segment& segment : *segments_in) {
             for(const LaserBeam& beam : segment.rays) {
-                if(beam.range >= rmin && beam.range <= rmax) {
+                if(beam.range() >= rmin && beam.range() <= rmax) {
                     result.push_back(segment);
                     break;
                 }

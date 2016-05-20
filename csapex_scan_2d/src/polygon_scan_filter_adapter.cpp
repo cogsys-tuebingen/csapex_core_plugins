@@ -201,7 +201,7 @@ void PolygonScanFilterAdapter::display(const lib_laser_processing::Scan *scan)
     if(!state.inside_item || state.inside.size() < 3) {
         for(std::size_t i = 0, n =  scan->rays.size(); i < n; ++i) {
             const lib_laser_processing::LaserBeam& beam = scan->rays[i];
-            QGraphicsItem* item = scene->addRect(SCALE * beam.pos_x, SCALE * beam.pos_y, dim, dim, QPen(outside.color()), outside);
+            QGraphicsItem* item = scene->addRect(SCALE * beam.posX(), SCALE * beam.posY(), dim, dim, QPen(outside.color()), outside);
 
             item->setData(0, QVariant::fromValue(i));
 
@@ -212,13 +212,12 @@ void PolygonScanFilterAdapter::display(const lib_laser_processing::Scan *scan)
         for(std::size_t i = 0, n =  scan->rays.size(); i < n; ++i) {
             const lib_laser_processing::LaserBeam& beam = scan->rays[i];
             QGraphicsItem* item;
-            QPointF beam_pos(SCALE * beam.pos_x, SCALE * beam.pos_y);
+            QPointF beam_pos(SCALE * beam.posX(), SCALE * beam.posY());
             if(state.inside_item->contains(beam_pos)) {
-                item = scene->addRect(SCALE * beam.pos_x, SCALE * beam.pos_y, dim, dim, QPen(inside.color()), inside);
-                s.rays[i].valid = true;
+                item = scene->addRect(SCALE * beam.posX(), SCALE * beam.posY(), dim, dim, QPen(inside.color()), inside);
             } else {
-                item = scene->addRect(SCALE * beam.pos_x, SCALE * beam.pos_y, dim, dim, QPen(outside.color()), outside);
-                s.rays[i].valid = false;
+                item = scene->addRect(SCALE * beam.posX(), SCALE * beam.posY(), dim, dim, QPen(outside.color()), outside);
+                s.rays[i].invalidate();
             }
             item->setData(0, QVariant::fromValue(i));
             item->setFlag(QGraphicsItem::ItemIsSelectable);
