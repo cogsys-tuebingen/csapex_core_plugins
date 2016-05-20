@@ -21,10 +21,10 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(PolygonScanFilterAdapter, csapex::ScanLabeler)
+CSAPEX_REGISTER_NODE_ADAPTER(PolygonScanFilterAdapter, csapex::PolygonScanFilter)
 
 
-PolygonScanFilterAdapter::PolygonScanFilterAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node)
+PolygonScanFilterAdapter::PolygonScanFilterAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {

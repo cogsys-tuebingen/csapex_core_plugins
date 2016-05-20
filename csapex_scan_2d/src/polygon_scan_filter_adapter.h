@@ -5,7 +5,7 @@
 #include <csapex/view/node/default_node_adapter.h>
 
 /// COMPONENT
-#include "scan_labeler.h"
+#include "polygon_scan_filter.h"
 #include <csapex_scan_2d/labeled_scan_message.h>
 
 /// SYSTEM
@@ -19,7 +19,7 @@ class PolygonScanFilterAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    PolygonScanFilterAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node);
+    PolygonScanFilterAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node);
 
     virtual Memento::Ptr getState() const;
     virtual void setParameterState(Memento::Ptr memento);
@@ -43,7 +43,7 @@ protected:
     void updatePolygon();
     void labelInside();
 
-    std::weak_ptr<ScanLabeler> wrapped_;
+    std::weak_ptr<PolygonScanFilter> wrapped_;
 
     struct State : public Memento {
         int width;
