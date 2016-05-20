@@ -23,25 +23,17 @@ public:
 
     virtual Memento::Ptr getState() const;
     virtual void setParameterState(Memento::Ptr memento);
-
     virtual void setupUi(QBoxLayout* layout);
-
-    void updateLabel(int label);
 
 public Q_SLOTS:
     void display(const lib_laser_processing::Scan* img);
-    void submit();
-    void labelSelected();
 
 Q_SIGNALS:
     void displayRequest(const lib_laser_processing::Scan* img);
-    void submitRequest();
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);
-    void labelSelected(int label);
     void updatePolygon();
-    void labelInside();
 
     std::weak_ptr<PolygonScanFilter> wrapped_;
 
@@ -49,7 +41,7 @@ protected:
         int width;
         int height;
 
-        QPolygonF inside;
+        QPolygonF             inside;
         QGraphicsPolygonItem* inside_item;
 
         State()
@@ -100,6 +92,9 @@ private:
     bool resize_down_;
     bool move_down_;
     QPoint last_pos_;
+
+    void submit();
+
 };
 
 }

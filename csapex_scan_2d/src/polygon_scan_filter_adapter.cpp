@@ -32,62 +32,11 @@ PolygonScanFilterAdapter::PolygonScanFilterAdapter(NodeHandleWeakPtr worker, Nod
 
     // translate to UI thread via Qt signal
     trackConnection(n->display_request.connect(std::bind(&PolygonScanFilterAdapter::displayRequest, this, std::placeholders::_1)));
-    trackConnection(n->submit_request.connect(std::bind(&PolygonScanFilterAdapter::submitRequest, this)));
-}
-
-void PolygonScanFilterAdapter::labelSelected()
-{
-    auto node = wrapped_.lock();
-    if(!node) {
-        return;
-    }
-    int label = node->readParameter<int>("label");
-
-    labelSelected(label);
-    view_->scene()->clearSelection();
-}
-
-void PolygonScanFilterAdapter::labelSelected(int label)
-{
-    QBrush brush(color::fromCount<QColor>(label), Qt::SolidPattern);
-    QPen pen(color::fromCount<QColor>(label));
-
-    for(QGraphicsItem* item : view_->scene()->selectedItems()) {
-        result_->value.labels[item->data(0).toUInt()] = label;
-
-        QGraphicsRectItem* rect = dynamic_cast<QGraphicsRectItem*> (item);
-        if(rect) {
-            rect->setPen(pen);
-            rect->setBrush(brush);
-        }
-    }
-    view_->update();
-}
-
-void PolygonScanFilterAdapter::updateLabel(int label)
-{
-    NodeHandlePtr node_handle = node_.lock();
-    if(node_handle) {
-        auto node = node_handle->getNode().lock();
-        if(node) {
-            node->getParameter("label")->set(label);
-        }
-    }
 }
 
 void PolygonScanFilterAdapter::updatePolygon()
 {
     state.inside_item->setPolygon(state.inside);
-
-    labelInside();
-}
-
-void PolygonScanFilterAdapter::labelInside()
-{
-    for(QGraphicsItem* item : view_->scene()->collidingItems(state.inside_item)) {
-        item->setSelected(true);
-    }
-    labelSelected();
 }
 
 bool PolygonScanFilterAdapter::eventFilter(QObject *o, QEvent *e)
@@ -99,21 +48,6 @@ bool PolygonScanFilterAdapter::eventFilter(QObject *o, QEvent *e)
     QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
 
     switch(e->type()) {
-    case QEvent::KeyPress: {
-        QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e);
-
-        int key = ke->key();
-
-        if(Qt::Key_0 <= key && key <= Qt::Key_9) {
-            updateLabel(ke->key() - Qt::Key_0);
-        } else if(key == Qt::Key_Space) {
-            submit();
-        } else if(key == Qt::Key_Escape) {
-            updateLabel(0);
-        }
-
-        break;
-    }
     case QEvent::GraphicsSceneMousePress:
         if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
             if(me->button() == Qt::LeftButton) {
@@ -142,7 +76,6 @@ bool PolygonScanFilterAdapter::eventFilter(QObject *o, QEvent *e)
             e->accept();
         }
 
-        labelSelected();
         return true;
     }
     case QEvent::GraphicsSceneMouseMove:
@@ -217,7 +150,7 @@ void PolygonScanFilterAdapter::setupUi(QBoxLayout* layout)
     layout->addWidget(view_);
 
     connect(this, SIGNAL(displayRequest(const lib_laser_processing::Scan* )), this, SLOT(display(const lib_laser_processing::Scan* )));
-    connect(this, SIGNAL(submitRequest()), this, SLOT(submit()));
+    connect(this, SIGNAL(resetRequest()), this, SLOT(reset()));
 
     DefaultNodeAdapter::setupUi(layout);
 
@@ -261,27 +194,44 @@ void PolygonScanFilterAdapter::display(const lib_laser_processing::Scan *scan)
     lib_laser_processing::Scan& s = result_->value;
     s = *scan;
 
-    result_->value.rays = scan->rays;
-    result_->value.labels.resize(scan->rays.size(), 0);
+    QBrush outside(Qt::red, Qt::SolidPattern);
+    QBrush inside(Qt::green, Qt::SolidPattern);
+    state.inside_item = scene->addPolygon(state.inside);
 
-    QBrush brush(color::fromCount<QColor>(0), Qt::SolidPattern);
-    for(std::size_t i = 0, n =  scan->rays.size(); i < n; ++i) {
-        const lib_laser_processing::LaserBeam& beam = scan->rays[i];
-        QGraphicsItem* item = scene->addRect(SCALE * beam.pos_x, SCALE * beam.pos_y, dim, dim, QPen(brush.color()), brush);
+    if(!state.inside_item || state.inside.size() < 3) {
+        for(std::size_t i = 0, n =  scan->rays.size(); i < n; ++i) {
+            const lib_laser_processing::LaserBeam& beam = scan->rays[i];
+            QGraphicsItem* item = scene->addRect(SCALE * beam.pos_x, SCALE * beam.pos_y, dim, dim, QPen(outside.color()), outside);
 
-        item->setData(0, QVariant::fromValue(i));
+            item->setData(0, QVariant::fromValue(i));
 
-        item->setFlag(QGraphicsItem::ItemIsSelectable);
-        item->setFlag(QGraphicsItem::ItemIsFocusable);
+            item->setFlag(QGraphicsItem::ItemIsSelectable);
+            item->setFlag(QGraphicsItem::ItemIsFocusable);
+        }
+    } else {
+        for(std::size_t i = 0, n =  scan->rays.size(); i < n; ++i) {
+            const lib_laser_processing::LaserBeam& beam = scan->rays[i];
+            QGraphicsItem* item;
+            QPointF beam_pos(SCALE * beam.pos_x, SCALE * beam.pos_y);
+            if(state.inside_item->contains(beam_pos)) {
+                item = scene->addRect(SCALE * beam.pos_x, SCALE * beam.pos_y, dim, dim, QPen(inside.color()), inside);
+                s.rays[i].valid = true;
+            } else {
+                item = scene->addRect(SCALE * beam.pos_x, SCALE * beam.pos_y, dim, dim, QPen(outside.color()), outside);
+                s.rays[i].valid = false;
+            }
+            item->setData(0, QVariant::fromValue(i));
+            item->setFlag(QGraphicsItem::ItemIsSelectable);
+            item->setFlag(QGraphicsItem::ItemIsFocusable);
+        }
     }
 
-    state.inside_item = scene->addPolygon(state.inside);
-    labelInside();
+
 
     scene->update();
 
     auto node = node_worker->getNode().lock();
-    if(node && node->readParameter<bool>("automatic")) {
+    if(node) {
         submit();
     }
 }
@@ -294,5 +244,6 @@ void PolygonScanFilterAdapter::submit()
     }
     node->setResult(result_);
 }
+
 /// MOC
 #include "moc_polygon_scan_filter_adapter.cpp"

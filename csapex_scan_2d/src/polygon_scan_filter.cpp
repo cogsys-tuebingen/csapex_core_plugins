@@ -28,24 +28,12 @@ PolygonScanFilter::~PolygonScanFilter()
 
 void PolygonScanFilter::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("submit", csapex::param::ParameterDescription("Continue with the current labeling")),
-                                                         std::bind(&PolygonScanFilter::submit, this));
-
-    addParameter(csapex::param::ParameterFactory::declareBool("automatic", csapex::param::ParameterDescription("Automatically continue without user interaction"), false));
-    addParameter(csapex::param::ParameterFactory::declareRange("label",
-                                                       csapex::param::ParameterDescription("The label to be assigned to the selected points"),
-                                                       0, 9, 0, 1));
 }
 
 void PolygonScanFilter::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addMultiInput<ScanMessage, LabeledScanMessage>("Scan");
     output_ = node_modifier.addOutput<LabeledScanMessage>("Labeled Scan");
-}
-
-void PolygonScanFilter::submit()
-{
-    submit_request();
 }
 
 void PolygonScanFilter::beginProcess()
@@ -55,11 +43,9 @@ void PolygonScanFilter::beginProcess()
     if(msg::isMessage<LabeledScanMessage>(input_)) {
         LabeledScanMessage::ConstPtr scan_msg = msg::getMessage<LabeledScanMessage>(input_);
         display_request(&scan_msg->value);
-
     } else if(msg::isMessage<ScanMessage>(input_)) {
         ScanMessage::ConstPtr scan_msg = msg::getMessage<ScanMessage>(input_);
         display_request(&scan_msg->value);
-
     } else {
         throw std::runtime_error("invalid input type");
     }

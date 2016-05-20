@@ -6,6 +6,7 @@
 #include <utils_laser_processing/data/scan.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
 
+
 namespace csapex
 {
 
@@ -16,6 +17,7 @@ class PolygonScanFilter : public InteractiveNode
     friend class PolygonScanFilterAdapter;
 
 public:
+
     PolygonScanFilter();
     virtual ~PolygonScanFilter();
 
@@ -28,9 +30,6 @@ protected:
     virtual void beginProcess() override;
     virtual void finishProcess() override;
 
-private:
-    void submit();
-
 protected:
     Input* input_;
     Output* output_;
@@ -39,7 +38,7 @@ protected:
 
 public:
     csapex::slim_signal::Signal<void(const lib_laser_processing::Scan* )> display_request;
-    csapex::slim_signal::Signal<void()> submit_request;
+    csapex::slim_signal::Signal<void()> reset_request;
 };
 
 }
