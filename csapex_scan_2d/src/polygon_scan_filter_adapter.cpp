@@ -150,7 +150,6 @@ void PolygonScanFilterAdapter::setupUi(QBoxLayout* layout)
     layout->addWidget(view_);
 
     connect(this, SIGNAL(displayRequest(const lib_laser_processing::Scan* )), this, SLOT(display(const lib_laser_processing::Scan* )));
-    connect(this, SIGNAL(resetRequest()), this, SLOT(reset()));
 
     DefaultNodeAdapter::setupUi(layout);
 
@@ -193,6 +192,7 @@ void PolygonScanFilterAdapter::display(const lib_laser_processing::Scan *scan)
 
     lib_laser_processing::Scan& s = result_->value;
     s = *scan;
+    result_->value.labels.resize(scan->rays.size(), 0);
 
     QBrush outside(Qt::red, Qt::SolidPattern);
     QBrush inside(Qt::green, Qt::SolidPattern);
