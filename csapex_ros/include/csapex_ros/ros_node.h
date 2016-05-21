@@ -28,7 +28,11 @@ protected:
     virtual void tick() override;
     virtual bool tickROS();
 
-    ROSHandler& getRosHandler();
+    ROSHandler& getRosHandler() const;
+
+protected:
+    void ensureROSisSetUp();
+    bool isConnected() const;
 
 private:
     bool ros_init_;

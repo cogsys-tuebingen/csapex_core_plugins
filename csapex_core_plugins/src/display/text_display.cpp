@@ -24,7 +24,7 @@ void TextDisplay::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
 
-    slot_ = node_modifier.addTypedSlot("Display", [this](const TokenConstPtr& token){
+    slot_ = node_modifier.addTypedSlot<connection_types::AnyMessage>("Display", [this](const TokenConstPtr& token){
         display(token->getTokenData());
     });
 }
