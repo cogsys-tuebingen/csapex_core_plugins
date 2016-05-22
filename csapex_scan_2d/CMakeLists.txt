@@ -100,6 +100,7 @@ add_library(csapex_scan_2d_plugin_node
     src/segmentation_p2pline.cpp
     src/segmentation_linefit.cpp
     src/segmentation_linefit_lsq.cpp
+    src/segmentation_ellipsoid.cpp
 )
 
 target_link_libraries(csapex_scan_2d_plugin_node
