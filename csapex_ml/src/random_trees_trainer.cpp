@@ -25,12 +25,12 @@ RandomTreesTrainer::RandomTreesTrainer()
 
 void RandomTreesTrainer::setup(NodeModifier& node_modifier)
 {
-    CollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
+    VectorCollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
 }
 
 void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
 {
-    CollectionNode<FeaturesMessage>::setupParameters(parameters);
+    VectorCollectionNode<FeaturesMessage>::setupParameters(parameters);
 
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("classes",

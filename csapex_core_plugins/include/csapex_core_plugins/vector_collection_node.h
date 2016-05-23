@@ -13,15 +13,15 @@
 namespace csapex {
 
 template <typename MessageType>
-class CollectionNode : public Node
+class VectorCollectionNode : public Node
 {
 public:
-    CollectionNode()
+    VectorCollectionNode()
     {}
 
     virtual void setupParameters(Parameterizable &parameters) {
-        addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType>::doProcessCollection, this, std::ref(buffer_)));
-        addParameter(csapex::param::ParameterFactory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType>::clearCollection, this));
+        addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&VectorCollectionNode<MessageType>::doProcessCollection, this, std::ref(buffer_)));
+        addParameter(csapex::param::ParameterFactory::declareTrigger("clear"), std::bind(&VectorCollectionNode<MessageType>::clearCollection, this));
     }
 
     virtual void setup(NodeModifier& modifier) override

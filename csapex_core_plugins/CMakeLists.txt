@@ -41,7 +41,7 @@ add_library(csapex_core_lib
     src/core/timestamp_message.cpp
     src/core/duration_message.cpp
     src/core/interactive_node.cpp
-    src/core/collection_node.cpp
+    src/core/vector_collection_node.cpp
 
     ${QT_RESOURCES}
 )
