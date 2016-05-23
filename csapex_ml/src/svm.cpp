@@ -20,8 +20,8 @@ SVM::SVM() :
 
 void SVM::setup(NodeModifier& node_modifier)
 {
-    in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
-    out_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Labeled Features");
+    in_ = node_modifier.addInput<VectorMessage, FeaturesMessage>("features");
+    out_ = node_modifier.addOutput<VectorMessage, FeaturesMessage>("labelled features");
 }
 
 void SVM::setupParameters(Parameterizable& parameters)
@@ -37,20 +37,24 @@ void SVM::setupParameters(Parameterizable& parameters)
 
 void SVM::process()
 {
-    std::shared_ptr<std::vector<FeaturesMessage> const> in = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
-    std::shared_ptr<std::vector<FeaturesMessage> >      out(new std::vector<FeaturesMessage>(in->size()));
+    VectorMessage::ConstPtr features_msg = msg::getMessage<VectorMessage>(in_);
+
+    VectorMessage::Ptr out_msg(VectorMessage::make<FeaturesMessage>());
 
     if(!loaded_) {
         throw std::runtime_error("No SVM is loaded!");
     }
 
-    for(unsigned int i = 0 ; i < in->size() ; ++i) {
-        out->at(i) = in->at(i);
-        cv::Mat sample(in->at(i).value);
-        out->at(i).classification = svm_.predict(sample);
+    for(ConnectionType::ConstPtr fm : features_msg->value) {
+        FeaturesMessage::ConstPtr msg = std::dynamic_pointer_cast<FeaturesMessage const>(fm);
+        FeaturesMessage::Ptr out(new FeaturesMessage());
+        out->value = msg->value;
+        cv::Mat sample(msg->value);
+        out->classification = svm_.predict(sample);
+        out_msg->value.push_back(out);
     }
 
-    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
+    msg::publish(out_, out_msg);
 }
 
 void SVM::load()

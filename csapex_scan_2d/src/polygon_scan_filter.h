@@ -31,13 +31,14 @@ protected:
     virtual void finishProcess() override;
 
 protected:
-    Input* input_;
+    Input*  input_;
     Output* output_;
+    bool    invert_;
 
     connection_types::LabeledScanMessage::Ptr result_;
 
 public:
-    csapex::slim_signal::Signal<void(const lib_laser_processing::Scan* )> display_request;
+    csapex::slim_signal::Signal<void(const lib_laser_processing::Scan*, const bool )> display_request;
 };
 
 }

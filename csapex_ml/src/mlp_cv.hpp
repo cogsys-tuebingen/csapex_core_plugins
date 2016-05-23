@@ -18,7 +18,7 @@ public:
     virtual void process() override;
 
 private:
-    connection_types::FeaturesMessage::Ptr classify(const connection_types::FeaturesMessage::ConstPtr& input);
+    void classify(const connection_types::FeaturesMessage &input, connection_types::FeaturesMessage &output);
     void loadMLP();
 
 private:
