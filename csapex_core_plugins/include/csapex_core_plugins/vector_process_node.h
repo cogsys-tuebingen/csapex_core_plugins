@@ -25,56 +25,89 @@ public:
 
     virtual void setup(NodeModifier& modifier) override
     {
-        in_vector_generic  = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
-        in_vector  = modifier.addOptionalInput<connection_types::VectorMessage, MessageType>("messages to collect");
-        in_single  = modifier.addOptionalInput<MessageType>("message to collect");
-
-
-
+        in_vector_generic  = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to process");
+        in_vector  = modifier.addOptionalInput<connection_types::VectorMessage, MessageType>("messages to process");
+        out_vector_generic = modifier.addOutput<connection_types::GenericVectorMessage, MessageType>("messages processed");
+        out_vector = modifier.addOutput<connection_types::VectorMessage, MessageType>("messages processed");
     }
 
     virtual void process() override
     {
-        if(msg::hasMessage(in_vector_generic)) {
-            std::shared_ptr<std::vector<MessageType> const> input = msg::getMessage<connection_types::GenericVectorMessage, MessageType>(in_vector_generic);
-            buffer_.insert(buffer_.end(), input->begin(), input->end());
-        }
-        if (msg::hasMessage(in_vector)) {
-            connection_types::VectorMessage::ConstPtr input = msg::getMessage<connection_types::VectorMessage>(in_vector);
-            for (auto&& msg : input->value) {
-                if (auto casted = std::dynamic_pointer_cast<MessageType const>(msg))
-                    buffer_.push_back(*casted);
+        std::shared_ptr<std::vector<MessageType> const> input_vector_generic;
+        connection_types::VectorMessage::ConstPtr input_vector;
+        std::shared_ptr<std::vector<MessageType>> output_vector_generic;
+        connection_types::VectorMessage::Ptr      output_vector;
+
+        if(msg::hasMessage(in_vector_generic))
+            input_vector_generic = msg::getMessage<connection_types::GenericVectorMessage, MessageType>(in_vector_generic);
+        if(msg::hasMessage(in_vector))
+            input_vector = msg::getMessage<connection_types::VectorMessage>(in_vector);
+
+        std::vector<MessageType *> access;
+        if(msg::isConnected(out_vector)) {
+            output_vector = connection_types::VectorMessage::make<MessageType>();
+            if(input_vector_generic) {
+                for(const MessageType &msg : *input_vector_generic) {
+                    output_vector->value.push_back(msg.clone());
+                    access.push_back(output_vector->value.back().get());
+                }
             }
-        }
-        if(msg::hasMessage(in_single)) {
-            std::shared_ptr<MessageType const> input = msg::getMessage<MessageType>(in_single);
-            buffer_.push_back(*input);
+            if(input_vector) {
+                for(auto msg : input_vector->value) {
+                    output_vector->value.push_back(msg->cloneAs<MessageType>());
+                    access.push_back(output_vector->value.back().get());
+                }
+            }
+
+            doProcessCollection(access);
+
+            if(msg::isConnected(out_vector_generic)) {
+                output_vector_generic.reset(new std::vector<MessageType>);
+                for(auto msg : access) {
+                    output_vector_generic->emplace_back(*msg);
+                }
+                msg::publish(out_vector, output_vector);
+            }
+            msg::publish(out_vector, output_vector);
+
+        } else if(msg::isConnected(out_vector_generic)) {
+            output_vector_generic.reset(new std::vector<MessageType>);
+
+            if(input_vector_generic) {
+                for(const MessageType &msg : *input_vector_generic) {
+                    output_vector_generic->emplace_back(msg);
+                    access.push_back(&(output_vector_generic->back()));
+                }
+            }
+            if(input_vector) {
+                for(auto msg : input_vector->value) {
+                    std::shared_ptr<MessageType> m = std::dynamic_pointer_cast<MessageType>(msg);
+                    output_vector_generic->emplace_back(*m);
+                    access.push_back(&(output_vector_generic->back()));
+                }
+            }
+
+            doProcessCollection(access);
+
+            msg::publish(out_vector_generic, output_vector_generic);
         }
     }
 
 protected:
-    void doProcessCollection(std::vector<MessageType>& collection)
+    void doProcessCollection(std::vector<MessageType*>& collection)
     {
         processCollection(collection);
     }
 
-    virtual void processCollection(std::vector<MessageType>& collection) = 0;
-
-    void clearCollection()
-    {
-        buffer_.clear();
-    }
+    virtual void processCollection(std::vector<MessageType*>& collection) = 0;
 
 protected:
     Input* in_vector_generic;
     Input* in_vector;
-    Input* in_single;
 
     Output *out_vector_generic;
+    Output *out_vector;
 
-
-private:
-    std::vector<MessageType> buffer_;
 };
 
 }
