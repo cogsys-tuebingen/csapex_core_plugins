@@ -31,7 +31,7 @@ PolygonScanFilterAdapter::PolygonScanFilterAdapter(NodeHandleWeakPtr worker, Nod
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&PolygonScanFilterAdapter::displayRequest, this, std::placeholders::_1)));
+    trackConnection(n->display_request.connect(std::bind(&PolygonScanFilterAdapter::displayRequest, this, std::placeholders::_1, std::placeholders::_2)));
 }
 
 void PolygonScanFilterAdapter::updatePolygon()
@@ -149,7 +149,7 @@ void PolygonScanFilterAdapter::setupUi(QBoxLayout* layout)
 
     layout->addWidget(view_);
 
-    connect(this, SIGNAL(displayRequest(const lib_laser_processing::Scan* )), this, SLOT(display(const lib_laser_processing::Scan* )));
+    connect(this, SIGNAL(displayRequest(const lib_laser_processing::Scan* , const bool)), this, SLOT(display(const lib_laser_processing::Scan* , const bool)));
 
     DefaultNodeAdapter::setupUi(layout);
 
@@ -174,7 +174,7 @@ void PolygonScanFilterAdapter::setParameterState(Memento::Ptr memento)
     view_->setFixedSize(QSize(state.width, state.height));
 }
 
-void PolygonScanFilterAdapter::display(const lib_laser_processing::Scan *scan)
+void PolygonScanFilterAdapter::display(const lib_laser_processing::Scan *scan, const bool invert)
 {
     NodeHandlePtr node_worker = node_.lock();
     if(!node_worker) {
@@ -213,7 +213,10 @@ void PolygonScanFilterAdapter::display(const lib_laser_processing::Scan *scan)
             const lib_laser_processing::LaserBeam& beam = scan->rays[i];
             QGraphicsItem* item;
             QPointF beam_pos(SCALE * beam.posX(), SCALE * beam.posY());
-            if(state.inside_item->contains(beam_pos)) {
+            bool within_polygon = state.inside_item->contains(beam_pos);
+            if(invert)
+                within_polygon = !within_polygon;
+            if(within_polygon) {
                 item = scene->addRect(SCALE * beam.posX(), SCALE * beam.posY(), dim, dim, QPen(inside.color()), inside);
             } else {
                 item = scene->addRect(SCALE * beam.posX(), SCALE * beam.posY(), dim, dim, QPen(outside.color()), outside);

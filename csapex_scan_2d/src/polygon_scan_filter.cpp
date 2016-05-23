@@ -28,6 +28,9 @@ PolygonScanFilter::~PolygonScanFilter()
 
 void PolygonScanFilter::setupParameters(Parameterizable& parameters)
 {
+    parameters.addParameter(param::ParameterFactory::declareBool("invert",
+                                                                 false),
+                            invert_);
 }
 
 void PolygonScanFilter::setup(NodeModifier& node_modifier)
@@ -42,10 +45,10 @@ void PolygonScanFilter::beginProcess()
 
     if(msg::isMessage<LabeledScanMessage>(input_)) {
         LabeledScanMessage::ConstPtr scan_msg = msg::getMessage<LabeledScanMessage>(input_);
-        display_request(&scan_msg->value);
+        display_request(&scan_msg->value, invert_);
     } else if(msg::isMessage<ScanMessage>(input_)) {
         ScanMessage::ConstPtr scan_msg = msg::getMessage<ScanMessage>(input_);
-        display_request(&scan_msg->value);
+        display_request(&scan_msg->value, invert_);
     } else {
         throw std::runtime_error("invalid input type");
     }

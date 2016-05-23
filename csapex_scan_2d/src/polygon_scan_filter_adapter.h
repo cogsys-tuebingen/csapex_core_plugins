@@ -26,16 +26,17 @@ public:
     virtual void setupUi(QBoxLayout* layout);
 
 public Q_SLOTS:
-    void display(const lib_laser_processing::Scan* img);
+    void display(const lib_laser_processing::Scan* img, const bool invert);
 
 Q_SIGNALS:
-    void displayRequest(const lib_laser_processing::Scan* img);
+    void displayRequest(const lib_laser_processing::Scan* img, const bool invert);
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);
     void updatePolygon();
 
     std::weak_ptr<PolygonScanFilter> wrapped_;
+    const PolygonScanFilter         *wrapped_ptr_;
 
     struct State : public Memento {
         int width;
