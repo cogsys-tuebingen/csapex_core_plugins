@@ -49,13 +49,13 @@ public:
             if(input_vector_generic) {
                 for(const MessageType &msg : *input_vector_generic) {
                     output_vector->value.push_back(msg.clone());
-                    access.push_back(output_vector->value.back().get());
+                    access.push_back((MessageType *) output_vector->value.back().get());
                 }
             }
             if(input_vector) {
                 for(auto msg : input_vector->value) {
                     output_vector->value.push_back(msg->cloneAs<MessageType>());
-                    access.push_back(output_vector->value.back().get());
+                    access.push_back((MessageType *) output_vector->value.back().get());
                 }
             }
 
@@ -64,7 +64,7 @@ public:
             if(msg::isConnected(out_vector_generic)) {
                 output_vector_generic.reset(new std::vector<MessageType>);
                 for(auto msg : access) {
-                    output_vector_generic->emplace_back(*msg);
+                    output_vector_generic->push_back(*msg);
                 }
                 msg::publish(out_vector, output_vector);
             }
@@ -76,20 +76,20 @@ public:
             if(input_vector_generic) {
                 for(const MessageType &msg : *input_vector_generic) {
                     output_vector_generic->emplace_back(msg);
-                    access.push_back(&(output_vector_generic->back()));
                 }
             }
             if(input_vector) {
-                for(auto msg : input_vector->value) {
-                    std::shared_ptr<MessageType> m = std::dynamic_pointer_cast<MessageType>(msg);
-                    output_vector_generic->emplace_back(*m);
-                    access.push_back(&(output_vector_generic->back()));
+                for (auto&& msg : input_vector->value) {
+                    if (auto casted = std::dynamic_pointer_cast<MessageType const>(msg))
+                        output_vector_generic->emplace_back(*casted);
                 }
             }
 
-            doProcessCollection(access);
+            for(MessageType &msg : *output_vector_generic)
+                access.push_back(&msg);
 
-            msg::publish(out_vector_generic, output_vector_generic);
+            doProcessCollection(access);
+            msg::publish<connection_types::GenericVectorMessage, MessageType>(out_vector_generic, output_vector_generic);
         }
     }
 
