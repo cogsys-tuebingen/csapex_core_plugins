@@ -99,7 +99,10 @@
   <description>Laser scan segmentation using line fitting with least squares.</description>
   <tags>Laser, Scan</tags>
 </class>
-
+<class type="csapex::SegmentLengthSegmentation" base_class_type="csapex::Node">
+  <description>Laser scan segmentation using line fitting with least squares.</description>
+  <tags>Laser, Scan</tags>
+</class>
 </library>
 
 
