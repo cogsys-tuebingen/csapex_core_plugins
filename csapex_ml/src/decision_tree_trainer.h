@@ -2,13 +2,13 @@
 #define DECISION_TREE_TRAINER_H
 
 /// PROJECT
-#include <csapex_core_plugins/vector_collection_node.h>
+#include <csapex_core_plugins/collection_node.h>
 #include <csapex_ml/features_message.h>
 
 namespace csapex {
 
 
-class DecisionTreeTrainer : public VectorCollectionNode<connection_types::FeaturesMessage>
+class DecisionTreeTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
     DecisionTreeTrainer();

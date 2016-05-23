@@ -26,12 +26,12 @@ MLPCvTrainer::MLPCvTrainer() :
 
 void MLPCvTrainer::setup(NodeModifier &node_modifier)
 {
-    VectorCollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
+    CollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
 }
 
 void MLPCvTrainer::setupParameters(Parameterizable &parameters)
 {
-    VectorCollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
+    CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
 
     addParameter(csapex::param::ParameterFactory::declareFileOutputPath("file", "mlp.yaml"));
 

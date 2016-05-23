@@ -25,12 +25,12 @@ DecisionTreeTrainer::DecisionTreeTrainer()
 
 void DecisionTreeTrainer::setup(NodeModifier& node_modifier)
 {
-    VectorCollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
+    CollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
 }
 
 void DecisionTreeTrainer::setupParameters(Parameterizable& parameters)
 {
-    VectorCollectionNode<FeaturesMessage>::setupParameters(parameters);
+    CollectionNode<FeaturesMessage>::setupParameters(parameters);
 
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("classes",

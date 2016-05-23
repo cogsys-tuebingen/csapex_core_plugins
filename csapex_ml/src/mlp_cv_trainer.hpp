@@ -1,11 +1,11 @@
 #pragma once
 
-#include <csapex_core_plugins/vector_collection_node.h>
+#include <csapex_core_plugins/collection_node.h>
 #include <csapex_ml/features_message.h>
 
 namespace csapex
 {
-class MLPCvTrainer : public VectorCollectionNode<connection_types::FeaturesMessage>
+class MLPCvTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
     MLPCvTrainer();

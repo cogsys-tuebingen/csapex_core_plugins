@@ -1,5 +1,6 @@
-#ifndef COLLECTION_NODE_H
-#define COLLECTION_NODE_H
+#ifndef VECTORPROCESSNODE_H
+#define VECTORPROCESSNODE_H
+
 
 /// PROJECT
 #include <csapex/model/node.h>
@@ -13,15 +14,13 @@
 namespace csapex {
 
 template <typename MessageType>
-class VectorCollectionNode : public Node
+class VectorProcessNode : public Node
 {
 public:
-    VectorCollectionNode()
+    VectorProcessNode()
     {}
 
     virtual void setupParameters(Parameterizable &parameters) {
-        addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&VectorCollectionNode<MessageType>::doProcessCollection, this, std::ref(buffer_)));
-        addParameter(csapex::param::ParameterFactory::declareTrigger("clear"), std::bind(&VectorCollectionNode<MessageType>::clearCollection, this));
     }
 
     virtual void setup(NodeModifier& modifier) override
@@ -29,6 +28,9 @@ public:
         in_vector_generic  = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
         in_vector  = modifier.addOptionalInput<connection_types::VectorMessage, MessageType>("messages to collect");
         in_single  = modifier.addOptionalInput<MessageType>("message to collect");
+
+
+
     }
 
     virtual void process() override
@@ -68,10 +70,13 @@ protected:
     Input* in_vector;
     Input* in_single;
 
+    Output *out_vector_generic;
+
+
 private:
     std::vector<MessageType> buffer_;
 };
 
 }
 
-#endif // COLLECTION_NODE_H
+#endif // VECTORPROCESSNODE_H
