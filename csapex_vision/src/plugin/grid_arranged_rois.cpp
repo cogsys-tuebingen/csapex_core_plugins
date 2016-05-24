@@ -29,7 +29,7 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
         input_  = node_modifier.addInput<CvMatMessage>("Image");
-        output_ = node_modifier.addOutput<VectorMessage, RoiMessage>("ROIs");
+        output_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
     }
 
     virtual void setupParameters(Parameterizable &parameters) override
@@ -43,7 +43,7 @@ public:
     virtual void process() override
     {
         CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-        VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
+        std::shared_ptr<std::vector<RoiMessage>> out(new std::vector<RoiMessage>);
 
         int dim_x = readParameter<int>("dimension x");
         int dim_y = readParameter<int>("dimension y");
@@ -59,19 +59,19 @@ public:
         cv::Rect rect;
         for(int i = 0 ; i < dim_y ; ++i) {
             for(int j = 0 ; j < dim_x ; ++j) {
-                RoiMessage::Ptr roi(new RoiMessage);
+                RoiMessage roi;
                 rect.x = cell_width  * j;
                 rect.y = cell_height * i;
                 rect.width  = cell_width  + ((j == dim_x - 1) ? rest_witdh : 0);
                 rect.height = cell_height + ((i == dim_y - 1) ? rest_height : 0);
-                roi->value.setRect(rect);
-                roi->value.setColor(color);
-                roi->value.setClassification(class_id);
-                out->value.push_back(roi);
+                roi.value.setRect(rect);
+                roi.value.setColor(color);
+                roi.value.setClassification(class_id);
+                out->push_back(roi);
             }
         }
 
-        msg::publish(output_, out);
+        msg::publish<GenericVectorMessage, RoiMessage>(output_, out);
     }
 
 private:
