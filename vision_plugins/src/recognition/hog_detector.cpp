@@ -116,13 +116,13 @@ void HOGDetector::setupParameters(Parameterizable& parameters)
 void HOGDetector::setup(NodeModifier& node_modifier)
 {
     in_  = node_modifier.addInput<CvMatMessage>("image");
-    out_ = node_modifier.addOutput<VectorMessage, RoiMessage>("detections");
+    out_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("detections");
 }
 
 void HOGDetector::process()
 {
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_);
-    VectorMessage::Ptr      out(VectorMessage::make<RoiMessage>());
+    std::shared_ptr<std::vector<RoiMessage>> out(new std::vector<RoiMessage>);
 
     switch(svm_type_) {
     case DEFAULT:
@@ -168,21 +168,21 @@ void HOGDetector::process()
     }
 
     for(unsigned int i = 0 ; i < loc_rects.size() ; ++i) {
-        RoiMessage::Ptr roi(new RoiMessage);
+        RoiMessage roi;
         cv::Scalar color(utils_vision::color::bezierColor<cv::Scalar>(i / (float) loc_rects.size()));
-        roi->value = Roi(loc_rects.at(i), color, HUMAN);
-        out->value.push_back(roi);
+        roi.value = Roi(loc_rects.at(i), color, HUMAN);
+        out->push_back(roi);
     }
 
     for(unsigned int i = 0 ; i < loc_points.size() ; ++i) {
-        RoiMessage::Ptr roi(new RoiMessage);
+        RoiMessage roi;
         cv::Scalar color(utils_vision::color::bezierColor<cv::Scalar>(i / (float) loc_points.size()));
         cv::Point &p = loc_points.at(i);
         cv::Rect r(p.x, p.y, hog_.winSize.width, hog_.winSize.height);
-        roi->value = Roi(r, color, HUMAN);
-        out->value.push_back(roi);
+        roi.value = Roi(r, color, HUMAN);
+        out->push_back(roi);
     }
-    msg::publish(out_, out);
+    msg::publish<GenericVectorMessage, RoiMessage>(out_, out);
 }
 
 void HOGDetector::load()

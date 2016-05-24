@@ -296,7 +296,7 @@ void AssignROIClassAdapter::display(QImage img)
     for(auto it = node->rois_.begin() ;
         it != node->rois_.end() ;
         ++it) {
-        csapex::Roi &roi = (*it)->value;
+        csapex::Roi &roi = it->value;
 
         QPointF ppos = pixmap_->scenePos();
         QInteractiveRect *rect = new QInteractiveRect(roi,
@@ -359,7 +359,7 @@ void AssignROIClassAdapter::drop()
     for(auto it = node->rois_.begin() ;
         it != node->rois_.end() ;
         ++it) {
-        (*it)->value.setClassification(-1);
+        it->value.setClassification(-1);
     }
     node->done();
 }

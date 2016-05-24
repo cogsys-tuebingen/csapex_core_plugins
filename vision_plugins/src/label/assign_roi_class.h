@@ -41,7 +41,7 @@ protected:
     csapex::Output*   out_rois_;
 
     cv::Mat                                                image_;
-    std::vector<csapex::connection_types::RoiMessage::Ptr> rois_;
+    std::vector<csapex::connection_types::RoiMessage>      rois_;
 
 public:
     csapex::slim_signal::Signal<void(QImage)> display_request;

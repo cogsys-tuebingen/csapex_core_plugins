@@ -56,8 +56,8 @@ void AssignROIClass::setupParameters(Parameterizable& parameters)
 void AssignROIClass::setup(NodeModifier& node_modifier)
 {
     in_image_    = node_modifier.addInput<CvMatMessage>("Image");
-    in_rois_ = node_modifier.addInput<VectorMessage, RoiMessage>("Rois");
-    out_rois_  = node_modifier.addOutput<VectorMessage, RoiMessage>("Labeled Rois");
+    in_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("Rois");
+    out_rois_  = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("Labeled Rois");
 }
 
 void AssignROIClass::setActiveClassColor(const int r, const int g, const int b)
@@ -109,19 +109,17 @@ void AssignROIClass::display()
 void AssignROIClass::beginProcess()
 {
     CvMatMessage::ConstPtr  in_img  = msg::getMessage<CvMatMessage>(in_image_);
-    VectorMessage::ConstPtr in_rois = msg::getMessage<VectorMessage>(in_rois_);
-
+    std::shared_ptr<std::vector<RoiMessage> const> in_rois =
+            msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
     if(in_img->value.empty())
         return;
 
     /// COPY INPUT DATA
     rois_.clear();
-    for(std::vector<ConnectionType::ConstPtr>::const_iterator it = in_rois->value.begin(); it != in_rois->value.end(); ++it) {
-        RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(*it);
-        RoiMessage::Ptr roi_msg(new RoiMessage);
-        roi_msg->value = roi->value;
-        rois_.push_back(roi_msg);
+    for(const RoiMessage &roi : *in_rois) {
+        rois_.push_back(roi);
     }
+
     image_    = in_img->value.clone();
 
     /// RENDER CLUSTER BOARDERS
@@ -132,7 +130,7 @@ void AssignROIClass::beginProcess()
 
 void AssignROIClass::finishProcess()
 {
-    VectorMessage::Ptr out_rois(VectorMessage::make<RoiMessage>());
-    out_rois->value.assign(rois_.begin(), rois_.end());
-    msg::publish(out_rois_, out_rois);
+    std::shared_ptr<std::vector<RoiMessage>> out_rois(new std::vector<RoiMessage>);
+    out_rois->assign(rois_.begin(), rois_.end());
+    msg::publish<GenericVectorMessage, RoiMessage>(out_rois_, out_rois);
 }
