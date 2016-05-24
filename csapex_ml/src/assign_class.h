@@ -1,25 +1,26 @@
 #ifndef ASSIGNCLASS_H
 #define ASSIGNCLASS_H
 
-#include <csapex_core_plugins/vector_process_node.h>
-#include <csapex_ml/features_message.h>
+#include <csapex/model/node.h>
 
 namespace csapex {
-class AssignClass : public VectorProcessNode<connection_types::FeaturesMessage>
+class AssignClass : public Node
 {
 public:
     AssignClass();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
-
-protected:
-    void processCollection(std::vector<connection_types::FeaturesMessage *> &collection) override;
+    virtual void process() override;
 
 private:
+    csapex::Input  *in_features_;
     csapex::Input  *in_labels_;
+    csapex::Output *out_;
+
     int label_;
 };
 }
 
 #endif // ASSIGNCLASS_H
+

@@ -21,36 +21,40 @@ AssignClass::AssignClass()
 
 void AssignClass::setup(NodeModifier &node_modifier)
 {
-    VectorProcessNode<FeaturesMessage>::setup(node_modifier);
+    in_features_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("features");
     in_labels_   = node_modifier.addOptionalInput<GenericVectorMessage, int>("labels");
+    out_         = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("labeled features");
 }
 
 void AssignClass::setupParameters(Parameterizable &parameters)
 {
-    VectorProcessNode<FeaturesMessage>::setupParameters(parameters);
     parameters.addParameter(param::ParameterFactory::declareRange("label", 0, 255, 0, 1),
                             label_);
 }
 
-void AssignClass::processCollection(std::vector<FeaturesMessage *> &collection)
+void AssignClass::process()
 {
+    std::shared_ptr<std::vector<FeaturesMessage> const> in_features =
+            msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_features_);
+    std::shared_ptr<std::vector<FeaturesMessage>> out_features;
+
     if(msg::hasMessage(in_labels_)) {
         std::shared_ptr<std::vector<int> const> in_labels = msg::getMessage<GenericVectorMessage, int>(in_labels_);
 
-        if(collection.size() != in_labels->size())
+        if(in_features->size() != in_labels->size())
             throw std::runtime_error("Label count != FeatureMsg count!");
 
-        for(std::size_t i = 0 ; i < collection.size() ; ++i) {
-            FeaturesMessage &feature = *(collection.at(i));
+        for(std::size_t i = 0 ; i < in_features->size() ; ++i) {
+            FeaturesMessage feature = in_features->at(i);
             int label = (int) in_labels->at(i);
             feature.classification = label;
+            out_features->emplace_back(feature);
         }
     } else {
-        std::cout << "label " << label_ << std::endl;
-        std::cout << "msgs " << collection.size() << std::endl;
-        for(FeaturesMessage *feature : collection) {
-            std::cout << feature << std::endl;
-            feature->classification = label_;
+        for(FeaturesMessage feature : *in_features) {
+            feature.classification = label_;
+            out_features->emplace_back(feature);
         }
     }
+    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out_features);
 }
