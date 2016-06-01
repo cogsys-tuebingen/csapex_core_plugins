@@ -1,5 +1,7 @@
 #include "cluster_pointcloud.h"
 
+#include "polar_clustering.hpp"
+
 /// PROJECT
 #include <csapex/msg/io.h>
 #include <csapex_core_plugins/vector_message.h>
@@ -9,6 +11,8 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/utility/interlude.hpp>
+#include <csapex/utility/timer.h>
 
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
@@ -28,10 +32,8 @@
 #include <pcl/features/normal_3d.h>
 #include <pcl/kdtree/kdtree.h>
 #include <pcl/search/impl/kdtree.hpp>
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
+#include <pcl/segmentation/conditional_euclidean_clustering.h>
 #if __clang__
 #pragma clang diagnostic pop
 #endif //__clang__
@@ -50,18 +52,23 @@ ClusterPointcloud::ClusterPointcloud()
 
 void ClusterPointcloud::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MinClusterSize", 0, 20000, 100, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MaxClusterSize", 0, 100000, 25000, 1));
+    std::map<std::string, int> methods = {
+        {"PCL_EUCLIDEAN", (int) Method::PCL_EUCLIDEAN},
+        {"POLAR", (int) Method::POLAR},
+    };
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) Method::PCL_EUCLIDEAN),
+                            [this](param::Parameter* p) {method_ = static_cast<Method>(p->as<int>());});
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001), param_clusterTolerance_);
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MinClusterSize", 0, 20000, 100, 1), param_clusterMinSize_);
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MaxClusterSize", 0, 100000, 25000, 1), param_clusterMaxSize_);
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareAngle("opening_angle", 0.001), opening_angle_);
 }
 
 void ClusterPointcloud::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_cloud_));
-
-    param_clusterTolerance_ = readParameter<double>("ClusterTolerance");
-    param_clusterMinSize_   = readParameter<int>("MinClusterSize");
-    param_clusterMaxSize_   = readParameter<int>("MaxClusterSize");
 
     boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointcloud>(this, msg), msg->value);
 }
@@ -77,6 +84,90 @@ void ClusterPointcloud::setup(NodeModifier& node_modifier)
 
 template <class PointT>
 void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+{
+
+    std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices;
+
+    switch(method_) {
+    case Method::PCL_EUCLIDEAN:
+        cluster_indices = pclEuclidean<PointT>(cloud);
+        break;
+    case Method::POLAR:
+        cluster_indices = polar<PointT>(cloud);
+        break;
+
+    default:
+        throw std::runtime_error("unknown method");
+    }
+
+    msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, cluster_indices);
+
+    std::string text_msg("Found clusters: ");
+    text_msg += std::to_string(cluster_indices->size());
+    msg::publish(out_debug_, text_msg);
+}
+
+namespace {
+template <class PointT>
+bool customRegionGrowing (const PointT& point_a,
+                          const PointT& point_b,
+                          float squared_distance)
+{
+    return false;
+}
+template <>
+bool customRegionGrowing<pcl::PointXYZI> (const pcl::PointXYZI& point_a,
+                                          const pcl::PointXYZI& point_b,
+                                          float squared_distance)
+{
+    if (squared_distance < 10000)
+    {
+        if (fabs (point_a.intensity - point_b.intensity) < 8.0f)
+            return true;
+
+    } else {
+        if (fabs (point_a.intensity - point_b.intensity) < 3.0f)
+            return true;
+    }
+    return false;
+}
+}
+
+template <class PointT>
+std::shared_ptr<std::vector<pcl::PointIndices> >
+ClusterPointcloud::polar(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+{
+    pcl::PointIndicesPtr indices;
+    if(msg::isConnected(in_indices_)) {
+        auto indices_msg = msg::getMessage<PointIndecesMessage>(in_indices_);
+        indices = indices_msg->value;
+    }
+
+    typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
+    tree->setInputCloud (cloud);
+
+    std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
+
+    {
+        INTERLUDE("clustering");
+        PolarClustering<PointT> ec;
+        ec.setClusterTolerance (param_clusterTolerance_);
+        ec.setOpeningAngle(opening_angle_);
+
+        ec.setMinClusterSize (param_clusterMinSize_);
+        ec.setMaxClusterSize (param_clusterMaxSize_);
+        ec.setSearchMethod (tree);
+        ec.setInputCloud (cloud);
+        ec.extract (*cluster_indices);
+    }
+
+    return cluster_indices;
+}
+
+
+template <class PointT>
+std::shared_ptr<std::vector<pcl::PointIndices> >
+ClusterPointcloud::pclEuclidean(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     typename pcl::PointCloud<PointT>::ConstPtr cloud_clean;
 
@@ -152,10 +243,5 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
         }
     }
 
-    std::stringstream stringstream;
-    stringstream << "Found clusters: " << cluster_indices->size();
-    std::string text_msg = stringstream.str();
-    msg::publish(out_debug_, text_msg);
-    msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, cluster_indices);
-
+    return cluster_indices;
 }
