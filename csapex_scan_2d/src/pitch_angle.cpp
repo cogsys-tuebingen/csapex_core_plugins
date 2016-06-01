@@ -60,8 +60,8 @@ public:
         bool   deg    = readParameter<bool>("degrees");
 
         for(const LaserBeam &b : scan.rays) {
-            if(b.range > 0.f)
-                mean_dist_(b.pos_x);
+            if(b.range() > 0.f)
+                mean_dist_(b.posX());
         }
 
         out = normalize(asin(height / mean(mean_dist_)));

@@ -44,6 +44,17 @@
   <tags>Laser, Scan, Interactive</tags>
 </class>
 
+<class type="csapex::PolygonScanFilter" base_class_type="csapex::Node">
+  <description>
+    Allows definition of polygon to filter scan.
+    Use 'shift' + 'left mouse button' to add corners to the polygon.
+    Use 'shift' + 'right mouse button'  to clear the polygon.
+  </description>
+  <icon>:/picture.png</icon>
+  <tags>Laser, Scan, Interactive</tags>
+</class>
+
+
 <class type="csapex::ScanCovariance" base_class_type="csapex::Node">
   <description>Calculates the covariance of a laser scan</description>
   <tags>Laser, Scan</tags>
@@ -88,14 +99,18 @@
   <description>Laser scan segmentation using line fitting with least squares.</description>
   <tags>Laser, Scan</tags>
 </class>
-
-
-
+<class type="csapex::SegmentLengthSegmentation" base_class_type="csapex::Node">
+  <description>Laser scan segmentation using line fitting with least squares.</description>
+  <tags>Laser, Scan</tags>
+</class>
 </library>
 
 
 <library path="libcsapex_scan_2d_plugin_qt">
 <class type="csapex::ScanLabelerAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+<class type="csapex::PolygonScanFilterAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
 </library>

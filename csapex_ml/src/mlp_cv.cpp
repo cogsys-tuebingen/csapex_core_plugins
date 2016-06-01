@@ -21,8 +21,8 @@ MLPCv::MLPCv()
 
 void MLPCv::setup(NodeModifier &node_modifier)
 {
-    input_ = node_modifier.addInput<VectorMessage, FeaturesMessage>("Unclassified feature");
-    output_ = node_modifier.addOutput<VectorMessage, FeaturesMessage>("Classified features");
+    input_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Unclassified feature");
+    output_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Classified features");
 
     reload_ = node_modifier.addSlot("Reload", std::bind(&MLPCv::loadMLP, this));
 }
@@ -41,14 +41,16 @@ void MLPCv::loadMLP()
 
 void MLPCv::process()
 {
-    VectorMessage::ConstPtr input = msg::getMessage<VectorMessage>(input_);
-    VectorMessage::Ptr output = VectorMessage::make<FeaturesMessage>();
+    std::shared_ptr<std::vector<FeaturesMessage> const> input =
+            msg::getMessage<GenericVectorMessage, FeaturesMessage>(input_);
+
+    std::shared_ptr<std::vector<FeaturesMessage>> output;
 
     if(loaded_) {
-        std::size_t n = input->value.size();
-        output->value.resize(n);
+        std::size_t n = input->size();
+        output->resize(n);
         for(std::size_t i = 0; i < n; ++i) {
-            output->value.at(i) = classify(std::dynamic_pointer_cast<FeaturesMessage const>(input->value.at(i)));
+           classify(input->at(i),output->at(i));
         }
 
     } else {
@@ -56,20 +58,20 @@ void MLPCv::process()
         node_modifier_->setWarning("cannot classfiy, no forest loaded");
     }
 
-    msg::publish(output_, output);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(output_, output);
 }
 
-connection_types::FeaturesMessage::Ptr MLPCv::classify(const connection_types::FeaturesMessage::ConstPtr& input)
+void MLPCv::classify(const FeaturesMessage &input,
+                     FeaturesMessage &output)
 {
-    FeaturesMessage::Ptr result = std::dynamic_pointer_cast<FeaturesMessage>(input->clone());
+    output = input;
 
-    cv::Mat feature(1, input->value.size(), CV_32FC1, const_cast<float*>(input->value.data()));
+    cv::Mat feature(input.value);
     cv::Mat response;
     mlp_.predict(feature, response);
 
     cv::Point max;
     cv::minMaxLoc(response, nullptr, nullptr, nullptr, &max);
 
-    result->classification = max.x;
-    return result;
+    output.classification = max.x;
 }

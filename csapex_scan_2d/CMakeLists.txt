@@ -85,6 +85,7 @@ add_library(csapex_scan_2d_plugin_node
     src/segment_label_filter.cpp
     src/scan_renderer.cpp
     src/scan_labeler.cpp
+    src/polygon_scan_filter.cpp
 
     src/covariance.cpp
     src/filter.cpp
@@ -99,6 +100,8 @@ add_library(csapex_scan_2d_plugin_node
     src/segmentation_p2pline.cpp
     src/segmentation_linefit.cpp
     src/segmentation_linefit_lsq.cpp
+    src/segmentation_segment_length.cpp
+
 )
 
 target_link_libraries(csapex_scan_2d_plugin_node
@@ -112,6 +115,7 @@ target_link_libraries(csapex_scan_2d_plugin_node
 
 add_library(csapex_scan_2d_plugin_qt
     src/scan_labeler_adapter.cpp
+    src/polygon_scan_filter_adapter.cpp
 )
 
 target_link_libraries(csapex_scan_2d_plugin_qt

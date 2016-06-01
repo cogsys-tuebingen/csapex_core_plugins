@@ -69,8 +69,8 @@ public:
         bool   renew        = readParameter<bool>("renew");
 
         for(const LaserBeam &b : scan.rays) {
-            if(b.range > 0.f)
-                mean_dist_(b.pos_x);
+            if(b.range() > 0.f)
+                mean_dist_(b.posX());
         }
 
         if(toggle_) {

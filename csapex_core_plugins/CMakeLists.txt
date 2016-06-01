@@ -42,6 +42,7 @@ add_library(csapex_core_lib
     src/core/duration_message.cpp
     src/core/interactive_node.cpp
     src/core/collection_node.cpp
+    src/core/vector_process_node.cpp
 
     ${QT_RESOURCES}
 )

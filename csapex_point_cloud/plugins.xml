@@ -13,6 +13,10 @@
   <description>Merge close clusters</description>
 </class>
 
+<class type="csapex::ClustersToMarkerArray" base_class_type="csapex::Node">
+  <description>Generate axis-aligned bounding boxes (AABB) for clusters</description>
+</class>
+
 <class type="csapex::PointCount" base_class_type="csapex::Node">
   <description>Displays the number of points in a point cloud</description>
   <tags>PointCloud, Output</tags>

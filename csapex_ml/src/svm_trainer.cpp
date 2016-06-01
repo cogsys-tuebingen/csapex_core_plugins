@@ -46,18 +46,13 @@ struct ExtendedSVM : cv::SVM {
 
 };
 
-SVMTrainer::SVMTrainer() :
-    step_(0)
+SVMTrainer::SVMTrainer()
 {
-}
-
-void SVMTrainer::setup(NodeModifier& node_modifier)
-{
-    in_vector_ = node_modifier.addInput<VectorMessage, FeaturesMessage>("Features");
 }
 
 void SVMTrainer::setupParameters(Parameterizable& parameters)
 {
+    CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
 
     parameters.addParameter(param::ParameterFactory::declareFileOutputPath("svm/path",
                                                                            param::ParameterDescription("File to write svm to."),
@@ -69,14 +64,6 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
                                                       param::ParameterDescription("Save precomputed vector for HOG."),
                                                       false),
                  save_for_hog_);
-
-    parameters.addParameter(param::ParameterFactory::declareTrigger("svm/train",
-                                                         param::ParameterDescription("Train using obtained data!")),
-                 std::bind(&SVMTrainer::train, this));
-
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("svm/clear",
-                                                                            param::ParameterDescription("Clear buffered data!")),
-                 std::bind(&SVMTrainer::clear, this));
 
 
     std::map<std::string, int> kernel_types = {
@@ -153,32 +140,25 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
                                        svm_params_.p);
 }
 
-void SVMTrainer::process()
+void SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
-    VectorMessage::ConstPtr in =
-            msg::getMessage<VectorMessage>(in_vector_);
+    if(collection.empty())
+        return;
 
-    for(auto entry : in->value) {
-        FeaturesMessage::ConstPtr feature = std::dynamic_pointer_cast<FeaturesMessage const>(entry);
-
-        if(step_ == 0)
-            step_ = feature->value.size();
-        if(step_ != feature->value.size())
-            throw std::runtime_error("Inconsistent feature length!");
-
-        msgs_.push_back(feature);
+    std::size_t step = collection.front().value.size();
+    for(const FeaturesMessage &fm : collection) {
+        if(fm.value.size() != step)
+            throw std::runtime_error("All descriptors must have the same length!");
     }
-}
 
-void SVMTrainer::train()
-{
+
     ExtendedSVM     svm;
-    cv::Mat samples(msgs_.size(), step_, CV_32FC1, cv::Scalar::all(0));
-    cv::Mat labels (msgs_.size(), 1, CV_32FC1, cv::Scalar::all(0));
+    cv::Mat samples(collection.size(), step, CV_32FC1, cv::Scalar::all(0));
+    cv::Mat labels (collection.size(), 1, CV_32FC1, cv::Scalar::all(0));
     for(int i = 0 ; i < samples.rows ; ++i) {
-        labels.at<float>(i)    = msgs_.at(i)->classification; //  i % 2
+        labels.at<float>(i)    = collection.at(i).classification; //  i % 2
         for(int j = 0 ; j < samples.cols ; ++j) {
-            samples.at<float>(i,j) = msgs_.at(i)->value.at(j);
+            samples.at<float>(i,j) = collection.at(i).value.at(j);
         }
     }
 
@@ -211,11 +191,4 @@ void SVMTrainer::train()
     } else {
         throw std::runtime_error("Training failed!");
     }
-
-}
-
-void SVMTrainer::clear()
-{
-    msgs_.clear();
-    step_ = 0;
 }

@@ -17,7 +17,10 @@ private:
     csapex::Input  *in_features_;
     csapex::Input  *in_labels_;
     csapex::Output *out_;
+
+    int label_;
 };
 }
 
 #endif // ASSIGNCLASS_H
+

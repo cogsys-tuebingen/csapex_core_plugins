@@ -5,35 +5,26 @@
 #include <csapex_ml/features_message.h>
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include <csapex_core_plugins/collection_node.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
-#include <mutex>
 
 namespace csapex {
-class SVMTrainer : public Node
+class SVMTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
-    typedef csapex::connection_types::FeaturesMessage::ConstPtr FeaturePtr;
-
     SVMTrainer();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    void setupParameters(Parameterizable& parameters);
 
 private:
-    Input*                       in_vector_;
+    std::string     path_;
+    bool            save_for_hog_;
+    cv::SVMParams   svm_params_;
 
-    std::size_t                  step_;
-    std::vector<FeaturePtr>      msgs_;
-    std::string  path_;
-    bool         save_for_hog_;
-    cv::SVMParams svm_params_;
+    void processCollection(std::vector<connection_types::FeaturesMessage> &collection);
 
-    void train();
-    void clear();
 };
 }
 

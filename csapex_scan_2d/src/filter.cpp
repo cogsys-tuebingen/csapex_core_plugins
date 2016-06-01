@@ -48,10 +48,10 @@ void ScanFilter::process()
     for(std::vector<LaserBeam>::const_iterator it = scan.rays.begin() ; it != scan.rays.end() ; ++it, angle += scan.angle_increment) {
         const LaserBeam& ray = *it;
         if(angle >= min_angle && angle <= max_angle &&
-                ray.range > min_range && ray.range < max_range) {
+                ray.range() > min_range && ray.range() < max_range) {
             filtered_scan.rays.push_back(ray);
         } else {
-            filtered_scan.rays.push_back(LaserBeam(ray.yaw, 0.0f));
+            filtered_scan.rays.push_back(LaserBeam(ray.yaw(), 0.0f));
         }
     }
 

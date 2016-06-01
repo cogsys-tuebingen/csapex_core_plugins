@@ -115,17 +115,17 @@ void ScanSegmentation2DRenderer::render(const std::vector<Segment> &segments)
         }
 
         if(draw_all_points) {
-            cv::Point2f last(segment.rays.front().pos_x, segment.rays.front().pos_y);
+            cv::Point2f last(segment.rays.front().posX(), segment.rays.front().posY());
             for(std::size_t i = 1, n = segment.rays.size(); i < n; ++i) {
-                const Eigen::Vector2d pt(segment.rays[i].pos_x, segment.rays[i].pos_y);
+                const Eigen::Vector2d pt(segment.rays[i].posX(), segment.rays[i].posY());
                 cv::Point2f current(pt(0), pt(1));
                 cv::line(output->value, origin + scale * last, origin + scale * current, color, 6, CV_AA);
                 last = current;
             }
 
         } else {
-            cv::Point2f from(segment.rays.front().pos_x, segment.rays.front().pos_y);
-            cv::Point2f to(segment.rays.back().pos_x, segment.rays.back().pos_y);
+            cv::Point2f from(segment.rays.front().posX(), segment.rays.front().posY());
+            cv::Point2f to(segment.rays.back().posX(), segment.rays.back().posY());
             cv::line(output->value, origin + scale * from, origin + scale * to, color, 6, CV_AA);
         }
     }
@@ -154,12 +154,12 @@ void ScanSegmentation2DRenderer::publishMarkers(const std::vector<Segment> &segm
         marker.color.g = g / 255.0;
         marker.color.b = b / 255.0;
 
-        marker.points.push_back(toGeometry(Eigen::Vector2d(it_seg->rays.front().pos_x, it_seg->rays.front().pos_y)));
+        marker.points.push_back(toGeometry(Eigen::Vector2d(it_seg->rays.front().posX(), it_seg->rays.front().posY())));
         for(std::vector<LaserBeam>::const_iterator it = it_seg->rays.begin() ; it != it_seg->rays.end(); ++it) {
-            marker.points.push_back(toGeometry(Eigen::Vector2d(it->pos_x, it->pos_y)));
+            marker.points.push_back(toGeometry(Eigen::Vector2d(it->posX(), it->posY())));
             marker.points.push_back(marker.points.back());
         }
-        marker.points.push_back(toGeometry(Eigen::Vector2d(it_seg->rays.back().pos_x, it_seg->rays.back().pos_y)));
+        marker.points.push_back(toGeometry(Eigen::Vector2d(it_seg->rays.back().posX(), it_seg->rays.back().posY())));
         marker.header.frame_id = it_seg->frame_id;
         marker_array->markers.push_back(marker);
         ++marker.id;

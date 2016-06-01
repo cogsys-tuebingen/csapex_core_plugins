@@ -89,9 +89,9 @@ public:
 
         if(collect_.load()) {
             for(const LaserBeam &b : scan.rays) {
-                if(b.range > 0.f) {
+                if(b.range() > 0.f) {
                     ceres::CostFunction *cost_function =
-                            new ceres::AutoDiffCostFunction<RPResidual, 1, 1, 1>(new RPResidual(b.pos_x, b.pos_y, height_));
+                            new ceres::AutoDiffCostFunction<RPResidual, 1, 1, 1>(new RPResidual(b.posX(), b.posY(), height_));
                     problem_->AddResidualBlock(cost_function, NULL, &pitch_, &roll_);
                 }
             }
