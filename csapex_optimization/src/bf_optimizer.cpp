@@ -64,6 +64,12 @@ bool BFOptimizer::canTick()
 
 bool BFOptimizer::tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters)
 {
+    if(!next_tick_) {
+        return false;
+    }
+
+    next_tick_ = false;
+
     if(best_fitness_ != std::numeric_limits<double>::infinity()) {
         msg::publish(out_best_fitness_, best_fitness_);
     }
@@ -157,6 +163,14 @@ void BFOptimizer::start()
 
     sent_ = 0;
     step_ = 0;
+
+    std::vector<csapex::param::Parameter::Ptr> params = getPersistentParameters();
+    for(auto p : params) {
+        param::RangeParameter::Ptr dbl_range = std::dynamic_pointer_cast<param::RangeParameter>(p);
+        if(dbl_range && dbl_range->is<double>()) {
+            dbl_range->set(dbl_range->min<double>());
+        }
+    }
 
     setTickEnabled(true);
     setTickFrequency(100.);

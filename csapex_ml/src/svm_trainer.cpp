@@ -46,18 +46,13 @@ struct ExtendedSVM : cv::SVM {
 
 };
 
-SVMTrainer::SVMTrainer() :
-    step_(0)
+SVMTrainer::SVMTrainer()
 {
-}
-
-void SVMTrainer::setup(NodeModifier& node_modifier)
-{
-    in_vector_ = node_modifier.addInput<VectorMessage, FeaturesMessage>("Features");
 }
 
 void SVMTrainer::setupParameters(Parameterizable& parameters)
 {
+    CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
 
     parameters.addParameter(param::ParameterFactory::declareFileOutputPath("svm/path",
                                                                            param::ParameterDescription("File to write svm to."),
@@ -69,14 +64,6 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
                                                       param::ParameterDescription("Save precomputed vector for HOG."),
                                                       false),
                  save_for_hog_);
-
-    parameters.addParameter(param::ParameterFactory::declareTrigger("svm/train",
-                                                         param::ParameterDescription("Train using obtained data!")),
-                 std::bind(&SVMTrainer::train, this));
-
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("svm/clear",
-                                                                            param::ParameterDescription("Clear buffered data!")),
-                 std::bind(&SVMTrainer::clear, this));
 
 
     std::map<std::string, int> kernel_types = {
@@ -136,10 +123,10 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, 9.0, 3.0, 1.0),
                                        deg_cond,
                                        svm_params_.degree);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", 0.0, 10.0, 0.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", 0.0, 10.0, 0.0, 0.01),
                                        gamma_cond,
                                        svm_params_.gamma);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -10.0, 10.0, 0.0, 0.05),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -10.0, 10.0, 0.0, 0.01),
                                        coeff0_cond,
                                        svm_params_.coef0);
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("C", 0.0, 10.0, 0.01, 0.01),
@@ -153,34 +140,33 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
                                        svm_params_.p);
 }
 
-void SVMTrainer::process()
+void SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
-    VectorMessage::ConstPtr in =
-            msg::getMessage<VectorMessage>(in_vector_);
+    if(collection.empty())
+        return;
 
-    for(auto entry : in->value) {
-        FeaturesMessage::ConstPtr feature = std::dynamic_pointer_cast<FeaturesMessage const>(entry);
-
-        if(step_ == 0)
-            step_ = feature->value.size();
-        if(step_ != feature->value.size())
-            throw std::runtime_error("Inconsistent feature length!");
-
-        msgs_.push_back(feature);
+    std::size_t step = collection.front().value.size();
+    for(const FeaturesMessage &fm : collection) {
+        if(fm.value.size() != step)
+            throw std::runtime_error("All descriptors must have the same length!");
     }
-}
 
-void SVMTrainer::train()
-{
+
     ExtendedSVM     svm;
-    cv::Mat samples(msgs_.size(), step_, CV_32FC1, cv::Scalar::all(0));
-    cv::Mat labels (msgs_.size(), 1, CV_32FC1, cv::Scalar::all(0));
+    cv::Mat samples(collection.size(), step, CV_32FC1, cv::Scalar::all(0));
+    cv::Mat labels (collection.size(), 1, CV_32FC1, cv::Scalar::all(0));
     for(int i = 0 ; i < samples.rows ; ++i) {
+        labels.at<float>(i)    = collection.at(i).classification; //  i % 2
         for(int j = 0 ; j < samples.cols ; ++j) {
-            samples.at<float>(i,j) = msgs_.at(i)->value.at(j);
-            labels.at<float>(i)    = msgs_.at(i)->classification; //  i % 2
+            samples.at<float>(i,j) = collection.at(i).value.at(j);
         }
     }
+
+    if (svm_params_.gamma == 0) {
+        svm_params_.gamma = 1.0 / labels.rows;
+        getParameter("gamma")->set(svm_params_.gamma);
+    }
+
     std::cout << "started training" << std::endl;
     if(svm.train(samples, labels,cv::Mat(), cv::Mat(), svm_params_)) {
         std::cout << "finished training" << std::endl;
@@ -205,11 +191,4 @@ void SVMTrainer::train()
     } else {
         throw std::runtime_error("Training failed!");
     }
-
-}
-
-void SVMTrainer::clear()
-{
-    msgs_.clear();
-    step_ = 0;
 }

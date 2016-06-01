@@ -20,8 +20,8 @@ SVM::SVM() :
 
 void SVM::setup(NodeModifier& node_modifier)
 {
-    in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
-    out_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Labeled Features");
+    in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("features");
+    out_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("labelled features");
 }
 
 void SVM::setupParameters(Parameterizable& parameters)
@@ -37,20 +37,21 @@ void SVM::setupParameters(Parameterizable& parameters)
 
 void SVM::process()
 {
-    std::shared_ptr<std::vector<FeaturesMessage> const> in = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
-    std::shared_ptr<std::vector<FeaturesMessage> >      out(new std::vector<FeaturesMessage>(in->size()));
+    std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
+    std::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
+    output->insert(output->end(), input->begin(), input->end());
 
     if(!loaded_) {
         throw std::runtime_error("No SVM is loaded!");
     }
 
-    for(unsigned int i = 0 ; i < in->size() ; ++i) {
-        out->at(i) = in->at(i);
-        cv::Mat sample(in->at(i).value);
-        out->at(i).classification = svm_.predict(sample);
+    std::size_t size = input->size();
+    for(std::size_t i = 0 ; i < size ; ++i) {
+        cv::Mat sample(output->at(i).value);
+        output->at(i).classification = svm_.predict(sample);
     }
 
-    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);
 }
 
 void SVM::load()

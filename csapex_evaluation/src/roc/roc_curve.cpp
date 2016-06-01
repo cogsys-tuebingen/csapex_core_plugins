@@ -10,6 +10,7 @@
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/any_message.h>
 #include <csapex/param/parameter_factory.h>
+#include <fstream>
 
 CSAPEX_REGISTER_CLASS(csapex::ROCCurve, csapex::Node)
 
@@ -55,6 +56,10 @@ void ROCCurve::setupParameters(Parameterizable& parameters)
     parameters.addParameter(param::ParameterFactory::declareRange
                             ("height",
                              16, 4096, 128, 1));
+    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("save to", "",  "*.txt"),
+                            out_path_);
+    parameters.addParameter(param::ParameterFactory::declareTrigger("save"),
+                            std::bind(&ROCCurve::saveData, this));
 }
 
 
@@ -78,10 +83,10 @@ void ROCCurve::process()
             cm.threshold = threshold;
         }
 
-        int tp = cm.histogram.at(std::make_pair(1, 1));
-        int tn = cm.histogram.at(std::make_pair(0, 0));
-        int fp = cm.histogram.at(std::make_pair(0, 1));
-        int fn = cm.histogram.at(std::make_pair(1, 0));
+        int tp = cm.histogram[std::make_pair(1, 1)];
+        int tn = cm.histogram[std::make_pair(0, 0)];
+        int fp = cm.histogram[std::make_pair(0, 1)];
+        int fn = cm.histogram[std::make_pair(1, 0)];
         int p = tp + fn;
         int n = tn + fp;
 
@@ -125,4 +130,25 @@ std::vector<ROCCurve::Entry> ROCCurve::getEntries() const
 ROCCurve::Type ROCCurve::getType() const
 {
     return type_;
+}
+
+void ROCCurve::saveData()
+{
+    if(type_ == Type::ROC) {
+        std::ofstream out(out_path_);
+        for(const auto &e : entries_) {
+            out << e.second.specificity << " "
+                << e.second.recall << " "
+                << e.second.threshold << std::endl;
+        }
+    } else if(type_ == Type::PR) {
+        std::ofstream out(out_path_);
+        for(const auto &e : entries_) {
+            out << e.second.precision << " "
+                << e.second.recall << " "
+                << e.second.threshold << std::endl;
+
+        }
+
+    }
 }
