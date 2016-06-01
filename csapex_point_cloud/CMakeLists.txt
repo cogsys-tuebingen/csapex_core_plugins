@@ -113,6 +113,7 @@ add_library(csapex_point_cloud_plugin_node
     src/model_to_marker.cpp
     src/transform_from_models.cpp
     src/scale_intensity.cpp
+    src/clusters_to_markerarray.cpp
 )
 
 target_link_libraries(csapex_point_cloud_plugin_node
