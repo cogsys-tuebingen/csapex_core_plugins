@@ -153,6 +153,8 @@ void DynamicTransform::resetTf()
     }
 
     reset_->trigger();
+
+    refresh();
 }
 
 void DynamicTransform::refresh()
@@ -167,7 +169,6 @@ void DynamicTransform::refresh()
     if(getParameter("target")->is<std::string>()) {
         from = source_p->as<std::string>();
     }
-    ainfo << "from: " << from << ", to: " << to << std::endl;
 
     LockedTFListener l = TFListener::getLocked();
     if(!l.l) {
@@ -192,7 +193,8 @@ void DynamicTransform::refresh()
             }
         }
 
-        if(!has_from || !has_to) {
+        if((!from.empty() && !has_from) ||
+                (!to.empty() && !has_to)) {
             if(initial_retries_ --> 0) {
                 ainfo << "retry" << std::endl;
                 return;
