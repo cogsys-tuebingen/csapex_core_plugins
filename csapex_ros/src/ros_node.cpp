@@ -12,6 +12,12 @@ RosNode::RosNode()
 
 }
 
+void RosNode::getProperties(std::vector<std::string>& properties) const
+{
+    TickableNode::getProperties(properties);
+    properties.push_back("ROS");
+}
+
 ROSHandler& RosNode::getRosHandler() const
 {
     return ROSHandler::instance();
@@ -71,3 +77,4 @@ void RosNode::process()
         node_modifier_->setWarning("[process] no ROS connection");
     }
 }
+

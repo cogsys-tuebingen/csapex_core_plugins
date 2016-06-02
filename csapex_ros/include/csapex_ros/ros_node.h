@@ -28,6 +28,9 @@ protected:
     virtual void tick() override;
     virtual bool tickROS();
 
+    virtual void getProperties(std::vector<std::string>& properties) const override;
+
+
     ROSHandler& getRosHandler() const;
 
 protected:
