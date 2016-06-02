@@ -127,15 +127,16 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
 void HOGClassifier::setup(NodeModifier& node_modifier)
 {
     in_img_     = node_modifier.addInput<CvMatMessage>("image");
-    in_rois_    = node_modifier.addInput<VectorMessage, RoiMessage>("rois");
-    out_rois_   = node_modifier.addOutput<VectorMessage, RoiMessage>("filtered rois");
+    in_rois_    = node_modifier.addInput<GenericVectorMessage, RoiMessage>("rois");
+    out_rois_   = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("filtered rois");
 }
 
 void HOGClassifier::process()
 {
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_img_);
-    VectorMessage::ConstPtr in_rois = msg::getMessage<VectorMessage>(in_rois_);
-    VectorMessage::Ptr      out(VectorMessage::make<RoiMessage>());
+    std::shared_ptr<std::vector<RoiMessage> const> in_rois =
+            msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
+    std::shared_ptr<std::vector<RoiMessage>> out(new std::vector<RoiMessage>);
 
     if(in->value.channels() != 1 && in->value.channels() != 3) {
         throw std::runtime_error("Only 1 or 3 channel matrices supported!");
@@ -171,11 +172,10 @@ void HOGClassifier::process()
     if(hog_.winSigma == 0.0)
         hog_.winSigma = -1.0;
 
-    for(auto &entry : in_rois->value) {
-        RoiMessage::ConstPtr roi  = std::dynamic_pointer_cast<RoiMessage const>(entry);
+    for(auto &roi : *in_rois) {
         cv::Mat data;
 
-        getData(in->value, roi->value.rect(), data);
+        getData(in->value, roi.value.rect(), data);
 
         if(data.empty())
             continue;
@@ -210,22 +210,22 @@ void HOGClassifier::process()
             throw std::runtime_error("Unknown threshold type!");
         }
 
-//        std::cout << roi->value.classification() <<
+//        std::cout << roi.value.classification() <<
 //                     " " << weight <<
 //                     " " << weight_mirrored << std::endl;
 
 
-        RoiMessage::Ptr roi_out(new RoiMessage);
-        roi_out->value = roi->value;
+        RoiMessage roi_out;
+        roi_out.value = roi.value;
         if(accepted) {
-            roi_out->value.setClassification(HUMAN);
-            roi_out->value.setColor(cv::Scalar(0,200,0));
+            roi_out.value.setClassification(HUMAN);
+            roi_out.value.setColor(cv::Scalar(0,200,0));
         } else {
-            roi_out->value.setClassification(BACKGROUND);
+            roi_out.value.setClassification(BACKGROUND);
         }
-        out->value.push_back(roi_out);
+        out->push_back(roi_out);
     }
-    msg::publish(out_rois_, out);
+    msg::publish<GenericVectorMessage, RoiMessage>(out_rois_, out);
 }
 
 void HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst)

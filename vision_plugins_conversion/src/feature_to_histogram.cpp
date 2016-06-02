@@ -20,10 +20,17 @@ FeatureToHistogram::FeatureToHistogram()
 {
 }
 
+void FeatureToHistogram::setup(NodeModifier& node_modifier)
+{
+    in_        = node_modifier.addOptionalInput<FeaturesMessage>("feature");
+    in_vector_ = node_modifier.addOptionalInput<GenericVectorMessage, FeaturesMessage>("features");
+    out_       = node_modifier.addOutput<HistogramMessage>("histograms");
+}
+
 void FeatureToHistogram::process()
 {
     FeaturesMessage::ConstPtr  in;
-    VectorMessage::ConstPtr    in_vector;
+    std::shared_ptr<std::vector<FeaturesMessage> const> in_vector;
     HistogramMessage::Ptr hist(new HistogramMessage);
 
     if(msg::hasMessage(in_)) {
@@ -32,24 +39,15 @@ void FeatureToHistogram::process()
         hist->value.histograms.push_back(cv::Mat(in->value, true));
     }
     if(msg::hasMessage(in_vector_)) {
-        in_vector = msg::getMessage<VectorMessage>(in_vector_);
+        in_vector = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_vector_);
 
-        for(auto it = in_vector->value.begin() ;
-            it != in_vector->value.end() ;
-            ++it) {
-
-            FeaturesMessage::ConstPtr feature_msg = std::dynamic_pointer_cast<FeaturesMessage const>(*it);
-            hist->value.ranges.push_back(utils_vision::histogram::Rangef(0, feature_msg->value.size()));
-            hist->value.histograms.push_back(cv::Mat(feature_msg->value, true));
+        for(const FeaturesMessage &fm : *in_vector) {
+            hist->value.ranges.push_back(utils_vision::histogram::Rangef(0, fm.value.size()));
+            hist->value.histograms.push_back(cv::Mat(fm.value, true));
         }
     }
 
     msg::publish(out_, hist);
 }
 
-void FeatureToHistogram::setup(NodeModifier& node_modifier)
-{
-    in_        = node_modifier.addOptionalInput<FeaturesMessage>("feature");
-    in_vector_ = node_modifier.addOptionalInput<VectorMessage, FeaturesMessage>("features");
-    out_       = node_modifier.addOutput<HistogramMessage>("histograms");
-}
+

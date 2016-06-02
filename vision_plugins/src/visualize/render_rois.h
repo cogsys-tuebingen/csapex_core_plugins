@@ -11,14 +11,13 @@ class RenderROIs : public csapex::Node
 public:
     RenderROIs();
 
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);
     virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
 
 private:
     Input* input_img_;
     Input* input_rois_;
-    Input* input_rois_gen_;
 
     Output* output_;
 };

@@ -85,15 +85,16 @@ void HOGExtractor::setupParameters(Parameterizable& parameters)
 void HOGExtractor::setup(NodeModifier& node_modifier)
 {
     in_img_     = node_modifier.addInput<CvMatMessage>("image");
-    in_rois_    = node_modifier.addInput<VectorMessage, RoiMessage>("rois");
-    out_        = node_modifier.addOutput<VectorMessage, FeaturesMessage>("features");
+    in_rois_    = node_modifier.addInput<GenericVectorMessage, RoiMessage>("rois");
+    out_        = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("features");
 }
 
 void HOGExtractor::process()
 {
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_img_);
-    VectorMessage::ConstPtr in_rois = msg::getMessage<VectorMessage>(in_rois_);
-    VectorMessage::Ptr      out(VectorMessage::make<FeaturesMessage>());
+    std::shared_ptr<std::vector<RoiMessage> const> in_rois =
+            msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
+    std::shared_ptr<std::vector<FeaturesMessage>> out(new std::vector<FeaturesMessage>);
 
     /// update HOG parameters
     hog_.cellSize.width  = cell_size_;
@@ -110,11 +111,10 @@ void HOGExtractor::process()
         throw std::runtime_error("Only 1 or 3 channel matrices supported!");
     }
 
-    for(auto &entry : in_rois->value) {
-        RoiMessage::ConstPtr roi  = std::dynamic_pointer_cast<RoiMessage const>(entry);
+    for(auto &roi : *in_rois) {
         cv::Mat data;
 
-        getData(in->value, roi->value.rect(), data);
+        getData(in->value, roi.value.rect(), data);
 
         if(data.empty())
             continue;
@@ -122,20 +122,17 @@ void HOGExtractor::process()
         assert(data.rows == hog_.winSize.height);
         assert(data.cols == hog_.winSize.width);
 
-        FeaturesMessage::Ptr feature(new FeaturesMessage);
-        feature->classification = roi->value.classification();
-        hog_.computeSingle(data, feature->value);
-        out->value.push_back(feature);
+        FeaturesMessage feature;
+        feature.classification = roi.value.classification();
+        hog_.computeSingle(data, feature.value);
+        out->push_back(feature);
         if(mirror_) {
-            feature.reset(new FeaturesMessage);
-            feature->classification = roi->value.classification();
-
             cv::flip(data, data, 1);
-            hog_.compute(data, feature->value);
-            out->value.push_back(feature);
+            hog_.compute(data, feature.value);
+            out->push_back(feature);
         }
     }
-    msg::publish(out_, out);
+    msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
 void HOGExtractor::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst)

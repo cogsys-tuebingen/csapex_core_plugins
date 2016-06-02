@@ -33,21 +33,20 @@ void GrowROIs::setupParameters(Parameterizable &parameters)
 
 void GrowROIs::process()
 {
-    VectorMessage::ConstPtr rois_in = msg::getMessage<VectorMessage>(input_);
-    VectorMessage::Ptr      rois_out(VectorMessage::make<RoiMessage>());
+    std::shared_ptr<std::vector<RoiMessage> const> rois_in =
+            msg::getMessage<GenericVectorMessage, RoiMessage>(input_);
+    std::shared_ptr<std::vector<RoiMessage>> rois_out(new std::vector<RoiMessage>);
+    rois_out->assign(rois_in->begin(), rois_in->end());
 
-    for(const auto roi : rois_in->value) {
-        RoiMessage::ConstPtr roi_in =
-                std::dynamic_pointer_cast<RoiMessage const>(roi);
-        RoiMessage::Ptr roi_out = roi_in->cloneAs<RoiMessage>();
-        roi_out->value.grow(x_, y_);
-        rois_out->value.emplace_back(roi_out);
+    for(RoiMessage &roi : *rois_out) {
+        roi.value.grow(x_, y_);
     }
-    msg::publish(output_, rois_out);
+
+    msg::publish<GenericVectorMessage, RoiMessage>(output_, rois_out);
 }
 
 void GrowROIs::setup(NodeModifier& node_modifier)
 {
-    input_ = node_modifier.addInput<VectorMessage, RoiMessage>("ROI");
-    output_ = node_modifier.addOutput<VectorMessage, RoiMessage>("grown ROI");
+    input_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROI");
+    output_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("grown ROI");
 }

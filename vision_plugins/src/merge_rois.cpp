@@ -23,29 +23,30 @@ MergeROIs::MergeROIs()
 {
 }
 
-void MergeROIs::process()
-{
-    VectorMessage::ConstPtr rois = msg::getMessage<VectorMessage>(input_);
-
-    RectangleCluster cluster;
-    for(std::vector<TokenData::ConstPtr>::const_iterator it = rois->value.begin(); it != rois->value.end(); ++it) {
-        RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(*it);
-        const Roi& r = roi->value;
-        cluster.integrate(r.rect());
-    }
-
-    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
-    for(std::vector<cv::Rect>::iterator it = cluster.begin(); it != cluster.end(); ++it) {
-        RoiMessage::Ptr msg(new RoiMessage);
-        msg->value = Roi(*it);
-        out->value.push_back(msg);
-    }
-
-    msg::publish(output_, out);
-}
 
 void MergeROIs::setup(NodeModifier& node_modifier)
 {
-    input_ = node_modifier.addInput<VectorMessage, RoiMessage>("ROIs");
-    output_ = node_modifier.addOutput<VectorMessage, RoiMessage>("merged ROIs");
+    input_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
+    output_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("merged ROIs");
 }
+
+void MergeROIs::process()
+{
+    std::shared_ptr<std::vector<RoiMessage> const> rois =
+            msg::getMessage<GenericVectorMessage, RoiMessage>(input_);
+
+    RectangleCluster cluster;
+    for(const RoiMessage &roi : *rois) {
+        cluster.integrate(roi.value.rect());
+    }
+
+    std::shared_ptr<std::vector<RoiMessage>> out(new std::vector<RoiMessage>);
+    for(std::vector<cv::Rect>::iterator it = cluster.begin(); it != cluster.end(); ++it) {
+        RoiMessage msg;
+        msg.value = Roi(*it);
+        out->push_back(msg);
+    }
+
+    msg::publish<GenericVectorMessage, RoiMessage>(output_, out);
+}
+

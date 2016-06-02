@@ -104,7 +104,7 @@ void BlobDetector::process()
 
     cvLabel(&grayPtr, labelImgPtr, blobs);
 
-    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
+    std::shared_ptr<std::vector<RoiMessage>> out(new std::vector<RoiMessage>);
 
     std::pair<unsigned int,unsigned int> range_area = readParameter<std::pair<int, int> >("Area");
 
@@ -122,19 +122,18 @@ void BlobDetector::process()
 
         ++it;
 
-         RoiMessage::Ptr roi(new RoiMessage);
+         RoiMessage roi;
         double r, g, b;
         _HSV2RGB_((double)((blob.label *77)%360), .5, 1., r, g, b);
         cv::Scalar color(b,g,r);
 
-        roi->value = Roi(blob.minx, blob.miny, w, h, color);
-
-        out->value.push_back(roi);
+        roi.value = Roi(blob.minx, blob.miny, w, h, color);
+        out->push_back(roi);
     }
 
 //    ainfo << blobs.size() << " blobs" << std::endl;
 
-    msg::publish(output_, out);
+    msg::publish<GenericVectorMessage, RoiMessage>(output_, out);
 
     if(msg::isConnected(output_debug_)) {
         IplImage debugPtr(debug->value);
@@ -196,7 +195,7 @@ void BlobDetector::setup(NodeModifier& node_modifier)
     input_ = node_modifier.addInput<CvMatMessage>("Image");
 
     output_debug_ = node_modifier.addOutput<CvMatMessage>("OutputImage");
-    output_ = node_modifier.addOutput<VectorMessage, RoiMessage>("ROIs");
+    output_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
     output_reduce_ = node_modifier.addOutput<CvMatMessage>("ReducedImage");
 
 }

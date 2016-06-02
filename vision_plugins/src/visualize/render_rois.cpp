@@ -22,6 +22,14 @@ RenderROIs::RenderROIs()
 {
 }
 
+void RenderROIs::setup(NodeModifier& node_modifier)
+{
+    input_img_  = node_modifier.addInput<CvMatMessage>("image");
+    input_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
+
+    output_ = node_modifier.addOutput<CvMatMessage>("Rendered Image");
+}
+
 void RenderROIs::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
@@ -53,56 +61,25 @@ void RenderROIs::process()
     }
 
     bool ignore_uc = readParameter<bool>("ignore unclassified");
-    if(msg::hasMessage(input_rois_)) {
-        VectorMessage::ConstPtr rois = msg::getMessage<VectorMessage>(input_rois_);
-        for(const TokenData::ConstPtr& e : rois->value) {
-            RoiMessage::ConstPtr roi = std::dynamic_pointer_cast<RoiMessage const>(e);
+    std::shared_ptr< std::vector<RoiMessage> const> rois =
+            msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_);
 
-            if(ignore_uc && roi->value.classification() == -1) {
-                continue;
-            }
-
-            cv::rectangle(out->value, roi->value.rect(), force_color ? color : roi->value.color(), thickness);
-
-            std::string text = roi->value.label();
-
-            if(!text.empty()) {
-                cv::Point pt = roi->value.rect().tl();
-                cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar::all(0), 4, CV_AA);
-                cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., roi->value.color(), 1, CV_AA);
-            }
+    for(const RoiMessage& roi : *rois) {
+        if(ignore_uc && roi.value.classification() == -1) {
+            continue;
         }
-    }
 
-    if(msg::hasMessage(input_rois_gen_)) {
-        std::shared_ptr< std::vector<RoiMessage> const> rois =
-                msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_gen_);
+        cv::rectangle(out->value, roi.value.rect(), force_color ? color : roi.value.color(), thickness);
 
-        for(const RoiMessage& roi : *rois) {
-            if(ignore_uc && roi.value.classification() == -1) {
-                continue;
-            }
+        std::string text = roi.value.label();
 
-            cv::rectangle(out->value, roi.value.rect(), force_color ? color : roi.value.color(), thickness);
-
-            std::string text = roi.value.label();
-
-            if(!text.empty()) {
-                cv::Point pt = roi.value.rect().tl();
-                cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar::all(0), 4, CV_AA);
-                cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., roi.value.color(), 1, CV_AA);
-            }
+        if(!text.empty()) {
+            cv::Point pt = roi.value.rect().tl();
+            cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar::all(0), 4, CV_AA);
+            cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., roi.value.color(), 1, CV_AA);
         }
     }
 
     msg::publish(output_, out);
 }
 
-void RenderROIs::setup(NodeModifier& node_modifier)
-{
-    input_img_      = node_modifier.addInput<CvMatMessage>("image");
-    input_rois_     = node_modifier.addOptionalInput<VectorMessage, RoiMessage>("ROIs");
-    input_rois_gen_ = node_modifier.addOptionalInput<GenericVectorMessage, RoiMessage>("ROIs");
-
-    output_ = node_modifier.addOutput<CvMatMessage>("Rendered Image");
-}

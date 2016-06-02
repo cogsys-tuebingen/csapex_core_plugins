@@ -108,7 +108,8 @@ add_library(vision_plugins_node
     src/analyze/camera_calibration.cpp
     src/analyze/cluster_boundary_mask.cpp
     src/analyze/glcm.cpp
-    src/analyze/preemptiveSLIC.cpp
+
+    src/segment/preemptiveSLIC.cpp
 
     src/label/label_regions.cpp
     src/label/cluster_grid.cpp
