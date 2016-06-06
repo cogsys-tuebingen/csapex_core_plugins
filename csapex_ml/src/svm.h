@@ -22,8 +22,11 @@ public:
     virtual void process() override;
 
 private:
+    enum ThresholdType { GREATER = 0, LESS, LESS_EQUAL, GREATER_EQUAL};
+
     Input  *in_;
     Output *out_;
+    Slot*   reload_;
 
     bool loaded_;
     cv::SVM svm_;
