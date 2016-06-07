@@ -11,10 +11,16 @@ namespace buffered_tree
 {
 struct NodeImpl
 {
+    typedef Eigen::Vector3f MeanType;
+
     std::vector<std::size_t> indices;
+    MeanType    mean = MeanType::Zero();
+    std::size_t mean_count = 1;
 
     inline void overwrite(const NodeImpl& other)
     {
+        mean = (mean_count * mean + other.mean_count * other.mean) / (mean_count + other.mean_count);
+        mean_count += other.mean_count;
         indices.insert(indices.end(),
                        other.indices.begin(),
                        other.indices.end());
@@ -51,6 +57,10 @@ struct PCLKDTreeNodeIndex {
     {
         BufferedKDTreeNode node;
         node.wrapped.indices.emplace_back(index);
+        node.wrapped.mean_count = 1;
+        node.wrapped.mean[0] = point.x;
+        node.wrapped.mean[1] = point.y;
+        node.wrapped.mean[2] = point.z;
         node.index[0] = floor(point.x / size_x);
         node.index[1] = floor(point.y / size_y);
         node.index[2] = floor(point.z / size_z);
@@ -77,7 +87,7 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
-    void updateTree(int size = 0);
+    void updateTree();
 
 private:
     Input* in_cloud_;
@@ -90,6 +100,7 @@ private:
     double bin_size_z_;
     int    cluster_min_size_;
     int    cluster_max_size_;
+    double cluster_distance_;
 
     typename buffered_tree::TreeType::Ptr kdtree_;
 

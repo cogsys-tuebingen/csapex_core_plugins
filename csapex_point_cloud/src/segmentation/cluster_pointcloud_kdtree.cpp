@@ -61,6 +61,8 @@ void ClusterPointcloudKDTree::setupParameters(Parameterizable &parameters)
                             cluster_min_size_);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_size", 1, 1000000, 1000000, 1),
                             cluster_max_size_);
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_distance", 0.00, 3.0, 0.0, 0.01),
+                            cluster_distance_);
 }
 
 void ClusterPointcloudKDTree::process()
@@ -81,7 +83,12 @@ void ClusterPointcloudKDTree::setup(NodeModifier& node_modifier)
 namespace impl {
 struct PCLKDTreeNode : public kdtree::KDTreeNode<int,3>
 {
+    typedef Eigen::Vector3f MeanType;
+
     std::vector<size_t> indices;
+    MeanType            mean;
+    std::size_t         mean_count;
+
     PCLKDTreeNode() :
         KDTreeNode()
     {
@@ -104,6 +111,9 @@ struct PCLKDTreeNode : public kdtree::KDTreeNode<int,3>
     inline void overwrite(const Ptr &other) override
     {
         PCLKDTreeNode *other_ptr = (PCLKDTreeNode*) other.get();
+
+        mean = (mean * mean_count + other_ptr->mean * other_ptr->mean_count) / (mean_count + other_ptr->mean_count);
+        mean_count += other_ptr->mean_count;
         indices.insert(indices.end(),
                        other_ptr->indices.begin(),
                        other_ptr->indices.end());
@@ -142,6 +152,10 @@ struct PCLKDTreeNodeIndex {
 
         PCLKDTreeNode *n = new PCLKDTreeNode;
         n->indices.emplace_back(index);
+        n->mean_count = 1;
+        n->mean[0] = point.x;
+        n->mean[1] = point.y;
+        n->mean[2] = point.z;
         n->index[0] = floor(point.x / size_x);
         n->index[1] = floor(point.y / size_y);
         n->index[2] = floor(point.z / size_z);
@@ -161,11 +175,13 @@ struct KDTreeClustering {
     kdtree::KDTreeClusterMask<Dim>   cluster_mask;
     std::vector<NodePtr>             queue;
     std::size_t                      cluster_count;
-    double                           distance_threhold;
+    double                           distance_threshold;
 
-    KDTreeClustering(const typename KDTreeType::Ptr &kdtree) :
+    KDTreeClustering(const typename KDTreeType::Ptr &kdtree,
+                     const double cluster_distance) :
         kdtree(kdtree),
-        cluster_count(0)
+        cluster_count(0),
+        distance_threshold(cluster_distance)
     {
     }
 
@@ -199,9 +215,19 @@ struct KDTreeClustering {
             if(!kdtree->find(index, neighbour))
                 continue;
             if(neighbour->cluster > -1)
-                continue;
+                continue;            
 
             PCLKDTreeNode *n = (PCLKDTreeNode*) neighbour.get();
+
+            if (distance_threshold != 0)
+            {
+                PCLKDTreeNode::MeanType diff = dynamic_cast<PCLKDTreeNode*>(node.get())->mean - n->mean;
+                auto dist = diff.dot(diff);
+                if (dist > distance_threshold * distance_threshold)
+                    continue;
+            }
+
+
             n->cluster = node->cluster;
             clusterNode(neighbour);
         }
@@ -213,7 +239,8 @@ template<typename PointT>
 void cluster(const typename pcl::PointCloud<PointT>::ConstPtr &cloud,
              const pcl::PointIndicesPtr &cloud_indeces,
              const PCLKDTreeNodeIndex<PointT> &index,
-             std::map<int, std::vector<std::size_t>> &indices)
+             std::map<int, std::vector<std::size_t>> &indices,
+             const double cluster_distance)
 {
     kdtree::KDTree<int, 3>::Ptr tree(new kdtree::KDTree<int, 3>);
     if(cloud_indeces) {
@@ -233,7 +260,7 @@ void cluster(const typename pcl::PointCloud<PointT>::ConstPtr &cloud,
         }
     }
 
-    KDTreeClustering<int,3> clustering(tree);
+    KDTreeClustering<int,3> clustering(tree, cluster_distance);
     clustering.cluster();
 
     std::vector<PCLKDTreeNode::Ptr> leaves;
@@ -265,7 +292,8 @@ template<>
 void cluster<pcl::PointNormal>(const pcl::PointCloud<pcl::PointNormal>::ConstPtr &cloud,
                                const pcl::PointIndicesPtr &cloud_indeces,
                                const PCLKDTreeNodeIndex<pcl::PointNormal> &index,
-                               std::map<int, std::vector<std::size_t>> &indices)
+                               std::map<int, std::vector<std::size_t>> &indices,
+                               const double cluster_distance)
 {
     throw std::runtime_error("pcl::PointNormal not supported!");
 }
@@ -287,7 +315,8 @@ void ClusterPointcloudKDTree::inputCloud(typename pcl::PointCloud<PointT>::Const
     impl::cluster<PointT>(cloud,
                           indices,
                           index,
-                          cluster_indices);
+                          cluster_indices,
+                          cluster_distance_);
 
     std::shared_ptr<std::vector<pcl::PointIndices> >
             out_cluster_indices(new std::vector<pcl::PointIndices>);

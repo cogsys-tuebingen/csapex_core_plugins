@@ -63,9 +63,11 @@ void ClusterPointcloudKDTreeBuffered::setupParameters(Parameterizable &parameter
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_size", 1, 1000000, 1000000, 1),
                             cluster_max_size_);
     parameters.addParameter(param::ParameterFactory::declareRange("cloud/max_width", 1, 10000, 640, 1),
-                            std::bind(&ClusterPointcloudKDTreeBuffered::updateTree, this, 0));
+                            std::bind(&ClusterPointcloudKDTreeBuffered::updateTree, this));
     parameters.addParameter(param::ParameterFactory::declareRange("cloud/max_height", 1, 10000, 480, 1),
-                            std::bind(&ClusterPointcloudKDTreeBuffered::updateTree, this, 0));
+                            std::bind(&ClusterPointcloudKDTreeBuffered::updateTree, this));
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_distance", 0.00, 3.0, 0.0, 0.01),
+                            cluster_distance_);
 }
 
 void ClusterPointcloudKDTreeBuffered::process()
@@ -83,26 +85,108 @@ void ClusterPointcloudKDTreeBuffered::setup(NodeModifier& node_modifier)
     out_debug_ = node_modifier.addOutput<std::string>("Debug Info");
 }
 
-void ClusterPointcloudKDTreeBuffered::updateTree(int size)
+void ClusterPointcloudKDTreeBuffered::updateTree()
 {
-    if (size == 0)
-    {
-        const int width = readParameter<int>("cloud/max_width");
-        const int height = readParameter<int>("cloud/max_height");
-        size = width * height;
-    }
+    const int width = readParameter<int>("cloud/max_width");
+    const int height = readParameter<int>("cloud/max_height");
+    const int size = width * height;
 
     kdtree_ = std::make_shared<kdtree::buffered::KDTree<buffered_tree::BufferedKDTreeNode>>(2 * size + 1);
 }
 
 namespace buffered_tree {
 
+template<typename NodeType>
+struct KDTreeClustering {
+    /// TODO : cache leaves in map -> no tree access anymore afterwards - maybe faster
+
+    typedef kdtree::buffered::KDTree<NodeType>      KDTreeType;
+    typedef typename KDTreeType::NodeIndex          NodeIndex;
+    typename KDTreeType::Ptr                        kdtree;
+    kdtree::KDTreeClusterMask<NodeType::Dimension>  cluster_mask;
+    NodeType                                        **queue;
+    std::size_t                                     queue_size;
+    std::size_t                                     queue_pos;
+    std::size_t                                     cluster_count;
+    double                                          distance_threshold;
+
+
+    KDTreeClustering(const typename KDTreeType::Ptr &kdtree,
+                     const double cluster_distance) :
+        kdtree(kdtree),
+        queue(new NodeType*[kdtree->nodeCount()]),
+        queue_size(kdtree->nodeCount()),
+        queue_pos(0),
+        cluster_count(0),
+        distance_threshold(cluster_distance)
+    {
+    }
+
+    virtual ~KDTreeClustering()
+    {
+        delete[] queue;
+    }
+
+    inline int getCluster(const NodeIndex &index)
+    {
+        NodeType *node;
+        if(!kdtree->find(index, node))
+            return -1;
+        return node->cluster;
+    }
+
+    inline void cluster()
+    {
+        kdtree->getNodes(queue);
+        for(std::size_t i = 0 ; i < queue_size ; ++i) {
+            NodeType *node = queue[i];
+            if(node->isLeaf()) {
+                if(node->cluster > -1)
+                    continue;
+                node->cluster = cluster_count;
+                ++cluster_count;
+                clusterNode(node);
+            }
+        }
+    }
+
+    inline void clusterNode(NodeType *node)
+    {
+        /// check surrounding indeces
+        NodeIndex index;
+        NodeType *neighbour;
+        std::size_t rows = cluster_mask.rows;
+        for(std::size_t i = 0 ; i < rows; ++i) {
+            cluster_mask.applyToIndex(node->index, i, index);
+            neighbour = kdtree->find(index);
+            if(!neighbour)
+                continue;
+            if(neighbour->cluster > -1)
+                continue;
+
+            if (distance_threshold != 0)
+            {
+                typename decltype(node->wrapped)::MeanType diff = node->wrapped.mean - neighbour->wrapped.mean;
+                auto dist = diff.dot(diff);
+                if (dist > distance_threshold * distance_threshold)
+                    continue;
+            }
+
+            neighbour->cluster = node->cluster;
+            clusterNode(neighbour);
+        }
+
+    }
+
+};
+
 template<typename PointT>
 void cluster(const TreeType::Ptr& tree,
              const typename pcl::PointCloud<PointT>::ConstPtr &cloud,
              const pcl::PointIndicesPtr &cloud_indeces,
              const PCLKDTreeNodeIndex<PointT> &index,
-             std::map<int, std::vector<std::size_t>> &indices)
+             std::map<int, std::vector<std::size_t>> &indices,
+             const double cluster_distance)
 {
     if(cloud_indeces) {
         for(int i : cloud_indeces->indices) {
@@ -120,7 +204,7 @@ void cluster(const TreeType::Ptr& tree,
         }
     }
 
-    kdtree::buffered::KDTreeClustering<BufferedKDTreeNode> clustering(tree);
+    KDTreeClustering<BufferedKDTreeNode> clustering(tree, cluster_distance);
     clustering.cluster();
 
     std::vector<BufferedKDTreeNode*> leaves;
@@ -152,7 +236,8 @@ void cluster<pcl::PointNormal>(const typename TreeType::Ptr& tree,
                                const pcl::PointCloud<pcl::PointNormal>::ConstPtr &cloud,
                                const pcl::PointIndicesPtr &cloud_indeces,
                                const PCLKDTreeNodeIndex<pcl::PointNormal> &index,
-                               std::map<int, std::vector<std::size_t>> &indices)
+                               std::map<int, std::vector<std::size_t>> &indices,
+                               const double cluster_distance)
 {
     throw std::runtime_error("pcl::PointNormal not supported!");
 }
@@ -167,21 +252,22 @@ void ClusterPointcloudKDTreeBuffered::inputCloud(typename pcl::PointCloud<PointT
         indices = indices_msg->value;
     }
 
-    //if (!kdtree_)
-        updateTree((indices) ? indices->indices.size() : cloud->size());
+    if (!kdtree_)
+        updateTree();
 
     std::map<int, std::vector<std::size_t>> cluster_indices;
     buffered_tree::PCLKDTreeNodeIndex<PointT> index(bin_size_x_,
                                                     bin_size_y_,
                                                     bin_size_z_);
 
-    //kdtree_->resetNodes();
+    kdtree_->clear();
 
     buffered_tree::cluster<PointT>(kdtree_,
                                    cloud,
                                    indices,
                                    index,
-                                   cluster_indices);
+                                   cluster_indices,
+                                   cluster_distance_);
 
     std::shared_ptr<std::vector<pcl::PointIndices> >
             out_cluster_indices(new std::vector<pcl::PointIndices>);
