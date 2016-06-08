@@ -112,7 +112,8 @@ void DynamicTransform::publishTransform(const ros::Time& time)
                     node_modifier_->setWarning("cannot transform, using latest transform");
                     tfl.lookupTransform(target, source, ros::Time(0), t);
                 } else {
-                    node_modifier_->setWarning("cannot transform at all...");
+                    node_modifier_->setWarning(std::string("cannot transform between ") +
+                                               target + " and " + source + " at all...");
                     return;
                 }
             }
