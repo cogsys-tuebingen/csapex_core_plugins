@@ -87,9 +87,6 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
-    void updateTree();
-
-private:
     Input* in_cloud_;
     Input* in_indices_;
     Output* out_;
@@ -102,6 +99,7 @@ private:
     int    cluster_max_size_;
     double cluster_distance_;
 
+    std::size_t last_size_;
     typename buffered_tree::TreeType::Ptr kdtree_;
 
 };

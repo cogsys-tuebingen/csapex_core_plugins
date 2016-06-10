@@ -46,26 +46,23 @@ using namespace csapex::connection_types;
 using namespace std;
 
 
-ClusterPointcloudKDTreeBuffered::ClusterPointcloudKDTreeBuffered()
+ClusterPointcloudKDTreeBuffered::ClusterPointcloudKDTreeBuffered() :
+    last_size_(0)
 {
 }
 
 void ClusterPointcloudKDTreeBuffered::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_x", 0.01, 1.0, 0.1, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_x", 0.01, 8.0, 0.1, 0.01),
                             bin_size_x_);
-    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_y", 0.01, 1.0, 0.1, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_y", 0.01, 8.0, 0.1, 0.01),
                             bin_size_y_);
-    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_z", 0.01, 1.0, 0.1, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_z", 0.01, 8.0, 0.1, 0.01),
                             bin_size_z_);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/min_size", 1, 1000000, 0, 1),
                             cluster_min_size_);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_size", 1, 1000000, 1000000, 1),
                             cluster_max_size_);
-    parameters.addParameter(param::ParameterFactory::declareRange("cloud/max_width", 1, 10000, 640, 1),
-                            std::bind(&ClusterPointcloudKDTreeBuffered::updateTree, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("cloud/max_height", 1, 10000, 480, 1),
-                            std::bind(&ClusterPointcloudKDTreeBuffered::updateTree, this));
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_distance", 0.00, 3.0, 0.0, 0.01),
                             cluster_distance_);
 }
@@ -85,15 +82,6 @@ void ClusterPointcloudKDTreeBuffered::setup(NodeModifier& node_modifier)
     out_debug_ = node_modifier.addOutput<std::string>("Debug Info");
 }
 
-void ClusterPointcloudKDTreeBuffered::updateTree()
-{
-    const int width = readParameter<int>("cloud/max_width");
-    const int height = readParameter<int>("cloud/max_height");
-    const int size = width * height;
-
-    kdtree_ = std::make_shared<kdtree::buffered::KDTree<buffered_tree::BufferedKDTreeNode>>(2 * size + 1);
-}
-
 namespace buffered_tree {
 
 template<typename NodeType>
@@ -104,7 +92,8 @@ struct KDTreeClustering {
     typedef typename KDTreeType::NodeIndex          NodeIndex;
     typename KDTreeType::Ptr                        kdtree;
     kdtree::KDTreeClusterMask<NodeType::Dimension>  cluster_mask;
-    NodeType                                        **queue;
+    std::vector<NodeType*>                          queue;
+    NodeType                                      **queue_ptr;
     std::size_t                                     queue_size;
     std::size_t                                     queue_pos;
     std::size_t                                     cluster_count;
@@ -114,7 +103,8 @@ struct KDTreeClustering {
     KDTreeClustering(const typename KDTreeType::Ptr &kdtree,
                      const double cluster_distance) :
         kdtree(kdtree),
-        queue(new NodeType*[kdtree->nodeCount()]),
+        queue(kdtree->nodeCount()),
+        queue_ptr(queue.data()),
         queue_size(kdtree->nodeCount()),
         queue_pos(0),
         cluster_count(0),
@@ -122,9 +112,30 @@ struct KDTreeClustering {
     {
     }
 
+    KDTreeClustering(const KDTreeClustering &other) :
+        kdtree(other.kdtree),
+        queue(other.queue),
+        queue_ptr(queue.data()),
+        queue_size(other.queue.size()),
+        queue_pos(other.queue_pos),
+        cluster_count(other.cluster_count)
+    {
+    }
+
+    KDTreeClustering<NodeType> & operator = (const KDTreeClustering<NodeType> &other)
+    {
+        kdtree = other.kdtree;
+        queue = other.queue;
+        queue_ptr = queue.data();
+        queue_size = other.queue_size;
+        queue_pos  = other.queue_pos;
+        cluster_count = other.cluster_count;
+
+        return *this;
+    }
+
     virtual ~KDTreeClustering()
     {
-        delete[] queue;
     }
 
     inline int getCluster(const NodeIndex &index)
@@ -139,7 +150,7 @@ struct KDTreeClustering {
     {
         kdtree->getNodes(queue);
         for(std::size_t i = 0 ; i < queue_size ; ++i) {
-            NodeType *node = queue[i];
+            NodeType *node = queue_ptr[i];
             if(node->isLeaf()) {
                 if(node->cluster > -1)
                     continue;
@@ -246,14 +257,20 @@ void cluster<pcl::PointNormal>(const typename TreeType::Ptr& tree,
 template <class PointT>
 void ClusterPointcloudKDTreeBuffered::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
+    if(cloud->empty())
+        return;
+
+    std::size_t size = cloud->size();
     pcl::PointIndicesPtr indices;
     if(msg::isConnected(in_indices_)) {
         auto indices_msg = msg::getMessage<PointIndecesMessage>(in_indices_);
         indices = indices_msg->value;
     }
 
-    if (!kdtree_)
-        updateTree();
+    if(!kdtree_ || size != last_size_) {
+        kdtree_.reset(new kdtree::buffered::KDTree<buffered_tree::BufferedKDTreeNode>(2 * size + 1));
+        last_size_ = size;
+    }
 
     std::map<int, std::vector<std::size_t>> cluster_indices;
     buffered_tree::PCLKDTreeNodeIndex<PointT> index(bin_size_x_,

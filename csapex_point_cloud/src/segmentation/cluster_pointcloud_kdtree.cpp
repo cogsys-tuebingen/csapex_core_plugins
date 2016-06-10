@@ -51,11 +51,11 @@ ClusterPointcloudKDTree::ClusterPointcloudKDTree()
 
 void ClusterPointcloudKDTree::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_x", 0.01, 1.0, 0.1, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_x", 0.01, 8.0, 0.1, 0.01),
                             bin_size_x_);
-    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_y", 0.01, 1.0, 0.1, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_y", 0.01, 8.0, 0.1, 0.01),
                             bin_size_y_);
-    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_z", 0.01, 1.0, 0.1, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("bin/size_z", 0.01, 8.0, 0.1, 0.01),
                             bin_size_z_);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/min_size", 1, 1000000, 0, 1),
                             cluster_min_size_);
