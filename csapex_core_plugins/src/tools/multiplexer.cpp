@@ -8,6 +8,7 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/msg/no_message.h>
+#include <csapex/model/token.h>
 
 namespace csapex
 {
@@ -31,7 +32,7 @@ public:
 
     void process()
     {
-        std::vector<ConnectionTypeConstPtr> msg = input->getMessageParts();
+        std::vector<TokenPtr> msg = input->getMessageParts();
 //        aerr << "size is " << msg.size() << std::endl;
 
         if(msg.empty()) {
@@ -40,8 +41,8 @@ public:
             connection_types::VectorMessage::Ptr composed(new connection_types::VectorMessage);
 //            composed->value = msg;
             for(auto& m : msg) {
-                if(std::dynamic_pointer_cast<connection_types::MarkerMessage const>(m) == nullptr) {
-                    composed->value.push_back(m);
+                if(std::dynamic_pointer_cast<connection_types::MarkerMessage const>(m->getTokenData()) == nullptr) {
+                    composed->value.push_back(m->getTokenData());
                 }
             }
 

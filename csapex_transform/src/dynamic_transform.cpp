@@ -8,7 +8,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex/signal/trigger.h>
+#include <csapex/signal/event.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -112,7 +112,8 @@ void DynamicTransform::publishTransform(const ros::Time& time)
                     node_modifier_->setWarning("cannot transform, using latest transform");
                     tfl.lookupTransform(target, source, ros::Time(0), t);
                 } else {
-                    node_modifier_->setWarning("cannot transform at all...");
+                    node_modifier_->setWarning(std::string("cannot transform between ") +
+                                               target + " and " + source + " at all...");
                     return;
                 }
             }
@@ -139,7 +140,7 @@ void DynamicTransform::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<connection_types::TransformMessage>("Transform");
 
     node_modifier.addSlot("reset", std::bind(&DynamicTransform::resetTf, this));
-    reset_ = node_modifier.addTrigger("reset");
+    reset_ = node_modifier.addEvent("reset");
 }
 
 
@@ -153,6 +154,8 @@ void DynamicTransform::resetTf()
     }
 
     reset_->trigger();
+
+    refresh();
 }
 
 void DynamicTransform::refresh()
@@ -167,7 +170,6 @@ void DynamicTransform::refresh()
     if(getParameter("target")->is<std::string>()) {
         from = source_p->as<std::string>();
     }
-    ainfo << "from: " << from << ", to: " << to << std::endl;
 
     LockedTFListener l = TFListener::getLocked();
     if(!l.l) {
@@ -192,7 +194,8 @@ void DynamicTransform::refresh()
             }
         }
 
-        if(!has_from || !has_to) {
+        if((!from.empty() && !has_from) ||
+                (!to.empty() && !has_to)) {
             if(initial_retries_ --> 0) {
                 ainfo << "retry" << std::endl;
                 return;

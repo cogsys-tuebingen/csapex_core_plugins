@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/model/connection_type.h>
+#include <csapex/model/token_data.h>
 
 namespace csapex {
 
@@ -22,7 +22,7 @@ private:
     Output* output_;
 
     Slot* delayed_slot_;
-    Trigger* delayed_forward_;
+    Event* delayed_forward_;
 
     param::OutputProgressParameter* progress_;
 };

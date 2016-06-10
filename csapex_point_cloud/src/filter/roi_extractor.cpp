@@ -47,7 +47,7 @@ void ROIExtractor::setup(NodeModifier& node_modifier)
 
 void ROIExtractor::updateOutputs()
 {
-    int new_count = readParameter<int>("outputs");
+    std::size_t new_count = readParameter<int>("outputs");
     if (new_count != output_clouds_single_.size())
     {
         if (new_count > output_clouds_single_.size())

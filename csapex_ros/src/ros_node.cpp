@@ -12,33 +12,49 @@ RosNode::RosNode()
 
 }
 
-ROSHandler& RosNode::getRosHandler()
+void RosNode::getProperties(std::vector<std::string>& properties) const
+{
+    TickableNode::getProperties(properties);
+    properties.push_back("ROS");
+}
+
+ROSHandler& RosNode::getRosHandler() const
 {
     return ROSHandler::instance();
 }
 
 void RosNode::setup(NodeModifier& node_modifier)
 {
+    ensureROSisSetUp();
+}
+
+void RosNode::ensureROSisSetUp()
+{
+    if(!ros_init_) {
+        if(isConnected()) {
+            setupROS();
+            ros_init_ = true;
+            node_modifier_->setNoError();
+
+        } else if(!node_modifier_->isError()) {
+            node_modifier_->setWarning("no ROS connection");
+        }
+    }
 }
 
 bool RosNode::canTick()
 {
-    ROSHandler& ros = getRosHandler();
-    return ros.isConnected();
+    return isConnected();
 }
 
 void RosNode::tick()
 {
-    ROSHandler& ros = getRosHandler();
-    if(ros.isConnected()) {
-        if(!ros_init_) {
-            setupROS();
-            ros_init_ = true;
-        }
+    ensureROSisSetUp();
 
+    if(isConnected()) {
         tickROS();
 
-    } else {
+    } else if(ros_init_) {
         ros_init_ = false;
         node_modifier_->setWarning("[tick] no ROS connection");
     }
@@ -49,19 +65,21 @@ bool RosNode::tickROS()
     return false;
 }
 
+bool RosNode::isConnected() const
+{
+    return getRosHandler().isConnected();
+}
+
 void RosNode::process()
 {
-    ROSHandler& ros = getRosHandler();
-    if(ros.isConnected()) {
-        if(!ros_init_) {
-            setupROS();
-            ros_init_ = true;
-        }
+    ensureROSisSetUp();
 
+    if(isConnected()) {
         processROS();
 
-    } else {
+    } else if(ros_init_) {
         ros_init_ = false;
         node_modifier_->setWarning("[process] no ROS connection");
     }
 }
+

@@ -4,7 +4,7 @@
 #include <csapex/msg/io.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/signal/trigger.h>
+#include <csapex/signal/event.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -24,8 +24,8 @@ public:
     {
         input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
 
-        trigger_empty_ = node_modifier.addTrigger("empty");
-        trigger_not_empty_ = node_modifier.addTrigger("not empty");
+        trigger_empty_ = node_modifier.addEvent("empty");
+        trigger_not_empty_ = node_modifier.addEvent("not empty");
     }
 
     virtual void setupParameters(Parameterizable &parameters) override
@@ -59,8 +59,8 @@ public:
 
 private:
     Input*  input_cloud_;
-    Trigger* trigger_empty_;
-    Trigger* trigger_not_empty_;
+    Event* trigger_empty_;
+    Event* trigger_not_empty_;
 
     int min_count_;
 };

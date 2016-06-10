@@ -55,9 +55,9 @@ private:
     bool trigger_signal_begin_;
     bool trigger_signal_end_;
 
-    Trigger* begin_;
-    Trigger* end_;
-    Trigger* new_provider_;
+    Event* begin_;
+    Event* end_;
+    Event* new_provider_;
 
     bool directory_import_;
     int last_directory_index_;

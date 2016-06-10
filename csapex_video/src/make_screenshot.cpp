@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/signal/slot.h>
-#include <csapex/signal/trigger.h>
+#include <csapex/signal/event.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -28,7 +28,7 @@ void MakeScreenshot::setupParameters(Parameterizable& parameters)
 void MakeScreenshot::setup(NodeModifier& node_modifier)
 {
     in_ = node_modifier.addSlot("Trigger", std::bind(&MakeScreenshot::makeScreenshot, this));
-    done_ = node_modifier.addTrigger("Done");
+    done_ = node_modifier.addEvent("Done");
 
     node_modifier_->setIsSource(true);
     node_modifier_->setIsSink(true);

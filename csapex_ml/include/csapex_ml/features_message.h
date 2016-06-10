@@ -20,8 +20,8 @@ struct FeaturesMessage : public Message
 
     FeaturesMessage(Message::Stamp stamp_micro_seconds = 0);
 
-    virtual ConnectionType::Ptr clone() const override;
-    virtual ConnectionType::Ptr toType() const override;
+    virtual TokenData::Ptr clone() const override;
+    virtual TokenData::Ptr toType() const override;
 
     std::vector<float> value;
     int   classification;

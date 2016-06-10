@@ -7,6 +7,8 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/signal/event.h>
+#include <csapex/model/token.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TextInput, csapex::Node)
 
@@ -18,7 +20,16 @@ TextInput::TextInput()
 
 void TextInput::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("text", ""));
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("text", ""), [this](param::Parameter* p){
+        std::string txt = p->as<std::string>();
+        if(txt != text_) {
+            text_ = txt;
+
+            auto text_message = std::make_shared<connection_types::GenericValueMessage<std::string>>();
+            text_message->value = text_;
+            event_->triggerWith(std::make_shared<Token>(text_message));
+        }
+    });
 }
 
 void TextInput::process()
@@ -32,10 +43,11 @@ void TextInput::tick()
 
 void TextInput::setup(NodeModifier& node_modifier)
 {
-    connector_ = node_modifier.addOutput<std::string>("Text");
+    output_ = node_modifier.addOutput<std::string>("Text");
+    event_ = node_modifier.addEvent("text changed");
 }
 
 void TextInput::publish()
 {
-    msg::publish(connector_, readParameter<std::string>("text"));
+    msg::publish(output_, text_);
 }

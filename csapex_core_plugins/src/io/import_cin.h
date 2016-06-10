@@ -31,8 +31,8 @@ private:
 
     std::stringstream buffer;
 
-    std::deque<ConnectionTypeConstPtr> message_buffer_;
-    ConnectionTypeConstPtr last_message_;
+    std::deque<TokenDataConstPtr> message_buffer_;
+    TokenDataConstPtr last_message_;
 
     bool import_yaml_;
     bool latch_;

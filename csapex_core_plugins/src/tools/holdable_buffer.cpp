@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex/model/connection_type.h>
+#include <csapex/model/token_data.h>
 #include <csapex/msg/message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -32,7 +32,7 @@ void HoldableBuffer::setup(NodeModifier& node_modifier)
 
 void HoldableBuffer::process()
 {
-    ConnectionType::ConstPtr msg = msg::getMessage<ConnectionType>(in_);
+    TokenData::ConstPtr msg = msg::getMessage<TokenData>(in_);
 
     unsigned int size = readParameter<int>("buffer size");
     bool hold = readParameter<bool>("hold");
@@ -40,7 +40,7 @@ void HoldableBuffer::process()
     range->setMax<int>(buffer_.size() - 1);
     setParameterEnabled("out idx", hold);
 
-    ConnectionType::ConstPtr out;
+    TokenData::ConstPtr out;
 
     if(hold && buffer_.size() > 0) {
         int idx = readParameter<int>("out idx");

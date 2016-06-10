@@ -29,8 +29,8 @@ protected:
 private:
     Output* out_;
 
-    Trigger* begin_;
-    Trigger* end_;
+    Event* begin_;
+    Event* end_;
 
     std::string prefix_;
     std::string path_;
@@ -38,7 +38,7 @@ private:
     boost::filesystem::directory_iterator current_file_;
 
     bool do_buffer_;
-    std::map<std::string, ConnectionTypeConstPtr> buffer_;
+    std::map<std::string, TokenDataConstPtr> buffer_;
 
     bool at_end_;
     bool next_is_first_;

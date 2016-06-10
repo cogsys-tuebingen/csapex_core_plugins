@@ -9,24 +9,35 @@
 #include <csapex/utility/timer.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/utility/interlude.hpp>
+#include <csapex/model/token.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)
 
 using namespace csapex;
 
 TextDisplay::TextDisplay()
-    : connector_(nullptr)
+    : input_(nullptr)
 {
 }
 
 void TextDisplay::setup(NodeModifier& node_modifier)
 {
-    connector_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
+    input_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
+
+    slot_ = node_modifier.addTypedSlot<connection_types::AnyMessage>("Display", [this](const TokenConstPtr& token){
+        display(token->getTokenData());
+    });
 }
+
 void TextDisplay::process()
 {
-    connection_types::Message::ConstPtr msg = msg::getMessage<connection_types::Message>(connector_);
+    connection_types::Message::ConstPtr msg = msg::getMessage<connection_types::Message>(input_);
 
+    display(msg);
+}
+
+void TextDisplay::display(TokenDataConstPtr msg)
+{
     YAML::Node node;
     {
         INTERLUDE("serialize");
@@ -41,7 +52,6 @@ void TextDisplay::process()
 
     display_request(ss.str());
 }
-
 void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node, const std::string& prefix)
 {
     static const std::string PREFIX = "   ";
@@ -72,7 +82,7 @@ void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node, const s
             ss << "...\n";
         }
 
-    } else {
+    } else if(node.Type() != YAML::NodeType::Null) {
         ss << prefix << node.as<std::string>().substr(0, 1000);
     }
 }
