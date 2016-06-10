@@ -95,7 +95,7 @@ VectorMessage::Ptr VectorMessage::make(){
 
 TokenData::Ptr VectorMessage::clone() const
 {
-    Ptr new_msg(new VectorMessage(frame_id));
+    Ptr new_msg(new VectorMessage(type_, frame_id, stamp_micro_seconds));
     new_msg->value = value;
     return new_msg;
 }
