@@ -111,8 +111,8 @@ public:
                 pca.setInputCloud(xy_cloud);
 
                 Eigen::Matrix3f eigen_vectors = pca.getEigenVectors();
-                Eigen::Vector3f eigen_values = pca.getEigenValues();
-                Eigen::Vector4f mean = pca.getMean();
+//                Eigen::Vector3f eigen_values = pca.getEigenValues();
+//                Eigen::Vector4f mean = pca.getMean();
 
                 Eigen::Vector3f principal_component = eigen_vectors.block<3,1>(0,0);
                 double theta = std::atan2(principal_component(1), principal_component(0));
