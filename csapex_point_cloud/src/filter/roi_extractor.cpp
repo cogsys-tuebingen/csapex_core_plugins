@@ -26,12 +26,20 @@ void ROIExtractor::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("outputs", 0, 10, 0, 1),
                             std::bind(&ROIExtractor::updateOutputs, this));
+
+    param::ParameterPtr filter_param = param::ParameterFactory::declareBool("filter", false);
+    parameters.addParameter(filter_param,
+                            filter_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/class", -100, 100, 0, 1),
+                                       [filter_param]() { return filter_param->as<bool>(); },
+                                       filter_class_);
+
 }
 
 void ROIExtractor::setup(NodeModifier& node_modifier)
 {
     input_cloud_ = node_modifier.addInput<PointCloudMessage>("Source PointCloud");
-    input_rois_ = node_modifier.addInput<VectorMessage, RoiMessage>("ROIs");
+    input_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
     input_indices_ = node_modifier.addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Indices");
 
     output_clouds_ = node_modifier.addOutput<VectorMessage, PointCloudMessage>("PointClouds");
@@ -80,20 +88,19 @@ void ROIExtractor::process()
 template<typename PointT>
 void ROIExtractor::extract_organized(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    VectorMessage::ConstPtr roi_vector(msg::getMessage<VectorMessage>(input_rois_));
+    std::shared_ptr<std::vector<RoiMessage> const> roi_vector(msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_));
     VectorMessage::Ptr out_vector(VectorMessage::make<PointCloudMessage>());
 
     if (!cloud->isOrganized())
         throw std::runtime_error("Cluster index list required for unorganized clouds");
 
-    for (auto raw_msg : roi_vector->value)
+    for (const auto& roi_msg : *roi_vector)
     {
-        RoiMessage::ConstPtr roi_msg = std::dynamic_pointer_cast<RoiMessage const>(raw_msg);
+        if (filter_)
+            if (roi_msg.value.classification() != filter_class_)
+                continue;
 
-        if (roi_msg->value.classification() != 1)
-            continue;
-
-        cv::Rect region = roi_msg->value.rect() & cv::Rect(0, 0, cloud->width, cloud->height);
+        cv::Rect region = roi_msg.value.rect() & cv::Rect(0, 0, cloud->width, cloud->height);
 
         typename pcl::PointCloud<PointT>::Ptr result(new pcl::PointCloud<PointT>(region.width, region.height));
         result->header = cloud->header;
@@ -113,22 +120,23 @@ void ROIExtractor::extract_organized(typename pcl::PointCloud<PointT>::ConstPtr 
 template<typename PointT>
 void ROIExtractor::extract_unorganized(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    VectorMessage::ConstPtr roi_vector(msg::getMessage<VectorMessage>(input_rois_));
+    std::shared_ptr<std::vector<RoiMessage> const> roi_vector(msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_));
     std::shared_ptr<std::vector<pcl::PointIndices> const> indices = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(input_indices_);
     VectorMessage::Ptr out_vector(VectorMessage::make<PointCloudMessage>());
 
-    if (roi_vector->value.size() != indices->size())
+    if (roi_vector->size() != indices->size())
         throw std::runtime_error("ROIs and Indices vectors do not have equal length");
 
     int idx = 0;
-    for (auto raw_msg : roi_vector->value)
+    for (const auto& roi_msg : *roi_vector)
     {
-        RoiMessage::ConstPtr roi_msg = std::dynamic_pointer_cast<RoiMessage const>(raw_msg);
-
-        if (roi_msg->value.classification() != 1)
+        if (filter_)
         {
-            ++idx;
-            continue;
+            if (roi_msg.value.classification() != filter_class_)
+            {
+                ++idx;
+                continue;
+            }
         }
 
         /*
