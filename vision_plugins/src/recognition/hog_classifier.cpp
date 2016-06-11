@@ -62,7 +62,7 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
                                        custom_active, std::bind(&HOGClassifier::load, this));
 
 
-    parameters.addParameter(param::ParameterFactory::declareRange("svm/thresh", -10000.0, 10000.0, 0.0, 0.1),
+    parameters.addParameter(param::ParameterFactory::declareRange("svm/thresh", -10000.0, 10000.0, 0.0, 0.01),
                             svm_thresh_);
 
     parameters.addParameter(param::ParameterFactory::declareBool("hog/mirror",
@@ -175,7 +175,8 @@ void HOGClassifier::process()
     for(auto &roi : *in_rois) {
         cv::Mat data;
 
-        getData(in->value, roi.value.rect(), data);
+        if (!getData(in->value, roi.value.rect(), data))
+            continue;
 
         if(data.empty())
             continue;
@@ -228,7 +229,7 @@ void HOGClassifier::process()
     msg::publish<GenericVectorMessage, RoiMessage>(out_rois_, out);
 }
 
-void HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst)
+bool HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst)
 {
     cv::Mat window;
     double ratio_roi = roi.width / (double) roi.height;
@@ -271,7 +272,7 @@ void HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &ds
         if(roi.height > src.rows || roi.width > src.cols) {
 
             if(adaption_type_ == GROW_STRICT)
-                return;
+                return false;
         }
         break;
     default:
@@ -281,8 +282,12 @@ void HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &ds
     cv::Rect img_rect(0,0,src.cols, src.rows);
     roi_adapted = roi_adapted & img_rect;
 
+    if (roi_adapted.area() <= 0)
+        return false;
+
     window = cv::Mat(src, roi_adapted);
     cv::resize(window, dst, hog_.winSize);
+    return true;
 }
 
 void HOGClassifier::load()

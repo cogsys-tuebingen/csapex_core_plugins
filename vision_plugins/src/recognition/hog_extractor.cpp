@@ -114,7 +114,8 @@ void HOGExtractor::process()
     for(auto &roi : *in_rois) {
         cv::Mat data;
 
-        getData(in->value, roi.value.rect(), data);
+        if (!getData(in->value, roi.value.rect(), data))
+            continue;
 
         if(data.empty())
             continue;
@@ -135,7 +136,7 @@ void HOGExtractor::process()
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
-void HOGExtractor::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst)
+bool HOGExtractor::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst)
 {
     cv::Mat window;
     double ratio_roi = roi.width / (double) roi.height;
@@ -180,7 +181,7 @@ void HOGExtractor::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst
             roi_adapted = roi_adapted & img_rect;
 
             if(adaption_type_ == GROW_STRICT)
-                return;
+                return false;
         }
         break;
     default:
@@ -190,7 +191,10 @@ void HOGExtractor::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst
     cv::Rect img_rect(0,0,src.cols, src.rows);
     roi_adapted = roi_adapted & img_rect;
 
+    if (roi_adapted.area() <= 0)
+        return false;
+
     window = cv::Mat(src, roi_adapted);
     cv::resize(window, dst, hog_.winSize);
-
+    return true;
 }

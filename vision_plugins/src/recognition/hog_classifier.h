@@ -47,7 +47,7 @@ private:
     double             svm_thresh_;
     int                svm_thresh_type_;
 
-    void getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst);
+    bool getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst);
     void load();
     void setParameters(const int cell_size, const int cells_x,
                        const int cells_y,

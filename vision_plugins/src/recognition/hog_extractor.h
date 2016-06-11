@@ -34,7 +34,7 @@ private:
     int             adaption_type_;
     double          ratio_hog_;
 
-    void getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst);
+    bool getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst);
 };
 }
 #endif // HOG_EXTRACTOR_H
