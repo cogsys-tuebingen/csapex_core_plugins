@@ -41,6 +41,11 @@ ImportRos::ImportRos()
 {
 }
 
+ImportRos::~ImportRos()
+{
+    current_subscriber.shutdown();
+}
+
 void ImportRos::setup(NodeModifier& node_modifier)
 {
     input_time_ = node_modifier.addOptionalInput<connection_types::TimestampMessage>("time");

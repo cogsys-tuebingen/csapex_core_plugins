@@ -16,6 +16,7 @@ class ImportRos : public RosNode
 {
 public:
     ImportRos();
+    ~ImportRos();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters) override;

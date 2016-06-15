@@ -22,8 +22,9 @@ public:
     }
     static void createInstance(Settings& settings)
     {
-        assert(!g_instance_);
-        g_instance_ = new ROSHandler(settings);
+        if(!g_instance_) {
+            g_instance_ = new ROSHandler(settings);
+        }
     }
 
 public:
