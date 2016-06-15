@@ -30,6 +30,8 @@ private:
     Input* input_rois_;
     Input* input_indices_;
     Output* output_clouds_;
+    bool filter_;
+    int filter_class_;
     std::vector<Output*> output_clouds_single_;
 };
 }

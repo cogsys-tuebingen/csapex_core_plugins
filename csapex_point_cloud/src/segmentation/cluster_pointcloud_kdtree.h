@@ -29,6 +29,7 @@ private:
     double bin_size_z_;
     int    cluster_min_size_;
     int    cluster_max_size_;
+    double cluster_distance_;
 
 };
 }
