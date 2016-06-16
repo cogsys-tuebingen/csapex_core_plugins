@@ -148,6 +148,7 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
 
 
     NodeHandle* nh = nullptr;
+    std::string param_name;
     for(std::size_t i = 0, n = levels.size(); i < n - 1; ++i) {
         const std::string subname = levels.at(i);
         std::cerr << "searching for " << subname << std::endl;
@@ -156,10 +157,21 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
             std::cerr << "no parameter for " << parameter_name << ", label " << subname << " non-existent" << std::endl;
             return;
         }
+
+        if (NodePtr node = nh->getNode().lock()) {
+            std::ostringstream param_name_builder;
+            std::copy(std::next(levels.begin(), i + 1), levels.end(), std::ostream_iterator<std::string>(param_name_builder, "/"));
+            param_name = param_name_builder.str();
+            param_name = param_name.substr(0, param_name.size() - 1);
+            std::cerr << "searching for param " << param_name << std::endl;
+            if (node->hasParameter(param_name))
+                break;
+        }
         if(i < n- 2) {
             graph = dynamic_cast<Graph*>(nh->getNode().lock().get());
             if(!graph) {
                 std::cerr << "no parameter for " << parameter_name << ", child " << subname << " is not a graph" << std::endl;
+                return;
             }
         }
 
@@ -173,7 +185,6 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
         return;
     }
 
-    std::string param_name = levels.back();
     if(!node->hasParameter(param_name)) {
         std::cerr << "node " << nh->getUUID() << " doesn't have a parameter called " << param_name << std::endl;
         return;
