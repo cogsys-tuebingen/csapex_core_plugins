@@ -20,6 +20,7 @@ public:
 protected:
     void setExportPath();
 
+    void exportMessage(const TokenData::ConstPtr& msg);
     void exportVector(const connection_types::VectorMessage::ConstPtr& vector);
     void exportSingle(const TokenData::ConstPtr& msg);
 
@@ -33,6 +34,8 @@ private:
 
     bool oneshot_;
     bool oneshot_allowed_;
+
+    TokenData::ConstPtr last_message_;
 };
 
 }

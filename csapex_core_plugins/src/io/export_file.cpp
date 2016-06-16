@@ -41,6 +41,10 @@ void ExportFile::setupParameters(Parameterizable& parameters)
     addConditionalParameter(param::ParameterFactory::declareTrigger("save one message"), is_one, [this](param::Parameter* p) {
         oneshot_allowed_ = true;
     });
+    addConditionalParameter(param::ParameterFactory::declareTrigger("save last message"), is_one, [this](param::Parameter* p) {
+        if (last_message_)
+            exportMessage(last_message_);
+    });
 
     addParameter(csapex::param::ParameterFactory::declareBool("yaml",
                                                       csapex::param::ParameterDescription("Export message in cs::APEX-YAML format?"),
@@ -70,6 +74,9 @@ void ExportFile::process()
         return;
     }
 
+    TokenData::ConstPtr msg = msg::getMessage<TokenData>(connector_);
+    last_message_ = msg;
+
     if(oneshot_) {
         if(!oneshot_allowed_) {
             return;
@@ -78,7 +85,11 @@ void ExportFile::process()
         }
     }
 
-    TokenData::ConstPtr msg = msg::getMessage<TokenData>(connector_);
+    exportMessage(msg);
+}
+
+void ExportFile::exportMessage(const TokenData::ConstPtr &msg)
+{
     connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<const connection_types::VectorMessage>(msg);
     if(vector) {
         exportVector(vector);
