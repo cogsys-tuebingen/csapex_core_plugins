@@ -47,17 +47,19 @@ bool RosNode::canTick()
     return isConnected();
 }
 
-void RosNode::tick()
+bool RosNode::tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters)
 {
     ensureROSisSetUp();
 
     if(isConnected()) {
-        tickROS();
+        return tickROS();
 
     } else if(ros_init_) {
         ros_init_ = false;
         node_modifier_->setWarning("[tick] no ROS connection");
     }
+
+    return false;
 }
 
 bool RosNode::tickROS()

@@ -317,6 +317,9 @@ bool ImportRos::tickROS()
     }
 
     if(!current_topic_.name.empty()) {
+        if(msgs_.empty()) {
+            return false;
+        }
         publishLatestMessage();
     }
 
@@ -329,6 +332,10 @@ void ImportRos::publishLatestMessage()
     std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
 
     INTERLUDE("publish");
+
+    if(!ROSHandler::instance().isConnected()) {
+        return;
+    }
 
     if(msgs_.empty()) {
         INTERLUDE("wait for message");

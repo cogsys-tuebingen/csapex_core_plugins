@@ -25,7 +25,7 @@ protected:
     virtual void processROS() = 0;
 
     virtual bool canTick() override;
-    virtual void tick() override;
+    virtual bool tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
     virtual bool tickROS();
 
     virtual void getProperties(std::vector<std::string>& properties) const override;
