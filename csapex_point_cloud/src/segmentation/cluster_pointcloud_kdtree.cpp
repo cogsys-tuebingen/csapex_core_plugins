@@ -246,8 +246,8 @@ struct KDTreeClustering {
         math::Distribution<3>::MatrixType cov = distribution.getCovariance();
         bool valid = true;
         for(std::size_t i = 0 ; i < 3 ; ++i) {
-            valid = params.cluster_max_std_devs[i] == 0.0 ||
-                    cov(i,i) <= params.cluster_max_std_devs[i];
+            valid &= (params.cluster_max_std_devs[i] == 0.0 ||
+                     cov(i,i) <= params.cluster_max_std_devs[i]);
         }
         return valid;
     }
@@ -362,6 +362,7 @@ void ClusterPointcloudKDTree::inputCloud(typename pcl::PointCloud<PointT>::Const
             out_cluster_indices(new std::vector<pcl::PointIndices>);
 
     /// todo : minimum covariance?
+    /// todo : allow main components for evaluation (rotation of cluster does not matter then)
     impl::cluster<PointT>(cloud,
                           indices,
                           cluster_params_,
