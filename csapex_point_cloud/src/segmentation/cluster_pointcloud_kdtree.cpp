@@ -98,9 +98,8 @@ struct PCLKDTreeNode : public kdtree::KDTreeNode<int,3>
 {
     typedef Eigen::Vector3d MeanType;
 
-    std::vector<size_t> indices;
-    MeanType            mean;
-    std::size_t         mean_count;
+    std::vector<size_t>   indices;
+    math::Distribution<3> distribution;
 
     PCLKDTreeNode() :
         KDTreeNode()
@@ -124,9 +123,7 @@ struct PCLKDTreeNode : public kdtree::KDTreeNode<int,3>
     inline void overwrite(const Ptr &other) override
     {
         PCLKDTreeNode *other_ptr = (PCLKDTreeNode*) other.get();
-
-        mean = (mean * mean_count + other_ptr->mean * other_ptr->mean_count) / (mean_count + other_ptr->mean_count);
-        mean_count += other_ptr->mean_count;
+        distribution += other_ptr->distribution;
         indices.insert(indices.end(),
                        other_ptr->indices.begin(),
                        other_ptr->indices.end());
@@ -160,10 +157,7 @@ struct PCLKDTreeNodeIndex {
 
         PCLKDTreeNode *n = new PCLKDTreeNode;
         n->indices.emplace_back(index);
-        n->mean_count = 1;
-        n->mean[0] = point.x;
-        n->mean[1] = point.y;
-        n->mean[2] = point.z;
+        n->distribution.add(Eigen::Vector3d(point.x, point.y, point.z));
         n->index[0] = floor(point.x / size[0]);
         n->index[1] = floor(point.y / size[1]);
         n->index[2] = floor(point.z / size[2]);
@@ -194,6 +188,9 @@ struct KDTreeClustering {
         params(params)
     {
         this->params.cluster_distance_and_weights[0] *= this->params.cluster_distance_and_weights[0];
+        this->params.cluster_max_std_devs[0] *= this->params.cluster_max_std_devs[0];
+        this->params.cluster_max_std_devs[1] *= this->params.cluster_max_std_devs[1];
+        this->params.cluster_max_std_devs[2] *= this->params.cluster_max_std_devs[2];
     }
 
     int getCluster(const NodeIndex &index) {
@@ -207,6 +204,8 @@ struct KDTreeClustering {
     {
         queue.reserve(kdtree->leafCount());
         kdtree->getLeaves(queue, true);
+
+        std::vector<math::Distribution<3>> distributions;
         for(NodePtr &node : queue) {
             PCLKDTreeNode *n = (PCLKDTreeNode*) node.get();
             /// node already clustered
@@ -214,16 +213,48 @@ struct KDTreeClustering {
                 continue;
             /// spawn a new cluster
             indices.emplace_back(pcl::PointIndices());
+            distributions.emplace_back(n->distribution);
+
             pcl::PointIndices &indices_entry = indices.back();
             indices_entry.indices.insert(indices_entry.indices.end(), n->indices.begin(), n->indices.end());
             n->cluster = cluster_count;
             ++cluster_count;
-            clusterNode(node, indices_entry);
+            clusterNode(node, indices_entry, distributions.back());
         }
+
+        std::vector<pcl::PointIndices> tmp;
+        tmp.reserve(indices.size());
+        for(std::size_t i = 0 ; i < indices.size() ; ++i) {
+            std::size_t size = indices[i].indices.size();
+            if(validSize(size) && validCovariance(distributions[i])) {
+                tmp.emplace_back(indices[i]);
+            }
+        }
+
+        std::swap(tmp, indices);
+
+    }
+
+    inline bool validSize(const std::size_t size)
+    {
+        return size >= params.cluster_sizes[0] &&
+               size <= params.cluster_sizes[1];
+    }
+
+    inline bool validCovariance(math::Distribution<3> &distribution)
+    {
+        math::Distribution<3>::MatrixType cov = distribution.getCovariance();
+        bool valid = true;
+        for(std::size_t i = 0 ; i < 3 ; ++i) {
+            valid = params.cluster_max_std_devs[i] == 0.0 ||
+                    cov(i,i) <= params.cluster_max_std_devs[i];
+        }
+        return valid;
     }
 
     inline void clusterNode(NodePtr           &node,
-                            pcl::PointIndices &indices)
+                            pcl::PointIndices &indices,
+                            math::Distribution<3> &distribution)
     {
         /// check surrounding indeces
         NodeIndex index;
@@ -235,21 +266,29 @@ struct KDTreeClustering {
             if(neighbour->cluster > -1)
                 continue;
 
-            PCLKDTreeNode *n = (PCLKDTreeNode*) neighbour.get();
+            PCLKDTreeNode *neighbour_ptr = (PCLKDTreeNode*) neighbour.get();
 
             if (params.cluster_distance_and_weights[0] != 0)
             {
-                PCLKDTreeNode::MeanType diff = dynamic_cast<PCLKDTreeNode*>(node.get())->mean - n->mean;
+                PCLKDTreeNode *node_ptr = (PCLKDTreeNode*) node.get();
+                PCLKDTreeNode::MeanType diff = node_ptr->distribution.getMean() - neighbour_ptr->distribution.getMean();
                 diff(0) *= params.cluster_distance_and_weights[1];
                 diff(1) *= params.cluster_distance_and_weights[2];
                 diff(2) *= params.cluster_distance_and_weights[3];
                 auto dist = diff.dot(diff);
                 if (dist > params.cluster_distance_and_weights[0])
                     continue;
+
+                distribution += neighbour_ptr->distribution;
+                neighbour_ptr->cluster = node->cluster;
+                indices.indices.insert(indices.indices.end(), neighbour_ptr->indices.begin(), neighbour_ptr->indices.end());
+            } else {
+                distribution += neighbour_ptr->distribution;
+                neighbour_ptr->cluster = node->cluster;
+                indices.indices.insert(indices.indices.end(), neighbour_ptr->indices.begin(), neighbour_ptr->indices.end());
             }
-            n->cluster = node->cluster;
-            indices.indices.insert(indices.indices.end(), n->indices.begin(), n->indices.end());
-            clusterNode(neighbour, indices);
+
+            clusterNode(neighbour, indices, distribution);
         }
 
     }
@@ -284,18 +323,6 @@ void cluster(const typename pcl::PointCloud<PointT>::ConstPtr &cloud,
 
     KDTreeClustering<int,3> clustering(tree, params);
     clustering.cluster(indices);
-
-    //    std::vector<PCLKDTreeNode::Ptr> leaves;
-    //    tree->getLeaves(leaves);
-    //    for(PCLKDTreeNode::Ptr &leaf : leaves) {
-    //        PCLKDTreeNode* l = (PCLKDTreeNode*) leaf.get();
-    //        int c = l->cluster;
-    //        if(c != -1) {
-    //            indices[c].insert(indices[c].end(),
-    //                              l->indices.begin(),
-    //                              l->indices.end());
-    //        }
-    //    }
 
 }
 /// -------------------------------------------------------------------------------------
@@ -338,26 +365,6 @@ void ClusterPointcloudKDTree::inputCloud(typename pcl::PointCloud<PointT>::Const
                           indices,
                           cluster_params_,
                           *out_cluster_indices);
-    // ** this way sqrt is not necessary and we can still interpret value as a distance
-
-
-    //    for(auto &cluster : cluster_indices) {
-    //        /// check for cluster sizes
-    //        if(cluster.second.size() < (std::size_t) cluster_min_size_)
-    //            continue;
-    //        if(cluster.second.size() > (std::size_t) cluster_max_size_)
-    //            continue;
-
-    //        /// check for covariances
-
-
-
-    //        out_cluster_indices->emplace_back(pcl::PointIndices());
-    //        pcl::PointIndices &entry = out_cluster_indices->back();
-    //        for(std::size_t index : cluster.second) {
-    //            entry.indices.emplace_back(index);
-    //        }
-    //    }
 
     std::stringstream stringstream;
     stringstream << "Found clusters: " << out_cluster_indices->size();
