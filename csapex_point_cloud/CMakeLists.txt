@@ -125,6 +125,8 @@ add_library(csapex_point_cloud_plugin_node
     src/analysis/estimate_normals.cpp
     src/analysis/estimate_center.cpp
 
+    src/math/distribution.hpp
+
     src/pointcloud_generator.cpp
     src/sac_fit.cpp
     src/model_to_marker.cpp

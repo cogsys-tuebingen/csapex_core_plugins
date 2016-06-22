@@ -9,6 +9,13 @@ namespace csapex {
 class ClusterPointcloudKDTree : public csapex::Node
 {
 public:
+    struct ClusterParams {
+        std::array<int, 2>    cluster_sizes;
+        std::array<double, 3> bin_sizes;
+        std::array<double, 3> cluster_max_std_devs;
+        std::array<double, 4> cluster_distance_and_weights;
+    };
+
     ClusterPointcloudKDTree();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
@@ -23,13 +30,7 @@ private:
     Input* in_indices_;
     Output* out_;
     Output* out_debug_;
-
-    double bin_size_x_;
-    double bin_size_y_;
-    double bin_size_z_;
-    int    cluster_min_size_;
-    int    cluster_max_size_;
-    double cluster_distance_;
+    ClusterParams cluster_params_;
 
 };
 }
