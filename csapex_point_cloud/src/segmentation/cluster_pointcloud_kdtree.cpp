@@ -361,6 +361,7 @@ void ClusterPointcloudKDTree::inputCloud(typename pcl::PointCloud<PointT>::Const
     std::shared_ptr<std::vector<pcl::PointIndices> >
             out_cluster_indices(new std::vector<pcl::PointIndices>);
 
+    /// todo : minimum covariance?
     impl::cluster<PointT>(cloud,
                           indices,
                           cluster_params_,
