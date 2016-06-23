@@ -98,7 +98,7 @@ struct PCLKDTreeNode : public kdtree::KDTreeNode<int,3>
 {
     typedef Eigen::Vector3d MeanType;
 
-    std::vector<size_t>   indices;
+    std::list<size_t>     indices;
     math::Distribution<3> distribution;
 
     PCLKDTreeNode() :
@@ -205,40 +205,45 @@ struct KDTreeClustering {
         queue.reserve(kdtree->leafCount());
         kdtree->getLeaves(queue, true);
 
-        std::vector<math::Distribution<3>> distributions;
+        pcl::PointIndices     buffer_indices;
+        math::Distribution<3> buffer_distribution;
+
         for(NodePtr &node : queue) {
             PCLKDTreeNode *n = (PCLKDTreeNode*) node.get();
             /// node already clustered
-            if(n->cluster > -1)
+            if(n->cluster > -1) {
                 continue;
-            /// spawn a new cluster
-            indices.emplace_back(pcl::PointIndices());
-            distributions.emplace_back(n->distribution);
+            } else {
+                std::size_t size = buffer_indices.indices.size();
+                if(size > 0) {
+                    if(validSize(size) && validCovariance(buffer_distribution)) {
+                        indices.emplace_back(buffer_indices);
+                    }
+                }
 
-            pcl::PointIndices &indices_entry = indices.back();
-            indices_entry.indices.insert(indices_entry.indices.end(), n->indices.begin(), n->indices.end());
+                buffer_indices.indices.clear();
+                buffer_distribution.reset();
+            }
+
+            /// spawn a new cluster
             n->cluster = cluster_count;
             ++cluster_count;
-            clusterNode(node, indices_entry, distributions.back());
+
+            clusterNode(node, buffer_indices, buffer_distribution);
         }
 
-        std::vector<pcl::PointIndices> tmp;
-        tmp.reserve(indices.size());
-        for(std::size_t i = 0 ; i < indices.size() ; ++i) {
-            std::size_t size = indices[i].indices.size();
-            if(validSize(size) && validCovariance(distributions[i])) {
-                tmp.emplace_back(indices[i]);
+        std::size_t size = buffer_indices.indices.size();
+        if(size > 0) {
+            if(validSize(size) && validCovariance(buffer_distribution)) {
+                indices.emplace_back(buffer_indices);
             }
         }
-
-        std::swap(tmp, indices);
-
     }
 
     inline bool validSize(const std::size_t size)
     {
         return size >= params.cluster_sizes[0] &&
-               size <= params.cluster_sizes[1];
+                size <= params.cluster_sizes[1];
     }
 
     inline bool validCovariance(math::Distribution<3> &distribution)
@@ -247,7 +252,7 @@ struct KDTreeClustering {
         bool valid = true;
         for(std::size_t i = 0 ; i < 3 ; ++i) {
             valid &= (params.cluster_max_std_devs[i] == 0.0 ||
-                     cov(i,i) <= params.cluster_max_std_devs[i]);
+                      cov(i,i) <= params.cluster_max_std_devs[i]);
         }
         return valid;
     }
@@ -258,39 +263,51 @@ struct KDTreeClustering {
     {
         /// check surrounding indeces
         NodeIndex index;
-        for(std::size_t i = 0 ; i < cluster_mask.rows ; ++i) {
-            cluster_mask.applyToIndex(node->index, i, index);
-            NodePtr neighbour;
-            if(!kdtree->find(index, neighbour))
-                continue;
-            if(neighbour->cluster > -1)
-                continue;
+        const double max_distance = params.cluster_distance_and_weights[0];
+        PCLKDTreeNode::MeanType diff;
+        if(max_distance != 0) {
+            const double w_0 = params.cluster_distance_and_weights[1];
+            const double w_1 = params.cluster_distance_and_weights[2];
+            const double w_2 = params.cluster_distance_and_weights[3];
+            for(std::size_t i = 0 ; i < cluster_mask.rows ; ++i) {
+                cluster_mask.applyToIndex(node->index, i, index);
+                NodePtr neighbour;
+                if(!kdtree->find(index, neighbour))
+                    continue;
+                if(neighbour->cluster > -1)
+                    continue;
 
-            PCLKDTreeNode *neighbour_ptr = (PCLKDTreeNode*) neighbour.get();
-
-            if (params.cluster_distance_and_weights[0] != 0)
-            {
+                PCLKDTreeNode *neighbour_ptr = (PCLKDTreeNode*) neighbour.get();
                 PCLKDTreeNode *node_ptr = (PCLKDTreeNode*) node.get();
-                PCLKDTreeNode::MeanType diff = node_ptr->distribution.getMean() - neighbour_ptr->distribution.getMean();
-                diff(0) *= params.cluster_distance_and_weights[1];
-                diff(1) *= params.cluster_distance_and_weights[2];
-                diff(2) *= params.cluster_distance_and_weights[3];
+                diff = node_ptr->distribution.getMean() - neighbour_ptr->distribution.getMean();
+                diff(0) *= w_0;
+                diff(1) *= w_1;
+                diff(2) *= w_2;
                 auto dist = diff.dot(diff);
-                if (dist > params.cluster_distance_and_weights[0])
+                if (dist > max_distance)
                     continue;
 
                 distribution += neighbour_ptr->distribution;
                 neighbour_ptr->cluster = node->cluster;
                 indices.indices.insert(indices.indices.end(), neighbour_ptr->indices.begin(), neighbour_ptr->indices.end());
-            } else {
+
+                clusterNode(neighbour, indices, distribution);
+            }
+        } else {
+            for(std::size_t i = 0 ; i < cluster_mask.rows ; ++i) {
+                cluster_mask.applyToIndex(node->index, i, index);
+                NodePtr neighbour;
+                if(!kdtree->find(index, neighbour))
+                    continue;
+                if(neighbour->cluster > -1)
+                    continue;
+                PCLKDTreeNode *neighbour_ptr = (PCLKDTreeNode*) neighbour.get();
                 distribution += neighbour_ptr->distribution;
                 neighbour_ptr->cluster = node->cluster;
                 indices.indices.insert(indices.indices.end(), neighbour_ptr->indices.begin(), neighbour_ptr->indices.end());
+                clusterNode(neighbour, indices, distribution);
             }
-
-            clusterNode(neighbour, indices, distribution);
         }
-
     }
 };
 
