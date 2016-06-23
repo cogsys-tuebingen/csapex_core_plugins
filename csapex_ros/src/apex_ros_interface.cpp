@@ -105,10 +105,14 @@ void APEXRosInterface::init(CsApexCore &core)
                         continue;
                     }
 
-                    XmlRpc::XmlRpcValue parameter_value;
-                    ros::param::getCached(parameter_name, parameter_value);
+                    try {
+                        XmlRpc::XmlRpcValue parameter_value;
+                        ros::param::getCached(parameter_name, parameter_value);
 
-                    loadParameterValue(prefix, parameter_name, parameter_value);
+                        loadParameterValue(prefix, parameter_name, parameter_value);
+                    } catch (std::exception e) {
+                        // silence
+                    }
                 }
             }
         }
@@ -146,7 +150,6 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
         return;
     }
 
-
     NodeHandle* nh = nullptr;
     std::string param_name;
     for(std::size_t i = 0, n = levels.size(); i < n - 1; ++i) {
@@ -166,8 +169,12 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
             std::cerr << "searching for param " << param_name << std::endl;
             if (node->hasParameter(param_name))
                 break;
+            std::replace(param_name.begin(), param_name.end(), '_', ' ');
+            std::cerr << "searching for param " << param_name << " (fallback)" << std::endl;
+            if (node->hasParameter(param_name))
+                break;
         }
-        if(i < n- 2) {
+        if(i < n - 2) {
             graph = dynamic_cast<Graph*>(nh->getNode().lock().get());
             if(!graph) {
                 std::cerr << "no parameter for " << parameter_name << ", child " << subname << " is not a graph" << std::endl;
