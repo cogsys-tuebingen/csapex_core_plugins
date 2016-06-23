@@ -10,7 +10,6 @@
 #include <csapex/msg/generic_value_message.hpp>
 #include <kdtree/kdtree.hpp>
 #include <kdtree/kdtree_cluster_mask.hpp>
-#include "../math/distribution.hpp"
 
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
@@ -76,8 +75,15 @@ void ClusterPointcloudKDTree::setupParameters(Parameterizable &parameters)
                             cluster_params_.cluster_std_devs[1]);
     parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/z", 0.0, 3.0, 0.0, 0.0, 0.01),
                             cluster_params_.cluster_std_devs[2]);
-    parameters.addParameter(param::ParameterFactory::declareBool("use principal components", false),
-                            cluster_params_.use_principal_components);
+
+    std::map<std::string, int> covariance_threshold_types = {{"DEFAULT", ClusterParams::DEFAULT},
+                                                             {"PCA2D", ClusterParams::PCA2D},
+                                                             {"PCA3D", ClusterParams::PCA3D}};
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("cluster/std_dev_thresh_type",
+                                                                         covariance_threshold_types,
+                                                                         (int) ClusterParams::DEFAULT),
+                            cluster_params_);
+
 }
 
 void ClusterPointcloudKDTree::process()
@@ -172,16 +178,16 @@ struct PCLKDTreeNodeIndex {
 
 template<typename T, int Dim>
 struct KDTreeClustering {
-    typedef kdtree::KDTree<T, Dim>           KDTreeType;
-    typedef typename KDTreeType::NodeIndex   NodeIndex;
-    typedef typename KDTreeType::NodePtr     NodePtr;
+    typedef kdtree::KDTree<T, Dim>                 KDTreeType;
+    typedef typename KDTreeType::NodeIndex         NodeIndex;
+    typedef typename KDTreeType::NodePtr           NodePtr;
+    typedef ClusterPointcloudKDTree::ClusterParams ClusterParams;
 
-
-    typename KDTreeType::Ptr               kdtree;
-    kdtree::KDTreeClusterMask<Dim>         cluster_mask;
-    std::vector<NodePtr>                   queue;
-    std::size_t                            cluster_count;
-    ClusterPointcloudKDTree::ClusterParams params;
+    typename KDTreeType::Ptr        kdtree;
+    kdtree::KDTreeClusterMask<Dim>  cluster_mask;
+    std::vector<NodePtr>            queue;
+    std::size_t                     cluster_count;
+    ClusterParams                   params;
 
     inline void square(double &value)
     {
@@ -198,6 +204,20 @@ struct KDTreeClustering {
         for(std::size_t i = 0 ; i < 3 ; ++i) {
             square(this->params.cluster_std_devs[i].first);
             square(this->params.cluster_std_devs[i].second);
+        }
+        switch(params.cluster_cov_thresh_type) {
+        case ClusterParams::DEFAULT:
+            this->params.validateCovariance = KDTreeClustering::validateCovDefault;
+            break;
+        case ClusterParams::PCA2D:
+            this->params.validateCovariance = KDTreeClustering::validateCovPCA2D;
+            break;
+        case ClusterParams::PCA3D:
+            this->params.validateCovariance = KDTreeClustering::validateCovPCA3D;
+            break;
+        default:
+            this->params.validateCovariance = KDTreeClustering::validateCovDefault;
+            break;
         }
    }
 
@@ -224,7 +244,8 @@ struct KDTreeClustering {
             } else {
                 std::size_t size = buffer_indices.indices.size();
                 if(size > 0) {
-                    if(validSize(size) && validCovariance(buffer_distribution)) {
+                    if(validateSize(size) &&
+                            (*(params.validateCovariance))(buffer_distribution, params.cluster_std_devs)) {
                         indices.emplace_back(buffer_indices);
                     }
                 }
@@ -242,38 +263,68 @@ struct KDTreeClustering {
 
         std::size_t size = buffer_indices.indices.size();
         if(size > 0) {
-            if(validSize(size) && validCovariance(buffer_distribution)) {
+            if(validateSize(size) &&
+                  (*(params.validateCovariance))(buffer_distribution, params.cluster_std_devs)) {
                 indices.emplace_back(buffer_indices);
             }
         }
     }
 
-    inline bool validSize(const std::size_t size)
+    inline bool validateSize(std::size_t size)
     {
         return size >= params.cluster_sizes[0] &&
                size <= params.cluster_sizes[1];
     }
 
-    inline bool validCovariance(math::Distribution<3> &distribution)
+    inline static bool validateCovDefault(math::Distribution<3> &distribution,
+                                          std::array<std::pair<double, double>, 3> &intervals)
     {
         bool valid = true;
-        if(params.use_principal_components) {
-            math::Distribution<3>::EigenValueSetType eigen_values;
-            distribution.getEigenValues(eigen_values, true);
+        math::Distribution<3>::MatrixType cov;
+        distribution.getCovariance(cov);
+        for(std::size_t i = 0 ; i < 3 ; ++i) {
+            const auto &interval = intervals[i];
+            valid &= cov(i,i) >= interval.first;
+            valid &= (interval.second == 0.0 || cov(i,i) <= interval.second);
+        }
+        return valid;
+    }
 
-            for(std::size_t i = 0 ; i < 3 ; ++i) {
-                const auto &limits = params.cluster_std_devs[i];
-                valid &= eigen_values(i) >= limits.first;
-                valid &= (limits.second == 0.0 || eigen_values(i) <= limits.second);
-            }
-        } else {
-            math::Distribution<3>::MatrixType cov;
-            distribution.getCovariance(cov);
-            for(std::size_t i = 0 ; i < 3 ; ++i) {
-                const auto &limits = params.cluster_std_devs[i];
-                valid &= cov(i,i) >= limits.first;
-                valid &= (limits.second == 0.0 || cov(i,i) <= limits.second);
-            }
+    inline static bool validateCovPCA2D(math::Distribution<3> &distribution,
+                                        std::array<std::pair<double, double>, 3> &intervals)
+    {
+        bool valid = true;
+        math::Distribution<3>::MatrixType cov3D;
+        distribution.getCovariance(cov3D);
+
+        Eigen::Matrix2d cov2D = cov3D.block<2,2>(0,0);
+        Eigen::EigenSolver<Eigen::Matrix2d> solver(cov2D);
+        Eigen::Vector2d eigen_values  = solver.eigenvalues().real();
+
+        for(std::size_t i = 0 ; i < 2 ; ++i) {
+            const auto &interval = intervals[i];
+            valid &= eigen_values[i] >= interval.first;
+            valid &= (interval.second == 0.0 || eigen_values[i] <= interval.second);
+        }
+
+        return valid;
+    }
+
+    inline static bool validateCovPCA3D(math::Distribution<3> &distribution,
+                                        std::array<std::pair<double, double>, 3> &intervals)
+    {
+        bool valid = true;
+        math::Distribution<3>::EigenValueSetType eigen_values;
+        distribution.getEigenValues(eigen_values, true);
+        /// first sort the eigen values by descending so first paramter always corresponds to
+        /// the highest value
+        std::vector<double> eigen_values_vec(eigen_values.data(), eigen_values.data() + 3);
+        std::sort(eigen_values_vec.begin(), eigen_values_vec.end());
+
+        for(std::size_t i = 0 ; i < 3 ; ++i) {
+            const auto &interval = intervals[i];
+            valid &= eigen_values_vec[i] >= interval.first;
+            valid &= (interval.second == 0.0 || eigen_values_vec[i] <= interval.second);
         }
         return valid;
     }
