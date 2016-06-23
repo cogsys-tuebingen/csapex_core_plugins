@@ -70,12 +70,12 @@ void ClusterPointcloudKDTree::setupParameters(Parameterizable &parameters)
                             cluster_params_.cluster_distance_and_weights[2]);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/distance_weights/z", 0.0, 1.0, 1.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[3]);
-    parameters.addParameter(param::ParameterFactory::declareRange("cluster/std_dev/x", 0.0, 3.0, 0.0, 0.01),
-                            cluster_params_.cluster_max_std_devs[0]);
-    parameters.addParameter(param::ParameterFactory::declareRange("cluster/std_dev/y", 0.0, 3.0, 0.0, 0.01),
-                            cluster_params_.cluster_max_std_devs[1]);
-    parameters.addParameter(param::ParameterFactory::declareRange("cluster/std_dev/z", 0.0, 3.0, 0.0, 0.01),
-                            cluster_params_.cluster_max_std_devs[2]);
+    parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/x", 0.0, 3.0, 0.0, 0.0, 0.01),
+                            cluster_params_.cluster_std_devs[0]);
+    parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/y", 0.0, 3.0, 0.0, 0.0, 0.01),
+                            cluster_params_.cluster_std_devs[1]);
+    parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/z", 0.0, 3.0, 0.0, 0.0, 0.01),
+                            cluster_params_.cluster_std_devs[2]);
 }
 
 void ClusterPointcloudKDTree::process()
@@ -181,17 +181,23 @@ struct KDTreeClustering {
     std::size_t                            cluster_count;
     ClusterPointcloudKDTree::ClusterParams params;
 
+    inline void square(double &value)
+    {
+        value *= value;
+    }
+
     KDTreeClustering(const typename KDTreeType::Ptr &kdtree,
                      const ClusterPointcloudKDTree::ClusterParams &params) :
         kdtree(kdtree),
         cluster_count(0),
         params(params)
     {
-        this->params.cluster_distance_and_weights[0] *= this->params.cluster_distance_and_weights[0];
-        this->params.cluster_max_std_devs[0] *= this->params.cluster_max_std_devs[0];
-        this->params.cluster_max_std_devs[1] *= this->params.cluster_max_std_devs[1];
-        this->params.cluster_max_std_devs[2] *= this->params.cluster_max_std_devs[2];
-    }
+        square(this->params.cluster_distance_and_weights[0]);
+        for(std::size_t i = 0 ; i < 3 ; ++i) {
+            square(this->params.cluster_std_devs[i].first);
+            square(this->params.cluster_std_devs[i].second);
+        }
+   }
 
     int getCluster(const NodeIndex &index) {
         NodePtr node;
@@ -243,7 +249,7 @@ struct KDTreeClustering {
     inline bool validSize(const std::size_t size)
     {
         return size >= params.cluster_sizes[0] &&
-                size <= params.cluster_sizes[1];
+               size <= params.cluster_sizes[1];
     }
 
     inline bool validCovariance(math::Distribution<3> &distribution)
@@ -251,8 +257,9 @@ struct KDTreeClustering {
         math::Distribution<3>::MatrixType cov = distribution.getCovariance();
         bool valid = true;
         for(std::size_t i = 0 ; i < 3 ; ++i) {
-            valid &= (params.cluster_max_std_devs[i] == 0.0 ||
-                      cov(i,i) <= params.cluster_max_std_devs[i]);
+            const auto &limits = params.cluster_std_devs[i];
+            valid &= cov(i,i) >= limits.first;
+            valid &= (limits.second == 0.0 || cov(i,i) <= limits.second);
         }
         return valid;
     }
@@ -317,30 +324,39 @@ template<typename PointT>
 void cluster(const typename pcl::PointCloud<PointT>::ConstPtr &cloud,
              const pcl::PointIndicesPtr                       &cloud_indeces,
              const ClusterPointcloudKDTree::ClusterParams     &params,
+             ClusterPointcloudKDTree                         *self,
              std::vector<pcl::PointIndices>                   &indices)
 {
+
     PCLKDTreeNodeIndex<PointT>  index(params.bin_sizes);
     kdtree::KDTree<int, 3>::Ptr tree(new kdtree::KDTree<int, 3>);
-    if(cloud_indeces) {
-        for(const int i : cloud_indeces->indices) {
-            PCLKDTreeNode::Ptr node;
 
-            index.get(cloud->at(i), i, node);
-            if(node)
-                tree->insertNode(node);
-        }
-    } else {
-        for(std::size_t i = 0 ; i < cloud->size() ; ++i) {
-            PCLKDTreeNode::Ptr node;
-            index.get(cloud->at(i), i, node);
-            if(node)
-                tree->insertNode(node);
+    {
+        NAMED_INTERLUDE_INSTANCE(self, build_tree);
+
+        if(cloud_indeces) {
+            for(const int i : cloud_indeces->indices) {
+                PCLKDTreeNode::Ptr node;
+
+                index.get(cloud->at(i), i, node);
+                if(node)
+                    tree->insertNode(node);
+            }
+        } else {
+            for(std::size_t i = 0 ; i < cloud->size() ; ++i) {
+                PCLKDTreeNode::Ptr node;
+                index.get(cloud->at(i), i, node);
+                if(node)
+                    tree->insertNode(node);
+            }
         }
     }
+    {
+        NAMED_INTERLUDE_INSTANCE(self, cluster_tree);
 
-    KDTreeClustering<int,3> clustering(tree, params);
-    clustering.cluster(indices);
-
+        KDTreeClustering<int,3> clustering(tree, params);
+        clustering.cluster(indices);
+    }
 }
 /// -------------------------------------------------------------------------------------
 /// dead end implementaions -------------------------------------------------------------
@@ -359,6 +375,7 @@ template<>
 void cluster<pcl::PointNormal>(const typename pcl::PointCloud<pcl::PointNormal>::ConstPtr &cloud,
                                const pcl::PointIndicesPtr                                 &cloud_indeces,
                                const ClusterPointcloudKDTree::ClusterParams               &params,
+                               ClusterPointcloudKDTree                                    *self,
                                std::vector<pcl::PointIndices>                             &indices)
 {
     throw std::runtime_error("pcl::PointNormal not supported!");
@@ -383,6 +400,7 @@ void ClusterPointcloudKDTree::inputCloud(typename pcl::PointCloud<PointT>::Const
     impl::cluster<PointT>(cloud,
                           indices,
                           cluster_params_,
+                          this,
                           *out_cluster_indices);
 
     std::stringstream stringstream;
