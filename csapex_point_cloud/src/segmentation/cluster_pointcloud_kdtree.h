@@ -16,6 +16,7 @@ public:
         std::array<double, 3>                    bin_sizes;
         std::array<std::pair<double, double>, 3> cluster_std_devs;
         std::array<double, 4>                    cluster_distance_and_weights;
+        bool                                     use_principal_components;
     };
 
     ClusterPointcloudKDTree();

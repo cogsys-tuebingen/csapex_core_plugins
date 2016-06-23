@@ -170,26 +170,34 @@ public:
         }
     }
 
-    inline EigenValueSetType getEigenValues()
+    inline EigenValueSetType getEigenValues(const bool _abs = false)
     {
         assert(guardian_of_the_galaxy == 0xDEADBEEF);
 
         if(n_1 >= 2) {
             if(dirty)
                 update();
-            return eigen_values;
+
+            if(_abs)
+                return eigen_values.cwiseAbs();
+            else
+                return eigen_values;
         }
         return EigenValueSetType::Zero();
     }
 
-    inline void getEigenValues(EigenValueSetType &_eigen_values)
+    inline void getEigenValues(EigenValueSetType &_eigen_values,
+                               const double _abs = false)
     {
         assert(guardian_of_the_galaxy == 0xDEADBEEF);
 
         if(n_1 >= 2) {
             if(dirty)
                 update();
-            _eigen_values = eigen_values;
+            if(_abs)
+                _eigen_values = eigen_values.cwiseAbs();
+            else
+                _eigen_values = eigen_values;
         } else {
             _eigen_values = EigenValueSetType::Zero();
         }

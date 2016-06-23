@@ -76,6 +76,8 @@ void ClusterPointcloudKDTree::setupParameters(Parameterizable &parameters)
                             cluster_params_.cluster_std_devs[1]);
     parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/z", 0.0, 3.0, 0.0, 0.0, 0.01),
                             cluster_params_.cluster_std_devs[2]);
+    parameters.addParameter(param::ParameterFactory::declareBool("use principal components", false),
+                            cluster_params_.use_principal_components);
 }
 
 void ClusterPointcloudKDTree::process()
@@ -254,12 +256,24 @@ struct KDTreeClustering {
 
     inline bool validCovariance(math::Distribution<3> &distribution)
     {
-        math::Distribution<3>::MatrixType cov = distribution.getCovariance();
         bool valid = true;
-        for(std::size_t i = 0 ; i < 3 ; ++i) {
-            const auto &limits = params.cluster_std_devs[i];
-            valid &= cov(i,i) >= limits.first;
-            valid &= (limits.second == 0.0 || cov(i,i) <= limits.second);
+        if(params.use_principal_components) {
+            math::Distribution<3>::EigenValueSetType eigen_values;
+            distribution.getEigenValues(eigen_values, true);
+
+            for(std::size_t i = 0 ; i < 3 ; ++i) {
+                const auto &limits = params.cluster_std_devs[i];
+                valid &= eigen_values(i) >= limits.first;
+                valid &= (limits.second == 0.0 || eigen_values(i) <= limits.second);
+            }
+        } else {
+            math::Distribution<3>::MatrixType cov;
+            distribution.getCovariance(cov);
+            for(std::size_t i = 0 ; i < 3 ; ++i) {
+                const auto &limits = params.cluster_std_devs[i];
+                valid &= cov(i,i) >= limits.first;
+                valid &= (limits.second == 0.0 || cov(i,i) <= limits.second);
+            }
         }
         return valid;
     }
