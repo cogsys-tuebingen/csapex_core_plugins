@@ -6,21 +6,20 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <kdtree/buffered_kdtree.hpp>
 #include <kdtree/buffered_kdtree_node.hpp>
+#include "../math/distribution.hpp"
 
 namespace buffered_tree
 {
 struct NodeImpl
 {
-    typedef Eigen::Vector3f MeanType;
+    typedef Eigen::Vector3d MeanType;
 
     std::vector<std::size_t> indices;
-    MeanType    mean = MeanType::Zero();
-    std::size_t mean_count = 1;
+    math::Distribution<3>    distribution;
 
     inline void overwrite(const NodeImpl& other)
     {
-        mean = (mean_count * mean + other.mean_count * other.mean) / (mean_count + other.mean_count);
-        mean_count += other.mean_count;
+        distribution += other.distribution;
         indices.insert(indices.end(),
                        other.indices.begin(),
                        other.indices.end());
@@ -32,16 +31,12 @@ typedef kdtree::buffered::KDTreeNode<int, 3, NodeImpl> BufferedKDTreeNode;
 
 template<typename PointT>
 struct PCLKDTreeNodeIndex {
-    double size_x;
-    double size_y;
-    double size_z;
+    typedef std::array<double, 3> Size;
 
-    PCLKDTreeNodeIndex(const double size_x,
-                       const double size_y,
-                       const double size_z) :
-        size_x(size_x),
-        size_y(size_y),
-        size_z(size_z)
+    Size size;
+
+    PCLKDTreeNodeIndex(const Size& size) :
+        size(size)
     {
     }
 
@@ -57,13 +52,10 @@ struct PCLKDTreeNodeIndex {
     {
         BufferedKDTreeNode node;
         node.wrapped.indices.emplace_back(index);
-        node.wrapped.mean_count = 1;
-        node.wrapped.mean[0] = point.x;
-        node.wrapped.mean[1] = point.y;
-        node.wrapped.mean[2] = point.z;
-        node.index[0] = floor(point.x / size_x);
-        node.index[1] = floor(point.y / size_y);
-        node.index[2] = floor(point.z / size_z);
+        node.wrapped.distribution.add(Eigen::Vector3d(point.x, point.y, point.z));
+        node.index[0] = floor(point.x / size[0]);
+        node.index[1] = floor(point.y / size[1]);
+        node.index[2] = floor(point.z / size[2]);
 
         return node;
     }
@@ -77,6 +69,20 @@ namespace csapex {
 class ClusterPointcloudKDTreeBuffered : public csapex::Node
 {
 public:
+    struct ClusterParams
+    {
+        enum CovarianceThresholdType {DEFAULT, PCA2D, PCA3D};
+
+        std::array<int, 2>                       cluster_sizes;
+        std::array<double, 3>                    bin_sizes;
+        std::array<std::pair<double, double>, 3> cluster_std_devs;
+        std::array<double, 4>                    cluster_distance_and_weights;
+        CovarianceThresholdType                  cluster_cov_thresh_type;
+
+        bool (*validateCovariance)(math::Distribution<3> &distribution,
+                                   std::array<std::pair<double, double>, 3> &intervals);
+    };
+
     ClusterPointcloudKDTreeBuffered();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
@@ -92,12 +98,7 @@ private:
     Output* out_;
     Output* out_debug_;
 
-    double bin_size_x_;
-    double bin_size_y_;
-    double bin_size_z_;
-    int    cluster_min_size_;
-    int    cluster_max_size_;
-    double cluster_distance_;
+    ClusterParams cluster_params_;
 
     std::size_t last_size_;
     typename buffered_tree::TreeType::Ptr kdtree_;
