@@ -86,7 +86,7 @@ void ClusterPointcloudKDTreeBuffered::setupParameters(Parameterizable &parameter
     parameters.addParameter(param::ParameterFactory::declareParameterSet("cluster/std_dev_thresh_type",
                                                                          covariance_threshold_types,
                                                                          (int) ClusterParams::DEFAULT),
-                            cluster_params_);
+                            reinterpret_cast<int&>(cluster_params_.cluster_cov_thresh_type));
 }
 
 void ClusterPointcloudKDTreeBuffered::process()
