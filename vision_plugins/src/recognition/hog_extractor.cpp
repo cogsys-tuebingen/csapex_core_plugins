@@ -61,7 +61,7 @@ void HOGExtractor::setupParameters(Parameterizable& parameters)
                                                                   param::ParameterDescription("Size of the cells."),
                                                                   4, 16, 8, 1),
                             cell_size_);
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/block size",
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/block_size",
                                                                   param::ParameterDescription("Cell count in both dimension of a block."),
                                                                   1, 4, 2, 1),
                             block_size_);

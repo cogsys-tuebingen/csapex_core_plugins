@@ -111,7 +111,7 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
                                        custom_active,
                                        cell_size_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/block size",
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/block_size",
                                                                              param::ParameterDescription("Cell count in both dimension of a block."),
                                                                              1, 4, 2, 1),
                                        custom_active,
