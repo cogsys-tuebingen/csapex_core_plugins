@@ -288,13 +288,16 @@ void ClusterPointcloudKDTreeBuffered::inputCloud(typename pcl::PointCloud<PointT
 
     {
         NAMED_INTERLUDE(init_tree);
-        if (!kdtree_ || size > last_size_)
+        if (!kdtree_  || size > last_size_)
         {
             kdtree_.reset(new detail_buffered::KDTree(2 * size + 1));
             last_size_ = size;
         }
+//        if (!kdtree_)
+//            kdtree_.reset(new detail_buffered::KDTree(64));
+        else
+            kdtree_->clear();
 
-        kdtree_->clear();
     }
 
     std::shared_ptr<std::vector<pcl::PointIndices>> out_cluster_indices = std::make_shared<std::vector<pcl::PointIndices>>();
