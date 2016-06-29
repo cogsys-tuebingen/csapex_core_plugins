@@ -11,32 +11,6 @@
 #include <csapex/utility/timer.h>
 #include <csapex/utility/interlude.hpp>
 
-/// SYSTEM
-#include <boost/mpl/for_each.hpp>
-#include <tf/tf.h>
-
-/// PCL
-#if __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Woverloaded-virtual"
-#pragma clang diagnostic ignored "-Wsign-compare"
-#endif //__clang__
-#include <pcl/ModelCoefficients.h>
-#include <pcl/point_types.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/filters/extract_indices.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/features/normal_3d.h>
-#include <pcl/kdtree/kdtree.h>
-#include <pcl/search/impl/kdtree.hpp>
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl/segmentation/extract_clusters.h>
-#if __clang__
-#pragma clang diagnostic pop
-#endif //__clang__
-
 
 CSAPEX_REGISTER_CLASS(csapex::ClusterPointcloudKDTreeBuffered, csapex::Node)
 
@@ -103,76 +77,69 @@ void ClusterPointcloudKDTreeBuffered::setup(NodeModifier& node_modifier)
 namespace detail_buffered
 {
 
-template<typename TreeType>
-class KDTreeClustering
+class Validator
 {
     using ClusterParams = ClusterPointcloudKDTreeBuffered::ClusterParams;
-public:
-    typedef TreeType                            KDTreeType;
-    typedef KDTreeClustering<TreeType>          ClusteringType;
-    typedef typename KDTreeType::NodeType       NodeType;
-    typedef typename KDTreeType::IndexTraits    IndexTraits;
-    typedef typename KDTreeType::IndexType      IndexType;
-
-    static_assert(std::is_base_of<kdtree::buffered::KDTreeNodeClusteringSupport, typename NodeType::DataType>::value,
-                  "NodeType does not have KDTreeNodeClusteringSupport");
 
 public:
-    inline void square(double &value)
-    {
-        value *= value;
-    }
-
-    KDTreeClustering(KDTreeType& tree,
-                     const ClusterParams& params) :
-        _tree(tree),
-        _cluster_count(0),
-        _neighbourhood(tree),
-        params(params)
+    Validator(const ClusterParams& params,
+              const pcl::PointIndices& indices,
+              const math::Distribution<3>& distribution) :
+        params(params),
+        buffer_indices(indices),
+        buffer_distribution(distribution)
     {
         square(this->params.cluster_distance_and_weights[0]);
         for(std::size_t i = 0 ; i < 3 ; ++i) {
             square(this->params.cluster_std_devs[i].first);
             square(this->params.cluster_std_devs[i].second);
         }
-        switch(params.cluster_cov_thresh_type) {
-        case ClusterParams::DEFAULT:
-            this->params.validateCovariance = KDTreeClustering::validateCovDefault;
-            break;
-        case ClusterParams::PCA2D:
-            this->params.validateCovariance = KDTreeClustering::validateCovPCA2D;
-            break;
-        case ClusterParams::PCA3D:
-            this->params.validateCovariance = KDTreeClustering::validateCovPCA3D;
-            break;
-        default:
-            this->params.validateCovariance = KDTreeClustering::validateCovDefault;
-            break;
-        }
     }
 
-    inline bool validateSize(std::size_t size)
+    inline bool validate() const
     {
-        return size >= params.cluster_sizes[0] &&
-               size <= params.cluster_sizes[1];
+        if (!validateSize(buffer_indices.indices.size()))
+            return false;
+
+        if (params.cluster_distance_and_weights[0] != 0)
+        {
+            switch (params.cluster_cov_thresh_type)
+            {
+            default:
+            case ClusterParams::DEFAULT: return validateCovDefault(buffer_distribution);
+            case ClusterParams::PCA2D: return validateCovPCA2D(buffer_distribution);
+            case ClusterParams::PCA3D: return validateCovPCA3D(buffer_distribution);
+            }
+        }
+        return true;
     }
 
-    inline static bool validateCovDefault(math::Distribution<3> &distribution,
-                                          std::array<std::pair<double, double>, 3> &intervals)
+private:
+    inline void square(double &value)
+    {
+        value *= value;
+    }
+
+    inline bool validateSize(std::size_t size) const
+    {
+        return size >= static_cast<std::size_t>(params.cluster_sizes[0]) &&
+               size <= static_cast<std::size_t>(params.cluster_sizes[1]);
+    }
+
+    inline bool validateCovDefault(const math::Distribution<3>& distribution) const
     {
         bool valid = true;
         math::Distribution<3>::MatrixType cov;
         distribution.getCovariance(cov);
         for(std::size_t i = 0 ; i < 3 ; ++i) {
-            const auto &interval = intervals[i];
+            const auto &interval = params.cluster_std_devs[i];
             valid &= cov(i,i) >= interval.first;
             valid &= (interval.second == 0.0 || cov(i,i) <= interval.second);
         }
         return valid;
     }
 
-    inline static bool validateCovPCA2D(math::Distribution<3> &distribution,
-                                        std::array<std::pair<double, double>, 3> &intervals)
+    inline bool validateCovPCA2D(const math::Distribution<3>& distribution) const
     {
         bool valid = true;
         math::Distribution<3>::MatrixType cov3D;
@@ -183,7 +150,7 @@ public:
         Eigen::Vector2d eigen_values  = solver.eigenvalues().real();
 
         for(std::size_t i = 0 ; i < 2 ; ++i) {
-            const auto &interval = intervals[i];
+            const auto &interval = params.cluster_std_devs[i];
             valid &= eigen_values[i] >= interval.first;
             valid &= (interval.second == 0.0 || eigen_values[i] <= interval.second);
         }
@@ -191,8 +158,7 @@ public:
         return valid;
     }
 
-    inline static bool validateCovPCA3D(math::Distribution<3> &distribution,
-                                        std::array<std::pair<double, double>, 3> &intervals)
+    inline bool validateCovPCA3D(const math::Distribution<3> &distribution) const
     {
         bool valid = true;
         math::Distribution<3>::EigenValueSetType eigen_values;
@@ -203,115 +169,17 @@ public:
         std::sort(eigen_values_vec.begin(), eigen_values_vec.end());
 
         for(std::size_t i = 0 ; i < 3 ; ++i) {
-            const auto &interval = intervals[i];
+            const auto &interval = params.cluster_std_devs[i];
             valid &= eigen_values_vec[i] >= interval.first;
             valid &= (interval.second == 0.0 || eigen_values_vec[i] <= interval.second);
         }
         return valid;
     }
 
-    inline void cluster(std::vector<pcl::PointIndices>& indices)
-    {
-        int cluster_idx = 0;
-
-        pcl::PointIndices     buffer_indices;
-        math::Distribution<3> buffer_distribution;
-
-        _tree.traverse_leafs([this, &cluster_idx, &buffer_indices, &buffer_distribution, &indices](NodeType& node)
-        {
-            if (node.data.cluster > -1)
-                return;
-            else
-            {
-                std::size_t size = buffer_indices.indices.size();
-                if (size > 0)
-                {
-                    if (validateSize(size)
-                            && (*(params.validateCovariance))(buffer_distribution, params.cluster_std_devs))
-                        indices.emplace_back(buffer_indices);
-                }
-
-                buffer_indices.indices.clear();
-                buffer_distribution.reset();
-            }
-
-            node.data.cluster = cluster_idx;
-            ++cluster_idx;
-            cluster(node, buffer_indices, buffer_distribution);
-        });
-
-        std::size_t size = buffer_indices.indices.size();
-        if (size > 0)
-        {
-            if(validateSize(size)
-                    && (*(params.validateCovariance))(buffer_distribution, params.cluster_std_devs))
-                indices.emplace_back(buffer_indices);
-        }
-
-        _cluster_count = cluster_idx;
-    }
-
-    inline std::size_t cluster_count() const
-    {
-        return _cluster_count;
-    }
-
 private:
-    inline void cluster(NodeType& node,
-                        pcl::PointIndices& indices,
-                        math::Distribution<3>& distribution)
-    {
-        using MeanType = Eigen::Matrix<double, 3, 1>;
-        const double max_distance = params.cluster_distance_and_weights[0];
-
-        if (max_distance != 0.0)
-        {
-            const double w_0 = params.cluster_distance_and_weights[1];
-            const double w_1 = params.cluster_distance_and_weights[2];
-            const double w_2 = params.cluster_distance_and_weights[3];
-
-            _neighbourhood.visit(node.index, [this, &node, &indices, &distribution, w_0, w_1, w_2, max_distance](NodeType& neighbour)
-            {
-                if (neighbour.data.cluster > -1)
-                    return;
-
-                MeanType diff = node.data.distribution.getMean() - neighbour.data.distribution.getMean();
-                diff(0) *= w_0;
-                diff(1) *= w_1;
-                diff(2) *= w_2;
-                auto dist = diff.dot(diff);
-                if (dist > max_distance)
-                    return;
-
-                distribution += neighbour.data.distribution;
-                indices.indices.insert(indices.indices.end(), neighbour.data.indices.begin(), neighbour.data.indices.end());
-
-                neighbour.data.cluster = node.data.cluster;
-                cluster(neighbour, indices, distribution);
-            });
-        }
-        else
-        {
-            _neighbourhood.visit(node.index, [this, &node, &indices, &distribution](NodeType& neighbour)
-            {
-                if (neighbour.data.cluster > -1)
-                    return;
-
-                distribution += neighbour.data.distribution;
-                indices.indices.insert(indices.indices.end(), neighbour.data.indices.begin(), neighbour.data.indices.end());
-
-                neighbour.data.cluster = node.data.cluster;
-                cluster(neighbour, indices, distribution);
-            });
-        }
-    }
-
-
-private:
-    KDTreeType& _tree;
-    std::size_t _cluster_count;
-    kdtree::buffered::KDTreeIndexNeigbourhood<TreeType, IndexTraits> _neighbourhood;
     ClusterParams params;
+    const pcl::PointIndices& buffer_indices;
+    const math::Distribution<3>& buffer_distribution;
 };
 
 template<typename PointT>
@@ -333,7 +201,7 @@ void cluster(const KDTreePtr&                                       tree,
             {
                 const PointT& point = cloud->at(i);
                 if (index.is_valid(point))
-                    tree->insert(index.create(point), NodeData(point, i));
+                    tree->insert_bulk(index.create(point), NodeData(point, i));
             }
         }
         else
@@ -342,17 +210,63 @@ void cluster(const KDTreePtr&                                       tree,
             {
                 const PointT& point = cloud->at(i);
                 if (index.is_valid(point))
-                    tree->prepare(index.create(point), NodeData(point, i));
-//                    tree->insert(index.create(point), NodeData(point, i));
+                    tree->insert_bulk(index.create(point), NodeData(point, i));
             }
-            tree->load();
         }
+        tree->load_bulk();
     }
     {
         NAMED_INTERLUDE_INSTANCE(self, cluster_tree);
 
-        KDTreeClustering<KDTree> clustering(*tree, params);
-        clustering.cluster(indicies);
+
+        pcl::PointIndices     buffer_indices;
+        math::Distribution<3> buffer_distribution;
+
+        using MeanType = math::Distribution<3>::PointType;
+        const double max_distance = params.cluster_distance_and_weights[0];
+        const double w_0 = params.cluster_distance_and_weights[1];
+        const double w_1 = params.cluster_distance_and_weights[2];
+        const double w_2 = params.cluster_distance_and_weights[3];
+
+        Validator validator(params, buffer_indices, buffer_distribution);
+
+        kdtree::buffered::KDTreeClustering<KDTree> clustering(*tree);
+
+        clustering.set_cluster_init([&](const NodeData& data)
+        {
+            if (validator.validate())
+                indicies.emplace_back(std::move(buffer_indices));
+            else
+                buffer_indices.indices.clear();
+
+            buffer_distribution.reset();
+
+            return true;
+        });
+
+        clustering.set_cluster_extend([&](const NodeData& node_data, const NodeData& neighbour_data)
+        {
+            if (max_distance != 0)
+            {
+                MeanType diff = node_data.distribution.getMean() - neighbour_data.distribution.getMean();
+                diff(0) *= w_0;
+                diff(1) *= w_1;
+                diff(2) *= w_2;
+                auto dist = diff.dot(diff);
+                if (dist > max_distance)
+                    return false;
+            }
+
+            buffer_distribution += neighbour_data.distribution;
+            buffer_indices.indices.insert(buffer_indices.indices.end(), neighbour_data.indices.begin(), neighbour_data.indices.end());
+
+            return true;
+        });
+
+        clustering.cluster();
+
+        if (validator.validate())
+            indicies.emplace_back(std::move(buffer_indices));
     }
 
 }
