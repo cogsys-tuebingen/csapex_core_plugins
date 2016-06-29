@@ -4,12 +4,10 @@
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
-#include <kdtree/buffered/kdtree.hpp>
-#include <kdtree/buffered/kdtree_node.hpp>
-#include <kdtree/buffered/kdtree_clustering.hpp>
+#include <kdtree/kdtree.hpp>
 #include "../math/distribution.hpp"
 
-namespace detail_buffered
+namespace detail_filtered
 {
 struct NodeIndex
 {
@@ -37,7 +35,7 @@ struct NodeIndex
     }
 };
 
-struct NodeData : public kdtree::buffered::KDTreeNodeClusteringSupport
+struct NodeData : public kdtree::KDTreeNodeClusteringSupport
 {
     std::vector<std::size_t> indices;
     math::Distribution<3>    distribution;
@@ -64,9 +62,10 @@ using KDTree = kdtree::buffered::KDTree<NodeIndex, NodeData>;
 using KDTreePtr = std::shared_ptr<KDTree>;
 }
 
-namespace csapex {
+namespace csapex
+{
 
-class ClusterPointcloudKDTreeBuffered : public csapex::Node
+class ClusterPointcloudKDTreeFiltered : public csapex::Node
 {
 public:
     struct ClusterParams
@@ -83,7 +82,7 @@ public:
                                    std::array<std::pair<double, double>, 3> &intervals);
     };
 
-    ClusterPointcloudKDTreeBuffered();
+    ClusterPointcloudKDTreeFiltered();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
@@ -101,7 +100,7 @@ private:
     ClusterParams cluster_params_;
 
     std::size_t last_size_;
-    detail_buffered::KDTreePtr kdtree_;
+    detail_filtered::KDTreePtr kdtree_;
 
 };
 }

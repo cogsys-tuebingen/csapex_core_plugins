@@ -1,4 +1,4 @@
-#include "cluster_pointcloud_kdtree_buffered.h"
+#include "cluster_pointcloud_kdtree_filtered.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -12,18 +12,18 @@
 #include <csapex/utility/interlude.hpp>
 
 
-CSAPEX_REGISTER_CLASS(csapex::ClusterPointcloudKDTreeBuffered, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ClusterPointcloudKDTreeFiltered, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 
-ClusterPointcloudKDTreeBuffered::ClusterPointcloudKDTreeBuffered() :
+ClusterPointcloudKDTreeFiltered::ClusterPointcloudKDTreeFiltered() :
     last_size_(0)
 {
 }
 
-void ClusterPointcloudKDTreeBuffered::setupParameters(Parameterizable &parameters)
+void ClusterPointcloudKDTreeFiltered::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareRange("bin/size_x", 0.01, 8.0, 0.1, 0.01),
                             cluster_params_.bin_sizes[0]);
@@ -59,13 +59,13 @@ void ClusterPointcloudKDTreeBuffered::setupParameters(Parameterizable &parameter
                             reinterpret_cast<int&>(cluster_params_.cluster_cov_thresh_type));
 }
 
-void ClusterPointcloudKDTreeBuffered::process()
+void ClusterPointcloudKDTreeFiltered::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_cloud_));
-    boost::apply_visitor(PointCloudMessage::Dispatch<ClusterPointcloudKDTreeBuffered>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<ClusterPointcloudKDTreeFiltered>(this, msg), msg->value);
 }
 
-void ClusterPointcloudKDTreeBuffered::setup(NodeModifier& node_modifier)
+void ClusterPointcloudKDTreeFiltered::setup(NodeModifier& node_modifier)
 {
     in_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
     in_indices_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
@@ -74,12 +74,12 @@ void ClusterPointcloudKDTreeBuffered::setup(NodeModifier& node_modifier)
     out_debug_ = node_modifier.addOutput<std::string>("Debug Info");
 }
 
-namespace detail_buffered
+namespace detail_filtered
 {
 
 class Validator
 {
-    using ClusterParams = ClusterPointcloudKDTreeBuffered::ClusterParams;
+    using ClusterParams = ClusterPointcloudKDTreeFiltered::ClusterParams;
 
 public:
     Validator(const ClusterParams& params,
@@ -186,8 +186,8 @@ template<typename PointT>
 void cluster(const KDTreePtr&                                       tree,
              const typename pcl::PointCloud<PointT>::ConstPtr&      cloud,
              const pcl::PointIndices::ConstPtr&                     cloud_indices,
-             const ClusterPointcloudKDTreeBuffered::ClusterParams&  params,
-             ClusterPointcloudKDTreeBuffered*                       self,
+             const ClusterPointcloudKDTreeFiltered::ClusterParams&  params,
+             ClusterPointcloudKDTreeFiltered*                       self,
              std::vector<pcl::PointIndices>&                        indicies)
 {
     {
@@ -230,7 +230,7 @@ void cluster(const KDTreePtr&                                       tree,
 
         Validator validator(params, buffer_indices, buffer_distribution);
 
-        kdtree::buffered::KDTreeClustering<KDTree> clustering(*tree);
+        kdtree::KDTreeClustering<KDTree> clustering(*tree);
 
         clustering.set_cluster_init([&](const NodeData& data)
         {
@@ -273,7 +273,7 @@ void cluster(const KDTreePtr&                                       tree,
 }
 
 template <class PointT>
-void ClusterPointcloudKDTreeBuffered::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+void ClusterPointcloudKDTreeFiltered::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     if (cloud->empty())
         return;
@@ -288,13 +288,12 @@ void ClusterPointcloudKDTreeBuffered::inputCloud(typename pcl::PointCloud<PointT
 
     {
         NAMED_INTERLUDE(init_tree);
+
         if (!kdtree_  || size > last_size_)
         {
-            kdtree_.reset(new detail_buffered::KDTree(2 * size + 1));
+            kdtree_.reset(new detail_filtered::KDTree(2 * size + 1));
             last_size_ = size;
         }
-//        if (!kdtree_)
-//            kdtree_.reset(new detail_buffered::KDTree(64));
         else
             kdtree_->clear();
 
@@ -302,7 +301,7 @@ void ClusterPointcloudKDTreeBuffered::inputCloud(typename pcl::PointCloud<PointT
 
     std::shared_ptr<std::vector<pcl::PointIndices>> out_cluster_indices = std::make_shared<std::vector<pcl::PointIndices>>();
 
-    detail_buffered::cluster<PointT>(kdtree_,
+    detail_filtered::cluster<PointT>(kdtree_,
                                      cloud,
                                      indices,
                                      cluster_params_,

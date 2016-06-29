@@ -182,11 +182,11 @@
   <tags>PointCloud</tags>
 </class>
 <class type="csapex::ClusterPointcloudKDTree" base_class_type="csapex::Node">
-  <description>Cluster implementation using kdtree template library.</description>
+  <description>Cluster implementation using buffered kdtree template library.</description>
   <tags>PointCloud</tags>
 </class>
-<class type="csapex::ClusterPointcloudKDTreeBuffered" base_class_type="csapex::Node">
-  <description>Cluster implementation using buffered kdtree template library.</description>
+<class type="csapex::ClusterPointcloudKDTreeFiltered" base_class_type="csapex::Node">
+  <description>Cluster implementation using buffered kdtree template library with additional filter options.</description>
   <tags>PointCloud</tags>
 </class>
 <class type="csapex::LabeledCloudToIndices" base_class_type="csapex::Node">
