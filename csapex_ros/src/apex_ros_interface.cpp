@@ -22,6 +22,7 @@
 
 /// SYSTEM
 #include <boost/regex.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/String.h>
@@ -169,7 +170,7 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
             std::cerr << "searching for param " << param_name << std::endl;
             if (node->hasParameter(param_name))
                 break;
-            std::replace(param_name.begin(), param_name.end(), '_', ' ');
+            boost::algorithm::replace_all(param_name, " ", "_");
             std::cerr << "searching for param " << param_name << " (fallback)" << std::endl;
             if (node->hasParameter(param_name))
                 break;
