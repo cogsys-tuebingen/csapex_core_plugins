@@ -4,11 +4,10 @@
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
-#include <csapex/utility/timer.h>
-#include <csapex/utility/interlude.hpp>
 #include <kdtree/kdtree.hpp>
+#include "../math/distribution.hpp"
 
-namespace detail
+namespace detail_filtered
 {
 struct NodeIndex
 {
@@ -39,6 +38,7 @@ struct NodeIndex
 struct NodeData : public kdtree::KDTreeNodeClusteringSupport
 {
     std::vector<std::size_t> indices;
+    math::Distribution<3>    distribution;
 
     NodeData() = default;
 
@@ -46,10 +46,12 @@ struct NodeData : public kdtree::KDTreeNodeClusteringSupport
     inline NodeData(const PointT& point, std::size_t index)
     {
         indices.emplace_back(index);
+        distribution.add({point.x, point.y, point.z});
     }
 
     inline void merge(const NodeData& other)
     {
+        distribution += other.distribution;
         indices.insert(indices.end(),
                        other.indices.begin(),
                        other.indices.end());
@@ -62,11 +64,25 @@ using KDTreePtr = std::shared_ptr<KDTree>;
 
 namespace csapex
 {
-class ClusterPointcloudKDTree : public csapex::Node
+
+class ClusterPointcloudKDTreeFiltered : public csapex::Node
 {
 public:
+    struct ClusterParams
+    {
+        enum CovarianceThresholdType {DEFAULT, PCA2D, PCA3D};
 
-    ClusterPointcloudKDTree();
+        std::array<double, 3>                    bin_sizes;
+        std::array<int, 2>                       cluster_sizes;
+        std::array<std::pair<double, double>, 3> cluster_std_devs;
+        std::array<double, 4>                    cluster_distance_and_weights;
+        CovarianceThresholdType                  cluster_cov_thresh_type;
+
+        bool (*validateCovariance)(math::Distribution<3> &distribution,
+                                   std::array<std::pair<double, double>, 3> &intervals);
+    };
+
+    ClusterPointcloudKDTreeFiltered();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
@@ -76,19 +92,15 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
-    Input*  in_cloud_;
-    Input*  in_indices_;
+    Input* in_cloud_;
+    Input* in_indices_;
     Output* out_;
     Output* out_debug_;
 
-    struct ClusterParams
-    {
-        std::array<double, 3>   bin_sizes;
-        std::array<int, 2>      cluster_sizes;
-    } cluster_params_;
+    ClusterParams cluster_params_;
 
-    std::size_t        last_size_;
-    detail::KDTreePtr  kdtree_;
+    std::size_t last_size_;
+    detail_filtered::KDTreePtr kdtree_;
 
 };
 }
