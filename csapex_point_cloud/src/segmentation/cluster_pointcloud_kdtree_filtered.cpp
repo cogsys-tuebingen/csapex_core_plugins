@@ -70,7 +70,8 @@ void ClusterPointcloudKDTreeFiltered::setup(NodeModifier& node_modifier)
     in_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
     in_indices_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
 
-    out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
+    out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Clusters");
+    out_rejected_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Rejected Clusters");
     out_debug_ = node_modifier.addOutput<std::string>("Debug Info");
 }
 
@@ -82,6 +83,8 @@ class Validator
     using ClusterParams = ClusterPointcloudKDTreeFiltered::ClusterParams;
 
 public:
+    enum class Result { ACCEPTED, TO_SMALL, REJECTED };
+
     Validator(const ClusterParams& params,
               const pcl::PointIndices& indices,
               const math::Distribution<3>& distribution) :
@@ -96,22 +99,22 @@ public:
         }
     }
 
-    inline bool validate() const
+    inline Result validate() const
     {
         if (!validateSize(buffer_indices.indices.size()))
-            return false;
+            return Result::TO_SMALL;
 
         if (params.cluster_distance_and_weights[0] != 0)
         {
             switch (params.cluster_cov_thresh_type)
             {
             default:
-            case ClusterParams::DEFAULT: return validateCovDefault(buffer_distribution);
-            case ClusterParams::PCA2D: return validateCovPCA2D(buffer_distribution);
-            case ClusterParams::PCA3D: return validateCovPCA3D(buffer_distribution);
+            case ClusterParams::DEFAULT: return validateCovDefault(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
+            case ClusterParams::PCA2D: return validateCovPCA2D(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
+            case ClusterParams::PCA3D: return validateCovPCA3D(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
             }
         }
-        return true;
+        return Result::ACCEPTED;
     }
 
 private:
@@ -188,7 +191,8 @@ void cluster(const KDTreePtr&                                       tree,
              const pcl::PointIndices::ConstPtr&                     cloud_indices,
              const ClusterPointcloudKDTreeFiltered::ClusterParams&  params,
              ClusterPointcloudKDTreeFiltered*                       self,
-             std::vector<pcl::PointIndices>&                        indicies)
+             std::vector<pcl::PointIndices>&                        indicies,
+             std::shared_ptr<std::vector<pcl::PointIndices>>&       rejected)
 {
     {
         NAMED_INTERLUDE_INSTANCE(self, build_tree);
@@ -234,10 +238,16 @@ void cluster(const KDTreePtr&                                       tree,
 
         clustering.set_cluster_init([&](const NodeData& data)
         {
-            if (validator.validate())
+            Validator::Result validation = validator.validate();
+            if (validation == Validator::Result::ACCEPTED)
                 indicies.emplace_back(std::move(buffer_indices));
             else
-                buffer_indices.indices.clear();
+            {
+                if (rejected && validation != Validator::Result::TO_SMALL)
+                    rejected->emplace_back(std::move(buffer_indices));
+                else
+                    buffer_indices.indices.clear();
+            }
 
             buffer_distribution.reset();
 
@@ -265,8 +275,11 @@ void cluster(const KDTreePtr&                                       tree,
 
         clustering.cluster();
 
-        if (validator.validate())
+        Validator::Result validation = validator.validate();
+        if (validation == Validator::Result::ACCEPTED)
             indicies.emplace_back(std::move(buffer_indices));
+        else if (rejected && validation != Validator::Result::TO_SMALL)
+            rejected->emplace_back(std::move(buffer_indices));
     }
 
 }
@@ -300,13 +313,17 @@ void ClusterPointcloudKDTreeFiltered::inputCloud(typename pcl::PointCloud<PointT
     }
 
     std::shared_ptr<std::vector<pcl::PointIndices>> out_cluster_indices = std::make_shared<std::vector<pcl::PointIndices>>();
+    std::shared_ptr<std::vector<pcl::PointIndices>> out_rejected_indices;
+    if (msg::isConnected(out_rejected_))
+            out_rejected_indices = std::make_shared<std::vector<pcl::PointIndices>>();
 
     detail_filtered::cluster<PointT>(kdtree_,
                                      cloud,
                                      indices,
                                      cluster_params_,
                                      this,
-                                     *out_cluster_indices);
+                                     *out_cluster_indices,
+                                     out_rejected_indices);
 
 
     std::stringstream stringstream;
@@ -314,4 +331,6 @@ void ClusterPointcloudKDTreeFiltered::inputCloud(typename pcl::PointCloud<PointT
     std::string text_msg = stringstream.str();
     msg::publish(out_debug_, text_msg);
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
+    if (msg::isConnected(out_rejected_))
+        msg::publish<GenericVectorMessage, pcl::PointIndices >(out_rejected_, out_rejected_indices);
 }

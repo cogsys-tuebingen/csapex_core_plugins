@@ -95,6 +95,7 @@ private:
     Input* in_cloud_;
     Input* in_indices_;
     Output* out_;
+    Output* out_rejected_;
     Output* out_debug_;
 
     ClusterParams cluster_params_;
