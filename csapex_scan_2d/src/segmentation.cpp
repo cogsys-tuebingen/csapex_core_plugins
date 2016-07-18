@@ -32,6 +32,7 @@ void ScanSegmentation::process()
 
     for(Segment& segment : *segments_msg) {
         segment.frame_id = scan_msg->frame_id;
+        segment.stamp_micro_seconds = scan_msg->stamp_micro_seconds;
     }
 
 

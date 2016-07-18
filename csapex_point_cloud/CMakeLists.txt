@@ -68,7 +68,7 @@ target_link_libraries(csapex_point_cloud_plugin_core
 if(${kdtree_FOUND})
     set(clustering_kd_tree_SRCS
         src/segmentation/cluster_pointcloud_kdtree.cpp
-        src/segmentation/cluster_pointcloud_kdtree_buffered.cpp
+        src/segmentation/cluster_pointcloud_kdtree_filtered.cpp
     )
     include_directories(${kdtree_INCLUDE_DIRS})
 else()
@@ -100,6 +100,7 @@ add_library(csapex_point_cloud_plugin_node
     src/conversion/pointmatrix_to_pointcloud.cpp
     src/conversion/image_to_point_cloud.cpp
     src/conversion/pointcloud_to_xyz.cpp
+    src/conversion/indices_to_mask.cpp
 
     src/filter/conditional_outlier_removal.cpp
     src/filter/statistical_outlier_removal.cpp
@@ -123,6 +124,8 @@ add_library(csapex_point_cloud_plugin_node
     src/analysis/ray_angles.cpp
     src/analysis/estimate_normals.cpp
     src/analysis/estimate_center.cpp
+
+    src/math/distribution.hpp
 
     src/pointcloud_generator.cpp
     src/sac_fit.cpp
