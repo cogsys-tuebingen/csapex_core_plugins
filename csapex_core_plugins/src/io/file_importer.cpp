@@ -312,7 +312,12 @@ void FileImporter::doImportDir(const QString &dir_string)
         }
     };
     boost::filesystem::path directory(dir_string.toStdString());
-    crawl_dir(directory);
+    try {
+        crawl_dir(directory);
+    } catch(const std::exception& e) {
+        aerr << e.what() << std::endl;
+        return;
+    }
 
     std::sort(dir_files_.begin(), dir_files_.end());
 

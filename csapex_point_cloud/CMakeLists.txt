@@ -68,7 +68,7 @@ target_link_libraries(csapex_point_cloud_plugin_core
 if(${kdtree_FOUND})
     set(clustering_kd_tree_SRCS
         src/segmentation/cluster_pointcloud_kdtree.cpp
-        src/segmentation/cluster_pointcloud_kdtree_buffered.cpp
+        src/segmentation/cluster_pointcloud_kdtree_filtered.cpp
     )
     include_directories(${kdtree_INCLUDE_DIRS})
 else()
