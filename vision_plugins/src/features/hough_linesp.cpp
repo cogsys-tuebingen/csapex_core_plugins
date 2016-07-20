@@ -9,6 +9,7 @@
 #include <csapex_core_plugins/vector_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex_vision/yaml_io.hpp>
+#include <QColor>
 #include <csapex/view/utility/color.hpp>
 
 using namespace csapex;
