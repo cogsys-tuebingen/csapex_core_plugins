@@ -37,7 +37,29 @@ void StaticTransform::setupParameters(Parameterizable &parameters)
 
 void StaticTransform::process()
 {
+    if(!msg::hasMessage(input_)) {
+        return;
+    }
 
+    connection_types::TransformMessage::ConstPtr pose = msg::getMessage<connection_types::TransformMessage>(input_);
+    tf::Transform trafo = pose->value;
+
+    tf::Matrix3x3 rot_mat(trafo.getRotation());
+    rot_mat.getEulerYPR(yaw, pitch, roll);
+
+    x = trafo.getOrigin().x();
+    y = trafo.getOrigin().y();
+    z = trafo.getOrigin().z();
+
+    setParameter("frame", pose->frame_id);
+    setParameter("child_frame", pose->child_frame);
+
+    setParameter("roll", roll);
+    setParameter("pitch", pitch);
+    setParameter("yaw", yaw);
+    setParameter("dx", x);
+    setParameter("dy", y);
+    setParameter("dz", z);
 }
 
 void StaticTransform::tick()
@@ -52,5 +74,6 @@ void StaticTransform::tick()
 
 void StaticTransform::setup(NodeModifier& node_modifier)
 {
+    input_ = node_modifier.addOptionalInput<connection_types::TransformMessage>("Transformation (opt.)");
     output_ = node_modifier.addOutput<connection_types::TransformMessage>("Transformation");
 }

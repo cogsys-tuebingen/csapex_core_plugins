@@ -17,6 +17,7 @@ public:
     virtual void setupParameters(Parameterizable &parameters) override;
 
 private:
+    Input* input_;
     Output* output_;
 
     std::string frame;
