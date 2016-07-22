@@ -35,6 +35,7 @@ add_library(csapex_ml_plugin
 
     src/svm_trainer.cpp
     src/svm.cpp
+    src/svm_array_trainer.cpp
 
     src/mlp.cpp
     src/mlp/mlp.cpp
