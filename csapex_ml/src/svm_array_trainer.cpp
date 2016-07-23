@@ -13,6 +13,14 @@ CSAPEX_REGISTER_CLASS(csapex::SVMArrayTrainer, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
+template<typename T>
+inline std::string toString(const T value)
+{
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
+}
+
 struct ExtendedSVM : public cv::SVM {
     typedef std::shared_ptr<ExtendedSVM> Ptr;
 
@@ -144,6 +152,8 @@ void SVMArrayTrainer::setupParameters(Parameterizable& parameters)
 
 void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
+    /// TODO : Mix classes for negative samples?
+
     if(collection.empty())
         return;
 
@@ -157,7 +167,7 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
         indices_by_label[fm.classification].push_back(i);
     }
 
-    std::vector<ExtendedSVM::Ptr> svms;
+    std::map<int, ExtendedSVM::Ptr> svms;
     if(svm_params_.svm_type != cv::SVM::ONE_CLASS) {
         if(indices_by_label.find(NEGATIVE) == indices_by_label.end()) {
             throw std::runtime_error("Need negative examples labelled with -1");
@@ -167,12 +177,14 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
         }
         std::vector<std::size_t> neg_indices = indices_by_label[NEGATIVE];
         indices_by_label.erase(NEGATIVE);
-        svms.resize(indices_by_label.size());
         /// iterate samples
-        /// mixed classes?
         for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
             auto it = indices_by_label.begin();
             std::advance(it, i);
+
+            /// allocate svm
+            ExtendedSVM::Ptr svm(new ExtendedSVM);
+            svms[it->first] = svm;
 
             /// gather data
             const std::vector<std::size_t> &pos_indices = it->second;
@@ -206,66 +218,58 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
 
             /// train the svm
             std::cout << "Started training for '" << it->first << std::endl;
-            ExtendedSVM::Ptr &svm = svms.at(i);
             svm.reset(new ExtendedSVM);
             if(svm->train(samples, labels, cv::Mat(), cv::Mat(), params)) {
                 std::cout << "Finished training for '" << it->first << std::endl;
             }
         }
-        /// write all svms to disk
-
     } else {
         if(indices_by_label.find(NEGATIVE) != indices_by_label.end()) {
             indices_by_label.erase(NEGATIVE);
         }
-        svms.resize(indices_by_label.size());
         /// iterate samples
+        /// mixed classes?
+        for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
+            auto it = indices_by_label.begin();
+            std::advance(it, i);
+
+            /// allocate svm
+            ExtendedSVM::Ptr svm(new ExtendedSVM);
+            svms[it->first] = svm;
+
+            /// gather data
+            const std::vector<std::size_t> &indices = it->second;
+            const std::size_t sample_size = indices.size();
+
+            cv::Mat samples(sample_size, step, CV_32FC1, cv::Scalar());
+            cv::Mat labels(sample_size, 1, CV_32FC1, cv::Scalar());
+
+            for(int i = 0 ; i < samples.rows ; ++i) {
+                const std::vector<float> &data = collection.at(indices.at(i)).value;
+                labels.at<float>(i) = POSITIVE;
+                for(std::size_t j = 0 ; j < step ; ++j) {
+                    samples.at<float>(i,j) = data.at(j);
+                }
+            }
+            cv::SVMParams params = svm_params_;
+            if(params.gamma == 0) {
+                params.gamma = 1.0 / labels.rows;
+            }
+
+            /// train the svm
+            std::cout << "Started training for '" << it->first << std::endl;
+            svm.reset(new ExtendedSVM);
+            if(svm->train(samples, labels, cv::Mat(), cv::Mat(), params)) {
+                std::cout << "Finished training for '" << it->first << std::endl;
+            }
+        }
 
     }
-
-    /// save the svms with write and label
-
-//    /// maybe we can use some combinatoric principles to mix classes
-
-//    std::vector<ExtendedSVM> svms;
-
-//    ExtendedSVM     svm;
-//    cv::Mat samples(collection.size(), step, CV_32FC1, cv::Scalar::all(0));
-//    cv::Mat labels (collection.size(), 1, CV_32FC1, cv::Scalar::all(0));
-//    for(int i = 0 ; i < samples.rows ; ++i) {
-//        labels.at<float>(i)    = collection.at(i).classification; //  i % 2
-//        for(int j = 0 ; j < samples.cols ; ++j) {
-//            samples.at<float>(i,j) = collection.at(i).value.at(j);
-//        }
-//    }
-
-//    if (svm_params_.gamma == 0) {
-//        svm_params_.gamma = 1.0 / labels.rows;
-//        getParameter("gamma")->set(svm_params_.gamma);
-//    }
-
-//    std::cout << "started training" << std::endl;
-//    if(svm.train(samples, labels,cv::Mat(), cv::Mat(), svm_params_)) {
-//        std::cout << "finished training" << std::endl;
-//        svm.print_decision_func();
-//        if(save_for_hog_) {
-//            cv::FileStorage fs(path_, cv::FileStorage::WRITE);
-//            CvSVMDecisionFunc *df = svm.get_decision_function();
-//            std::vector<float> coeffs(svm.get_var_count(), 0.f);
-//            for(int i = 0 ; i < df->sv_count ; ++i) {
-//                const float *sv = svm.get_support_vector(i);
-//                for(int j = 0 ; j < svm.get_var_count() ; ++j) {
-//                    coeffs[j] += df->alpha[i] * sv[j] * -1;
-//                }
-//            }
-
-//            fs << "svm_coeffs" << coeffs;
-//            svm.export_decision_func(fs);
-//            fs.release();
-//        } else {
-//            svm.save(path_.c_str(), "svm");
-//        }
-//    } else {
-//        throw std::runtime_error("Training failed!");
-//    }
+    /// write all svms to disk
+    cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+    for(auto &svm_entry : svms) {
+        std::string label = toString(svm_entry.first);
+        ExtendedSVM::Ptr svm = svm_entry.second;
+        svm->write(fs.fs, label.c_str());
+    }
 }
