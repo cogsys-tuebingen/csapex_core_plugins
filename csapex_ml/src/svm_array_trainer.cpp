@@ -8,12 +8,14 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_core_plugins/vector_message.h>
 
-CSAPEX_REGISTER_CLASS(csapex::SVMTrainer, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::SVMArrayTrainer, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-struct ExtendedSVM : cv::SVM {
+struct ExtendedSVM : public cv::SVM {
+    typedef std::shared_ptr<ExtendedSVM> Ptr;
+
     CvSVMDecisionFunc* get_decision_function()
     {
         return decision_func;
@@ -155,7 +157,7 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
         indices_by_label[fm.classification].push_back(i);
     }
 
-    std::vector<ExtendedSVM> svms;
+    std::vector<ExtendedSVM::Ptr> svms;
     if(svm_params_.svm_type != cv::SVM::ONE_CLASS) {
         if(indices_by_label.find(NEGATIVE) == indices_by_label.end()) {
             throw std::runtime_error("Need negative examples labelled with -1");
@@ -163,9 +165,55 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
         if(indices_by_label.size() == 1) {
             throw std::runtime_error("Multi class SVMs require multiple classes!");
         }
-        svms.resize(indices_by_label.size() - 1);
+        std::vector<std::size_t> neg_indices = indices_by_label[NEGATIVE];
+        indices_by_label.erase(NEGATIVE);
+        svms.resize(indices_by_label.size());
         /// iterate samples
         /// mixed classes?
+        for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
+            auto it = indices_by_label.begin();
+            std::advance(it, i);
+
+            /// gather data
+            const std::vector<std::size_t> &pos_indices = it->second;
+            const std::size_t sample_size = pos_indices.size() + neg_indices.size();
+
+            cv::Mat samples(sample_size, step, CV_32FC1, cv::Scalar());
+            cv::Mat labels(sample_size, 1, CV_32FC1, cv::Scalar());
+
+            cv::Mat neg_samples = samples.rowRange(0, neg_indices.size());
+            cv::Mat pos_samples = samples.rowRange(neg_indices.size(), sample_size);
+            cv::Mat neg_labels = labels.rowRange(0, neg_indices.size());
+            cv::Mat pos_labels = labels.rowRange(neg_indices.size(), sample_size);
+            for(int i = 0 ; i < neg_samples.rows; ++i) {
+                const std::vector<float> &data = collection.at(neg_indices.at(i)).value;
+                neg_labels.at<float>(i) = NEGATIVE;
+                for(std::size_t j = 0 ; j < step ; ++j) {
+                    neg_samples.at<float>(i,j) = data.at(j);
+                }
+            }
+            for(int i = 0 ; i < pos_samples.rows ; ++i) {
+                const std::vector<float> &data = collection.at(pos_indices.at(i)).value;
+                pos_labels.at<float>(i) = POSITIVE;
+                for(std::size_t j = 0 ; j < step ; ++j) {
+                    pos_samples.at<float>(i,j) = data.at(j);
+                }
+            }
+            cv::SVMParams params = svm_params_;
+            if(params.gamma == 0) {
+                params.gamma = 1.0 / labels.rows;
+            }
+
+            /// train the svm
+            std::cout << "Started training for '" << it->first << std::endl;
+            ExtendedSVM::Ptr &svm = svms.at(i);
+            svm.reset(new ExtendedSVM);
+            if(svm->train(samples, labels, cv::Mat(), cv::Mat(), params)) {
+                std::cout << "Finished training for '" << it->first << std::endl;
+            }
+        }
+        /// write all svms to disk
+
     } else {
         if(indices_by_label.find(NEGATIVE) != indices_by_label.end()) {
             indices_by_label.erase(NEGATIVE);
