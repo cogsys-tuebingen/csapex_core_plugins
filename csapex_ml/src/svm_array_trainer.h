@@ -1,5 +1,5 @@
-#ifndef SVM_TRAINER_H
-#define SVM_TRAINER_H
+#ifndef SVM_ARRAY_TRAINER_H
+#define SVM_ARRAY_TRAINER_H
 
 /// COMPONENT
 #include <csapex_ml/features_message.h>
@@ -30,4 +30,4 @@ private:
 };
 }
 
-#endif // SVM_TRAINER_H
+#endif // SVM_ARRAY_TRAINER_H

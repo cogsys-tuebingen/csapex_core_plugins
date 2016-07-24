@@ -267,9 +267,14 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
     }
     /// write all svms to disk
     cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+    const static std::string prefix = "svm_";
+    std::vector<int> labels;
     for(auto &svm_entry : svms) {
-        std::string label = toString(svm_entry.first);
+        std::string label = prefix + toString(svm_entry.first);
         ExtendedSVM::Ptr svm = svm_entry.second;
         svm->write(fs.fs, label.c_str());
+        labels.push_back(svm_entry.first);
     }
+    fs << "labels" << labels;
+    fs.release();
 }
