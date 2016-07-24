@@ -198,6 +198,12 @@
     </description>
     <tags>Vision</tags>
   </class>
+  <class type="vision_plugins::FlipROIs" base_class_type="csapex::Node">
+    <description>
+        Flip rois horizontal, vertical or both.
+    </description>
+    <tags>Vision</tags>
+  </class>
   <class type="vision_plugins::Laplacian" base_class_type="csapex::Node">
     <description>
         Apply the laplacian operator to an image.

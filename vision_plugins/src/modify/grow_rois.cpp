@@ -13,8 +13,6 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-/// SYSTEM
-
 
 CSAPEX_REGISTER_CLASS(csapex::GrowROIs, csapex::Node)
 
@@ -47,6 +45,6 @@ void GrowROIs::process()
 
 void GrowROIs::setup(NodeModifier& node_modifier)
 {
-    input_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROI");
-    output_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("grown ROI");
+    input_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
+    output_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("grown ROIs");
 }
