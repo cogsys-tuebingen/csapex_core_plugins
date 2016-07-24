@@ -106,6 +106,8 @@ void SVMArray::process()
         }
     }
 
+    /// TODO : OMP?
+
     std::size_t size = input->size();
     output->resize(size);
     for(std::size_t i = 0 ; i < size ; ++i)
