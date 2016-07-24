@@ -144,6 +144,8 @@ public:
     inline EigenValueSetType getEigenValues(const bool _abs = false) const
     {
         if(n_1 >= 2) {
+            if(dirty)
+                update();
             if(dirty_eigen)
                 updateEigen();
 
@@ -159,8 +161,11 @@ public:
                                const double _abs = false) const
     {
         if(n_1 >= 2) {
+            if(dirty)
+                update();
             if(dirty_eigen)
                 updateEigen();
+
             if(_abs)
                 _eigen_values = eigen_values.cwiseAbs();
             else
@@ -173,8 +178,11 @@ public:
     inline EigenVectorSetType getEigenVectors() const
     {
         if(n_1 >= 2) {
+            if(dirty)
+                update();
             if(dirty_eigen)
                 updateEigen();
+
             return eigen_vectors;
         }
         return EigenVectorSetType::Zero();
@@ -183,8 +191,11 @@ public:
     inline void getEigenVectors(EigenVectorSetType &_eigen_vectors) const
     {
         if(n_1 >= 2) {
+            if(dirty)
+                update();
             if(dirty_eigen)
                 updateEigen();
+
             _eigen_vectors = eigen_vectors;
         } else {
             _eigen_vectors = EigenVectorSetType::Zero();
@@ -293,8 +304,10 @@ private:
         } else {
             inverse_covariance = covariance.inverse();
         }
+
         determinant = covariance.determinant();
         dirty = false;
+        dirty_eigen = true;
     }
 
     inline void updateEigen() const
