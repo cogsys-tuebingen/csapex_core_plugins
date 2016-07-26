@@ -105,6 +105,7 @@ add_library(vision_plugins_node
     src/filter/normalize.cpp
     src/filter/adaptive_threshold.cpp
     src/filter/threshold_noise_filter.cpp
+    src/filter/filter_rois.cpp
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
