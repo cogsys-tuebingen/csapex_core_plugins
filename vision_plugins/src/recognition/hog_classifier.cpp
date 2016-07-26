@@ -223,6 +223,7 @@ void HOGClassifier::process()
             roi_out.value.setColor(cv::Scalar(0,200,0));
         } else {
             roi_out.value.setClassification(BACKGROUND);
+            roi_out.value.setColor(cv::Scalar(0,0,200));
         }
         out->push_back(roi_out);
     }

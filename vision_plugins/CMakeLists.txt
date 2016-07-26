@@ -55,11 +55,13 @@ add_library(vision_plugins_node
 #    src/vj_detector.cpp
     src/lk_tracking.cpp
     src/visualize/render_rois.cpp
-    src/merge_rois.cpp
-    src/grow_roi.cpp
-    src/grow_rois.cpp
-    src/extract_roi.cpp
     src/number_generator.cpp
+
+    src/roi/merge_rois.cpp
+    src/roi/grow_roi.cpp
+    src/roi/grow_rois.cpp
+    src/roi/extract_roi.cpp
+    src/roi/filter_rois.cpp
 
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp
