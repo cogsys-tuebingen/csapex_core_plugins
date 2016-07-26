@@ -20,8 +20,6 @@ using namespace connection_types;
 class FilterROIs : public csapex::Node
 {
 public:
-    FilterROIs();
-
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
         input_  = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
