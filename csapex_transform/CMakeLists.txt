@@ -48,6 +48,8 @@ target_link_libraries(csapex_transform_plugin_core csapex_transform
 
 add_library(csapex_transform_plugin_node
     src/transform_to_odometry.cpp
+    src/transform_to_pose.cpp
+    src/pose_to_transform.cpp
     src/clock.cpp
     src/time_offset.cpp
     src/static_transform.cpp

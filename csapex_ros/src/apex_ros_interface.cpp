@@ -17,7 +17,6 @@
 #include <csapex/signal/event.h>
 #include <csapex/msg/no_message.h>
 #include <csapex/model/token.h>
-#include <csapex/utility/error_handling.h>
 #include <csapex/msg/any_message.h>
 
 /// SYSTEM
@@ -123,10 +122,6 @@ void APEXRosInterface::init(CsApexCore &core)
 void APEXRosInterface::setupGraph(Graph *graph)
 {
     clock_reset_event_ = graph->createInternalEvent(connection_types::makeEmpty<connection_types::AnyMessage>(), graph->makeUUID("event_ros_time_reset"), "ros time reset");
-    graph->createInternalSlot(connection_types::makeEmpty<connection_types::AnyMessage>(), graph->makeUUID("slot_exit"), "exit", [this](const TokenPtr& token) {
-        // TODO: more graceful stopping
-        csapex::error_handling::stop();
-    });
 }
 
 void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::string& parameter_name, const XmlRpc::XmlRpcValue& parameter_value)

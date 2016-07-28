@@ -1,0 +1,75 @@
+/// COMPONENT
+#include <csapex/model/node.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/msg/generic_pointer_message.hpp>
+#include <csapex_ros/yaml_io.hpp>
+#include <csapex_ros/ros_message_conversion.h>
+#include <csapex_transform/transform_message.h>
+
+/// SYSTEM
+#include <visualization_msgs/MarkerArray.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <tf/tf.h>
+
+using namespace csapex::connection_types;
+
+
+namespace csapex
+{
+
+class PoseToTransform : public Node
+{
+public:
+    void setup(csapex::NodeModifier& modifier) override
+    {
+        //        in_ = modifier.addInput<geometry_msgs::PoseStamped>("Pose");
+        in_ = modifier.addMultiInput<geometry_msgs::PoseStamped, geometry_msgs::PoseWithCovarianceStamped>("Pose");
+        out_ = modifier.addOutput<TransformMessage>("Transform");
+    }
+
+    void setupParameters(csapex::Parameterizable& params) override
+    {
+        params.addParameter(param::ParameterFactory::declareText("child frame", "/pose"), child_frame_);
+    }
+
+    void process()
+    {
+        ainfo << "process" << std::endl;
+
+        geometry_msgs::PoseStamped ps;
+
+        if(msg::isMessage<GenericPointerMessage<geometry_msgs::PoseStamped>>(in_)) {
+            auto pose = msg::getMessage<geometry_msgs::PoseStamped>(in_);
+            ps = *pose;
+        } else if(msg::isMessage<GenericPointerMessage<geometry_msgs::PoseWithCovarianceStamped>>(in_)) {
+            auto pose = msg::getMessage<geometry_msgs::PoseWithCovarianceStamped>(in_);
+            ps.pose = pose->pose.pose;
+            ps.header = pose->header;
+
+        } else {
+            aerr << "unknown input type" << std::endl;
+            return;
+        }
+
+        auto result = std::make_shared<connection_types::TransformMessage>(ps.header.frame_id, child_frame_);
+        tf::Transform& trafo = result->value;
+
+        tf::poseMsgToTF(ps.pose, trafo);
+
+        ainfo << "publish" << std::endl;
+        msg::publish(out_, result);
+    }
+private:
+    Input* in_;
+    Output* out_;
+
+    std::string child_frame_;
+};
+
+}
+
+CSAPEX_REGISTER_CLASS(csapex::PoseToTransform, csapex::Node)
+
