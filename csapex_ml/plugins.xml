@@ -49,5 +49,13 @@
   <description>Train MLP (OpenCV) to classify data</description>
   <tags>ML</tags>
 </class>
+<class type="csapex::AdaBoost" base_class_type="csapex::Node">
+  <description>AdaBoost (OpenCV) to classify data.</description>
+  <tags>ML</tags>
+</class>
+<class type="csapex::AdaBoostTrainer" base_class_type="csapex::Node">
+  <description>Train AdaBoost (OpenCV) to classify data</description>
+  <tags>ML</tags>
+</class>
 </library>
 

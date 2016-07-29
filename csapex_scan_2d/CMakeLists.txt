@@ -79,6 +79,8 @@ add_library(csapex_scan_2d_plugin_node
     src/segment_labeler.cpp
     src/split_labeled_scan.cpp
     src/labeled_scan_to_scan.cpp
+    src/relabel_scan.cpp
+    src/label_scan_by_validity.cpp
     src/segmentation_renderer.cpp
     src/segment_distance_filter.cpp
     src/segment_mincount_filter.cpp

@@ -43,13 +43,16 @@
   <icon>:/picture.png</icon>
   <tags>Laser, Scan, Interactive</tags>
 </class>
-
 <class type="csapex::RelabelScan" base_class_type="csapex::Node">
   <description>Relabel a labeled scan by exchanging a defined label.</description>
   <icon>:/picture.png</icon>
   <tags>Laser, Scan, Interactive</tags>
 </class>
-
+<class type="csapex::LabelScanByValidity" base_class_type="csapex::Node">
+  <description>Label scan by validity.</description>
+  <icon>:/picture.png</icon>
+  <tags>Laser, Scan, Interactive</tags>
+</class>
 <class type="csapex::PolygonScanFilter" base_class_type="csapex::Node">
   <description>
     Allows definition of polygon to filter scan.
