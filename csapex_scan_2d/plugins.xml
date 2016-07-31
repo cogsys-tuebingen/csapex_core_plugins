@@ -44,7 +44,7 @@
   <tags>Laser, Scan, Interactive</tags>
 </class>
 <class type="csapex::RelabelScan" base_class_type="csapex::Node">
-  <description>Relabel a labeled scan by exchanging a defined label.</description>
+  <description>Relabel a labeled scan by exchanging label by a defined label.</description>
   <icon>:/picture.png</icon>
   <tags>Laser, Scan, Interactive</tags>
 </class>

@@ -90,7 +90,7 @@ void AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
     boost_params_.weight_trim_rate = weight_trim_rate_;
     cv::Boost boost;
     cv::Mat samples(collection.size(), step, CV_32FC1, cv::Scalar());
-    cv::Mat labels(collection.size(), 1, CV_32FC1, cv::Scalar());
+    cv::Mat labels(collection.size(), 1, CV_32SC1, cv::Scalar());
     for(int i = 0 ; i < samples.rows ; ++i) {
         labels.at<float>(i) = collection.at(i).classification;
         for(int j = 0 ; j < samples.cols ; ++j) {
