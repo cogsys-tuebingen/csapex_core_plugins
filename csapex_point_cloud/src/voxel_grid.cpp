@@ -74,6 +74,7 @@ void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     voxel_f.filter(*out);
 
     PointCloudMessage::Ptr msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
+    out->header = cloud->header;
     msg->value = out;
 
     msg::publish(output_, msg);
