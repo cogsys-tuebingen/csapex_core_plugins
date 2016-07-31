@@ -25,6 +25,14 @@
   <description>Train SVM to classify data.</description>
   <tags>ML</tags>
 </class>
+<class type="csapex::SVMArray" base_class_type="csapex::Node">
+  <description>SVMArray representing an ensemble of binary SVMs to classify data.</description>
+  <tags>ML</tags>
+</class>
+<class type="csapex::SVMArrayTrainer" base_class_type="csapex::Node">
+  <description>Train SVMArray representing an ensemble of binary classifiers.</description>
+  <tags>ML</tags>
+</class>
 <class type="csapex::ArffFormatExport" base_class_type="csapex::Node">
   <description>Export features messages to the weka arff file format.</description>
   <tags>ML</tags>

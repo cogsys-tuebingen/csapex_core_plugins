@@ -23,6 +23,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <QDir>
 #include <QUrl>
+#include<boost/regex.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::FileImporter, csapex::Node)
 
@@ -58,6 +59,12 @@ void FileImporter::setupParameters(Parameterizable& parameters)
 
     parameters.addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
     parameters.addConditionalParameter(param::ParameterFactory::declareText("directory/current_file", ""), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool(
+                                           "directory/sort_numerically",
+                                           param::ParameterDescription(
+                                               "If true, the expected format is <em>any_text</em>_<b>number</b>.<em>file_ending</em>"
+                                               ),
+                                           false), cond_dir);
     parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/show parameters", false), cond_dir);
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
 
@@ -114,7 +121,7 @@ void FileImporter::setup(NodeModifier& node_modifier)
         playing_ = false;
     });
     node_modifier.addSlot("abort", [this](){
-//        playing_ = false;
+        //        playing_ = false;
         abort_ = true;
     });
     play_->connection_added.connect([this](ConnectionPtr){
@@ -196,7 +203,7 @@ bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
             (play_->isConnected() && playing_);
 
     if(provider_) {
-         if(provider_->hasNext()) {
+        if(provider_->hasNext()) {
             for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
                 INTERLUDE_STREAM("slot " << slot);
 
@@ -212,21 +219,21 @@ bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
             return true;
 
         } else {
-             if(directory_import_) {
-                 if(play) {
-                     int current = readParameter<int>("directory/current");
-                     if(current == last_directory_index_) {
-                         ++current;
+            if(directory_import_) {
+                if(play) {
+                    int current = readParameter<int>("directory/current");
+                    if(current == last_directory_index_) {
+                        ++current;
 
-                         //DEBUGainfo << "increasing current to " << current << std::endl;
-                         setParameter("directory/current", current);
-                     }
-                 }
-             } else {
+                        //DEBUGainfo << "increasing current to " << current << std::endl;
+                        setParameter("directory/current", current);
+                    }
+                }
+            } else {
                 // the importer is done and we are only importing one file
                 // -> report tick as successful
                 return true;
-             }
+            }
         }
     }
 
@@ -280,12 +287,36 @@ bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
 
             //DEBUGainfo << "setting current to " << current << std::endl;
             setParameter("directory/current", current);
-//            int current = readParameter<int>("directory/current");
+            //            int current = readParameter<int>("directory/current");
         }
     }
 
 
     return false;
+}
+
+namespace {
+bool is_not_digit(char c)
+{
+    return !std::isdigit(c);
+}
+
+bool numeric_string_compare(const std::string& s1, const std::string& s2)
+{
+    boost::regex re(".*_([\\d]+)\\.[^\\.]+");
+    boost::smatch result;
+
+    if (!boost::regex_search(s1, result, re)) {
+        return false;
+    }
+    std::string sn1(result[1].first, result[1].second);
+    if (!boost::regex_search(s2, result, re)) {
+        return false;
+    }
+    std::string sn2(result[1].first, result[1].second);
+
+    return atoi(sn1.c_str()) < atoi(sn2.c_str());
+}
 }
 
 void FileImporter::doImportDir(const QString &dir_string)
@@ -319,7 +350,13 @@ void FileImporter::doImportDir(const QString &dir_string)
         return;
     }
 
-    std::sort(dir_files_.begin(), dir_files_.end());
+
+    bool sort_numerically = readParameter<bool>("directory/sort_numerically");
+    if(sort_numerically) {
+        std::sort(dir_files_.begin(), dir_files_.end(), numeric_string_compare);
+    } else {
+        std::sort(dir_files_.begin(), dir_files_.end());
+    }
 
     param::RangeParameter::Ptr current = getParameter<param::RangeParameter>("directory/current");
     current->set(0);

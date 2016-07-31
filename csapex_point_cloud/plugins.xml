@@ -78,6 +78,14 @@
   <description>Extracts all point from a point cloud that lie on one side of a plane</description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::PassThroughByIndices" base_class_type="csapex::Node">
+  <description>Extracts all point from a point cloud by indices given.</description>
+  <tags>PointCloud</tags>
+</class>
+<class type="csapex::PassThroughByCluster" base_class_type="csapex::Node">
+  <description>Extracts all point from a point cloud by clusters given.</description>
+  <tags>PointCloud</tags>
+</class>
 <class type="csapex::ExtractTimeStampCloud" base_class_type="csapex::Node">
   <description>Extracts the timestamp and frame id from a point cloud</description>
   <tags>PointCloud</tags>

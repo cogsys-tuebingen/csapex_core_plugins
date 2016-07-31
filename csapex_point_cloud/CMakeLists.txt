@@ -85,7 +85,6 @@ add_library(csapex_point_cloud_plugin_node
     src/extract_timestamp.cpp
     src/set_timestamp.cpp
     src/crop_box.cpp
-    src/passthrough.cpp
     src/row.cpp
     src/col.cpp
 
@@ -112,6 +111,9 @@ add_library(csapex_point_cloud_plugin_node
     src/filter/index_filter.cpp
     src/filter/edge_filter.cpp
     src/filter/roi_extractor.cpp
+    src/filter/passthrough.cpp
+    src/filter/passthrough_by_cluster.cpp
+    src/filter/passthrough_by_indices.cpp
 
     src/segmentation/labeled_cloud_to_indices.cpp
     src/segmentation/label_pointcloud.cpp

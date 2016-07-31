@@ -4,6 +4,7 @@ project(csapex_ml)
 find_package(catkin REQUIRED COMPONENTS
   csapex
   csapex_core_plugins
+  csapex_vision
 )
 
 catkin_package(
@@ -35,6 +36,8 @@ add_library(csapex_ml_plugin
 
     src/svm_trainer.cpp
     src/svm.cpp
+    src/svm_array_trainer.cpp
+    src/svm_array.cpp
 
     src/mlp.cpp
     src/mlp/mlp.cpp
