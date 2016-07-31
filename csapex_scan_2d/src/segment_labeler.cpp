@@ -40,7 +40,7 @@ void SegmentLabeler::process()
     std::shared_ptr< std::vector<Segment> > segments_out (new std::vector<Segment>);
 
     LabeledScanMessage::ConstPtr scan = msg::getMessage<LabeledScanMessage>(in_labeled_scan_);
-    std::vector<int>::const_iterator labeled_ray = scan->value.labels.begin();
+    const std::vector<int> &labels = scan->value.labels;
 
     segments_out->resize(segments_in->size());
 
@@ -48,12 +48,14 @@ void SegmentLabeler::process()
         Segment& segment = segments_out->at(s);
         segment = segments_in->at(s);
 
+        if(segment.start_idx == -1) {
+            throw std::runtime_error("Segments without start index are not supported!");
+        }
+
         std::map<int,int> histogram;
         for(std::size_t ray_in_segment = 0, rays = segment.rays.size(); ray_in_segment < rays; ++ray_in_segment) {
-            int classification = *labeled_ray;
+            int classification = labels[segment.start_idx + ray_in_segment];
             ++histogram[classification];
-
-            ++labeled_ray;
         }
 
         int max = -1;
