@@ -26,9 +26,8 @@ void AdaBoost::setup(NodeModifier& node_modifier)
 
 void AdaBoost::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareFileInputPath(
+    addParameter(csapex::param::ParameterFactory::declareFileOutputPath(
                                                       "boost/path",
-                                                      csapex::param::ParameterDescription("Path to a saved svm."),
                                                       "",
                                                       "*.yaml *.tar.gz"),
                  std::bind(&AdaBoost::load, this));

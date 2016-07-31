@@ -91,12 +91,22 @@ void AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
     cv::Boost boost;
     cv::Mat samples(collection.size(), step, CV_32FC1, cv::Scalar());
     cv::Mat labels(collection.size(), 1, CV_32SC1, cv::Scalar());
+    cv::Mat missing(collection.size(), step, CV_8UC1, cv::Scalar());
     for(int i = 0 ; i < samples.rows ; ++i) {
-        labels.at<float>(i) = collection.at(i).classification;
+        labels.at<int>(i) = collection.at(i).classification;
         for(int j = 0 ; j < samples.cols ; ++j) {
-            samples.at<float>(i,j) = collection.at(i).value.at(j);
+            const float value = collection.at(i).value.at(j);
+            if(std::isnan(value) ||
+                    std::isinf(value) ||
+                        (fabs(value) >= 0.5f * FLT_MAX)) {
+                missing.at<uchar>(i,j) = 1;
+                samples.at<float>(i,j) = 0.f;
+            } else {
+                samples.at<float>(i,j) = value;
+            }
         }
     }
+
     if(boost.train(samples, CV_ROW_SAMPLE, labels, cv::Mat(), cv::Mat(), cv::Mat(), cv::Mat(), boost_params_)) {
         boost.save(path_.c_str(), "adaboost");
     } else {
