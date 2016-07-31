@@ -26,7 +26,7 @@ void AdaBoost::setup(NodeModifier& node_modifier)
 
 void AdaBoost::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareFileOutputPath(
+    addParameter(csapex::param::ParameterFactory::declareFileInputPath(
                                                       "boost/path",
                                                       "",
                                                       "*.yaml *.tar.gz"),

@@ -158,10 +158,10 @@ void RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     FeaturesMessage& first_feature = collection[0];
     std::size_t feature_length = first_feature.value.size();
 
-    cv::Mat train_data(collection.size(), feature_length, CV_32FC1);
+    cv::Mat train_data(collection.size(), feature_length, CV_32FC1, cv::Scalar());
     cv::Mat missing(collection.size(), feature_length, CV_8UC1, cv::Scalar(0));
 
-    cv::Mat responses(collection.size(), 1, CV_32SC1);
+    cv::Mat responses(collection.size(), 1, CV_32SC1, cv::Scalar());
     int tflag = CV_ROW_SAMPLE;
 
     std::size_t n = collection.size();
