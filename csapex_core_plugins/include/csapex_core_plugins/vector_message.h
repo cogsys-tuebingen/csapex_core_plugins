@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/message.h>
-#include <csapex/msg/message_traits.h>
+#include <csapex/msg/token_traits.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/utility/yaml_io.hpp>
 

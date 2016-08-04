@@ -66,8 +66,12 @@ void RadiusOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
     bool   negative_      = readParameter<bool>("negate");
     double search_radius_ = readParameter<double>("search radius");
 
+    typename pcl::PointCloud<PointT>::Ptr cloud_wo_nan(new pcl::PointCloud<PointT>);
+    std::vector<int> nan_indices;
+    pcl::removeNaNFromPointCloud<PointT>(*cloud, *cloud_wo_nan, nan_indices);
+
     pcl::RadiusOutlierRemoval<PointT> ror;
-    ror.setInputCloud(cloud);
+    ror.setInputCloud(cloud_wo_nan);
     ror.setKeepOrganized(keep_organized_);
     ror.setNegative(negative_);
     ror.setRadiusSearch(search_radius_);

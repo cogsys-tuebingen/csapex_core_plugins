@@ -2,7 +2,7 @@
 #include <csapex_core_plugins/vector_message.h>
 
 /// COMPONENT
-#include <csapex/msg/message_traits.h>
+#include <csapex/msg/token_traits.h>
 #include <csapex/utility/register_msg.h>
 #include <csapex/serialization/yaml.h>
 #include <csapex/msg/no_message.h>
