@@ -24,12 +24,26 @@ Delay::Delay()
 {
 }
 
+Delay::~Delay()
+{
+    if(future.valid()) {
+        future.wait();
+    }
+}
+
 void Delay::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareRange<double>
-                 ("delay",
-                  csapex::param::ParameterDescription("Delay <b><span style='color: red'>in seconds</style></b> to wait after each message."),
-                  0.0, 10.0, 1.0, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>
+                            ("delay",
+                             csapex::param::ParameterDescription("Delay <b><span style='color: red'>in seconds</style></b> to wait after each message."),
+                             0.0, 10.0, 1.0, 0.01));
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool
+                            ("blocking",
+                             csapex::param::ParameterDescription("If true, the node sleeps for the given time, not giving up resources to other nodes in "
+                                                                 "the same thread group. Otherwise it uses signals to yield the CPU."),
+                             false),
+                            blocking_);
 
     csapex::param::Parameter::Ptr p = csapex::param::ParameterFactory::declareOutputProgress("delay progress");
     progress_ = dynamic_cast<param::OutputProgressParameter*>(p.get());
@@ -43,9 +57,33 @@ void Delay::setup(NodeModifier& node_modifier)
 
     delayed_forward_ = node_modifier.addEvent("delayed forwarded signal");
     delayed_slot_ = node_modifier.addSlot("delayed slot", [this]() {
-        doSleep();
-        delayed_forward_->trigger();
+        if(future.valid()) {
+            future.wait();
+        }
+
+        if(blocking_) {
+            delayEvent();
+
+        } else {
+            if(delayed_forward_) {
+                future = std::async(std::launch::async, [this]{
+                    delayEvent();
+                });
+            }
+        }
+
     });
+}
+
+void Delay::tearDown()
+{
+    delayed_forward_ = nullptr;
+    output_ = nullptr;
+}
+
+bool Delay::isAsynchronous() const
+{
+    return true;
 }
 
 void Delay::doSleep()
@@ -60,16 +98,39 @@ void Delay::doSleep()
         t -= 10;
     }
     progress_->setProgress(wait_time, wait_time);
-
-    apex_assert_hard(wait_time == readParameter<double>("delay") * 1000);
 }
 
-void Delay::process()
+void Delay::process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters,
+                    std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation)
+{
+    if(future.valid()) {
+        future.wait();
+    }
+
+    if(blocking_) {
+        delayInput(continuation);
+
+    } else {
+        future = std::async(std::launch::async, [this, continuation]{
+            delayInput(continuation);
+        });
+    }
+}
+
+void Delay::delayInput(std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation)
 {
     TokenData::ConstPtr msg = msg::getMessage<TokenData>(input_);
-
     doSleep();
-
-    msg::publish(output_, msg);
+    if(output_) {
+        msg::publish(output_, msg);
+        continuation([](csapex::NodeModifier& node_modifier, Parameterizable &parameters){});
+    }
 }
 
+void Delay::delayEvent()
+{
+    doSleep();
+    if(delayed_forward_) {
+        delayed_forward_->trigger();
+    }
+}

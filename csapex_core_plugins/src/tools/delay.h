@@ -5,18 +5,32 @@
 #include <csapex/model/node.h>
 #include <csapex/model/token_data.h>
 
+/// SYSTEM
+#include <future>
+
 namespace csapex {
 
 class Delay : public Node
 {
 public:
     Delay();
+    ~Delay();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    virtual void process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters,
+                         std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation);
 
+    virtual void tearDown() override;
+
+    virtual bool isAsynchronous() const;
+
+private:
     void doSleep();
+
+    void delayInput(std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation);
+    void delayEvent();
+
 private:
     Input* input_;
     Output* output_;
@@ -24,7 +38,12 @@ private:
     Slot* delayed_slot_;
     Event* delayed_forward_;
 
+    bool blocking_;
+
     param::OutputProgressParameter* progress_;
+
+    std::future<void> future;
+
 };
 
 }
