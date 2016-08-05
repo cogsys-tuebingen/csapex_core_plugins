@@ -35,7 +35,6 @@ struct Entry {
 };
 
 using ArrayType           = kdtree::Array<Entry*, 3>;
-using ArrayClusteringType = kdtree::ArrayClustering<Entry, 3>;
 using ArrayIndex          = ArrayType::Index;
 using AO                  = kdtree::ArrayOperations<3, int, int>;
 using AOA                 = kdtree::ArrayOperations<3, int, std::size_t>;

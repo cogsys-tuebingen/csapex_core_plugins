@@ -190,7 +190,11 @@
   <tags>PointCloud</tags>
 </class>
 <class type="csapex::ClusterPointCloudArray" base_class_type="csapex::Node">
-  <description>Cluster implementation from pcl</description>
+  <description>Cluster based on a voxel grid like structure.</description>
+  <tags>PointCloud</tags>
+</class>
+<class type="csapex::ClusterPointCloudPaging" base_class_type="csapex::Node">
+  <description>Cluster point cloud on a grid like structure using paging for memory allocation.</description>
   <tags>PointCloud</tags>
 </class>
 <class type="csapex::ClusterPointcloudKDTree" base_class_type="csapex::Node">
