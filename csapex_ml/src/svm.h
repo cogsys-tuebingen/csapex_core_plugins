@@ -9,7 +9,6 @@
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
-#include <mutex>
 
 namespace csapex {
 class SVM : public Node

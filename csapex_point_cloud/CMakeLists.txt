@@ -69,6 +69,8 @@ if(${kdtree_FOUND})
     set(clustering_kd_tree_SRCS
         src/segmentation/cluster_pointcloud_kdtree.cpp
         src/segmentation/cluster_pointcloud_kdtree_filtered.cpp
+        src/segmentation/cluster_pointcloud_page.cpp
+        src/segmentation/cluster_pointcloud_array.cpp
     )
     include_directories(${kdtree_INCLUDE_DIRS})
 else()
@@ -122,6 +124,8 @@ add_library(csapex_point_cloud_plugin_node
     src/segmentation/split_clustered_cloud.cpp
     src/segmentation/label_clustered_pointcloud.cpp
     src/segmentation/merge_clusters.cpp
+
+
 
     src/analysis/ray_angles.cpp
     src/analysis/estimate_normals.cpp
