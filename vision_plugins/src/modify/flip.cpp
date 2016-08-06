@@ -60,10 +60,5 @@ void Flip::setupParameters(Parameterizable& parameters)
         {"v+h", -1}
     };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("type", types, -1),
-                            std::bind(&Flip::update, this));
-}
-
-void Flip::update()
-{
-    mode_ = readParameter<int>("type");
+                            mode_);
 }

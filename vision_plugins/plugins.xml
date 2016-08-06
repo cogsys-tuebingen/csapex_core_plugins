@@ -75,6 +75,10 @@
     <description>Change the size of a ROI</description>
     <tags>Vision, ROI</tags>
   </class>
+  <class type="csapex::FilterROIs" base_class_type="csapex::Node">
+    <description>Filter ROIs according to size and ratio.</description>
+    <tags>Vision, ROI</tags>
+  </class>
   <class type="csapex::ExtractROI" base_class_type="csapex::Node">
     <description>Extracts a subimage according to the given ROI</description>
     <tags>Vision, ROI</tags>
@@ -199,6 +203,12 @@
   <class type="vision_plugins::Flip" base_class_type="csapex::Node">
     <description>
         Flip matrices or images horizontal, vertical or both.
+    </description>
+    <tags>Vision</tags>
+  </class>
+  <class type="vision_plugins::FlipROIs" base_class_type="csapex::Node">
+    <description>
+        Flip rois horizontal, vertical or both.
     </description>
     <tags>Vision</tags>
   </class>

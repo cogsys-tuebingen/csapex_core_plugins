@@ -20,7 +20,6 @@ protected:
 
     int mode_;
 
-    void update();
 };
 }
 

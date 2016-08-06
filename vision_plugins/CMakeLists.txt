@@ -54,7 +54,6 @@ add_library(vision_plugins_node
     src/morphological.cpp
 #    src/vj_detector.cpp
     src/lk_tracking.cpp
-    src/visualize/render_rois.cpp
     src/number_generator.cpp
 
     src/roi/merge_rois.cpp
@@ -62,6 +61,7 @@ add_library(vision_plugins_node
     src/roi/grow_rois.cpp
     src/roi/extract_roi.cpp
     src/roi/filter_rois.cpp
+    src/roi/flip_rois.cpp
 
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp
@@ -96,6 +96,7 @@ add_library(vision_plugins_node
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
     src/visualize/image_text_label.cpp
+    src/visualize/render_rois.cpp
 
     src/filter/median_filter.cpp
     src/filter/binomial_filter.cpp
