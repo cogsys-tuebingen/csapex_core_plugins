@@ -90,12 +90,13 @@ void Delay::doSleep()
 {
     long wait_time = readParameter<double>("delay") * 1000;
     long t = wait_time;
+    long step = 100l;
 
     while(t > 0) {
         progress_->setProgress(wait_time - t, wait_time);
-        std::chrono::milliseconds dura(std::min(10l, t));
+        std::chrono::milliseconds dura(std::min(step, t));
         std::this_thread::sleep_for(dura);
-        t -= 10;
+        t -= step;
     }
     progress_->setProgress(wait_time, wait_time);
 }

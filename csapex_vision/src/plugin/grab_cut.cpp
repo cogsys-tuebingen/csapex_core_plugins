@@ -8,8 +8,8 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-#include <csapex/utility/timer.h>
-#include <csapex/utility/interlude.hpp>
+#include <csapex/profiling/timer.h>
+#include <csapex/profiling/interlude.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::GrabCut, csapex::Node)
 

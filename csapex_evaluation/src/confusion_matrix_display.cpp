@@ -6,7 +6,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/factory/message_factory.h>
-#include <csapex/utility/timer.h>
+#include <csapex/profiling/timer.h>
 
 #include <csapex/msg/any_message.h>
 CSAPEX_REGISTER_CLASS(csapex::ConfusionMatrixDisplay, csapex::Node)

@@ -8,11 +8,11 @@
 #include <csapex/msg/message.h>
 #include <csapex/signal/event.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/utility/timer.h>
+#include <csapex/profiling/timer.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
 #include <csapex/msg/any_message.h>
-#include <csapex/utility/interlude.hpp>
+#include <csapex/profiling/interlude.hpp>
 #include <csapex/signal/slot.h>
 #include <csapex/model/node_handle.h>
 #include <csapex/msg/end_of_sequence_message.h>

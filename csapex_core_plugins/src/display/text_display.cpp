@@ -6,9 +6,9 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/serialization/message_serializer.h>
-#include <csapex/utility/timer.h>
+#include <csapex/profiling/timer.h>
 #include <csapex/msg/any_message.h>
-#include <csapex/utility/interlude.hpp>
+#include <csapex/profiling/interlude.hpp>
 #include <csapex/model/token.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)

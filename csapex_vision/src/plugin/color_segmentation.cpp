@@ -6,8 +6,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/interlude.hpp>
-#include <csapex/utility/timer.h>
+#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/timer.h>
 
 /// SYSTEM
 

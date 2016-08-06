@@ -10,7 +10,7 @@
 #include <csapex_scan_2d/labeled_scan_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/timer.h>
+#include <csapex/profiling/timer.h>
 #include <csapex/model/node_modifier.h>
 
 using namespace csapex;

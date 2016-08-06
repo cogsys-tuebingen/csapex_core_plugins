@@ -5,9 +5,9 @@
 #include <csapex/model/parameterizable.h>
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
-#include <csapex/utility/timable.h>
-#include <csapex/utility/timer.h>
-#include <csapex/utility/interlude.hpp>
+#include <csapex/profiling/timable.h>
+#include <csapex/profiling/timer.h>
+#include <csapex/profiling/interlude.hpp>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
