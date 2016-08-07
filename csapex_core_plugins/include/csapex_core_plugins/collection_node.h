@@ -27,7 +27,7 @@ public:
     virtual void setup(NodeModifier& modifier) override
     {
         in_vector_generic  = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
-        in_vector  = modifier.addOptionalInput<connection_types::VectorMessage, MessageType>("messages to collect");
+        in_vector  = modifier.addOptionalInput<connection_types::AnyMessage>("messages to collect (deprecated)");
         in_single  = modifier.addOptionalInput<MessageType>("message to collect");
     }
 
@@ -38,11 +38,7 @@ public:
             buffer_.insert(buffer_.end(), input->begin(), input->end());
         }
         if (msg::hasMessage(in_vector)) {
-            connection_types::VectorMessage::ConstPtr input = msg::getMessage<connection_types::VectorMessage>(in_vector);
-            for (auto&& msg : input->value) {
-                if (auto casted = std::dynamic_pointer_cast<MessageType const>(msg))
-                    buffer_.push_back(*casted);
-            }
+            throw std::runtime_error("VectorMessage no longer exists");
         }
         if(msg::hasMessage(in_single)) {
             std::shared_ptr<MessageType const> input = msg::getMessage<MessageType>(in_single);

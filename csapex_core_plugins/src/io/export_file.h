@@ -21,7 +21,7 @@ protected:
     void setExportPath();
 
     void exportMessage(const TokenData::ConstPtr& msg);
-    void exportVector(const connection_types::VectorMessage::ConstPtr& vector);
+    void exportVector(const connection_types::GenericVectorMessage::ConstPtr& vector);
     void exportSingle(const TokenData::ConstPtr& msg);
 
 private:

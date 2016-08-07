@@ -54,7 +54,8 @@ void BarCodeReader::process()
     // scan the image for barcodes
     scanner.scan(image);
 
-    VectorMessage::Ptr out(VectorMessage::make<RoiMessage>());
+    std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
+
 
     // extract results
     for(zbar::Image::SymbolIterator symbol = image.symbol_begin();
@@ -79,11 +80,11 @@ void BarCodeReader::process()
                 Y = std::max(Y, py);
             }
 
-            RoiMessage::Ptr msg(new RoiMessage);
+            RoiMessage msg;
             cv::Rect rect(x,y, X-x, Y-y);
             if(rect.x >= 0 && rect.y >= 0) {
-                msg->value = Roi(rect, cv::Scalar(0,0,0));
-                out->value.push_back(msg);
+                msg.value = Roi(rect, cv::Scalar(0,0,0));
+                out->push_back(msg);
             }
         }
 
@@ -111,7 +112,7 @@ void BarCodeReader::process()
         }
     }
 
-    msg::publish(out_roi, out);
+    msg::publish<GenericVectorMessage, RoiMessage>(out_roi, out);
 
     // clean up
     image.set_data(nullptr, 0);
@@ -124,5 +125,5 @@ void BarCodeReader::setup(NodeModifier& node_modifier)
     in_img = node_modifier.addInput<CvMatMessage>("Image");
 
     out_str = node_modifier.addOutput<std::string>("String");
-    out_roi = node_modifier.addOutput<VectorMessage, RoiMessage>("ROIs");
+    out_roi = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
 }

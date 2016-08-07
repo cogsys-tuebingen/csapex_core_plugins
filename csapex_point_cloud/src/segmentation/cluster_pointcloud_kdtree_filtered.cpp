@@ -8,8 +8,8 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <csapex/msg/generic_value_message.hpp>
-#include <csapex/utility/timer.h>
-#include <csapex/utility/interlude.hpp>
+#include <csapex/profiling/timer.h>
+#include <csapex/profiling/interlude.hpp>
 
 
 CSAPEX_REGISTER_CLASS(csapex::ClusterPointcloudKDTreeFiltered, csapex::Node)

@@ -42,11 +42,12 @@ void ROIExtractor::setup(NodeModifier& node_modifier)
     input_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
     input_indices_ = node_modifier.addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Indices");
 
-    output_clouds_ = node_modifier.addOutput<VectorMessage, PointCloudMessage>("PointClouds");
+    output_clouds_ = node_modifier.addOutput<GenericVectorMessage, PointCloudMessage::Ptr>("PointClouds");
 }
 
 void ROIExtractor::updateOutputs()
 {
+    // TODO: implement variadic outputs
     std::size_t new_count = readParameter<int>("outputs");
     if (new_count != output_clouds_single_.size())
     {
@@ -61,7 +62,7 @@ void ROIExtractor::updateOutputs()
         }
         else
         {
-            for (int i = output_clouds_single_.size() - 1; i >= new_count; --i)
+            for (int i = ((int) output_clouds_single_.size()) - 1; i >= (int) new_count; --i)
             {
                 node_modifier_->removeOutput(msg::getUUID(output_clouds_single_[i]));
                 output_clouds_single_.pop_back();
@@ -70,12 +71,12 @@ void ROIExtractor::updateOutputs()
     }
 }
 
-void ROIExtractor::publish(VectorMessage::Ptr message)
+void ROIExtractor::publish(const std::shared_ptr< std::vector<PointCloudMessage::Ptr> > message)
 {
-    for (std::size_t i = 0; i < output_clouds_single_.size() && i < message->value.size(); ++i)
-        msg::publish(output_clouds_single_[i], message->value[i]);
+    for (std::size_t i = 0; i < output_clouds_single_.size() && i < message->size(); ++i)
+        msg::publish(output_clouds_single_[i], message->at(i));
 
-    msg::publish(output_clouds_, message);
+    msg::publish<GenericVectorMessage, PointCloudMessage::Ptr>(output_clouds_, message);
 }
 
 void ROIExtractor::process()
@@ -89,7 +90,7 @@ template<typename PointT>
 void ROIExtractor::extract_organized(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     std::shared_ptr<std::vector<RoiMessage> const> roi_vector(msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_));
-    VectorMessage::Ptr out_vector(VectorMessage::make<PointCloudMessage>());
+    std::shared_ptr< std::vector<PointCloudMessage::Ptr> > out_vector(new std::vector<PointCloudMessage::Ptr> );
 
     if (!cloud->isOrganized())
         throw std::runtime_error("Cluster index list required for unorganized clouds");
@@ -111,7 +112,7 @@ void ROIExtractor::extract_organized(typename pcl::PointCloud<PointT>::ConstPtr 
 
         PointCloudMessage::Ptr out_msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         out_msg->value = result;
-        out_vector->value.push_back(out_msg);
+        out_vector->push_back(out_msg);
     }
 
     publish(out_vector);
@@ -122,7 +123,8 @@ void ROIExtractor::extract_unorganized(typename pcl::PointCloud<PointT>::ConstPt
 {
     std::shared_ptr<std::vector<RoiMessage> const> roi_vector(msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_));
     std::shared_ptr<std::vector<pcl::PointIndices> const> indices = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(input_indices_);
-    VectorMessage::Ptr out_vector(VectorMessage::make<PointCloudMessage>());
+
+    std::shared_ptr< std::vector<PointCloudMessage::Ptr> > out_vector(new std::vector<PointCloudMessage::Ptr> );
 
     if (roi_vector->size() != indices->size())
         throw std::runtime_error("ROIs and Indices vectors do not have equal length");
@@ -166,7 +168,7 @@ void ROIExtractor::extract_unorganized(typename pcl::PointCloud<PointT>::ConstPt
 
         PointCloudMessage::Ptr out_msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
         out_msg->value = result;
-        out_vector->value.push_back(out_msg);
+        out_vector->push_back(out_msg);
 
         ++idx;
     }

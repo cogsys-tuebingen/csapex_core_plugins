@@ -45,22 +45,21 @@ void EstimateCenter::setupParameters(Parameterizable& parameters)
 
 void EstimateCenter::setup(NodeModifier& node_modifier)
 {
-    input_clouds_ = node_modifier.addInput<VectorMessage, PointCloudMessage>("PointClouds");
+    input_clouds_ = node_modifier.addInput<GenericVectorMessage, PointCloudMessage::Ptr>("PointClouds");
 
     output_poses_ = node_modifier.addOutput<geometry_msgs::PoseArray>("PoseArray");
-    output_poses_covariance_ = node_modifier.addOutput<VectorMessage, GenericPointerMessage<geometry_msgs::PoseWithCovarianceStamped>>("PoseWithCovariance");
+    output_poses_covariance_ = node_modifier.addOutput<GenericVectorMessage, std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped>>("PoseWithCovariance");
 }
 
 void EstimateCenter::process()
 {
-    VectorMessage::ConstPtr pcl_vector(msg::getMessage<VectorMessage>(input_clouds_));
+    std::shared_ptr<std::vector<PointCloudMessage::Ptr> const> pcl_vector =
+            msg::getMessage<GenericVectorMessage, PointCloudMessage::Ptr>(input_clouds_);
 
     output_.clear();
 
-    for (auto raw_msg : pcl_vector->value)
+    for (const PointCloudMessage::ConstPtr& pcl_msg : *pcl_vector)
     {
-        PointCloudMessage::ConstPtr pcl_msg = std::dynamic_pointer_cast<PointCloudMessage const>(raw_msg);
-
         tmp.frame_id = pcl_msg->frame_id;
         tmp.stamp_micro_seconds = pcl_msg->stamp_micro_seconds;
 
@@ -83,17 +82,12 @@ void EstimateCenter::process()
 
     if (output_poses_covariance_->isConnected())
     {
-        VectorMessage::Ptr msgs = VectorMessage::make<GenericPointerMessage<geometry_msgs::PoseWithCovarianceStamped>>();
+        std::shared_ptr< std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped>>>
+                msgs(new std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped>> );
 
-        for (auto&& with_cov : output_)
-        {
-            GenericPointerMessage<geometry_msgs::PoseWithCovarianceStamped>::Ptr msg(new GenericPointerMessage<geometry_msgs::PoseWithCovarianceStamped>());
-            msg->value = with_cov;
+        *msgs = output_;
 
-            msgs->value.push_back(msg);
-        }
-
-        msg::publish(output_poses_covariance_, msgs);
+        msg::publish<GenericVectorMessage, std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped>>(output_poses_covariance_, msgs);
     }
 }
 

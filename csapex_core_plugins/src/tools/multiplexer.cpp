@@ -9,6 +9,7 @@
 #include <csapex/msg/any_message.h>
 #include <csapex/msg/no_message.h>
 #include <csapex/model/token.h>
+#include <csapex/serialization/yaml.h>
 
 namespace csapex
 {
@@ -23,7 +24,7 @@ public:
     {
         auto i = node_modifier.addDynamicInput<connection_types::AnyMessage>("series of messages");
         input = dynamic_cast<DynamicInput*> (i);
-        output = node_modifier.addOutput<connection_types::AnyMessage>("multidimensional message");
+        output = node_modifier.addOutput<connection_types::GenericVectorMessage, TokenDataConstPtr>("multidimensional message");
     }
 
     void setupParameters(Parameterizable& parameters)
@@ -38,15 +39,15 @@ public:
         if(msg.empty()) {
             msg::publish(output, connection_types::makeEmpty<connection_types::NoMessage>());
         } else {
-            connection_types::VectorMessage::Ptr composed(new connection_types::VectorMessage);
+            std::shared_ptr<std::vector<TokenDataConstPtr>> composed(new std::vector<TokenDataConstPtr>());
 //            composed->value = msg;
             for(auto& m : msg) {
                 if(std::dynamic_pointer_cast<connection_types::MarkerMessage const>(m->getTokenData()) == nullptr) {
-                    composed->value.push_back(m->getTokenData());
+                    composed->push_back(m->getTokenData());
                 }
             }
 
-            msg::publish(output, composed);
+            msg::publish<connection_types::GenericVectorMessage, TokenDataConstPtr>(output, composed);
         }
     }
 

@@ -8,7 +8,6 @@
 #include <csapex/msg/no_message.h>
 
 CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::GenericVectorMessage, g_instance_generic_vector_)
-CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::VectorMessage, g_instance_vector_)
 
 using namespace csapex;
 using namespace connection_types;
@@ -46,7 +45,54 @@ std::string GenericVectorMessage::descriptiveName() const
 }
 
 
+GenericVectorMessage::AnythingImplementation::AnythingImplementation()
+    : EntryInterface("Anything")
+{
 
+}
+
+GenericVectorMessage::EntryInterface::Ptr GenericVectorMessage::AnythingImplementation::cloneEntry() const
+{
+    return std::make_shared<GenericVectorMessage::AnythingImplementation>();
+}
+
+void GenericVectorMessage::AnythingImplementation::encode(YAML::Node& node) const
+{
+
+}
+void GenericVectorMessage::AnythingImplementation::decode(const YAML::Node& node)
+{
+
+}
+
+
+
+TokenData::Ptr GenericVectorMessage::AnythingImplementation::toType() const
+{
+    return std::make_shared<AnyMessage>();
+}
+
+bool GenericVectorMessage::AnythingImplementation::canConnectTo(const TokenData* other_side) const
+{
+    if(dynamic_cast<const EntryInterface*> (other_side)) {
+        return true;
+    } else if(dynamic_cast<const GenericVectorMessage*> (other_side)) {
+        return true;
+    } else {
+        return dynamic_cast<const AnyMessage*> (other_side) != nullptr;
+    }
+}
+
+bool GenericVectorMessage::AnythingImplementation::acceptsConnectionFrom(const TokenData *other_side) const
+{
+    if(dynamic_cast<const EntryInterface*> (other_side)) {
+        return true;
+    } else if(dynamic_cast<const GenericVectorMessage*> (other_side)) {
+        return true;
+    } else {
+        return dynamic_cast<const AnyMessage*> (other_side) != nullptr;
+    }
+}
 
 /// YAML
 namespace YAML {
@@ -68,103 +114,3 @@ bool convert<csapex::connection_types::GenericVectorMessage>::decode(const Node&
 }
 }
 
-
-
-//// OLD
-VectorMessage::VectorMessage(const std::string& frame_id, Message::Stamp stamp)
-    : Message ("MessageVector", frame_id, stamp)
-{
-    type_ = connection_types::makeEmpty<AnyMessage>();
-}
-VectorMessage::VectorMessage(TokenData::Ptr type, const std::string& frame_id, Message::Stamp stamp)
-    : Message ("MessageVector", frame_id, stamp)
-{
-    setDescriptiveName(std::string("std::vector<") + type->typeName()  + "::Ptr>");
-    type_ = type;
-}
-
-TokenData::Ptr VectorMessage::getSubType() const
-{
-    return type_;
-}
-
-VectorMessage::Ptr VectorMessage::make(){
-    Ptr new_msg(new VectorMessage("/"));
-    return new_msg;
-}
-
-TokenData::Ptr VectorMessage::clone() const
-{
-    Ptr new_msg(new VectorMessage(type_, frame_id, stamp_micro_seconds));
-    new_msg->value = value;
-    return new_msg;
-}
-
-TokenData::Ptr VectorMessage::toType() const
-{
-    return make();
-}
-
-bool VectorMessage::canConnectTo(const TokenData *other_side) const
-{
-    const VectorMessage* vec = dynamic_cast<const VectorMessage*> (other_side);
-    if(vec != 0 && type_->canConnectTo(vec->getSubType().get())) {
-        return true;
-    } else {
-        return other_side->canConnectTo(this);
-    }
-}
-
-bool VectorMessage::acceptsConnectionFrom(const TokenData *other_side) const
-{
-    const VectorMessage* vec = dynamic_cast<const VectorMessage*> (other_side);
-    if(vec != 0 && type_->acceptsConnectionFrom(vec->getSubType().get())) {
-        return true;
-    } else {
-        return other_side->acceptsConnectionFrom(this);
-    }
-}
-
-bool VectorMessage::isContainer() const
-{
-    return true;
-}
-
-TokenData::Ptr VectorMessage::nestedType() const
-{
-    return value.empty() ? connection_types::makeEmpty<connection_types::NoMessage>() : value.front()->toType();
-}
-
-TokenData::ConstPtr VectorMessage::nestedValue(std::size_t i) const
-{
-    return  value.at(i);
-}
-std::size_t VectorMessage::nestedValueCount() const
-{
-    return value.size();
-}
-void VectorMessage::addNestedValue(const TokenData::ConstPtr &msg)
-{
-    value.push_back(msg);
-}
-
-
-/// YAML
-namespace YAML {
-Node convert<csapex::connection_types::VectorMessage>::encode(const csapex::connection_types::VectorMessage& rhs)
-{
-    Node node = convert<csapex::connection_types::Message>::encode(rhs);
-    node["values"] = rhs.value;
-    return node;
-}
-
-bool convert<csapex::connection_types::VectorMessage>::decode(const Node& node, csapex::connection_types::VectorMessage& rhs)
-{
-    if(!node.IsMap()) {
-        return false;
-    }
-    convert<csapex::connection_types::Message>::decode(node, rhs);
-    rhs.value = node["values"].as<std::vector<TokenDataConstPtr>>();
-    return true;
-}
-}

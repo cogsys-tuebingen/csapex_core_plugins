@@ -18,7 +18,7 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier)
     {
-        output = node_modifier.addOutput<connection_types::VectorMessage>("merged vector");
+        output = node_modifier.addOutput<connection_types::GenericVectorMessage>("merged vector");
 
         updateInputs();
     }
@@ -30,24 +30,30 @@ public:
 
     void process()
     {
-        connection_types::VectorMessage::Ptr result(new connection_types::VectorMessage);
+        // TODO: implement variadic io
+        connection_types::GenericVectorMessage::Ptr result;
 
         bool first = true;
         std::vector<Input*> inputs = node_modifier_->getMessageInputs();
         for(std::size_t i = 0 ; i < inputs.size() ; i++) {
             Input *in = inputs[i];
             if(msg::hasMessage(in)) {
-                connection_types::VectorMessage::ConstPtr msg = msg::getMessage<connection_types::VectorMessage>(in);
+                connection_types::GenericVectorMessage::ConstPtr msg;
                 if(first) {
-                    result->stamp_micro_seconds = msg->stamp_micro_seconds;
+                    result =  msg::getClonedMessage<connection_types::GenericVectorMessage>(in);
                     first = false;
+                } else {
+                    msg= msg::getMessage<connection_types::GenericVectorMessage>(in);
+                    for(std::size_t i = 0, total = msg->nestedValueCount(); i < total; ++i) {
+                        result->addNestedValue(msg->nestedValue(i));
+                    }
                 }
-                auto v = msg->value;
-                result->value.insert(result->value.end(), v.begin(), v.end());
             }
         }
 
-        msg::publish(output, result);
+        if(result) {
+            msg::publish(output, result);
+        }
     }
 
 
@@ -73,7 +79,7 @@ public:
                 msg::enable(inputs[i]);
             }
             for(int i = 0 ; i < to_add ; i++) {
-                node_modifier_->addOptionalInput<connection_types::VectorMessage>("Vector");
+                node_modifier_->addOptionalInput<connection_types::GenericVectorMessage>("Vector");
             }
         }
 

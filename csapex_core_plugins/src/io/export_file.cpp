@@ -90,7 +90,7 @@ void ExportFile::process()
 
 void ExportFile::exportMessage(const TokenData::ConstPtr &msg)
 {
-    connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<const connection_types::VectorMessage>(msg);
+    connection_types::GenericVectorMessage::ConstPtr vector = std::dynamic_pointer_cast<const connection_types::GenericVectorMessage>(msg);
     if(vector) {
         exportVector(vector);
     } else {
@@ -98,10 +98,11 @@ void ExportFile::exportMessage(const TokenData::ConstPtr &msg)
     }
 }
 
-void ExportFile::exportVector(const connection_types::VectorMessage::ConstPtr& vector)
+void ExportFile::exportVector(const connection_types::GenericVectorMessage::ConstPtr& vector)
 {
-    for(std::size_t i = 0, total = vector->value.size(); i < total; ++i) {
-        exportSingle(vector->value[i]);
+
+    for(std::size_t i = 0, total = vector->nestedValueCount(); i < total; ++i) {
+        exportSingle(vector->nestedValue(i));
     }
 }
 

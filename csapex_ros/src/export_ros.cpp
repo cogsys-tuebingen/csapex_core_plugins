@@ -52,11 +52,11 @@ void ExportRos::processROS()
 
     TokenData::ConstPtr msg = msg::getMessage<TokenData>(connector_);
 
-    connection_types::VectorMessage::ConstPtr vector = std::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
+    connection_types::GenericVectorMessage::ConstPtr vector = std::dynamic_pointer_cast<connection_types::GenericVectorMessage const>(msg);
 
     TokenData::ConstPtr type;
     if(vector) {
-        type = vector->getSubType();
+        type = vector->nestedType();
     } else {
         type = msg;//->toType();
     }
@@ -69,10 +69,9 @@ void ExportRos::processROS()
     }
 
     if(vector) {
-        for(auto it = vector->value.begin();
-            it != vector->value.end();
-            ++it) {
-            RosMessageConversion::instance().publish(pub, *it);
+        for(std::size_t i = 0, n = vector->nestedValueCount(); i < n; ++i) {
+            TokenDataConstPtr msg = vector->nestedValue(i);
+            RosMessageConversion::instance().publish(pub, msg);
         }
     } else {
         RosMessageConversion::instance().publish(pub, msg);

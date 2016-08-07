@@ -23,7 +23,7 @@ private:
     template <class PointT> void extract_unorganized(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
     void updateOutputs();
-    void publish(connection_types::VectorMessage::Ptr message);
+    void publish(const std::shared_ptr< std::vector<connection_types::PointCloudMessage::Ptr> > message);
 
 private:
     Input* input_cloud_;
