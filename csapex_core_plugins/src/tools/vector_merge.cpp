@@ -2,15 +2,14 @@
 #include <csapex/model/node.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/msg/dynamic_input.h>
+#include <csapex/model/variadic_io.h>
 #include <csapex/msg/io.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/msg/generic_vector_message.hpp>
 
 namespace csapex
 {
 
-class VectorMerge : public Node
+class VectorMerge : public Node, public VariadicInputs
 {
 public:
     VectorMerge()
@@ -18,19 +17,18 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier)
     {
-        output = node_modifier.addOutput<connection_types::GenericVectorMessage>("merged vector");
+        setupVariadic(node_modifier);
 
-        updateInputs();
+        output = node_modifier.addOutput<connection_types::GenericVectorMessage>("merged vector");
     }
 
     void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(csapex::param::ParameterFactory::declareRange("input count", 2, 10, 2, 1), std::bind(&VectorMerge::updateInputs, this));
+        setupVariadicParameters(parameters);
     }
 
     void process()
     {
-        // TODO: implement variadic io
         connection_types::GenericVectorMessage::Ptr result;
 
         bool first = true;
@@ -43,9 +41,9 @@ public:
                     result =  msg::getClonedMessage<connection_types::GenericVectorMessage>(in);
                     first = false;
                 } else {
-                    msg= msg::getMessage<connection_types::GenericVectorMessage>(in);
-                    for(std::size_t i = 0, total = msg->nestedValueCount(); i < total; ++i) {
-                        result->addNestedValue(msg->nestedValue(i));
+                    msg = msg::getMessage<connection_types::GenericVectorMessage>(in);
+                    for(std::size_t j = 0, total = msg->nestedValueCount(); j < total; ++j) {
+                        result->addNestedValue(msg->nestedValue(j));
                     }
                 }
             }
@@ -56,33 +54,9 @@ public:
         }
     }
 
-
-    void updateInputs()
+    virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override
     {
-        int input_count = readParameter<int>("input count");
-
-        std::vector<Input*> inputs = node_modifier_->getMessageInputs();
-        int current_amount = inputs.size();
-
-        if(current_amount > input_count) {
-            for(int i = current_amount; i > input_count ; i--) {
-                Input* in = inputs[i - 1];
-                if(msg::isConnected(in)) {
-                    msg::disable(in);
-                } else {
-                    node_modifier_->removeInput(msg::getUUID(in));
-                }
-            }
-        } else {
-            int to_add = input_count - current_amount;
-            for(int i = 0 ; i < current_amount; i++) {
-                msg::enable(inputs[i]);
-            }
-            for(int i = 0 ; i < to_add ; i++) {
-                node_modifier_->addOptionalInput<connection_types::GenericVectorMessage>("Vector");
-            }
-        }
-
+        return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::GenericVectorMessage>(), label.empty() ? "Vector" : label, getVariadicInputCount() == 0 ? false : true);
     }
 
 private:
