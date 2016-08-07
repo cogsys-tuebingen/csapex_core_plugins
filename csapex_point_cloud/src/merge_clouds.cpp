@@ -18,18 +18,21 @@ MergeClouds::MergeClouds()
 {
 }
 
+Input* MergeClouds::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool optional)
+{
+    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::PointCloudMessage>(), label.empty() ? "Cloud" : label, getVariadicInputCount() == 0 ? false : true);
+}
+
 void MergeClouds::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("input count", 2, 8, 2, 1), [this](csapex::param::Parameter*) {
-        updateInputs();
-    });
+    setupVariadicParameters(parameters);
 }
 
 void MergeClouds::setup(NodeModifier& node_modifier)
 {
-    out_ = node_modifier.addOutput<PointCloudMessage>("merged PointCloud");
+    setupVariadic(node_modifier);
 
-    updateInputs();
+    out_ = node_modifier.addOutput<PointCloudMessage>("merged PointCloud");
 }
 
 void MergeClouds::process()
@@ -57,34 +60,6 @@ void MergeClouds::process()
     if(result_) {
         msg::publish(out_, result_);
     }
-}
-
-void MergeClouds::updateInputs()
-{
-    int input_count = readParameter<int>("input count");
-
-    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
-    int current_amount = inputs.size();
-
-    if(current_amount > input_count) {
-        for(int i = current_amount; i > input_count ; i--) {
-            Input* in = inputs[i - 1];
-            if(msg::isConnected(in)) {
-                msg::disable(in);
-            } else {
-                node_modifier_->removeInput(msg::getUUID(in));
-            }
-        }
-    } else {
-        int to_add = input_count - current_amount;
-        for(int i = 0 ; i < current_amount; i++) {
-            msg::enable(inputs[i]);
-        }
-        for(int i = 0 ; i < to_add ; i++) {
-            node_modifier_->addOptionalInput<PointCloudMessage>("Cloud");
-        }
-    }
-
 }
 
 template <class PointT>
