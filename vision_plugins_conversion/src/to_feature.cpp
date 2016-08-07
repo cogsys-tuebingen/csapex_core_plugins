@@ -114,12 +114,12 @@ inline void processSingle(const TokenData::ConstPtr                    &src,
         doProcessSingle(h, dst, label);
 }
 
-inline void processVector(const connection_types::VectorMessage::ConstPtr    &src,
+inline void processVector(const connection_types::GenericVectorMessage::ConstPtr    &src,
                           std::shared_ptr< std::vector<FeaturesMessage> >  &dst,
                           const int label)
 {
-    for(std::size_t i = 0, total = src->value.size(); i < total; ++i) {
-        processSingle(src->value[i], dst, label);
+    for(std::size_t i = 0, total = src->nestedValueCount(); i < total; ++i) {
+        processSingle(src->nestedValue(i), dst, label);
     }
 }
 }
@@ -133,8 +133,8 @@ void ToFeature::process()
 
     int class_id = readParameter<int>("class id");
 
-    connection_types::VectorMessage::ConstPtr vector =
-            std::dynamic_pointer_cast<connection_types::VectorMessage const>(msg);
+    connection_types::GenericVectorMessage::ConstPtr vector =
+            std::dynamic_pointer_cast<connection_types::GenericVectorMessage const>(msg);
     if(vector) {
         processVector(vector, out, class_id);
     } else {
