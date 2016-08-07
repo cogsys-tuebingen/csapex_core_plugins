@@ -12,7 +12,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 
 /// SYSTEM
 #include <QPushButton>

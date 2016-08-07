@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex_point_cloud/indeces_message.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/interval_parameter.h>
 #include <csapex/model/node_modifier.h>

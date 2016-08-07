@@ -1,12 +1,12 @@
 /// PROJECT
 #include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <csapex/model/node.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex_vision/cv_mat_message.h>
 

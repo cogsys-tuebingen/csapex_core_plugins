@@ -7,7 +7,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_vision/roi_message.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <csapex_ros/ros_message_conversion.h>
@@ -53,8 +53,8 @@ void EstimateCenter::setup(NodeModifier& node_modifier)
 
 void EstimateCenter::process()
 {
-    std::shared_ptr<std::vector<PointCloudMessage::Ptr> const> pcl_vector =
-            msg::getMessage<GenericVectorMessage, PointCloudMessage::Ptr>(input_clouds_);
+    std::shared_ptr<std::vector<PointCloudMessage::ConstPtr> const> pcl_vector =
+            msg::getMessage<GenericVectorMessage, PointCloudMessage::ConstPtr>(input_clouds_);
 
     output_.clear();
 
@@ -82,12 +82,12 @@ void EstimateCenter::process()
 
     if (output_poses_covariance_->isConnected())
     {
-        std::shared_ptr< std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped>>>
-                msgs(new std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped>> );
+        std::shared_ptr< std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>>>
+                msgs(new std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>> );
 
         *msgs = output_;
 
-        msg::publish<GenericVectorMessage, std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped>>(output_poses_covariance_, msgs);
+        msg::publish<GenericVectorMessage, std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>>(output_poses_covariance_, msgs);
     }
 }
 

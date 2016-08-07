@@ -1,7 +1,7 @@
 #pragma once
 
 #include <csapex/model/node.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseArray.h>
@@ -35,6 +35,6 @@ private:
         csapex::connection_types::Message::Stamp stamp_micro_seconds;
     } tmp;
 
-    std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped>> output_;
+    std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>> output_;
 };
 }

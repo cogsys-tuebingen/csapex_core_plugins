@@ -1,7 +1,7 @@
 #pragma once
 
 #include <csapex/model/node.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_point_cloud/point_cloud_message.h>
 
 namespace csapex
@@ -23,7 +23,7 @@ private:
     template <class PointT> void extract_unorganized(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
     void updateOutputs();
-    void publish(const std::shared_ptr< std::vector<connection_types::PointCloudMessage::Ptr> > message);
+    void publish(const std::shared_ptr<std::vector<connection_types::PointCloudMessage::ConstPtr> >& message);
 
 private:
     Input* input_cloud_;

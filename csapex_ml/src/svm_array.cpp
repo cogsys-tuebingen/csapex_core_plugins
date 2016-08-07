@@ -6,7 +6,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_vision/cv_mat_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::SVMArray, csapex::Node)
@@ -30,7 +30,7 @@ SVMArray::SVMArray() :
 void SVMArray::setup(NodeModifier& node_modifier)
 {
     in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("features");
-    out_ = node_modifier.addOutput<GenericVectorMessage, CvMatMessage::Ptr>("responses");
+    out_ = node_modifier.addOutput<GenericVectorMessage, CvMatMessage::ConstPtr>("responses");
 
     reload_ = node_modifier.addSlot("Reload", std::bind(&SVMArray::load, this));
 
@@ -75,7 +75,7 @@ void SVMArray::setupParameters(Parameterizable& parameters)
 void SVMArray::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
-    std::shared_ptr<std::vector<CvMatMessage::Ptr>> output(new std::vector<CvMatMessage::Ptr>);
+    std::shared_ptr<std::vector<CvMatMessage::ConstPtr>> output(new std::vector<CvMatMessage::ConstPtr>);
 
     if(!loaded_) {
         throw std::runtime_error("No SVM is loaded!");
@@ -113,7 +113,7 @@ void SVMArray::process()
     for(std::size_t i = 0 ; i < size ; ++i)
     {
         cv::Mat sample(input->at(i).value);
-        CvMatMessage::Ptr &result_msg = output->at(i);
+        CvMatMessage::ConstPtr &result_msg = output->at(i);
         result_msg.reset(new CvMatMessage(enc::unknown, 0));
         cv::Mat result = result_msg->value;
         result = svm_responses_.clone();
@@ -129,7 +129,7 @@ void SVMArray::process()
         }
     }
 
-    msg::publish<GenericVectorMessage, CvMatMessage::Ptr>(out_, output);
+    msg::publish<GenericVectorMessage, CvMatMessage::ConstPtr>(out_, output);
 }
 
 void SVMArray::load()

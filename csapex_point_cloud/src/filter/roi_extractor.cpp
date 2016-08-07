@@ -6,7 +6,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_vision/roi_message.h>
 #include <csapex_point_cloud/indeces_message.h>
 
@@ -42,7 +42,7 @@ void ROIExtractor::setup(NodeModifier& node_modifier)
     input_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
     input_indices_ = node_modifier.addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Indices");
 
-    output_clouds_ = node_modifier.addOutput<GenericVectorMessage, PointCloudMessage::Ptr>("PointClouds");
+    output_clouds_ = node_modifier.addOutput<GenericVectorMessage, PointCloudMessage::ConstPtr>("PointClouds");
 }
 
 void ROIExtractor::updateOutputs()
@@ -71,12 +71,12 @@ void ROIExtractor::updateOutputs()
     }
 }
 
-void ROIExtractor::publish(const std::shared_ptr< std::vector<PointCloudMessage::Ptr> > message)
+void ROIExtractor::publish(const std::shared_ptr< std::vector<PointCloudMessage::ConstPtr> >& message)
 {
     for (std::size_t i = 0; i < output_clouds_single_.size() && i < message->size(); ++i)
         msg::publish(output_clouds_single_[i], message->at(i));
 
-    msg::publish<GenericVectorMessage, PointCloudMessage::Ptr>(output_clouds_, message);
+    msg::publish<GenericVectorMessage, PointCloudMessage::ConstPtr>(output_clouds_, message);
 }
 
 void ROIExtractor::process()
@@ -90,7 +90,7 @@ template<typename PointT>
 void ROIExtractor::extract_organized(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     std::shared_ptr<std::vector<RoiMessage> const> roi_vector(msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_));
-    std::shared_ptr< std::vector<PointCloudMessage::Ptr> > out_vector(new std::vector<PointCloudMessage::Ptr> );
+    std::shared_ptr< std::vector<PointCloudMessage::ConstPtr> > out_vector(new std::vector<PointCloudMessage::ConstPtr> );
 
     if (!cloud->isOrganized())
         throw std::runtime_error("Cluster index list required for unorganized clouds");
@@ -124,7 +124,7 @@ void ROIExtractor::extract_unorganized(typename pcl::PointCloud<PointT>::ConstPt
     std::shared_ptr<std::vector<RoiMessage> const> roi_vector(msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_));
     std::shared_ptr<std::vector<pcl::PointIndices> const> indices = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(input_indices_);
 
-    std::shared_ptr< std::vector<PointCloudMessage::Ptr> > out_vector(new std::vector<PointCloudMessage::Ptr> );
+    std::shared_ptr< std::vector<PointCloudMessage::ConstPtr> > out_vector(new std::vector<PointCloudMessage::ConstPtr> );
 
     if (roi_vector->size() != indices->size())
         throw std::runtime_error("ROIs and Indices vectors do not have equal length");

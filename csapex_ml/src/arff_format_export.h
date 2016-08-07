@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex/model/token_data.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_ml/features_message.h>
 
 /// SYSTEM

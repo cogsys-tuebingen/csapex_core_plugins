@@ -35,7 +35,6 @@ include_directories(include
 )
 
 add_library(csapex_core_lib
-    src/core/vector_message.cpp
     src/core/composite_message.cpp
     src/core/point_message.cpp
     src/core/timestamp_message.cpp

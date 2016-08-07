@@ -6,7 +6,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex_point_cloud/indeces_message.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex_ros/yaml_io.hpp>
 #include <csapex_ros/ros_message_conversion.h>

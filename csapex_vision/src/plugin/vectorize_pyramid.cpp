@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/cv_pyramid_message.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -22,8 +22,8 @@ VectorizePyramid::VectorizePyramid()
 void VectorizePyramid::process()
 {
     CvPyramidMessage::ConstPtr in = msg::getMessage<CvPyramidMessage>(input_);
-    std::shared_ptr<std::vector<CvMatMessage::Ptr> >
-            out(new std::vector<CvMatMessage::Ptr>);
+    std::shared_ptr<std::vector<CvMatMessage::ConstPtr> >
+            out(new std::vector<CvMatMessage::ConstPtr>);
 
     Encoding enc = in->getEncoding();
 
@@ -36,11 +36,11 @@ void VectorizePyramid::process()
         out->push_back(msg);
     }
 
-    msg::publish<GenericVectorMessage, CvMatMessage::Ptr>(output_, out);
+    msg::publish<GenericVectorMessage, CvMatMessage::ConstPtr>(output_, out);
 }
 
 void VectorizePyramid::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<CvPyramidMessage>("pyramid");
-    output_ = node_modifier.addOutput<GenericVectorMessage, CvMatMessage::Ptr>("vectorized");
+    output_ = node_modifier.addOutput<GenericVectorMessage, CvMatMessage::ConstPtr>("vectorized");
 }

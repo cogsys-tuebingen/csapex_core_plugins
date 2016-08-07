@@ -6,7 +6,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/signal/slot.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ConfidenceEvaluator, csapex::Node)
