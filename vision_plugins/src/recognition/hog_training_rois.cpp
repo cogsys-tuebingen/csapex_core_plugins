@@ -8,7 +8,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision/roi_message.h>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::HOGTrainingRois, csapex::Node)
 

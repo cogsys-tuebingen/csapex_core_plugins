@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/msg/io.h>
 #include <csapex/msg/generic_value_message.hpp>
-#include <csapex_core_plugins/vector_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
