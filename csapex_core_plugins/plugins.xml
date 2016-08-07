@@ -11,14 +11,6 @@
 <class type="csapex::ImportFile" base_class_type="csapex::Node">
   <description>Imports messages from a directory (in APEX-YAML format)</description>
 </class>
-<class type="csapex::Multiplexer" base_class_type="csapex::Node">
-  <description>Multiplexes a series of messages into a multidimensional message</description>
-  <tags>General, Multiplex</tags>
-</class>
-<class type="csapex::Demultiplexer" base_class_type="csapex::Node">
-  <description>Demultiplexes a multidimensional message</description>
-  <tags>General, Multiplex</tags>
-</class>
 <class type="csapex::Cache" base_class_type="csapex::Node">
   <description>Caches all incoming messages and allows to play them back</description>
   <tags>General, Caching</tags>

@@ -82,10 +82,8 @@ add_library(csapex_core_plugins_node
     src/tools/composer.cpp
     src/tools/decomposer.cpp
     src/tools/delay.cpp
-    src/tools/demultiplexer.cpp
     src/tools/duration_convertion.cpp
     src/tools/holdable_buffer.cpp
-    src/tools/multiplexer.cpp
     src/tools/relay.cpp
     src/tools/shutdown.cpp
     src/tools/signal_delay_measurement.cpp
