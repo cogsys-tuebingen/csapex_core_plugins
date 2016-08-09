@@ -5,7 +5,7 @@
 #include <csapex/model/node.h>
 
 /// PROJECT
-#include <utils_vision/utils/extractor.h>
+#include <cslibs_vision/utils/extractor.h>
 
 namespace csapex
 {

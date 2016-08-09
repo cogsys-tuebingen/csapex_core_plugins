@@ -2,7 +2,7 @@
 #define EXTRACTOR_MANAGER_H
 
 /// COMPONENT
-#include <utils_vision/utils/extractor.h>
+#include <cslibs_vision/utils/extractor.h>
 #include <csapex/param/parameter_provider.h>
 
 /// SYSTEM

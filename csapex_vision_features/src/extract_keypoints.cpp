@@ -7,7 +7,7 @@
 #include <csapex_vision_features/extractor_manager.h>
 
 /// PROJECT
-#include <utils_vision/utils/extractor.h>
+#include <cslibs_vision/utils/extractor.h>
 #include <csapex/param/range_parameter.h>
 #include <csapex/param/value_parameter.h>
 #include <csapex/param/io.h>
