@@ -6,7 +6,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
-#include <utils_vision/utils/histogram.hpp>
+#include <cslibs_vision/utils/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <csapex/model/node_modifier.h>
 
@@ -48,54 +48,54 @@ void Histogram::process()
     if(min_max_ && type != last_type_)
         resetMinMax();
 
-    utils_vision::histogram::Rangef range;
+    cslibs_vision::histogram::Rangef range;
     switch(type) {
     case CV_8U:
         if(min_max_)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<unsigned char>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<unsigned char>();
         break;
     case CV_8S:
         if(min_max_)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<signed char>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<signed char>();
         break;
     case CV_16U:
         if(min_max_)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<unsigned short>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<unsigned short>();
         break;
     case CV_16S:
         if(min_max_)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<signed short>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<signed short>();
         break;
     case CV_32S:
         if(min_max_)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<int>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<int>();
         break;
     case CV_32F:
         if(min_max_)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<float>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<float>();
         break;
     default:
@@ -113,11 +113,11 @@ void Histogram::process()
         range = min_max_value_;
     }
 
-    std::vector<utils_vision::histogram::Rangef> ranges (in->value.channels(), range);
+    std::vector<cslibs_vision::histogram::Rangef> ranges (in->value.channels(), range);
     bins.resize(in->value.channels(), bins_);
 
     std::vector<cv::Mat> histograms;
-    utils_vision::histogram::histogram
+    cslibs_vision::histogram::histogram
             (in->value, histograms, mask, bins, ranges, uniform_, accumulate_);
 
     if(append_) {

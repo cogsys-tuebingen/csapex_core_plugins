@@ -7,7 +7,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <utils_vision/utils/preemptiveSLIC.h>
+#include <cslibs_vision/utils/preemptiveSLIC.h>
 
 
 CSAPEX_REGISTER_CLASS(vision_plugins::PreemptiveSLIC, csapex::Node)
@@ -32,7 +32,7 @@ void PreemptiveSLIC::process()
     int n = readParameter<int>("super pixels");
     double c = readParameter<double>("compactness");
 
-    utils_vision::PreemptiveSLIC ps;
+    cslibs_vision::PreemptiveSLIC ps;
     cv::Mat seeds;
     ps.preemptiveSLIC(in->value, n, c, out->value, seeds);
 

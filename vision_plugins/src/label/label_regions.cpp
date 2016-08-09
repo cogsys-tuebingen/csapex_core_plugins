@@ -6,7 +6,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <utils_vision/utils/flood.h>
+#include <cslibs_vision/utils/flood.h>
 #include <csapex/model/node_modifier.h>
 
 using namespace csapex;
@@ -33,9 +33,9 @@ void LabelRegions::process()
 
     uchar   edge   = readParameter<int>("edge value");
     if(threshold > 0)
-        utils_vision::label(in->value, out->value, edge, threshold);
+        cslibs_vision::label(in->value, out->value, edge, threshold);
     else
-        utils_vision::label(in->value, out->value, edge);
+        cslibs_vision::label(in->value, out->value, edge);
 
     msg::publish(output_, out);
 }

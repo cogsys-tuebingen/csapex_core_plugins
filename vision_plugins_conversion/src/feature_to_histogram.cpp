@@ -35,14 +35,14 @@ void FeatureToHistogram::process()
 
     if(msg::hasMessage(in_)) {
         in = msg::getMessage<FeaturesMessage>(in_);
-        hist->value.ranges.push_back(utils_vision::histogram::Rangef(0, in->value.size()));
+        hist->value.ranges.push_back(cslibs_vision::histogram::Rangef(0, in->value.size()));
         hist->value.histograms.push_back(cv::Mat(in->value, true));
     }
     if(msg::hasMessage(in_vector_)) {
         in_vector = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_vector_);
 
         for(const FeaturesMessage &fm : *in_vector) {
-            hist->value.ranges.push_back(utils_vision::histogram::Rangef(0, fm.value.size()));
+            hist->value.ranges.push_back(cslibs_vision::histogram::Rangef(0, fm.value.size()));
             hist->value.histograms.push_back(cv::Mat(fm.value, true));
         }
     }

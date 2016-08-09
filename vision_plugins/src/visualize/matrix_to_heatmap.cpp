@@ -7,8 +7,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
-#include <utils_vision/utils/heatmap.hpp>
-#include <utils_vision/utils/color_functions.hpp>
+#include <cslibs_vision/utils/heatmap.hpp>
+#include <cslibs_vision/utils/color_functions.hpp>
 
 /// SYSTEM
 #include <functional>
@@ -52,19 +52,19 @@ void MatrixToHeatmap::process()
     float divider = 1 / (float) channels.size();
     mean = mean * divider;
 
-    utils_vision::heatmap::colorFunction fc;
+    cslibs_vision::heatmap::colorFunction fc;
     switch(color_type_) {
     case BEZIER:
-        fc = &utils_vision::color::bezierColor<cv::Vec3f>;
+        fc = &cslibs_vision::color::bezierColor<cv::Vec3f>;
         break;
     case PARABOLA:
-        fc = &utils_vision::color::parabolaColor<cv::Vec3f>;
+        fc = &cslibs_vision::color::parabolaColor<cv::Vec3f>;
         break;
     default:
         throw std::runtime_error("Unknown color function type!");
     }
 
-    utils_vision::heatmap::renderHeatmap(mean, heatmap, fc, mask);
+    cslibs_vision::heatmap::renderHeatmap(mean, heatmap, fc, mask);
 
     out->value = heatmap;
     msg::publish(output_, out);

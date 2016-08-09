@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(vision_plugins)
 
-find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_features csapex_ml utils_vision REQUIRED)
+find_package(catkin COMPONENTS roscpp csapex csapex_vision csapex_vision_features csapex_ml cslibs_vision REQUIRED)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 set(CMAKE_AUTOMOC ON)

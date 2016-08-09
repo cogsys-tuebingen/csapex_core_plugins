@@ -7,7 +7,7 @@
 #include <csapex_vision/roi_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <utils_vision/utils/rectangle_cluster.h>
+#include <cslibs_vision/utils/rectangle_cluster.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 

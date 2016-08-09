@@ -10,10 +10,10 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 
-#include <utils_vision/textures/lbp.hpp>
-#include <utils_vision/textures/ltp.hpp>
-#include <utils_vision/textures/wld.hpp>
-#include <utils_vision/textures/homogenity.hpp>
+#include <cslibs_vision/textures/lbp.hpp>
+#include <cslibs_vision/textures/ltp.hpp>
+#include <cslibs_vision/textures/wld.hpp>
+#include <cslibs_vision/textures/homogenity.hpp>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatterns, csapex::Node)
 
@@ -49,33 +49,33 @@ void LocalPatterns::process()
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::LBP::standard(working, k, out->value);
+            cslibs_vision::LBP::standard(working, k, out->value);
             break;
         case LBP_EXT:
             size = r;
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::LBP::extended(working, r, n, k, out->value);
+            cslibs_vision::LBP::extended(working, r, n, k, out->value);
             break;
         case LBP_VAR:
             size = r;
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::LBP::var(working, r, n, out->value);
+            cslibs_vision::LBP::var(working, r, n, out->value);
             break;
         case LBP_CS:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::LBP::centerSymmetric(working, k, out->value);
+            cslibs_vision::LBP::centerSymmetric(working, k, out->value);
             break;
         case LTP:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::LTP::standard(working, k, out->value);
+            cslibs_vision::LTP::standard(working, k, out->value);
             out->setEncoding(enc::unknown);
             break;
         case LTP_EXT:
@@ -83,48 +83,48 @@ void LocalPatterns::process()
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::LTP::extended(working, r, n , k , out->value);
+            cslibs_vision::LTP::extended(working, r, n , k , out->value);
             out->setEncoding(enc::unknown);
             break;
         case LTP_SHORT:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::LTP::shortened(working, k, out->value);
+            cslibs_vision::LTP::shortened(working, k, out->value);
             break;
         case LTP_CS:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::LTP::centerSymmetric(working, k, out->value);
+            cslibs_vision::LTP::centerSymmetric(working, k, out->value);
             out->setEncoding(enc::unknown);
             break;
         case WLD:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::WLD::standard(working, out->value);
+            cslibs_vision::WLD::standard(working, out->value);
             break;
         case WLD_SHORT:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::WLD::shortened(working, out->value);
+            cslibs_vision::WLD::shortened(working, out->value);
             break;
         case WLD_ORIENTED:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::WLD::oriented(working, out->value);
+            cslibs_vision::WLD::oriented(working, out->value);
             break;
         case HOMOGENITY:
             cv::copyMakeBorder(in->value, working,
                                size, size, size, size,
                                cv::BORDER_REFLECT_101);
-            utils_vision::Homogenity::standard(working, out->value);
+            cslibs_vision::Homogenity::standard(working, out->value);
             break;
         case HOMOGENITY_TEX:
-            utils_vision::Homogenity::texture(in->value, out->value);
+            cslibs_vision::Homogenity::texture(in->value, out->value);
             break;
         default:
             throw std::runtime_error("Unknown local pattern!");
@@ -132,46 +132,46 @@ void LocalPatterns::process()
     } else {
         switch(t) {
         case LBP:
-            utils_vision::LBP::standard(in->value, k, out->value);
+            cslibs_vision::LBP::standard(in->value, k, out->value);
             break;
         case LBP_EXT:
-            utils_vision::LBP::extended(in->value, r, n, k, out->value);
+            cslibs_vision::LBP::extended(in->value, r, n, k, out->value);
             break;
         case LBP_VAR:
-            utils_vision::LBP::var(in->value, r, n, out->value);
+            cslibs_vision::LBP::var(in->value, r, n, out->value);
             break;
         case LBP_CS:
-            utils_vision::LBP::centerSymmetric(in->value, k, out->value);
+            cslibs_vision::LBP::centerSymmetric(in->value, k, out->value);
             break;
         case LTP:
-            utils_vision::LTP::standard(in->value, k, out->value);
+            cslibs_vision::LTP::standard(in->value, k, out->value);
             out->setEncoding(enc::unknown);
             break;
         case LTP_EXT:
-            utils_vision::LTP::extended(in->value, r, n , k , out->value);
+            cslibs_vision::LTP::extended(in->value, r, n , k , out->value);
             out->setEncoding(enc::unknown);
             break;
         case LTP_SHORT:
-            utils_vision::LTP::shortened(in->value, k, out->value);
+            cslibs_vision::LTP::shortened(in->value, k, out->value);
             break;
         case LTP_CS:
-            utils_vision::LTP::centerSymmetric(in->value, k, out->value);
+            cslibs_vision::LTP::centerSymmetric(in->value, k, out->value);
             out->setEncoding(enc::unknown);
             break;
         case WLD:
-            utils_vision::WLD::standard(in->value, out->value);
+            cslibs_vision::WLD::standard(in->value, out->value);
             break;
         case WLD_SHORT:
-            utils_vision::WLD::shortened(in->value, out->value);
+            cslibs_vision::WLD::shortened(in->value, out->value);
             break;
         case WLD_ORIENTED:
-            utils_vision::WLD::oriented(in->value, out->value);
+            cslibs_vision::WLD::oriented(in->value, out->value);
             break;
         case HOMOGENITY:
-            utils_vision::Homogenity::standard(in->value, out->value);
+            cslibs_vision::Homogenity::standard(in->value, out->value);
             break;
         case HOMOGENITY_TEX:
-            utils_vision::Homogenity::texture(in->value, out->value);
+            cslibs_vision::Homogenity::texture(in->value, out->value);
             break;
         default:
             throw std::runtime_error("Unknown local pattern!");

@@ -8,7 +8,7 @@
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
-#include <utils_vision/utils/histogram.hpp>
+#include <cslibs_vision/utils/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/assert.h>
@@ -33,7 +33,7 @@ struct Dispatch {
     void apply(const cv::Mat &src,
                const cv::Mat &mask,
                const cv::Mat &clusters,
-               const utils_vision::histogram::Ranged &range,
+               const cslibs_vision::histogram::Ranged &range,
                const int bins,
                const bool append,
                int  &num_clusters,
@@ -41,7 +41,7 @@ struct Dispatch {
     {
         std::vector<cv::Mat> channels;
         cv::split(src, channels);
-        num_clusters = utils_vision::histogram::numClusters(clusters);
+        num_clusters = cslibs_vision::histogram::numClusters(clusters);
 
         if(append) {
             msg.value.ranges.resize(1, range);
@@ -53,7 +53,7 @@ struct Dispatch {
 
             for(int i = 0 ; i < channels.size() ; ++i) {
                 std::vector<cv::Mat> tmp;
-                utils_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
+                cslibs_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
                                                         range.first,  range.second, bins,
                                                         num_clusters, tmp);
 
@@ -67,7 +67,7 @@ struct Dispatch {
             msg.value.ranges.resize(channels.size(), range);
             for(int i = 0 ; i < channels.size() ; ++i) {
                 std::vector<cv::Mat> tmp;
-                utils_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
+                cslibs_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
                                                         range.first,  range.second, bins,
                                                         num_clusters, tmp);
                 msg.value.histograms.insert(msg.value.histograms.end(), tmp.begin(), tmp.end());
@@ -123,15 +123,15 @@ void ClusterHistograms::process()
     if(set_min)
         min = readParameter<double>("min");
 
-    utils_vision::histogram::Ranged range;
+    cslibs_vision::histogram::Ranged range;
     int type = in->value.type() & 7;
     switch(type) {
     case CV_8U:
         if(min_max)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<unsigned char>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<unsigned char>();
         if(set_max)
             range.second = max;
@@ -149,10 +149,10 @@ void ClusterHistograms::process()
         break;
     case CV_8S:
         if(min_max)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<signed char>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<signed char>();
 
         if(set_max)
@@ -171,10 +171,10 @@ void ClusterHistograms::process()
         break;
     case CV_16U:
         if(min_max)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<unsigned short>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<unsigned short>();
 
         if(set_max)
@@ -193,10 +193,10 @@ void ClusterHistograms::process()
         break;
     case CV_16S:
         if(min_max)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<signed short>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<signed short>();
         if(set_max)
             range.second = max;
@@ -214,10 +214,10 @@ void ClusterHistograms::process()
         break;
     case CV_32S:
         if(min_max)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<int>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<int>();
         if(set_max)
             range.second = max;
@@ -235,10 +235,10 @@ void ClusterHistograms::process()
         break;
     case CV_32F:
         if(min_max)
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_min_max_range<float>(in->value, mask);
         else
-            range = utils_vision::histogram::
+            range = cslibs_vision::histogram::
                     make_range<float>();
         if(set_max)
             range.second = max;

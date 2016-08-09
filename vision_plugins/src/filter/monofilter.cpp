@@ -6,7 +6,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
-#include <utils_vision/utils/histogram.hpp>
+#include <cslibs_vision/utils/histogram.hpp>
 #include <csapex/model/node_modifier.h>
 
 using namespace csapex;

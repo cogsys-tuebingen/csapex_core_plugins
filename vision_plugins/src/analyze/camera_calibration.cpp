@@ -77,12 +77,12 @@ void vision_plugins::CameraCalibration::setupParameters(Parameterizable& paramet
                             std::bind(&CameraCalibration::requestUpdateCalibration, this));
 
     std::map<std::string, int> types {
-        {"chessboard", (int) utils_vision::CameraCalibration::CHESSBOARD},
-        {"circles grid", (int) utils_vision::CameraCalibration::CIRCLES_GRID},
-        {"asym. circles grid", (int) utils_vision::CameraCalibration::ASYMMETRIC_CIRCLES_GRID}
+        {"chessboard", (int) cslibs_vision::CameraCalibration::CHESSBOARD},
+        {"circles grid", (int) cslibs_vision::CameraCalibration::CIRCLES_GRID},
+        {"asym. circles grid", (int) cslibs_vision::CameraCalibration::ASYMMETRIC_CIRCLES_GRID}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("type", types, (int) utils_vision::CameraCalibration::CHESSBOARD),
+    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("type", types, (int) cslibs_vision::CameraCalibration::CHESSBOARD),
                             std::bind(&CameraCalibration::requestUpdateCalibration, this));
 
     std::map<std::string, std::pair<int, bool> > corner_flags = {
@@ -124,15 +124,15 @@ void vision_plugins::CameraCalibration::calibrate()
 void vision_plugins::CameraCalibration::updateCalibration()
 {
     cv::Size board_size;
-    utils_vision::CameraCalibration::Mode mode =
-            (utils_vision::CameraCalibration::Mode) readParameter<int>("type");
+    cslibs_vision::CameraCalibration::Mode mode =
+            (cslibs_vision::CameraCalibration::Mode) readParameter<int>("type");
     board_size.width   = readParameter<int>("squares x");
     board_size.height  = readParameter<int>("squares y");
     double square_size = readParameter<double>("squares scale");
     int    kernel_size = readParameter<int>("kernel");
     int    flag_corner = readParameter<int>("corner flags");
     int    flag_calib  = readParameter<int>("calib flags");
-    calibration_.reset(new utils_vision::CameraCalibration(mode, board_size, square_size, kernel_size, flag_corner, flag_calib));
+    calibration_.reset(new cslibs_vision::CameraCalibration(mode, board_size, square_size, kernel_size, flag_corner, flag_calib));
 }
 
 void vision_plugins::CameraCalibration::requestUpdateCalibration()

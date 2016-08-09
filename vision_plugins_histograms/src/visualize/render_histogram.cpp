@@ -8,7 +8,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <utils_vision/utils/histogram.hpp>
+#include <cslibs_vision/utils/histogram.hpp>
 #include <vision_plugins_histograms/histogram_msg.h>
 #include <vision_plugins_histograms/histogram_maxima_msg.h>
 
@@ -48,16 +48,16 @@ void RenderHistogram::process()
             int type = it->type();
             switch(type) {
             case CV_32FC1:
-                utils_vision::histogram::render_curve<float>(*it,
-                                                         utils_vision::histogram::COLOR_PALETTE.at
-                                                         (color_count % utils_vision::histogram::COLOR_PALETTE.size()),
+                cslibs_vision::histogram::render_curve<float>(*it,
+                                                         cslibs_vision::histogram::COLOR_PALETTE.at
+                                                         (color_count % cslibs_vision::histogram::COLOR_PALETTE.size()),
                                                          line_width,
                                                          out->value);
                 break;
             case CV_32SC1:
-                utils_vision::histogram::render_curve<int>(  *it,
-                                                         utils_vision::histogram::COLOR_PALETTE.at
-                                                         (color_count % utils_vision::histogram::COLOR_PALETTE.size()),
+                cslibs_vision::histogram::render_curve<int>(  *it,
+                                                         cslibs_vision::histogram::COLOR_PALETTE.at
+                                                         (color_count % cslibs_vision::histogram::COLOR_PALETTE.size()),
                                                          line_width,
                                                          out->value);
                 break;
@@ -71,19 +71,19 @@ void RenderHistogram::process()
             int type = histograms.at(i).type() & 7;
             switch(type) {
             case CV_32F:
-                utils_vision::histogram::render_curve<float>(histograms.at(i),
+                cslibs_vision::histogram::render_curve<float>(histograms.at(i),
                                                          maxima->value.maxima.at(i),
-                                                         utils_vision::histogram::COLOR_PALETTE.at
-                                                         (i % utils_vision::histogram::COLOR_PALETTE.size()),
+                                                         cslibs_vision::histogram::COLOR_PALETTE.at
+                                                         (i % cslibs_vision::histogram::COLOR_PALETTE.size()),
                                                          line_width,
                                                          5,
                                                          out->value);
                 break;
             case CV_32S:
-                utils_vision::histogram::render_curve<int>(histograms.at(i),
+                cslibs_vision::histogram::render_curve<int>(histograms.at(i),
                                                        maxima->value.maxima.at(i),
-                                                       utils_vision::histogram::COLOR_PALETTE.at
-                                                       (i % utils_vision::histogram::COLOR_PALETTE.size()),
+                                                       cslibs_vision::histogram::COLOR_PALETTE.at
+                                                       (i % cslibs_vision::histogram::COLOR_PALETTE.size()),
                                                        line_width,
                                                        5,
                                                        out->value);

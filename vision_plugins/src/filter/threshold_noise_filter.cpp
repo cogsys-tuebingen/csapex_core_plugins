@@ -7,7 +7,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
-#include <utils_vision/utils/noise_filter.hpp>
+#include <cslibs_vision/utils/noise_filter.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -36,58 +36,58 @@ void ThresholdNoiseFilter::process()
     switch(type) {
     case CV_8UC1:
         if(interpolate)
-            utils_vision::ThresholdNoiseFilter<uchar,uchar>::interpolate
+            cslibs_vision::ThresholdNoiseFilter<uchar,uchar>::interpolate
                     (input->value, threshold->value, thresh, output->value);
         else
-            utils_vision::ThresholdNoiseFilter<uchar,uchar>::filter
+            cslibs_vision::ThresholdNoiseFilter<uchar,uchar>::filter
                     (input->value, threshold->value, thresh, output->value);
         break;
     case CV_8SC1:
         if(interpolate)
-            utils_vision::ThresholdNoiseFilter<char,uchar>::interpolate
+            cslibs_vision::ThresholdNoiseFilter<char,uchar>::interpolate
                     (input->value, threshold->value, thresh, output->value);
         else
-            utils_vision::ThresholdNoiseFilter<char,uchar>::filter
+            cslibs_vision::ThresholdNoiseFilter<char,uchar>::filter
                     (input->value, threshold->value, thresh, output->value);
         break;
     case CV_16UC1:
         if(interpolate)
-            utils_vision::ThresholdNoiseFilter<ushort,uchar>::interpolate
+            cslibs_vision::ThresholdNoiseFilter<ushort,uchar>::interpolate
                     (input->value, threshold->value, thresh, output->value);
         else
-            utils_vision::ThresholdNoiseFilter<ushort,uchar>::filter
+            cslibs_vision::ThresholdNoiseFilter<ushort,uchar>::filter
                     (input->value, threshold->value, thresh, output->value);
         break;
     case CV_16SC1:
         if(interpolate)
-            utils_vision::ThresholdNoiseFilter<short,uchar>::interpolate
+            cslibs_vision::ThresholdNoiseFilter<short,uchar>::interpolate
                     (input->value, threshold->value, thresh, output->value);
         else
-            utils_vision::ThresholdNoiseFilter<short,uchar>::filter
+            cslibs_vision::ThresholdNoiseFilter<short,uchar>::filter
                     (input->value, threshold->value, thresh, output->value);
         break;
     case CV_32SC1:
         if(interpolate)
-            utils_vision::ThresholdNoiseFilter<int,uchar>::interpolate
+            cslibs_vision::ThresholdNoiseFilter<int,uchar>::interpolate
                     (input->value, threshold->value, thresh, output->value);
         else
-            utils_vision::ThresholdNoiseFilter<int,uchar>::filter
+            cslibs_vision::ThresholdNoiseFilter<int,uchar>::filter
                     (input->value, threshold->value, thresh, output->value);
         break;
     case CV_32FC1:
         if(interpolate)
-            utils_vision::ThresholdNoiseFilter<float,uchar>::interpolate
+            cslibs_vision::ThresholdNoiseFilter<float,uchar>::interpolate
                     (input->value, threshold->value, thresh, output->value);
         else
-            utils_vision::ThresholdNoiseFilter<float,uchar>::filter
+            cslibs_vision::ThresholdNoiseFilter<float,uchar>::filter
                     (input->value, threshold->value, thresh, output->value);
         break;
     case CV_64FC1:
         if(interpolate)
-            utils_vision::ThresholdNoiseFilter<double,uchar>::interpolate
+            cslibs_vision::ThresholdNoiseFilter<double,uchar>::interpolate
                     (input->value, threshold->value, thresh, output->value);
         else
-            utils_vision::ThresholdNoiseFilter<double,uchar>::filter
+            cslibs_vision::ThresholdNoiseFilter<double,uchar>::filter
                     (input->value, threshold->value, thresh, output->value);
         break;
     }

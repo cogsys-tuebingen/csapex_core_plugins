@@ -14,8 +14,8 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 
-#include <utils_vision/textures/lbp.hpp>
-#include <utils_vision/textures/ltp.hpp>
+#include <cslibs_vision/textures/lbp.hpp>
+#include <cslibs_vision/textures/ltp.hpp>
 
 CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatternsHistogram, csapex::Node)
 
@@ -31,25 +31,25 @@ inline void lbp(const cv::Mat &src,
 
     switch(src.type()) {
     case CV_8UC1:
-         utils_vision::LBP::histogram<uchar>(src, 0, histogram);
+         cslibs_vision::LBP::histogram<uchar>(src, 0, histogram);
          break;
     case CV_8SC1:
-         utils_vision::LBP::histogram<char>(src, 0, histogram);
+         cslibs_vision::LBP::histogram<char>(src, 0, histogram);
          break;
     case CV_16UC1:
-         utils_vision::LBP::histogram<ushort>(src, 0, histogram);
+         cslibs_vision::LBP::histogram<ushort>(src, 0, histogram);
          break;
     case CV_16SC1:
-         utils_vision::LBP::histogram<short>(src, 0, histogram);
+         cslibs_vision::LBP::histogram<short>(src, 0, histogram);
          break;
     case CV_32SC1:
-         utils_vision::LBP::histogram<int>(src, 0, histogram);
+         cslibs_vision::LBP::histogram<int>(src, 0, histogram);
          break;
     case CV_32FC1:
-         utils_vision::LBP::histogram<float>(src, 0, histogram);
+         cslibs_vision::LBP::histogram<float>(src, 0, histogram);
          break;
     case CV_64FC1:
-         utils_vision::LBP::histogram<double>(src, 0, histogram);
+         cslibs_vision::LBP::histogram<double>(src, 0, histogram);
          break;
     default:
         throw std::runtime_error("Unknown matrix type!");
@@ -66,25 +66,25 @@ inline void ltp(const cv::Mat &src,
     std::vector<int> histogram;
     switch(src.type()) {
     case CV_8UC1:
-         utils_vision::LTP::histogram<uchar>(src, k, histogram);
+         cslibs_vision::LTP::histogram<uchar>(src, k, histogram);
          break;
     case CV_8SC1:
-         utils_vision::LTP::histogram<char>(src, k, histogram);
+         cslibs_vision::LTP::histogram<char>(src, k, histogram);
          break;
     case CV_16UC1:
-         utils_vision::LTP::histogram<ushort>(src, k, histogram);
+         cslibs_vision::LTP::histogram<ushort>(src, k, histogram);
          break;
     case CV_16SC1:
-         utils_vision::LTP::histogram<short>(src, k, histogram);
+         cslibs_vision::LTP::histogram<short>(src, k, histogram);
          break;
     case CV_32SC1:
-         utils_vision::LTP::histogram<int>(src, k, histogram);
+         cslibs_vision::LTP::histogram<int>(src, k, histogram);
          break;
     case CV_32FC1:
-         utils_vision::LTP::histogram<float>(src, k, histogram);
+         cslibs_vision::LTP::histogram<float>(src, k, histogram);
          break;
     case CV_64FC1:
-         utils_vision::LTP::histogram<double>(src, k, histogram);
+         cslibs_vision::LTP::histogram<double>(src, k, histogram);
          break;
     default:
         throw std::runtime_error("Unknown matrix type!");

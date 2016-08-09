@@ -7,7 +7,7 @@
 #include <csapex/view/utility/QtCvImageConverter.h>
 #include <csapex/view/utility/color.hpp>
 #include <csapex/utility/assert.h>
-#include <utils_vision/utils/histogram.hpp>
+#include <cslibs_vision/utils/histogram.hpp>
 
 /// SYSTEM
 #include <QPainter>
@@ -229,7 +229,7 @@ void AssignClusterClassAdapter::setParameterState(Memento::Ptr memento)
 void AssignClusterClassAdapter::display(QImage img, const cv::Mat &clusters)
 {
     /// PREPARE LABLES
-    int num_clusters = utils_vision::histogram::numClusters(clusters);
+    int num_clusters = cslibs_vision::histogram::numClusters(clusters);
     classes_.resize(num_clusters, -1);
     img_ = img;
 

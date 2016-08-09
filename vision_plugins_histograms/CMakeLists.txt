@@ -7,7 +7,7 @@ find_package(catkin COMPONENTS
                     csapex_vision
                     csapex_vision_features
                     csapex_ml
-                    utils_vision
+                    cslibs_vision
                     REQUIRED)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)

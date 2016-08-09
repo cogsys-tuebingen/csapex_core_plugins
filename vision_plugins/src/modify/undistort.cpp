@@ -84,7 +84,7 @@ void Undistort::update()
     int mode = readParameter<int>("mode");
 
     if(read_matrices(path, intr, coef)) {
-        undist_ = utils_vision::Undistortion::Ptr(new utils_vision::Undistortion(intr, coef, mode));
+        undist_ = cslibs_vision::Undistortion::Ptr(new cslibs_vision::Undistortion(intr, coef, mode));
     }
 
 }

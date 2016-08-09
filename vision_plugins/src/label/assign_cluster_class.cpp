@@ -10,7 +10,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/param/color_parameter.h>
 #include <csapex/param/range_parameter.h>
-#include <utils_vision/utils/cluster_boundaries.hpp>
+#include <cslibs_vision/utils/cluster_boundaries.hpp>
 
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/msg/generic_vector_message.hpp>
@@ -131,7 +131,7 @@ void AssignClusterClass::beginProcess()
     /// RENDER CLUSTER BOARDERS
     image_ = in_img->value.clone();
     clusters_ = in_clu->value;
-    utils_vision::getClusterBoundaryMask<int32_t>(clusters_, mask_);
+    cslibs_vision::getClusterBoundaryMask<int32_t>(clusters_, mask_);
 
     setColor();
     setClass();
