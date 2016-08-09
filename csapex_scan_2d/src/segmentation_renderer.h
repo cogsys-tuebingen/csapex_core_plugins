@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <utils_laser_processing/data/segment.h>
+#include <cslibs_laser_processing/data/segment.h>
 
 /// SYSTEM
 #include <geometry_msgs/Point.h>

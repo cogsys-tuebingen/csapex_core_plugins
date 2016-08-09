@@ -2,7 +2,7 @@
 #include "segmentation_renderer.h"
 
 /// COMPONENT
-#include <utils_laser_processing/segmentation/p2pline.h>
+#include <cslibs_laser_processing/segmentation/p2pline.h>
 
 /// PROJECT
 #include <csapex_ros/ros_message_conversion.h>
@@ -11,10 +11,10 @@
 #include <csapex/msg/io.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex/param/parameter_factory.h>
-#include <utils_laser_processing/data/segment.h>
+#include <cslibs_laser_processing/data/segment.h>
 #include <csapex/view/utility/color.hpp>
 #include <csapex/model/node_modifier.h>
-#include <utils_laser_processing/common/yaml-io.hpp>
+#include <cslibs_laser_processing/common/yaml-io.hpp>
 #include <csapex_ros/yaml_io.hpp>
 
 /// SYSTEM

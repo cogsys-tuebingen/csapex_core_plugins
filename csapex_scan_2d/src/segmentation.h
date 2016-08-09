@@ -2,7 +2,7 @@
 #define SCAN_SEGMENTATION_H
 
 /// COMPONENT
-#include <utils_laser_processing/segmentation/segmentation.h>
+#include <cslibs_laser_processing/segmentation/segmentation.h>
 
 /// PROJECT
 #include <csapex/model/node.h>

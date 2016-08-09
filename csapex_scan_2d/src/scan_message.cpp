@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/utility/assert.h>
 #include <csapex/utility/register_msg.h>
-#include <utils_laser_processing/common/yaml-io.hpp>
+#include <cslibs_laser_processing/common/yaml-io.hpp>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::ScanMessage)
 

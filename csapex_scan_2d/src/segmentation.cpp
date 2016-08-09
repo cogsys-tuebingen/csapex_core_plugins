@@ -8,8 +8,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex_scan_2d/scan_message.h>
 #include <csapex/model/node_modifier.h>
-#include <utils_laser_processing/data/segment.h>
-#include <utils_laser_processing/common/yaml-io.hpp>
+#include <cslibs_laser_processing/data/segment.h>
+#include <cslibs_laser_processing/common/yaml-io.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;

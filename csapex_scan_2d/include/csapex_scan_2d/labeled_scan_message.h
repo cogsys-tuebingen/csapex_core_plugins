@@ -2,7 +2,7 @@
 #define DESCRIPTOR_MESSAGE_H
 
 /// COMPONENT
-#include <utils_laser_processing/data/labeled_scan.h>
+#include <cslibs_laser_processing/data/labeled_scan.h>
 
 /// PROJECT
 #include <csapex/msg/message_template.hpp>

@@ -2,7 +2,7 @@
 
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
-#include <utils_laser_processing/segmentation/line_fit.h>
+#include <cslibs_laser_processing/segmentation/line_fit.h>
 
 using namespace csapex;
 using namespace lib_laser_processing;

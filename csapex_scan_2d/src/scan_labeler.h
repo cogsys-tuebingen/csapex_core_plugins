@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex_core_plugins/interactive_node.h>
-#include <utils_laser_processing/data/scan.h>
+#include <cslibs_laser_processing/data/scan.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
 
 namespace csapex

@@ -8,7 +8,7 @@
 /// PROJECT
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <utils_laser_processing/data/segment.h>
+#include <cslibs_laser_processing/data/segment.h>
 
 /// SYSTEM
 #include <sensor_msgs/LaserScan.h>

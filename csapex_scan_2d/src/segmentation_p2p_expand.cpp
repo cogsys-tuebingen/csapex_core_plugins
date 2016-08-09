@@ -3,7 +3,7 @@
 /// PROJECT
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
-#include <utils_laser_processing/segmentation/p2pdistance_expand.h>
+#include <cslibs_laser_processing/segmentation/p2pdistance_expand.h>
 
 using namespace csapex;
 using namespace lib_laser_processing;

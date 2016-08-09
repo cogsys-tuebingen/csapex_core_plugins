@@ -8,7 +8,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 
-#include <utils_laser_processing/common/yaml-io.hpp>
+#include <cslibs_laser_processing/common/yaml-io.hpp>
 
 #include <atomic>
 #include <thread>
