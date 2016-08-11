@@ -19,7 +19,7 @@ add_definitions("-O3")
 find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_vision)
 find_package(pcl_ros REQUIRED)
 
-find_package(cs_kdtree QUIET)
+find_package(cslibs_kdtree QUIET)
 
 find_package(Qt5 COMPONENTS Core OpenGL Gui Widgets REQUIRED)
 
@@ -65,14 +65,14 @@ target_link_libraries(csapex_point_cloud_plugin_core
     csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
 )
 
-if(${kdtree_FOUND})
+if(${cslibs_kdtree_FOUND})
     set(clustering_kd_tree_SRCS
         src/segmentation/cluster_pointcloud_kdtree.cpp
         src/segmentation/cluster_pointcloud_kdtree_filtered.cpp
         src/segmentation/cluster_pointcloud_page.cpp
         src/segmentation/cluster_pointcloud_array.cpp
     )
-    include_directories(${cs_kdtree_INCLUDE_DIRS})
+    include_directories(${cslibs_kdtree_INCLUDE_DIRS})
 else()
     message("Building without kdtree clustering!")
 endif()
