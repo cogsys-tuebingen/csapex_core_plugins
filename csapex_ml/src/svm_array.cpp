@@ -120,12 +120,13 @@ void SVMArray::process()
         for(std::size_t j = 0 ; j < svms_size_ ; ++j) {
             SVMPtr svm = svms_.at(j);
             if (compute_label)
-                result.at<float>(1,j) = svm->predict(sample);
+                result.at<float>(j,1) = svm->predict(sample);
             else
             {
                 const float response = svm->predict(sample, true);
-                result.at<float>(1,j) = comparator(response) ? POSITIVE : NEGATIVE;
+                result.at<float>(j,1) = comparator(response) ? POSITIVE : NEGATIVE;
             }
+            std::cout << svm_responses_ << std::endl;
         }
     }
 
