@@ -124,7 +124,6 @@ void SVMArray::process()
                 const float response = svm->predict(sample, true);
                 result_value.at<float>(j,1) = comparator(response) ? POSITIVE : NEGATIVE;
             }
-            /// just for shit
             std::cout << svm_responses_ << std::endl;
         }
         output->push_back(result_msg);
