@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
-#include <kdtree/kdtree.hpp>
+#include <cslibs_kdtree/kdtree.hpp>
 #include "../math/distribution.hpp"
 
 namespace detail_filtered

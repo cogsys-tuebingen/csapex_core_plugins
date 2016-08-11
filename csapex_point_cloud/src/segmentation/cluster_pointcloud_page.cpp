@@ -14,9 +14,9 @@
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
 
-#include <kdtree/page.hpp>
-#include <kdtree/index.hpp>
-#include <kdtree/fill.hpp>
+#include <cslibs_kdtree/page.hpp>
+#include <cslibs_kdtree/index.hpp>
+#include <cslibs_kdtree/fill.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudPaging, csapex::Node)
 

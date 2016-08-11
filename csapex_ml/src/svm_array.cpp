@@ -109,25 +109,25 @@ void SVMArray::process()
     /// TODO : OMP?
 
     std::size_t size = input->size();
-    output->resize(size);
     for(std::size_t i = 0 ; i < size ; ++i)
     {
         cv::Mat sample(input->at(i).value);
-        CvMatMessage::ConstPtr &result_msg = output->at(i);
-        result_msg.reset(new CvMatMessage(enc::unknown, 0));
-        cv::Mat result = result_msg->value;
-        result = svm_responses_.clone();
+        CvMatMessage::Ptr result_msg(new CvMatMessage(enc::unknown, 0));
+        cv::Mat &result_value = result_msg->value;
+        result_value = svm_responses_.clone();
+
         for(std::size_t j = 0 ; j < svms_size_ ; ++j) {
             SVMPtr svm = svms_.at(j);
-            if (compute_label)
-                result.at<float>(j,1) = svm->predict(sample);
-            else
-            {
+            if (compute_label) {
+                result_value.at<float>(j,1) = svm->predict(sample);
+            } else {
                 const float response = svm->predict(sample, true);
-                result.at<float>(j,1) = comparator(response) ? POSITIVE : NEGATIVE;
+                result_value.at<float>(j,1) = comparator(response) ? POSITIVE : NEGATIVE;
             }
+            /// just for shit
             std::cout << svm_responses_ << std::endl;
         }
+        output->push_back(result_msg);
     }
 
     msg::publish<GenericVectorMessage, CvMatMessage::ConstPtr>(out_, output);

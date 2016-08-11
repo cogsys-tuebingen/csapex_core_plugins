@@ -6,7 +6,7 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
-#include <kdtree/kdtree.hpp>
+#include <cslibs_kdtree/kdtree.hpp>
 
 namespace detail
 {
