@@ -167,7 +167,16 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
         indices_by_label[fm.classification].push_back(i);
     }
 
-    std::map<int, ExtendedSVM::Ptr> svms;
+
+//    /// write all svms to disk
+//    for(auto &svm_entry : svms) {
+//    }
+
+
+
+    std::vector<int> svm_labels;
+    cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+    const static std::string prefix = "svm_";
     if(svm_params_.svm_type != cv::SVM::ONE_CLASS) {
         if(indices_by_label.find(NEGATIVE) == indices_by_label.end()) {
             throw std::runtime_error("Need negative examples labelled with -1");
@@ -183,9 +192,7 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
             std::advance(it, i);
 
             /// allocate svm
-            ExtendedSVM::Ptr svm(new ExtendedSVM);
-            svms[it->first] = svm;
-
+            ExtendedSVM svm;
             /// gather data
             const std::vector<std::size_t> &pos_indices = it->second;
             const std::size_t sample_size = pos_indices.size() + neg_indices.size();
@@ -218,9 +225,13 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
 
             /// train the svm
             std::cout << "Started training for '" << it->first << std::endl;
-            svm.reset(new ExtendedSVM);
-            if(svm->train(samples, labels, cv::Mat(), cv::Mat(), params)) {
-                std::cout << "Finished training for '" << it->first << std::endl;
+            if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
+                std::cout << "Finished training for '" << it->first << "'!" << std::endl;
+                std::string label = prefix + toString(it->first);
+                svm.write(fs.fs, label.c_str());
+                svm_labels.push_back(it->first);
+            } else {
+                std::cerr << "Failed traininng for '" << it->first << "'!" << std::endl;
             }
         }
     } else {
@@ -234,8 +245,7 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
             std::advance(it, i);
 
             /// allocate svm
-            ExtendedSVM::Ptr svm(new ExtendedSVM);
-            svms[it->first] = svm;
+            ExtendedSVM svm;
 
             /// gather data
             const std::vector<std::size_t> &indices = it->second;
@@ -258,23 +268,16 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
 
             /// train the svm
             std::cout << "Started training for '" << it->first << std::endl;
-            svm.reset(new ExtendedSVM);
-            if(svm->train(samples, labels, cv::Mat(), cv::Mat(), params)) {
+            if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
                 std::cout << "Finished training for '" << it->first << std::endl;
+                std::string label = prefix + toString(it->first);
+                svm.write(fs.fs, label.c_str());
+                svm_labels.push_back(it->first);
+            } else {
+                std::cerr << "Failed traininng for '" << it->first << "'!" << std::endl;
             }
         }
-
     }
-    /// write all svms to disk
-    cv::FileStorage fs(path_, cv::FileStorage::WRITE);
-    const static std::string prefix = "svm_";
-    std::vector<int> labels;
-    for(auto &svm_entry : svms) {
-        std::string label = prefix + toString(svm_entry.first);
-        ExtendedSVM::Ptr svm = svm_entry.second;
-        svm->write(fs.fs, label.c_str());
-        labels.push_back(svm_entry.first);
-    }
-    fs << "labels" << labels;
+    fs << "labels" << svm_labels;
     fs.release();
 }

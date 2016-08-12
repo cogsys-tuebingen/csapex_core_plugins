@@ -12,8 +12,8 @@
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
 
-#include <kdtree/array_clustering.hpp>
-#include <kdtree/fill.hpp>
+#include <cslibs_kdtree/array_clustering.hpp>
+#include <cslibs_kdtree/fill.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudArray, csapex::Node)
 
