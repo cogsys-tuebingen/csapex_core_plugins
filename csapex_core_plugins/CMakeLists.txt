@@ -93,6 +93,7 @@ add_library(csapex_core_plugins_node
 
     src/display/output_display.cpp
     src/display/text_display.cpp
+    src/display/signal_light.cpp
 )
 
 target_link_libraries(csapex_core_plugins_node csapex_core_lib
@@ -104,6 +105,7 @@ target_link_libraries(csapex_core_plugins_node csapex_core_lib
 add_library(csapex_core_plugins_qt
     src/display/output_display_adapter.cpp
     src/display/text_display_adapter.cpp
+    src/display/signal_light_adapter.cpp
 )
 
 
