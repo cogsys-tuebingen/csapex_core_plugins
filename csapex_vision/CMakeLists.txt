@@ -118,6 +118,8 @@ add_library(csapex_vision_plugin_node
     src/plugin/mean_dev.cpp
 
     src/plugin/load_filestorage.cpp
+
+    src/plugin/example_image_generator.cpp
 )
 target_link_libraries(csapex_vision_plugin_node csapex_vision
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})

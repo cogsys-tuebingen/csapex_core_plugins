@@ -3,5 +3,6 @@
         <file>filter.png</file>
         <file>combiner.png</file>
         <file>border.png</file>
+        <file>lena.png</file>
     </qresource>
 </RCC>

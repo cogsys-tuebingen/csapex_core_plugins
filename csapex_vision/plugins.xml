@@ -165,6 +165,10 @@
 <class type="csapex::LoadFilestorage" base_class_type="csapex::Node">
   <description>Load OpenCV file storages containing matrices.</description>
 </class>
+
+<class type="csapex::ExampleImageGenerator" base_class_type="csapex::Node">
+  <description>Generates different example images</description>
+</class>
 </library>
 
 
