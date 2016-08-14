@@ -21,7 +21,9 @@ public:
 private:
     std::string     path_;
     bool            save_for_hog_;
+    bool            one_vs_all_;
     cv::SVMParams   svm_params_;
+
 
     enum ClassTypes {NEGATIVE = -1, POSITIVE = 1};
 

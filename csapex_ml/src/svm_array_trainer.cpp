@@ -36,7 +36,7 @@ struct ExtendedSVM : public cv::SVM {
             std::cout << decision_func->alpha[i] << ", ";
         }
         std::cout << decision_func->alpha[decision_func->sv_count - 1]
-                  << "]" << std::endl;
+                << "]" << std::endl;
         std::cout << "rho: " << decision_func->rho  * -1 << std::endl;
     }
 
@@ -68,12 +68,12 @@ void SVMArrayTrainer::setupParameters(Parameterizable& parameters)
                                                                            param::ParameterDescription("File to write svm to."),
                                                                            "",
                                                                            "*.yaml *.tar.gz"),
-                 path_);
+                            path_);
 
     parameters.addParameter(param::ParameterFactory::declareBool("svm/save_coeffs",
-                                                      param::ParameterDescription("Save precomputed vector for HOG."),
-                                                      false),
-                 save_for_hog_);
+                                                                 param::ParameterDescription("Save precomputed vector for HOG."),
+                                                                 false),
+                            save_for_hog_);
 
 
     std::map<std::string, int> kernel_types = {
@@ -105,29 +105,32 @@ void SVMArrayTrainer::setupParameters(Parameterizable& parameters)
 
 
     std::function<bool()> deg_cond    = [this]() {
-            return svm_params_.kernel_type == cv::SVM::POLY;};
+        return svm_params_.kernel_type == cv::SVM::POLY;};
 
     std::function<bool()> gamma_cond  = [this]() {
-            return svm_params_.kernel_type == cv::SVM::POLY ||
-                   svm_params_.kernel_type == cv::SVM::RBF ||
-                   svm_params_.kernel_type == cv::SVM::SIGMOID;};
+        return svm_params_.kernel_type == cv::SVM::POLY ||
+                svm_params_.kernel_type == cv::SVM::RBF ||
+                svm_params_.kernel_type == cv::SVM::SIGMOID;};
 
     std::function<bool()> coeff0_cond = [this]() {
-            return svm_params_.kernel_type == cv::SVM::POLY ||
-                   svm_params_.kernel_type == cv::SVM::SIGMOID;};
+        return svm_params_.kernel_type == cv::SVM::POLY ||
+                svm_params_.kernel_type == cv::SVM::SIGMOID;};
 
     std::function<bool()> c_cond = [this]() {
-            return svm_params_.svm_type == cv::SVM::C_SVC ||
-                   svm_params_.svm_type == cv::SVM::EPS_SVR ||
-                   svm_params_.svm_type == cv::SVM::NU_SVR;};
+        return svm_params_.svm_type == cv::SVM::C_SVC ||
+                svm_params_.svm_type == cv::SVM::EPS_SVR ||
+                svm_params_.svm_type == cv::SVM::NU_SVR;};
 
     std::function<bool()> nu_cond = [this]() {
-            return svm_params_.svm_type == cv::SVM::ONE_CLASS ||
-                   svm_params_.svm_type == cv::SVM::NU_SVR ||
-                   svm_params_.svm_type == cv::SVM::EPS_SVR;};
+        return svm_params_.svm_type == cv::SVM::ONE_CLASS ||
+                svm_params_.svm_type == cv::SVM::NU_SVR ||
+                svm_params_.svm_type == cv::SVM::EPS_SVR;};
 
     std::function<bool()> p_cond = [this]() {
-            return svm_params_.svm_type == cv::SVM::EPS_SVR;};
+        return svm_params_.svm_type == cv::SVM::EPS_SVR;};
+
+    std::function<bool()> one_class_cond = [this]() {
+        return svm_params_.svm_type != cv::SVM::ONE_CLASS;};
 
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, 9.0, 3.0, 1.0),
@@ -148,6 +151,9 @@ void SVMArrayTrainer::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("p", 0.0, 1.0, 0.1, 0.01),
                                        p_cond,
                                        svm_params_.p);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("one-vs-all", false),
+                                       one_class_cond,
+                                       one_vs_all_);
 }
 
 void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection)
@@ -168,70 +174,129 @@ void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection
     }
 
 
-//    /// write all svms to disk
-//    for(auto &svm_entry : svms) {
-//    }
-
-
-
     std::vector<int> svm_labels;
     cv::FileStorage fs(path_, cv::FileStorage::WRITE);
     const static std::string prefix = "svm_";
     if(svm_params_.svm_type != cv::SVM::ONE_CLASS) {
-        if(indices_by_label.find(NEGATIVE) == indices_by_label.end()) {
-            throw std::runtime_error("Need negative examples labelled with -1");
-        }
         if(indices_by_label.size() == 1) {
             throw std::runtime_error("Multi class SVMs require multiple classes!");
         }
-        std::vector<std::size_t> neg_indices = indices_by_label[NEGATIVE];
-        indices_by_label.erase(NEGATIVE);
-        /// iterate samples
-        for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
-            auto it = indices_by_label.begin();
-            std::advance(it, i);
 
-            /// allocate svm
-            ExtendedSVM svm;
-            /// gather data
-            const std::vector<std::size_t> &pos_indices = it->second;
-            const std::size_t sample_size = pos_indices.size() + neg_indices.size();
+        if(one_vs_all_) {
+            /// iterate samples
+            for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
+                /// this is the current goal class
+                auto it = indices_by_label.begin();
+                std::advance(it, i);
 
-            cv::Mat samples(sample_size, step, CV_32FC1, cv::Scalar());
-            cv::Mat labels(sample_size, 1, CV_32FC1, cv::Scalar());
+                std::vector<std::size_t> neg_indices;
+                /// now we gather negative samples, which is basically collecting all the other classes
+                for(const auto &entry : indices_by_label) {
+                    if(entry.first == it->first)
+                        continue;
+                    neg_indices.insert(neg_indices.end(),
+                                       entry.second.begin(),
+                                       entry.second.end());
+                }
 
-            cv::Mat neg_samples = samples.rowRange(0, neg_indices.size());
-            cv::Mat pos_samples = samples.rowRange(neg_indices.size(), sample_size);
-            cv::Mat neg_labels = labels.rowRange(0, neg_indices.size());
-            cv::Mat pos_labels = labels.rowRange(neg_indices.size(), sample_size);
-            for(int i = 0 ; i < neg_samples.rows; ++i) {
-                const std::vector<float> &data = collection.at(neg_indices.at(i)).value;
-                neg_labels.at<float>(i) = NEGATIVE;
-                for(std::size_t j = 0 ; j < step ; ++j) {
-                    neg_samples.at<float>(i,j) = data.at(j);
+                ExtendedSVM svm;
+                /// gather data
+                const std::vector<std::size_t> &pos_indices = it->second;
+                const std::size_t sample_size = pos_indices.size() + neg_indices.size();
+
+                cv::Mat samples(sample_size, step, CV_32FC1, cv::Scalar());
+                cv::Mat labels(sample_size, 1, CV_32FC1, cv::Scalar());
+
+                cv::Mat neg_samples = samples.rowRange(0, neg_indices.size());
+                cv::Mat pos_samples = samples.rowRange(neg_indices.size(), sample_size);
+                cv::Mat neg_labels = labels.rowRange(0, neg_indices.size());
+                cv::Mat pos_labels = labels.rowRange(neg_indices.size(), sample_size);
+                for(int i = 0 ; i < neg_samples.rows; ++i) {
+                    const std::vector<float> &data = collection.at(neg_indices.at(i)).value;
+                    neg_labels.at<float>(i) = NEGATIVE;
+                    for(std::size_t j = 0 ; j < step ; ++j) {
+                        neg_samples.at<float>(i,j) = data.at(j);
+                    }
+                }
+                for(int i = 0 ; i < pos_samples.rows ; ++i) {
+                    const std::vector<float> &data = collection.at(pos_indices.at(i)).value;
+                    pos_labels.at<float>(i) = POSITIVE;
+                    for(std::size_t j = 0 ; j < step ; ++j) {
+                        pos_samples.at<float>(i,j) = data.at(j);
+                    }
+                }
+                cv::SVMParams params = svm_params_;
+                if(params.gamma == 0) {
+                    params.gamma = 1.0 / labels.rows;
+                }
+
+                /// train the svm
+                std::cout << "Started training for '" << it->first << std::endl;
+                if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
+                    std::cout << "Finished training for '" << it->first << "'!" << std::endl;
+                    std::string label = prefix + toString(it->first);
+                    svm.write(fs.fs, label.c_str());
+                    svm_labels.push_back(it->first);
+                } else {
+                    std::cerr << "Failed traininng for '" << it->first << "'!" << std::endl;
                 }
             }
-            for(int i = 0 ; i < pos_samples.rows ; ++i) {
-                const std::vector<float> &data = collection.at(pos_indices.at(i)).value;
-                pos_labels.at<float>(i) = POSITIVE;
-                for(std::size_t j = 0 ; j < step ; ++j) {
-                    pos_samples.at<float>(i,j) = data.at(j);
-                }
+        } else {
+            if(indices_by_label.find(NEGATIVE) == indices_by_label.end()) {
+                throw std::runtime_error("Need negative examples labelled with -1");
             }
-            cv::SVMParams params = svm_params_;
-            if(params.gamma == 0) {
-                params.gamma = 1.0 / labels.rows;
+            if(indices_by_label.size() == 1) {
+                throw std::runtime_error("Multi class SVMs require multiple classes!");
             }
+            std::vector<std::size_t> neg_indices = indices_by_label[NEGATIVE];
+            indices_by_label.erase(NEGATIVE);
 
-            /// train the svm
-            std::cout << "Started training for '" << it->first << std::endl;
-            if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
-                std::cout << "Finished training for '" << it->first << "'!" << std::endl;
-                std::string label = prefix + toString(it->first);
-                svm.write(fs.fs, label.c_str());
-                svm_labels.push_back(it->first);
-            } else {
-                std::cerr << "Failed traininng for '" << it->first << "'!" << std::endl;
+            /// iterate samples
+            for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
+                auto it = indices_by_label.begin();
+                std::advance(it, i);
+
+                ExtendedSVM svm;
+                /// gather data
+                const std::vector<std::size_t> &pos_indices = it->second;
+                const std::size_t sample_size = pos_indices.size() + neg_indices.size();
+
+                cv::Mat samples(sample_size, step, CV_32FC1, cv::Scalar());
+                cv::Mat labels(sample_size, 1, CV_32FC1, cv::Scalar());
+
+                cv::Mat neg_samples = samples.rowRange(0, neg_indices.size());
+                cv::Mat pos_samples = samples.rowRange(neg_indices.size(), sample_size);
+                cv::Mat neg_labels = labels.rowRange(0, neg_indices.size());
+                cv::Mat pos_labels = labels.rowRange(neg_indices.size(), sample_size);
+                for(int i = 0 ; i < neg_samples.rows; ++i) {
+                    const std::vector<float> &data = collection.at(neg_indices.at(i)).value;
+                    neg_labels.at<float>(i) = NEGATIVE;
+                    for(std::size_t j = 0 ; j < step ; ++j) {
+                        neg_samples.at<float>(i,j) = data.at(j);
+                    }
+                }
+                for(int i = 0 ; i < pos_samples.rows ; ++i) {
+                    const std::vector<float> &data = collection.at(pos_indices.at(i)).value;
+                    pos_labels.at<float>(i) = POSITIVE;
+                    for(std::size_t j = 0 ; j < step ; ++j) {
+                        pos_samples.at<float>(i,j) = data.at(j);
+                    }
+                }
+                cv::SVMParams params = svm_params_;
+                if(params.gamma == 0) {
+                    params.gamma = 1.0 / labels.rows;
+                }
+
+                /// train the svm
+                std::cout << "Started training for '" << it->first << std::endl;
+                if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
+                    std::cout << "Finished training for '" << it->first << "'!" << std::endl;
+                    std::string label = prefix + toString(it->first);
+                    svm.write(fs.fs, label.c_str());
+                    svm_labels.push_back(it->first);
+                } else {
+                    std::cerr << "Failed traininng for '" << it->first << "'!" << std::endl;
+                }
             }
         }
     } else {
