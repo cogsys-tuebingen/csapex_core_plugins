@@ -36,8 +36,8 @@ add_library(csapex_ml_plugin
 
     src/svm_trainer.cpp
     src/svm.cpp
-    src/svm_array_trainer.cpp
-    src/svm_array.cpp
+    src/svm_ensemble_trainer.cpp
+    src/svm_ensemble.cpp
 
     src/ada_boost_trainer.cpp
     src/ada_boost.cpp

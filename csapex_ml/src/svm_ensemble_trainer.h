@@ -11,10 +11,10 @@
 #include <opencv2/opencv.hpp>
 
 namespace csapex {
-class SVMArrayTrainer : public CollectionNode<connection_types::FeaturesMessage>
+class SVMEnsembleTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
-    SVMArrayTrainer();
+    SVMEnsembleTrainer();
 
     void setupParameters(Parameterizable& parameters);
 

@@ -12,10 +12,10 @@
 #include <mutex>
 
 namespace csapex {
-class SVMArray : public Node
+class SVMEnsemble : public Node
 {
 public:
-    SVMArray();
+    SVMEnsemble();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);

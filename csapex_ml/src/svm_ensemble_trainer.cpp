@@ -1,5 +1,5 @@
 /// HEADER
-#include "svm_array_trainer.h"
+#include "svm_ensemble_trainer.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -8,7 +8,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
 
-CSAPEX_REGISTER_CLASS(csapex::SVMArrayTrainer, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::SVMEnsembleTrainer, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -56,11 +56,11 @@ struct ExtendedSVM : public cv::SVM {
 
 };
 
-SVMArrayTrainer::SVMArrayTrainer()
+SVMEnsembleTrainer::SVMEnsembleTrainer()
 {
 }
 
-void SVMArrayTrainer::setupParameters(Parameterizable& parameters)
+void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
 {
     CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
 
@@ -156,7 +156,7 @@ void SVMArrayTrainer::setupParameters(Parameterizable& parameters)
                                        one_vs_all_);
 }
 
-void SVMArrayTrainer::processCollection(std::vector<FeaturesMessage> &collection)
+void SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
     /// TODO : Mix classes for negative samples?
 

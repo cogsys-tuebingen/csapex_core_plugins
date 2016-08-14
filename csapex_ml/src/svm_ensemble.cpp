@@ -1,5 +1,5 @@
 /// HEADER
-#include "svm_array.h"
+#include "svm_ensemble.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -9,7 +9,7 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_vision/cv_mat_message.h>
 
-CSAPEX_REGISTER_CLASS(csapex::SVMArray, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::SVMEnsemble, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -22,28 +22,28 @@ inline std::string toString(const T value)
     return ss.str();
 }
 
-SVMArray::SVMArray() :
+SVMEnsemble::SVMEnsemble() :
     loaded_(false)
 {
 }
 
-void SVMArray::setup(NodeModifier& node_modifier)
+void SVMEnsemble::setup(NodeModifier& node_modifier)
 {
     in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("features");
     out_ = node_modifier.addOutput<GenericVectorMessage, CvMatMessage::ConstPtr>("responses");
 
-    reload_ = node_modifier.addSlot("Reload", std::bind(&SVMArray::load, this));
+    reload_ = node_modifier.addSlot("Reload", std::bind(&SVMEnsemble::load, this));
 
 }
 
-void SVMArray::setupParameters(Parameterizable& parameters)
+void SVMEnsemble::setupParameters(Parameterizable& parameters)
 {
     addParameter(csapex::param::ParameterFactory::declarePath("svm array path",
                                                       csapex::param::ParameterDescription("Path to a saved svm."),
                                                       true,
                                                       "",
                                                       "*.yaml *.tar.gz"),
-                 std::bind(&SVMArray::load, this));
+                 std::bind(&SVMEnsemble::load, this));
 
     csapex::param::ParameterPtr param_label = csapex::param::ParameterFactory::declareBool("compute labels",
                                                                                            csapex::param::ParameterDescription("Directly compute labels. 'false' allows manual threshold setting for binary classification"),
@@ -72,7 +72,7 @@ void SVMArray::setupParameters(Parameterizable& parameters)
                             threshold_condition);
 }
 
-void SVMArray::process()
+void SVMEnsemble::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
     std::shared_ptr<std::vector<CvMatMessage::ConstPtr>> output(new std::vector<CvMatMessage::ConstPtr>);
@@ -132,7 +132,7 @@ void SVMArray::process()
     msg::publish<GenericVectorMessage, CvMatMessage::ConstPtr>(out_, output);
 }
 
-void SVMArray::load()
+void SVMEnsemble::load()
 {
     std::string path = readParameter<std::string>("svm array path");
     if(path == "")
