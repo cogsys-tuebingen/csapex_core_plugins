@@ -4,7 +4,7 @@ project(csapex_vision_histograms)
 find_package(catkin COMPONENTS
                     roscpp
                     csapex
-                    csapex_vision
+                    csapex_opencv
                     csapex_vision_features
                     csapex_ml
                     cslibs_vision

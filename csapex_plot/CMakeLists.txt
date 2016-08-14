@@ -9,7 +9,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(catkin REQUIRED COMPONENTS
   csapex
-  csapex_vision
+  csapex_opencv
 )
 
 

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(csapex_video)
 
 find_package(catkin REQUIRED COMPONENTS
-  csapex csapex_vision
+  csapex csapex_opencv
 )
 
 catkin_package(

@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex_core_plugins/interactive_node.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 class QImage;
 

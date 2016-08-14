@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex_vision/cv_mat_message.h>
-#include <csapex_vision/cv_pyramid_message.h>
+#include <csapex_opencv/cv_mat_message.h>
+#include <csapex_opencv/cv_pyramid_message.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>

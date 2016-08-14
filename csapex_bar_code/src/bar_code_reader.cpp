@@ -3,13 +3,13 @@
 
 /// COMPONENT
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_vision/roi_message.h>
+#include <csapex_opencv/roi_message.h>
 
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>

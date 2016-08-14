@@ -16,7 +16,7 @@ find_package(ZBar)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS csapex csapex_vision)
+find_package(catkin REQUIRED COMPONENTS csapex csapex_opencv)
 
 find_package(OpenCV REQUIRED)
 
@@ -31,8 +31,8 @@ find_package(OpenCV REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES csapex_vision_features
-#  CATKIN_DEPENDS csapex csapex_vision
+#  LIBRARIES csapex_opencv_features
+#  CATKIN_DEPENDS csapex csapex_opencv
 #  DEPENDS system_lib
 )
 

@@ -7,7 +7,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/serialization/serialization.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
 

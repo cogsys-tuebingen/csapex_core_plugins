@@ -11,7 +11,7 @@
 /// PROJECT
 #include <csapex/factory/message_factory.h>
 #include <csapex/model/tag.h>
-#include <csapex_vision/yaml_io.hpp>
+#include <csapex_opencv/yaml_io.hpp>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

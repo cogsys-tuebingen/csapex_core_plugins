@@ -12,7 +12,7 @@
 #include <csapex/param/range_parameter.h>
 #include <csapex/param/io.h>
 #include <csapex/msg/io.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/set_parameter.h>
 #include <csapex/utility/register_apex_plugin.h>

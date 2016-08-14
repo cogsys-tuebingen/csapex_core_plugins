@@ -12,7 +12,7 @@
 #include <csapex/param/value_parameter.h>
 #include <csapex/param/io.h>
 #include <csapex/msg/io.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/view/utility/qt_helper.hpp>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/set_parameter.h>

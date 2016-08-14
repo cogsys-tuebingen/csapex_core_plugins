@@ -2,7 +2,7 @@
 #include <csapex_vision_features/keypoint_message.h>
 
 /// PROJECT
-#include <csapex_vision/yaml_io.hpp>
+#include <csapex_opencv/yaml_io.hpp>
 #include <csapex/utility/register_msg.h>
 #include <csapex/msg/generic_value_message.hpp>
 

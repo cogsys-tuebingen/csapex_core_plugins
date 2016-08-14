@@ -6,7 +6,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImageCollage, csapex::Node)
 

@@ -13,7 +13,7 @@
 
 /// CONCRETE MESSAGES
 #include <csapex_ml/features_message.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex_vision_features/descriptor_message.h>
 #include <csapex_vision_histograms/histogram_msg.h>
 

@@ -13,12 +13,12 @@
 
   <build_depend>csapex</build_depend>
   <build_depend>csapex_ros</build_depend>
-  <build_depend>csapex_vision</build_depend>
+  <build_depend>csapex_opencv</build_depend>
   <build_depend>cslibs_laser_processing</build_depend>
 
   <run_depend>csapex</run_depend>
   <run_depend>csapex_ros</run_depend>
-  <run_depend>csapex_vision</run_depend>
+  <run_depend>csapex_opencv</run_depend>
   <run_depend>cslibs_laser_processing</run_depend>
 
   <export>

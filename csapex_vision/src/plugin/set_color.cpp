@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
 #include <csapex/model/node_modifier.h>

@@ -8,7 +8,7 @@
 #include <csapex/model/node.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_point_cloud/point_cloud_message.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 namespace csapex {
 using namespace connection_types;

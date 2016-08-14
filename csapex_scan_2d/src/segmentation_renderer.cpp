@@ -9,7 +9,7 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/io.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <cslibs_laser_processing/data/segment.h>
 #include <csapex/view/utility/color.hpp>

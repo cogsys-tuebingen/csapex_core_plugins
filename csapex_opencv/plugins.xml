@@ -1,0 +1,25 @@
+<library path="libcsapex_opencv_core">
+<class type="csapex::ImageProviderDir" base_class_type="csapex::MessageProvider">
+  <description></description>
+</class>
+<class type="csapex::ImageProviderImg" base_class_type="csapex::MessageProvider">
+  <description></description>
+</class>
+<class type="csapex::ImageProviderMov" base_class_type="csapex::MessageProvider">
+  <description></description>
+</class>
+<class type="csapex::ImageRenderer" base_class_type="csapex::MessageRenderer">
+  <description></description>
+</class>
+</library>
+
+
+<library path="libcsapex_opencv_node">
+<class type="csapex::BlobDetector" base_class_type="csapex::Node">
+  <description>Detects blobs in an image and publishes them as ROIs</description>
+  <tags>Vision, ROI</tags>
+</class>
+<class type="csapex::ExampleImageGenerator" base_class_type="csapex::Node">
+  <description>Generates different example images</description>
+</class>
+</library>

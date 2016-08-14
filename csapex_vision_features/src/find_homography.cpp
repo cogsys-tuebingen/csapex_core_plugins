@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex_vision_features/keypoint_message.h>
 #include <csapex_vision_features/match_message.h>
 

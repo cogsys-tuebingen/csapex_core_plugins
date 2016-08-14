@@ -1,7 +1,7 @@
 #include "indexed_pointcloud.h"
 
 /// PROJECT
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex_point_cloud/point_cloud_message.h>

@@ -16,7 +16,7 @@ add_definitions("-O3")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_vision)
+find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_opencv)
 find_package(pcl_ros REQUIRED)
 
 find_package(cslibs_kdtree QUIET)

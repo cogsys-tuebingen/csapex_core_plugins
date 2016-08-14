@@ -1,7 +1,7 @@
 #include "ray_angles.h"
 
 /// PROJECT
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/msg/io.h>
 #include <csapex_core_plugins/timestamp_message.h>
 #include <csapex/param/parameter_factory.h>

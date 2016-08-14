@@ -2,7 +2,7 @@
 #include "camera.h"
 
 /// COMPONENT
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 /// PROJECT
 #include <csapex/msg/io.h>

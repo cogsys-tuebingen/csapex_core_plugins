@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex_core_plugins/interactive_node.h>
-#include <csapex_vision/roi_message.h>
+#include <csapex_opencv/roi_message.h>
 
 /// SYSTEM
 #include <QImage>

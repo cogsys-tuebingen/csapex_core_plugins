@@ -30,6 +30,10 @@
   <description>Finds homography given feature matches</description>
   <tags>Vision, Features</tags>
 </class>
+<class type="csapex::LKTracking" base_class_type="csapex::Node">
+  <description>Lukas Kanade tracking of features points</description>
+  <tags>Vision, Tracking</tags>
+</class>
 </library>
 
 

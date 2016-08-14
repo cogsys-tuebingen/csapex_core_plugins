@@ -4,7 +4,8 @@ project(csapex_vision_conversion)
 find_package(catkin REQUIRED COMPONENTS
   csapex
   csapex_ml
-  csapex_vision
+  csapex_opencv
+  cslibs_vision
   csapex_vision_features
   csapex_vision_histograms
 )
@@ -21,7 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES vision_plugins_conversion
-#  CATKIN_DEPENDS csapex csapex_ml csapex_vision csapex_vision_features
+#  CATKIN_DEPENDS csapex csapex_ml csapex_opencv csapex_vision_features
 #  DEPENDS system_lib
 )
 

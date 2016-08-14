@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex_vision_features/keypoint_message.h>
-#include <csapex_vision/cv_mat_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 /// PROJECT
 #include <csapex/param/range_parameter.h>

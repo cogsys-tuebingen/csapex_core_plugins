@@ -2,18 +2,6 @@
 <class type="csapex::RegisterPlugin" base_class_type="csapex::CorePlugin">
   <description></description>
   </class>
-<class type="csapex::ImageProviderDir" base_class_type="csapex::MessageProvider">
-  <description></description>
-</class>
-<class type="csapex::ImageProviderImg" base_class_type="csapex::MessageProvider">
-  <description></description>
-</class>
-<class type="csapex::ImageProviderMov" base_class_type="csapex::MessageProvider">
-  <description></description>
-</class>
-<class type="csapex::ImageRenderer" base_class_type="csapex::MessageRenderer">
-  <description></description>
-</class>
 </library>
 
 
@@ -166,10 +154,6 @@
   <description>Load OpenCV file storages containing matrices.</description>
 </class>
 
-<class type="csapex::ExampleImageGenerator" base_class_type="csapex::Node">
-  <description>Generates different example images</description>
-</class>
-
 <class type="csapex::DistanceTransform" base_class_type="csapex::Node">
   <description>OpenCV's distance transform</description>
 </class>
@@ -185,10 +169,6 @@
   <class type="csapex::AdaptiveThreshold" base_class_type="csapex::Node">
     <description>Adaptive thresholding</description>
     <tags>Vision, Filter</tags>
-  </class>
-  <class type="csapex::BlobDetector" base_class_type="csapex::Node">
-    <description>Detects blobs in an image and publishes them as ROIs</description>
-    <tags>Vision, ROI</tags>
   </class>
   <class type="csapex::Merger" base_class_type="csapex::Node">
     <description>Merges multiple images as channels into one image</description>
@@ -262,10 +242,6 @@
   <class type="csapex::NumberGenerator" base_class_type="csapex::Node">
     <description>[DEBUG] Generates images containing numbers</description>
     <tags>Vision, Debug</tags>
-  </class>
-  <class type="csapex::LKTracking" base_class_type="csapex::Node">
-    <description>Lukas Kanade tracking of features points</description>
-    <tags>Vision, Tracking</tags>
   </class>
   <class type="vision_plugins::GenericImageCombiner" base_class_type="csapex::Node">
     <description>

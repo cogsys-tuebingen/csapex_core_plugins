@@ -4,13 +4,13 @@ project(csapex_ml)
 find_package(catkin REQUIRED COMPONENTS
   csapex
   csapex_core_plugins
-  csapex_vision
+  csapex_opencv
 )
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_ml
-  CATKIN_DEPENDS csapex csapex_core_plugins
+  CATKIN_DEPENDS csapex csapex_core_plugins csapex_opencv
 )
 
 find_package(OpenCV REQUIRED)

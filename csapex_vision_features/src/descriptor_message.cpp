@@ -2,7 +2,7 @@
 #include <csapex_vision_features/descriptor_message.h>
 
 /// PROJECT
-#include <csapex_vision/yaml_io.hpp>
+#include <csapex_opencv/yaml_io.hpp>
 #include <csapex/utility/register_msg.h>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::DescriptorMessage)
