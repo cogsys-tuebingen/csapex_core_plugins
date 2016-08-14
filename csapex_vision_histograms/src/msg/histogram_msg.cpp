@@ -1,5 +1,5 @@
 /// HEADER
-#include <vision_plugins_histograms/histogram_msg.h>
+#include <csapex_vision_histograms/histogram_msg.h>
 
 /// PROJECT
 #include <csapex/utility/register_msg.h>

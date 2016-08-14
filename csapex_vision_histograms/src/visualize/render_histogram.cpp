@@ -9,8 +9,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <cslibs_vision/utils/histogram.hpp>
-#include <vision_plugins_histograms/histogram_msg.h>
-#include <vision_plugins_histograms/histogram_maxima_msg.h>
+#include <csapex_vision_histograms/histogram_msg.h>
+#include <csapex_vision_histograms/histogram_maxima_msg.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;

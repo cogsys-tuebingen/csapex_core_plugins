@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(vision_plugins_histograms)
+project(csapex_vision_histograms)
 
 find_package(catkin COMPONENTS
                     roscpp
@@ -11,8 +11,6 @@ find_package(catkin COMPONENTS
                     REQUIRED)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
-
-set(CMAKE_BUILD_TYPE Debug)
 
 #set(CMAKE_CXX_FLAGS "-O3")
 
@@ -26,7 +24,7 @@ set(CMAKE_BUILD_TYPE Debug)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS  include
-  LIBRARIES     vision_plugins_histograms_msgs
+  LIBRARIES     ${PROJECT_NAME}_msgs
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
@@ -39,29 +37,29 @@ include_directories(include
     ${catkin_INCLUDE_DIRS}
 )
 
-add_library(vision_plugins_histograms_msgs
+add_library(${PROJECT_NAME}_msgs
     src/msg/histogram_msg.cpp
     src/msg/histogram_container.cpp
     src/msg/histogram_maxima_msg.cpp
     src/msg/histogram_maxima_container.cpp
 )
 
-target_link_libraries(vision_plugins_histograms_msgs
+target_link_libraries(${PROJECT_NAME}_msgs
     ${OpenCV_LIBS}
     ${Boost_LIBRARIES}
     ${catkin_LIBRARIES}
 )
 
-add_library(vision_plugins_histograms
+add_library(${PROJECT_NAME}
     src/visualize/render_histogram.cpp
     src/analyze/histogram.cpp
     src/analyze/cluster_histograms.cpp
     src/analyze/histogram_maxima.cpp
 )
 
-target_link_libraries(vision_plugins_histograms 
+target_link_libraries(${PROJECT_NAME}
+  ${PROJECT_NAME}_msgs
   yaml-cpp 
-  vision_plugins_histograms_msgs
   ${OpenCV_LIBS} ${Boost_LIBRARIES}
   ${catkin_LIBRARIES} 
 )
@@ -73,7 +71,12 @@ target_link_libraries(vision_plugins_histograms
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS vision_plugins_histograms
+install(TARGETS ${PROJECT_NAME}_msgs
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS ${PROJECT_NAME}
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

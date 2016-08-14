@@ -15,7 +15,7 @@
 #include <csapex_ml/features_message.h>
 #include <csapex_vision/cv_mat_message.h>
 #include <csapex_vision_features/descriptor_message.h>
-#include <vision_plugins_histograms/histogram_msg.h>
+#include <csapex_vision_histograms/histogram_msg.h>
 
 using namespace csapex;
 using namespace connection_types;

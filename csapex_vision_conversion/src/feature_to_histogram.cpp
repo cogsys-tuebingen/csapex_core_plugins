@@ -7,7 +7,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <vision_plugins_histograms/histogram_msg.h>
+#include <csapex_vision_histograms/histogram_msg.h>
 #include <csapex_ml/features_message.h>
 
 using namespace csapex;

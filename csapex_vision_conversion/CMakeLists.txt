@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(vision_plugins_conversion)
+project(csapex_vision_conversion)
 
 find_package(catkin REQUIRED COMPONENTS
   csapex
   csapex_ml
   csapex_vision
   csapex_vision_features
-  vision_plugins_histograms
+  csapex_vision_histograms
 )
-
-set(CMAKE_BUILD_TYPE Debug)
 
 ###################################
 ## catkin specific configuration ##
@@ -35,12 +33,12 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(vision_plugins_conversion
+add_library(${PROJECT_NAME}
     src/feature_to_histogram.cpp
     src/to_feature.cpp
 )
 
-target_link_libraries(vision_plugins_conversion
+target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
@@ -51,7 +49,7 @@ target_link_libraries(vision_plugins_conversion
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS vision_plugins_conversion
+install(TARGETS ${PROJECT_NAME}
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})

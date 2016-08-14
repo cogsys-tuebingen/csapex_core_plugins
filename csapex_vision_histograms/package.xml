@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>vision_plugins_histograms</name>
+  <name>csapex_vision_histograms</name>
   <version>0.0.0</version>
-  <description>The image_transformation package contains image transformation plugins for the vision evaluator.</description>
+  <description>This package contains nodes to generate histograms</description>
   <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
  <license>BSD</license>
 
