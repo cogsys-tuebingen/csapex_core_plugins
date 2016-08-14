@@ -303,25 +303,32 @@ bool is_not_digit(char c)
 
 bool numeric_string_compare(const std::string& s1, const std::string& s2)
 {
-    boost::regex re(".*_([\\d]+)\\.[^\\.]+");
-    boost::smatch result;
+    boost::regex re("(.*)_([\\d]+)\\.[^\\.]+");
+    boost::smatch result1, result2;
 
-    if (!boost::regex_search(s1, result, re)) {
+    if (!boost::regex_search(s1, result1, re)) {
         return false;
     }
-    std::string sn1(result[1].first, result[1].second);
-    if (!boost::regex_search(s2, result, re)) {
+    if (!boost::regex_search(s2, result2, re)) {
         return false;
     }
-    std::string sn2(result[1].first, result[1].second);
+    std::string prefix_n1(result1[1].first, result1[1].second);
+    std::string prefix_n2(result2[1].first, result2[1].second);
 
-    return atoi(sn1.c_str()) < atoi(sn2.c_str());
+    if(prefix_n1 != prefix_n2) {
+        return prefix_n1 < prefix_n2;
+
+    } else {
+        std::string suffix_n1(result1[2].first, result1[2].second);
+        std::string suffix_n2(result2[2].first, result2[2].second);
+
+        return atoi(suffix_n1.c_str()) < atoi(suffix_n2.c_str());
+    }
 }
 }
 
 void FileImporter::doImportDir(const QString &dir_string)
 {
-
     dir_files_.clear();
 
     bool recursive = readParameter<bool>("recursive import");
@@ -350,8 +357,8 @@ void FileImporter::doImportDir(const QString &dir_string)
         return;
     }
 
-
     bool sort_numerically = readParameter<bool>("directory/sort_numerically");
+
     if(sort_numerically) {
         std::sort(dir_files_.begin(), dir_files_.end(), numeric_string_compare);
     } else {
