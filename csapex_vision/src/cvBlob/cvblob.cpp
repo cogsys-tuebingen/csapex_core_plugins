@@ -29,7 +29,7 @@ using namespace std;
 #include <opencv/highgui.h>
 #endif
 
-#include <vision_plugins/cvblob.h>
+#include <csapex_vision/cvblob.h>
 
 namespace cvb
 {
