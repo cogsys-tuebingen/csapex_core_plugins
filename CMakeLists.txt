@@ -3,7 +3,7 @@ project(csapex_tutorial)
 
 find_package(catkin REQUIRED COMPONENTS
   csapex
-  csapex_vision
+  csapex_opencv
   csapex_ros
   message_generation
 )
