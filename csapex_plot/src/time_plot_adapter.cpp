@@ -4,6 +4,8 @@
 /// SYSTEM
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+#include <qwt/qwt_legend.h>
+#include <qwt_legend_label.h>
 
 using namespace csapex;
 
@@ -37,20 +39,24 @@ void TimePlotAdapter::display()
 
     plot_widget_->setFixedSize(n->getWidth(), n->getHeight());
 
-    QwtPlotCurve* curve = new QwtPlotCurve;
-    curve->setBaseline(0.0);
-
-    curve->setPen(n->getLineColor(), n->getLineWidth());
-    curve->setStyle(QwtPlotCurve::Lines);
-
-    curve->setBrush(QBrush(n->getFillColor(), Qt::SolidPattern));
-
-    curve->setRawSamples(n->getTData(), n->getVData(), n->getCount());
-
     plot_widget_->detachItems();
-    curve->attach(plot_widget_);
 
-    plot_widget_->replot();
+
+    QwtPlotCurve* curve[n->getVDataCountNumCurves()] /*= new QwtPlotCurve[n->getVDataCountNumCurves()];*/;
+    for(std::size_t i = 0; i < n->getVDataCountNumCurves(); ++i){
+        curve[i] = new QwtPlotCurve;
+        curve[i]->setBaseline(0.0);
+        curve[i]->setPen(n->getLineColor(i), n->getLineWidth());
+        curve[i]->setStyle(QwtPlotCurve::Lines);
+
+        curve[i]->setBrush(QBrush(n->getFillColor(), Qt::SolidPattern));
+
+        curve[i]->setRawSamples(n->getTData(), n->getVData(i), n->getCount());
+
+        curve[i]->attach(plot_widget_);
+        plot_widget_->replot();
+    }
+
 }
 
 

@@ -31,11 +31,12 @@ public:
     double getLineWidth() const;
 
     QColor getBackgroundColor() const;
-    QColor getLineColor() const;
+    QColor getLineColor(std::size_t idx) const;
     QColor getFillColor() const;
 
     const double *getTData() const;
-    const double* getVData() const;
+    const double* getVData(std::size_t idx) const;
+    std::size_t getVDataCountNumCurves() const;
     std::size_t getCount() const;
 
     const QwtScaleMap& getXMap() const;
@@ -53,6 +54,9 @@ public:
     csapex::slim_signal::Signal<void()> display_request;
 
 private:
+    bool initialize_;
+    bool basic_line_color_changed_;
+    std::size_t num_plots_;
     Input* in_;
     Output* out_;
 
@@ -60,7 +64,8 @@ private:
     int height_;
 
     QColor color_bg_;
-    QColor color_line_;
+    QColor basic_line_color_;
+    std::vector<QColor> color_line_;
     QColor color_fill_;
 
     double line_width_;
@@ -72,10 +77,13 @@ private:
     std::vector<double> data_t_raw_;
 
     std::vector<double> data_t_;
-        std::vector<double> data_v_;
+    std::vector<std::vector<double>> data_v_;
 
     QwtScaleMap x_map;
     QwtScaleMap y_map;
+
+private:
+    void calculateLineColors();
 };
 
 }
