@@ -90,6 +90,7 @@ add_library(csapex_core_plugins_node
     src/tools/stamp_delay_measurement.cpp
     src/tools/synchronizer.cpp
     src/tools/vector_merge.cpp
+    src/tools/select_vector_component.cpp
 
     src/display/output_display.cpp
     src/display/text_display.cpp

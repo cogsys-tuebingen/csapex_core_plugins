@@ -9,6 +9,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/view/utility/QtCvImageConverter.h>
+#include <csapex/msg/generic_vector_message.hpp>
 
 /// SYSTEM
 #include <qwt_scale_engine.h>
@@ -21,7 +22,7 @@ using namespace csapex::connection_types;
 
 void TimePlot::setup(NodeModifier &node_modifier)
 {
-    in_  = node_modifier.addInput<double>("Double");
+    in_  = node_modifier.addMultiInput<double, GenericVectorMessage>("Double");
     out_ = node_modifier.addOutput<CvMatMessage>("Plot");
 }
 
@@ -86,7 +87,15 @@ void TimePlot::setupParameters(Parameterizable &parameters)
 void TimePlot::process()
 {
     timepoint time = std::chrono::system_clock::now();
-    double value = msg::getValue<double>(in_);
+    double value;
+    if(msg::isValue<double>(in_)) {
+        value = msg::getValue<double>(in_);
+    }
+    else {
+        GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in_);
+        apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
+
+    }
 
     double ms = std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count();
 
