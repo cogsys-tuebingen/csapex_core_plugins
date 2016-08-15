@@ -2,12 +2,14 @@
 <package>
   <name>csapex_vision</name>
   <version>0.0.2</version>
-  <description>The csapex_vision package provides a gui for evaluation vision algorithms</description>
+  <description>The csapex_vision package provides various vision algorithms</description>
 
   <maintainer email="sebastian.buck@uni-tuebingen.de">buck</maintainer>
+  <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
 
   <license>BSD</license>
   <author email="sebastian.buck@uni-tuebingen.de">buck</author>
+  <author email="richard.hanten@uni-tuebingen.de">hanten</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
