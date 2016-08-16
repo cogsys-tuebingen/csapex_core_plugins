@@ -7,7 +7,7 @@
 
 namespace csapex {
 
-class Relay : public Node
+class CSAPEX_EXPORT_PLUGIN Relay : public Node
 {
 public:
     Relay();

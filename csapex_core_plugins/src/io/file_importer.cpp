@@ -23,7 +23,7 @@
 #include <boost/lambda/lambda.hpp>
 #include <QDir>
 #include <QUrl>
-#include<boost/regex.hpp>
+#include <boost/regex.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::FileImporter, csapex::Node)
 

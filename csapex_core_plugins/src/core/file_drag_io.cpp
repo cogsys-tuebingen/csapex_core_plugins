@@ -20,7 +20,7 @@
 namespace csapex
 {
 
-class FileHandler : public DragIOHandler
+class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
 {
     virtual bool handleEnter(GraphView* view, CommandDispatcher* dispatcher, QDragEnterEvent* e) {
         if(e->mimeData()->hasUrls()) {

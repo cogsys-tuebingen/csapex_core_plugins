@@ -11,7 +11,7 @@
 namespace csapex
 {
 
-class Composer : public Node
+class CSAPEX_EXPORT_PLUGIN Composer : public Node
 {
 public:
     Composer()

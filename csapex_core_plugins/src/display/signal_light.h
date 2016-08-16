@@ -6,7 +6,7 @@
 
 namespace csapex {
 
-class SignalLight : public Node
+class CSAPEX_EXPORT_PLUGIN SignalLight : public Node
 {
 public:
     SignalLight();

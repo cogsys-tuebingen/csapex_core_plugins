@@ -13,7 +13,7 @@
 namespace csapex {
 namespace connection_types {
 
-struct CompositeMessage : public Message
+struct CSAPEX_EXPORT_PLUGIN CompositeMessage : public Message
 {
     typedef std::shared_ptr<CompositeMessage> Ptr;
     typedef std::shared_ptr<const CompositeMessage> ConstPtr;
@@ -73,7 +73,7 @@ struct type<CompositeMessage> {
 /// YAML
 namespace YAML {
 template<>
-struct convert<csapex::connection_types::CompositeMessage> {
+struct CSAPEX_EXPORT_PLUGIN convert<csapex::connection_types::CompositeMessage> {
     static Node encode(const csapex::connection_types::CompositeMessage& rhs);
     static bool decode(const Node& node, csapex::connection_types::CompositeMessage& rhs);
 };

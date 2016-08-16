@@ -6,16 +6,13 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/any_message.h>
 
-/// SYSTEM
-#include <ros/time.h>
-
 using namespace csapex::connection_types;
 
 
 namespace csapex
 {
 
-class StampDelayMeasurement : public Node
+class CSAPEX_EXPORT_PLUGIN StampDelayMeasurement : public Node
 {
 public:
     void setup(csapex::NodeModifier& modifier) override
@@ -31,12 +28,15 @@ public:
     {
         Message::ConstPtr msg(msg::getMessage<Message>(in_));
 
-        ros::Time stamp;
-        stamp.fromNSec(msg->stamp_micro_seconds * 1e3);
 
-        ros::Time now = ros::Time::now();
+		auto stamp = std::chrono::microseconds(long(msg->stamp_micro_seconds));
+		auto now = std::chrono::high_resolution_clock::now().time_since_epoch();
 
-        ainfo << "Current time: " << now << "\tStamp: " << stamp << "\tDelay: " << (now - stamp).toNSec() * 1e-6 << " milliseconds" << std::endl;
+		auto delta = now - stamp;
+		
+        ainfo << "Current time: " << now.count() <<
+			"\tStamp: " << stamp.count() <<
+			"\tDelay: " << delta.count() * 1e-3 << " milliseconds" << std::endl;
     }
 
 private:

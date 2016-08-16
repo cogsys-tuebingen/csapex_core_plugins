@@ -8,7 +8,7 @@
 namespace csapex {
 namespace connection_types {
 
-struct PointMessage : public Message
+struct CSAPEX_EXPORT_PLUGIN PointMessage : public Message
 {
 public:
     typedef std::shared_ptr<PointMessage> Ptr;
@@ -26,14 +26,14 @@ public:
 
 /// TRAITS
 template <>
-struct type<PointMessage> {
+struct CSAPEX_EXPORT_PLUGIN type<PointMessage> {
     static std::string name() {
         return "Point";
     }
 };
 
 template <>
-inline std::shared_ptr<PointMessage> makeEmpty<PointMessage>()
+inline CSAPEX_EXPORT_PLUGIN std::shared_ptr<PointMessage> makeEmpty<PointMessage>()
 {
     return std::shared_ptr<PointMessage>(new PointMessage(0));
 }
@@ -44,7 +44,7 @@ inline std::shared_ptr<PointMessage> makeEmpty<PointMessage>()
 /// YAML
 namespace YAML {
 template<>
-struct convert<csapex::connection_types::PointMessage> {
+struct CSAPEX_EXPORT_PLUGIN convert<csapex::connection_types::PointMessage> {
   static Node encode(const csapex::connection_types::PointMessage& rhs);
   static bool decode(const Node& node, csapex::connection_types::PointMessage& rhs);
 };

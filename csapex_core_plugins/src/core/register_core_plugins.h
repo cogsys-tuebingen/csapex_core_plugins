@@ -6,7 +6,7 @@
 
 namespace csapex {
 
-class RegisterCorePlugins : public CorePlugin
+class CSAPEX_EXPORT_PLUGIN RegisterCorePlugins : public CorePlugin
 {
 public:
     RegisterCorePlugins();

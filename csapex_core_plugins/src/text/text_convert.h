@@ -9,7 +9,7 @@
 
 namespace csapex {
 
-class TextConvert : public Node
+class CSAPEX_EXPORT_PLUGIN TextConvert : public Node
 {
 public:
     TextConvert();

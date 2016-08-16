@@ -10,7 +10,7 @@
 namespace csapex {
 namespace connection_types {
 
-struct DurationMessage : public MessageTemplate<std::chrono::microseconds, DurationMessage>
+struct CSAPEX_EXPORT_PLUGIN DurationMessage : public MessageTemplate<std::chrono::microseconds, DurationMessage>
 {
 public:
     DurationMessage(std::chrono::microseconds duration = std::chrono::microseconds(0),
@@ -38,7 +38,7 @@ inline std::shared_ptr<DurationMessage> makeEmpty<DurationMessage>()
 /// YAML
 namespace YAML {
 template<>
-struct convert<csapex::connection_types::DurationMessage> {
+struct CSAPEX_EXPORT_PLUGIN convert<csapex::connection_types::DurationMessage> {
   static Node encode(const csapex::connection_types::DurationMessage& rhs);
   static bool decode(const Node& node, csapex::connection_types::DurationMessage& rhs);
 };

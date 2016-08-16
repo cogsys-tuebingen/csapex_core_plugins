@@ -8,7 +8,7 @@
 
 namespace csapex {
 
-class ExportFile : public Node
+class CSAPEX_EXPORT_PLUGIN ExportFile : public Node
 {
 public:
     ExportFile();

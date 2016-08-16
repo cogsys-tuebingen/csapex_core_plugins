@@ -10,7 +10,7 @@
 namespace csapex {
 
 
-class ImportFile : public csapex::TickableNode
+class CSAPEX_EXPORT_PLUGIN ImportFile : public csapex::TickableNode
 {
 public:
     ImportFile();

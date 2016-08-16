@@ -9,7 +9,7 @@
 #include <deque>
 
 namespace csapex {
-class HoldableBuffer : public Node
+class CSAPEX_EXPORT_PLUGIN HoldableBuffer : public Node
 {
 public:
     HoldableBuffer();

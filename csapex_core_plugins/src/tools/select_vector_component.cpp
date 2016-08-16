@@ -13,7 +13,7 @@
 using namespace csapex::connection_types;
 namespace csapex
 {
-class SelectVectorComponent : public Node
+class CSAPEX_EXPORT_PLUGIN SelectVectorComponent : public Node
 {
 public:
     SelectVectorComponent(): comp_(0){}

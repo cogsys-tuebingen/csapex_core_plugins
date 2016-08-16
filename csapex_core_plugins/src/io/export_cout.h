@@ -6,7 +6,7 @@
 
 namespace csapex {
 
-class ExportCout : public Node
+class CSAPEX_EXPORT_PLUGIN ExportCout : public Node
 {
 public:
     ExportCout();

@@ -6,7 +6,7 @@
 
 namespace csapex {
 
-class TextInput : public TickableNode
+class CSAPEX_EXPORT_PLUGIN TextInput : public TickableNode
 {
 public:
     TextInput();

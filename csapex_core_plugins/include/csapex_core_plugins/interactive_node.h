@@ -9,7 +9,7 @@
 
 namespace csapex {
 
-class InteractiveNode : public Node
+class CSAPEX_EXPORT_PLUGIN InteractiveNode : public Node
 {
     friend class InteractiveNodeAdapter;
 

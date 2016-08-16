@@ -38,7 +38,7 @@ void SayText::process()
             std::stringstream cmd;
             cmd << "espeak \"" << msg << "\" 2> /dev/null 1> /dev/null";
             if(system(cmd.str().c_str())) {
-                aerr << "command failed: " << cmd << std::endl;
+                aerr << "command failed: " << cmd.str() << std::endl;
             }
         }
     }

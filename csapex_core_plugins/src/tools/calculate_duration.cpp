@@ -7,16 +7,13 @@
 #include <csapex_core_plugins/timestamp_message.h>
 #include <csapex_core_plugins/duration_message.h>
 
-/// SYSTEM
-#include <ros/time.h>
-
 using namespace csapex::connection_types;
 
 
 namespace csapex
 {
 
-class CalculateDuration : public Node
+class CSAPEX_EXPORT_PLUGIN CalculateDuration : public Node
 {
 public:
     void setup(csapex::NodeModifier& modifier) override

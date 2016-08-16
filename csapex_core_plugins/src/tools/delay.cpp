@@ -19,6 +19,12 @@ CSAPEX_REGISTER_CLASS(csapex::Delay, csapex::Node)
 
 using namespace csapex;
 
+#if WIN32
+#undef min
+#undef max
+#endif
+
+
 Delay::Delay()
     : input_(nullptr), output_(nullptr)
 {

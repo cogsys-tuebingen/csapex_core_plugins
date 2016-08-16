@@ -16,7 +16,7 @@ using namespace csapex::connection_types;
 namespace csapex
 {
 
-class Decomposer : public Node
+class CSAPEX_EXPORT_PLUGIN Decomposer : public Node
 {
     friend class DecomposerSerializer;
 

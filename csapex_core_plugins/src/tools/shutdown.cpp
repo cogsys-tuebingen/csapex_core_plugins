@@ -17,7 +17,7 @@ using namespace csapex::connection_types;
 namespace csapex
 {
 
-class Shutdown : public Node
+class CSAPEX_EXPORT_PLUGIN Shutdown : public Node
 {
 public:
     void setup(csapex::NodeModifier& modifier) override

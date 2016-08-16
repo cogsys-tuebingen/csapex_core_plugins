@@ -9,7 +9,7 @@
 namespace csapex
 {
 
-class VectorMerge : public Node, public VariadicInputs
+class CSAPEX_EXPORT_PLUGIN VectorMerge : public Node, public VariadicInputs
 {
 public:
     VectorMerge()

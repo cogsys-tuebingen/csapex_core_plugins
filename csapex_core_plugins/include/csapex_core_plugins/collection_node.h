@@ -13,7 +13,7 @@
 namespace csapex {
 
 template <typename MessageType>
-class CollectionNode : public Node
+class CSAPEX_EXPORT_PLUGIN CollectionNode : public Node
 {
 public:
     CollectionNode()

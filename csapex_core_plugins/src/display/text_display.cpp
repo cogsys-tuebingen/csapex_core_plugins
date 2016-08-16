@@ -10,6 +10,7 @@
 #include <csapex/msg/any_message.h>
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/model/token.h>
+#include <cmath>
 
 CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)
 

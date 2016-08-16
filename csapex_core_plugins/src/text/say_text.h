@@ -9,7 +9,7 @@
 
 namespace csapex {
 
-class SayText : public Node
+class CSAPEX_EXPORT_PLUGIN SayText : public Node
 {
 public:
     SayText();

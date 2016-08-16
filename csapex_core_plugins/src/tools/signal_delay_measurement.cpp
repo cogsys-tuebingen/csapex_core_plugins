@@ -5,16 +5,13 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-/// SYSTEM
-#include <ros/time.h>
-
 using namespace csapex::connection_types;
 
 
 namespace csapex
 {
 
-class SignalDelayMeasurement : public Node
+class CSAPEX_EXPORT_PLUGIN SignalDelayMeasurement : public Node
 {
 public:
     void setup(csapex::NodeModifier& modifier) override

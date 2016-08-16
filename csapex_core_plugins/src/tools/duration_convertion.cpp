@@ -7,16 +7,13 @@
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex_core_plugins/duration_message.h>
 
-/// SYSTEM
-#include <ros/time.h>
-
 using namespace csapex::connection_types;
 
 
 namespace csapex
 {
 
-class DurationConvertion : public Node
+class CSAPEX_EXPORT_PLUGIN DurationConvertion : public Node
 {
 public:
     void setup(csapex::NodeModifier& modifier) override

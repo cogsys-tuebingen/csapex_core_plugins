@@ -10,7 +10,7 @@
 namespace csapex {
 namespace connection_types {
 
-struct TimestampMessage : public MessageTemplate<
+struct CSAPEX_EXPORT_PLUGIN TimestampMessage : public MessageTemplate<
         std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>,
         TimestampMessage>
 {
@@ -24,14 +24,14 @@ public:
 
 /// TRAITS
 template <>
-struct type<TimestampMessage> {
+struct CSAPEX_EXPORT_PLUGIN type<TimestampMessage> {
     static std::string name() {
         return "Timestamp";
     }
 };
 
 template <>
-inline std::shared_ptr<TimestampMessage> makeEmpty<TimestampMessage>()
+inline CSAPEX_EXPORT_PLUGIN std::shared_ptr<TimestampMessage> makeEmpty<TimestampMessage>()
 {
     return std::shared_ptr<TimestampMessage>(new TimestampMessage());
 }
@@ -42,7 +42,7 @@ inline std::shared_ptr<TimestampMessage> makeEmpty<TimestampMessage>()
 /// YAML
 namespace YAML {
 template<>
-struct convert<csapex::connection_types::TimestampMessage> {
+struct CSAPEX_EXPORT_PLUGIN convert<csapex::connection_types::TimestampMessage> {
   static Node encode(const csapex::connection_types::TimestampMessage& rhs);
   static bool decode(const Node& node, csapex::connection_types::TimestampMessage& rhs);
 };

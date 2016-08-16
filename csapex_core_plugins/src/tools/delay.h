@@ -10,7 +10,7 @@
 
 namespace csapex {
 
-class Delay : public Node
+class CSAPEX_EXPORT_PLUGIN Delay : public Node
 {
 public:
     Delay();

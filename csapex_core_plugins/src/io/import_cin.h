@@ -10,7 +10,7 @@
 
 namespace csapex {
 
-class ImportCin : public TickableNode
+class CSAPEX_EXPORT_PLUGIN ImportCin : public TickableNode
 {
 public:
     ImportCin();

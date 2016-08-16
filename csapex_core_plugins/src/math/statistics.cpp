@@ -9,7 +9,7 @@
 namespace csapex
 {
 
-class Statistics : public Node
+class CSAPEX_EXPORT_PLUGIN Statistics : public Node
 {
 public:
     Statistics()

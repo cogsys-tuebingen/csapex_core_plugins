@@ -3,10 +3,11 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include "csapex_core_plugins_node_export.h"
 
 namespace csapex {
 
-class TextDisplay : public Node
+class CSAPEX_CORE_PLUGINS_NODE_EXPORT TextDisplay : public Node
 {
 public:
     TextDisplay();

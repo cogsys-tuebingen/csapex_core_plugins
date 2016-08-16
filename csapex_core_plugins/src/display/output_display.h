@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex/view/view_fwd.h>
+#include "csapex_core_plugins_node_export.h"
 
 /// SYSTEM
 #include <QImage>
@@ -14,7 +15,7 @@ namespace csapex
 
 class Input;
 
-class OutputDisplay : public Node
+class CSAPEX_CORE_PLUGINS_NODE_EXPORT OutputDisplay : public Node
 {
     friend class OutputDisplayAdapter;
 

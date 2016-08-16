@@ -13,7 +13,7 @@
 namespace csapex
 {
 
-class Cache : public TickableNode
+class CSAPEX_EXPORT_PLUGIN Cache : public TickableNode
 {
 public:
     Cache()

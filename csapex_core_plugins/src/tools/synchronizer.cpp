@@ -11,7 +11,7 @@
 namespace csapex
 {
 
-class Synchronizer : public Node
+class CSAPEX_EXPORT_PLUGIN Synchronizer : public Node
 {
 public:
     Synchronizer()

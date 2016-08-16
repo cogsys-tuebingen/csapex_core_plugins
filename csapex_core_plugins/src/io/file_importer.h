@@ -12,7 +12,7 @@
 namespace csapex
 {
 
-class FileImporter : public TickableNode
+class CSAPEX_EXPORT_PLUGIN FileImporter : public TickableNode
 {
 public:
     FileImporter();

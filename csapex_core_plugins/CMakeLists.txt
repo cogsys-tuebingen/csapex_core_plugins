@@ -1,14 +1,26 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_core_plugins)
 
-find_package(catkin REQUIRED COMPONENTS csapex)
+#find_package(catkin REQUIRED COMPONENTS csapex)
+
+include (GenerateExportHeader)
+
+find_package(csapex REQUIRED)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(YAML-CPP REQUIRED)
+find_package(console_bridge REQUIRED)
+find_package(class_loader REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 qt5_add_resources(QT_RESOURCES
     res/csapex_core_resources.qrc
 )
+
+if(WIN32)
+add_definitions(/D POCO_NO_AUTOMATIC_LIBS)
+add_definitions(/D NOMINMAX)
+endif()
 
 ###################################
 ## catkin specific configuration ##
@@ -18,23 +30,35 @@ qt5_add_resources(QT_RESOURCES
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES csapex_core_lib
-  CATKIN_DEPENDS csapex roscpp
-#  DEPENDS
-)
+#catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES csapex_core_lib
+#  CATKIN_DEPENDS csapex roscpp
+##  DEPENDS
+#)
+
+find_package(Boost COMPONENTS program_options filesystem system regex serialization thread REQUIRED)
+
+set(INSTALL_DIR "C:/Users/buck/ws/apex/install")
+set(CATKIN_PACKAGE_INCLUDE_DESTINATION ${INSTALL_DIR}/include)
+set(CATKIN_PACKAGE_LIB_DESTINATION ${INSTALL_DIR}/lib)
+set(CATKIN_GLOBAL_BIN_DESTINATION ${INSTALL_DIR}/bin)
+set(CATKIN_PACKAGE_SHARE_DESTINATION ${INSTALL_DIR}/share/${PROJECT_NAME})
 
 ###########
 ## Build ##
 ###########
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(include
     ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
+    ${csapex_INCLUDE_DIR}
     ${catkin_INCLUDE_DIRS}
+	${Boost_INCLUDE_DIRS}
+	${YAML-CPP_INCLUDE_DIR}
 )
 
-add_library(csapex_core_lib
+add_library(csapex_core_lib SHARED
     src/core/composite_message.cpp
     src/core/point_message.cpp
     src/core/timestamp_message.cpp
@@ -48,21 +72,33 @@ add_library(csapex_core_lib
 
 target_link_libraries(csapex_core_lib
     ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    ${Boost_LIBRARIES}
+    Qt5::Core
 )
 
-add_library(csapex_core_plugins_core
+add_library(csapex_core_plugins_core SHARED
     src/core/register_core_plugins.cpp
 
     src/core/file_drag_io.cpp
 )
 
+
 target_link_libraries(csapex_core_plugins_core csapex_core_lib
     ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    ${class_loader_LIBRARIES}
+    ${console_bridge_LIBRARIES}
+    ${Poco_LIBRARIES}
+    Qt5::Core Qt5::Gui 
 )
 
 
 
-add_library(csapex_core_plugins_node
+add_library(csapex_core_plugins_node SHARED
 
     src/io/export_cout.cpp
     src/io/export_file.cpp
@@ -99,19 +135,36 @@ add_library(csapex_core_plugins_node
 
 target_link_libraries(csapex_core_plugins_node csapex_core_lib
     ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    ${class_loader_LIBRARIES}
+    ${console_bridge_LIBRARIES}
+    ${Poco_LIBRARIES}
+    Qt5::Core Qt5::Gui Qt5::Widgets
 )
 
+generate_export_header(csapex_core_plugins_node)
 
 
-add_library(csapex_core_plugins_qt
+add_library(csapex_core_plugins_qt SHARED
     src/display/output_display_adapter.cpp
     src/display/text_display_adapter.cpp
     src/display/signal_light_adapter.cpp
 )
 
 
-target_link_libraries(csapex_core_plugins_qt csapex_core_lib
+target_link_libraries(csapex_core_plugins_qt 
+	csapex_core_plugins_node
+	csapex_core_lib
+
     ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    ${class_loader_LIBRARIES}
+    ${console_bridge_LIBRARIES}
+    ${Poco_LIBRARIES}
+    Qt5::Core Qt5::Gui Qt5::Widgets
 )
 
 
@@ -121,6 +174,7 @@ target_link_libraries(csapex_core_plugins_qt csapex_core_lib
 
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+		
 install(TARGETS csapex_core_lib
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -141,6 +195,11 @@ install(TARGETS csapex_core_plugins_qt
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-install(DIRECTORY include/${PROJECT_NAME}/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
-
+if(WIN32)
+	install(DIRECTORY include/${PROJECT_NAME}/
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME}/)
+else()
+	install(DIRECTORY include/${PROJECT_NAME}/
+			LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+endif()
