@@ -70,7 +70,9 @@ if(${cslibs_kdtree_FOUND})
         src/segmentation/cluster_pointcloud_kdtree.cpp
         src/segmentation/cluster_pointcloud_kdtree_filtered.cpp
         src/segmentation/cluster_pointcloud_page.cpp
+        src/segmentation/cluster_pointcloud_page_filtered.cpp
         src/segmentation/cluster_pointcloud_array.cpp
+        src/segmentation/cluster_pointcloud_array_filtered.cpp
     )
     include_directories(${cslibs_kdtree_INCLUDE_DIRS})
 else()
