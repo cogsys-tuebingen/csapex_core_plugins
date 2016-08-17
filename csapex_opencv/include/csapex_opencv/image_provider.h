@@ -20,7 +20,7 @@
 namespace csapex
 {
 
-class ImageProvider : public MessageProvider
+class CSAPEX_EXPORT_PLUGIN ImageProvider : public MessageProvider
 {
 public:
     typedef std::shared_ptr<ImageProvider> Ptr;

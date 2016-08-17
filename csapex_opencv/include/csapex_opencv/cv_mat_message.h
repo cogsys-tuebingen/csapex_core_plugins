@@ -16,7 +16,7 @@ template <typename,typename,typename> class ConverterTemplate;
 
 namespace connection_types {
 
-struct CvMatMessage : public MessageTemplate<cv::Mat, CvMatMessage>
+struct CSAPEX_OPENCV_EXPORT CvMatMessage : public MessageTemplate<cv::Mat, CvMatMessage>
 {
     friend class MessageTemplate<cv::Mat, CvMatMessage>;
 

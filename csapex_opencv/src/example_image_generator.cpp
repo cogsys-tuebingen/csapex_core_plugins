@@ -15,7 +15,7 @@
 namespace csapex
 {
 
-class ExampleImageGenerator : public TickableNode
+class CSAPEX_EXPORT_PLUGIN ExampleImageGenerator : public TickableNode
 {
 public:
     ExampleImageGenerator()

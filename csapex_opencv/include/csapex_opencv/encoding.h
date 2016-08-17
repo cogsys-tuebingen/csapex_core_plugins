@@ -1,13 +1,16 @@
 #ifndef ENCODING_H
 #define ENCODING_H
 
+/// PROJECT
+#include <csapex_opencv/csapex_opencv_export.h>
+
 /// SYSTEM
 #include <string>
 #include <vector>
 
 namespace csapex {
 
-struct Channel {
+struct CSAPEX_OPENCV_EXPORT Channel {
     friend bool operator == (const Channel& lhs, const Channel& rhs) {
         return lhs.name == rhs.name && lhs.fp == rhs.fp;
     }
@@ -76,7 +79,7 @@ struct Channel {
     };
 };
 
-class Encoding
+class CSAPEX_OPENCV_EXPORT Encoding
 {
 public:
     template <typename Iterator>

@@ -7,7 +7,7 @@
 namespace csapex
 {
 
-class ImageProviderSet : public ImageProvider
+class CSAPEX_EXPORT_PLUGIN ImageProviderSet : public ImageProvider
 {
 protected:
     ImageProviderSet();

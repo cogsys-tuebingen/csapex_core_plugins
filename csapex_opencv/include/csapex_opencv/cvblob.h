@@ -35,6 +35,7 @@
 #include <list>
 #include <vector>
 #include <limits>
+#include <cvBlob/cvblob_export.h>
 
 #if (defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__) || (defined(__APPLE__) & defined(__MACH__)))
 #include <cv.h>
@@ -108,7 +109,7 @@ typedef std::list<CvChainCode> CvChainCodes;
 
 /// \brief Chain code contour.
 /// \see CvChainCodes
-struct CvContourChainCode
+struct CVBLOB_EXPORT CvContourChainCode
 {
     CvPoint startingPoint; ///< Point where contour begin.
     CvChainCodes chainCode; ///< Polygon description based on chain codes.
@@ -125,7 +126,7 @@ typedef std::vector<CvPoint> CvContourPolygon;
 /// \param img Image to draw on.
 /// \param color Color to draw (default, white).
 /// \see CvContourChainCode
-void cvRenderContourChainCode(CvContourChainCode const *contour, IplImage const *img, CvScalar const &color=CV_RGB(255, 255, 255));
+CVBLOB_EXPORT void cvRenderContourChainCode(CvContourChainCode const *contour, IplImage const *img, CvScalar const &color=CV_RGB(255, 255, 255));
 
 /// \fn CvContourPolygon *cvConvertChainCodesToPolygon(CvContourChainCode const *cc)
 /// \brief Convert a chain code contour to a polygon.
@@ -133,7 +134,7 @@ void cvRenderContourChainCode(CvContourChainCode const *contour, IplImage const 
 /// \return A polygon.
 /// \see CvContourChainCode
 /// \see CvContourPolygon
-CvContourPolygon *cvConvertChainCodesToPolygon(CvContourChainCode const *cc);
+CVBLOB_EXPORT CvContourPolygon *cvConvertChainCodesToPolygon(CvContourChainCode const *cc);
 
 /// \fn void cvRenderContourPolygon(CvContourPolygon const *contour, IplImage *img, CvScalar const &color=CV_RGB(255, 255, 255))
 /// \brief Draw a polygon.
@@ -141,31 +142,31 @@ CvContourPolygon *cvConvertChainCodesToPolygon(CvContourChainCode const *cc);
 /// \param img Image to draw on.
 /// \param color Color to draw (default, white).
 /// \see CvContourPolygon
-void cvRenderContourPolygon(CvContourPolygon const *contour, IplImage *img, CvScalar const &color=CV_RGB(255, 255, 255));
+CVBLOB_EXPORT void cvRenderContourPolygon(CvContourPolygon const *contour, IplImage *img, CvScalar const &color=CV_RGB(255, 255, 255));
 
 /// \fn double cvContourPolygonArea(CvContourPolygon const *p)
 /// \brief Calculates area of a polygonal contour.
 /// \param p Contour (polygon type).
 /// \return Area of the contour.
-double cvContourPolygonArea(CvContourPolygon const *p);
+CVBLOB_EXPORT double cvContourPolygonArea(CvContourPolygon const *p);
 
 /// \fn double cvContourChainCodePerimeter(CvContourChainCode const *c)
 /// \brief Calculates perimeter of a chain code contour.
 /// \param c Contour (chain code type).
 /// \return Perimeter of the contour.
-double cvContourChainCodePerimeter(CvContourChainCode const *c);
+CVBLOB_EXPORT double cvContourChainCodePerimeter(CvContourChainCode const *c);
 
 /// \fn double cvContourPolygonPerimeter(CvContourPolygon const *p)
 /// \brief Calculates perimeter of a polygonal contour.
 /// \param p Contour (polygon type).
 /// \return Perimeter of the contour.
-double cvContourPolygonPerimeter(CvContourPolygon const *p);
+CVBLOB_EXPORT double cvContourPolygonPerimeter(CvContourPolygon const *p);
 
 /// \fn double cvContourPolygonCircularity(const CvContourPolygon *p)
 /// \brief Calculates the circularity of a polygon (compactness measure).
 /// \param p Contour (polygon type).
 /// \return Circularity: a non-negative value, where 0 correspond with a circumference.
-double cvContourPolygonCircularity(const CvContourPolygon *p);
+CVBLOB_EXPORT double cvContourPolygonCircularity(const CvContourPolygon *p);
 
 /// \fn CvContourPolygon *cvSimplifyPolygon(CvContourPolygon const *p, double const delta=1.)
 /// \brief Simplify a polygon reducing the number of vertex according the distance "delta".
@@ -173,20 +174,20 @@ double cvContourPolygonCircularity(const CvContourPolygon *p);
 /// \param p Contour (polygon type).
 /// \param delta Minimun distance.
 /// \return A simplify version of the original polygon.
-CvContourPolygon *cvSimplifyPolygon(CvContourPolygon const *p, double const delta=1.);
+CVBLOB_EXPORT CvContourPolygon *cvSimplifyPolygon(CvContourPolygon const *p, double const delta=1.);
 
 /// \fn CvContourPolygon *cvPolygonContourConvexHull(CvContourPolygon const *p)
 /// \brief Calculates convex hull of a contour.
 /// Uses the Melkman Algorithm. Code based on the version in http://w3.impa.br/~rdcastan/Cgeometry/.
 /// \param p Contour (polygon type).
 /// \return Convex hull.
-CvContourPolygon *cvPolygonContourConvexHull(CvContourPolygon const *p);
+CVBLOB_EXPORT CvContourPolygon *cvPolygonContourConvexHull(CvContourPolygon const *p);
 
 /// \fn void cvWriteContourPolygonCSV(const CvContourPolygon& p, const std::string& filename)
 /// \brief Write a contour to a CSV (Comma-separated values) file.
 /// \param p Polygon contour.
 /// \param filename File name.
-void cvWriteContourPolygonCSV(const CvContourPolygon& p, const std::string& filename);
+CVBLOB_EXPORT void cvWriteContourPolygonCSV(const CvContourPolygon& p, const std::string& filename);
 
 /// \fn void cvWriteContourPolygonSVG(const CvContourPolygon& p, const std::string& filename, const CvScalar& stroke=cvScalar(0,0,0), const CvScalar& fill=cvScalar(255,255,255))
 /// \brief Write a contour to a SVG file (http://en.wikipedia.org/wiki/Scalable_Vector_Graphics).
@@ -194,7 +195,7 @@ void cvWriteContourPolygonCSV(const CvContourPolygon& p, const std::string& file
 /// \param filename File name.
 /// \param stroke Stroke color (black by default).
 /// \param fill Fill color (white by default).
-void cvWriteContourPolygonSVG(const CvContourPolygon& p, const std::string& filename, const CvScalar& stroke=cvScalar(0,0,0), const CvScalar& fill=cvScalar(255,255,255));
+CVBLOB_EXPORT void cvWriteContourPolygonSVG(const CvContourPolygon& p, const std::string& filename, const CvScalar& stroke=cvScalar(0,0,0), const CvScalar& fill=cvScalar(255,255,255));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Blobs
@@ -218,7 +219,7 @@ typedef unsigned int CvLabel;
 typedef unsigned int CvID;
 
 /// \brief Struct that contain information about one blob.
-struct CvBlob
+struct CVBLOB_EXPORT CvBlob
 {
     CvLabel label; ///< Label assigned to the blob.
     
@@ -276,7 +277,7 @@ typedef std::pair<CvLabel,CvBlob *> CvLabelBlob;
 /// \param imgOut Output image (depth=IPL_DEPTH_LABEL and num. channels=1).
 /// \param blobs List of blobs.
 /// \return Number of pixels that has been labeled.
-unsigned int cvLabel (IplImage const *img, IplImage *imgOut, CvBlobs &blobs);
+CVBLOB_EXPORT unsigned int cvLabel (IplImage const *img, IplImage *imgOut, CvBlobs &blobs);
 
 //IplImage *cvFilterLabel(IplImage *imgIn, CvLabel label);
 
@@ -286,7 +287,7 @@ unsigned int cvLabel (IplImage const *img, IplImage *imgOut, CvBlobs &blobs);
 /// \param imgOut Output binary image (depth=IPL_DEPTH_8U and num. channels=1).
 /// \param blobs List of blobs to be drawn.
 /// \see cvLabel
-void cvFilterLabels(IplImage *imgIn, IplImage *imgOut, const CvBlobs &blobs);
+CVBLOB_EXPORT void cvFilterLabels(IplImage *imgIn, IplImage *imgOut, const CvBlobs &blobs);
 
 /// \fn CvLabel cvGetLabel(IplImage const *img, unsigned int x, unsigned int y)
 /// \brief Get the label value from a labeled image.
@@ -295,13 +296,13 @@ void cvFilterLabels(IplImage *imgIn, IplImage *imgOut, const CvBlobs &blobs);
 /// \param y Y coordenate.
 /// \return Label value.
 /// \see CvLabel
-CvLabel cvGetLabel(IplImage const *img, int x, int y);
+CVBLOB_EXPORT CvLabel cvGetLabel(IplImage const *img, int x, int y);
 
 /// \fn inline void cvReleaseBlob(CvBlob *blob)
 /// \brief Clear a blob structure.
 /// \param blob Blob.
 /// \see CvBlob
-inline void cvReleaseBlob(CvBlob *blob)
+inline CVBLOB_EXPORT void cvReleaseBlob(CvBlob *blob)
 {
     if (blob)
     {
@@ -321,7 +322,7 @@ inline void cvReleaseBlob(CvBlob *blob)
 /// \brief Clear blobs structure.
 /// \param blobs List of blobs.
 /// \see CvBlobs
-inline void cvReleaseBlobs(CvBlobs &blobs)
+inline CVBLOB_EXPORT void cvReleaseBlobs(CvBlobs &blobs)
 {
     for (CvBlobs::iterator it=blobs.begin(); it!=blobs.end(); ++it)
     {
@@ -335,9 +336,9 @@ inline void cvReleaseBlobs(CvBlobs &blobs)
 /// \param blobs List of blobs.
 /// \return Label of the largest blob or 0 if there are no blobs.
 /// \see cvLabel
-CvLabel cvLargestBlob(const CvBlobs &blobs);
+CVBLOB_EXPORT CvLabel cvLargestBlob(const CvBlobs &blobs);
 
-inline CvLabel cvGreaterBlob(const CvBlobs &blobs)
+inline CVBLOB_EXPORT CvLabel cvGreaterBlob(const CvBlobs &blobs)
 {
     return cvLargestBlob(blobs);
 }
@@ -348,14 +349,14 @@ inline CvLabel cvGreaterBlob(const CvBlobs &blobs)
 /// \param blobs List of blobs.
 /// \param minArea Minimun area.
 /// \param maxArea Maximun area.
-void cvFilterByArea(CvBlobs &blobs, unsigned int minArea, unsigned int maxArea);
+CVBLOB_EXPORT void cvFilterByArea(CvBlobs &blobs, unsigned int minArea, unsigned int maxArea);
 
 /// \fn void cvFilterByLabel(CvBlobs &blobs, CvLabel label)
 /// \brief Filter blobs by label.
 /// Delete all blobs except those with label l.
 /// \param blobs List of blobs.
 /// \param label Label to leave.
-void cvFilterByLabel(CvBlobs &blobs, CvLabel label);
+CVBLOB_EXPORT void cvFilterByLabel(CvBlobs &blobs, CvLabel label);
 
 /// \fn inline CvPoint2D64f cvCentroid(CvBlob *blob)
 /// \brief Calculates centroid.
@@ -363,7 +364,7 @@ void cvFilterByLabel(CvBlobs &blobs, CvLabel label);
 /// \param blob Blob whose centroid will be calculated.
 /// \return Centroid.
 /// \see CvBlob
-inline CvPoint2D64f cvCentroid(CvBlob *blob)
+inline CVBLOB_EXPORT CvPoint2D64f cvCentroid(CvBlob *blob)
 {
     return blob->centroid=cvPoint2D64f(blob->m10/blob->area, blob->m01/blob->area);
 }
@@ -373,7 +374,7 @@ inline CvPoint2D64f cvCentroid(CvBlob *blob)
 /// \param blob Blob.
 /// \return Angle orientation in radians.
 /// \see CvBlob
-double cvAngle(CvBlob *blob);
+CVBLOB_EXPORT double cvAngle(CvBlob *blob);
 
 /// \fn cvSaveImageBlob(const char *filename, IplImage *img, CvBlob const *blob)
 /// \brief Save the image of a blob to a file.
@@ -384,7 +385,7 @@ double cvAngle(CvBlob *blob);
 /// \param blob Blob.
 /// \see CvBlob
 /// \see cvRenderBlob
-void cvSaveImageBlob(const char *filename, IplImage *img, CvBlob const *blob);
+CVBLOB_EXPORT void cvSaveImageBlob(const char *filename, IplImage *img, CvBlob const *blob);
 
 #define CV_BLOB_RENDER_COLOR            0x0001 ///< Render each blog with a different color. \see cvRenderBlobs
 #define CV_BLOB_RENDER_CENTROID         0x0002 ///< Render centroid. \see cvRenderBlobs
@@ -408,7 +409,7 @@ void cvSaveImageBlob(const char *filename, IplImage *img, CvBlob const *blob);
 /// \see CV_BLOB_RENDER_ANGLE
 /// \see CV_BLOB_RENDER_TO_LOG
 /// \see CV_BLOB_RENDER_TO_STD
-void cvRenderBlob(const IplImage *imgLabel, CvBlob *blob, IplImage *imgSource, IplImage *imgDest, unsigned short mode=0x000f, CvScalar const &color=CV_RGB(255, 255, 255), double alpha=1.);
+CVBLOB_EXPORT void cvRenderBlob(const IplImage *imgLabel, CvBlob *blob, IplImage *imgSource, IplImage *imgDest, unsigned short mode=0x000f, CvScalar const &color=CV_RGB(255, 255, 255), double alpha=1.);
 
 /// \fn void cvRenderBlobs(const IplImage *imgLabel, CvBlobs &blobs, IplImage *imgSource, IplImage *imgDest, unsigned short mode=0x000f, double alpha=1.)
 /// \brief Draws or prints information about blobs.
@@ -424,14 +425,14 @@ void cvRenderBlob(const IplImage *imgLabel, CvBlob *blob, IplImage *imgSource, I
 /// \see CV_BLOB_RENDER_ANGLE
 /// \see CV_BLOB_RENDER_TO_LOG
 /// \see CV_BLOB_RENDER_TO_STD
-void cvRenderBlobs(const IplImage *imgLabel, CvBlobs &blobs, IplImage *imgSource, IplImage *imgDest, unsigned short mode=0x000f, double alpha=1.);
+CVBLOB_EXPORT void cvRenderBlobs(const IplImage *imgLabel, CvBlobs &blobs, IplImage *imgSource, IplImage *imgDest, unsigned short mode=0x000f, double alpha=1.);
 
 /// \fn void cvSetImageROItoBlob(IplImage *img, CvBlob const *blob)
 /// \brief Set the ROI of an image to the bounding box of a blob.
 /// \param img Image.
 /// \param blob Blob.
 /// \see CvBlob
-inline void cvSetImageROItoBlob(IplImage *img, CvBlob const *blob)
+inline CVBLOB_EXPORT void cvSetImageROItoBlob(IplImage *img, CvBlob const *blob)
 {
     cvSetImageROI(img, cvRect(blob->minx, blob->miny, blob->maxx-blob->minx, blob->maxy-blob->miny));
 };
@@ -445,7 +446,7 @@ inline void cvSetImageROItoBlob(IplImage *img, CvBlob const *blob)
 /// \param imgLabel Image of labels.
 /// \param img Original image.
 /// \return Average color.
-CvScalar cvBlobMeanColor(CvBlob const *blob, IplImage const *imgLabel, IplImage const *img);
+CVBLOB_EXPORT CvScalar cvBlobMeanColor(CvBlob const *blob, IplImage const *imgLabel, IplImage const *img);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Aux
@@ -456,7 +457,7 @@ CvScalar cvBlobMeanColor(CvBlob const *blob, IplImage const *imgLabel, IplImage 
 /// \param b Middle point.
 /// \param c Last point.
 /// \return Dot product of ab and bc.
-double cvDotProductPoints(CvPoint const &a, CvPoint const &b, CvPoint const &c);
+CVBLOB_EXPORT double cvDotProductPoints(CvPoint const &a, CvPoint const &b, CvPoint const &c);
 
 /// \fn double cvCrossProductPoints(CvPoint const &a, CvPoint const &b, CvPoint const &c)
 /// \brief Cross product of the vectors ab and bc.
@@ -464,14 +465,14 @@ double cvDotProductPoints(CvPoint const &a, CvPoint const &b, CvPoint const &c);
 /// \param b Point.
 /// \param c Point.
 /// \return Cross product of ab and bc.
-double cvCrossProductPoints(CvPoint const &a, CvPoint const &b, CvPoint const &c);
+CVBLOB_EXPORT double cvCrossProductPoints(CvPoint const &a, CvPoint const &b, CvPoint const &c);
 
 /// \fn double cvDistancePointPoint(CvPoint const &a, CvPoint const &b)
 /// \brief Distance between two points.
 /// \param a Point.
 /// \param b Point.
 /// \return Distance.
-double cvDistancePointPoint(CvPoint const &a, CvPoint const &b);
+CVBLOB_EXPORT double cvDistancePointPoint(CvPoint const &a, CvPoint const &b);
 
 /// \fn double cvDistanceLinePoint(CvPoint const &a, CvPoint const &b, CvPoint const &c, bool isSegment=true)
 /// \brief Distance between line ab and point c.
@@ -480,7 +481,7 @@ double cvDistancePointPoint(CvPoint const &a, CvPoint const &b);
 /// \param c Point.
 /// \param isSegment If false then the distance will be calculated from the line defined by the points a and b, to the point c.
 /// \return Distance between ab and c.
-double cvDistanceLinePoint(CvPoint const &a, CvPoint const &b, CvPoint const &c, bool isSegment=true);
+CVBLOB_EXPORT double cvDistanceLinePoint(CvPoint const &a, CvPoint const &b, CvPoint const &c, bool isSegment=true);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Tracking
@@ -488,7 +489,7 @@ double cvDistanceLinePoint(CvPoint const &a, CvPoint const &b, CvPoint const &c,
 /// \brief Struct that contain information about one track.
 /// \see CvID
 /// \see CvLabel
-struct CvTrack
+struct CVBLOB_EXPORT CvTrack
 {
     CvID id; ///< Track identification number.
 
@@ -522,7 +523,7 @@ typedef std::pair<CvID, CvTrack *> CvIDTrack;
 /// \brief Clear tracks structure.
 /// \param tracks List of tracks.
 /// \see CvTracks
-inline void cvReleaseTracks(CvTracks &tracks)
+inline CVBLOB_EXPORT void cvReleaseTracks(CvTracks &tracks)
 {
     for (CvTracks::iterator it=tracks.begin(); it!=tracks.end(); it++)
     {
@@ -547,7 +548,7 @@ inline void cvReleaseTracks(CvTracks &tracks)
 /// \param thActive If a track becomes inactive but it has been active less than thActive frames, the track will be deleted.
 /// \see CvBlobs
 /// \see Tracks
-void cvUpdateTracks(CvBlobs const &b, CvTracks &t, const double thDistance, const unsigned int thInactive, const unsigned int thActive=0);
+CVBLOB_EXPORT void cvUpdateTracks(CvBlobs const &b, CvTracks &t, const double thDistance, const unsigned int thInactive, const unsigned int thActive=0);
 
 #define CV_TRACK_RENDER_ID            0x0001 ///< Print the ID of each track in the image. \see cvRenderTracks
 #define CV_TRACK_RENDER_BOUNDING_BOX  0x0002 ///< Draw bounding box of each track in the image. \see cvRenderTracks
@@ -565,7 +566,7 @@ void cvUpdateTracks(CvBlobs const &b, CvTracks &t, const double thDistance, cons
 /// \see CV_TRACK_RENDER_BOUNDING_BOX
 /// \see CV_TRACK_RENDER_TO_LOG
 /// \see CV_TRACK_RENDER_TO_STD
-void cvRenderTracks(CvTracks const tracks, IplImage *imgSource, IplImage *imgDest, unsigned short mode=0x000f, CvFont *font=NULL);
+CVBLOB_EXPORT void cvRenderTracks(CvTracks const tracks, IplImage *imgSource, IplImage *imgDest, unsigned short mode=0x000f, CvFont *font=NULL);
 }
 #ifdef __cplusplus
 }
@@ -574,15 +575,15 @@ void cvRenderTracks(CvTracks const tracks, IplImage *imgSource, IplImage *imgDes
 /// \fn std::ostream& operator<< (std::ostream& output, const cvb::CvBlob& b)
 /// \brief Overload operator "<<" for printing blob structure.
 /// \return Stream.
-std::ostream& operator<< (std::ostream& output, const cvb::CvBlob& b);
+CVBLOB_EXPORT std::ostream& operator<< (std::ostream& output, const cvb::CvBlob& b);
 
 /// \fn std::ostream& operator<< (std::ostream& output, const cvb::CvContourPolygon& p)
 /// \brief Overload operator "<<" for printing polygons in CSV format.
 /// \return Stream.
-std::ostream& operator<< (std::ostream& output, const cvb::CvContourPolygon& p);
+CVBLOB_EXPORT std::ostream& operator<< (std::ostream& output, const cvb::CvContourPolygon& p);
 
 /// \fn std::ostream& operator<< (std::ostream& output, const cvb::CvTrack& t)
 /// \brief Overload operator "<<" for printing track structure.
 /// \return Stream.
-std::ostream& operator<< (std::ostream& output, const cvb::CvTrack& t);
+CVBLOB_EXPORT std::ostream& operator<< (std::ostream& output, const cvb::CvTrack& t);
 #endif

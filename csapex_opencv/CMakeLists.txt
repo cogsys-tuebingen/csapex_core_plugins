@@ -1,9 +1,46 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_opencv)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include (GenerateExportHeader)
 
-find_package(catkin REQUIRED COMPONENTS csapex)
+find_package(csapex REQUIRED)
+
+find_package(catkin QUIET)
+
+if(${catkin_FOUND})
+	catkin_package(
+	  INCLUDE_DIRS include
+	  LIBRARIES csapex_opencv
+	  DEPENDS OpenCV
+	)
+
+else()
+	find_package(YAML-CPP REQUIRED)
+	find_package(console_bridge REQUIRED)
+	find_package(class_loader REQUIRED)
+	if(WIN32)
+		add_definitions(/D POCO_NO_AUTOMATIC_LIBS)
+		add_definitions(/D NOMINMAX)
+	endif()
+	
+	find_package(Boost COMPONENTS program_options filesystem system regex serialization thread REQUIRED)
+
+	set(INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+	set(CATKIN_PACKAGE_INCLUDE_DESTINATION ${INSTALL_DIR}/include)
+	set(CATKIN_PACKAGE_LIB_DESTINATION ${INSTALL_DIR}/lib)
+	set(CATKIN_GLOBAL_BIN_DESTINATION ${INSTALL_DIR}/bin)
+	set(CATKIN_PACKAGE_SHARE_DESTINATION ${INSTALL_DIR}/share/${PROJECT_NAME})
+	
+	set(catkin_INCLUDE_DIRS
+		${Boost_INCLUDE_DIRS} 
+		${YAML_CPP_INCLUDE_DIR})
+	set(catkin_LIBRARIES 
+		${Boost_LIBRARIES}
+		${YAML_CPP_LIBRARIES}
+		${class_loader_LIBRARIES}
+		${console_bridge_LIBRARIES}
+		${Poco_LIBRARIES})
+endif()
 
 # note to ubuntu 14 users: if opencv is installed at /usr/local and is not found:    sudo ldconfig /usr/local/lib
 set(USED_OpenCV_COMPONENTS core imgproc ml calib3d)
@@ -21,11 +58,6 @@ endif()
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES csapex_opencv
-  DEPENDS OpenCV
-)
 
 ###########
 ## Build ##
@@ -36,6 +68,8 @@ catkin_package(
 # include_directories(include)
 include_directories(include
   ${catkin_INCLUDE_DIRS}
+  ${csapex_INCLUDE_DIR}
+  ${OpenCV_INCLUDE_DIRS}
   ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
@@ -43,9 +77,7 @@ add_subdirectory(src/cvBlob)
 
 qt5_add_resources(QT_RESOURCES res/csapex_vision_resources.qrc)
 
-add_library(${PROJECT_NAME}
-    ${QT_RESOURCES}
-
+add_library(${PROJECT_NAME} SHARED
     src/filter.cpp
     src/encoding.cpp
     src/cv_mat_message.cpp
@@ -53,12 +85,20 @@ add_library(${PROJECT_NAME}
     src/roi_message.cpp
     src/cv_pyramid_message.cpp
     src/yaml_io.cpp
+
+    ${QT_RESOURCES}
 )
+generate_export_header(${PROJECT_NAME})
+
 target_link_libraries(${PROJECT_NAME}
-    ${OpenCV_LIBS})
+    ${OpenCV_LIBS}
+	${catkin_LIBRARIES}
+	${csapex_LIBRARIES}
+    Qt5::Core
+)
 
 
-add_library(${PROJECT_NAME}_core
+add_library(${PROJECT_NAME}_core SHARED
     src/image_renderer.cpp
     src/image_provider.cpp
     src/image_provider_dir.cpp
@@ -68,17 +108,24 @@ add_library(${PROJECT_NAME}_core
 )
 target_link_libraries(${PROJECT_NAME}_core
     ${PROJECT_NAME}
-   yaml-cpp  ${OpenCV_LIBS} ${catkin_LIBRARIES} ${QT_LIBRARIES})
+	${catkin_LIBRARIES} 
+	${csapex_LIBRARIES} 
+    ${OpenCV_LIBS} 
+    Qt5::Core Qt5::Gui
+)
 
 
-add_library(${PROJECT_NAME}_node
+add_library(${PROJECT_NAME}_node SHARED
     src/example_image_generator.cpp
     src/blob_detector.cpp
 )
 target_link_libraries(${PROJECT_NAME}_node
-    cvblob
     ${PROJECT_NAME}
-   yaml-cpp  ${OpenCV_LIBS} ${catkin_LIBRARIES})
+	${catkin_LIBRARIES}
+	${csapex_LIBRARIES}
+	${OpenCV_LIBS}
+    cvblob  
+    Qt5::Core Qt5::Gui)
 
 #
 # INSTALL
@@ -102,8 +149,26 @@ install(TARGETS ${PROJECT_NAME}_core
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+		
+if(WIN32)
+	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h
+		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
+	install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME}/)
+else()
+	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h
+		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
+	install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+endif()
 
 
-install(DIRECTORY include/${PROJECT_NAME}/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
+if(WIN32)
+	install(DIRECTORY include/${PROJECT_NAME}/
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME})
+else()
+	install(DIRECTORY include/${PROJECT_NAME}/
+			LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+endif()

@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex_opencv/csapex_opencv_export.h>
 
 /// SYSTEM
 #include <memory>
@@ -14,7 +15,7 @@ namespace csapex
 class Input;
 class Output;
 
-class Filter : public Node
+class CSAPEX_OPENCV_EXPORT Filter : public Node
 {
 public:
     typedef std::shared_ptr<Filter> Ptr;

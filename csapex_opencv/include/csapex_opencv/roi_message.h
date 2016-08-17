@@ -11,7 +11,7 @@ namespace csapex {
 namespace connection_types {
 
 
-struct RoiMessage : public MessageTemplate<Roi, RoiMessage>
+struct CSAPEX_OPENCV_EXPORT RoiMessage : public MessageTemplate<Roi, RoiMessage>
 {
     RoiMessage();
 };
@@ -19,7 +19,7 @@ struct RoiMessage : public MessageTemplate<Roi, RoiMessage>
 
 /// TRAITS
 template <>
-struct type<RoiMessage> {
+struct CSAPEX_OPENCV_EXPORT type<RoiMessage> {
     static std::string name() {
         return "ROI";
     }
@@ -31,7 +31,7 @@ struct type<RoiMessage> {
 /// YAML
 namespace YAML {
 template<>
-struct convert<csapex::connection_types::RoiMessage> {
+struct CSAPEX_OPENCV_EXPORT convert<csapex::connection_types::RoiMessage> {
   static Node encode(const csapex::connection_types::RoiMessage& rhs);
   static bool decode(const Node& node, csapex::connection_types::RoiMessage& rhs);
 };

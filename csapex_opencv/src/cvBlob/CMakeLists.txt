@@ -17,6 +17,8 @@
 # along with cvBlob.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+include (GenerateExportHeader)
+
 find_package(OpenCV REQUIRED)
 
 set(cvBlob_CVBLOB cvblob.cpp
@@ -32,7 +34,10 @@ set_source_files_properties(${cvBlob_SRC}
                             COMPILE_FLAGS "-O3"
 )
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
+
 add_library(cvblob SHARED ${cvBlob_CVBLOB})
+generate_export_header(cvblob)
 
 target_link_libraries(cvblob ${OpenCV_LIBS})
 
@@ -40,3 +45,15 @@ install(TARGETS cvblob
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+		
+if(WIN32)
+	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/cvblob_export.h
+		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/../../include/cvBlob/)
+	install(FILES ${PROJECT_BINARY_DIR}/src/cvBlob/cvblob_export.h
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/cvBlob/)
+else()
+	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/cvblob_export.h
+		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/../../include/cvBlob/)
+	install(FILES ${PROJECT_BINARY_DIR}/src/cvBlob/cvblob_export.h
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+endif()

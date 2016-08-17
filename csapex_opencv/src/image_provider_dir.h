@@ -11,7 +11,7 @@
 namespace csapex
 {
 
-class ImageProviderDir : public ImageProvider
+class CSAPEX_EXPORT_PLUGIN ImageProviderDir : public ImageProvider
 {
 public:
     ImageProviderDir();

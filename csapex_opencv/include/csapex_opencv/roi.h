@@ -1,13 +1,16 @@
 #ifndef ROI_H
 #define ROI_H
 
+/// COMPONENT
+#include <csapex_opencv/csapex_opencv_export.h>
+
 /// SYSTEM
 #include <opencv2/core/core.hpp>
 
 namespace csapex
 {
 
-class Roi
+class CSAPEX_OPENCV_EXPORT Roi
 {
 public:
     Roi();

@@ -5,7 +5,7 @@
 #include <csapex/model/node.h>
 
 namespace csapex {
-class BlobDetector : public csapex::Node
+class CSAPEX_EXPORT_PLUGIN BlobDetector : public csapex::Node
 {
 public:
     BlobDetector();

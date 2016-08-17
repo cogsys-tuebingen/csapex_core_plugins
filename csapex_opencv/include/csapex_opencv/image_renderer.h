@@ -9,7 +9,7 @@
 
 namespace csapex
 {
-class ImageRenderer : public MessageRendererImplementation<connection_types::CvMatMessage>
+class CSAPEX_EXPORT_PLUGIN ImageRenderer : public MessageRendererImplementation<connection_types::CvMatMessage>
 {
 public:
     virtual QImage doRender(const connection_types::CvMatMessage& msg);

@@ -16,7 +16,7 @@ template <typename,typename,typename> class ConverterTemplate;
 
 namespace connection_types {
 
-struct CvPyramidMessage : public MessageTemplate<std::vector<cv::Mat>, CvPyramidMessage>
+struct CSAPEX_OPENCV_EXPORT CvPyramidMessage : public MessageTemplate<std::vector<cv::Mat>, CvPyramidMessage>
 {
     friend class MessageTemplate<std::vector<cv::Mat>, CvPyramidMessage>;
 

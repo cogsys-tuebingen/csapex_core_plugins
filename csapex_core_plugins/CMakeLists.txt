@@ -1,61 +1,65 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_core_plugins)
 
-#find_package(catkin REQUIRED COMPONENTS csapex)
-
 include (GenerateExportHeader)
 
 find_package(csapex REQUIRED)
 
+find_package(catkin QUIET)
+
+if(${catkin_FOUND})
+	catkin_package(
+	  INCLUDE_DIRS include
+	  LIBRARIES csapex_core_lib
+	  CATKIN_DEPENDS csapex roscpp
+	)
+
+else()
+	find_package(YAML-CPP REQUIRED)
+	find_package(console_bridge REQUIRED)
+	find_package(class_loader REQUIRED)
+	if(WIN32)
+		add_definitions(/D POCO_NO_AUTOMATIC_LIBS)
+		add_definitions(/D NOMINMAX)
+	endif()
+	
+	find_package(Boost COMPONENTS program_options filesystem system regex serialization thread REQUIRED)
+
+	set(INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+	set(CATKIN_PACKAGE_INCLUDE_DESTINATION ${INSTALL_DIR}/include)
+	set(CATKIN_PACKAGE_LIB_DESTINATION ${INSTALL_DIR}/lib)
+	set(CATKIN_GLOBAL_BIN_DESTINATION ${INSTALL_DIR}/bin)
+	set(CATKIN_PACKAGE_SHARE_DESTINATION ${INSTALL_DIR}/share/${PROJECT_NAME})
+	
+	set(catkin_INCLUDE_DIRS
+		${Boost_INCLUDE_DIRS} 
+		${YAML_CPP_INCLUDE_DIR})
+	set(catkin_LIBRARIES 
+		${Boost_LIBRARIES}
+		${YAML_CPP_LIBRARIES}
+		${class_loader_LIBRARIES}
+		${console_bridge_LIBRARIES}
+		${Poco_LIBRARIES})
+endif()
+
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
-find_package(YAML-CPP REQUIRED)
-find_package(console_bridge REQUIRED)
-find_package(class_loader REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 qt5_add_resources(QT_RESOURCES
     res/csapex_core_resources.qrc
 )
 
-if(WIN32)
-add_definitions(/D POCO_NO_AUTOMATIC_LIBS)
-add_definitions(/D NOMINMAX)
-endif()
-
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-#catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES csapex_core_lib
-#  CATKIN_DEPENDS csapex roscpp
-##  DEPENDS
-#)
-
-find_package(Boost COMPONENTS program_options filesystem system regex serialization thread REQUIRED)
-
-set(INSTALL_DIR "C:/Users/buck/ws/apex/install")
-set(CATKIN_PACKAGE_INCLUDE_DESTINATION ${INSTALL_DIR}/include)
-set(CATKIN_PACKAGE_LIB_DESTINATION ${INSTALL_DIR}/lib)
-set(CATKIN_GLOBAL_BIN_DESTINATION ${INSTALL_DIR}/bin)
-set(CATKIN_PACKAGE_SHARE_DESTINATION ${INSTALL_DIR}/share/${PROJECT_NAME})
 
 ###########
 ## Build ##
 ###########
+
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(include
     ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
     ${csapex_INCLUDE_DIR}
     ${catkin_INCLUDE_DIRS}
-	${Boost_INCLUDE_DIRS}
-	${YAML-CPP_INCLUDE_DIR}
 )
 
 add_library(csapex_core_lib SHARED
@@ -73,8 +77,6 @@ add_library(csapex_core_lib SHARED
 target_link_libraries(csapex_core_lib
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
-    ${YAML_CPP_LIBRARIES}
-    ${Boost_LIBRARIES}
     Qt5::Core
 )
 
@@ -88,11 +90,6 @@ add_library(csapex_core_plugins_core SHARED
 target_link_libraries(csapex_core_plugins_core csapex_core_lib
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
-    ${Boost_LIBRARIES}
-    ${YAML_CPP_LIBRARIES}
-    ${class_loader_LIBRARIES}
-    ${console_bridge_LIBRARIES}
-    ${Poco_LIBRARIES}
     Qt5::Core Qt5::Gui 
 )
 
@@ -136,10 +133,6 @@ add_library(csapex_core_plugins_node SHARED
 target_link_libraries(csapex_core_plugins_node csapex_core_lib
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
-    ${YAML_CPP_LIBRARIES}
-    ${class_loader_LIBRARIES}
-    ${console_bridge_LIBRARIES}
-    ${Poco_LIBRARIES}
     Qt5::Core Qt5::Gui Qt5::Widgets
 )
 
@@ -159,11 +152,6 @@ target_link_libraries(csapex_core_plugins_qt
 
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
-    ${Boost_LIBRARIES}
-    ${YAML_CPP_LIBRARIES}
-    ${class_loader_LIBRARIES}
-    ${console_bridge_LIBRARIES}
-    ${Poco_LIBRARIES}
     Qt5::Core Qt5::Gui Qt5::Widgets
 )
 
@@ -197,7 +185,7 @@ install(TARGETS csapex_core_plugins_qt
 
 if(WIN32)
 	install(DIRECTORY include/${PROJECT_NAME}/
-			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME}/)
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME})
 else()
 	install(DIRECTORY include/${PROJECT_NAME}/
 			LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
