@@ -54,7 +54,7 @@
       (http://pascal.inrialpes.fr/soft/olt/)
 \****************************************************************************************/
 
-namespace vision_plugins
+namespace csapex
 {
 
 #define CV_SSE2 0

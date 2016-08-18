@@ -176,6 +176,8 @@ add_library(${PROJECT_NAME}_plugin_node
     src/plugin/label/assign_cluster_class.cpp
     src/plugin/label/assign_roi_class.cpp
 
+    src/plugin/recognition/acf_standard_extractor.cpp
+    src/plugin/recognition/acf_dynamic_extractor.cpp
     src/plugin/recognition/hog_detector.cpp
     src/plugin/recognition/hog_extractor.cpp
     src/plugin/recognition/hog.cpp

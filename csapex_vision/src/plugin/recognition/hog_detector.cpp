@@ -15,11 +15,11 @@
 /// TODO : L2HysThreshold - derivAperture
 
 /// SYSTEM
-CSAPEX_REGISTER_CLASS(vision_plugins::HOGDetector, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::HOGDetector, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
 HOGDetector::HOGDetector() :
     prev_svm_type_(NONE),

@@ -8,11 +8,11 @@
 #include <csapex_opencv/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::Resize, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::Resize, csapex::Node)
 
 using namespace csapex::connection_types;
 using namespace csapex;
-using namespace vision_plugins;
+using namespace csapex;
 
 Resize::Resize()
 {

@@ -10,7 +10,7 @@
 #include <QImage>
 #include <QSharedPointer>
 
-namespace vision_plugins {
+namespace csapex {
 class AssignROIClass : public csapex::InteractiveNode
 {
     friend class AssignROIClassAdapter;

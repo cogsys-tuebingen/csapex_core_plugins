@@ -9,7 +9,7 @@
 #include <csapex_opencv/cv_mat_message.h>
 
 
-namespace vision_plugins {
+namespace csapex {
 /**
  * @brief The ColorConvert class can be used to convert colored images from one color space
  *        to another.

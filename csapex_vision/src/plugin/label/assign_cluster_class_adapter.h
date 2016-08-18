@@ -12,7 +12,7 @@
 #include <QImage>
 #include <yaml-cpp/yaml.h>
 
-namespace vision_plugins {
+namespace csapex {
 
 class AssignClusterClassAdapter : public QObject, public csapex::DefaultNodeAdapter
 {
@@ -83,7 +83,7 @@ protected:
     };
 
 
-    std::weak_ptr<vision_plugins::AssignClusterClass> wrapped_;
+    std::weak_ptr<csapex::AssignClusterClass> wrapped_;
 
 private:
     std::vector<int>      classes_;

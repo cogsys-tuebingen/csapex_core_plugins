@@ -21,7 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES vision_plugins_conversion
+#  LIBRARIES csapex_conversion
 #  CATKIN_DEPENDS csapex csapex_ml csapex_opencv csapex_vision_features
 #  DEPENDS system_lib
 )

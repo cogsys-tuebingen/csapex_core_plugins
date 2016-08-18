@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace vision_plugins {
+namespace csapex {
 class LocalPatternsHistogram : public csapex::Node
 {
 public:

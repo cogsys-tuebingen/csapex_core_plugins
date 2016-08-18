@@ -8,9 +8,9 @@
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::Laplacian, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::Laplacian, csapex::Node)
 
 Laplacian::Laplacian()
 {

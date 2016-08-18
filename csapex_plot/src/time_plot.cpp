@@ -169,6 +169,7 @@ void TimePlot::preparePlot()
 {
     std::size_t n = data_t_raw_.size();
     data_t_.resize(n, 0.0);
+    color_fill_.setAlpha(100);
 
     double time_offset = time_relative_ ? data_t_raw_.front() : 0.0;
     double time_scale = time_seconds_ ? 1e-6 : 1.0;

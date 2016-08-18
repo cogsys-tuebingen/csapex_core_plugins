@@ -68,7 +68,7 @@ void SVMEnsemble::setupParameters(Parameterizable& parameters)
                                                                           -1000.0,
                                                                           1000.0,
                                                                           0.0,
-                                                                          0.01),
+                                                                          0.0001),
                             threshold_condition);
 }
 
@@ -80,6 +80,8 @@ void SVMEnsemble::process()
     if(!loaded_) {
         throw std::runtime_error("No SVM is loaded!");
     }
+
+
 
     const bool compute_label = readParameter<bool>("compute labels");
     std::function<bool(float)> comparator;
@@ -124,7 +126,6 @@ void SVMEnsemble::process()
                 const float response = svm->predict(sample, true);
                 result_value.at<float>(j,1) = comparator(response) ? POSITIVE : NEGATIVE;
             }
-            std::cout << svm_responses_ << std::endl;
         }
         output->push_back(result_msg);
     }
@@ -138,6 +139,7 @@ void SVMEnsemble::load()
     if(path == "")
         return;
 
+    svms_.clear();
     const static std::string prefix = "svm_";
     cv::FileStorage fs(path, cv::FileStorage::READ);
     std::vector<int> labels;
@@ -154,6 +156,8 @@ void SVMEnsemble::load()
         svm->read(fs.fs, (CvFileNode*) fs[label].node);
         svms_.push_back(svm);
         svm_responses_.at<float>(i, 0) = labels.at(i);
+        std::cout << label << std::endl;
+        std::cout << svm->get_var_count() << std::endl;
     }
     svms_size_ = svms_.size();
     loaded_ = true;

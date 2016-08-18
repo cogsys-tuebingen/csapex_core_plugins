@@ -4,7 +4,7 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace vision_plugins {
+namespace csapex {
 class PreemptiveSLIC : public csapex::Node
 {
 public:

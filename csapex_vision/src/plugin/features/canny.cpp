@@ -8,9 +8,9 @@
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::Canny, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::Canny, csapex::Node)
 
 Canny::Canny() :
     threshold_1_(3),

@@ -6,7 +6,7 @@
 
 #define FIELD_LENGTH 160
 
-namespace vision_plugins{
+namespace csapex{
 class LineSegmentDetector : public CornerLineDetection
 {
 public:

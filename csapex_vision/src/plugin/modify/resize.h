@@ -7,7 +7,7 @@
 /// SYSTEM
 #include <opencv2/core/core.hpp>
 
-namespace vision_plugins {
+namespace csapex {
 class Resize : public csapex::Node
 {
 public:

@@ -15,11 +15,11 @@
 #include <boost/assign.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::HOGClassifier, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::HOGClassifier, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
 HOGClassifier::HOGClassifier() :
     prev_svm_type_(NONE)

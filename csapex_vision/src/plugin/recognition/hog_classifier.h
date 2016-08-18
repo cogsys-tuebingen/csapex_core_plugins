@@ -8,7 +8,7 @@
 /// https://github.com/DaHoC/trainHOG/wiki/trainHOG-Tutorial
 /// TO CLASSIFY ROI DIRECTLY
 
-namespace vision_plugins {
+namespace csapex {
 class HOGClassifier : public csapex::Node
 {
 public:

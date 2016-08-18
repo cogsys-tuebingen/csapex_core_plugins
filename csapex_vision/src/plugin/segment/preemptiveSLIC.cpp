@@ -10,11 +10,11 @@
 #include <cslibs_vision/utils/preemptiveSLIC.h>
 
 
-CSAPEX_REGISTER_CLASS(vision_plugins::PreemptiveSLIC, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::PreemptiveSLIC, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
 PreemptiveSLIC::PreemptiveSLIC()
 {

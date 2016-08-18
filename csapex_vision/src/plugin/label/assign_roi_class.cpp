@@ -18,11 +18,11 @@
 
 #include <QColor>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::AssignROIClass, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::AssignROIClass, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
 AssignROIClass::AssignROIClass()
 {

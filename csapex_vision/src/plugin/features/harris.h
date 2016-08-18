@@ -4,7 +4,7 @@
 /// COMPONENT
 #include "corner_line_detection.h"
 
-namespace vision_plugins {
+namespace csapex {
 class CornerHarris : public CornerLineDetection
 {
 public:

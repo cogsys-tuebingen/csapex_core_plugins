@@ -8,18 +8,18 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::CameraCalibration, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::CameraCalibration, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
-vision_plugins::CameraCalibration::CameraCalibration() :
+csapex::CameraCalibration::CameraCalibration() :
     update_request_(true)
 {
 }
 
-void vision_plugins::CameraCalibration::process()
+void csapex::CameraCalibration::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
@@ -47,18 +47,18 @@ void vision_plugins::CameraCalibration::process()
 
 }
 
-void vision_plugins::CameraCalibration::setup(NodeModifier& node_modifier)
+void csapex::CameraCalibration::setup(NodeModifier& node_modifier)
 {
     input_  = node_modifier.addInput<CvMatMessage>("image");
     output_ = node_modifier.addOutput<CvMatMessage>("rendered corners");
 }
 
-void vision_plugins::CameraCalibration::add()
+void csapex::CameraCalibration::add()
 {
     calibration_->addFrame();
 }
 
-void vision_plugins::CameraCalibration::setupParameters(Parameterizable& parameters)
+void csapex::CameraCalibration::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareFileOutputPath("results", ""));
     parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("add"),
@@ -103,7 +103,7 @@ void vision_plugins::CameraCalibration::setupParameters(Parameterizable& paramet
                             std::bind(&CameraCalibration::requestUpdateCalibration, this));
 }
 
-void vision_plugins::CameraCalibration::calibrate()
+void csapex::CameraCalibration::calibrate()
 {
     std::string path = readParameter<std::string>("results");
     if(path == "") {
@@ -121,7 +121,7 @@ void vision_plugins::CameraCalibration::calibrate()
     fs.release();
 }
 
-void vision_plugins::CameraCalibration::updateCalibration()
+void csapex::CameraCalibration::updateCalibration()
 {
     cv::Size board_size;
     cslibs_vision::CameraCalibration::Mode mode =
@@ -135,7 +135,7 @@ void vision_plugins::CameraCalibration::updateCalibration()
     calibration_.reset(new cslibs_vision::CameraCalibration(mode, board_size, square_size, kernel_size, flag_corner, flag_calib));
 }
 
-void vision_plugins::CameraCalibration::requestUpdateCalibration()
+void csapex::CameraCalibration::requestUpdateCalibration()
 {
     update_request_ = true;
 }

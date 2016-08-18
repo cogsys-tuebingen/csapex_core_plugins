@@ -13,11 +13,11 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/assert.h>
 
-using namespace vision_plugins;
+using namespace csapex;
 using namespace csapex;
 using namespace csapex::connection_types;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::ClusterHistograms, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ClusterHistograms, csapex::Node)
 
 
 ClusterHistograms::ClusterHistograms()

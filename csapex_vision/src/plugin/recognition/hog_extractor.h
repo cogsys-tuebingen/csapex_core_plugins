@@ -7,7 +7,7 @@
 
 /// EXTRACT HOG FEATURE
 
-namespace vision_plugins {
+namespace csapex {
 class HOGExtractor : public csapex::Node
 {
 public:

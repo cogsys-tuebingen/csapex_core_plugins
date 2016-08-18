@@ -14,7 +14,7 @@
 #include <boost/smart_ptr/make_shared.hpp>
 #include <opencv2/opencv.hpp>
 
-namespace vision_plugins {
+namespace csapex {
 
 
 struct VariableMap {

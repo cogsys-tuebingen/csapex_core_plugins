@@ -18,11 +18,11 @@
 #include <QKeyEvent>
 
 using namespace csapex;
-using namespace vision_plugins;
+using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER_NS(vision_plugins, AssignROIClassAdapter, vision_plugins::AssignROIClass)
+CSAPEX_REGISTER_NODE_ADAPTER_NS(csapex, AssignROIClassAdapter, csapex::AssignROIClass)
 
-namespace vision_plugins {
+namespace csapex {
     class QInteractiveRect : public QGraphicsRectItem {
     public:
         QInteractiveRect(csapex::Roi &roi, float tx, float ty,

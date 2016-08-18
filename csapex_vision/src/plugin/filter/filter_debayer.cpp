@@ -10,9 +10,9 @@
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::Debayer, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::Debayer, csapex::Node)
 
-using namespace vision_plugins;
+using namespace csapex;
 using namespace csapex;
 using namespace connection_types;
 

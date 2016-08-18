@@ -6,7 +6,7 @@
 #include <opencv2/core/core.hpp>
 #include <deque>
 
-namespace vision_plugins {
+namespace csapex {
 class SequenceMean : public csapex::Node
 {
 public:

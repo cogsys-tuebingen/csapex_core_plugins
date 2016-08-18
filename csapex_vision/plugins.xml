@@ -158,7 +158,7 @@
   <description>OpenCV's distance transform</description>
 </class>
 
-  <class type="vision_plugins::ColorConvert" base_class_type="csapex::Node">
+  <class type="csapex::ColorConvert" base_class_type="csapex::Node">
     <description>Converts images between color spaces</description>
     <tags>Vision, Filter, Convert</tags>
   </class>
@@ -186,19 +186,19 @@
     <description>Gamma Correction using power low and logarithm transformations</description>
     <tags>Vision, Filter</tags>
   </class>
-  <class type="vision_plugins::PerspectiveTransform" base_class_type="csapex::Node">
+  <class type="csapex::PerspectiveTransform" base_class_type="csapex::Node">
     <description>Transforms an image using a perspective transformation</description>
     <tags>Vision, Filter</tags>
   </class>
-  <class type="vision_plugins::LocalPatternsHistogram" base_class_type="csapex::Node">
+  <class type="csapex::LocalPatternsHistogram" base_class_type="csapex::Node">
     <description>Extracts local patterns (binary, ternary) histogram.</description>
     <tags>Vision, Features</tags>
   </class>
-  <class type="vision_plugins::LocalPatterns" base_class_type="csapex::Node">
+  <class type="csapex::LocalPatterns" base_class_type="csapex::Node">
     <description>Extracts local patterns (binary, ternary).</description>
     <tags>Vision, Features</tags>
   </class>
-  <class type="vision_plugins::Debayer" base_class_type="csapex::Node">
+  <class type="csapex::Debayer" base_class_type="csapex::Node">
     <description>Debayering of images</description>
     <icon>:/bayer.png</icon>
     <tags>Vision, Filter</tags>
@@ -243,7 +243,7 @@
     <description>[DEBUG] Generates images containing numbers</description>
     <tags>Vision, Debug</tags>
   </class>
-  <class type="vision_plugins::GenericImageCombiner" base_class_type="csapex::Node">
+  <class type="csapex::GenericImageCombiner" base_class_type="csapex::Node">
     <description>
         Combine images or matrices by giving an expression that will induce the
         combinatoric operation.
@@ -251,7 +251,7 @@
     <tags>Vision, Filter, Combiner</tags>
     <icon>:/combiner.png</icon>
   </class>
-  <class type="vision_plugins::SetOperation" base_class_type="csapex::Node">
+  <class type="csapex::SetOperation" base_class_type="csapex::Node">
     <description>
         Compare two images using a grid
         overlay. The Feature observed in this case is the mean value of values given
@@ -259,7 +259,7 @@
     </description>
     <tags>Vision, Filter</tags>
   </class>
-  <class type="vision_plugins::Undistort" base_class_type="csapex::Node">
+  <class type="csapex::Undistort" base_class_type="csapex::Node">
     <description>
         Undistort and rectify images using given camera parameters.
         A margin parameter enables to gain more image data from the
@@ -267,235 +267,235 @@
     </description>
     <tags>Vision, Filter</tags>
   </class>
-  <class type="vision_plugins::CameraCalibration" base_class_type="csapex::Node">
+  <class type="csapex::CameraCalibration" base_class_type="csapex::Node">
     <description>
         Calibrate a camera by calculating the intrinsic parameters.
         The gained parameters can be used with the 'Undistort'-Plugin.
     </description>
   </class>
-  <class type="vision_plugins::Scale" base_class_type="csapex::Node">
+  <class type="csapex::Scale" base_class_type="csapex::Node">
     <description>
         Scale images from 1 to 400 percent of the original size.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::Resize" base_class_type="csapex::Node">
+  <class type="csapex::Resize" base_class_type="csapex::Node">
     <description>
         Resize images from 10 to 10000 pixels.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::CornerHarris" base_class_type="csapex::Node">
+  <class type="csapex::CornerHarris" base_class_type="csapex::Node">
     <description>
         Make it possible to find corners in an image by appling the harrisCorner function.
         It turns out an grayscale image giving selected border types at extreme gradients.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::Equalize" base_class_type="csapex::Node">
+  <class type="csapex::Equalize" base_class_type="csapex::Node">
     <description>
         Do a histogram equalization on each channel of a image.
     </description>
     <tags>Vision, Histogram</tags>
   </class>
-  <class type="vision_plugins::ContrastBrightness" base_class_type="csapex::Node">
+  <class type="csapex::ContrastBrightness" base_class_type="csapex::Node">
     <description>
         Adjust contrast and brightness.
     </description>
     <tags>Vision, Histogram</tags>
   </class>
-  <class type="vision_plugins::MonoFilter" base_class_type="csapex::Node">
+  <class type="csapex::MonoFilter" base_class_type="csapex::Node">
     <description>
         Filter a value range an set other values to defined fix values.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::Canny" base_class_type="csapex::Node">
+  <class type="csapex::Canny" base_class_type="csapex::Node">
     <description>
         Apply the canny edge filter to an image.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::EigenValsAndVecs" base_class_type="csapex::Node">
+  <class type="csapex::EigenValsAndVecs" base_class_type="csapex::Node">
     <description>
         Apply the computation of a covariation matrix of derivatives over a neighborhood
         of pixels. Calculate edges with this method.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::HoughLinesP" base_class_type="csapex::Node">
+  <class type="csapex::HoughLinesP" base_class_type="csapex::Node">
     <description>
         Search lines in an image by using the probabilistic hough lines function
         of opencv.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::MatrixToHeatmap" base_class_type="csapex::Node">
+  <class type="csapex::MatrixToHeatmap" base_class_type="csapex::Node">
     <description>
         Find maxima and minima in matrices and then visualize them.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::MedianFilter" base_class_type="csapex::Node">
+  <class type="csapex::MedianFilter" base_class_type="csapex::Node">
     <description>
         Apply a median filter to a multichannel (1 - 4) image using a specified kernel size.
     </description>
     <tags>Vision, Filter</tags>
   </class>
-  <class type="vision_plugins::ConvertType" base_class_type="csapex::Node">
+  <class type="csapex::ConvertType" base_class_type="csapex::Node">
     <description>
         Convert a matrix to a certain data type to make it usable for further algorithms.
     </description>
     <tags>Vision,  Convertion</tags>
   </class>
-  <class type="vision_plugins::Flip" base_class_type="csapex::Node">
+  <class type="csapex::Flip" base_class_type="csapex::Node">
     <description>
         Flip matrices or images horizontal, vertical or both.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::FlipROIs" base_class_type="csapex::Node">
+  <class type="csapex::FlipROIs" base_class_type="csapex::Node">
     <description>
         Flip rois horizontal, vertical or both.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::Laplacian" base_class_type="csapex::Node">
+  <class type="csapex::Laplacian" base_class_type="csapex::Node">
     <description>
         Apply the laplacian operator to an image.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::Sobel" base_class_type="csapex::Node">
+  <class type="csapex::Sobel" base_class_type="csapex::Node">
     <description>
         Apply the Sobel operator to an image.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::Scharr" base_class_type="csapex::Node">
+  <class type="csapex::Scharr" base_class_type="csapex::Node">
     <description>
         Apply the Scharr operator to an image.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::FloatToUchar" base_class_type="csapex::Node">
+  <class type="csapex::FloatToUchar" base_class_type="csapex::Node">
     <description>
         Convert floating point matrices to uchar matrices.
     </description>
     <tags>Vision, Convertion</tags>
   </class>
-  <class type="vision_plugins::SequenceMean" base_class_type="csapex::Node">
+  <class type="csapex::SequenceMean" base_class_type="csapex::Node">
     <description>
         Accumulate image or matrix information over a sequence an build the mean out of it.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::Pyramid" base_class_type="csapex::Node">
+  <class type="csapex::Pyramid" base_class_type="csapex::Node">
     <description>
         Build an 8 level image or matrix pyramid.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::BinomialFilter" base_class_type="csapex::Node">
+  <class type="csapex::BinomialFilter" base_class_type="csapex::Node">
     <description>
         Apply the binomial filter to either a matrix or an image.
     </description>
     <tags>Vision, Filter</tags>
   </class>
-  <class type="vision_plugins::SumChannels" base_class_type="csapex::Node">
+  <class type="csapex::SumChannels" base_class_type="csapex::Node">
     <description>
         Sum all image or matrix channels and optionally build the mean.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::LabelRegions" base_class_type="csapex::Node">
+  <class type="csapex::LabelRegions" base_class_type="csapex::Node">
     <description>
         Label regions devided by edges.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::RenderLabels" base_class_type="csapex::Node">
+  <class type="csapex::RenderLabels" base_class_type="csapex::Node">
     <description>
         Render labels that where found by the floodfill algorithm.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::DifferenceMaximum" base_class_type="csapex::Node">
+  <class type="csapex::DifferenceMaximum" base_class_type="csapex::Node">
     <description>
         Build the maxmimum difference of neighbouring pixels.
     </description>
     <tags>Vision, Filter</tags>
   </class>
-  <class type="vision_plugins::ThresholdNoiseFilter" base_class_type="csapex::Node">
+  <class type="csapex::ThresholdNoiseFilter" base_class_type="csapex::Node">
     <description>
         Filter noise by applying a threshold matrix.
     </description>
     <tags>Vision, Filter, Experimental</tags>
   </class>
-  <class type="vision_plugins::Normalize" base_class_type="csapex::Node">
+  <class type="csapex::Normalize" base_class_type="csapex::Node">
     <description>
         Normalize an arbitrary matrix type by applying different norm types.
    </description>
    <tags>Vision, Filter</tags>
   </class>
-  <class type="vision_plugins::MatrixStitcher" base_class_type="csapex::Node">
+  <class type="csapex::MatrixStitcher" base_class_type="csapex::Node">
     <description>
         Stitch matrices together using the maximum cols and rows to calculate the
         final matrix size.
    </description>
    <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::ImageTextLabel" base_class_type="csapex::Node">
+  <class type="csapex::ImageTextLabel" base_class_type="csapex::Node">
     <description>
         Render some text into an image.
    </description>
    <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::HOGDetector" base_class_type="csapex::Node">
+  <class type="csapex::HOGDetector" base_class_type="csapex::Node">
     <description>
         Detect objects via hog.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::HOGExtractor" base_class_type="csapex::Node">
+  <class type="csapex::HOGExtractor" base_class_type="csapex::Node">
     <description>
         Extract hog descriptor.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::HOGClassifier" base_class_type="csapex::Node">
+  <class type="csapex::HOGClassifier" base_class_type="csapex::Node">
     <description>
         Classifiy predefined windows.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::ClusterBoundaryMask" base_class_type="csapex::Node">
+  <class type="csapex::ClusterBoundaryMask" base_class_type="csapex::Node">
     <description>
         Retrieve the boundaries of clusters as a mask.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::PreemptiveSLIC" base_class_type="csapex::Node">
+  <class type="csapex::PreemptiveSLIC" base_class_type="csapex::Node">
     <description>
         Segment image using super pixels.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::GLCM" base_class_type="csapex::Node">
+  <class type="csapex::GLCM" base_class_type="csapex::Node">
     <description>
         Calculate the grey-level co-occurrence matrix of a mono image.
     </description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::AssignClusterClass" base_class_type="csapex::Node">
+  <class type="csapex::AssignClusterClass" base_class_type="csapex::Node">
     <description></description>
     <tags>Vision</tags>
   </class>
-  <class type="vision_plugins::AssignROIClass" base_class_type="csapex::Node">
+  <class type="csapex::AssignROIClass" base_class_type="csapex::Node">
      <description></description>
      <tags>Vision</tags>
    </class>
-   <class type="vision_plugins::ClusterGrid" base_class_type="csapex::Node">
+   <class type="csapex::ClusterGrid" base_class_type="csapex::Node">
       <description></description>
       <tags>Vision</tags>
     </class>
@@ -511,10 +511,10 @@
 </class>
 <class type="csapex::MaskRefinementAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
-<class type="vision_plugins::AssignClusterClassAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+<class type="csapex::AssignClusterClassAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
-<class type="vision_plugins::AssignROIClassAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+<class type="csapex::AssignROIClassAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
 </class>

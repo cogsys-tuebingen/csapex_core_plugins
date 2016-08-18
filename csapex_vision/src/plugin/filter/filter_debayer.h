@@ -7,7 +7,7 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace vision_plugins {
+namespace csapex {
 /**
  * @brief The Debayer class can be used to debayer raw images to get color images.
  */
