@@ -9,11 +9,11 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <cslibs_vision/utils/cluster_boundaries.hpp>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::ClusterBoundaryMask, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ClusterBoundaryMask, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
 ClusterBoundaryMask::ClusterBoundaryMask()
 {

@@ -6,7 +6,7 @@
 #include <csapex/model/token_data.h>
 #include <csapex/msg/generic_vector_message.hpp>
 
-namespace vision_plugins {
+namespace csapex {
 
 class ToFeature : public csapex::Node
 {

@@ -15,12 +15,12 @@
 #include <boost/assign.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::HOGExtractor, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::HOGExtractor, csapex::Node)
 /// TODO : L2HysThreshold - derivAperture
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
 HOGExtractor::HOGExtractor()
 {

@@ -11,7 +11,7 @@
 #include <QSharedPointer>
 
 
-namespace vision_plugins {
+namespace csapex {
 class AssignClusterClass : public csapex::InteractiveNode
 {
     friend class AssignClusterClassAdapter;

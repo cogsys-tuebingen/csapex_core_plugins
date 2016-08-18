@@ -10,11 +10,11 @@
 #include <csapex_vision_histograms/histogram_msg.h>
 #include <csapex/model/node_modifier.h>
 
-using namespace vision_plugins;
+using namespace csapex;
 using namespace csapex;
 using namespace csapex::connection_types;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::Histogram, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::Histogram, csapex::Node)
 
 Histogram::Histogram() :
     bins_(256),

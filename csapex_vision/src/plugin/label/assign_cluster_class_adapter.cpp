@@ -18,9 +18,9 @@
 #include <QKeyEvent>
 
 using namespace csapex;
-using namespace vision_plugins;
+using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER_NS(vision_plugins, AssignClusterClassAdapter, vision_plugins::AssignClusterClass)
+CSAPEX_REGISTER_NODE_ADAPTER_NS(csapex, AssignClusterClassAdapter, csapex::AssignClusterClass)
 
 AssignClusterClassAdapter::AssignClusterClassAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<AssignClusterClass> node)
     : DefaultNodeAdapter(worker, parent),

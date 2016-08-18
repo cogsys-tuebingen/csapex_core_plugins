@@ -17,10 +17,10 @@
 #include <cslibs_vision/features/lbp.hpp>
 #include <cslibs_vision/features/ltp.hpp>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatternsHistogram, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::LocalPatternsHistogram, csapex::Node)
 
 using namespace csapex;
-using namespace vision_plugins;
+using namespace csapex;
 using namespace connection_types;
 
 namespace {

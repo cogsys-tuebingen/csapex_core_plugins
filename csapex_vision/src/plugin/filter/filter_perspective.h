@@ -5,7 +5,7 @@
 #include <csapex_opencv/filter.h>
 #include <cslibs_vision/utils/perspective_transform.h>
 
-namespace vision_plugins {
+namespace csapex {
 
 class PerspectiveTransform : public csapex::Filter
 {

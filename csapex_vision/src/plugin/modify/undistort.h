@@ -5,7 +5,7 @@
 #include <cslibs_vision/utils/undistortion.h>
 #include <csapex/model/node.h>
 
-namespace vision_plugins {
+namespace csapex {
 class Undistort : public csapex::Node
 {
 public:

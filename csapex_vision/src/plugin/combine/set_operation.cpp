@@ -8,11 +8,11 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-using namespace vision_plugins;
+using namespace csapex;
 using namespace csapex;
 using namespace connection_types;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::SetOperation, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::SetOperation, csapex::Node)
 
 SetOperation::SetOperation()
 {

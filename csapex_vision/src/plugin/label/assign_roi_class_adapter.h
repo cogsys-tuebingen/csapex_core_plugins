@@ -13,7 +13,7 @@
 #include <QImage>
 #include <yaml-cpp/yaml.h>
 
-namespace vision_plugins {
+namespace csapex {
 
 class QInteractiveRect;
 
@@ -84,7 +84,7 @@ protected:
     };
 
 
-    std::weak_ptr<vision_plugins::AssignROIClass> wrapped_;
+    std::weak_ptr<csapex::AssignROIClass> wrapped_;
 
 private:
     std::map<int, QColor> colors_;

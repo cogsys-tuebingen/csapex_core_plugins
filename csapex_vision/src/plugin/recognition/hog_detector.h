@@ -5,7 +5,7 @@
 #include <csapex/model/node.h>
 #include "hog.h"
 
-namespace vision_plugins {
+namespace csapex {
 class HOGDetector : public csapex::Node
 {
 public:

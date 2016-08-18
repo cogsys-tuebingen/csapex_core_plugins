@@ -7,9 +7,9 @@
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::PerspectiveTransform, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::PerspectiveTransform, csapex::Node)
 
-using namespace vision_plugins;
+using namespace csapex;
 using namespace csapex;
 
 PerspectiveTransform::PerspectiveTransform()

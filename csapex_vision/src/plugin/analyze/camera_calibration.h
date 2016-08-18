@@ -5,7 +5,7 @@
 #include <cslibs_vision/utils/camera_calibration.h>
 #include <csapex/model/node.h>
 
-namespace vision_plugins {
+namespace csapex {
 class CameraCalibration : public csapex::Node
 {
 public:

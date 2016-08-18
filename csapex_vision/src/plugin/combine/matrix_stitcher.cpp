@@ -11,9 +11,9 @@
 
 using namespace csapex;
 using namespace connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::MatrixStitcher, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::MatrixStitcher, csapex::Node)
 
 namespace {
     void stitch(const cv::Mat &src1, const cv::Mat &src2,

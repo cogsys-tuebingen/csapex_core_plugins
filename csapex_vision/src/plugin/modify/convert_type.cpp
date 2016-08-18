@@ -9,9 +9,9 @@
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::ConvertType, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ConvertType, csapex::Node)
 
 namespace {
     template<typename Tp>

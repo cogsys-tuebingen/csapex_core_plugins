@@ -13,11 +13,11 @@
 /// SYSTEM
 #include <functional>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::MatrixToHeatmap, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::MatrixToHeatmap, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
 MatrixToHeatmap::MatrixToHeatmap() :
     color_type_(BEZIER)

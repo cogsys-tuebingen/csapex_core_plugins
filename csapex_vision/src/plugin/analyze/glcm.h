@@ -3,7 +3,7 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace vision_plugins {
+namespace csapex {
 class GLCM : public csapex::Node
 {
 public:

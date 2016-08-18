@@ -12,7 +12,7 @@
 #include <functional>
 
 
-namespace vision_plugins {
+namespace csapex {
 
 using namespace csapex;
 using namespace connection_types;
@@ -117,4 +117,4 @@ private:
 };
 }
 
-CSAPEX_REGISTER_CLASS(vision_plugins::FlipROIs, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::FlipROIs, csapex::Node)

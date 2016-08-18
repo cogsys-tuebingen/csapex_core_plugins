@@ -10,11 +10,11 @@
 #include <csapex_vision_histograms/histogram_msg.h>
 #include <csapex_vision_histograms/histogram_maxima_msg.h>
 
-using namespace vision_plugins;
+using namespace csapex;
 using namespace csapex;
 using namespace csapex::connection_types;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::HistogramMaxima, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::HistogramMaxima, csapex::Node)
 
 HistogramMaxima::HistogramMaxima()
 {

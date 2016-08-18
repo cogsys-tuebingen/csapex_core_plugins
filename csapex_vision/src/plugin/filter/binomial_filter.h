@@ -5,7 +5,7 @@
 #include <csapex/model/node.h>
 #include <opencv2/core/core.hpp>
 
-namespace vision_plugins {
+namespace csapex {
 class BinomialFilter : public csapex::Node
 {
 public:

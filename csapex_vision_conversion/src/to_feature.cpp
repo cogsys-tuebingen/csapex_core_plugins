@@ -19,9 +19,9 @@
 
 using namespace csapex;
 using namespace connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
-CSAPEX_REGISTER_CLASS(vision_plugins::ToFeature, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ToFeature, csapex::Node)
 
 ToFeature::ToFeature()
 {

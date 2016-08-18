@@ -46,7 +46,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-namespace vision_plugins {
+namespace csapex {
 //////////////// HOG (Histogram-of-Oriented-Gradients) Descriptor and Object Detector //////////////
 
 //! struct for detection region of interest (ROI)

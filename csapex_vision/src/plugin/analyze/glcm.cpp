@@ -10,10 +10,10 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::GLCM, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::GLCM, csapex::Node)
 
 using namespace csapex;
-using namespace vision_plugins;
+using namespace csapex;
 using namespace connection_types;
 
 

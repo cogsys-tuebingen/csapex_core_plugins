@@ -15,10 +15,10 @@
 #include <cslibs_vision/features/wld.hpp>
 #include <cslibs_vision/features/homogenity.hpp>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::LocalPatterns, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::LocalPatterns, csapex::Node)
 
 using namespace csapex;
-using namespace vision_plugins;
+using namespace csapex;
 using namespace connection_types;
 
 

@@ -17,11 +17,11 @@
 
 #include <QColor>
 
-CSAPEX_REGISTER_CLASS(vision_plugins::AssignClusterClass, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::AssignClusterClass, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
-using namespace vision_plugins;
+using namespace csapex;
 
 AssignClusterClass::AssignClusterClass()
 {

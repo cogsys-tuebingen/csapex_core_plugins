@@ -6,7 +6,7 @@
 #include <csapex_opencv/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
 
-namespace vision_plugins {
+namespace csapex {
 using namespace csapex;
 using namespace connection_types;
 
@@ -50,4 +50,4 @@ protected:
 };
 }
 
-CSAPEX_REGISTER_CLASS(vision_plugins::ContrastBrightness, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ContrastBrightness, csapex::Node)
