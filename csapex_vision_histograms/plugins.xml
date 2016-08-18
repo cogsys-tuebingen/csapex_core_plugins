@@ -1,12 +1,12 @@
 <library path="libcsapex_vision_histograms">
-  <class type="vision_plugins::Histogram" base_class_type="csapex::Node">
+  <class type="csapex::Histogram" base_class_type="csapex::Node">
     <description>
         Calculate an 1D histogram for an image. Multiple Channels are supported, but only
         one value for the bin amount can be set.
     </description>
     <tags>Vision, Histogram</tags>
   </class>
-  <class type="vision_plugins::ClusterHistograms" base_class_type="csapex::Node">
+  <class type="csapex::ClusterHistograms" base_class_type="csapex::Node">
     <description>
         Calculate an 1D histogram for an image. Multiple Channels are supported, but only
         one value for the bin amount can be set.
@@ -14,13 +14,13 @@
     <tags>Vision, Histogram</tags>
   </class>
 
-  <class type="vision_plugins::RenderHistogram" base_class_type="csapex::Node">
+  <class type="csapex::RenderHistogram" base_class_type="csapex::Node">
     <description>
         Render histogram results.
     </description>
     <tags>Vision, Histogram</tags>
   </class>
-  <class type="vision_plugins::HistogramMaxima" base_class_type="csapex::Node">
+  <class type="csapex::HistogramMaxima" base_class_type="csapex::Node">
     <description>
         Simple method to find maxima in histograms.
     </description>
