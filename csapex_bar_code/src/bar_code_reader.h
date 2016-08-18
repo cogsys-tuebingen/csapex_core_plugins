@@ -7,7 +7,7 @@
 namespace csapex
 {
 
-class BarCodeReader : public csapex::Node
+class CSAPEX_EXPORT_PLUGIN BarCodeReader : public csapex::Node
 {
 public:
     BarCodeReader();

@@ -45,20 +45,20 @@ private:
 
 /// TRAITS
 template <>
-struct type<CvMatMessage> {
+struct CSAPEX_OPENCV_EXPORT type<CvMatMessage> {
     static std::string name() {
         return "cv::Mat";
     }
 };
 
 template <>
-inline std::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage>()
+inline CSAPEX_OPENCV_EXPORT std::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage>()
 {
     return std::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr, 0));
 }
 
 template <>
-struct MessageContainer<cv::Mat>
+struct CSAPEX_OPENCV_EXPORT MessageContainer<cv::Mat>
 {
     typedef CvMatMessage type;
 
@@ -77,7 +77,7 @@ struct MessageContainer<cv::Mat>
 /// YAML
 namespace YAML {
 template<>
-struct convert<csapex::connection_types::CvMatMessage> {
+struct CSAPEX_OPENCV_EXPORT convert<csapex::connection_types::CvMatMessage> {
   static Node encode(const csapex::connection_types::CvMatMessage& rhs);
   static bool decode(const Node& node, csapex::connection_types::CvMatMessage& rhs);
 };

@@ -4,7 +4,7 @@
 #include <csapex/model/node.h>
 
 namespace csapex {
-class AssignClass : public Node
+class CSAPEX_EXPORT_PLUGIN AssignClass : public Node
 {
 public:
     AssignClass();

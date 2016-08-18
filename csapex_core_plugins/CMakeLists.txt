@@ -5,42 +5,13 @@ include (GenerateExportHeader)
 
 find_package(csapex REQUIRED)
 
-find_package(catkin QUIET)
+list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 
-if(${catkin_FOUND})
-	catkin_package(
-	  INCLUDE_DIRS include
-	  LIBRARIES csapex_core_lib
-	  CATKIN_DEPENDS csapex roscpp
-	)
-
-else()
-	find_package(YAML-CPP REQUIRED)
-	find_package(console_bridge REQUIRED)
-	find_package(class_loader REQUIRED)
-	if(WIN32)
-		add_definitions(/D POCO_NO_AUTOMATIC_LIBS)
-		add_definitions(/D NOMINMAX)
-	endif()
-	
-	find_package(Boost COMPONENTS program_options filesystem system regex serialization thread REQUIRED)
-
-	set(INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
-	set(CATKIN_PACKAGE_INCLUDE_DESTINATION ${INSTALL_DIR}/include)
-	set(CATKIN_PACKAGE_LIB_DESTINATION ${INSTALL_DIR}/lib)
-	set(CATKIN_GLOBAL_BIN_DESTINATION ${INSTALL_DIR}/bin)
-	set(CATKIN_PACKAGE_SHARE_DESTINATION ${INSTALL_DIR}/share/${PROJECT_NAME})
-	
-	set(catkin_INCLUDE_DIRS
-		${Boost_INCLUDE_DIRS} 
-		${YAML_CPP_INCLUDE_DIR})
-	set(catkin_LIBRARIES 
-		${Boost_LIBRARIES}
-		${YAML_CPP_LIBRARIES}
-		${class_loader_LIBRARIES}
-		${console_bridge_LIBRARIES}
-		${Poco_LIBRARIES})
-endif()
+csapex_package(
+	INCLUDE_DIRS include
+	LIBRARIES csapex_core_lib
+	CATKIN_DEPENDS csapex roscpp
+)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
@@ -70,9 +41,12 @@ add_library(csapex_core_lib SHARED
     src/core/interactive_node.cpp
     src/core/collection_node.cpp
     src/core/vector_process_node.cpp
+	
+	${core_HEADERS}
 
     ${QT_RESOURCES}
 )
+generate_export_header(csapex_core_lib)
 
 target_link_libraries(csapex_core_lib
     ${catkin_LIBRARIES}
@@ -184,10 +158,28 @@ install(TARGETS csapex_core_plugins_qt
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
 if(WIN32)
+	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/csapex_core_lib_export.h
+		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
+	install(FILES ${PROJECT_BINARY_DIR}/csapex_core_lib_export.h
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME}/)
+else()
+	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/csapex_core_lib_export.h
+		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
+	install(FILES ${PROJECT_BINARY_DIR}/csapex_core_lib_export.h
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+endif()
+
+
+if(WIN32)
 	install(DIRECTORY include/${PROJECT_NAME}/
 			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME})
 else()
 	install(DIRECTORY include/${PROJECT_NAME}/
 			LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+endif()
+
+if(NOT ${catkin_FOUND})
+	install(FILES cmake/csapex_core_plugins-config.cmake
+			DESTINATION ${CSAPEX_MODULE_DESTINATION})
 endif()

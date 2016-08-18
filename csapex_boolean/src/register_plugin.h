@@ -8,7 +8,7 @@ namespace csapex {
 
 namespace boolean {
 
-class RegisterPlugin : public CorePlugin
+class CSAPEX_EXPORT_PLUGIN RegisterPlugin : public CorePlugin
 {
 public:
     RegisterPlugin();

@@ -11,7 +11,7 @@
 #include <opencv2/opencv.hpp>
 
 namespace csapex {
-class SVMTrainer : public CollectionNode<connection_types::FeaturesMessage>
+class CSAPEX_EXPORT_PLUGIN SVMTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
     SVMTrainer();

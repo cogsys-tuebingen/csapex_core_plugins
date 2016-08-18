@@ -1,33 +1,45 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_ml)
 
-find_package(catkin REQUIRED COMPONENTS
-  csapex
-  csapex_core_plugins
-  csapex_opencv
+include (GenerateExportHeader)
+
+find_package(csapex REQUIRED)
+
+list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
+list(APPEND CMAKE_MODULE_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
+
+find_package(csapex_opencv REQUIRED)
+find_package(csapex_core_plugins REQUIRED)
+
+csapex_package(
+	INCLUDE_DIRS include
+	LIBRARIES csapex_ml
+	CATKIN_DEPENDS csapex csapex_core_plugins csapex_opencv
 )
 
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES csapex_ml
-  CATKIN_DEPENDS csapex csapex_core_plugins csapex_opencv
-)
-
-find_package(OpenCV REQUIRED)
-
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
   include
+  ${csapex_INCLUDE_DIR}
+  ${csapex_core_plugins_INCLUDE_DIR}
+  ${csapex_opencv_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUED_DIRS}
 )
-add_library(csapex_ml
+add_library(csapex_ml SHARED
     src/features_message.cpp
 )
+generate_export_header(csapex_ml)
 target_link_libraries(csapex_ml
-    yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+    ${csapex_LIBRARIES}
+    ${csapex_core_plugins_LIBRARIES}
+    ${csapex_opencv_LIBRARIES}
+    ${catkin_LIBRARIES}
+    ${Boost_LIBRARIES} 
+	${catkin_LIBRARIES})
 
 
-add_library(csapex_ml_plugin
+add_library(csapex_ml_plugin SHARED
     src/decision_tree.cpp
     src/decision_tree_trainer.cpp
 
@@ -54,7 +66,13 @@ add_library(csapex_ml_plugin
 )
 
 target_link_libraries(csapex_ml_plugin
-    yaml-cpp csapex_ml ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+	csapex_ml
+    ${csapex_LIBRARIES}
+    ${csapex_core_plugins_LIBRARIES}
+    ${csapex_opencv_LIBRARIES}
+    ${catkin_LIBRARIES}
+	${OpenCV_LIBRARIES}
+	)
 
 #
 # INSTALL
@@ -73,5 +91,28 @@ install(TARGETS csapex_ml
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-install(DIRECTORY include/${PROJECT_NAME}/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+if(WIN32)
+	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h
+		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
+	install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME}/)
+else()
+	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h
+		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
+	install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+endif()
+
+if(WIN32)
+	install(DIRECTORY include/${PROJECT_NAME}/
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME})
+else()
+	install(DIRECTORY include/${PROJECT_NAME}/
+			LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+endif()
+
+if(NOT ${catkin_FOUND})
+	install(FILES cmake/csapex_ml-config.cmake
+			DESTINATION ${CSAPEX_MODULE_DESTINATION})
+endif()

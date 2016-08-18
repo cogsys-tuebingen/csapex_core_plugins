@@ -11,7 +11,7 @@
 #include <opencv2/opencv.hpp>
 
 namespace csapex {
-class SVM : public Node
+class CSAPEX_EXPORT_PLUGIN SVM : public Node
 {
 public:
     SVM();

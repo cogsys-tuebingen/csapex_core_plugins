@@ -5,42 +5,13 @@ include (GenerateExportHeader)
 
 find_package(csapex REQUIRED)
 
-find_package(catkin QUIET)
+list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 
-if(${catkin_FOUND})
-	catkin_package(
-	  INCLUDE_DIRS include
-	  LIBRARIES csapex_opencv
-	  DEPENDS OpenCV
-	)
-
-else()
-	find_package(YAML-CPP REQUIRED)
-	find_package(console_bridge REQUIRED)
-	find_package(class_loader REQUIRED)
-	if(WIN32)
-		add_definitions(/D POCO_NO_AUTOMATIC_LIBS)
-		add_definitions(/D NOMINMAX)
-	endif()
-	
-	find_package(Boost COMPONENTS program_options filesystem system regex serialization thread REQUIRED)
-
-	set(INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
-	set(CATKIN_PACKAGE_INCLUDE_DESTINATION ${INSTALL_DIR}/include)
-	set(CATKIN_PACKAGE_LIB_DESTINATION ${INSTALL_DIR}/lib)
-	set(CATKIN_GLOBAL_BIN_DESTINATION ${INSTALL_DIR}/bin)
-	set(CATKIN_PACKAGE_SHARE_DESTINATION ${INSTALL_DIR}/share/${PROJECT_NAME})
-	
-	set(catkin_INCLUDE_DIRS
-		${Boost_INCLUDE_DIRS} 
-		${YAML_CPP_INCLUDE_DIR})
-	set(catkin_LIBRARIES 
-		${Boost_LIBRARIES}
-		${YAML_CPP_LIBRARIES}
-		${class_loader_LIBRARIES}
-		${console_bridge_LIBRARIES}
-		${Poco_LIBRARIES})
-endif()
+csapex_package(
+	INCLUDE_DIRS include
+	LIBRARIES csapex_opencv
+	DEPENDS OpenCV
+)
 
 # note to ubuntu 14 users: if opencv is installed at /usr/local and is not found:    sudo ldconfig /usr/local/lib
 set(USED_OpenCV_COMPONENTS core imgproc ml calib3d)
@@ -58,7 +29,6 @@ endif()
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
-
 ###########
 ## Build ##
 ###########
@@ -70,7 +40,6 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
   ${csapex_INCLUDE_DIR}
   ${OpenCV_INCLUDE_DIRS}
-  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 add_subdirectory(src/cvBlob)
@@ -171,4 +140,9 @@ else()
 	install(DIRECTORY include/${PROJECT_NAME}/
 			LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+endif()
+
+if(NOT ${catkin_FOUND})
+	install(FILES cmake/csapex_opencv-config.cmake
+			DESTINATION ${CSAPEX_MODULE_DESTINATION})
 endif()

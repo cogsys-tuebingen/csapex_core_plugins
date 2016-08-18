@@ -11,7 +11,7 @@
 #include <mutex>
 
 namespace csapex {
-class ArffFormatExport : public Node
+class CSAPEX_EXPORT_PLUGIN ArffFormatExport : public Node
 {
 public:
     ArffFormatExport();

@@ -5,7 +5,7 @@
 
 namespace csapex
 {
-class MLPCvTrainer : public CollectionNode<connection_types::FeaturesMessage>
+class CSAPEX_EXPORT_PLUGIN  MLPCvTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
     MLPCvTrainer();

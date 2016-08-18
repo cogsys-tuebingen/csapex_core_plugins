@@ -3,13 +3,14 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex_core_plugins/csapex_core_lib_export.h>
 
 /// SYSTEM
 #include <mutex>
 
 namespace csapex {
 
-class CSAPEX_EXPORT_PLUGIN InteractiveNode : public Node
+class CSAPEX_CORE_LIB_EXPORT InteractiveNode : public Node
 {
     friend class InteractiveNodeAdapter;
 

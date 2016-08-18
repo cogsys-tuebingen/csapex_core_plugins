@@ -13,6 +13,25 @@ endif()
 
 set(OpenCV_DIR "C:/opencv/build")
 
-add_subdirectory(csapex_core_plugins)
+find_package(csapex REQUIRED)
+
+set(CSAPEX_CMAKE_MODULE_PATHS "${CMAKE_PREFIX_PATH}" CACHE INTERNAL  "csapex_cmake_dirs")
+
 add_subdirectory(csapex_opencv)
+add_subdirectory(csapex_core_plugins)
+add_subdirectory(csapex_ml)
+
+add_subdirectory(csapex_bar_code)
+add_subdirectory(csapex_boolean)
+#add_subdirectory(csapex_evaluation)
+#add_subdirectory(csapex_optimization)
+#add_subdirectory(csapex_plot)
+#add_subdirectory(csapex_point_cloud)
+#add_subdirectory(csapex_scan_2d)
+#add_subdirectory(csapex_transform)
+#add_subdirectory(csapex_video)
+#add_subdirectory(csapex_vision)
+#add_subdirectory(csapex_vision_conversion)
+#add_subdirectory(csapex_vision_features)
+#add_subdirectory(csapex_vision_histograms)
 add_subdirectory(csapex_windows)

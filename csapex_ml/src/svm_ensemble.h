@@ -12,7 +12,7 @@
 #include <mutex>
 
 namespace csapex {
-class SVMEnsemble : public Node
+class CSAPEX_EXPORT_PLUGIN SVMEnsemble : public Node
 {
 public:
     SVMEnsemble();

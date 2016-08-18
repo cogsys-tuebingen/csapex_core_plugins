@@ -3,12 +3,13 @@
 
 /// PROJECT
 #include <csapex/msg/message.h>
+#include <csapex_core_plugins/csapex_core_lib_export.h>
 
 
 namespace csapex {
 namespace connection_types {
 
-struct CSAPEX_EXPORT_PLUGIN PointMessage : public Message
+struct CSAPEX_CORE_LIB_EXPORT PointMessage : public Message
 {
 public:
     typedef std::shared_ptr<PointMessage> Ptr;
@@ -26,14 +27,14 @@ public:
 
 /// TRAITS
 template <>
-struct CSAPEX_EXPORT_PLUGIN type<PointMessage> {
+struct CSAPEX_CORE_LIB_EXPORT type<PointMessage> {
     static std::string name() {
         return "Point";
     }
 };
 
 template <>
-inline CSAPEX_EXPORT_PLUGIN std::shared_ptr<PointMessage> makeEmpty<PointMessage>()
+inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<PointMessage> makeEmpty<PointMessage>()
 {
     return std::shared_ptr<PointMessage>(new PointMessage(0));
 }

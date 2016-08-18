@@ -8,7 +8,7 @@ namespace csapex {
 
 namespace boolean {
 
-class Toggle : public TickableNode
+class CSAPEX_EXPORT_PLUGIN Toggle : public TickableNode
 {
 public:
     Toggle();

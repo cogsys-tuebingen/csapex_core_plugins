@@ -325,7 +325,7 @@ bool numeric_string_compare(const std::string& s1, const std::string& s2)
         return atoi(suffix_n1.c_str()) < atoi(suffix_n2.c_str());
     }
 }
-}
+}	
 
 void FileImporter::doImportDir(const QString &dir_string)
 {

@@ -1,59 +1,43 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_bar_code)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-find_package(ZBar)
+find_package(ZBar REQUIRED)
 
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS csapex csapex_opencv)
+find_package(csapex REQUIRED)
 
-find_package(OpenCV REQUIRED)
+find_package(csapex_opencv REQUIRED)
 
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES csapex_opencv_features
-#  CATKIN_DEPENDS csapex csapex_opencv
-#  DEPENDS system_lib
-)
+csapex_package()
 
 ###########
 ## Build ##
 ###########
 
 if(${ZBAR_FOUND})
-    ## Specify additional locations of header files
-    ## Your package locations should be listed before other locations
-    # include_directories(include)
     include_directories(
+      ${csapex_INCLUDE_DIR}
+      ${csapex_opencv_INCLUDE_DIR}
       ${catkin_INCLUDE_DIRS}
       ${ZBAR_INCLUDE_DIR}
     )
 
-    add_library(csapex_bar_code_plugin
+	file(GLOB_RECURSE plugin_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.h*)
+	
+    add_library(csapex_bar_code_plugin SHARED
+		${plugin_HEADERS}
+		
         src/bar_code_reader.cpp
     )
+	
     target_link_libraries(csapex_bar_code_plugin
-        yaml-cpp ${catkin_LIBRARIES} ${ZBAR_LIBRARIES})
+		${csapex_LIBRARIES}
+		${csapex_opencv_LIBRARIES}
+		${catkin_LIBRARIES}
+		${ZBAR_LIBRARIES}
+	)
 
     #
     # INSTALL

@@ -11,7 +11,7 @@
 #include <opencv2/opencv.hpp>
 
 namespace csapex {
-class AdaBoost : public Node
+class CSAPEX_EXPORT_PLUGIN AdaBoost : public Node
 {
 public:
     AdaBoost();

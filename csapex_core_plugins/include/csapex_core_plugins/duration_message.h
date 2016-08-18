@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
+#include <csapex_core_plugins/csapex_core_lib_export.h>
 
 /// SYSTEM
 #include <chrono>
@@ -10,7 +11,7 @@
 namespace csapex {
 namespace connection_types {
 
-struct CSAPEX_EXPORT_PLUGIN DurationMessage : public MessageTemplate<std::chrono::microseconds, DurationMessage>
+struct CSAPEX_CORE_LIB_EXPORT DurationMessage : public MessageTemplate<std::chrono::microseconds, DurationMessage>
 {
 public:
     DurationMessage(std::chrono::microseconds duration = std::chrono::microseconds(0),
@@ -38,7 +39,7 @@ inline std::shared_ptr<DurationMessage> makeEmpty<DurationMessage>()
 /// YAML
 namespace YAML {
 template<>
-struct CSAPEX_EXPORT_PLUGIN convert<csapex::connection_types::DurationMessage> {
+struct CSAPEX_CORE_LIB_EXPORT convert<csapex::connection_types::DurationMessage> {
   static Node encode(const csapex::connection_types::DurationMessage& rhs);
   static bool decode(const Node& node, csapex::connection_types::DurationMessage& rhs);
 };

@@ -19,7 +19,7 @@ RoiMessage::RoiMessage()
 
 /// YAML
 namespace YAML {
-Node convert<csapex::connection_types::RoiMessage>::encode(const csapex::connection_types::RoiMessage& rhs)
+CSAPEX_EXPORT_PLUGIN Node convert<csapex::connection_types::RoiMessage>::encode(const csapex::connection_types::RoiMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
 
@@ -27,7 +27,7 @@ Node convert<csapex::connection_types::RoiMessage>::encode(const csapex::connect
     return node;
 }
 
-bool convert<csapex::connection_types::RoiMessage>::decode(const Node& node, csapex::connection_types::RoiMessage& rhs)
+CSAPEX_EXPORT_PLUGIN bool convert<csapex::connection_types::RoiMessage>::decode(const Node& node, csapex::connection_types::RoiMessage& rhs)
 {
     if(!node.IsMap()) {
         return false;

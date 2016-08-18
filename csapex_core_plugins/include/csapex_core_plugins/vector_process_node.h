@@ -8,12 +8,13 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex_core_plugins/csapex_core_lib_export.h>
 
 /// SYSTEM
 namespace csapex {
 
 template <typename MessageType>
-class VectorProcessNode : public Node
+class CSAPEX_CORE_LIB_EXPORT VectorProcessNode : public Node
 {
 public:
     VectorProcessNode()

@@ -8,7 +8,7 @@
 namespace csapex
 {
 
-class MLPCv : public Node
+class CSAPEX_EXPORT_PLUGIN  MLPCv : public Node
 {
 public:
     MLPCv();

@@ -8,12 +8,13 @@
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/signal/event.h>
+#include <csapex_core_plugins/csapex_core_lib_export.h>
 
 /// SYSTEM
 namespace csapex {
 
 template <typename MessageType>
-class CSAPEX_EXPORT_PLUGIN CollectionNode : public Node
+class CollectionNode : public Node
 {
 public:
     CollectionNode()

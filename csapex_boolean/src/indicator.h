@@ -8,7 +8,7 @@ namespace csapex {
 
 namespace boolean {
 
-class Indicator : public Node
+class CSAPEX_EXPORT_PLUGIN Indicator : public Node
 {
 public:
     Indicator();

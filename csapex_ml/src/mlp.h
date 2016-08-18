@@ -12,7 +12,7 @@
 #include <mutex>
 
 namespace csapex {
-class MLP : public Node
+class CSAPEX_EXPORT_PLUGIN MLP : public Node
 {
 public:
     MLP();

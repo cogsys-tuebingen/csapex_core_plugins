@@ -60,11 +60,9 @@ bool CvMatMessage::hasChannels(std::size_t count, int mat_type) const
 {
     return value.channels() == (int) count && encoding.channelCount() == count && value.type() == mat_type;
 }
-
-
 /// YAML
 namespace YAML {
-Node convert<csapex::connection_types::CvMatMessage>::encode(const csapex::connection_types::CvMatMessage& rhs)
+CSAPEX_EXPORT_PLUGIN Node convert<csapex::connection_types::CvMatMessage>::encode(const csapex::connection_types::CvMatMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
     node["value"] = rhs.value;
@@ -72,7 +70,7 @@ Node convert<csapex::connection_types::CvMatMessage>::encode(const csapex::conne
     return node;
 }
 
-bool convert<csapex::connection_types::CvMatMessage>::decode(const Node& node, csapex::connection_types::CvMatMessage& rhs)
+CSAPEX_EXPORT_PLUGIN bool convert<csapex::connection_types::CvMatMessage>::decode(const Node& node, csapex::connection_types::CvMatMessage& rhs)
 {
     if(!node.IsMap()) {
         return false;

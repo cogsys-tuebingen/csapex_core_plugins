@@ -8,7 +8,7 @@
 namespace csapex {
 
 
-class RandomTreesTrainer : public CollectionNode<connection_types::FeaturesMessage>
+class CSAPEX_EXPORT_PLUGIN RandomTreesTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
     RandomTreesTrainer();

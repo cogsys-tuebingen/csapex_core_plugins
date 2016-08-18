@@ -13,7 +13,7 @@
 namespace csapex {
 
 
-class RandomTrees : public csapex::Node
+class CSAPEX_EXPORT_PLUGIN RandomTrees : public csapex::Node
 {
 public:
     RandomTrees();

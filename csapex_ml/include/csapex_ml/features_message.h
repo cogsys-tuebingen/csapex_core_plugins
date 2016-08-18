@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
+#include <csapex_ml/csapex_ml_export.h>
 
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
@@ -11,7 +12,7 @@ namespace csapex {
 namespace connection_types {
 
 
-struct FeaturesMessage : public Message
+struct CSAPEX_ML_EXPORT FeaturesMessage : public Message
 {
     static const int INVALID_LABEL = -1;
 
@@ -30,7 +31,7 @@ struct FeaturesMessage : public Message
 
 /// TRAITS
 template <>
-struct type<FeaturesMessage> {
+struct CSAPEX_ML_EXPORT type<FeaturesMessage> {
     static std::string name() {
         return "FeaturesMessage";
     }
@@ -41,7 +42,7 @@ struct type<FeaturesMessage> {
 /// YAML
 namespace YAML {
 template<>
-struct convert<csapex::connection_types::FeaturesMessage> {
+struct CSAPEX_ML_EXPORT convert<csapex::connection_types::FeaturesMessage> {
   static Node encode(const csapex::connection_types::FeaturesMessage& rhs);
   static bool decode(const Node& node, csapex::connection_types::FeaturesMessage& rhs);
 };

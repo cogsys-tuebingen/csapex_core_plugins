@@ -8,7 +8,7 @@
 namespace csapex {
 
 
-class DecisionTreeTrainer : public CollectionNode<connection_types::FeaturesMessage>
+class CSAPEX_EXPORT_PLUGIN DecisionTreeTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
     DecisionTreeTrainer();

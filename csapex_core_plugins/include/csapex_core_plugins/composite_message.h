@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/msg/message.h>
 #include <csapex/msg/token_traits.h>
+#include <csapex_core_plugins/csapex_core_lib_export.h>
 
 /// SYSTEM
 #include <string>
@@ -13,7 +14,7 @@
 namespace csapex {
 namespace connection_types {
 
-struct CSAPEX_EXPORT_PLUGIN CompositeMessage : public Message
+struct CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
 {
     typedef std::shared_ptr<CompositeMessage> Ptr;
     typedef std::shared_ptr<const CompositeMessage> ConstPtr;

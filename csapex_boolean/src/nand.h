@@ -8,7 +8,7 @@ namespace csapex {
 
 namespace boolean {
 
-class NAND : public Node
+class CSAPEX_EXPORT_PLUGIN NAND : public Node
 {
 public:
     NAND();

@@ -13,7 +13,7 @@
 namespace csapex {
 
 
-class DecisionTree : public csapex::Node
+class CSAPEX_EXPORT_PLUGIN DecisionTree : public csapex::Node
 {
 public:
     DecisionTree();
