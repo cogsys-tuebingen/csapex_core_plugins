@@ -6,7 +6,7 @@ find_package(csapex REQUIRED)
 csapex_package()
 
 include_directories(
-    ${csapex_INCLUDE_DIR}
+    ${csapex_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
 )
 

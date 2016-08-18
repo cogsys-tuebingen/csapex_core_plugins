@@ -20,9 +20,9 @@ csapex_package(
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
   include
-  ${csapex_INCLUDE_DIR}
-  ${csapex_core_plugins_INCLUDE_DIR}
-  ${csapex_opencv_INCLUDE_DIR}
+  ${csapex_INCLUDE_DIRS}
+  ${csapex_core_plugins_INCLUDE_DIRS}
+  ${csapex_opencv_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUED_DIRS}
 )

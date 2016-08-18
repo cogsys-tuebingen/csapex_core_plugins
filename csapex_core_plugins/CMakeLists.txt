@@ -10,7 +10,7 @@ list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 csapex_package(
 	INCLUDE_DIRS include
 	LIBRARIES csapex_core_lib
-	CATKIN_DEPENDS csapex roscpp
+        CATKIN_DEPENDS csapex
 )
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
@@ -29,7 +29,7 @@ qt5_add_resources(QT_RESOURCES
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(include
     ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
-    ${csapex_INCLUDE_DIR}
+    ${csapex_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
 )
 

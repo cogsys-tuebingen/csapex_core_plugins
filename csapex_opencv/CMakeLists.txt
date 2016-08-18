@@ -7,12 +7,6 @@ find_package(csapex REQUIRED)
 
 list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 
-csapex_package(
-	INCLUDE_DIRS include
-	LIBRARIES csapex_opencv
-	DEPENDS OpenCV
-)
-
 # note to ubuntu 14 users: if opencv is installed at /usr/local and is not found:    sudo ldconfig /usr/local/lib
 set(USED_OpenCV_COMPONENTS core imgproc ml calib3d)
 find_package(OpenCV COMPONENTS nonfree ${USED_OpenCV_COMPONENTS} QUIET CONFIG)
@@ -29,6 +23,12 @@ endif()
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
+csapex_package(
+        INCLUDE_DIRS include
+        LIBRARIES csapex_opencv
+        DEPENDS OpenCV
+)
+
 ###########
 ## Build ##
 ###########
@@ -38,8 +38,9 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 # include_directories(include)
 include_directories(include
   ${catkin_INCLUDE_DIRS}
-  ${csapex_INCLUDE_DIR}
+  ${csapex_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 add_subdirectory(src/cvBlob)
