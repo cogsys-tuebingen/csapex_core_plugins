@@ -38,6 +38,8 @@ void DynamicTransform::setupParameters(Parameterizable& parameters)
     source_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("source"));
     target_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("target"));
 
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("exact_time", false), exact_time_);
+
     refresh();
 }
 
@@ -107,6 +109,12 @@ void DynamicTransform::publishTransform(const ros::Time& time)
             tf::TransformListener& tfl = *l.l->tfl;
             if(tfl.waitForTransform(target, source, time, ros::Duration(0.1))) {
                 tfl.lookupTransform(target, source, time, t);
+
+            } else if(exact_time_) {
+                node_modifier_->setWarning(std::string("cannot exactly transform between ") +
+                                           target + " and " + source);
+                return;
+
             } else {
                 if(tfl.canTransform(target, source, ros::Time(0))) {
                     node_modifier_->setWarning("cannot transform, using latest transform");

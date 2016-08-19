@@ -41,6 +41,8 @@ private:
 
     param::SetParameter::Ptr source_p;
     param::SetParameter::Ptr target_p;
+
+    bool exact_time_;
 };
 
 }
