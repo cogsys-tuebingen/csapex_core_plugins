@@ -13,3 +13,37 @@
 
 using namespace csapex;
 using namespace connection_types;
+
+
+void ACFStandardExtractor::setupParameters(Parameterizable &parameters)
+{
+    parameters.addParameter(param::ParameterFactory::declareRange("/window_width",
+                                                                  10, 1024, 64, 1),
+                            std::bind(&ACFStandardExtractor::update, this));
+    parameters.addParameter(param::ParameterFactory::declareRange("/window/height",
+                                                                  10, 1024, 128, 1),
+                            std::bind(&ACFStandardExtractor::update, this));
+    parameters.addParameter(param::ParameterFactory::declareBool("/window/mirror",
+                                                                 false),
+                            mirror_);
+    parameters.addParameter(param::ParameterFactory::declareBool("/window/keep_ratio",
+                                                                 false),
+                            keep_ratio_);
+}
+
+void ACFStandardExtractor::setup(NodeModifier &node_modifier)
+{
+
+}
+
+void ACFStandardExtractor::process()
+{
+
+
+
+}
+
+void ACFStandardExtractor::update()
+{
+
+}

@@ -8,43 +8,12 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
 
+#include "extended_svm.hpp"
+
 CSAPEX_REGISTER_CLASS(csapex::SVMTrainer, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-
-struct ExtendedSVM : cv::SVM {
-    CvSVMDecisionFunc* get_decision_function()
-    {
-        return decision_func;
-    }
-
-    void print_decision_func()
-    {
-        std::cout << "alpha: [";
-        for(int i = 0 ; i < decision_func->sv_count - 1; ++i) {
-            std::cout << decision_func->alpha[i] << ", ";
-        }
-        std::cout << decision_func->alpha[decision_func->sv_count - 1]
-                  << "]" << std::endl;
-        std::cout << "rho: " << decision_func->rho  * -1 << std::endl;
-    }
-
-    void export_decision_func(cv::FileStorage &fs)
-    {
-        fs << "svm_alpha" << "[";
-        for(int i = 0 ; i < decision_func->sv_count ; ++i)
-            fs << decision_func->alpha[i];
-        fs << "]";
-        fs << "svm_rho" << -decision_func->rho;
-    }
-
-    void set_parameters(const cv::SVMParams &params)
-    {
-        set_params(params);
-    }
-
-};
 
 SVMTrainer::SVMTrainer()
 {

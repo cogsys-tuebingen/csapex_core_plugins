@@ -6,9 +6,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-
-/// SYSTEM
-#include <opencv2/opencv.hpp>
+#include "extended_svm.hpp"
 
 namespace csapex {
 class CSAPEX_EXPORT_PLUGIN SVM : public Node
@@ -23,12 +21,12 @@ public:
 private:
     enum ThresholdType { GREATER = 0, LESS, LESS_EQUAL, GREATER_EQUAL};
 
-    Input  *in_;
-    Output *out_;
-    Slot*   reload_;
+    Input      *in_;
+    Output     *out_;
+    Slot       *reload_;
 
-    bool loaded_;
-    cv::SVM svm_;
+    bool        loaded_;
+    ExtendedSVM svm_;
 
     void load();
 };

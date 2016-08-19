@@ -48,6 +48,7 @@ add_library(csapex_ml_plugin SHARED
 
     src/svm_trainer.cpp
     src/svm.cpp
+    src/extended_svm.hpp
     src/svm_ensemble_trainer.cpp
     src/svm_ensemble.cpp
 

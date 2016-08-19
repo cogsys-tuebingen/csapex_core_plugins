@@ -6,10 +6,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-
-/// SYSTEM
-#include <opencv2/opencv.hpp>
-#include <mutex>
+#include "extended_svm.hpp"
 
 namespace csapex {
 class CSAPEX_EXPORT_PLUGIN SVMEnsemble : public Node
@@ -29,14 +26,14 @@ private:
 
     Input  *in_;
     Output *out_;
-    Slot*   reload_;
+    Slot   *reload_;
 
-    bool loaded_;
-    std::vector<SVMPtr> svms_;
-    std::size_t         svms_size_;
-    cv::Mat             svm_responses_;
+    bool                          loaded_;
+    std::vector<ExtendedSVM::Ptr> svms_;
+    std::size_t                   svms_size_;
+    cv::Mat                       svm_responses_;
 
-    void load();
+    void                          load();
 };
 }
 

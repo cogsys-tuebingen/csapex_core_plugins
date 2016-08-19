@@ -150,14 +150,17 @@ void SVMEnsemble::load()
 
     /// get svms for labels
     svm_responses_ = cv::Mat(labels.size(), 2, CV_32FC1, cv::Scalar());
+    double min_rho = std::numeric_limits<double>::max();
     for(std::size_t i = 0 ; i < labels.size() ; ++i) {
         std::string label = prefix + toString(labels.at(i));
-        SVMPtr svm(new cv::SVM);
+        ExtendedSVM::Ptr svm(new ExtendedSVM);
         svm->read(fs.fs, (CvFileNode*) fs[label].node);
         svms_.push_back(svm);
         svm_responses_.at<float>(i, 0) = labels.at(i);
         std::cout << label << std::endl;
         std::cout << svm->get_var_count() << std::endl;
+
+
     }
     svms_size_ = svms_.size();
     loaded_ = true;
