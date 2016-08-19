@@ -20,6 +20,10 @@
   <description>Merge multiple vectors into one by appending</description>
   <tags>General, Vector, Merge</tags>
 </class>
+<class type="csapex::VectorGenerate" base_class_type="csapex::Node">
+  <description>Merge multiple values into one vector</description>
+  <tags>General, Vector, Merge</tags>
+</class>
 <class type="csapex::SelectVectorComponent" base_class_type="csapex::Node">
   <description>Select std::vector component, resembles std::vector::at</description>
   <tags>std::vector,Component, at</tags>
