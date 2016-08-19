@@ -59,6 +59,7 @@ add_library(csapex_transform_plugin_node
     src/transform_publisher.cpp
     src/transform_filter.cpp
     src/extract_timestamp.cpp
+    src/extract_measures.cpp
 )
 target_link_libraries(csapex_transform_plugin_node csapex_transform
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
