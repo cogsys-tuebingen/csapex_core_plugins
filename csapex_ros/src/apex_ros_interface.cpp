@@ -286,7 +286,7 @@ void APEXRosInterface::clock(const rosgraph_msgs::ClockConstPtr &clock)
     if(now < last_clock_) {
         std::cerr << "time reset" << std::endl;
 
-        TokenDataConstPtr data(new connection_types::NoMessage);
+        TokenDataConstPtr data(new connection_types::AnyMessage);
         TokenPtr token = std::make_shared<Token>(data);
         token->setActive(true);
         clock_reset_event_->triggerWith(token);
