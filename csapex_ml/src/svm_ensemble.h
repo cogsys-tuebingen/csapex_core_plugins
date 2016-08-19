@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <csapex_ml/features_message.h>
+#include <csapex/param/range_parameter.h>
 
 /// PROJECT
 #include <csapex/model/node.h>
@@ -28,12 +29,15 @@ private:
     Output *out_;
     Slot   *reload_;
 
-    bool                          loaded_;
-    std::vector<ExtendedSVM::Ptr> svms_;
-    std::size_t                   svms_size_;
-    cv::Mat                       svm_responses_;
+    bool                                    loaded_;
+    std::vector<ExtendedSVM::Ptr>           svms_;
+    std::size_t                             svms_size_;
+    cv::Mat                                 svm_responses_;
+    std::vector<param::RangeParameter::Ptr> params_thresholds_;
+    std::vector<double>                     thresholds_;
 
-    void                          load();
+    void                                    load();
+    void                                    updateThresholds();
 };
 }
 

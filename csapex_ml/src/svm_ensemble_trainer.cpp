@@ -15,14 +15,6 @@ CSAPEX_REGISTER_CLASS(csapex::SVMEnsembleTrainer, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-template<typename T>
-inline std::string str(const T value)
-{
-    std::stringstream ss;
-    ss << value;
-    return ss.str();
-}
-
 SVMEnsembleTrainer::SVMEnsembleTrainer()
 {
 }
@@ -201,7 +193,7 @@ void SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
                 std::cout << "Started training for '" << it->first << std::endl;
                 if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
                     std::cout << "Finished training for '" << it->first << "'!" << std::endl;
-                    std::string label = prefix + str(it->first);
+                    std::string label = prefix + std::to_string(it->first);
                     svm.write(fs.fs, label.c_str());
                     svm_labels.push_back(it->first);
                 } else {
@@ -258,7 +250,7 @@ void SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
                 std::cout << "Started training for '" << it->first << std::endl;
                 if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
                     std::cout << "Finished training for '" << it->first << "'!" << std::endl;
-                    std::string label = prefix + str(it->first);
+                    std::string label = prefix + std::to_string(it->first);
                     svm.write(fs.fs, label.c_str());
                     svm_labels.push_back(it->first);
                 } else {
@@ -302,7 +294,7 @@ void SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
             std::cout << "Started training for '" << it->first << std::endl;
             if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
                 std::cout << "Finished training for '" << it->first << std::endl;
-                std::string label = prefix + str(it->first);
+                std::string label = prefix + std::to_string(it->first);
                 svm.write(fs.fs, label.c_str());
                 svm_labels.push_back(it->first);
             } else {
