@@ -12,7 +12,6 @@
 #include <csapex_ml/features_message.h>
 
 /// SYSTEM
-#include <boost/assign.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::HOGClassifier, csapex::Node)
@@ -29,8 +28,11 @@ HOGClassifier::HOGClassifier() :
 void HOGClassifier::setupParameters(Parameterizable& parameters)
 {
 
-    std::map<std::string, int> adpation_types =
-            boost::assign::map_list_of("Scale", SCALE)("TryGrow", TRY_GROW)("GrowStrict", GROW_STRICT);
+    std::map<std::string, int> adpation_types = {
+        {"Scale", SCALE},
+        {"TryGrow", TRY_GROW},
+        {"GrowStrict", GROW_STRICT}
+    };
     parameters.addParameter(param::ParameterFactory::declareParameterSet("hog/adaption_mode",
                                                                          param::ParameterDescription("Adaption of rois to window size of hog."),
                                                                          adpation_types,

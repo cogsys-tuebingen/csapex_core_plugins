@@ -16,9 +16,14 @@ public:
 
 
 private:
+    csapex::Input  *in_img_;
+    csapex::Input  *in_rois_;
+    csapex::Output *out_;
+
     cslibs_vision::ACFStandard::Parameters acf_params;
     cv::Size                               extraction_window_size;
     bool                                   mirror_;
+
 
 
 };

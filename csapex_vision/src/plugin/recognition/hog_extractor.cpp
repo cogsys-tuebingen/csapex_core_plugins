@@ -12,7 +12,6 @@
 #include <csapex_ml/features_message.h>
 
 /// SYSTEM
-#include <boost/assign.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::HOGExtractor, csapex::Node)
@@ -70,8 +69,12 @@ void HOGExtractor::setupParameters(Parameterizable& parameters)
                                                                   1, 3, 1, 1),
                             block_stride_);
 
-    std::map<std::string, int> adpation_types =
-            boost::assign::map_list_of("Scale", SCALE)("TryGrow", TRY_GROW)("GrowStrict", GROW_STRICT);
+    std::map<std::string, int> adpation_types = {
+        {"Scale", SCALE},
+        {"TryGrow", TRY_GROW},
+        {"GrowStrict", GROW_STRICT}
+    };
+
     parameters.addParameter(param::ParameterFactory::declareParameterSet("hog/adaption_mode",
                                                                          param::ParameterDescription("Adaption of rois to window size of hog."),
                                                                          adpation_types,
