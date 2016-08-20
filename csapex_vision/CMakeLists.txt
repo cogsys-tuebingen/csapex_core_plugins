@@ -13,7 +13,14 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS cslibs_vision csapex_opencv csapex csapex_ros csapex_core_plugins cv_bridge csapex_ml)
+find_package(catkin REQUIRED COMPONENTS cslibs_vision
+                                        csapex_opencv
+                                        csapex
+                                        csapex_ros
+                                        csapex_core_plugins
+                                        cv_bridge
+                                        csapex_ml
+                                        csapex_evaluation)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
@@ -127,6 +134,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/roi/image_roi.cpp
     src/roi/assign_roi_classification.cpp
     src/roi/set_roi_color_by_classification.cpp
+    src/roi/evaluate_roi_classification.cpp
 
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp

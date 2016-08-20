@@ -211,14 +211,18 @@
     <description>Viola Jones Detector</description>
     <tags>Vision</tags>
   </class>
-<class type="csapex::AssignROIClassification" base_class_type="csapex::Node">
-  <description>Assign ROI classifications from classified feature messages.</description>
-  <tags>Vision, ROI</tags>
-</class>
-<class type="csapex::SetROIColorByClassification" base_class_type="csapex::Node">
-  <description>Set color for a certain classification.</description>
-  <tags>Vision, ROI</tags>
-</class>
+  <class type="csapex::AssignROIClassification" base_class_type="csapex::Node">
+    <description>Assign ROI classifications from classified feature messages.</description>
+    <tags>Vision, ROI</tags>
+  </class>
+  <class type="csapex::EvaluateROIClassification" base_class_type="csapex::Node">
+    <description>Evaluate the ROI classifications to build up a confusion matrix.</description>
+    <tags>Vision, ROI</tags>
+  </class>
+  <class type="csapex::SetROIColorByClassification" base_class_type="csapex::Node">
+    <description>Set color for a certain classification.</description>
+    <tags>Vision, ROI</tags>
+  </class>
   <class type="csapex::RenderROIs" base_class_type="csapex::Node">
     <description>Render ROIs on top of an image</description>
     <tags>Vision, ROI</tags>
