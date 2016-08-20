@@ -15,7 +15,9 @@ using namespace connection_types;
 class AssignROIClassification : public csapex::Node
 {
 public:
-    AssignROIClassification();
+    AssignROIClassification()
+    {
+    }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {

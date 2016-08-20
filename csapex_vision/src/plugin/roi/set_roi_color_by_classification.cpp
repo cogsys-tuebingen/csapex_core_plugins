@@ -15,7 +15,9 @@ using namespace connection_types;
 class SetROIColorByClassification : public csapex::Node
 {
 public:
-    SetROIColorByClassification();
+    SetROIColorByClassification()
+    {
+    }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
