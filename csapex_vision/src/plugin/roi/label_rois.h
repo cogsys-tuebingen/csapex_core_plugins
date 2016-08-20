@@ -11,13 +11,13 @@
 #include <QSharedPointer>
 
 namespace csapex {
-class AssignROIClass : public csapex::InteractiveNode
+class LabelROIs : public csapex::InteractiveNode
 {
-    friend class AssignROIClassAdapter;
+    friend class LabelROIsAdapter;
 
 public:
-    AssignROIClass();
-    virtual ~AssignROIClass();
+    LabelROIs();
+    virtual ~LabelROIs();
 
     void setup(csapex::NodeModifier& node_modifier) override;
     void setupParameters(Parameterizable& parameters);

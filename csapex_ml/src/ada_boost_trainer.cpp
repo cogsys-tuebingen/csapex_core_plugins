@@ -52,7 +52,7 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
 
     parameters.addParameter(param::ParameterFactory::declareRange("boost/classifier_count",
                                                                   1,
-                                                                  500,
+                                                                  4096,
                                                                   100,
                                                                   1),
                             boost_params_.weak_count);
@@ -107,10 +107,11 @@ void AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
         }
     }
 
+    std::cout << "[AdaBoost]: started training" << std::endl;
     if(boost.train(samples, CV_ROW_SAMPLE, labels, cv::Mat(), cv::Mat(), cv::Mat(), cv::Mat(), boost_params_)) {
         boost.save(path_.c_str(), "adaboost");
     } else {
         throw std::runtime_error("Training failed!");
     }
-
+    std::cout << "[Ended]: started training" << std::endl;
 }

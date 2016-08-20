@@ -67,12 +67,9 @@ target_link_libraries(${PROJECT_NAME}_plugin_core
 
 
 add_library(${PROJECT_NAME}_plugin_node
-    src/plugin/static_roi.cpp
     src/plugin/rotate_image.cpp
     src/plugin/grab_cut.cpp
     src/plugin/camera.cpp
-    src/plugin/image_padding.cpp
-    src/plugin/copymakeborder.cpp
     src/plugin/color_segmentation.cpp
     src/plugin/filter/filter_apply_mask.cpp
 
@@ -83,14 +80,22 @@ add_library(${PROJECT_NAME}_plugin_node
     src/plugin/hough_circle.cpp
     src/plugin/vectorize_pyramid.cpp
 
-    src/plugin/image_roi.cpp
     src/plugin/grid_arranged_rois.cpp
 
-    src/plugin/row.cpp
-    src/plugin/col.cpp
-    src/plugin/minmax_loc.cpp
+    src/plugin/matrix_operations/row.cpp
+    src/plugin/matrix_operations/col.cpp
+    src/plugin/matrix_operations/minmax_loc.cpp
+    src/plugin/matrix_operations/scale.cpp
+    src/plugin/matrix_operations/resize.cpp
+    src/plugin/matrix_operations/flip.cpp
+    src/plugin/matrix_operations/convert_type.cpp
+    src/plugin/matrix_operations/reshape.cpp
+    src/plugin/matrix_operations/image_padding.cpp
+    src/plugin/matrix_operations/copymakeborder.cpp
+    src/plugin/matrix_operations/merge.cpp
+    src/plugin/matrix_operations/split.cpp
+
     src/plugin/set_color.cpp
-    src/plugin/reshape.cpp
     src/plugin/mean_dev_normalization.cpp
 
     src/plugin/levels.cpp
@@ -104,8 +109,6 @@ add_library(${PROJECT_NAME}_plugin_node
 
     src/plugin/filter/distance_transform.cpp
     src/plugin/filter/gamma_correction.cpp
-    src/plugin/filter/filter_merger.cpp
-    src/plugin/filter/filter_splitter.cpp
     src/plugin/filter/filter_perspective.cpp
 
     src/plugin/filter/filter_debayer.cpp
@@ -119,6 +122,9 @@ add_library(${PROJECT_NAME}_plugin_node
     src/plugin/roi/extract_roi.cpp
     src/plugin/roi/filter_rois.cpp
     src/plugin/roi/flip_rois.cpp
+    src/plugin/roi/label_rois.cpp
+    src/plugin/roi/static_roi.cpp
+    src/plugin/roi/image_roi.cpp
 
     src/plugin/combine/generic_image_combiner.cpp
     src/plugin/combine/set_operation.cpp
@@ -126,11 +132,8 @@ add_library(${PROJECT_NAME}_plugin_node
     src/plugin/combine/matrix_stitcher.cpp
 
     src/plugin/modify/undistort.cpp
-    src/plugin/modify/flip.cpp
-    src/plugin/modify/scale.cpp
-    src/plugin/modify/resize.cpp
+
     src/plugin/modify/float_to_uchar.cpp
-    src/plugin/modify/convert_type.cpp
 
     src/plugin/color/color_convert.cpp
     src/plugin/color/color_adjustment.cpp
@@ -174,7 +177,6 @@ add_library(${PROJECT_NAME}_plugin_node
     src/plugin/label/label_regions.cpp
     src/plugin/label/cluster_grid.cpp
     src/plugin/label/assign_cluster_class.cpp
-    src/plugin/label/assign_roi_class.cpp
 
     src/plugin/recognition/acf_standard_extractor.cpp
     src/plugin/recognition/acf_dynamic_extractor.cpp
@@ -193,10 +195,11 @@ add_library(${PROJECT_NAME}_plugin_qt
     src/plugin/filter/filter_static_mask_painter.cpp
     src/plugin/filter/filter_static_mask_adapter.cpp
     src/plugin/mask_refinement_adapter.cpp
-    src/plugin/image_roi_adapter.cpp
 
     src/plugin/label/assign_cluster_class_adapter.cpp
-    src/plugin/label/assign_roi_class_adapter.cpp
+
+    src/plugin/roi/label_rois_adapter.cpp
+    src/plugin/roi/image_roi_adapter.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_qt
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})

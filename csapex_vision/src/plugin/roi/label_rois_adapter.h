@@ -5,7 +5,7 @@
 #include <csapex/view/node/default_node_adapter.h>
 
 /// COMPONENT
-#include "assign_roi_class.h"
+#include "label_rois.h"
 
 /// SYSTEM
 #include <QGraphicsView>
@@ -17,13 +17,13 @@ namespace csapex {
 
 class QInteractiveRect;
 
-class AssignROIClassAdapter : public QObject, public csapex::DefaultNodeAdapter
+class LabelROIsAdapter : public QObject, public csapex::DefaultNodeAdapter
 {
     Q_OBJECT
 
 public:
-    AssignROIClassAdapter(csapex::NodeHandleWeakPtr worker, csapex::NodeBox* parent,
-                              std::weak_ptr<AssignROIClass> node);
+    LabelROIsAdapter(csapex::NodeHandleWeakPtr worker, csapex::NodeBox* parent,
+                              std::weak_ptr<LabelROIs> node);
 
     virtual csapex::Memento::Ptr getState() const;
     virtual void                 setParameterState(csapex::Memento::Ptr memento);
@@ -84,7 +84,7 @@ protected:
     };
 
 
-    std::weak_ptr<csapex::AssignROIClass> wrapped_;
+    std::weak_ptr<csapex::LabelROIs> wrapped_;
 
 private:
     std::map<int, QColor> colors_;

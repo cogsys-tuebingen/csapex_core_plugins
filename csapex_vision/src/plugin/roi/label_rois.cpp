@@ -1,5 +1,5 @@
 /// HEADER
-#include "assign_roi_class.h"
+#include "label_rois.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -18,49 +18,49 @@
 
 #include <QColor>
 
-CSAPEX_REGISTER_CLASS(csapex::AssignROIClass, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::LabelROIs, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
 using namespace csapex;
 
-AssignROIClass::AssignROIClass()
+LabelROIs::LabelROIs()
 {
 }
 
-AssignROIClass::~AssignROIClass()
+LabelROIs::~LabelROIs()
 {
 }
 
-void AssignROIClass::setupParameters(Parameterizable& parameters)
+void LabelROIs::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("submit"),
-                            std::bind(&AssignROIClass::submit, this));
+                            std::bind(&LabelROIs::submit, this));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("drop"),
-                            std::bind(&AssignROIClass::drop, this));
+                            std::bind(&LabelROIs::drop, this));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("clear"),
-                            std::bind(&AssignROIClass::clear, this));
+                            std::bind(&LabelROIs::clear, this));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("class id",
                                                                   csapex::param::ParameterDescription("The class id to be used!"),
                                                                   0, 255, 0, 1),
-                                                                  std::bind(&AssignROIClass::setClass, this));
+                                                                  std::bind(&LabelROIs::setClass, this));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("class color", 0, 255, 0),
-                            std::bind(&AssignROIClass::setColor, this));
+                            std::bind(&LabelROIs::setColor, this));
     setColor();
 }
 
-void AssignROIClass::setup(NodeModifier& node_modifier)
+void LabelROIs::setup(NodeModifier& node_modifier)
 {
     in_image_    = node_modifier.addInput<CvMatMessage>("Image");
     in_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("Rois");
     out_rois_  = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("Labeled Rois");
 }
 
-void AssignROIClass::setActiveClassColor(const int r, const int g, const int b)
+void LabelROIs::setActiveClassColor(const int r, const int g, const int b)
 {
     csapex::param::ParameterPtr ptr = getParameter("class color");
     param::ColorParameter *col = (param::ColorParameter*) ptr.get();
@@ -68,34 +68,34 @@ void AssignROIClass::setActiveClassColor(const int r, const int g, const int b)
     col->set(rgb);
 }
 
-void AssignROIClass::submit()
+void LabelROIs::submit()
 {
     submit_request();
 }
 
-void AssignROIClass::drop()
+void LabelROIs::drop()
 {
     drop_request();
 }
 
-void AssignROIClass::clear()
+void LabelROIs::clear()
 {
     clear_request();
 }
 
-void AssignROIClass::setColor()
+void LabelROIs::setColor()
 {
     const std::vector<int>& cc = readParameter<std::vector<int> >("class color");
     set_color(cc[0], cc[1], cc[2]);
 }
 
-void AssignROIClass::setClass()
+void LabelROIs::setClass()
 {
     int c = readParameter<int>("class id");
     set_class(c);
 }
 
-void AssignROIClass::display()
+void LabelROIs::display()
 {
     if(image_.empty())
         return;
@@ -106,7 +106,7 @@ void AssignROIClass::display()
 }
 
 
-void AssignROIClass::beginProcess()
+void LabelROIs::beginProcess()
 {
     CvMatMessage::ConstPtr  in_img  = msg::getMessage<CvMatMessage>(in_image_);
     std::shared_ptr<std::vector<RoiMessage> const> in_rois =
@@ -128,7 +128,7 @@ void AssignROIClass::beginProcess()
     display();
 }
 
-void AssignROIClass::finishProcess()
+void LabelROIs::finishProcess()
 {
     std::shared_ptr<std::vector<RoiMessage>> out_rois(new std::vector<RoiMessage>);
     out_rois->assign(rois_.begin(), rois_.end());
