@@ -125,6 +125,8 @@ add_library(${PROJECT_NAME}_plugin_node
     src/plugin/roi/label_rois.cpp
     src/plugin/roi/static_roi.cpp
     src/plugin/roi/image_roi.cpp
+    src/plugin/roi/assign_roi_classification.cpp
+    src/plugin/roi/set_roi_color_by_classification.cpp
 
     src/plugin/combine/generic_image_combiner.cpp
     src/plugin/combine/set_operation.cpp
