@@ -2,7 +2,7 @@
 <class type="csapex::EvaluateBinaryClassifier" base_class_type="csapex::Node">
   <description>Calculates binary classification statistics</description>
 </class>
-<class type="csapex::MLEvaluator" base_class_type="csapex::Node">
+<class type="csapex::EvaluateFeatureClassification" base_class_type="csapex::Node">
   <description>Evaluate a machine learing node</description>
   <tags>ML, evaluation</tags>
 </class>

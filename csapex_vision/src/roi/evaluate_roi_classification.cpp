@@ -22,9 +22,9 @@ public:
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
-        node_modifier.addInput<GenericVectorMessage, RoiMessage>("Ground Truth");
-        node_modifier.addInput<GenericVectorMessage, RoiMessage>("Predicted");
-        node_modifier.addOutput<ConfusionMatrixMessage>("Confusion");
+        input_gt_         = node_modifier.addInput<GenericVectorMessage, RoiMessage>("Ground Truth");
+        input_prediction_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("Predicted");
+        output_confusion_ = node_modifier.addOutput<ConfusionMatrixMessage>("Confusion");
 
         node_modifier.addSlot("Reset",
                               std::bind(&EvaluateROIClassification::reset, this));
@@ -42,7 +42,6 @@ public:
         std::shared_ptr<std::vector<RoiMessage> const> input_prediction =
                 msg::getMessage<GenericVectorMessage, RoiMessage>(input_prediction_);
 
-        ConfusionMatrixMessage::Ptr output_confusion(new ConfusionMatrixMessage);
 
         if(input_gt->size() != input_prediction->size())
             throw std::runtime_error("Size of ground truth data must be the same as predicted vice versa!");
@@ -51,9 +50,12 @@ public:
         for(std::size_t i = 0 ; i < size ; ++i) {
             const RoiMessage &gt = input_gt->at(i);
             const RoiMessage &prediction = input_prediction->at(i);
-            output_confusion->confusion.reportClassification(gt.value.classification(),
-                                                             prediction.value.classification());
+            confusion_.reportClassification(gt.value.classification(),
+                                        prediction.value.classification());
         }
+
+        ConfusionMatrixMessage::Ptr output_confusion(new ConfusionMatrixMessage);
+        output_confusion->confusion = confusion_;
         msg::publish(output_confusion_, output_confusion);
     }
 
@@ -63,9 +65,11 @@ private:
 
     Output* output_confusion_;
 
+    ConfusionMatrix confusion_;
+
     void reset()
     {
-
+        confusion_.reset();
     }
 
 };

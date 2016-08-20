@@ -11,7 +11,7 @@
 namespace csapex {
 
 
-class MLEvaluator : public csapex::Node
+class EvaluateFeatureClassification : public csapex::Node
 {
 
     struct BinaryClassificationResult
@@ -91,7 +91,7 @@ class MLEvaluator : public csapex::Node
     };
 
 public:
-    MLEvaluator();
+    EvaluateFeatureClassification();
 
     void setupParameters(Parameterizable& parameters);
     void setup(csapex::NodeModifier& node_modifier) override;

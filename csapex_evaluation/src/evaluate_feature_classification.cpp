@@ -1,5 +1,5 @@
 /// HEADER
-#include "ml_evaluator.h"
+#include "evaluate_feature_classification.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -9,12 +9,12 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/signal/slot.h>
 
-CSAPEX_REGISTER_CLASS(csapex::MLEvaluator, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::EvaluateFeatureClassification, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-MLEvaluator::BinaryClassificationMetrics::BinaryClassificationMetrics(BinaryClassificationResult result):
+EvaluateFeatureClassification::BinaryClassificationMetrics::BinaryClassificationMetrics(BinaryClassificationResult result):
     classification(result),
 
     tpr(result.tp / double(result.p)),
@@ -34,16 +34,16 @@ MLEvaluator::BinaryClassificationMetrics::BinaryClassificationMetrics(BinaryClas
 }
 
 
-MLEvaluator::MLEvaluator()
+EvaluateFeatureClassification::EvaluateFeatureClassification()
 {
 }
 
-void MLEvaluator::setupParameters(Parameterizable& parameters)
+void EvaluateFeatureClassification::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"), [&](csapex::param::Parameter*) { confusion_.reset(); });
 }
 
-void MLEvaluator::setup(NodeModifier& node_modifier)
+void EvaluateFeatureClassification::setup(NodeModifier& node_modifier)
 {
     in_truth_  = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("True feature");
     in_classified_  = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
@@ -53,7 +53,7 @@ void MLEvaluator::setup(NodeModifier& node_modifier)
     confusion_ = ConfusionMatrix();
 }
 
-void MLEvaluator::process()
+void EvaluateFeatureClassification::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> truth_msg = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_truth_);
     std::shared_ptr<std::vector<FeaturesMessage> const> classified_msg = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_classified_);
