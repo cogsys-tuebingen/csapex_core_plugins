@@ -37,7 +37,7 @@
   <description>Export features messages to the weka arff file format.</description>
   <tags>ML</tags>
 </class>
-<class type="csapex::AssignClass" base_class_type="csapex::Node">
+<class type="csapex::AssignFeatureLabels" base_class_type="csapex::Node">
   <description>Assign classes to Featuresmessages by introducing a vector of messages.</description>
   <tags>ML</tags>
 </class>

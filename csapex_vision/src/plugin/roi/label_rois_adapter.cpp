@@ -1,5 +1,5 @@
 /// HEADER
-#include "assign_roi_class_adapter.h"
+#include "label_rois_adapter.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -20,7 +20,7 @@
 using namespace csapex;
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER_NS(csapex, AssignROIClassAdapter, csapex::AssignROIClass)
+CSAPEX_REGISTER_NODE_ADAPTER_NS(csapex, LabelROIsAdapter, csapex::LabelROIs)
 
 namespace csapex {
     class QInteractiveRect : public QGraphicsRectItem {
@@ -103,7 +103,7 @@ namespace csapex {
 }
 
 
-AssignROIClassAdapter::AssignROIClassAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<AssignROIClass> node)
+LabelROIsAdapter::LabelROIsAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<LabelROIs> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       active_class_(0),
@@ -122,17 +122,17 @@ AssignROIClassAdapter::AssignROIClassAdapter(NodeHandleWeakPtr worker, NodeBox* 
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&AssignROIClassAdapter::displayRequest, this,
+    trackConnection(n->display_request.connect(std::bind(&LabelROIsAdapter::displayRequest, this,
                                             std::placeholders::_1)));
-    trackConnection(n->set_class.connect(std::bind(&AssignROIClassAdapter::setClassRequest, this, std::placeholders::_1)));
-    trackConnection(n->set_color.connect(std::bind(&AssignROIClassAdapter::setColorRequest, this,
+    trackConnection(n->set_class.connect(std::bind(&LabelROIsAdapter::setClassRequest, this, std::placeholders::_1)));
+    trackConnection(n->set_color.connect(std::bind(&LabelROIsAdapter::setColorRequest, this,
                                       std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    trackConnection(n->submit_request.connect(std::bind(&AssignROIClassAdapter::submitRequest, this)));
-    trackConnection(n->drop_request.connect(std::bind(&AssignROIClassAdapter::dropRequest, this)));
-    trackConnection(n->clear_request.connect(std::bind(&AssignROIClassAdapter::clearRequest, this)));
+    trackConnection(n->submit_request.connect(std::bind(&LabelROIsAdapter::submitRequest, this)));
+    trackConnection(n->drop_request.connect(std::bind(&LabelROIsAdapter::dropRequest, this)));
+    trackConnection(n->clear_request.connect(std::bind(&LabelROIsAdapter::clearRequest, this)));
 }
 
-bool AssignROIClassAdapter::eventFilter(QObject *o, QEvent *e)
+bool LabelROIsAdapter::eventFilter(QObject *o, QEvent *e)
 {
     QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
 
@@ -219,7 +219,7 @@ bool AssignROIClassAdapter::eventFilter(QObject *o, QEvent *e)
     return false;
 }
 
-void AssignROIClassAdapter::setupUi(QBoxLayout* layout)
+void LabelROIsAdapter::setupUi(QBoxLayout* layout)
 {
     QGraphicsScene* scene = view_->scene();
     if(scene == nullptr) {
@@ -257,12 +257,12 @@ void AssignROIClassAdapter::setupUi(QBoxLayout* layout)
     DefaultNodeAdapter::setupUi(layout);
 }
 
-Memento::Ptr AssignROIClassAdapter::getState() const
+Memento::Ptr LabelROIsAdapter::getState() const
 {
     return std::shared_ptr<State>(new State(state));
 }
 
-void AssignROIClassAdapter::setParameterState(Memento::Ptr memento)
+void LabelROIsAdapter::setParameterState(Memento::Ptr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
     apex_assert_hard(m.get());
@@ -273,7 +273,7 @@ void AssignROIClassAdapter::setParameterState(Memento::Ptr memento)
     loaded_ = true;
 }
 
-void AssignROIClassAdapter::display(QImage img)
+void LabelROIsAdapter::display(QImage img)
 {
     auto node = wrapped_.lock();
     if(!node) {
@@ -328,7 +328,7 @@ void AssignROIClassAdapter::display(QImage img)
     state.last_size = img_.size();
 }
 
-void AssignROIClassAdapter::fitInView()
+void LabelROIsAdapter::fitInView()
 {
     if(state.last_size.isNull()) {
         return;
@@ -339,7 +339,7 @@ void AssignROIClassAdapter::fitInView()
     view_->fitInView(view_->sceneRect(), Qt::KeepAspectRatio);
 }
 
-void AssignROIClassAdapter::submit()
+void LabelROIsAdapter::submit()
 {
     if(pixmap_ == nullptr)
         return;
@@ -350,7 +350,7 @@ void AssignROIClassAdapter::submit()
     node->done();
 }
 
-void AssignROIClassAdapter::drop()
+void LabelROIsAdapter::drop()
 {
     auto node = wrapped_.lock();
     if(!node) {
@@ -364,19 +364,19 @@ void AssignROIClassAdapter::drop()
     node->done();
 }
 
-void AssignROIClassAdapter::clear()
+void LabelROIsAdapter::clear()
 {
 
 }
 
-void AssignROIClassAdapter::setColor(int r, int g, int b)
+void LabelROIsAdapter::setColor(int r, int g, int b)
 {
     QColor c(r,g,b,127);
     colors_[active_class_] = c;
     active_color_ = c;
 }
 
-void AssignROIClassAdapter::setClass(int c)
+void LabelROIsAdapter::setClass(int c)
 {
     auto node = wrapped_.lock();
     if(!node) {
@@ -389,4 +389,4 @@ void AssignROIClassAdapter::setClass(int c)
 }
 
 /// MOC
-#include "../../moc_assign_roi_class_adapter.cpp"
+#include "../../moc_label_rois_adapter.cpp"

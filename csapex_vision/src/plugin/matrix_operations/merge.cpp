@@ -1,4 +1,4 @@
-#include "filter_merger.h"
+#include "merge.h"
 
 /// PROJECT
 #include <csapex_opencv/cv_mat_message.h>

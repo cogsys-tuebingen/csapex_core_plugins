@@ -170,11 +170,11 @@
     <description>Adaptive thresholding</description>
     <tags>Vision, Filter</tags>
   </class>
-  <class type="csapex::Merger" base_class_type="csapex::Node">
+  <class type="csapex::Merge" base_class_type="csapex::Node">
     <description>Merges multiple images as channels into one image</description>
     <tags>Vision</tags>
   </class>
-  <class type="csapex::Splitter" base_class_type="csapex::Node">
+  <class type="csapex::Split" base_class_type="csapex::Node">
     <description>Splits an image into multiple images, one for each channel</description>
     <tags>Vision</tags>
   </class>
@@ -211,6 +211,14 @@
     <description>Viola Jones Detector</description>
     <tags>Vision</tags>
   </class>
+<class type="csapex::AssignROIClassification" base_class_type="csapex::Node">
+  <description>Assign ROI classifications from classified feature messages.</description>
+  <tags>Vision, ROI</tags>
+</class>
+<class type="csapex::SetROIColorByClassification" base_class_type="csapex::Node">
+  <description>Set color for a certain classification.</description>
+  <tags>Vision, ROI</tags>
+</class>
   <class type="csapex::RenderROIs" base_class_type="csapex::Node">
     <description>Render ROIs on top of an image</description>
     <tags>Vision, ROI</tags>
@@ -469,6 +477,13 @@
     </description>
     <tags>Vision</tags>
   </class>
+  <class type="csapex::ACFStandardExtractor" base_class_type="csapex::Node">
+    <description>
+        Extract acf features from RGB or mono images.
+    </description>
+    <tags>Vision</tags>
+  </class>
+
   <class type="csapex::ClusterBoundaryMask" base_class_type="csapex::Node">
     <description>
         Retrieve the boundaries of clusters as a mask.
@@ -491,7 +506,7 @@
     <description></description>
     <tags>Vision</tags>
   </class>
-  <class type="csapex::AssignROIClass" base_class_type="csapex::Node">
+  <class type="csapex::LabelROIs" base_class_type="csapex::Node">
      <description></description>
      <tags>Vision</tags>
    </class>
@@ -514,7 +529,7 @@
 <class type="csapex::AssignClusterClassAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
-<class type="csapex::AssignROIClassAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+<class type="csapex::LabelROIsAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
 </class>

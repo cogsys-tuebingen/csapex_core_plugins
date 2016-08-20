@@ -9,6 +9,7 @@ namespace csapex {
 class ACFStandardExtractor : public csapex::Node
 {
 public:
+    ACFStandardExtractor();
 
     void setupParameters(Parameterizable &parameters) override;
     void setup(NodeModifier &node_modifier) override;
@@ -18,16 +19,17 @@ public:
 private:
     csapex::Input  *in_img_;
     csapex::Input  *in_rois_;
-    csapex::Output *out_;
+    csapex::Output *out_features_;
 
-    cv::Size                               extraction_window_size;
-    double                                 ratio_x_y_;
+    cv::Size                               window_size_before_;
+    cv::Size                               window_size_;
+    double                                 ratio_w_h_;
     bool                                   mirror_;
     bool                                   keep_ratio_;
 
-    cslibs_vision::ACFStandard::Parameters acf_params;
+    cslibs_vision::ACFStandard::Parameters acf_params_;
 
-    void update();
+    void updateWindow();
 
 };
 }
