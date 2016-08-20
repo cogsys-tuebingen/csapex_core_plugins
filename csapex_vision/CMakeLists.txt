@@ -60,154 +60,151 @@ include_directories(include
 
 
 add_library(${PROJECT_NAME}_plugin_core
-    src/plugin/register_plugin.cpp
+    src/register_plugin.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_core
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 
 add_library(${PROJECT_NAME}_plugin_node
-    src/plugin/rotate_image.cpp
-    src/plugin/grab_cut.cpp
-    src/plugin/camera.cpp
-    src/plugin/color_segmentation.cpp
-    src/plugin/filter/filter_apply_mask.cpp
+    src/rotate_image.cpp
+    src/grab_cut.cpp
+    src/camera.cpp
+    src/color_segmentation.cpp
+    src/filter/filter_apply_mask.cpp
 
-    src/plugin/filter/filter_static_mask.cpp
+    src/filter/filter_static_mask.cpp
 
-    src/plugin/mask_refinement.cpp
+    src/mask_refinement.cpp
 
-    src/plugin/hough_circle.cpp
-    src/plugin/vectorize_pyramid.cpp
+    src/hough_circle.cpp
+    src/vectorize_pyramid.cpp
 
-    src/plugin/grid_arranged_rois.cpp
+    src/grid_arranged_rois.cpp
 
-    src/plugin/matrix_operations/row.cpp
-    src/plugin/matrix_operations/col.cpp
-    src/plugin/matrix_operations/minmax_loc.cpp
-    src/plugin/matrix_operations/scale.cpp
-    src/plugin/matrix_operations/resize.cpp
-    src/plugin/matrix_operations/flip.cpp
-    src/plugin/matrix_operations/convert_type.cpp
-    src/plugin/matrix_operations/reshape.cpp
-    src/plugin/matrix_operations/image_padding.cpp
-    src/plugin/matrix_operations/copymakeborder.cpp
-    src/plugin/matrix_operations/merge.cpp
-    src/plugin/matrix_operations/split.cpp
+    src/matrix_operations/row.cpp
+    src/matrix_operations/col.cpp
+    src/matrix_operations/minmax_loc.cpp
+    src/matrix_operations/scale.cpp
+    src/matrix_operations/resize.cpp
+    src/matrix_operations/flip.cpp
+    src/matrix_operations/convert_type.cpp
+    src/matrix_operations/reshape.cpp
+    src/matrix_operations/image_padding.cpp
+    src/matrix_operations/copymakeborder.cpp
+    src/matrix_operations/merge.cpp
+    src/matrix_operations/split.cpp
 
-    src/plugin/set_color.cpp
-    src/plugin/mean_dev_normalization.cpp
+    src/set_color.cpp
+    src/mean_dev_normalization.cpp
 
-    src/plugin/levels.cpp
-    src/plugin/blur.cpp
-    src/plugin/gaussian_blur.cpp
-    src/plugin/bilateral.cpp
-    src/plugin/mean_dev.cpp
+    src/levels.cpp
+    src/blur.cpp
+    src/gaussian_blur.cpp
+    src/bilateral.cpp
+    src/mean_dev.cpp
 
-    src/plugin/load_filestorage.cpp
+    src/load_filestorage.cpp
 
 
-    src/plugin/filter/distance_transform.cpp
-    src/plugin/filter/gamma_correction.cpp
-    src/plugin/filter/filter_perspective.cpp
+    src/filter/distance_transform.cpp
+    src/filter/gamma_correction.cpp
+    src/filter/filter_perspective.cpp
 
-    src/plugin/filter/filter_debayer.cpp
-    src/plugin/filter/morphological.cpp
-#    src/plugin/vj_detector.cpp
-    src/plugin/number_generator.cpp
+    src/filter/filter_debayer.cpp
+    src/filter/morphological.cpp
+#    src/vj_detector.cpp
+    src/number_generator.cpp
 
-    src/plugin/roi/merge_rois.cpp
-    src/plugin/roi/grow_roi.cpp
-    src/plugin/roi/grow_rois.cpp
-    src/plugin/roi/extract_roi.cpp
-    src/plugin/roi/filter_rois.cpp
-    src/plugin/roi/flip_rois.cpp
-    src/plugin/roi/label_rois.cpp
-    src/plugin/roi/static_roi.cpp
-    src/plugin/roi/image_roi.cpp
-    src/plugin/roi/assign_roi_classification.cpp
-    src/plugin/roi/set_roi_color_by_classification.cpp
+    src/roi/merge_rois.cpp
+    src/roi/grow_roi.cpp
+    src/roi/grow_rois.cpp
+    src/roi/extract_roi.cpp
+    src/roi/filter_rois.cpp
+    src/roi/flip_rois.cpp
+    src/roi/label_rois.cpp
+    src/roi/static_roi.cpp
+    src/roi/image_roi.cpp
+    src/roi/assign_roi_classification.cpp
+    src/roi/set_roi_color_by_classification.cpp
 
-    src/plugin/combine/generic_image_combiner.cpp
-    src/plugin/combine/set_operation.cpp
-    src/plugin/combine/sum_channels.cpp
-    src/plugin/combine/matrix_stitcher.cpp
+    src/combine/generic_image_combiner.cpp
+    src/combine/set_operation.cpp
+    src/combine/sum_channels.cpp
+    src/combine/matrix_stitcher.cpp
 
-    src/plugin/modify/undistort.cpp
+    src/modify/undistort.cpp
 
-    src/plugin/modify/float_to_uchar.cpp
+    src/modify/float_to_uchar.cpp
 
-    src/plugin/color/color_convert.cpp
-    src/plugin/color/color_adjustment.cpp
-    src/plugin/color/yuv422_decoder.cpp
-    src/plugin/color/contrast_brightness.cpp
+    src/color/color_convert.cpp
+    src/color/color_adjustment.cpp
+    src/color/yuv422_decoder.cpp
+    src/color/contrast_brightness.cpp
 
-    src/plugin/features/corner_line_detection.cpp
-    src/plugin/features/difference_maximum.cpp
-    src/plugin/features/harris.cpp
-    src/plugin/features/canny.cpp
-    src/plugin/features/eigenvals_and_vecs.cpp
-    src/plugin/features/hough_linesp.cpp
-    src/plugin/features/hough_linesp.cpp
-    src/plugin/features/operator.cpp
-    src/plugin/features/laplacian.cpp
-    src/plugin/features/sobel.cpp
-    src/plugin/features/scharr.cpp
-    src/plugin/features/lsd.cpp
+    src/features/corner_line_detection.cpp
+    src/features/difference_maximum.cpp
+    src/features/harris.cpp
+    src/features/canny.cpp
+    src/features/eigenvals_and_vecs.cpp
+    src/features/hough_linesp.cpp
+    src/features/hough_linesp.cpp
+    src/features/operator.cpp
+    src/features/laplacian.cpp
+    src/features/sobel.cpp
+    src/features/scharr.cpp
+    src/features/lsd.cpp
 
-    src/plugin/visualize/matrix_to_heatmap.cpp
-    src/plugin/visualize/render_labels.cpp
-    src/plugin/visualize/image_text_label.cpp
-    src/plugin/visualize/render_rois.cpp
+    src/visualize/matrix_to_heatmap.cpp
+    src/visualize/render_labels.cpp
+    src/visualize/image_text_label.cpp
+    src/visualize/render_rois.cpp
 
-    src/plugin/filter/median_filter.cpp
-    src/plugin/filter/binomial_filter.cpp
-    src/plugin/filter/monofilter.cpp
-    src/plugin/filter/sequence_mean.cpp
-    src/plugin/filter/equalize.cpp
-    src/plugin/filter/normalize.cpp
-    src/plugin/filter/adaptive_threshold.cpp
-    src/plugin/filter/threshold_noise_filter.cpp
+    src/filter/median_filter.cpp
+    src/filter/binomial_filter.cpp
+    src/filter/monofilter.cpp
+    src/filter/sequence_mean.cpp
+    src/filter/equalize.cpp
+    src/filter/normalize.cpp
+    src/filter/adaptive_threshold.cpp
+    src/filter/threshold_noise_filter.cpp
 
-    src/plugin/analyze/pyramid.cpp
-    src/plugin/analyze/camera_calibration.cpp
-    src/plugin/analyze/cluster_boundary_mask.cpp
-    src/plugin/analyze/glcm.cpp
+    src/analyze/pyramid.cpp
+    src/analyze/camera_calibration.cpp
+    src/analyze/cluster_boundary_mask.cpp
+    src/analyze/glcm.cpp
 
-    src/plugin/segment/preemptiveSLIC.cpp
+    src/segment/preemptiveSLIC.cpp
 
-    src/plugin/label/label_regions.cpp
-    src/plugin/label/cluster_grid.cpp
-    src/plugin/label/assign_cluster_class.cpp
+    src/label/label_regions.cpp
+    src/label/cluster_grid.cpp
+    src/label/assign_cluster_class.cpp
 
-    src/plugin/recognition/acf_standard_extractor.cpp
-    src/plugin/recognition/acf_dynamic_extractor.cpp
-    src/plugin/recognition/hog_detector.cpp
-    src/plugin/recognition/hog_extractor.cpp
-    src/plugin/recognition/hog.cpp
-    src/plugin/recognition/hog_classifier.cpp
-    src/plugin/recognition/local_patterns.cpp
-    src/plugin/recognition/local_patterns_histogram.cpp
+    src/recognition/acf_standard_extractor.cpp
+    src/recognition/acf_dynamic_extractor.cpp
+    src/recognition/hog_detector.cpp
+    src/recognition/hog_extractor.cpp
+    src/recognition/hog.cpp
+    src/recognition/hog_classifier.cpp
+    src/recognition/local_patterns.cpp
+    src/recognition/local_patterns_histogram.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_node
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 
 add_library(${PROJECT_NAME}_plugin_qt
-    src/plugin/filter/filter_static_mask_painter.cpp
-    src/plugin/filter/filter_static_mask_adapter.cpp
-    src/plugin/mask_refinement_adapter.cpp
+    src/filter/filter_static_mask_painter.cpp
+    src/filter/filter_static_mask_adapter.cpp
+    src/mask_refinement_adapter.cpp
 
-    src/plugin/label/assign_cluster_class_adapter.cpp
+    src/label/assign_cluster_class_adapter.cpp
 
-    src/plugin/roi/label_rois_adapter.cpp
-    src/plugin/roi/image_roi_adapter.cpp
+    src/roi/label_rois_adapter.cpp
+    src/roi/image_roi_adapter.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_qt
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
-
-
-#add_executable(vision_evaluator src/deprecated.cpp)
 
 #
 # INSTALL
