@@ -47,6 +47,9 @@ private:
 
     mutable std::recursive_mutex mutex_;
     Metrics metrics_;
+
+    int negative_class_label_;
+    int positive_class_label_;
 };
 
 
