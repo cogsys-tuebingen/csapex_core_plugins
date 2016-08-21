@@ -4,10 +4,10 @@
 #include <csapex/model/node.h>
 
 namespace csapex {
-class CSAPEX_EXPORT_PLUGIN AssignFeatureLabels : public Node
+class CSAPEX_EXPORT_PLUGIN AssignFeatureClassifications : public Node
 {
 public:
-    AssignFeatureLabels();
+    AssignFeatureClassifications();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
