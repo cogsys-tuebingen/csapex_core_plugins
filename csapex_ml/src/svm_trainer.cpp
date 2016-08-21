@@ -136,9 +136,9 @@ void SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
         getParameter("gamma")->set(svm_params_.gamma);
     }
 
-    std::cout << "started training" << std::endl;
+    std::cout << "[SVM]: started training" << std::endl;
     if(svm.train(samples, labels,cv::Mat(), cv::Mat(), svm_params_)) {
-        std::cout << "finished training" << std::endl;
+        std::cout << "[SVM]: finished training" << std::endl;
         svm.print_decision_func();
         if(save_for_hog_) {
             cv::FileStorage fs(path_, cv::FileStorage::WRITE);
