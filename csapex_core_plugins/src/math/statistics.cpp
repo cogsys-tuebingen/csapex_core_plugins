@@ -50,10 +50,12 @@ public:
         double prev_mean = m;
         ++n;
         m = m + (x-m)/n;
-        S = S + (x-m)*(x-prev_mean);
+        S = ((n-1)*S + (x-m)*(x-prev_mean))/((double)n);
+
+        double std = sqrt(S);
 
         msg::publish(out_mean_, m);
-        msg::publish(out_std_dev_, S);
+        msg::publish(out_std_dev_, std);
     }
 
     void reset()
