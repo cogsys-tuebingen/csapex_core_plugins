@@ -1,5 +1,5 @@
 /// HEADER
-#include "assign_feature_labels.h"
+#include "assign_feature_classifications.h"
 
 /// PROJECT
 #include <csapex/model/node_modifier.h>
@@ -9,30 +9,30 @@
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 
-CSAPEX_REGISTER_CLASS(csapex::AssignFeatureLabels, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::AssignFeatureClassifications, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
 
-AssignFeatureLabels::AssignFeatureLabels()
+AssignFeatureClassifications::AssignFeatureClassifications()
 {
 
 }
 
-void AssignFeatureLabels::setup(NodeModifier &node_modifier)
+void AssignFeatureClassifications::setup(NodeModifier &node_modifier)
 {
-    in_features_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("features");
-    in_labels_   = node_modifier.addOptionalInput<GenericVectorMessage, int>("labels");
-    out_         = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("labeled features");
+    in_features_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
+    in_labels_   = node_modifier.addOptionalInput<GenericVectorMessage, int>("Classifications");
+    out_         = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Labelled features");
 }
 
-void AssignFeatureLabels::setupParameters(Parameterizable &parameters)
+void AssignFeatureClassifications::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareRange("label", 0, 255, 0, 1),
                             label_);
 }
 
-void AssignFeatureLabels::process()
+void AssignFeatureClassifications::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> in_features =
             msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_features_);

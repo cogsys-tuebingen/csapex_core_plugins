@@ -21,9 +21,9 @@ public:
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
-        node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
-        node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
-        node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
+        input_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
+        input_features_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
+        output_rois_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
     }
     virtual void setupParameters(Parameterizable &parameters) override
     {

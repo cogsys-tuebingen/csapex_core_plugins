@@ -63,7 +63,8 @@ add_library(csapex_ml_plugin SHARED
 
     src/arff_format_export.cpp
 
-    src/assign_feature_labels.cpp
+    src/assign_feature_classifications.cpp
+    src/exchange_feature_classification.cpp
 )
 
 target_link_libraries(csapex_ml_plugin

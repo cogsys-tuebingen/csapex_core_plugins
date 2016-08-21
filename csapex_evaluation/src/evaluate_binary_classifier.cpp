@@ -19,6 +19,11 @@ EvaluateBinaryClassifier::EvaluateBinaryClassifier()
 
 void EvaluateBinaryClassifier::setupParameters(Parameterizable& parameters)
 {
+    parameters.addParameter(param::ParameterFactory::declareValue("positive class label", 0),
+                            positive_class_label_);
+    parameters.addParameter(param::ParameterFactory::declareValue("negative class label", 1),
+                            negative_class_label_);
+
 }
 
 void EvaluateBinaryClassifier::setup(NodeModifier& node_modifier)
@@ -43,10 +48,10 @@ void EvaluateBinaryClassifier::process()
         std::unique_lock<std::recursive_mutex> lock(mutex_);
         metrics_.clear();
 
-        int tp = cm.histogram.at(std::make_pair(1, 1));
-        int tn = cm.histogram.at(std::make_pair(0, 0));
-        int fp = cm.histogram.at(std::make_pair(0, 1));
-        int fn = cm.histogram.at(std::make_pair(1, 0));
+        int tp = cm.histogram.at(std::make_pair(positive_class_label_, positive_class_label_));
+        int tn = cm.histogram.at(std::make_pair(negative_class_label_, negative_class_label_));
+        int fp = cm.histogram.at(std::make_pair(negative_class_label_, positive_class_label_));
+        int fn = cm.histogram.at(std::make_pair(positive_class_label_, negative_class_label_));
         int p = tp + fn;
         int n = tn + fp;
 

@@ -39,7 +39,7 @@ add_library(csapex_evaluation_plugin_node
     src/evaluate_binary_classifier.cpp
     src/empty_labeled_feature_message.cpp
     src/confidence_evaluator.cpp
-    src/ml_evaluator.cpp
+    src/evaluate_feature_classification.cpp
     src/confidence_class_toggle.cpp
 )
 
