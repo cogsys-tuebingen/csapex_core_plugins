@@ -77,8 +77,8 @@ QVariant ConfusionMatrixTableModel::data(const QModelIndex &index, int role) con
         return QVariant();
     }
 
-    auto actual = confusion_.classes[index.column()];
-    auto prediction = confusion_.classes[index.row()];
+    auto actual = confusion_.classes.at(index.column());
+    auto prediction = confusion_.classes.at(index.row());
     int entry = confusion_.histogram.at(std::make_pair(actual, prediction));
     if(role == Qt::DisplayRole) {
         return entry;

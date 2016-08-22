@@ -77,7 +77,7 @@ void FileImporter::setupParameters(Parameterizable& parameters)
     parameters.addParameter(immediate, std::bind(&FileImporter::changeMode, this));
 
     std::function<bool()> conditionf = [immediate]() { return !immediate->as<bool>(); };
-    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 256.0, 30.0, 0.5), conditionf, std::bind(&FileImporter::changeMode, this));
+    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 512.0, 30.0, 0.5), conditionf, std::bind(&FileImporter::changeMode, this));
 
     parameters.addParameter(param::ParameterFactory::declareBool("cache", 0), [this](param::Parameter* p) {
         cache_enabled_ = p->as<bool>();

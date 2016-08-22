@@ -169,7 +169,7 @@ void SVMEnsemble::load()
         svm_responses_.at<float>(i, 0) = labels.at(i);
 
         if(svm->rho() < min_rho)
-            min_rho = svm->rho();
+            min_rho = fabs(svm->rho());
     }
 
     if(!params_thresholds_.empty()) {
@@ -177,18 +177,19 @@ void SVMEnsemble::load()
         params_thresholds_.clear();
     }
 
-    double step = .1;
-    std::size_t digits = impl::digits(min_rho);
-    std::cout << digits << std::endl;
+    double step = std::pow(10,ceil(log10(min_rho)))*1e-7;/*.1;*/
     std::cout << min_rho << std::endl;
-    for(std::size_t i = 0 ; i < digits ; ++i) {
-        step *= .1;
-    }
+    std::cout << step << std::endl;
+//    std::size_t digits = impl::digits(min_rho);
+//    std::cout << digits << std::endl;
+//    for(std::size_t i = 0 ; i < digits ; ++i) {
+//        step *= .1;
+//    }
 
     svms_size_ = svms_.size();
     thresholds_.resize(svms_size_);
     for(std::size_t i = 0 ; i < svms_size_ ; ++i) {
-        std::string id = std::to_string((int) svm_responses_.at<float>(0,i));
+        std::string id = std::to_string((int) svm_responses_.at<float>(i,0));
         param::Parameter::Ptr param = param::ParameterFactory::declareRange("svm_" + id,
                                                                             -100.0,
                                                                             +100.0,
