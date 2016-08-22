@@ -31,6 +31,7 @@ private:
     std::string path_;
 
     void reload();
+    void updateMethod();
 };
 }
 #endif // ADABOOST_H

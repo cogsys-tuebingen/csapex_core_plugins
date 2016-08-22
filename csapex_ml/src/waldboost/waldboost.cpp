@@ -303,6 +303,31 @@ int WaldBoost::predict(const cv::Mat &sample, float &confidence) const
     return res > cascade_thresholds_[count - 1] ? +1 : -1;
 }
 
+void WaldBoost::save(const std::string &filename)
+{
+    cv::FileStorage fs(filename, cv::FileStorage::WRITE);
+    fs << "weak_count" << weak_count_;
+    fs << "thresholds" << thresholds_;
+    fs << "alphas" << alphas_;
+    fs << "polarities" << polarities_;
+    fs << "cascade_thresholds" << cascade_thresholds_;
+    fs << "feature_indices" << feature_indices_;
+
+    fs.release();
+}
+
+void WaldBoost::load(const std::string &filename)
+{
+    cv::FileStorage fs(filename, cv::FileStorage::READ);
+    fs["weak_count"] >> weak_count_;
+    fs["thresholds"] >> thresholds_;
+    fs["alphas"] >> alphas_;
+    fs["polarities"] >> polarities_;
+    fs["cascade_thresholds"] >> cascade_thresholds_;
+    fs["feature_indices"] >> feature_indices_;
+    fs.release();
+}
+
 void WaldBoost::write(FileStorage &fs) const
 {
     fs << "{";

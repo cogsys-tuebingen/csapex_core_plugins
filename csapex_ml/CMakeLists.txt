@@ -46,16 +46,19 @@ add_library(csapex_ml_plugin SHARED
     src/random_trees.cpp
     src/random_trees_trainer.cpp
 
-    src/svm_trainer.cpp
     src/svm.cpp
-    src/extended_svm.hpp
-    src/svm_ensemble_trainer.cpp
-    src/svm_ensemble.cpp
+    src/svm_trainer.cpp
 
-    src/ada_boost_trainer.cpp
+    src/extended_svm.hpp
+    src/svm_ensemble.cpp
+    src/svm_ensemble_trainer.cpp
+
     src/ada_boost.cpp
+    src/ada_boost_trainer.cpp
 
     src/waldboost/waldboost.cpp
+    src/waldboost.cpp
+    src/waldboost_trainer.cpp
 
     src/jannlab_mlp.cpp
     src/mlp/mlp.cpp

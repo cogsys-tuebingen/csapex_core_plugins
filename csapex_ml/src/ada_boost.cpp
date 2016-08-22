@@ -28,12 +28,12 @@ void AdaBoost::setup(NodeModifier& node_modifier)
 void AdaBoost::setupParameters(Parameterizable& parameters)
 {
     addParameter(csapex::param::ParameterFactory::declareFileInputPath(
-                                                      "boost/path",
+                                                      "/adaboost/path",
                                                       "",
                                                       "*.yaml *.tar.gz"),
                  path_);
 
-    addParameter(csapex::param::ParameterFactory::declareBool("boost/compute_labels",
+    addParameter(csapex::param::ParameterFactory::declareBool("/adaboost/compute_labels",
                                                               false),
                  compute_labels_);
 }
@@ -73,5 +73,15 @@ void AdaBoost::process()
 void AdaBoost::reload()
 {
     loaded_ = false;
+}
+
+void AdaBoost::updateMethod()
+{
+    compute_labels_ = readParameter<bool>("/adaboost/compute_labels");
+    if(compute_labels_) {
+        node_modifier_->setNoError();
+    } else {
+        node_modifier_->setWarning("This feature is not implemented fully yet!");
+    }
 }
 

@@ -82,6 +82,9 @@ bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
     for(const FeaturesMessage &fm : collection) {
         if(fm.value.size() != step)
             throw std::runtime_error("All descriptors must have the same length!");
+        if(fm.classification != 1 &&
+                fm.classification != -1)
+            throw std::runtime_error("Only class labels supported are '-1' and '1'!");
     }
 
     boost_params_.weight_trim_rate = weight_trim_rate_;
