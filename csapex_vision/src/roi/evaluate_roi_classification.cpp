@@ -31,7 +31,7 @@ public:
     }
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareTrigger("/reset"),
+        parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
                                 std::bind(&EvaluateROIClassification::reset, this));
 
     }

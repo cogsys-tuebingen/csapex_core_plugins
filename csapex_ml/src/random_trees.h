@@ -23,7 +23,7 @@ public:
     virtual void process() override;
 
 private:
-    void loadTree();
+    void reloadTree();
     connection_types::FeaturesMessage classify(const connection_types::FeaturesMessage& input);
 
 private:
@@ -32,8 +32,9 @@ private:
 
     Slot* reload_;
 
-    cv::RandomTrees dtree_;
-    bool loaded_;
+    cv::RandomTrees random_trees_;
+    std::string     path_;
+    bool            loaded_;
 };
 
 

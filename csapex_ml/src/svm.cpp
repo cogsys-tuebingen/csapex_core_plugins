@@ -23,23 +23,23 @@ void SVM::setup(NodeModifier& node_modifier)
     in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("features");
     out_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("labelled features");
 
-    reload_ = node_modifier.addSlot("Reload", std::bind(&SVM::load, this));
+    reload_ = node_modifier.addSlot("Reload", std::bind(&SVM::reload, this));
 
 }
 
 void SVM::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declarePath("svm path",
-                                                      csapex::param::ParameterDescription("Path to a saved svm."),
-                                                      true,
-                                                      "",
-                                                      "*.yaml *.tar.gz"),
-                 std::bind(&SVM::load, this));
+    parameters.addParameter(param::ParameterFactory::declarePath("svm path",
+                                                                 csapex::param::ParameterDescription("Path to a saved svm."),
+                                                                 true,
+                                                                 "",
+                                                                 "*.yaml *.tar.gz"),
+                            path_);
 
     csapex::param::ParameterPtr param_label = csapex::param::ParameterFactory::declareBool("compute labels",
                                                                                            csapex::param::ParameterDescription("Directly compute labels. 'false' allows manual threshold setting for binary classification"),
                                                                                            true);
-    addParameter(param_label);
+    parameters.addParameter(param_label);
 
     std::map<std::string, int> svm_thresh_types = {
         {">", GREATER},
@@ -48,19 +48,19 @@ void SVM::setupParameters(Parameterizable& parameters)
         {"<=", LESS_EQUAL}
     };
     auto threshold_condition = [param_label]() { return param_label->as<bool>() == false; };
-    addConditionalParameter(param::ParameterFactory::declareParameterSet("threshold/type",
-                                                                         csapex::param::ParameterDescription("SVM threshold comparison type"),
-                                                                         svm_thresh_types,
-                                                                         (int) GREATER),
-                            threshold_condition);
+    parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("threshold/type",
+                                                                                    csapex::param::ParameterDescription("SVM threshold comparison type"),
+                                                                                    svm_thresh_types,
+                                                                                    (int) GREATER),
+                                       threshold_condition);
 
-    addConditionalParameter(csapex::param::ParameterFactory::declareRange("threshold/value",
-                                                                          csapex::param::ParameterDescription("SVM threshold for binary classification"),
-                                                                          -1000.0,
-                                                                          1000.0,
-                                                                          0.0,
-                                                                          0.01),
-                            threshold_condition);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("threshold/value",
+                                                                                     csapex::param::ParameterDescription("SVM threshold for binary classification"),
+                                                                                     -100.0,
+                                                                                     100.0,
+                                                                                     0.0,
+                                                                                     0.001),
+                                       threshold_condition);
 }
 
 void SVM::process()
@@ -69,8 +69,14 @@ void SVM::process()
     std::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
     output->insert(output->end(), input->begin(), input->end());
 
+
     if(!loaded_) {
-        throw std::runtime_error("No SVM is loaded!");
+        if(path_ != "") {
+            svm_.load(path_.c_str(), "svm");
+            loaded_ = true;
+        } else {
+            throw std::runtime_error("SVM couldn't be loaded!");
+        }
     }
 
     const bool compute_label = readParameter<bool>("compute labels");
@@ -114,12 +120,7 @@ void SVM::process()
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);
 }
 
-void SVM::load()
+void SVM::reload()
 {
-    std::string path = readParameter<std::string>("svm path");
-    if(path == "")
-        return;
-
-    svm_.load(path.c_str(), "svm");
-    loaded_ = true;
+    loaded_ = false;
 }
