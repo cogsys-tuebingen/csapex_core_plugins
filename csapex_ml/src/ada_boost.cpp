@@ -30,7 +30,7 @@ void AdaBoost::setupParameters(Parameterizable& parameters)
                                                       "boost/path",
                                                       "",
                                                       "*.yaml *.tar.gz"),
-                 std::bind(&AdaBoost::load, this));
+                 path_);
 
     addParameter(csapex::param::ParameterFactory::declareBool("boost/compute_labels",
                                                               false),
@@ -44,7 +44,12 @@ void AdaBoost::process()
     output->insert(output->end(), input->begin(), input->end());
 
     if(!loaded_) {
-        throw std::runtime_error("Classifier ensemble is not loaded!");
+        if(path_ != "") {
+            boost_.load(path_.c_str(), "adaboost");
+            loaded_ = true;
+        } else {
+            throw std::runtime_error("Classifier ensemble is not loaded!");
+        }
     }
 
     std::size_t size = input->size();
@@ -61,14 +66,4 @@ void AdaBoost::process()
     }
 
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);
-}
-
-void AdaBoost::load()
-{
-    std::string path = readParameter<std::string>("boost/path");
-    if(path == "")
-        return;
-
-    boost_.load(path.c_str(), "adaboost");
-    loaded_ = true;
 }

@@ -22,15 +22,17 @@ RandomTrees::RandomTrees()
 
 void RandomTrees::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("file", "rforest.yaml"), std::bind(&RandomTrees::loadTree, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("file", "rforest.yaml"),
+                            path_);
 }
+
 
 void RandomTrees::setup(NodeModifier& node_modifier)
 {
     in_  = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Unclassified feature");
     out_ = node_modifier.addOutput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
 
-    reload_ = node_modifier.addSlot("Reload", std::bind(&RandomTrees::loadTree, this));
+    reload_ = node_modifier.addSlot("Reload", std::bind(&RandomTrees::reloadTree, this));
 }
 
 void RandomTrees::process()
@@ -38,17 +40,18 @@ void RandomTrees::process()
     std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
     std::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
 
-    std::size_t n = input->size();
-
-    if(loaded_) {
-        output->resize(n);
-        for(std::size_t i = 0; i < n; ++i) {
-            output->at(i) = classify(input->at(i));
+    if(!loaded_) {
+        if(path_ != "") {
+            random_trees_.load(path_.c_str());
+            loaded_ = true;
+        } else {
+            throw std::runtime_error("Randomforest couldn't be loaded!");
         }
-
-    } else {
-        *output = *input;
-        node_modifier_->setWarning("cannot classfiy, no forest loaded");
+    }
+    std::size_t n = input->size();
+    output->resize(n);
+    for(std::size_t i = 0; i < n; ++i) {
+        output->at(i) = classify(input->at(i));
     }
 
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);
@@ -59,15 +62,15 @@ connection_types::FeaturesMessage RandomTrees::classify(const FeaturesMessage &i
     connection_types::FeaturesMessage result = input;
 
     cv::Mat feature(1, input.value.size(), CV_32FC1, result.value.data());
-    float prediction = dtree_.predict(feature);
+    float prediction = random_trees_.predict(feature);
 
     std::map<int, float> votes;
     int max_votes    = 0;
     int max_class_id = 0;
-    int ntrees = dtree_.get_tree_count();
+    int ntrees = random_trees_.get_tree_count();
     for(int i = 0 ; i < ntrees ; ++i) {
         cv::Mat sample(1, result.value.size(), CV_32FC1, result.value.data());
-        CvDTreeNode* prediction = dtree_.get_tree(i)->predict(sample);
+        CvDTreeNode* prediction = random_trees_.get_tree(i)->predict(sample);
         int prediction_class_id = std::round(prediction->value);
         if(votes.find(prediction_class_id) == votes.end()) {
             votes[prediction_class_id] = 0;
@@ -86,10 +89,7 @@ connection_types::FeaturesMessage RandomTrees::classify(const FeaturesMessage &i
     return result;
 }
 
-void RandomTrees::loadTree()
+void RandomTrees::reloadTree()
 {
-    std::string file = readParameter<std::string>("file");
-    dtree_.load(file.c_str());
-
-    loaded_ = dtree_.get_tree_count() > 0;
+    loaded_ = false;
 }

@@ -24,12 +24,10 @@ private:
     Input  *in_;
     Output *out_;
 
-    bool      loaded_;
-    bool      compute_labels_;
-    cv::Boost boost_;
-
-
-    void load();
+    bool        loaded_;
+    bool        compute_labels_;
+    cv::Boost   boost_;
+    std::string path_;
 };
 }
 #endif // ADABOOST_H

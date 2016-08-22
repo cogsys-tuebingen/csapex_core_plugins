@@ -43,6 +43,16 @@ void ACFStandardExtractor::setupParameters(Parameterizable &parameters)
                             acf_params_.hog_directed);
     parameters.addParameter(param::ParameterFactory::declareBool("/acf/normalize_magnitude", false),
                             acf_params_.normalize_magnitude);
+
+    std::map<std::string, int> kernel_types =
+    {{"1D", cslibs_vision::ACF::Parameters::KERNEL_1D},
+     {"2D", cslibs_vision::ACF::Parameters::KERNEL_2D},
+     {"NONE", cslibs_vision::ACF::Parameters::NONE}};
+
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("/acf/kernel_type",
+                                                                         kernel_types,
+                                                                         (int) cslibs_vision::ACF::Parameters::KERNEL_2D),
+                            (int &) acf_params_.kernel_type);
 }
 
 void ACFStandardExtractor::setup(NodeModifier &node_modifier)

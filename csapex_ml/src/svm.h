@@ -25,10 +25,11 @@ private:
     Output     *out_;
     Slot       *reload_;
 
-    bool        loaded_;
     ExtendedSVM svm_;
+    std::string path_;
+    bool        loaded_;
 
-    void load();
+    void reload();
 };
 }
 
