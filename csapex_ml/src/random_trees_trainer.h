@@ -14,13 +14,13 @@ public:
     RandomTreesTrainer();
 
     void setup(csapex::NodeModifier& node_modifier) override;
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
 
 private:
     void updatePriors();
     void udpatePriorValues();
 
-    void processCollection(std::vector<connection_types::FeaturesMessage> &collection);
+    bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
 
 private:
     int categories_;

@@ -16,14 +16,14 @@ class CSAPEX_EXPORT_PLUGIN  AdaBoostTrainer : public CollectionNode<connection_t
 public:
     AdaBoostTrainer();
 
-    void setupParameters(Parameterizable &parameters);
+    void setupParameters(Parameterizable &parameters) override;
 
 private:
     std::string     path_;
     cv::BoostParams boost_params_;
     double          weight_trim_rate_;
 
-    void processCollection(std::vector<connection_types::FeaturesMessage> &collection);
+    bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
 };
 }
 

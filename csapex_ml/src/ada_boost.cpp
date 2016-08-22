@@ -22,6 +22,7 @@ void AdaBoost::setup(NodeModifier& node_modifier)
 {
     in_  = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("features");
     out_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("labelled features");
+    reload_ = node_modifier.addSlot("Reload", std::bind(&AdaBoost::reload, this));
 }
 
 void AdaBoost::setupParameters(Parameterizable& parameters)
@@ -67,3 +68,10 @@ void AdaBoost::process()
 
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);
 }
+
+
+void AdaBoost::reload()
+{
+    loaded_ = false;
+}
+

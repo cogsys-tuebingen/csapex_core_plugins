@@ -12,10 +12,10 @@
 #include <mutex>
 
 namespace csapex {
-class CSAPEX_EXPORT_PLUGIN MLP : public Node
+class CSAPEX_EXPORT_PLUGIN JANNLabMLP : public Node
 {
 public:
-    MLP();
+    JANNLabMLP();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);

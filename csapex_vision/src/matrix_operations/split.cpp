@@ -12,22 +12,22 @@
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
 
-CSAPEX_REGISTER_CLASS(csapex::Splitter, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::Split, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
 
-Splitter::Splitter() :
+Split::Split() :
     input_(nullptr)
 {
     channel_count_ = 0;
 }
 
-Splitter::~Splitter()
+Split::~Split()
 {
 }
 
-void Splitter::setup(NodeModifier& node_modifier)
+void Split::setup(NodeModifier& node_modifier)
 {
     /// add input
     input_ = node_modifier.addInput<CvMatMessage>("Image");
@@ -35,7 +35,7 @@ void Splitter::setup(NodeModifier& node_modifier)
     updateOutputs();
 }
 
-void Splitter::setupParameters(Parameterizable& parameters)
+void Split::setupParameters(Parameterizable& parameters)
 {
     addParameter(csapex::param::ParameterFactory::declareBool
                  ("enforce mono",
@@ -43,7 +43,7 @@ void Splitter::setupParameters(Parameterizable& parameters)
                   true));
 }
 
-void Splitter::process()
+void Split::process()
 {
     CvMatMessage::ConstPtr m = msg::getMessage<CvMatMessage>(input_);
 
@@ -98,7 +98,7 @@ void Splitter::process()
     }
 }
 
-void Splitter::updateOutputs()
+void Split::updateOutputs()
 {
     std::vector<Output*> outputs = node_modifier_->getMessageOutputs();
     int n = outputs.size();
@@ -143,15 +143,15 @@ void Splitter::updateOutputs()
 
 namespace csapex
 {
-class SplitterSerializer
+class SplitSerializer
 {
 public:
-    static void serialize(const Splitter& splitter, YAML::Node& doc)
+    static void serialize(const Split& splitter, YAML::Node& doc)
     {
         doc["channel_count"] = splitter.channel_count_;
     }
 
-    static void deserialize(Splitter& splitter, const YAML::Node& doc)
+    static void deserialize(Split& splitter, const YAML::Node& doc)
     {
         if(doc["channel_count"].IsDefined()) {
             splitter.channel_count_ = doc["channel_count"].as<int>();
@@ -162,4 +162,4 @@ public:
 };
 }
 
-CSAPEX_REGISTER_SERIALIZER(csapex::Splitter, SplitterSerializer)
+CSAPEX_REGISTER_SERIALIZER(csapex::Split, SplitSerializer)

@@ -6,13 +6,13 @@
 #include <csapex_opencv/cv_mat_message.h>
 
 namespace csapex {
-class Splitter : public csapex::Node
+class Split : public csapex::Node
 {
-    friend class SplitterSerializer;
+    friend class SplitSerializer;
 
 public:
-    Splitter();
-    ~Splitter();
+    Split();
+    ~Split();
 
     void setup(csapex::NodeModifier& node_modifier) override;
     void setupParameters(Parameterizable& parameters);

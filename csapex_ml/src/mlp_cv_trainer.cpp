@@ -7,7 +7,6 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/signal/event.h>
 
 /// SYSTEM
 #include <opencv2/ml/ml.hpp>
@@ -33,18 +32,18 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
 {
     CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
 
-    addParameter(csapex::param::ParameterFactory::declareFileOutputPath("file", "mlp.yaml"));
+    parameters.addParameter(csapex::param::ParameterFactory::declareFileOutputPath("file", "mlp.yaml"));
 
-    addParameter(csapex::param::ParameterFactory::declareRange<int>
-                 ("classes",
-                  csapex::param::ParameterDescription("Number of classes to learn."),
-                  0, 100, 2, 1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>
+                            ("classes",
+                             csapex::param::ParameterDescription("Number of classes to learn."),
+                             0, 100, 2, 1));
 
-    addParameter(csapex::param::ParameterFactory::declareRange<int>
-                 ("layers",
-                  csapex::param::ParameterDescription("Number of hidden layers"),
-                  0, 100, 1, 1),
-                 std::bind(&MLPCvTrainer::updateLayers, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>
+                            ("layers",
+                             csapex::param::ParameterDescription("Number of hidden layers"),
+                             0, 100, 1, 1),
+                            std::bind(&MLPCvTrainer::updateLayers, this));
 
     std::map<std::string, int> training_method = {
         {"backprop", cv::ANN_MLP_TrainParams::BACKPROP},
@@ -55,10 +54,10 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
             ("trainig method",
              training_method,
              cv::ANN_MLP_TrainParams::BACKPROP);
-    addParameter(training_parameter);
+    parameters.addParameter(training_parameter);
 
-    addParameter(csapex::param::ParameterFactory::declareRange<double>("training param 1", 0, 10, 0.1, 0.01));
-    addParameter(csapex::param::ParameterFactory::declareRange<double>("training param 2", 0, 10, 0.1, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("training param 1", 0, 10, 0.1, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("training param 2", 0, 10, 0.1, 0.01));
 
     std::map<std::string, int> activation_functions = {
         {"identity", cv::NeuralNet_MLP::IDENTITY},
@@ -70,16 +69,16 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
             ("activation function",
              activation_functions,
              cv::NeuralNet_MLP::SIGMOID_SYM);
-    addParameter(activation_parameter);
+    parameters.addParameter(activation_parameter);
 
-    addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
-                            ("activation alpha",
-                             -10, 10, 0, 0.01),
-                            [=](){ return activation_parameter->as<int>() != cv::NeuralNet_MLP::IDENTITY; });
-    addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
-                            ("activation beta",
-                             -10, 10, 0, 0.01),
-                            [=](){ return activation_parameter->as<int>() != cv::NeuralNet_MLP::IDENTITY; });
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
+                                       ("activation alpha",
+                                        -10, 10, 0, 0.01),
+                                       [=](){ return activation_parameter->as<int>() != cv::NeuralNet_MLP::IDENTITY; });
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
+                                       ("activation beta",
+                                        -10, 10, 0, 0.01),
+                                       [=](){ return activation_parameter->as<int>() != cv::NeuralNet_MLP::IDENTITY; });
 
 
     std::map<std::string, int> termcrit_type = {
@@ -97,17 +96,17 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
              termcrit_type, (int) (CV_TERMCRIT_ITER | CV_TERMCRIT_EPS));
     parameters.addParameter(termcrit_parameter);
 
-    addConditionalParameter(csapex::param::ParameterFactory::declareRange<int>
-                            ("max iterations",
-                             csapex::param::ParameterDescription("Maximum number of training iterations."),
-                             0, 1000000, 10000, 100),
-                            [=](){ return (termcrit_parameter->as<int>() & CV_TERMCRIT_ITER) != 0; });
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<int>
+                                       ("max iterations",
+                                        csapex::param::ParameterDescription("Maximum number of training iterations."),
+                                        0, 1000000, 10000, 100),
+                                       [=](){ return (termcrit_parameter->as<int>() & CV_TERMCRIT_ITER) != 0; });
 
-    addConditionalParameter(csapex::param::ParameterFactory::declareValue<double>
-                            ("epsilon",
-                             csapex::param::ParameterDescription("Training epsilon"),
-                             0.001),
-                            [=](){ return (termcrit_parameter->as<int>() & CV_TERMCRIT_EPS) != 0; });
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue<double>
+                                       ("epsilon",
+                                        csapex::param::ParameterDescription("Training epsilon"),
+                                        0.001),
+                                       [=](){ return (termcrit_parameter->as<int>() & CV_TERMCRIT_EPS) != 0; });
 }
 
 void MLPCvTrainer::updateLayers()
@@ -140,14 +139,8 @@ void MLPCvTrainer::updateLayers()
     }
 }
 
-void MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
+bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
-    if (collection.empty())
-    {
-        aerr << "there are no features to train on" << std::endl;
-        return;
-    }
-
     const int classes = readParameter<int>("classes");
 
     FeaturesMessage& first_feature = collection[0];
@@ -194,17 +187,22 @@ void MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
                readParameter<double>("activation alpha"),
                readParameter<double>("activation beta"));
 
-    ainfo << "starting training with " << collection.size() << " features" << std::endl;
+    std::cout << "[ANN]: Started training with " << trainig_data.rows << " samples!" << std::endl;
     int iters = mlp.train(trainig_data,
                           responses,
                           cv::Mat(),
                           cv::Mat(),
                           params,
                           0);
-    ainfo << "training finished after " << iters << " iterations, writing mlp" << std::endl;
-    mlp.save(readParameter<std::string>("file").c_str());
+    if(iters > 0) {
+        mlp.save(readParameter<std::string>("file").c_str());
+        std::cout << "[MLP_ANN]: Finished training after " << iters << " iterations!" << std::endl;
+    } else {
+        return false;
+    }
+    return true;
 
-/*
+    /*
     auto print_res = [](const cv::Mat& mat)
     {
         std::stringstream ss;

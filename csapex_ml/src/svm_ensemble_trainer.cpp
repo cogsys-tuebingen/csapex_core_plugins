@@ -19,6 +19,11 @@ SVMEnsembleTrainer::SVMEnsembleTrainer()
 {
 }
 
+void SVMEnsembleTrainer::setup(NodeModifier &modifier)
+{
+    CollectionNode<connection_types::FeaturesMessage>::setup(modifier);
+}
+
 void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
 {
     CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
@@ -115,13 +120,8 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
                                        one_vs_all_);
 }
 
-void SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collection)
+bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
-    /// TODO : Mix classes for negative samples?
-
-    if(collection.empty())
-        return;
-
     std::size_t step = collection.front().value.size();
     std::map<int, std::vector<std::size_t>> indices_by_label;
 
@@ -197,7 +197,7 @@ void SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
                     svm.write(fs.fs, label.c_str());
                     svm_labels.push_back(it->first);
                 } else {
-                    std::cerr << "Failed traininng for '" << it->first << "'!" << std::endl;
+                    return false;
                 }
             }
         } else {
@@ -247,14 +247,16 @@ void SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
                 }
 
                 /// train the svm
-                std::cout << "Started training for '" << it->first << std::endl;
+                std::cout << "[SVMEnsemble]: Started training for svm #"
+                          << it->first << " with " << samples.rows << std::endl;
                 if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
-                    std::cout << "Finished training for '" << it->first << "'!" << std::endl;
                     std::string label = prefix + std::to_string(it->first);
                     svm.write(fs.fs, label.c_str());
                     svm_labels.push_back(it->first);
+                    std::cout << "[SVMEnsemble]: Finished training for svm #"
+                              << it->first << "!" << std::endl;
                 } else {
-                    std::cerr << "Failed traininng for '" << it->first << "'!" << std::endl;
+                    return false;
                 }
             }
         }
@@ -291,17 +293,20 @@ void SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
             }
 
             /// train the svm
-            std::cout << "Started training for '" << it->first << std::endl;
+            std::cout << "[SVMEnsemble]: Started training for svm #"
+                      << it->first << " with " << samples.rows << std::endl;
             if(svm.train(samples, labels, cv::Mat(), cv::Mat(), params)) {
-                std::cout << "Finished training for '" << it->first << std::endl;
                 std::string label = prefix + std::to_string(it->first);
                 svm.write(fs.fs, label.c_str());
                 svm_labels.push_back(it->first);
+                std::cout << "[SVMEnsemble]: Finished training for svm #"
+                          << it->first << "!" << std::endl;
             } else {
-                std::cerr << "Failed traininng for '" << it->first << "'!" << std::endl;
+                return false;
             }
         }
     }
     fs << "labels" << svm_labels;
     fs.release();
+    return true;
 }

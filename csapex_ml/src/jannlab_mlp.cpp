@@ -1,5 +1,5 @@
 /// HEADER
-#include "mlp.h"
+#include "jannlab_mlp.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -12,37 +12,37 @@
 #include <fstream>
 #include <sstream>
 
-CSAPEX_REGISTER_CLASS(csapex::MLP, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::JANNLabMLP, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-MLP::MLP() :
+JANNLabMLP::JANNLabMLP() :
     mlp_input_size_(0),
     mlp_output_size_(0)
 {
 }
 
-void MLP::setup(NodeModifier& node_modifier)
+void JANNLabMLP::setup(NodeModifier& node_modifier)
 {
     in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
     out_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Labeled Features");
 }
 
-void MLP::setupParameters(Parameterizable& parameters)
+void JANNLabMLP::setupParameters(Parameterizable& parameters)
 {
     addParameter(csapex::param::ParameterFactory::declarePath("MLP path",
                                                       csapex::param::ParameterDescription("Path to a saved MLP."),
                                                       true,
                                                       "",
                                                       "*.yaml"),
-                 std::bind(&MLP::load, this));
+                 std::bind(&JANNLabMLP::load, this));
     addParameter(csapex::param::ParameterFactory::declarePath("normalization path",
                                                       csapex::param::ParameterDescription("Path to a normalization file."),
                                                       true,
                                                       "",
                                                       "*.norm"),
-                 std::bind(&MLP::load, this));
+                 std::bind(&JANNLabMLP::load, this));
 
 }
 
@@ -75,7 +75,7 @@ inline void convertNumeric(const std::vector<U> &src,
 }
 
 
-void MLP::process()
+void JANNLabMLP::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> in = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
     std::shared_ptr<std::vector<FeaturesMessage> >      out(new std::vector<FeaturesMessage>());
@@ -124,7 +124,7 @@ void MLP::process()
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
-void MLP::load()
+void JANNLabMLP::load()
 {
     auto mlp_p = readParameter<std::string>("MLP path");
     auto norm_p = readParameter<std::string>("normalization path");

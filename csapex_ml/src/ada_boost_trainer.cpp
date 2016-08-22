@@ -76,11 +76,8 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
                             boost_params_.use_surrogates);
 }
 
-void AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection)
+bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
-    if(collection.empty())
-        return;
-
     std::size_t step = collection.front().value.size();
     for(const FeaturesMessage &fm : collection) {
         if(fm.value.size() != step)
@@ -107,11 +104,12 @@ void AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
         }
     }
 
-    std::cout << "[AdaBoost]: started training" << std::endl;
+    std::cout << "[AdaBoost]: Started training with " << samples.rows << " samples!" << std::endl;
     if(boost.train(samples, CV_ROW_SAMPLE, labels, cv::Mat(), cv::Mat(), cv::Mat(), cv::Mat(), boost_params_)) {
+        std::cout << "[AdaBoost]: Finished training" << std::endl;
         boost.save(path_.c_str(), "adaboost");
     } else {
-        throw std::runtime_error("Training failed!");
+        return false;
     }
-    std::cout << "[Ended]: started training" << std::endl;
+    return true;
 }

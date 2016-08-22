@@ -20,7 +20,7 @@ private:
     void updatePriors();
     void udpatePriorValues();
 
-    void processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
+    bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
 
 private:
     int categories_;

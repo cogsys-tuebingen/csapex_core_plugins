@@ -78,10 +78,6 @@ add_library(${PROJECT_NAME}_plugin_node
     src/grab_cut.cpp
     src/camera.cpp
     src/color_segmentation.cpp
-    src/filter/filter_apply_mask.cpp
-
-    src/filter/filter_static_mask.cpp
-
     src/mask_refinement.cpp
 
     src/hough_circle.cpp
@@ -103,24 +99,19 @@ add_library(${PROJECT_NAME}_plugin_node
     src/matrix_operations/split.cpp
 
     src/set_color.cpp
-    src/mean_dev_normalization.cpp
-
     src/levels.cpp
-    src/blur.cpp
-    src/gaussian_blur.cpp
-    src/bilateral.cpp
-    src/mean_dev.cpp
 
     src/load_filestorage.cpp
 
-
-    src/filter/distance_transform.cpp
-    src/filter/gamma_correction.cpp
     src/filter/filter_perspective.cpp
-
     src/filter/filter_debayer.cpp
     src/filter/morphological.cpp
 #    src/vj_detector.cpp
+
+    src/filter/filter_apply_mask.cpp
+    src/filter/filter_static_mask.cpp
+    src/filter/distance_transform.cpp
+
     src/number_generator.cpp
 
     src/roi/merge_rois.cpp
@@ -177,11 +168,17 @@ add_library(${PROJECT_NAME}_plugin_node
     src/filter/normalize.cpp
     src/filter/adaptive_threshold.cpp
     src/filter/threshold_noise_filter.cpp
+    src/filter/mean_dev_normalization.cpp
+    src/filter/gamma_correction.cpp
+    src/filter/blur.cpp
+    src/filter/gaussian_blur.cpp
+    src/filter/bilateral.cpp
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
     src/analyze/cluster_boundary_mask.cpp
     src/analyze/glcm.cpp
+    src/analyze/mean_dev.cpp
 
     src/segment/preemptiveSLIC.cpp
 
@@ -197,6 +194,8 @@ add_library(${PROJECT_NAME}_plugin_node
     src/recognition/hog_classifier.cpp
     src/recognition/local_patterns.cpp
     src/recognition/local_patterns_histogram.cpp
+
+    src/event_and.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_node
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})

@@ -15,13 +15,13 @@ namespace csapex {
  * @brief The Merger class can be used to merge a certain amount of
  *        images.
  */
-class Merger : public Node, public VariadicInputs
+class Merge : public Node, public VariadicInputs
 {
 public:
     /**
      * @brief Merger Constructor.
      */
-    Merger();
+    Merge();
 
     /**
      * @brief See base class documentation.

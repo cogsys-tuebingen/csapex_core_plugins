@@ -55,7 +55,9 @@ add_library(csapex_ml_plugin SHARED
     src/ada_boost_trainer.cpp
     src/ada_boost.cpp
 
-    src/mlp.cpp
+    src/waldboost/waldboost.cpp
+
+    src/jannlab_mlp.cpp
     src/mlp/mlp.cpp
 
     src/mlp_cv.cpp

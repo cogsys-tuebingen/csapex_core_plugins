@@ -16,7 +16,8 @@ class CSAPEX_EXPORT_PLUGIN SVMEnsembleTrainer : public CollectionNode<connection
 public:
     SVMEnsembleTrainer();
 
-    void setupParameters(Parameterizable& parameters);
+    void setup(NodeModifier &modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 private:
     std::string     path_;
@@ -27,7 +28,7 @@ private:
 
     enum ClassTypes {NEGATIVE = -1, POSITIVE = 1};
 
-    void processCollection(std::vector<connection_types::FeaturesMessage> &collection);
+    bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
 
 };
 }

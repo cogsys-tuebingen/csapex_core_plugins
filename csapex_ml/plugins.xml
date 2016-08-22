@@ -13,7 +13,7 @@
   <description>Train a random forest</description>
 </class>
 
-<class type="csapex::MLP" base_class_type="csapex::Node">
+<class type="csapex::JANNLabMLP" base_class_type="csapex::Node">
   <description>MLP to classify data.</description>
   <tags>ML</tags>
 </class>

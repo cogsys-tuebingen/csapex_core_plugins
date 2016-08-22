@@ -7,7 +7,6 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/signal/event.h>
 
 /// SYSTEM
 #include <opencv2/ml/ml.hpp>
@@ -128,13 +127,8 @@ void DecisionTreeTrainer::udpatePriorValues()
     }
 }
 
-void DecisionTreeTrainer::processCollection(std::vector<connection_types::FeaturesMessage>& collection)
+bool DecisionTreeTrainer::processCollection(std::vector<connection_types::FeaturesMessage>& collection)
 {
-    if(collection.empty()) {
-        aerr << "there are no features to train on" << std::endl;
-        return;
-    }
-
     FeaturesMessage& first_feature = collection[0];
     std::size_t feature_length = first_feature.value.size();
 
@@ -173,17 +167,17 @@ void DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
     cv::Mat var_type( train_data.cols + 1, 1, CV_8U, CV_VAR_NUMERICAL);
 
     cv::DecisionTree dtree;
-    ainfo << "starting training with " << n << " features" << std::endl;
-    /*bool result = */
-    dtree.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, missing, params);
-
-    ainfo << "training finished, writing tree" << std::endl;
-    dtree.save(readParameter<std::string>("file").c_str());
-    ainfo << "done writing tree." << std::endl;
-
+    std::cout << "[DecisionTree]: Started training with " << train_data.rows << " samples!" << std::endl;
+    if(dtree.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, missing, params)) {
+        dtree.save(readParameter<std::string>("file").c_str());
+        std::cout << "[DecisionTree]: Finished training!" << std::endl;
+    } else {
+        return false;
+    }
     //    if(result) {
     //    } else {
     //        throw std::runtime_error("training failed for an unknown reason");
     //    }
+   return true;
 }
 

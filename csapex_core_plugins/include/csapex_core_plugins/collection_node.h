@@ -21,8 +21,8 @@ public:
     {}
 
     virtual void setupParameters(Parameterizable &parameters) {
-        addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType>::doProcessCollection, this, std::ref(buffer_)));
-        addParameter(csapex::param::ParameterFactory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType>::clearCollection, this));
+        parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType>::doProcessCollection, this, std::ref(buffer_)));
+        parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType>::clearCollection, this));
     }
 
     virtual void setup(NodeModifier& modifier) override
@@ -30,6 +30,7 @@ public:
         in_vector_generic  = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
         in_vector  = modifier.addOptionalInput<connection_types::AnyMessage>("messages to collect (deprecated)");
         in_single  = modifier.addOptionalInput<MessageType>("message to collect");
+        event_processed = modifier.addEvent("Processed Collection");
     }
 
     virtual void process() override
@@ -50,10 +51,21 @@ public:
 protected:
     void doProcessCollection(std::vector<MessageType>& collection)
     {
-        processCollection(collection);
+        if(collection.empty()) {
+            node_modifier_->setError("Collection is empty!");
+            return;
+        } else {
+            node_modifier_->setNoError();
+        }
+
+        if(processCollection(collection)) {
+            event_processed->trigger();
+        } else {
+            node_modifier_->setError("Could not process the collection!");
+        }
     }
 
-    virtual void processCollection(std::vector<MessageType>& collection) = 0;
+    virtual bool processCollection(std::vector<MessageType>& collection) = 0;
 
     void clearCollection()
     {
@@ -64,6 +76,7 @@ protected:
     Input* in_vector_generic;
     Input* in_vector;
     Input* in_single;
+    Event* event_processed;
 
 private:
     std::vector<MessageType> buffer_;

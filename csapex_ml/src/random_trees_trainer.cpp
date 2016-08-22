@@ -7,7 +7,6 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/signal/event.h>
 
 /// SYSTEM
 #include <opencv2/ml/ml.hpp>
@@ -148,13 +147,8 @@ void RandomTreesTrainer::udpatePriorValues()
     }
 }
 
-void RandomTreesTrainer::processCollection(std::vector<connection_types::FeaturesMessage>& collection)
+bool RandomTreesTrainer::processCollection(std::vector<connection_types::FeaturesMessage>& collection)
 {
-    if(collection.empty()) {
-        aerr << "there are no features to train on" << std::endl;
-        return;
-    }
-
     FeaturesMessage& first_feature = collection[0];
     std::size_t feature_length = first_feature.value.size();
 
@@ -195,17 +189,13 @@ void RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     cv::Mat var_type( train_data.cols + 1, 1, CV_8U, CV_VAR_NUMERICAL);
 
     cv::RandomTrees rtrees;
-    ainfo << "starting training with " << n << " features" << std::endl;
-    /*bool result = */
-    rtrees.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, cv::Mat(), params);
-
-    ainfo << "training finished, writing forest" << std::endl;
-    rtrees.save(readParameter<std::string>("file").c_str());
-    ainfo << "done writing forest." << std::endl;
-
-    //    if(result) {
-    //    } else {
-    //        throw std::runtime_error("training failed for an unknown reason");
-    //    }
+    std::cout << "[RandomTrees]: Started training with " << n << " samples!" << std::endl;
+    if(rtrees.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, cv::Mat(), params)) {
+        std::cout << "[RandomTrees]: Finished training!" << std::endl;
+        rtrees.save(readParameter<std::string>("file").c_str());
+    } else {
+        return false;
+    }
+    return true;
 }
 

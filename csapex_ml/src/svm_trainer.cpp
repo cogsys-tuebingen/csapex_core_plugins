@@ -19,6 +19,11 @@ SVMTrainer::SVMTrainer()
 {
 }
 
+void SVMTrainer::setup(NodeModifier &modifier)
+{
+    CollectionNode<connection_types::FeaturesMessage>::setup(modifier);
+}
+
 void SVMTrainer::setupParameters(Parameterizable& parameters)
 {
     CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
@@ -109,11 +114,8 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
                                        svm_params_.p);
 }
 
-void SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
+bool SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
-    if(collection.empty())
-        return;
-
     std::size_t step = collection.front().value.size();
     for(const FeaturesMessage &fm : collection) {
         if(fm.value.size() != step)
@@ -136,9 +138,9 @@ void SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
         getParameter("gamma")->set(svm_params_.gamma);
     }
 
-    std::cout << "[SVM]: started training" << std::endl;
+    std::cout << "[SVM]: started training with " << samples.rows << " samples!"  << std::endl;
     if(svm.train(samples, labels,cv::Mat(), cv::Mat(), svm_params_)) {
-        std::cout << "[SVM]: finished training" << std::endl;
+        std::cout << "[SVM]: Finished training!" << std::endl;
         if(save_for_hog_) {
             cv::FileStorage fs(path_, cv::FileStorage::WRITE);
             CvSVMDecisionFunc *df = svm.get_decision_function();
@@ -157,6 +159,8 @@ void SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
             svm.save(path_.c_str(), "svm");
         }
     } else {
-        throw std::runtime_error("Training failed!");
+        return false;
     }
+
+    return true;
 }

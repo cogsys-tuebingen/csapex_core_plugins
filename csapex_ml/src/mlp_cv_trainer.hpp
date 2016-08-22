@@ -14,7 +14,7 @@ public:
     virtual void setupParameters(Parameterizable &parameters) override;
 
 private:
-    void processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;
+    bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;
     void updateLayers();
 
 private:

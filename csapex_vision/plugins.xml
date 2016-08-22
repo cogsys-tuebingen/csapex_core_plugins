@@ -6,6 +6,11 @@
 
 
 <library path="libcsapex_vision_plugin_node">
+<class type="csapex::EventAND" base_class_type="csapex::Node">
+  <description>Check if two events have happened.</description>
+  <tags>Vision</tags>
+</class>
+
 <class type="csapex::StaticRoi" base_class_type="csapex::Node">
   <description>Produce static roi matrix.</description>
   <tags>Vision</tags>
@@ -20,8 +25,6 @@
 <class type="csapex::GrabCut" base_class_type="csapex::Node">
   <description>GrabCut image segmentation</description>
 </class>
-
-
 
 <class type="csapex::Camera" base_class_type="csapex::Node">
   <description>
@@ -491,7 +494,12 @@
     </description>
     <tags>Vision</tags>
   </class>
-
+  <class type="csapex::ACFDynamicExtractor" base_class_type="csapex::Node">
+    <description>
+        Extract acf features from arbitrary images.
+    </description>
+    <tags>Vision</tags>
+  </class>
   <class type="csapex::ClusterBoundaryMask" base_class_type="csapex::Node">
     <description>
         Retrieve the boundaries of clusters as a mask.
@@ -522,6 +530,7 @@
       <description></description>
       <tags>Vision</tags>
     </class>
+
 </library>
 
 

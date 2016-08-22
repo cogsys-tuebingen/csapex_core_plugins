@@ -23,11 +23,14 @@ public:
 private:
     Input  *in_;
     Output *out_;
+    Slot   *reload_;
 
     bool        loaded_;
     bool        compute_labels_;
     cv::Boost   boost_;
     std::string path_;
+
+    void reload();
 };
 }
 #endif // ADABOOST_H
