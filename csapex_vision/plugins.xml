@@ -165,6 +165,11 @@
     <description>Converts images between color spaces</description>
     <tags>Vision, Filter, Convert</tags>
   </class>
+  <class type="csapex::LABToLCh" base_class_type="csapex::Node">
+    <description>Convert LAB color space to LCh space.</description>
+    <tags>Vision, Filter, Convert</tags>
+  </class>
+
   <class type="csapex::YUV422Decoder" base_class_type="csapex::Node">
     <description>Converts a 2 channel YUV422 image into an 3 channel YUV422 image</description>
     <tags>Vision, Filter, Convert</tags>

@@ -141,6 +141,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/color/color_adjustment.cpp
     src/color/yuv422_decoder.cpp
     src/color/contrast_brightness.cpp
+    src/color/lab_to_lch.cpp
 
     src/features/corner_line_detection.cpp
     src/features/difference_maximum.cpp

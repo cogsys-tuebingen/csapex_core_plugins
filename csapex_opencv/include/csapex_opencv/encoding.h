@@ -132,6 +132,11 @@ static const Channel unknown("?",0,1,  g_channels);
 
 static const Channel a("a",0,255, g_channels);
 static const Channel b("b",0,255, g_channels);
+
+static const Channel L("L",  0.f, 1.f, g_channels);
+static const Channel C("C",  0.f, 1.f, g_channels);
+static const Channel H("H",  0.f, 1.f, g_channels);
+
 }
 
 static const Encoding mono = { channel::gray };
@@ -143,6 +148,7 @@ static const Encoding hsl = { channel::hue, channel::saturation, channel::l };
 static const Encoding yuv = { channel::y, channel::u, channel::v };
 static const Encoding depth = { channel::depth };
 static const Encoding lab = {channel::l, channel::a, channel::b };
+static const Encoding LCh = {channel::L, channel::C, channel::H };
 }
 
 }
