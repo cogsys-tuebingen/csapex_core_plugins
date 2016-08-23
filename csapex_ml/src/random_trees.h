@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <csapex_ml/features_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 /// PROJECT
 #include <csapex/model/node.h>
@@ -24,17 +25,19 @@ public:
 
 private:
     void reloadTree();
-    connection_types::FeaturesMessage classify(const connection_types::FeaturesMessage& input);
 
 private:
-    Input*  in_;
-    Output* out_;
+    Input*  in_features_;
+    Output* out_features_;
+    Output* out_class_weights_;
 
-    Slot* reload_;
+    Slot*   reload_;
 
-    cv::RandomTrees random_trees_;
-    std::string     path_;
-    bool            loaded_;
+    cv::RandomTrees            random_trees_;
+    std::string                path_;
+    bool                       loaded_;
+    bool                       compute_class_weights_;
+    std::map<int, std::size_t> class_labels_;
 };
 
 

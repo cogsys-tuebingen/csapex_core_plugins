@@ -38,7 +38,8 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
                  std::bind(&RandomTreesTrainer::updatePriors, this));;
 
     addParameter(csapex::param::ParameterFactory::declareFileOutputPath
-                 ("file", "rforest.yaml"));
+                 ("path", "rforest.yaml"),
+                 path_);
 
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max depth",
@@ -158,6 +159,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     cv::Mat responses(collection.size(), 1, CV_32SC1, cv::Scalar());
     int tflag = CV_ROW_SAMPLE;
 
+    std::set<int> classifications;
     std::size_t n = collection.size();
     for(std::size_t i = 0; i < n; ++i) {
         FeaturesMessage& feature = collection[i];
@@ -172,6 +174,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
         }
 
         responses.at<int>(i,0) = feature.classification;
+        classifications.insert(feature.classification);
     }
 
     CvRTParams params( readParameter<int>("max depth"),
@@ -191,8 +194,15 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     cv::RandomTrees rtrees;
     std::cout << "[RandomTrees]: Started training with " << n << " samples!" << std::endl;
     if(rtrees.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, cv::Mat(), params)) {
+        cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+        rtrees.write(fs.fs, "random_forest");
+        fs << "classes" << "[";
+        for(int i : classifications) {
+            fs << i;
+        }
+        fs << "]";
+        fs.release();
         std::cout << "[RandomTrees]: Finished training!" << std::endl;
-        rtrees.save(readParameter<std::string>("file").c_str());
     } else {
         return false;
     }
