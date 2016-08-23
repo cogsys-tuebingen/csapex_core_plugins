@@ -96,6 +96,10 @@ struct Label {
                       const LabelClusteredPointCloud::Indices &indices)
     {
         pcl::PointCloud<pcl::PointXYZL>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZL>);
+        cloud->header = src->header;
+        cloud->width = src->width;
+        cloud->height = src->height;
+        cloud->is_dense = src->is_dense;
         Impl<PointT, pcl::PointXYZL>::label(src, cloud, indices);
         dst_msg->value = cloud;
     }

@@ -102,6 +102,10 @@
   <description>Converts a colored point cloud to a color image</description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::NormalsToColorImage" base_class_type="csapex::Node">
+  <description>Converts a normals point cloud to a color image</description>
+  <tags>PointCloud</tags>
+</class>
 <class type="csapex::PointCloudToXYZ" base_class_type="csapex::Node">
   <description>Converts any point cloud to PointXYZ</description>
   <tags>PointCloud</tags>

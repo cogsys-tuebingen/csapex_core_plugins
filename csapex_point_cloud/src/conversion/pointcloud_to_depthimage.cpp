@@ -47,6 +47,9 @@ public:
     {
         unsigned n = cloud->points.size();
 
+        apex_assert(cloud->isOrganized());
+        apex_assert(cloud->width != 0 && cloud->height != 0);
+
         int cols = cloud->width;
         int rows = n / cols;
 
