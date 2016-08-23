@@ -1,7 +1,5 @@
-#include "cluster_pointcloud_page.h"
-
 /// HEADER
-#include "cluster_pointcloud_array.h"
+#include "cluster_array.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -14,11 +12,10 @@
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
 
-#include <cslibs_kdtree/page.hpp>
-#include <cslibs_kdtree/index.hpp>
+#include <cslibs_kdtree/array_clustering.hpp>
 #include <cslibs_kdtree/fill.hpp>
 
-CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudPaging, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudArray, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -37,10 +34,11 @@ struct Entry {
     }
 };
 
-using PageType            = kdtree::Page<Entry*, 3>;
-using PageIndex           = PageType::Index;
+using ArrayType           = kdtree::Array<Entry*, 3>;
+using ArrayIndex          = ArrayType::Index;
 using AO                  = kdtree::ArrayOperations<3, int, int>;
 using AOA                 = kdtree::ArrayOperations<3, int, std::size_t>;
+
 
 struct Indexation {
     using BinType = std::array<double, 3>;
@@ -52,10 +50,11 @@ struct Indexation {
     {
     }
 
-    inline static PageType::Size size(const DataIndex &min_index,
+
+    inline static ArrayType::Size size(const DataIndex &min_index,
                                        const DataIndex &max_index)
     {
-        PageType::Size size;
+        ArrayType::Size size;
         for(std::size_t i = 0 ; i < 3 ; ++i) {
             size[i] = (max_index[i] - min_index[i]) + 1;
         }
@@ -74,25 +73,25 @@ struct Indexation {
     inline constexpr DataIndex create(const PointT& point) const
     {
         return { static_cast<int>(std::floor(point.x / bin_sizes[0])),
-                 static_cast<int>(std::floor(point.y / bin_sizes[1])),
-                 static_cast<int>(std::floor(point.z / bin_sizes[2]))};
+                    static_cast<int>(std::floor(point.y / bin_sizes[1])),
+                    static_cast<int>(std::floor(point.z / bin_sizes[2]))};
     }
 };
 
-class PageClustering {
+class ArrayClustering {
 public:
     typedef kdtree::detail::fill<DataIndex, 3>   MaskFiller;
     typedef typename MaskFiller::Type            MaskType;
 
-    PageClustering(std::vector<Entry*>            &_entries,
+    ArrayClustering(std::vector<Entry*>            &_entries,
                     std::vector<pcl::PointIndices> &_indices,
-                    PageType                      &_array,
+                    ArrayType                      &_array,
                     DataIndex                      &_min_index,
                     DataIndex                      &_max_index) :
         cluster_count(0),
         entries(_entries),
         indices(_indices),
-        page(_array),
+        array(_array),
         min_index(_min_index),
         max_index(_max_index)
     {
@@ -119,13 +118,13 @@ private:
 
     std::vector<Entry*>            &entries;
     std::vector<pcl::PointIndices> &indices;
-    PageType                      &page;
-    DataIndex                      min_index;
-    DataIndex                      max_index;
+    ArrayType                      &array;
+    DataIndex            min_index;
+    DataIndex            max_index;
 
     inline void clusterEntry(Entry *entry)
     {
-        PageIndex page_index;
+        ArrayIndex array_index;
         DataIndex index;
         for(DataIndex &offset : offsets) {
             if(AO::is_zero(offset))
@@ -137,13 +136,13 @@ private:
             for(std::size_t j = 0 ; j < 3 ; ++j) {
                 out_of_bounds |= index[j] < min_index[j];
                 out_of_bounds |= index[j] > max_index[j];
-                page_index[j]  = index[j] - min_index[j];
+                array_index[j]  = index[j] - min_index[j];
             }
 
             if(out_of_bounds)
                 continue;
 
-            Entry *neighbour = page.at(page_index);
+            Entry *neighbour = array.at(array_index);
             if(!neighbour)
                 continue;
             if(neighbour->cluster > -1)
@@ -163,7 +162,7 @@ private:
 
 }
 
-void ClusterPointCloudPaging::setup(NodeModifier &node_modifier)
+void ClusterPointCloudArray::setup(NodeModifier &node_modifier)
 {
     in_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
     in_indices_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
@@ -171,7 +170,7 @@ void ClusterPointCloudPaging::setup(NodeModifier &node_modifier)
     out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
 }
 
-void ClusterPointCloudPaging::setupParameters(Parameterizable &parameters)
+void ClusterPointCloudArray::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareRange("bin/size_x", 0.01, 8.0, 0.1, 0.01),
                             cluster_params_.bin_sizes[0]);
@@ -185,14 +184,14 @@ void ClusterPointCloudPaging::setupParameters(Parameterizable &parameters)
                             cluster_params_.cluster_sizes[1]);
 }
 
-void ClusterPointCloudPaging::process()
+void ClusterPointCloudArray::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_cloud_));
-    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointCloudPaging>(this, msg), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointCloudArray>(this, msg), msg->value);
 }
 
 template <class PointT>
-void ClusterPointCloudPaging::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+void ClusterPointCloudArray::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     if (cloud->empty())
         return;
@@ -240,21 +239,21 @@ void ClusterPointCloudPaging::inputCloud(typename pcl::PointCloud<PointT>::Const
         }
     }
     std::vector<impl::Entry*> referenced;
-    impl::PageType::Size size = impl::Indexation::size(min_index, max_index);
-    impl::PageType page(size);
+    impl::ArrayType::Size size = impl::Indexation::size(min_index, max_index);
+    impl::ArrayType array(size);
     {
         /// Setup array adressing
-        impl::PageType::Index index;
+        impl::ArrayType::Index index;
         for(impl::Entry &e : entries) {
             index = impl::AOA::sub(e.index, min_index);
-            impl::Entry *& page_entry = page.at(index);
-            if(!page_entry) {
+            impl::Entry *& array_entry = array.at(index);
+            if(!array_entry) {
                 /// put into array
-                page_entry = &e;
-                referenced.emplace_back(page_entry);
+                array_entry = &e;
+                referenced.emplace_back(array_entry);
             } else {
                 /// fuse with existing
-                std::vector<int> &array_entry_indices = page_entry->indices;
+                std::vector<int> &array_entry_indices = array_entry->indices;
                 array_entry_indices.insert(array_entry_indices.end(),
                                            e.indices.begin(),
                                            e.indices.end());
@@ -264,7 +263,7 @@ void ClusterPointCloudPaging::inputCloud(typename pcl::PointCloud<PointT>::Const
     {
         /// Clustering stage
         std::vector<pcl::PointIndices> buffer;
-        impl::PageClustering clustering(referenced, buffer, page, min_index, max_index);
+        impl::ArrayClustering clustering(referenced, buffer, array, min_index, max_index);
         clustering.cluster();
 
         for(pcl::PointIndices &pcl_indices : buffer) {

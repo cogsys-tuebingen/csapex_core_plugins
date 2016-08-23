@@ -1,4 +1,4 @@
-#include "cluster_pointcloud_array_filtered.h"
+#include "cluster_array_filtered.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
