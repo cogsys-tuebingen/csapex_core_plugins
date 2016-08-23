@@ -10,7 +10,7 @@
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
-
+#include "cluster_utils.hpp"
 
 CSAPEX_REGISTER_CLASS(csapex::ClusterPointcloudKDTreeFiltered, csapex::Node)
 
@@ -78,112 +78,8 @@ void ClusterPointcloudKDTreeFiltered::setup(NodeModifier& node_modifier)
 namespace detail_filtered
 {
 
-class Validator
-{
-    using ClusterParams = ClusterPointcloudKDTreeFiltered::ClusterParams;
-
-public:
-    enum class Result { ACCEPTED, TO_SMALL, REJECTED };
-
-    Validator(const ClusterParams& params,
-              const pcl::PointIndices& indices,
-              const math::Distribution<3>& distribution) :
-        params(params),
-        buffer_indices(indices),
-        buffer_distribution(distribution)
-    {
-        square(this->params.cluster_distance_and_weights[0]);
-        for(std::size_t i = 0 ; i < 3 ; ++i) {
-            square(this->params.cluster_std_devs[i].first);
-            square(this->params.cluster_std_devs[i].second);
-        }
-    }
-
-    inline Result validate() const
-    {
-        if (!validateSize(buffer_indices.indices.size()))
-            return Result::TO_SMALL;
-
-        if (params.cluster_distance_and_weights[0] != 0)
-        {
-            switch (params.cluster_cov_thresh_type)
-            {
-            default:
-            case ClusterParams::DEFAULT: return validateCovDefault(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
-            case ClusterParams::PCA2D: return validateCovPCA2D(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
-            case ClusterParams::PCA3D: return validateCovPCA3D(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
-            }
-        }
-        return Result::ACCEPTED;
-    }
-
-private:
-    inline void square(double &value)
-    {
-        value *= value;
-    }
-
-    inline bool validateSize(std::size_t size) const
-    {
-        return size >= static_cast<std::size_t>(params.cluster_sizes[0]) &&
-               size <= static_cast<std::size_t>(params.cluster_sizes[1]);
-    }
-
-    inline bool validateCovDefault(const math::Distribution<3>& distribution) const
-    {
-        bool valid = true;
-        math::Distribution<3>::MatrixType cov;
-        distribution.getCovariance(cov);
-        for(std::size_t i = 0 ; i < 3 ; ++i) {
-            const auto &interval = params.cluster_std_devs[i];
-            valid &= cov(i,i) >= interval.first;
-            valid &= (interval.second == 0.0 || cov(i,i) <= interval.second);
-        }
-        return valid;
-    }
-
-    inline bool validateCovPCA2D(const math::Distribution<3>& distribution) const
-    {
-        bool valid = true;
-        math::Distribution<3>::MatrixType cov3D;
-        distribution.getCovariance(cov3D);
-
-        Eigen::Matrix2d cov2D = cov3D.block<2,2>(0,0);
-        Eigen::EigenSolver<Eigen::Matrix2d> solver(cov2D);
-        Eigen::Vector2d eigen_values  = solver.eigenvalues().real();
-
-        for(std::size_t i = 0 ; i < 2 ; ++i) {
-            const auto &interval = params.cluster_std_devs[i];
-            valid &= eigen_values[i] >= interval.first;
-            valid &= (interval.second == 0.0 || eigen_values[i] <= interval.second);
-        }
-
-        return valid;
-    }
-
-    inline bool validateCovPCA3D(const math::Distribution<3> &distribution) const
-    {
-        bool valid = true;
-        math::Distribution<3>::EigenValueSetType eigen_values;
-        distribution.getEigenValues(eigen_values, true);
-        /// first sort the eigen values by descending so first paramter always corresponds to
-        /// the highest value
-        std::vector<double> eigen_values_vec(eigen_values.data(), eigen_values.data() + 3);
-        std::sort(eigen_values_vec.begin(), eigen_values_vec.end());
-
-        for(std::size_t i = 0 ; i < 3 ; ++i) {
-            const auto &interval = params.cluster_std_devs[i];
-            valid &= eigen_values_vec[i] >= interval.first;
-            valid &= (interval.second == 0.0 || eigen_values_vec[i] <= interval.second);
-        }
-        return valid;
-    }
-
-private:
-    ClusterParams params;
-    const pcl::PointIndices& buffer_indices;
-    const math::Distribution<3>& buffer_distribution;
-};
+typedef ClusterPointcloudKDTreeFiltered::ClusterParams ClusterParams;
+typedef Validator<ClusterParams>                       ValidatorType;
 
 template<typename PointT>
 void cluster(const KDTreePtr&                                       tree,
@@ -232,18 +128,18 @@ void cluster(const KDTreePtr&                                       tree,
         const double w_1 = params.cluster_distance_and_weights[2];
         const double w_2 = params.cluster_distance_and_weights[3];
 
-        Validator validator(params, buffer_indices, buffer_distribution);
+        ValidatorType validator(params, buffer_indices, buffer_distribution);
 
         kdtree::KDTreeClustering<KDTree> clustering(*tree);
 
         clustering.set_cluster_init([&](const NodeData& data)
         {
-            Validator::Result validation = validator.validate();
-            if (validation == Validator::Result::ACCEPTED)
+            ValidatorType::Result validation = validator.validate();
+            if (validation == ValidatorType::Result::ACCEPTED)
                 indicies.emplace_back(std::move(buffer_indices));
             else
             {
-                if (rejected && validation != Validator::Result::TO_SMALL)
+                if (rejected && validation != ValidatorType::Result::TOO_SMALL)
                     rejected->emplace_back(std::move(buffer_indices));
                 else
                     buffer_indices.indices.clear();
@@ -275,10 +171,10 @@ void cluster(const KDTreePtr&                                       tree,
 
         clustering.cluster();
 
-        Validator::Result validation = validator.validate();
-        if (validation == Validator::Result::ACCEPTED)
+        ValidatorType::Result validation = validator.validate();
+        if (validation == ValidatorType::Result::ACCEPTED)
             indicies.emplace_back(std::move(buffer_indices));
-        else if (rejected && validation != Validator::Result::TO_SMALL)
+        else if (rejected && validation != ValidatorType::Result::TOO_SMALL)
             rejected->emplace_back(std::move(buffer_indices));
     }
 

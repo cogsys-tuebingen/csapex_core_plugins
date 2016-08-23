@@ -10,6 +10,7 @@
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
+#include "cluster_utils.hpp"
 
 #include <cslibs_kdtree/page.hpp>
 #include <cslibs_kdtree/index.hpp>
@@ -77,122 +78,16 @@ struct Indexation {
     }
 };
 
-class Validator
-{
-public:
-    using ClusterParams = ClusterPointCloudPagingFiltered::ClusterParams;
-
-    enum class Result { ACCEPTED, TO_SMALL, REJECTED };
-
-    Validator(const ClusterParams& params,
-              pcl::PointIndices& indices,
-              math::Distribution<3>& distribution) :
-        params(params),
-        buffer_indices(indices),
-        buffer_distribution(distribution)
-    {
-        square(this->params.cluster_distance_and_weights[0]);
-        for(std::size_t i = 0 ; i < 3 ; ++i) {
-            square(this->params.cluster_std_devs[i].first);
-            square(this->params.cluster_std_devs[i].second);
-        }
-    }
-
-    inline Result validate()
-    {
-        if (!validateSize(buffer_indices.indices.size()))
-            return Result::TO_SMALL;
-
-        if (params.cluster_distance_and_weights[0] != 0)
-        {
-            switch (params.cluster_cov_thresh_type)
-            {
-            default:
-            case ClusterParams::DEFAULT: return validateCovDefault(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
-            case ClusterParams::PCA2D: return validateCovPCA2D(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
-            case ClusterParams::PCA3D: return validateCovPCA3D(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
-            }
-        }
-        return Result::ACCEPTED;
-    }
-
-private:
-    inline void square(double &value)
-    {
-        value *= value;
-    }
-
-    inline bool validateSize(std::size_t size)
-    {
-        return size >= static_cast<std::size_t>(params.cluster_sizes[0]) &&
-               size <= static_cast<std::size_t>(params.cluster_sizes[1]);
-    }
-
-    inline bool validateCovDefault(math::Distribution<3>& distribution)
-    {
-        bool valid = true;
-        math::Distribution<3>::MatrixType cov;
-        distribution.getCovariance(cov);
-        for(std::size_t i = 0 ; i < 3 ; ++i) {
-            const auto &interval = params.cluster_std_devs[i];
-            valid &= cov(i,i) >= interval.first;
-            valid &= (interval.second == 0.0 || cov(i,i) <= interval.second);
-        }
-        return valid;
-    }
-
-    inline bool validateCovPCA2D(math::Distribution<3>& distribution)
-    {
-        bool valid = true;
-        math::Distribution<3>::MatrixType cov3D;
-        distribution.getCovariance(cov3D);
-
-        Eigen::Matrix2d cov2D = cov3D.block<2,2>(0,0);
-        Eigen::EigenSolver<Eigen::Matrix2d> solver(cov2D);
-        Eigen::Vector2d eigen_values  = solver.eigenvalues().real();
-
-        for(std::size_t i = 0 ; i < 2 ; ++i) {
-            const auto &interval = params.cluster_std_devs[i];
-            valid &= eigen_values[i] >= interval.first;
-            valid &= (interval.second == 0.0 || eigen_values[i] <= interval.second);
-        }
-
-        return valid;
-    }
-
-    inline bool validateCovPCA3D(math::Distribution<3> &distribution)
-    {
-        bool valid = true;
-        math::Distribution<3>::EigenValueSetType eigen_values;
-        distribution.getEigenValues(eigen_values, true);
-        /// first sort the eigen values by descending so first paramter always corresponds to
-        /// the highest value
-        std::vector<double> eigen_values_vec(eigen_values.data(), eigen_values.data() + 3);
-        std::sort(eigen_values_vec.begin(), eigen_values_vec.end());
-
-        for(std::size_t i = 0 ; i < 3 ; ++i) {
-            const auto &interval = params.cluster_std_devs[i];
-            valid &= eigen_values_vec[i] >= interval.first;
-            valid &= (interval.second == 0.0 || eigen_values_vec[i] <= interval.second);
-        }
-        return valid;
-    }
-
-public:
-    ClusterParams params;
-private:
-    pcl::PointIndices& buffer_indices;
-    math::Distribution<3>& buffer_distribution;
-};
-
 class PageClustering
 {
 public:
     typedef kdtree::detail::fill<DataIndex, 3>   MaskFiller;
     typedef typename MaskFiller::Type            MaskType;
+    typedef ClusterPointCloudPagingFiltered::ClusterParams ClusterParams;
+    typedef Validator<ClusterParams>             ValidatorType;
 
     PageClustering(std::vector<Entry*>            &_entries,
-                   const Validator::ClusterParams &_params,
+                   const  ClusterParams           &_params,
                    std::vector<pcl::PointIndices> &_indices,
                    std::vector<pcl::PointIndices> &_indices_rejected,
                    PageType                       &_array,
@@ -217,12 +112,12 @@ public:
             if(entry->cluster > -1)
                 continue;
 
-            Validator::Result validation = validator.validate();
-            if (validation == Validator::Result::ACCEPTED)
+            ValidatorType::Result validation = validator.validate();
+            if (validation == ValidatorType::Result::ACCEPTED)
                 indices.emplace_back(std::move(buffer_indices));
             else
             {
-                if (validation != Validator::Result::TO_SMALL)
+                if (validation != ValidatorType::Result::TOO_SMALL)
                     indices_rejected.emplace_back(std::move(buffer_indices));
                 else
                     buffer_indices.indices.clear();
@@ -235,10 +130,10 @@ public:
             clusterEntry(entry);
         }
 
-        Validator::Result validation = validator.validate();
-        if (validation == Validator::Result::ACCEPTED)
+        ValidatorType::Result validation = validator.validate();
+        if (validation == ValidatorType::Result::ACCEPTED)
             indices.emplace_back(std::move(buffer_indices));
-        else if (validation != Validator::Result::TO_SMALL)
+        else if (validation != ValidatorType::Result::TOO_SMALL)
             indices_rejected.emplace_back(std::move(buffer_indices));
     }
 
@@ -253,7 +148,7 @@ private:
     DataIndex                      min_index;
     DataIndex                      max_index;
 
-    Validator                      validator;
+    ValidatorType                  validator;
     pcl::PointIndices              buffer_indices;
     math::Distribution<3>          buffer_distribution;
 
