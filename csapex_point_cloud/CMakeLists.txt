@@ -46,7 +46,7 @@ catkin_package(
 
 include_directories(
   include
-  src/math
+  src/math/
   ${catkin_INCLUDE_DIRS}
   ${pcl_ros_INCLUDE_DIRS}
   ${Qt5Core_INCLUDE_DIRS}

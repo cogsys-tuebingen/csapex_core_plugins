@@ -9,6 +9,7 @@
 #include <eigen3/Eigen/Eigen>
 #include <iostream>
 
+namespace csapex {
 namespace math {
 template<std::size_t Dim, bool limit_covariance = false>
 class Distribution {
@@ -319,5 +320,6 @@ private:
         dirty_eigen = false;
     }
 };
+}
 }
 #endif // DISTRIBUTION_H

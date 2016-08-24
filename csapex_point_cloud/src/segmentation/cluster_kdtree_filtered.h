@@ -38,8 +38,8 @@ struct NodeIndex
 
 struct NodeData : public kdtree::KDTreeNodeClusteringSupport
 {
-    std::vector<std::size_t> indices;
-    math::Distribution<3>    distribution;
+    std::vector<std::size_t>        indices;
+    csapex::math::Distribution<3>   distribution;
 
     NodeData() = default;
 

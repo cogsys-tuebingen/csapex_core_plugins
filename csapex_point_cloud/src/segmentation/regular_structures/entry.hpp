@@ -1,7 +1,7 @@
 #ifndef ENTRY_HPP
 #define ENTRY_HPP
 
-#include "../../math/distribution.hpp"
+#include <distribution.hpp>
 
 namespace csapex {
 using DataIndex = std::array<int, 3>;

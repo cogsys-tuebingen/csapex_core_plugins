@@ -1,7 +1,7 @@
 #ifndef CLUSTER_PARAMS_HPP
 #define CLUSTER_PARAMS_HPP
 
-#include "../../math/distribution.hpp"
+#include <distribution.hpp>
 
 namespace csapex {
 struct ClusterParams {
