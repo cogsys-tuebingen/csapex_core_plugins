@@ -4,12 +4,15 @@
 #include "../../math/distribution.hpp"
 
 namespace csapex {
-/// clustering parameters
 struct ClusterParams {
+    std::array<double, 3> bin_sizes;
+    std::array<int, 2>    cluster_sizes;
+};
+
+struct ClusterParamsStatistical : public ClusterParams
+{
     enum CovarianceThresholdType {DEFAULT, PCA2D, PCA3D};
 
-    std::array<double, 3>                    bin_sizes;
-    std::array<int, 2>                       cluster_sizes;
     std::array<std::pair<double, double>, 3> cluster_std_devs;
     std::array<double, 4>                    cluster_distance_and_weights;
     CovarianceThresholdType                  cluster_cov_thresh_type;

@@ -11,7 +11,7 @@ class Validator
 public:
     enum class Result { ACCEPTED, TOO_SMALL, REJECTED };
 
-    Validator(const ClusterParams   &params,
+    Validator(const ClusterParamsStatistical   &params,
               pcl::PointIndices     &indices,
               math::Distribution<3> &distribution) :
         params(params),
@@ -36,11 +36,11 @@ public:
         if(check_statistic) {
             switch (params.cluster_cov_thresh_type)
             {
-            case ClusterParams::DEFAULT:
+            case ClusterParamsStatistical::DEFAULT:
                 return validateCovDefault(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
-            case ClusterParams::PCA2D:
+            case ClusterParamsStatistical::PCA2D:
                 return validateCovPCA2D(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
-            case ClusterParams::PCA3D:
+            case ClusterParamsStatistical::PCA3D:
                 return validateCovPCA3D(buffer_distribution) ? Result::ACCEPTED : Result::REJECTED;
             default:
                 break;
@@ -112,7 +112,7 @@ private:
     }
 
 public:
-    ClusterParams params;
+    ClusterParamsStatistical params;
     bool          check_statistic;
 private:
     pcl::PointIndices& buffer_indices;

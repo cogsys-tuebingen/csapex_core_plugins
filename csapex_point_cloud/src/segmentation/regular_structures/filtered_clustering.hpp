@@ -20,8 +20,8 @@ public:
     typedef typename StructureType::Index        StructureIndex;
 
 
-    FilteredClustering(std::vector<EntryWithDistr*> &_entries,
-                   const ClusterParams              &_params,
+    FilteredClustering(std::vector<EntryStatistical*> &_entries,
+                   const ClusterParamsStatistical              &_params,
                    std::vector<pcl::PointIndices>   &_indices,
                    std::vector<pcl::PointIndices>   &_indices_rejected,
                    StructureType                    &_array,
@@ -41,7 +41,7 @@ public:
 
     inline void cluster()
     {
-        for(EntryWithDistr *entry : entries)
+        for(EntryStatistical *entry : entries)
         {
             if(entry->cluster > -1)
                 continue;
@@ -75,7 +75,7 @@ private:
     MaskType offsets;
     int      cluster_count;
 
-    std::vector<EntryWithDistr*>   &entries;
+    std::vector<EntryStatistical*>   &entries;
     std::vector<pcl::PointIndices> &indices;
     std::vector<pcl::PointIndices> &indices_rejected;
     StructureType                  &array;
@@ -86,7 +86,7 @@ private:
     pcl::PointIndices               buffer_indices;
     math::Distribution<3>           buffer_distribution;
 
-    inline void clusterEntry(EntryWithDistr *entry)
+    inline void clusterEntry(EntryStatistical *entry)
     {
         StructureIndex array_index;
         DataIndex index;
@@ -106,7 +106,7 @@ private:
             if(out_of_bounds)
                 continue;
 
-            EntryWithDistr *neighbour = array.at(array_index);
+            EntryStatistical *neighbour = array.at(array_index);
             if(!neighbour)
                 continue;
             if(neighbour->cluster > -1)

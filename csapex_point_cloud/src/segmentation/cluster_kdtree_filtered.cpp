@@ -51,12 +51,12 @@ void ClusterPointcloudKDTreeFiltered::setupParameters(Parameterizable &parameter
     parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/z", 0.0, 3.0, 0.0, 0.0, 0.01),
                             cluster_params_.cluster_std_devs[2]);
 
-    std::map<std::string, int> covariance_threshold_types = {{"DEFAULT", ClusterParams::DEFAULT},
-                                                             {"PCA2D", ClusterParams::PCA2D},
-                                                             {"PCA3D", ClusterParams::PCA3D}};
+    std::map<std::string, int> covariance_threshold_types = {{"DEFAULT", ClusterParamsStatistical::DEFAULT},
+                                                             {"PCA2D", ClusterParamsStatistical::PCA2D},
+                                                             {"PCA3D", ClusterParamsStatistical::PCA3D}};
     parameters.addParameter(param::ParameterFactory::declareParameterSet("cluster/std_dev_thresh_type",
                                                                          covariance_threshold_types,
-                                                                         (int) ClusterParams::DEFAULT),
+                                                                         (int) ClusterParamsStatistical::DEFAULT),
                             reinterpret_cast<int&>(cluster_params_.cluster_cov_thresh_type));
 }
 
@@ -83,7 +83,7 @@ template<typename PointT>
 void cluster(const KDTreePtr&                                       tree,
              const typename pcl::PointCloud<PointT>::ConstPtr&      cloud,
              const pcl::PointIndices::ConstPtr&                     cloud_indices,
-             const ClusterParams&                                   params,
+             const ClusterParamsStatistical&                                   params,
              ClusterPointcloudKDTreeFiltered*                       self,
              std::vector<pcl::PointIndices>&                        indicies,
              std::shared_ptr<std::vector<pcl::PointIndices>>&       rejected)

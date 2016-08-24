@@ -85,7 +85,7 @@ private:
     Output* out_rejected_;
     Output* out_debug_;
 
-    ClusterParams cluster_params_;
+    ClusterParamsStatistical cluster_params_;
 
     std::size_t last_size_;
     detail_filtered::KDTreePtr kdtree_;

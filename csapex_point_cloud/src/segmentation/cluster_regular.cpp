@@ -1,5 +1,5 @@
 /// HEADER
-#include "cluster_page.h"
+#include "cluster_regular.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -13,22 +13,18 @@
 #include <csapex/profiling/interlude.hpp>
 
 #include <cslibs_kdtree/fill.hpp>
+#include <cslibs_kdtree/array.hpp>
 #include <cslibs_kdtree/page.hpp>
 #include <cslibs_kdtree/index.hpp>
 
 #include "regular_structures/indexation.hpp"
 #include "regular_structures/clustering.hpp"
 
-CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudPaging, csapex::Node)
-
 using namespace csapex;
 using namespace csapex::connection_types;
 
-using PageType           = kdtree::Page<Entry*, 3>;
-using PageIndex          = PageType::Index;
-using IndexationType     = Indexation<PageType>;
-
-void ClusterPointCloudPaging::setup(NodeModifier &node_modifier)
+template<typename StructureType>
+void ClusterRegular<StructureType>::setup(NodeModifier &node_modifier)
 {
     in_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
     in_indices_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
@@ -36,7 +32,8 @@ void ClusterPointCloudPaging::setup(NodeModifier &node_modifier)
     out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
 }
 
-void ClusterPointCloudPaging::setupParameters(Parameterizable &parameters)
+template<typename StructureType>
+void ClusterRegular<StructureType>::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareRange("bin/size_x", 0.01, 8.0, 0.1, 0.01),
                             cluster_params_.bin_sizes[0]);
@@ -50,14 +47,16 @@ void ClusterPointCloudPaging::setupParameters(Parameterizable &parameters)
                             cluster_params_.cluster_sizes[1]);
 }
 
-void ClusterPointCloudPaging::process()
+template<typename StructureType>
+void ClusterRegular<StructureType>::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_cloud_));
-    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointCloudPaging>(this, msg), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterRegular>(this, msg), msg->value);
 }
 
+template <typename StructureType>
 template <class PointT>
-void ClusterPointCloudPaging::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+void ClusterRegular<StructureType>::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     if (cloud->empty())
         return;
@@ -70,8 +69,8 @@ void ClusterPointCloudPaging::inputCloud(typename pcl::PointCloud<PointT>::Const
     }
 
     std::shared_ptr<std::vector<pcl::PointIndices>> out_cluster_indices(new std::vector<pcl::PointIndices>);
-    DataIndex      min_index = AO::max();
-    DataIndex      max_index = AO::min();
+    DataIndex  min_index = AO::max();
+    DataIndex  max_index = AO::min();
     IndexationType indexation(cluster_params_.bin_sizes);
 
     std::vector<Entry>  entries;
@@ -105,21 +104,21 @@ void ClusterPointCloudPaging::inputCloud(typename pcl::PointCloud<PointT>::Const
         }
     }
     std::vector<Entry*> referenced;
-    PageType::Size size = IndexationType::size(min_index, max_index);
-    PageType page(size);
+    typename StructureType::Size size = IndexationType::size(min_index, max_index);
+    StructureType array(size);
     {
         /// Setup array adressing
-        PageType::Index index;
+        typename StructureType::Index index;
         for(Entry &e : entries) {
             index = AOA::sub(e.index, min_index);
-            Entry *& page_entry = page.at(index);
-            if(!page_entry) {
+            Entry *& array_entry = array.at(index);
+            if(!array_entry) {
                 /// put into array
-                page_entry = &e;
-                referenced.emplace_back(page_entry);
+                array_entry = &e;
+                referenced.emplace_back(array_entry);
             } else {
                 /// fuse with existing
-                std::vector<int> &array_entry_indices = page_entry->indices;
+                std::vector<int> &array_entry_indices = array_entry->indices;
                 array_entry_indices.insert(array_entry_indices.end(),
                                            e.indices.begin(),
                                            e.indices.end());
@@ -129,7 +128,7 @@ void ClusterPointCloudPaging::inputCloud(typename pcl::PointCloud<PointT>::Const
     {
         /// Clustering stage
         std::vector<pcl::PointIndices> buffer;
-        Clustering<PageType> clustering(referenced, buffer, page, min_index, max_index);
+        Clustering<StructureType> clustering(referenced, buffer, array, min_index, max_index);
         clustering.cluster();
 
         for(pcl::PointIndices &pcl_indices : buffer) {
@@ -141,3 +140,13 @@ void ClusterPointCloudPaging::inputCloud(typename pcl::PointCloud<PointT>::Const
     }
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
 }
+
+using PageType    = kdtree::Page<Entry*, 3>;
+using ArrayType   = kdtree::Array<Entry*, 3>;
+namespace csapex {
+typedef ClusterRegular<PageType>  ClusterPointCloudPaging;
+typedef ClusterRegular<ArrayType> ClusterPointCloudArray;
+}
+
+CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudPaging, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudArray, csapex::Node)

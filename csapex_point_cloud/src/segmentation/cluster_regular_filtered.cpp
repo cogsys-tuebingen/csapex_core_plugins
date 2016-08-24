@@ -1,4 +1,4 @@
-#include "cluster_array_filtered.h"
+#include "cluster_regular_filtered.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -16,17 +16,13 @@
 #include "regular_structures/filtered_clustering.hpp"
 
 #include <cslibs_kdtree/array.hpp>
-
-CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudArrayFiltered, csapex::Node)
+#include <cslibs_kdtree/page.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-using ArrayType       = kdtree::Array<EntryWithDistr*, 3>;
-using ArrayIndex      = ArrayType::Index;
-using IndexationType  = Indexation<ArrayType>;
-
-void ClusterPointCloudArrayFiltered::setup(NodeModifier &node_modifier)
+template<typename StructureType>
+void ClusterRegularFiltered<StructureType>::setup(NodeModifier &node_modifier)
 {
     in_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
     in_indices_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
@@ -35,7 +31,8 @@ void ClusterPointCloudArrayFiltered::setup(NodeModifier &node_modifier)
     out_rejected_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Rejected Clusters");
 }
 
-void ClusterPointCloudArrayFiltered::setupParameters(Parameterizable &parameters)
+template<typename StructureType>
+void ClusterRegularFiltered<StructureType>::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareRange("bin/size_x", 0.01, 8.0, 0.1, 0.01),
                             cluster_params_.bin_sizes[0]);
@@ -49,7 +46,7 @@ void ClusterPointCloudArrayFiltered::setupParameters(Parameterizable &parameters
                             cluster_params_.cluster_sizes[1]);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_distance", 0.00, 3.0, 0.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[0]);
-    parameters.addParameter(param::ParameterFactory::declareRange("cluster/distance_weights/x", 0.0, 1.0, 1.0, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("cClusterPointCloudPageFilteredluster/distance_weights/x", 0.0, 1.0, 1.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[1]);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/distance_weights/y", 0.0, 1.0, 1.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[2]);
@@ -62,23 +59,25 @@ void ClusterPointCloudArrayFiltered::setupParameters(Parameterizable &parameters
     parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/z", 0.0, 3.0, 0.0, 0.0, 0.01),
                             cluster_params_.cluster_std_devs[2]);
 
-    std::map<std::string, int> covariance_threshold_types = {{"DEFAULT", ClusterParams::DEFAULT},
-                                                             {"PCA2D", ClusterParams::PCA2D},
-                                                             {"PCA3D", ClusterParams::PCA3D}};
+    std::map<std::string, int> covariance_threshold_types = {{"DEFAULT", ClusterParamsStatistical::DEFAULT},
+                                                             {"PCA2D", ClusterParamsStatistical::PCA2D},
+                                                             {"PCA3D", ClusterParamsStatistical::PCA3D}};
     parameters.addParameter(param::ParameterFactory::declareParameterSet("cluster/std_dev_thresh_type",
                                                                          covariance_threshold_types,
-                                                                         (int) ClusterParams::DEFAULT),
+                                                                         (int) ClusterParamsStatistical::DEFAULT),
                             reinterpret_cast<int&>(cluster_params_.cluster_cov_thresh_type));
 }
 
-void ClusterPointCloudArrayFiltered::process()
+template<typename StructureType>
+void ClusterRegularFiltered<StructureType>::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_cloud_));
-    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointCloudArrayFiltered>(this, msg), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterRegularFiltered>(this, msg), msg->value);
 }
 
+template<typename StructureType>
 template <class PointT>
-void ClusterPointCloudArrayFiltered::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     if (cloud->empty())
         return;
@@ -96,14 +95,14 @@ void ClusterPointCloudArrayFiltered::inputCloud(typename pcl::PointCloud<PointT>
     DataIndex  max_index = AO::min();
     IndexationType indexation(cluster_params_.bin_sizes);
 
-    std::vector<EntryWithDistr>  entries;
+    std::vector<EntryStatistical>  entries;
     {
         /// Preparation of indices
         if(indices) {
             for(const int i : indices->indices) {
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
-                    EntryWithDistr entry;
+                    EntryStatistical entry;
                     entry.index = indexation.create(pt);
                     entry.indices.push_back(i);
                     entry.distribution.add({pt.x, pt.y, pt.z});
@@ -117,7 +116,7 @@ void ClusterPointCloudArrayFiltered::inputCloud(typename pcl::PointCloud<PointT>
             for(std::size_t i = 0; i < cloud_size ; ++i) {
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
-                    EntryWithDistr entry;
+                    EntryStatistical entry;
                     entry.index = indexation.create(pt);
                     entry.indices.push_back(i);
                     entry.distribution.add({pt.x, pt.y, pt.z});
@@ -128,15 +127,15 @@ void ClusterPointCloudArrayFiltered::inputCloud(typename pcl::PointCloud<PointT>
             }
         }
     }
-    std::vector<EntryWithDistr*> referenced;
-    ArrayType::Size size = IndexationType::size(min_index, max_index);
-    ArrayType array(size);
+    std::vector<EntryStatistical*> referenced;
+    typename StructureType::Size size = IndexationType::size(min_index, max_index);
+    StructureType array(size);
     {
         /// Setup array adressing
-        ArrayType::Index index;
-        for(EntryWithDistr &e : entries) {
+        typename StructureType::Index index;
+        for(EntryStatistical &e : entries) {
             index = AOA::sub(e.index, min_index);
-            EntryWithDistr *& array_entry = array.at(index);
+            EntryStatistical *& array_entry = array.at(index);
             if(!array_entry) {
                 /// put into array
                 array_entry = &e;
@@ -153,9 +152,19 @@ void ClusterPointCloudArrayFiltered::inputCloud(typename pcl::PointCloud<PointT>
     }
     {
         /// Clustering stage
-        FilteredClustering<ArrayType> clustering(referenced, cluster_params_, *out_cluster_indices, *out_rejected_cluster_indices, array, min_index, max_index);
+        FilteredClustering<StructureType> clustering(referenced, cluster_params_, *out_cluster_indices, *out_rejected_cluster_indices, array, min_index, max_index);
         clustering.cluster();
     }
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_rejected_, out_rejected_cluster_indices);
 }
+
+using PageType    = kdtree::Page<EntryStatistical*, 3>;
+using ArrayType   = kdtree::Array<EntryStatistical*, 3>;
+namespace csapex {
+typedef ClusterRegularFiltered<PageType>  ClusterPointCloudPagingFiltered;
+typedef ClusterRegularFiltered<ArrayType> ClusterPointCloudArrayFiltered;
+}
+
+CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudPagingFiltered, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudArrayFiltered, csapex::Node)

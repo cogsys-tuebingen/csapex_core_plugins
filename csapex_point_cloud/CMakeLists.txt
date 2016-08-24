@@ -121,10 +121,6 @@ add_library(csapex_point_cloud_plugin_node
 
     src/segmentation/cluster_kdtree.cpp
     src/segmentation/cluster_kdtree_filtered.cpp
-    src/segmentation/cluster_page.cpp
-    src/segmentation/cluster_page_filtered.cpp
-    src/segmentation/cluster_array.cpp
-    src/segmentation/cluster_array_filtered.cpp
     src/segmentation/cluster_array_filtered_lch.cpp
 
     src/segmentation/regular_structures/entry.hpp
@@ -133,6 +129,8 @@ add_library(csapex_point_cloud_plugin_node
     src/segmentation/regular_structures/cluster_params.hpp
     src/segmentation/regular_structures/filtered_clustering.hpp
     src/segmentation/regular_structures/clustering.hpp
+    src/segmentation/cluster_regular.cpp
+    src/segmentation/cluster_regular_filtered.cpp
 
     src/analysis/ray_angles.cpp
     src/analysis/estimate_normals.cpp

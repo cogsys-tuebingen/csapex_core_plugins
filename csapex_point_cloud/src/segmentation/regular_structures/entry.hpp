@@ -17,10 +17,10 @@ struct Entry {
     }
 };
 
-struct EntryWithDistr  : public Entry
+struct EntryStatistical  : public Entry
 {
     math::Distribution<3> distribution;
-    EntryWithDistr() :
+    EntryStatistical() :
         Entry()
     {
     }

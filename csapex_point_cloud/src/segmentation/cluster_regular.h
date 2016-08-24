@@ -1,16 +1,21 @@
-#ifndef CLUSTERPOINTCLOUDPAGE_H
-#define CLUSTERPOINTCLOUDPAGE_H
+#ifndef CLUSTERREGULAR_H
+#define CLUSTERREGULAR_H
 
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 
+#include "regular_structures/indexation.hpp"
 #include "regular_structures/cluster_params.hpp"
 
 namespace csapex {
-class ClusterPointCloudPagingFiltered : public csapex::Node
+template<typename StructureType>
+class ClusterRegular : public csapex::Node
 {
 public:
+    typedef typename StructureType::Index IndexType;
+    typedef Indexation<StructureType> IndexationType;
+
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
     virtual void process() override;
@@ -22,11 +27,10 @@ private:
     Input*        in_cloud_;
     Input*        in_indices_;
     Output*       out_;
-    Output*       out_rejected_;
 
     ClusterParams cluster_params_;
 
 };
 }
 
-#endif // CLUSTERPOINTCLOUDPAGE_H
+#endif // CLUSTERREGULAR_H
