@@ -1,11 +1,11 @@
-#ifndef CLUSTER_VALIDATOR_HPP
-#define CLUSTER_VALIDATOR_HPP
+#ifndef VALIDATOR_HPP
+#define VALIDATOR_HPP
 
-#include "../math/distribution.hpp"
+#include "cluster_params.hpp"
 #include <pcl/PointIndices.h>
+#include <vector>
 
 namespace csapex {
-template<typename ClusterParams>
 class Validator
 {
 public:
@@ -119,4 +119,4 @@ private:
     math::Distribution<3>& buffer_distribution;
 };
 }
-#endif // CLUSTER_VALIDATOR_HPP
+#endif // VALIDATOR_HPP

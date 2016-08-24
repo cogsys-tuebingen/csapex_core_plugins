@@ -126,7 +126,11 @@ add_library(csapex_point_cloud_plugin_node
     src/segmentation/cluster_array.cpp
     src/segmentation/cluster_array_filtered.cpp
     src/segmentation/cluster_array_filtered_lch.cpp
-    src/segmentation/cluster_utils.hpp
+    src/segmentation/clustering/entry.hpp
+    src/segmentation/clustering/validator.hpp
+    src/segmentation/clustering/indexation.hpp
+    src/segmentation/clustering/cluster_params.hpp
+    src/segmentation/clustering/filtered_clustering.hpp
 
     src/analysis/ray_angles.cpp
     src/analysis/estimate_normals.cpp

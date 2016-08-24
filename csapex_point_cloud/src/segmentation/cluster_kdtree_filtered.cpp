@@ -10,7 +10,8 @@
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
-#include "cluster_utils.hpp"
+
+#include "clustering/validator.hpp"
 
 CSAPEX_REGISTER_CLASS(csapex::ClusterPointcloudKDTreeFiltered, csapex::Node)
 
@@ -78,14 +79,11 @@ void ClusterPointcloudKDTreeFiltered::setup(NodeModifier& node_modifier)
 namespace detail_filtered
 {
 
-typedef ClusterPointcloudKDTreeFiltered::ClusterParams ClusterParams;
-typedef Validator<ClusterParams>                       ValidatorType;
-
 template<typename PointT>
 void cluster(const KDTreePtr&                                       tree,
              const typename pcl::PointCloud<PointT>::ConstPtr&      cloud,
              const pcl::PointIndices::ConstPtr&                     cloud_indices,
-             const ClusterPointcloudKDTreeFiltered::ClusterParams&  params,
+             const ClusterParams&                                   params,
              ClusterPointcloudKDTreeFiltered*                       self,
              std::vector<pcl::PointIndices>&                        indicies,
              std::shared_ptr<std::vector<pcl::PointIndices>>&       rejected)
@@ -128,18 +126,18 @@ void cluster(const KDTreePtr&                                       tree,
         const double w_1 = params.cluster_distance_and_weights[2];
         const double w_2 = params.cluster_distance_and_weights[3];
 
-        ValidatorType validator(params, buffer_indices, buffer_distribution);
+        Validator validator(params, buffer_indices, buffer_distribution);
 
         kdtree::KDTreeClustering<KDTree> clustering(*tree);
 
         clustering.set_cluster_init([&](const NodeData& data)
         {
-            ValidatorType::Result validation = validator.validate();
-            if (validation == ValidatorType::Result::ACCEPTED)
+            Validator::Result validation = validator.validate();
+            if (validation == Validator::Result::ACCEPTED)
                 indicies.emplace_back(std::move(buffer_indices));
             else
             {
-                if (rejected && validation != ValidatorType::Result::TOO_SMALL)
+                if (rejected && validation != Validator::Result::TOO_SMALL)
                     rejected->emplace_back(std::move(buffer_indices));
                 else
                     buffer_indices.indices.clear();
@@ -171,10 +169,10 @@ void cluster(const KDTreePtr&                                       tree,
 
         clustering.cluster();
 
-        ValidatorType::Result validation = validator.validate();
-        if (validation == ValidatorType::Result::ACCEPTED)
+        Validator::Result validation = validator.validate();
+        if (validation == Validator::Result::ACCEPTED)
             indicies.emplace_back(std::move(buffer_indices));
-        else if (rejected && validation != ValidatorType::Result::TOO_SMALL)
+        else if (rejected && validation != Validator::Result::TOO_SMALL)
             rejected->emplace_back(std::move(buffer_indices));
     }
 
