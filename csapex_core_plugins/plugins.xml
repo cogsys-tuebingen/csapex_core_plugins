@@ -144,6 +144,10 @@
   <description>Quits the program.</description>
   <tags>General</tags>
 </class>
+<class type="csapex::GenericTextCombiner" base_class_type="csapex::Node">
+  <description>Creates a string from different values.</description>
+  <tags>General</tags>
+</class>
 </library>
 
 <library path="libcsapex_core_plugins_qt">
