@@ -4,8 +4,9 @@
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
+
 #include <cslibs_kdtree/kdtree.hpp>
-#include "clustering/cluster_params.hpp"
+#include "regular_structures/cluster_params.hpp"
 
 namespace detail_filtered
 {

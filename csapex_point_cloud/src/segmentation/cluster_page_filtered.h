@@ -5,7 +5,7 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 
-#include "clustering/cluster_params.hpp"
+#include "regular_structures/cluster_params.hpp"
 
 namespace csapex {
 class ClusterPointCloudPagingFiltered : public csapex::Node

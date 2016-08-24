@@ -11,7 +11,7 @@
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
 
-#include "clustering/validator.hpp"
+#include "regular_structures/validator.hpp"
 
 CSAPEX_REGISTER_CLASS(csapex::ClusterPointcloudKDTreeFiltered, csapex::Node)
 

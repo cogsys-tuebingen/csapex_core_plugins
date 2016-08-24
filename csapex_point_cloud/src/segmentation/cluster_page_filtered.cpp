@@ -11,9 +11,9 @@
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
 
-#include "clustering/entry.hpp"
-#include "clustering/indexation.hpp"
-#include "clustering/filtered_clustering.hpp"
+#include "regular_structures/entry.hpp"
+#include "regular_structures/indexation.hpp"
+#include "regular_structures/filtered_clustering.hpp"
 
 #include <cslibs_kdtree/page.hpp>
 
@@ -22,7 +22,7 @@ CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudPagingFiltered, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-using PageType            = kdtree::Page<Entry*, 3>;
+using PageType            = kdtree::Page<EntryWithDistr*, 3>;
 using PageIndex           = PageType::Index;
 using IndexationType      = Indexation<PageType>;
 
@@ -96,14 +96,14 @@ void ClusterPointCloudPagingFiltered::inputCloud(typename pcl::PointCloud<PointT
     DataIndex  max_index = AO::min();
     IndexationType indexation(cluster_params_.bin_sizes);
 
-    std::vector<Entry>  entries;
+    std::vector<EntryWithDistr>  entries;
     {
         /// Preparation of indices
         if(indices) {
             for(const int i : indices->indices) {
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
-                    Entry entry;
+                    EntryWithDistr entry;
                     entry.index = indexation.create(pt);
                     entry.indices.push_back(i);
                     entry.distribution.add({pt.x, pt.y, pt.z});
@@ -117,7 +117,7 @@ void ClusterPointCloudPagingFiltered::inputCloud(typename pcl::PointCloud<PointT
             for(std::size_t i = 0; i < cloud_size ; ++i) {
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
-                    Entry entry;
+                    EntryWithDistr entry;
                     entry.index = indexation.create(pt);
                     entry.indices.push_back(i);
                     entry.distribution.add({pt.x, pt.y, pt.z});
@@ -128,15 +128,15 @@ void ClusterPointCloudPagingFiltered::inputCloud(typename pcl::PointCloud<PointT
             }
         }
     }
-    std::vector<Entry*> referenced;
+    std::vector<EntryWithDistr*> referenced;
     PageType::Size size = IndexationType::size(min_index, max_index);
     PageType page(size);
     {
         /// Setup array adressing
         PageType::Index index;
-        for(Entry &e : entries) {
+        for(EntryWithDistr &e : entries) {
             index = AOA::sub(e.index, min_index);
-            Entry *& page_entry = page.at(index);
+            EntryWithDistr *& page_entry = page.at(index);
             if(!page_entry) {
                 /// put into array
                 page_entry = &e;
@@ -153,7 +153,7 @@ void ClusterPointCloudPagingFiltered::inputCloud(typename pcl::PointCloud<PointT
     }
     {
         /// Clustering stage
-        ArrayClustering<PageType> clustering(referenced, cluster_params_, *out_cluster_indices, *out_rejected_cluster_indices, page, min_index, max_index);
+        FilteredClustering<PageType> clustering(referenced, cluster_params_, *out_cluster_indices, *out_rejected_cluster_indices, page, min_index, max_index);
         clustering.cluster();
     }
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);

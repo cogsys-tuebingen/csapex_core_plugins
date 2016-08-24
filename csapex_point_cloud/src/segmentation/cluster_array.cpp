@@ -12,155 +12,21 @@
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
 
-#include <cslibs_kdtree/array_clustering.hpp>
 #include <cslibs_kdtree/fill.hpp>
+#include <cslibs_kdtree/array.hpp>
+#include <cslibs_kdtree/index.hpp>
+
+#include "regular_structures/indexation.hpp"
+#include "regular_structures/clustering.hpp"
 
 CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudArray, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-namespace impl {
-using DataIndex           = std::array<int, 3>;
-
-struct Entry {
-    int                      cluster;
-    impl::DataIndex          index;
-    std::vector<int>         indices;
-
-    Entry() :
-        cluster(-1)
-    {
-    }
-};
-
 using ArrayType           = kdtree::Array<Entry*, 3>;
 using ArrayIndex          = ArrayType::Index;
-using AO                  = kdtree::ArrayOperations<3, int, int>;
-using AOA                 = kdtree::ArrayOperations<3, int, std::size_t>;
-
-
-struct Indexation {
-    using BinType = std::array<double, 3>;
-
-    BinType bin_sizes;
-
-    Indexation(const BinType &_bin_sizes) :
-        bin_sizes(_bin_sizes)
-    {
-    }
-
-
-    inline static ArrayType::Size size(const DataIndex &min_index,
-                                       const DataIndex &max_index)
-    {
-        ArrayType::Size size;
-        for(std::size_t i = 0 ; i < 3 ; ++i) {
-            size[i] = (max_index[i] - min_index[i]) + 1;
-        }
-        return size;
-    }
-
-    template<typename PointT>
-    inline constexpr bool is_valid(const PointT& point) const
-    {
-        bool nan = std::isnan(point.x) || std::isnan(point.y) || std::isnan(point.z);
-        bool inf = std::isinf(point.x) || std::isinf(point.y) || std::isinf(point.z);
-        return !(nan || inf);
-    }
-
-    template<typename PointT>
-    inline constexpr DataIndex create(const PointT& point) const
-    {
-        return { static_cast<int>(std::floor(point.x / bin_sizes[0])),
-                    static_cast<int>(std::floor(point.y / bin_sizes[1])),
-                    static_cast<int>(std::floor(point.z / bin_sizes[2]))};
-    }
-};
-
-class ArrayClustering {
-public:
-    typedef kdtree::detail::fill<DataIndex, 3>   MaskFiller;
-    typedef typename MaskFiller::Type            MaskType;
-
-    ArrayClustering(std::vector<Entry*>            &_entries,
-                    std::vector<pcl::PointIndices> &_indices,
-                    ArrayType                      &_array,
-                    DataIndex                      &_min_index,
-                    DataIndex                      &_max_index) :
-        cluster_count(0),
-        entries(_entries),
-        indices(_indices),
-        array(_array),
-        min_index(_min_index),
-        max_index(_max_index)
-    {
-        MaskFiller::assign(offsets);
-    }
-
-    inline void cluster()
-    {
-        for(Entry *entry : entries)
-        {
-            if(entry->cluster > -1)
-                continue;
-            entry->cluster = cluster_count;
-            indices.emplace_back(pcl::PointIndices());
-            indices.back().indices = entry->indices;
-            ++cluster_count;
-            clusterEntry(entry);
-        }
-    }
-
-private:
-    MaskType offsets;
-    int      cluster_count;
-
-    std::vector<Entry*>            &entries;
-    std::vector<pcl::PointIndices> &indices;
-    ArrayType                      &array;
-    DataIndex            min_index;
-    DataIndex            max_index;
-
-    inline void clusterEntry(Entry *entry)
-    {
-        ArrayIndex array_index;
-        DataIndex index;
-        for(DataIndex &offset : offsets) {
-            if(AO::is_zero(offset))
-                continue;
-
-            AO::add(entry->index, offset, index);
-
-            bool out_of_bounds = false;
-            for(std::size_t j = 0 ; j < 3 ; ++j) {
-                out_of_bounds |= index[j] < min_index[j];
-                out_of_bounds |= index[j] > max_index[j];
-                array_index[j]  = index[j] - min_index[j];
-            }
-
-            if(out_of_bounds)
-                continue;
-
-            Entry *neighbour = array.at(array_index);
-            if(!neighbour)
-                continue;
-            if(neighbour->cluster > -1)
-                continue;
-            assert(neighbour->cluster == -1);
-            const int cluster = entry->cluster;
-            neighbour->cluster = cluster;
-            pcl::PointIndices &pcl_indices = indices[cluster];
-            pcl_indices.indices.insert(pcl_indices.indices.end(),
-                                       neighbour->indices.begin(),
-                                       neighbour->indices.end());
-            clusterEntry(neighbour);
-        }
-    }
-};
-
-
-}
+using IndexationType      = Indexation<ArrayType>;
 
 void ClusterPointCloudArray::setup(NodeModifier &node_modifier)
 {
@@ -204,22 +70,22 @@ void ClusterPointCloudArray::inputCloud(typename pcl::PointCloud<PointT>::ConstP
     }
 
     std::shared_ptr<std::vector<pcl::PointIndices>> out_cluster_indices(new std::vector<pcl::PointIndices>);
-    impl::DataIndex  min_index = impl::AO::max();
-    impl::DataIndex  max_index = impl::AO::min();
-    impl::Indexation indexation(cluster_params_.bin_sizes);
+    DataIndex  min_index = AO::max();
+    DataIndex  max_index = AO::min();
+    IndexationType indexation(cluster_params_.bin_sizes);
 
-    std::vector<impl::Entry>  entries;
+    std::vector<Entry>  entries;
     {
         /// Preparation of indices
         if(indices) {
             for(const int i : indices->indices) {
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
-                    impl::Entry entry;
+                    Entry entry;
                     entry.index = indexation.create(pt);
                     entry.indices.push_back(i);
-                    impl::AO::cwise_min(entry.index, min_index);
-                    impl::AO::cwise_max(entry.index, max_index);
+                    AO::cwise_min(entry.index, min_index);
+                    AO::cwise_max(entry.index, max_index);
                     entries.emplace_back(entry);
                 }
             }
@@ -228,25 +94,25 @@ void ClusterPointCloudArray::inputCloud(typename pcl::PointCloud<PointT>::ConstP
             for(std::size_t i = 0; i < cloud_size ; ++i) {
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
-                    impl::Entry entry;
+                    Entry entry;
                     entry.index = indexation.create(pt);
                     entry.indices.push_back(i);
-                    impl::AO::cwise_min(entry.index, min_index);
-                    impl::AO::cwise_max(entry.index, max_index);
+                    AO::cwise_min(entry.index, min_index);
+                    AO::cwise_max(entry.index, max_index);
                     entries.emplace_back(entry);
                 }
             }
         }
     }
-    std::vector<impl::Entry*> referenced;
-    impl::ArrayType::Size size = impl::Indexation::size(min_index, max_index);
-    impl::ArrayType array(size);
+    std::vector<Entry*> referenced;
+    ArrayType::Size size = IndexationType::size(min_index, max_index);
+    ArrayType array(size);
     {
         /// Setup array adressing
-        impl::ArrayType::Index index;
-        for(impl::Entry &e : entries) {
-            index = impl::AOA::sub(e.index, min_index);
-            impl::Entry *& array_entry = array.at(index);
+        ArrayType::Index index;
+        for(Entry &e : entries) {
+            index = AOA::sub(e.index, min_index);
+            Entry *& array_entry = array.at(index);
             if(!array_entry) {
                 /// put into array
                 array_entry = &e;
@@ -263,7 +129,7 @@ void ClusterPointCloudArray::inputCloud(typename pcl::PointCloud<PointT>::ConstP
     {
         /// Clustering stage
         std::vector<pcl::PointIndices> buffer;
-        impl::ArrayClustering clustering(referenced, buffer, array, min_index, max_index);
+        Clustering<ArrayType> clustering(referenced, buffer, array, min_index, max_index);
         clustering.cluster();
 
         for(pcl::PointIndices &pcl_indices : buffer) {

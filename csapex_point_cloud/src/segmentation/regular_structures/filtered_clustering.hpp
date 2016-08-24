@@ -4,6 +4,7 @@
 #include <cslibs_kdtree/fill.hpp>
 #include <cslibs_kdtree/index.hpp>
 
+#include "entry.hpp"
 #include "validator.hpp"
 
 namespace csapex {
@@ -11,21 +12,21 @@ using AO                  = kdtree::ArrayOperations<3, int, int>;
 using AOA                 = kdtree::ArrayOperations<3, int, std::size_t>;
 
 template<typename StructureType>
-class ArrayClustering
+class FilteredClustering
 {
 public:
     typedef kdtree::detail::fill<DataIndex, 3>   MaskFiller;
     typedef typename MaskFiller::Type            MaskType;
-    typedef typename StructureType::Index        ArrayIndex;
+    typedef typename StructureType::Index        StructureIndex;
 
 
-    ArrayClustering(std::vector<Entry*>            &_entries,
-                   const ClusterParams             &_params,
-                   std::vector<pcl::PointIndices>  &_indices,
-                   std::vector<pcl::PointIndices>  &_indices_rejected,
-                   StructureType                   &_array,
-                   DataIndex                       &_min_index,
-                   DataIndex                       &_max_index) :
+    FilteredClustering(std::vector<EntryWithDistr*> &_entries,
+                   const ClusterParams              &_params,
+                   std::vector<pcl::PointIndices>   &_indices,
+                   std::vector<pcl::PointIndices>   &_indices_rejected,
+                   StructureType                    &_array,
+                   DataIndex                        &_min_index,
+                   DataIndex                        &_max_index) :
         cluster_count(0),
         entries(_entries),
         indices(_indices),
@@ -40,7 +41,7 @@ public:
 
     inline void cluster()
     {
-        for(Entry *entry : entries)
+        for(EntryWithDistr *entry : entries)
         {
             if(entry->cluster > -1)
                 continue;
@@ -74,20 +75,20 @@ private:
     MaskType offsets;
     int      cluster_count;
 
-    std::vector<Entry*>            &entries;
+    std::vector<EntryWithDistr*>   &entries;
     std::vector<pcl::PointIndices> &indices;
     std::vector<pcl::PointIndices> &indices_rejected;
     StructureType                  &array;
     DataIndex                       min_index;
     DataIndex                       max_index;
 
-    Validator                  validator;
-    pcl::PointIndices              buffer_indices;
-    math::Distribution<3>          buffer_distribution;
+    Validator                       validator;
+    pcl::PointIndices               buffer_indices;
+    math::Distribution<3>           buffer_distribution;
 
-    inline void clusterEntry(Entry *entry)
+    inline void clusterEntry(EntryWithDistr *entry)
     {
-        ArrayIndex array_index;
+        StructureIndex array_index;
         DataIndex index;
         for(DataIndex &offset : offsets) {
             if(AO::is_zero(offset))
@@ -105,7 +106,7 @@ private:
             if(out_of_bounds)
                 continue;
 
-            Entry *neighbour = array.at(array_index);
+            EntryWithDistr *neighbour = array.at(array_index);
             if(!neighbour)
                 continue;
             if(neighbour->cluster > -1)
