@@ -122,22 +122,25 @@ add_library(csapex_point_cloud_plugin_node
 
     src/segmentation/cluster_kdtree.cpp
     src/segmentation/cluster_kdtree_filtered.cpp
-#    src/segmentation/cluster_array_filtered_lch.cpp
 
     src/segmentation/regular_structures/entry.hpp
     src/segmentation/regular_structures/validator.hpp
     src/segmentation/regular_structures/indexation.hpp
     src/segmentation/regular_structures/cluster_params.hpp
-    src/segmentation/regular_structures/filtered_clustering.hpp
     src/segmentation/regular_structures/clustering.hpp
+    src/segmentation/regular_structures/filtered_clustering.hpp
+    src/segmentation/regular_structures/filtered_clustering_ic.hpp
     src/segmentation/cluster_regular.cpp
     src/segmentation/cluster_regular_filtered.cpp
+    src/segmentation/cluster_regular_filtered_color.cpp
+    src/segmentation/cluster_regular_filtered_intensity.cpp
 
     src/analysis/ray_angles.cpp
     src/analysis/estimate_normals.cpp
     src/analysis/estimate_center.cpp
 
     src/math/distribution.hpp
+    src/math/mean.hpp
 
     src/pointcloud_generator.cpp
     src/sac_fit.cpp

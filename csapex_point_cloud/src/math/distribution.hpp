@@ -70,6 +70,12 @@ public:
         dirty_eigen = true;
     }
 
+    inline Distribution& operator+=(const PointType &_p)
+    {
+        add(_p);
+        return *this;
+    }
+
     inline Distribution& operator+=(const Distribution &other)
     {
         std::size_t _n = n_1 + other.n_1;

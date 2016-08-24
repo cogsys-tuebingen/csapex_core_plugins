@@ -2,6 +2,7 @@
 #define ENTRY_HPP
 
 #include <distribution.hpp>
+#include <mean.hpp>
 
 namespace csapex {
 using DataIndex = std::array<int, 3>;
@@ -25,6 +26,17 @@ struct EntryStatistical  : public Entry
     {
     }
 };
+
+template<std::size_t Dim>
+struct EntryStatisticalIC : public EntryStatistical
+{
+    math::Mean<Dim> color_mean;
+    EntryStatisticalIC() :
+        EntryStatistical()
+    {
+    }
+};
+
 }
 
 #endif // ENTRY_HPP
