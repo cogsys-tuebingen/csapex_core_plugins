@@ -46,6 +46,7 @@ catkin_package(
 
 include_directories(
   include
+  src/math
   ${catkin_INCLUDE_DIRS}
   ${pcl_ros_INCLUDE_DIRS}
   ${Qt5Core_INCLUDE_DIRS}
@@ -121,7 +122,7 @@ add_library(csapex_point_cloud_plugin_node
 
     src/segmentation/cluster_kdtree.cpp
     src/segmentation/cluster_kdtree_filtered.cpp
-    src/segmentation/cluster_array_filtered_lch.cpp
+#    src/segmentation/cluster_array_filtered_lch.cpp
 
     src/segmentation/regular_structures/entry.hpp
     src/segmentation/regular_structures/validator.hpp
