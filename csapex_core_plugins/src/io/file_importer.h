@@ -5,6 +5,7 @@
 #include <csapex/msg/message_provider.h>
 #include <csapex/model/tickable_node.h>
 #include <csapex/signal/signal_fwd.h>
+#include <csapex/msg/generic_vector_message.hpp>
 
 /// SYSTEM
 #include <QString>
@@ -68,6 +69,10 @@ private:
 
     bool cache_enabled_;
     std::map<std::string, MessageProvider::Ptr> cache_;
+
+    bool split_container_messages_;
+    std::size_t current_container_index_;
+    connection_types::GenericVectorMessage::ConstPtr current_container_msg_;
 };
 
 }

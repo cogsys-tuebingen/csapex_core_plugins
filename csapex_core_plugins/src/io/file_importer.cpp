@@ -54,6 +54,12 @@ void FileImporter::setupParameters(Parameterizable& parameters)
 
     parameters.addConditionalParameter(param::ParameterFactory::declareBool("recursive import", false), cond_dir);
 
+    parameters.addParameter(param::ParameterFactory::declareBool("split_container_messages",
+                                                                 param::ParameterDescription("Specifies, wheter imported container messages should be split into their"
+                                                                                             "constituent parts for export. (Only applicable to the first output slot.)"),
+                                                                 false),
+                            split_container_messages_);
+
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
     parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
 
@@ -202,6 +208,18 @@ bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
     bool play = readParameter<bool>("directory/play") ||
             (play_->isConnected() && playing_);
 
+    if(current_container_msg_) {
+        if(current_container_index_ < current_container_msg_->nestedValueCount()) {
+            TokenDataConstPtr msg = current_container_msg_->nestedValue(current_container_index_);
+            msg::publish(outputs_[0], msg);
+            ++current_container_index_;
+            return true;
+
+        } else {
+            current_container_msg_.reset();
+        }
+    }
+
     if(provider_) {
         if(provider_->hasNext()) {
             for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
@@ -211,6 +229,15 @@ bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
 
                 if(msg::isConnected(output)) {
                     Message::Ptr msg = provider_->next(slot);
+
+                    if(split_container_messages_ && slot == 0) {
+                        if(GenericVectorMessage::ConstPtr vector = std::dynamic_pointer_cast<GenericVectorMessage>(msg)) {
+                            current_container_msg_ = vector;
+                            current_container_index_ = 0;
+                            return tick(nm, p);
+                        }
+                    }
+
                     if(msg) {
                         msg::publish(output, msg);
                     }
