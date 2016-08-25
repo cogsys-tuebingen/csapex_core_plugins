@@ -125,16 +125,16 @@ private:
                 double diff = 0.0;
                 switch(validator.params.color_difference_type) {
                 case ClusterParamsStatisticalColor::CIE76:
-                    diff = color_differences::CIE76(entry->color_mean,
-                                                    neighbour->color_mean);
+                    diff = color_differences::CIE76(entry->color_mean.getMean(),
+                                                    neighbour->color_mean.getMean());
                     break;
                 case ClusterParamsStatisticalColor::CIE94Grahpics:
-                    diff = color_differences::CIE94Grahpics(entry->color_mean,
-                                                            neighbour->color_mean);
+                    diff = color_differences::CIE94Grahpics(entry->color_mean.getMean(),
+                                                            neighbour->color_mean.getMean());
                     break;
                 case ClusterParamsStatisticalColor::CIE94Textiles:
-                    diff = color_differences::CIE94Textiles(entry->color_mean,
-                                                            neighbour->color_mean);
+                    diff = color_differences::CIE94Textiles(entry->color_mean.getMean(),
+                                                            neighbour->color_mean.getMean());
                     break;
                 default:
                     break;
