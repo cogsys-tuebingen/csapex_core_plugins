@@ -6,12 +6,13 @@
 #include <vector>
 
 namespace csapex {
+template<typename ParamType>
 class Validator
 {
 public:
     enum class Result { ACCEPTED, TOO_SMALL, REJECTED };
 
-    Validator(const ClusterParamsStatistical   &params,
+    Validator(const ParamType       &params,
               pcl::PointIndices     &indices,
               math::Distribution<3> &distribution) :
         params(params),
@@ -112,8 +113,8 @@ private:
     }
 
 public:
-    ClusterParamsStatistical params;
-    bool          check_statistic;
+    ParamType params;
+    bool      check_statistic;
 private:
     pcl::PointIndices& buffer_indices;
     math::Distribution<3>& buffer_distribution;

@@ -14,14 +14,14 @@
 
 #include "regular_structures/indexation.hpp"
 #include "regular_structures/entry.hpp"
-#include "regular_structures/filtered_clustering_ic.hpp"
+#include "regular_structures/filtered_clustering_color.hpp"
 
 #include <cslibs_kdtree/array.hpp>
 #include <cslibs_kdtree/page.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using EntryType   = EntryStatisticalIC<3>;
+using EntryType   = EntryStatisticalColor;
 
 template<typename StructureType>
 void ClusterRegularFilteredColor<StructureType>::setup(NodeModifier &node_modifier)
@@ -62,7 +62,7 @@ void ClusterRegularFilteredColor<StructureType>::setupParameters(Parameterizable
     parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/z", 0.0, 3.0, 0.0, 0.0, 0.01),
                             cluster_params_.cluster_std_devs[2]);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_color_difference", 0.0, 10.0, 0.0, 0.01),
-                            cluster_params_.max_ic_difference);
+                            cluster_params_.color_difference);
 
     std::map<std::string, int> covariance_threshold_types = {{"DEFAULT", ClusterParamsStatistical::DEFAULT},
                                                              {"PCA2D", ClusterParamsStatistical::PCA2D},
@@ -73,15 +73,14 @@ void ClusterRegularFilteredColor<StructureType>::setupParameters(Parameterizable
                             reinterpret_cast<int&>(cluster_params_.cluster_cov_thresh_type));
     std::map<std::string, int> color_difference_types =
     {
-        {"CIE94", ClusterParamsStatisticalIC::CIE94},
-        {"CIEDE2000", ClusterParamsStatisticalIC::CIEDE2000},
-        {"CMC", ClusterParamsStatisticalIC::CMC},
-        {"CIE76", ClusterParamsStatisticalIC::CIE76}
+        {"CIE76", ClusterParamsStatisticalColor::CIE76},
+        {"CIE94Grahpics", ClusterParamsStatisticalColor::CIE94Grahpics},
+        {"CIE94Textiles", ClusterParamsStatisticalColor::CIE94Textiles},
     };
     parameters.addParameter(param::ParameterFactory::declareParameterSet("cluster/color_difference_type",
                                                                          color_difference_types,
-                                                                         (int) ClusterParamsStatisticalIC::CIE94),
-                            (int&) cluster_params_.color_diff_type);
+                                                                         (int) ClusterParamsStatisticalColor::CIE76),
+                            (int&) cluster_params_.color_difference_type);
 
 }
 
@@ -136,9 +135,9 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
                     entry.indices.push_back(i);
                     entry.distribution.add({pt.x, pt.y, pt.z});
                     const std::size_t color_pos = 3 * i;
-                    entry.color_mean.add({color_ptr[color_pos],
-                                          color_ptr[color_pos + 1],
-                                          color_ptr[color_pos + 2]});
+                    entry.color_mean.add({(double) color_ptr[color_pos],
+                                          (double) color_ptr[color_pos + 1],
+                                          (double) color_ptr[color_pos + 2]});
                     AO::cwise_min(entry.index, min_index);
                     AO::cwise_max(entry.index, max_index);
                     entries.emplace_back(entry);
@@ -154,9 +153,9 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
                     entry.indices.push_back(i);
                     entry.distribution.add({pt.x, pt.y, pt.z});
                     const std::size_t color_pos = 3 * i;
-                    entry.color_mean.add({color_ptr[color_pos],
-                                          color_ptr[color_pos + 1],
-                                          color_ptr[color_pos + 2]});
+                    entry.color_mean.add({(double) color_ptr[color_pos],
+                                          (double) color_ptr[color_pos + 1],
+                                          (double) color_ptr[color_pos + 2]});
                     AO::cwise_min(entry.index, min_index);
                     AO::cwise_max(entry.index, max_index);
                     entries.push_back(entry);
@@ -190,10 +189,10 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
     }
     {
         /// Clustering stage
-    FilteredClusteringIC<StructureType, 3> clustering(referenced,
+    FilteredClusteringColor<StructureType> clustering(referenced,
                                                       cluster_params_,
-                                                      *out_cluster_indices,
-                                                      *out_rejected_cluster_indices,
+                                                     *out_cluster_indices,
+                                                     *out_rejected_cluster_indices,
                                                       array,
                                                       min_index,
                                                       max_index);
@@ -212,4 +211,4 @@ typedef ClusterRegularFilteredColor<ArrayType> ClusterPointCloudArrayFilteredCol
 }
 
 CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudPagingFilteredColor, csapex::Node)
-CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudPagingFilteredColor, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloudArrayFilteredColor, csapex::Node)

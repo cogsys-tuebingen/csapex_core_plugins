@@ -1,4 +1,4 @@
-#ifndef FILTERED_CLUSTERING_HPP
+ #ifndef FILTERED_CLUSTERING_HPP
 #define FILTERED_CLUSTERING_HPP
 
 #include <cslibs_kdtree/fill.hpp>
@@ -6,27 +6,29 @@
 
 #include "entry.hpp"
 #include "validator.hpp"
+#include "color_differences.hpp"
 
 namespace csapex {
 using AO                  = kdtree::ArrayOperations<3, int, int>;
 using AOA                 = kdtree::ArrayOperations<3, int, std::size_t>;
 
 template<typename StructureType>
-class FilteredClustering
+class FilteredClusteringColor
 {
 public:
     typedef kdtree::detail::fill<DataIndex, 3>   MaskFiller;
     typedef typename MaskFiller::Type            MaskType;
     typedef typename StructureType::Index        StructureIndex;
-    typedef Validator<ClusterParamsStatistical>  ValidatorType;
+    typedef EntryStatisticalColor                EntryType;
+    typedef Validator<ClusterParamsStatisticalColor> ValidatorType;
 
-    FilteredClustering(std::vector<EntryStatistical*> &_entries,
-                   const ClusterParamsStatistical              &_params,
-                   std::vector<pcl::PointIndices>   &_indices,
-                   std::vector<pcl::PointIndices>   &_indices_rejected,
-                   StructureType                    &_array,
-                   DataIndex                        &_min_index,
-                   DataIndex                        &_max_index) :
+    FilteredClusteringColor(std::vector<EntryType*> &_entries,
+                            const ClusterParamsStatisticalColor &_params,
+                            std::vector<pcl::PointIndices>      &_indices,
+                            std::vector<pcl::PointIndices>      &_indices_rejected,
+                            StructureType                       &_array,
+                            DataIndex                           &_min_index,
+                            DataIndex                           &_max_index) :
         cluster_count(0),
         entries(_entries),
         indices(_indices),
@@ -41,7 +43,7 @@ public:
 
     inline void cluster()
     {
-        for(EntryStatistical *entry : entries)
+        for(EntryType *entry : entries)
         {
             if(entry->cluster > -1)
                 continue;
@@ -63,24 +65,25 @@ public:
                     buffer_indices.indices.clear();
             }
         }
-   }
+    }
 
 private:
     MaskType offsets;
     int      cluster_count;
 
-    std::vector<EntryStatistical*>   &entries;
+    std::vector<EntryType*>        &entries;
     std::vector<pcl::PointIndices> &indices;
     std::vector<pcl::PointIndices> &indices_rejected;
     StructureType                  &array;
     DataIndex                       min_index;
     DataIndex                       max_index;
 
-    ValidatorType                   validator;
+    ValidatorType                   validator;              /// TODO : refactor that
     pcl::PointIndices               buffer_indices;
     math::Distribution<3>           buffer_distribution;
 
-    inline void clusterEntry(EntryStatistical *entry)
+
+    inline void clusterEntry(EntryType *entry)
     {
         StructureIndex array_index;
         DataIndex index;
@@ -100,7 +103,7 @@ private:
             if(out_of_bounds)
                 continue;
 
-            EntryStatistical *neighbour = array.at(array_index);
+            EntryType *neighbour = array.at(array_index);
             if(!neighbour)
                 continue;
             if(neighbour->cluster > -1)
@@ -118,6 +121,30 @@ private:
                 if (dist > validator.params.cluster_distance_and_weights[0])
                     continue;
             }
+            if(validator.params.color_difference) {
+                double diff = 0.0;
+                switch(validator.params.color_difference_type) {
+                case ClusterParamsStatisticalColor::CIE76:
+                    diff = color_differences::CIE76(entry->color_mean,
+                                                    neighbour->color_mean);
+                    break;
+                case ClusterParamsStatisticalColor::CIE94Grahpics:
+                    diff = color_differences::CIE94Grahpics(entry->color_mean,
+                                                            neighbour->color_mean);
+                    break;
+                case ClusterParamsStatisticalColor::CIE94Textiles:
+                    diff = color_differences::CIE94Textiles(entry->color_mean,
+                                                            neighbour->color_mean);
+                    break;
+                default:
+                    break;
+                }
+                if(diff > validator.params.color_difference) {
+                    continue;
+                }
+            }
+
+
 
             const int cluster = entry->cluster;
             neighbour->cluster = cluster;

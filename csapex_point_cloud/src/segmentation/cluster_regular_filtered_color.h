@@ -30,7 +30,7 @@ private:
     Output*       out_;
     Output*       out_rejected_;
 
-    ClusterParamsStatisticalIC cluster_params_;
+    ClusterParamsStatisticalColor cluster_params_;
 
 };
 }

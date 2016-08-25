@@ -129,7 +129,7 @@ add_library(csapex_point_cloud_plugin_node
     src/segmentation/regular_structures/cluster_params.hpp
     src/segmentation/regular_structures/clustering.hpp
     src/segmentation/regular_structures/filtered_clustering.hpp
-    src/segmentation/regular_structures/filtered_clustering_ic.hpp
+    src/segmentation/regular_structures/filtered_clustering_color.hpp
     src/segmentation/cluster_regular.cpp
     src/segmentation/cluster_regular_filtered.cpp
     src/segmentation/cluster_regular_filtered_color.cpp

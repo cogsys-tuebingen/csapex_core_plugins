@@ -46,6 +46,7 @@ protected:
     std::map<ColorSpace, csapex::Encoding> cs_to_encoding_;
     std::map<int, ColorSpace> index_to_cs_in_;
     std::map<int, ColorSpace> index_to_cs_out_;
+    int depth_;
 
     csapex::Input* input_img_;
     csapex::Output* output_img_;

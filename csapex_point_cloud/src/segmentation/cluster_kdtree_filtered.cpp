@@ -126,18 +126,19 @@ void cluster(const KDTreePtr&                                       tree,
         const double w_1 = params.cluster_distance_and_weights[2];
         const double w_2 = params.cluster_distance_and_weights[3];
 
-        Validator validator(params, buffer_indices, buffer_distribution);
+        typedef Validator<ClusterParamsStatistical> ValidatorType;
+        ValidatorType validator(params, buffer_indices, buffer_distribution);
 
         kdtree::KDTreeClustering<KDTree> clustering(*tree);
 
         clustering.set_cluster_init([&](const NodeData& data)
         {
-            Validator::Result validation = validator.validate();
-            if (validation == Validator::Result::ACCEPTED)
+            ValidatorType::Result validation = validator.validate();
+            if (validation == ValidatorType::Result::ACCEPTED)
                 indicies.emplace_back(std::move(buffer_indices));
             else
             {
-                if (rejected && validation != Validator::Result::TOO_SMALL)
+                if (rejected && validation != ValidatorType::Result::TOO_SMALL)
                     rejected->emplace_back(std::move(buffer_indices));
                 else
                     buffer_indices.indices.clear();
@@ -169,10 +170,10 @@ void cluster(const KDTreePtr&                                       tree,
 
         clustering.cluster();
 
-        Validator::Result validation = validator.validate();
-        if (validation == Validator::Result::ACCEPTED)
+        ValidatorType::Result validation = validator.validate();
+        if (validation == ValidatorType::Result::ACCEPTED)
             indicies.emplace_back(std::move(buffer_indices));
-        else if (rejected && validation != Validator::Result::TOO_SMALL)
+        else if (rejected && validation != ValidatorType::Result::TOO_SMALL)
             rejected->emplace_back(std::move(buffer_indices));
     }
 

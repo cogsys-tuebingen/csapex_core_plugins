@@ -11,22 +11,22 @@ namespace csapex {
 using AO                  = kdtree::ArrayOperations<3, int, int>;
 using AOA                 = kdtree::ArrayOperations<3, int, std::size_t>;
 
-template<typename StructureType, std::size_t ICDim>
+template<typename StructureType>
 class FilteredClusteringIC
 {
 public:
     typedef kdtree::detail::fill<DataIndex, 3>   MaskFiller;
     typedef typename MaskFiller::Type            MaskType;
     typedef typename StructureType::Index        StructureIndex;
-    typedef EntryStatisticalIC<ICDim>            EntryType;
+    typedef EntryStatisticalColor                EntryType;
 
     FilteredClusteringIC(std::vector<EntryType*> &_entries,
-                   const ClusterParamsStatistical              &_params,
-                   std::vector<pcl::PointIndices>   &_indices,
-                   std::vector<pcl::PointIndices>   &_indices_rejected,
-                   StructureType                    &_array,
-                   DataIndex                        &_min_index,
-                   DataIndex                        &_max_index) :
+                   const ClusterParamsStatisticalColor &_params,
+                   std::vector<pcl::PointIndices>      &_indices,
+                   std::vector<pcl::PointIndices>      &_indices_rejected,
+                   StructureType                       &_array,
+                   DataIndex                           &_min_index,
+                   DataIndex                           &_max_index) :
         cluster_count(0),
         entries(_entries),
         indices(_indices),

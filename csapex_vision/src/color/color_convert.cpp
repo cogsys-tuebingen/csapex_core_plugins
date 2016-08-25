@@ -35,8 +35,8 @@ void ColorConvert::setupParameters(Parameterizable& parameters)
         {"BGR", (int) BGR},
         {"HSL", (int) HSL},
         {"HSV", (int) HSV},
-        {"MONO", (int) MONO},
-        {"LAB",(int) LAB}
+        {"MONO",(int) MONO},
+        {"LAB", (int) LAB}
     };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
@@ -70,13 +70,24 @@ void ColorConvert::setupParameters(Parameterizable& parameters)
     cs_pair_to_operation_.insert(csiPair(csPair(LAB, RGB), (int) CV_Lab2RGB));
     cs_pair_to_operation_.insert(csiPair(csPair(LAB, BGR), (int) CV_Lab2BGR));
 
-    cs_to_encoding_[YUV] = enc::yuv;
-    cs_to_encoding_[RGB] = enc::rgb;
-    cs_to_encoding_[BGR] = enc::bgr;
-    cs_to_encoding_[HSL] = enc::hsl;
-    cs_to_encoding_[HSV] = enc::hsv;
+    cs_to_encoding_[YUV]  = enc::yuv;
+    cs_to_encoding_[RGB]  = enc::rgb;
+    cs_to_encoding_[BGR]  = enc::bgr;
+    cs_to_encoding_[HSL]  = enc::hsl;
+    cs_to_encoding_[HSV]  = enc::hsv;
     cs_to_encoding_[MONO] = enc::mono;
-    cs_to_encoding_[LAB] = enc::lab;
+    cs_to_encoding_[LAB]  = enc::lab;
+
+    std::map<std::string, int> depths = {
+        {"DEFAULT", -1},
+        {"8UC",  (int) CV_8U},
+        {"16U", (int) CV_16U},
+        {"32F", (int) CV_32F}
+    };
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("depth", depths, CV_8U),
+                            depth_);
+
+
 }
 
 void ColorConvert::process()
@@ -98,10 +109,36 @@ void ColorConvert::process()
     if(cspair.first != cspair.second) {
         if(cs_pair_to_operation_.find(cspair) != cs_pair_to_operation_.end()) {
             int mode = cs_pair_to_operation_[cspair];
-            cv::cvtColor(img->value, out->value, mode);
+            if(depth_ != -1) {
+                switch (depth_) {
+                case CV_8U:
+                    out->value = cv::Mat(img->value.rows,
+                                         img->value.cols,
+                                         CV_8UC(img->value.channels()),
+                                         cv::Scalar());
+                    break;
+                case CV_16U:
+                    out->setEncoding(enc::unknown);
+                    out->value = cv::Mat(img->value.rows,
+                                         img->value.cols,
+                                         CV_16UC(img->value.channels()),
+                                         cv::Scalar());
+                    break;
+                case CV_32F:
+                    out->setEncoding(enc::unknown);
+                    out->value = cv::Mat(img->value.rows,
+                                         img->value.cols,
+                                         CV_32FC(img->value.channels()),
+                                         cv::Scalar());
+                    break;
+                }
+            } else {
+                cv::cvtColor(img->value, out->value, mode);
 
-            if((int) out->getEncoding().channelCount() != out->value.channels()) {
-                throw std::runtime_error("Conversion didn't work!");
+
+                if((int) out->getEncoding().channelCount() != out->value.channels()) {
+                    throw std::runtime_error("Conversion didn't work!");
+                }
             }
         } else {
             throw std::runtime_error("Conversion not supported!");

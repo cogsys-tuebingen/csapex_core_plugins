@@ -27,15 +27,26 @@ struct EntryStatistical  : public Entry
     }
 };
 
-template<std::size_t Dim>
-struct EntryStatisticalIC : public EntryStatistical
+struct EntryStatisticalColor : public EntryStatistical
 {
-    math::Mean<Dim> color_mean;
-    EntryStatisticalIC() :
+    math::Mean<3> color_mean;
+    EntryStatisticalColor() :
         EntryStatistical()
     {
     }
 };
+
+struct EntryStatisticalIntensity : public EntryStatistical
+{
+    math::Mean<3> color_mean;
+    EntryStatisticalIntensity() :
+        EntryStatistical()
+    {
+    }
+};
+
+
+
 
 }
 

@@ -21,11 +21,11 @@ struct ClusterParamsStatistical : public ClusterParams
                                std::array<std::pair<double, double>, 3> &intervals);
 };
 
-struct ClusterParamsStatisticalIC  : public ClusterParamsStatistical
+struct ClusterParamsStatisticalColor  : public ClusterParamsStatistical
 {
-    enum ColorDifferenceType {CIE94, CIEDE2000, CMC, CIE76};
-    ColorDifferenceType color_diff_type;
-    double max_ic_difference;
+    enum ColorDifferenceType {CIE76, CIE94Grahpics, CIE94Textiles};
+    ColorDifferenceType color_difference_type;
+    double color_difference;
 };
 }
 
