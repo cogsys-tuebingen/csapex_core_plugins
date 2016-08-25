@@ -110,11 +110,7 @@ void ExportFile::exportVector(const connection_types::GenericVectorMessage::Cons
 
             if(!QFile(QString::fromStdString(file)).exists()) {
                 YAML::Emitter em;
-                em << YAML::BeginSeq;
-                for(std::size_t i = 0, total = vector->nestedValueCount(); i < total; ++i) {
-                    MessageFactory::writeMessage(em, *vector->nestedValue(i));
-                }
-                em << YAML::EndSeq;
+                MessageFactory::writeMessage(em, *vector);
                 std::ofstream out(file);
                 out << em.c_str();
                 out.close();
