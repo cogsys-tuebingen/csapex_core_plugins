@@ -83,6 +83,7 @@ add_library(csapex_core_plugins_node SHARED
     src/text/say_text.cpp
     src/text/text_convert.cpp
     src/text/text_input.cpp
+    src/text/generic_text_combiner.cpp
 
     src/tools/cache.cpp
     src/tools/calculate_duration.cpp
