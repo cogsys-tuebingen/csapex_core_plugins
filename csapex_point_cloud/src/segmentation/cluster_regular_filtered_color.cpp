@@ -15,6 +15,7 @@
 #include "regular_structures/indexation.hpp"
 #include "regular_structures/entry.hpp"
 #include "regular_structures/filtered_clustering_color.hpp"
+#include <iostream>
 
 #include <cslibs_kdtree/array.hpp>
 #include <cslibs_kdtree/page.hpp>
@@ -27,7 +28,7 @@ template<typename StructureType>
 void ClusterRegularFilteredColor<StructureType>::setup(NodeModifier &node_modifier)
 {
     in_cloud_   = node_modifier.addInput<PointCloudMessage>("PointCloud");
-    in_color_      = node_modifier.addInput<CvMatMessage>("Intensity / Color");
+    in_color_      = node_modifier.addInput<CvMatMessage>("LAB");
     in_indices_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
 
     out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
@@ -49,7 +50,7 @@ void ClusterRegularFilteredColor<StructureType>::setupParameters(Parameterizable
                             cluster_params_.cluster_sizes[1]);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_distance", 0.00, 3.0, 0.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[0]);
-    parameters.addParameter(param::ParameterFactory::declareRange("cClusterPointCloudPageFilteredluster/distance_weights/x", 0.0, 1.0, 1.0, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/distance_weights/x", 0.0, 1.0, 1.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[1]);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/distance_weights/y", 0.0, 1.0, 1.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[2]);
@@ -61,8 +62,6 @@ void ClusterRegularFilteredColor<StructureType>::setupParameters(Parameterizable
                             cluster_params_.cluster_std_devs[1]);
     parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/z", 0.0, 3.0, 0.0, 0.0, 0.01),
                             cluster_params_.cluster_std_devs[2]);
-    parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_color_difference", 0.0, 10.0, 0.0, 0.01),
-                            cluster_params_.color_difference);
 
     std::map<std::string, int> covariance_threshold_types = {{"DEFAULT", ClusterParamsStatistical::DEFAULT},
                                                              {"PCA2D", ClusterParamsStatistical::PCA2D},
@@ -81,7 +80,16 @@ void ClusterRegularFilteredColor<StructureType>::setupParameters(Parameterizable
                                                                          color_difference_types,
                                                                          (int) ClusterParamsStatisticalColor::CIE76),
                             (int&) cluster_params_.color_difference_type);
-
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/color_difference/max", 0.0, 4000.0, 0.0, 0.1),
+                            cluster_params_.color_difference);
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/color_difference/weights/l", 0.0, 1.0, 1.0, 0.01),
+                            cluster_params_.color_difference_weights[0]);
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/color_difference/weights/a", 0.0, 1.0, 1.0, 0.01),
+                            cluster_params_.color_difference_weights[1]);
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/color_difference/weights/b", 0.0, 1.0, 1.0, 0.01),
+                            cluster_params_.color_difference_weights[2]);
+    parameters.addParameter(param::ParameterFactory::declareBool("cluser/color_difference/only_horizontal", true),
+                            cluster_params_.color_difference_horizontal);
 }
 
 /// TODO: Maybe use distribution instead of mean to omit entries of too high variance
@@ -108,8 +116,8 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
     }
     CvMatMessage::ConstPtr in_color = msg::getMessage<CvMatMessage>(in_color_);
     const cv::Mat &color = in_color->value;
-    if(color.type() != CV_32FC3) {
-        throw std::runtime_error("Matrix must be CV_32FC3");
+    if(!in_color->getEncoding().matches(enc::lab)) {
+        throw std::runtime_error("Encoding must be enc::lab!");
     }
     if(cloud->height != color.rows ||
             cloud->width != color.cols) {
@@ -123,10 +131,11 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
     IndexationType indexation(cluster_params_.bin_sizes);
 
     std::vector<EntryType>  entries;
-    const float *color_ptr = color.ptr<float>();
+    const uchar *color_ptr = color.ptr<uchar>();
     {
         /// Preparation of indices
         if(indices) {
+            std::cout << "got indices" << std::endl;
             for(const int i : indices->indices) {
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
@@ -189,14 +198,14 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
     }
     {
         /// Clustering stage
-    FilteredClusteringColor<StructureType> clustering(referenced,
-                                                      cluster_params_,
-                                                     *out_cluster_indices,
-                                                     *out_rejected_cluster_indices,
-                                                      array,
-                                                      min_index,
-                                                      max_index);
-    clustering.cluster();
+        FilteredClusteringColor<StructureType> clustering(referenced,
+                                                          cluster_params_,
+                                                          *out_cluster_indices,
+                                                          *out_rejected_cluster_indices,
+                                                          array,
+                                                          min_index,
+                                                          max_index);
+        clustering.cluster();
     }
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_rejected_, out_rejected_cluster_indices);

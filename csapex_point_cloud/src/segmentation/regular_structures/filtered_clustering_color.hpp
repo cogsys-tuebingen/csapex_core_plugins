@@ -1,4 +1,4 @@
- #ifndef FILTERED_CLUSTERING_HPP
+#ifndef FILTERED_CLUSTERING_HPP
 #define FILTERED_CLUSTERING_HPP
 
 #include <cslibs_kdtree/fill.hpp>
@@ -83,6 +83,11 @@ private:
     math::Distribution<3>           buffer_distribution;
 
 
+    inline bool isHorizontal(const DataIndex &offset)
+    {
+        return (offset[0] != 0 || offset[1] != 0) ;
+    }
+
     inline void clusterEntry(EntryType *entry)
     {
         StructureIndex array_index;
@@ -122,29 +127,33 @@ private:
                     continue;
             }
             if(validator.params.color_difference) {
-                double diff = 0.0;
-                switch(validator.params.color_difference_type) {
-                case ClusterParamsStatisticalColor::CIE76:
-                    diff = color_differences::CIE76(entry->color_mean.getMean(),
-                                                    neighbour->color_mean.getMean());
-                    break;
-                case ClusterParamsStatisticalColor::CIE94Grahpics:
-                    diff = color_differences::CIE94Grahpics(entry->color_mean.getMean(),
-                                                            neighbour->color_mean.getMean());
-                    break;
-                case ClusterParamsStatisticalColor::CIE94Textiles:
-                    diff = color_differences::CIE94Textiles(entry->color_mean.getMean(),
-                                                            neighbour->color_mean.getMean());
-                    break;
-                default:
-                    break;
-                }
-                if(diff > validator.params.color_difference) {
-                    continue;
+                if(!validator.params.color_difference_horizontal ||
+                        isHorizontal(offset)) {
+                    double diff = 0.0;
+                    switch(validator.params.color_difference_type) {
+                    case ClusterParamsStatisticalColor::CIE76:
+                        diff = color_differences::CIE76(entry->color_mean.getMean(),
+                                                        neighbour->color_mean.getMean(),
+                                                        validator.params.color_difference_weights);
+                        break;
+                    case ClusterParamsStatisticalColor::CIE94Grahpics:
+                        diff = color_differences::CIE94Grahpics(entry->color_mean.getMean(),
+                                                                neighbour->color_mean.getMean(),
+                                                                validator.params.color_difference_weights);
+                        break;
+                    case ClusterParamsStatisticalColor::CIE94Textiles:
+                        diff = color_differences::CIE94Textiles(entry->color_mean.getMean(),
+                                                                neighbour->color_mean.getMean(),
+                                                                validator.params.color_difference_weights);
+                        break;
+                    default:
+                        break;
+                    }
+                    if(diff > validator.params.color_difference) {
+                        continue;
+                    }
                 }
             }
-
-
 
             const int cluster = entry->cluster;
             neighbour->cluster = cluster;

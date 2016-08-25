@@ -24,8 +24,10 @@ struct ClusterParamsStatistical : public ClusterParams
 struct ClusterParamsStatisticalColor  : public ClusterParamsStatistical
 {
     enum ColorDifferenceType {CIE76, CIE94Grahpics, CIE94Textiles};
-    ColorDifferenceType color_difference_type;
-    double color_difference;
+    ColorDifferenceType   color_difference_type;
+    std::array<double, 3> color_difference_weights;
+    double                color_difference;
+    bool                  color_difference_horizontal;
 };
 }
 
