@@ -34,6 +34,7 @@ private:
 
     bool oneshot_;
     bool oneshot_allowed_;
+    bool vector_as_single_file_;
 
     TokenData::ConstPtr last_message_;
 };
