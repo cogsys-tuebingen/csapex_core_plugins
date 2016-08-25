@@ -55,6 +55,8 @@ void ExportFile::setupParameters(Parameterizable& parameters)
     addParameter(csapex::param::ParameterFactory::declareDirectoryOutputPath("path",
                                                                      csapex::param::ParameterDescription("Directory to write messages to"),
                                                                      "", ""), std::bind(&ExportFile::setExportPath, this));
+    addParameter(csapex::param::ParameterFactory::declareBool("vector_as_single_file", false),
+                 vector_as_single_file_);
 }
 
 void ExportFile::setup(NodeModifier& node_modifier)
@@ -100,9 +102,27 @@ void ExportFile::exportMessage(const TokenData::ConstPtr &msg)
 
 void ExportFile::exportVector(const connection_types::GenericVectorMessage::ConstPtr& vector)
 {
+    if(vector_as_single_file_) {
+        while(true) {
+            std::stringstream file_s;
+            file_s << path_ << "/" << base_ << "_" << suffix_ << Settings::message_extension;
+            std::string file = file_s.str();
 
-    for(std::size_t i = 0, total = vector->nestedValueCount(); i < total; ++i) {
-        exportSingle(vector->nestedValue(i));
+            if(!QFile(QString::fromStdString(file)).exists()) {
+                YAML::Emitter em;
+                MessageFactory::writeMessage(em, *vector);
+                std::ofstream out(file);
+                out << em.c_str();
+                out.close();
+                break;
+            } else {
+                ++suffix_;
+            }
+        }
+    } else {
+        for(std::size_t i = 0, total = vector->nestedValueCount(); i < total; ++i) {
+            exportSingle(vector->nestedValue(i));
+        }
     }
 }
 
