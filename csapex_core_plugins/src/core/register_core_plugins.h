@@ -12,7 +12,7 @@ public:
     RegisterCorePlugins();
 
     void init(CsApexCore& core);
-    void shutdown();
+    void shutdown() override;
 };
 
 }

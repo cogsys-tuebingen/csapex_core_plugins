@@ -45,7 +45,7 @@ public:
                     } else if(std::dynamic_pointer_cast<connection_types::GenericValueMessage<std::string> const>(m)) {
                         result = connection_types::GenericVectorMessage::make<std::string>();
                     } else {
-                        throw std::runtime_error("this node only supports int, double and string");
+                        result = connection_types::GenericVectorMessage::make(m);
                     }
                 }
 
