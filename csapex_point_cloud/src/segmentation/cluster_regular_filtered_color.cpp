@@ -88,8 +88,6 @@ void ClusterRegularFilteredColor<StructureType>::setupParameters(Parameterizable
                             cluster_params_.color_difference_weights[1]);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/color_difference/weights/b", 0.0, 1.0, 1.0, 0.01),
                             cluster_params_.color_difference_weights[2]);
-    parameters.addParameter(param::ParameterFactory::declareBool("cluser/color_difference/only_horizontal", true),
-                            cluster_params_.color_difference_horizontal);
 }
 
 /// TODO: Maybe use distribution instead of mean to omit entries of too high variance
@@ -135,7 +133,6 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
     {
         /// Preparation of indices
         if(indices) {
-            std::cout << "got indices" << std::endl;
             for(const int i : indices->indices) {
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
@@ -207,6 +204,7 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
                                                           max_index);
         clustering.cluster();
     }
+
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_rejected_, out_rejected_cluster_indices);
 }

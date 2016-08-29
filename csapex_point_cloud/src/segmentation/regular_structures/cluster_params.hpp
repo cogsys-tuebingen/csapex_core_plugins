@@ -2,6 +2,7 @@
 #define CLUSTER_PARAMS_HPP
 
 #include <distribution.hpp>
+#include <mean.hpp>
 
 namespace csapex {
 struct ClusterParams {
@@ -27,7 +28,11 @@ struct ClusterParamsStatisticalColor  : public ClusterParamsStatistical
     ColorDifferenceType   color_difference_type;
     std::array<double, 3> color_difference_weights;
     double                color_difference;
-    bool                  color_difference_horizontal;
+};
+
+struct ClusterParamsStatisticalMono : public ClusterParamsStatistical
+{
+    double                mono_difference;
 };
 }
 

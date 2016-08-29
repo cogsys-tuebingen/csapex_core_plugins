@@ -50,6 +50,11 @@ public:
         return Result::ACCEPTED;
     }
 
+    inline math::Distribution<3> getBufferDistribution() const
+    {
+        return buffer_distribution;
+    }
+
 private:
     inline void square(double &value)
     {

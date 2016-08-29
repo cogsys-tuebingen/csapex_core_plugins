@@ -1,11 +1,14 @@
 #ifndef CLUSTERING_HPP
 #define CLUSTERING_HPP
 
+#include <map>
+
 #include <cslibs_kdtree/fill.hpp>
 #include <cslibs_kdtree/index.hpp>
 
 #include "entry.hpp"
 #include "validator.hpp"
+#include "iostream"
 
 namespace csapex {
 using AO                  = kdtree::ArrayOperations<3, int, int>;
@@ -51,11 +54,11 @@ private:
     MaskType offsets;
     int      cluster_count;
 
-    std::vector<Entry*>            &entries;
-    std::vector<pcl::PointIndices> &indices;
-    StructureType                  &array;
-    DataIndex                       min_index;
-    DataIndex                       max_index;
+    std::vector<Entry*>                      &entries;
+    std::vector<pcl::PointIndices>           &indices;
+    StructureType                            &array;
+    DataIndex                                 min_index;
+    DataIndex                                 max_index;
 
     inline void clusterEntry(Entry *entry)
     {
@@ -80,8 +83,9 @@ private:
             Entry *neighbour = array.at(array_index);
             if(!neighbour)
                 continue;
-            if(neighbour->cluster > -1)
+            if(neighbour->cluster > -1) {
                 continue;
+            }
             assert(neighbour->cluster == -1);
             const int cluster = entry->cluster;
             neighbour->cluster = cluster;

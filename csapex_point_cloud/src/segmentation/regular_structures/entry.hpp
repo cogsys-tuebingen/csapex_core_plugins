@@ -36,10 +36,10 @@ struct EntryStatisticalColor : public EntryStatistical
     }
 };
 
-struct EntryStatisticalIntensity : public EntryStatistical
+struct EntryStatisticalMono : public EntryStatistical
 {
-    math::Mean<3> color_mean;
-    EntryStatisticalIntensity() :
+    math::Mean<1> mono_mean;
+    EntryStatisticalMono() :
         EntryStatistical()
     {
     }
