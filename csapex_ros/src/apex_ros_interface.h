@@ -23,7 +23,7 @@ public:
     void prepare(Settings& settings);
     void init(CsApexCore& core);
     void setupGraph(Graph* graph);
-    void shutdown();
+    void shutdown() override;
 
 private:
     void registerCommandListener();
