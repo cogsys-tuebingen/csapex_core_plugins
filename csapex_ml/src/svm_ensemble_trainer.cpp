@@ -15,7 +15,8 @@ CSAPEX_REGISTER_CLASS(csapex::SVMEnsembleTrainer, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-SVMEnsembleTrainer::SVMEnsembleTrainer()
+SVMEnsembleTrainer::SVMEnsembleTrainer():
+    rand_vec_(2)
 {
 }
 
@@ -118,6 +119,13 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("one-vs-all", false),
                                        one_class_cond,
                                        one_vs_all_);
+
+    parameters.addParameter(param::ParameterFactory::declareBool
+                            ("balance",
+                             param::ParameterDescription("Use the same amount of samples per class."),
+                             false),
+                            balance_);
+
 }
 
 bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collection)
@@ -142,6 +150,24 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
         }
 
         if(one_vs_all_) {
+            std::vector<std::size_t> num_of_neg(indices_by_label.size());
+
+            auto it = indices_by_label.begin();
+            for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
+                num_of_neg[i] = it->second.size() /(indices_by_label.size() - 1);
+                auto it2 = indices_by_label.begin();
+                for(std::size_t j = 0 ; j < indices_by_label.size() ; ++j) {
+                    if(i != j){
+                        if(num_of_neg[i] > it2->second.size())
+                        {
+                            num_of_neg[i] = it2->second.size() /(indices_by_label.size() - 1);
+                        }
+                    }
+                    ++it2;
+                }
+                ++it;
+            }
+
             /// iterate samples
             for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
                 /// this is the current goal class
@@ -153,9 +179,18 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
                 for(const auto &entry : indices_by_label) {
                     if(entry.first == it->first)
                         continue;
-                    neg_indices.insert(neg_indices.end(),
-                                       entry.second.begin(),
-                                       entry.second.end());
+
+                    if(balance_){
+                        std::vector<std::size_t> shuffled = rand_vec_.newPermutation(entry.second.size());
+                        for(std::size_t n = 0; n < num_of_neg[i]; ++ n){
+                            neg_indices.push_back(entry.second[shuffled[n]]);
+                        }
+                    }
+                    else{
+                        neg_indices.insert(neg_indices.end(),
+                                           entry.second.begin(),
+                                           entry.second.end());
+                    }
                 }
 
                 ExtendedSVM svm;
@@ -207,14 +242,23 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
             if(indices_by_label.size() == 1) {
                 throw std::runtime_error("Multi class SVMs require multiple classes!");
             }
-            std::vector<std::size_t> neg_indices = indices_by_label[NEGATIVE];
+
+            std::vector<std::size_t> neg_indices_org = indices_by_label[NEGATIVE];
             indices_by_label.erase(NEGATIVE);
 
             /// iterate samples
             for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
                 auto it = indices_by_label.begin();
                 std::advance(it, i);
-
+                std::vector<std::size_t> neg_indices = neg_indices_org;
+                if(balance_){
+                    std::vector<std::size_t> shuffled = rand_vec_.newPermutation(it->second.size());
+                    neg_indices.resize(shuffled.size());
+                    for(std::size_t i = 0; i < neg_indices.size(); ++i)
+                    {
+                        neg_indices[i] = neg_indices_org[shuffled[i]];
+                    }
+                }
                 ExtendedSVM svm;
                 /// gather data
                 const std::vector<std::size_t> &pos_indices = it->second;
