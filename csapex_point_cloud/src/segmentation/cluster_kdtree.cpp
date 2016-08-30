@@ -1,4 +1,4 @@
-#include "cluster_pointcloud_kdtree.h"
+#include "cluster_kdtree.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>

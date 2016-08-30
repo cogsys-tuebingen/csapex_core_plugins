@@ -9,6 +9,7 @@
 #include <eigen3/Eigen/Eigen>
 #include <iostream>
 
+namespace csapex {
 namespace math {
 template<std::size_t Dim, bool limit_covariance = false>
 class Distribution {
@@ -67,6 +68,12 @@ public:
         ++n_1;
         dirty = true;
         dirty_eigen = true;
+    }
+
+    inline Distribution& operator+=(const PointType &_p)
+    {
+        add(_p);
+        return *this;
     }
 
     inline Distribution& operator+=(const Distribution &other)
@@ -319,5 +326,6 @@ private:
         dirty_eigen = false;
     }
 };
+}
 }
 #endif // DISTRIBUTION_H

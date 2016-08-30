@@ -1,14 +1,21 @@
-#ifndef CLUSTERPOINTCLOUDARRAY_H
-#define CLUSTERPOINTCLOUDARRAY_H
+#ifndef CLUSTERREGULAR_H
+#define CLUSTERREGULAR_H
 
 /// PROJECT
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/point_cloud_message.h>
 
+#include "regular_structures/indexation.hpp"
+#include "regular_structures/cluster_params.hpp"
+
 namespace csapex {
-class ClusterPointCloudArray : public csapex::Node
+template<typename StructureType>
+class ClusterRegular : public csapex::Node
 {
 public:
+    typedef typename StructureType::Index IndexType;
+    typedef Indexation<StructureType> IndexationType;
+
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
     virtual void process() override;
@@ -17,11 +24,6 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
-    struct ClusterParams {
-        std::array<double, 3> bin_sizes;
-        std::array<int, 2>    cluster_sizes;
-    };
-
     Input*        in_cloud_;
     Input*        in_indices_;
     Output*       out_;
@@ -31,4 +33,4 @@ private:
 };
 }
 
-#endif // CLUSTERPOINTCLOUDARRAY_H
+#endif // CLUSTERREGULAR_H

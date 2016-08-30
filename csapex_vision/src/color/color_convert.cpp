@@ -35,8 +35,8 @@ void ColorConvert::setupParameters(Parameterizable& parameters)
         {"BGR", (int) BGR},
         {"HSL", (int) HSL},
         {"HSV", (int) HSV},
-        {"MONO", (int) MONO},
-        {"LAB",(int) LAB}
+        {"MONO",(int) MONO},
+        {"LAB", (int) LAB}
     };
 
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
@@ -70,13 +70,13 @@ void ColorConvert::setupParameters(Parameterizable& parameters)
     cs_pair_to_operation_.insert(csiPair(csPair(LAB, RGB), (int) CV_Lab2RGB));
     cs_pair_to_operation_.insert(csiPair(csPair(LAB, BGR), (int) CV_Lab2BGR));
 
-    cs_to_encoding_[YUV] = enc::yuv;
-    cs_to_encoding_[RGB] = enc::rgb;
-    cs_to_encoding_[BGR] = enc::bgr;
-    cs_to_encoding_[HSL] = enc::hsl;
-    cs_to_encoding_[HSV] = enc::hsv;
+    cs_to_encoding_[YUV]  = enc::yuv;
+    cs_to_encoding_[RGB]  = enc::rgb;
+    cs_to_encoding_[BGR]  = enc::bgr;
+    cs_to_encoding_[HSL]  = enc::hsl;
+    cs_to_encoding_[HSV]  = enc::hsv;
     cs_to_encoding_[MONO] = enc::mono;
-    cs_to_encoding_[LAB] = enc::lab;
+    cs_to_encoding_[LAB]  = enc::lab;
 }
 
 void ColorConvert::process()
@@ -99,6 +99,7 @@ void ColorConvert::process()
         if(cs_pair_to_operation_.find(cspair) != cs_pair_to_operation_.end()) {
             int mode = cs_pair_to_operation_[cspair];
             cv::cvtColor(img->value, out->value, mode);
+
 
             if((int) out->getEncoding().channelCount() != out->value.channels()) {
                 throw std::runtime_error("Conversion didn't work!");

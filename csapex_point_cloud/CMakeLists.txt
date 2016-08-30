@@ -16,10 +16,15 @@ add_definitions("-O3")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS csapex csapex_ros csapex_transform csapex_opencv)
-find_package(pcl_ros REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+        csapex
+        csapex_ros
+        csapex_transform
+        csapex_opencv
+        cslibs_kdtree
+)
 
-find_package(cslibs_kdtree QUIET)
+find_package(pcl_ros REQUIRED)
 
 find_package(Qt5 COMPONENTS Core OpenGL Gui Widgets REQUIRED)
 
@@ -41,9 +46,12 @@ catkin_package(
 
 include_directories(
   include
+  src/math/
   ${catkin_INCLUDE_DIRS}
   ${pcl_ros_INCLUDE_DIRS}
-  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS}
+  ${Qt5Gui_INCLUDE_DIRS}
+  ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 add_library(csapex_point_cloud
@@ -64,21 +72,6 @@ target_link_libraries(csapex_point_cloud_plugin_core
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
     csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
 )
-
-if(${cslibs_kdtree_FOUND})
-    set(clustering_kd_tree_SRCS
-        src/segmentation/cluster_pointcloud_kdtree.cpp
-        src/segmentation/cluster_pointcloud_kdtree_filtered.cpp
-        src/segmentation/cluster_pointcloud_page.cpp
-        src/segmentation/cluster_pointcloud_page_filtered.cpp
-        src/segmentation/cluster_pointcloud_array.cpp
-        src/segmentation/cluster_pointcloud_array_filtered.cpp
-    )
-    include_directories(${cslibs_kdtree_INCLUDE_DIRS})
-else()
-    message("Building without kdtree clustering!")
-endif()
-
 
 add_library(csapex_point_cloud_plugin_node
     src/merge_clouds.cpp
@@ -128,13 +121,28 @@ add_library(csapex_point_cloud_plugin_node
     src/segmentation/label_clustered_pointcloud.cpp
     src/segmentation/merge_clusters.cpp
 
+    src/segmentation/cluster_kdtree.cpp
+    src/segmentation/cluster_kdtree_filtered.cpp
 
+    src/segmentation/regular_structures/entry.hpp
+    src/segmentation/regular_structures/validator.hpp
+    src/segmentation/regular_structures/indexation.hpp
+    src/segmentation/regular_structures/cluster_params.hpp
+    src/segmentation/regular_structures/clustering.hpp
+    src/segmentation/regular_structures/filtered_clustering.hpp
+    src/segmentation/regular_structures/filtered_clustering_color.hpp
+    src/segmentation/regular_structures/filtered_clustering_mono.hpp
+    src/segmentation/cluster_regular.cpp
+    src/segmentation/cluster_regular_filtered.cpp
+    src/segmentation/cluster_regular_filtered_color.cpp
+    src/segmentation/cluster_regular_filtered_mono.cpp
 
     src/analysis/ray_angles.cpp
     src/analysis/estimate_normals.cpp
     src/analysis/estimate_center.cpp
 
     src/math/distribution.hpp
+    src/math/mean.hpp
 
     src/pointcloud_generator.cpp
     src/sac_fit.cpp
