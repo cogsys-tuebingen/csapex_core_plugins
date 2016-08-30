@@ -18,7 +18,7 @@ public:
     {
         std::vector<std::size_t> random_vector(size);
         for(std::size_t i = 0 ; i < size ; ++i){
-            random_vector[i] = i;
+            random_vector[i] =  i;
         }
 
         std::shuffle(random_vector.begin(), random_vector.end(), gen_);
@@ -26,8 +26,8 @@ public:
     }
 
 private:
-    std::mt19937 gen_;
     std::size_t seed_;
+    std::mt19937 gen_;
 
 };
 #endif // RANDOM_VECTOR_HPP
