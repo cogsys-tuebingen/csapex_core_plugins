@@ -61,6 +61,7 @@ private:
     Event* new_provider_;
 
     bool directory_import_;
+    std::string directory_filter_;
     int last_directory_index_;
     QString file_;
     std::vector<std::string> dir_files_;

@@ -71,6 +71,14 @@ void FileImporter::setupParameters(Parameterizable& parameters)
                                                "If true, the expected format is <em>any_text</em>_<b>number</b>.<em>file_ending</em>"
                                                ),
                                            false), cond_dir);
+    parameters.addConditionalParameter(param::ParameterFactory::declareText("directory/filter",
+                                                                            param::ParameterDescription("This filter is applied as a regular expression to all files in the directory."
+                                                                                                        "Example usage: <b>.*\\.png</b> to select all .png files."),
+                                                                            ".*"),
+                                       cond_dir, [this](param::Parameter* p) {
+        directory_filter_ = p->as<std::string>();
+        doImportDir(QString::fromStdString(readParameter<std::string>("directory")));
+    });
     parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/show parameters", false), cond_dir);
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
 
@@ -360,6 +368,8 @@ void FileImporter::doImportDir(const QString &dir_string)
 
     bool recursive = readParameter<bool>("recursive import");
 
+    boost::regex filter_regex(directory_filter_);
+
     std::function<void(const boost::filesystem::path&)> crawl_dir = [&](const boost::filesystem::path& directory) {
         boost::filesystem::directory_iterator dir(directory);
         boost::filesystem::directory_iterator end;
@@ -371,7 +381,10 @@ void FileImporter::doImportDir(const QString &dir_string)
                     crawl_dir(path);
                 }
             } else {
-                dir_files_.push_back(path.string());
+                std::string path_string = path.string();
+                if (boost::regex_match(path_string, filter_regex)) {
+                    dir_files_.push_back(path_string);
+                }
             }
 
         }
