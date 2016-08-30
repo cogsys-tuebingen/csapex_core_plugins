@@ -1,3 +1,7 @@
+#include <vector>
+#include <random>
+#include <iostream>
+#include <algorithm>
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_ml)
 
@@ -70,6 +74,8 @@ add_library(csapex_ml_plugin SHARED
 
     src/assign_feature_classifications.cpp
     src/exchange_feature_classification.cpp
+
+    src/random_vector.hpp
 )
 
 target_link_libraries(csapex_ml_plugin
