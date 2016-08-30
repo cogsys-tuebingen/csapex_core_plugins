@@ -136,11 +136,9 @@ private:
                     continue;
             }
             if(validator.params.mono_difference) {
-                if(!isVertical(offset)) {
-                    double diff = entry->mono_mean.getMean() - neighbour->mono_mean.getMean();
-                    if(diff > validator.params.mono_difference) {
-                        continue;
-                    }
+                double diff = entry->mono_mean.getMean() - neighbour->mono_mean.getMean();
+                if(diff > validator.params.mono_difference) {
+                    continue;
                 }
             }
 

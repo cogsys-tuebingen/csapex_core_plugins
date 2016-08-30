@@ -126,30 +126,28 @@ private:
                     continue;
             }
             if(validator.params.color_difference) {
-                if(!isVertical(offset)) {
-                    double diff = 0.0;
-                    switch(validator.params.color_difference_type) {
-                    case ClusterParamsStatisticalColor::CIE76:
-                        diff = color_differences::CIE76(entry->color_mean.getMean(),
-                                                        neighbour->color_mean.getMean(),
-                                                        validator.params.color_difference_weights);
-                        break;
-                    case ClusterParamsStatisticalColor::CIE94Grahpics:
-                        diff = color_differences::CIE94Grahpics(entry->color_mean.getMean(),
-                                                                neighbour->color_mean.getMean(),
-                                                                validator.params.color_difference_weights);
-                        break;
-                    case ClusterParamsStatisticalColor::CIE94Textiles:
-                        diff = color_differences::CIE94Textiles(entry->color_mean.getMean(),
-                                                                neighbour->color_mean.getMean(),
-                                                                validator.params.color_difference_weights);
-                        break;
-                    default:
-                        break;
-                    }
-                    if(diff > validator.params.color_difference) {
-                        continue;
-                    }
+                double diff = 0.0;
+                switch(validator.params.color_difference_type) {
+                case ClusterParamsStatisticalColor::CIE76:
+                    diff = color_differences::CIE76(entry->color_mean.getMean(),
+                                                    neighbour->color_mean.getMean(),
+                                                    validator.params.color_difference_weights);
+                    break;
+                case ClusterParamsStatisticalColor::CIE94Grahpics:
+                    diff = color_differences::CIE94Grahpics(entry->color_mean.getMean(),
+                                                            neighbour->color_mean.getMean(),
+                                                            validator.params.color_difference_weights);
+                    break;
+                case ClusterParamsStatisticalColor::CIE94Textiles:
+                    diff = color_differences::CIE94Textiles(entry->color_mean.getMean(),
+                                                            neighbour->color_mean.getMean(),
+                                                            validator.params.color_difference_weights);
+                    break;
+                default:
+                    break;
+                }
+                if(diff > validator.params.color_difference) {
+                    continue;
                 }
             }
 
