@@ -44,7 +44,11 @@ public:
             FeaturesMessage fm = input_features->at(i);
             RoiMessage roi = input_rois->at(i);
             roi.value.setClassification(fm.classification);
-            output_rois->emplace_back(roi);
+            if (roi.value.classification() > 0)
+                roi.value.setColor(cv::Scalar(0, 255, 0));
+            else
+                roi.value.setColor(cv::Scalar(0, 0, 255));
+            output_rois->push_back(roi);
         }
         msg::publish<GenericVectorMessage, RoiMessage>(output_rois_, output_rois);
     }
