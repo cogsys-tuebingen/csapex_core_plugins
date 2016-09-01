@@ -96,14 +96,22 @@ void ACFDynamicExtractor::process()
 
     std::shared_ptr<std::vector<FeaturesMessage>> out_features(new std::vector<FeaturesMessage>);
     for(const RoiMessage &roi : *in_rois) {
-        cv::Mat roi_mat;
-        cv::resize(cv::Mat(in_img->value, roi.value.rect()), roi_mat, window_size_);
+        cv::Mat data;
+        cv::resize(cv::Mat(in_img->value, roi.value.rect()), data, window_size_);
         cv::Mat feature;
-        cslibs_vision::ACFDynamic::compute(roi_mat, params, feature);
+        cslibs_vision::ACFDynamic::compute(data, params, feature);
         FeaturesMessage features_msg;
         feature.copyTo(features_msg.value);
         features_msg.classification = roi.value.classification();
         out_features->emplace_back(features_msg);
+
+        if(mirror_) {
+            cv::flip(data, data, 1);
+            cslibs_vision::ACFDynamic::compute(data, params, feature);
+            feature.copyTo(features_msg.value);
+            features_msg.classification = roi.value.classification();
+            out_features->emplace_back(features_msg);
+        }
     }
 
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_features_, out_features);
