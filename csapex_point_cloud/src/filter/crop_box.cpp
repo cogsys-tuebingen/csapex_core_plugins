@@ -34,9 +34,13 @@ CropBox::CropBox()
 
 void CropBox::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dx", -10.0, 10.0, -10.0, 10.0, 0.01));
-    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dy", -10.0, 10.0, -10.0, 10.0, 0.01));
-    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dz", -10.0, 10.0, -10.0, 10.0, 0.01));
+    static const auto min_value = -100.0;
+    static const auto max_value = 100.0;
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dx", min_value, max_value, min_value, max_value, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dy", min_value, max_value, min_value, max_value, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dz", min_value, max_value, min_value, max_value, 0.01));
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("keep organized", true));
 }
 
 void CropBox::setup(NodeModifier& node_modifier)
@@ -67,6 +71,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     pcl::CropBox<PointT> crop;
     crop.setMin(min_pt_);
     crop.setMax(max_pt_);
+    crop.setKeepOrganized(readParameter<bool>("keep organized"));
     crop.setInputCloud(cloud);
 
     if(msg::isConnected(output_pos_)) {
