@@ -11,15 +11,18 @@ struct Entry {
     int                      cluster;
     DataIndex                index;
     std::vector<int>         indices;
+    bool                     valid;
 
     Entry() :
-        cluster(-1)
+        cluster(-1),
+        valid(false)
     {
     }
 };
 
 struct EntryStatistical  : public Entry
 {
+    math::Mean<1>         depth_mean;
     math::Distribution<3> distribution;
     EntryStatistical() :
         Entry()

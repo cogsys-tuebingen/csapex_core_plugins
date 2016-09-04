@@ -7,6 +7,7 @@
 
 #include "regular_structures/cluster_params.hpp"
 #include "regular_structures/indexation.hpp"
+#include "regular_structures/entry.hpp"
 
 namespace csapex {
 template<typename StructureType>
@@ -22,6 +23,7 @@ public:
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+    void validateVoxel(EntryStatistical &e);
 
 private:
     Input*        in_cloud_;

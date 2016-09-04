@@ -12,7 +12,6 @@
 #include <csapex/profiling/interlude.hpp>
 
 #include "regular_structures/indexation.hpp"
-#include "regular_structures/entry.hpp"
 #include "regular_structures/filtered_clustering.hpp"
 
 #include <cslibs_kdtree/array.hpp>
@@ -46,7 +45,7 @@ void ClusterRegularFiltered<StructureType>::setupParameters(Parameterizable &par
                             cluster_params_.cluster_sizes[1]);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/max_distance", 0.00, 3.0, 0.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[0]);
-    parameters.addParameter(param::ParameterFactory::declareRange("cClusterPointCloudPageFilteredluster/distance_weights/x", 0.0, 1.0, 1.0, 0.01),
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/distance_weights/x", 0.0, 1.0, 1.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[1]);
     parameters.addParameter(param::ParameterFactory::declareRange("cluster/distance_weights/y", 0.0, 1.0, 1.0, 0.01),
                             cluster_params_.cluster_distance_and_weights[2]);
@@ -58,6 +57,10 @@ void ClusterRegularFiltered<StructureType>::setupParameters(Parameterizable &par
                             cluster_params_.cluster_std_devs[1]);
     parameters.addParameter(param::ParameterFactory::declareInterval("cluster/std_dev/z", 0.0, 3.0, 0.0, 0.0, 0.01),
                             cluster_params_.cluster_std_devs[2]);
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/voxel/min_points", 0, 1000000, 0, 1),
+                            cluster_params_.voxel_min_points);
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster/voxel/min_points_scale", 0.0, 1.0, 0.0, 0.001),
+                            cluster_params_.voxel_min_points_scale);
 
     std::map<std::string, int> covariance_threshold_types = {{"DEFAULT", ClusterParamsStatistical::DEFAULT},
                                                              {"PCA2D", ClusterParamsStatistical::PCA2D},
@@ -99,46 +102,68 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
     {
         /// Preparation of indices
         if(indices) {
-            for(const int i : indices->indices) {
-                const PointT &pt = cloud->at(i);
+            const int *indices_ptr = indices->indices.data();
+            const std::size_t size = indices->indices.size();
+            const PointT *points_ptr = cloud->points.data();
+
+            entries.resize(size);
+            EntryStatistical *entries_ptr = entries.data();
+            for(std::size_t i = 0 ; i < size ; ++i, ++indices_ptr) {
+                const int index = *indices_ptr;
+                const PointT &pt = points_ptr[index];
                 if(indexation.is_valid(pt)) {
-                    EntryStatistical entry;
+                    EntryStatistical &entry = entries_ptr[i];
+                    entry.valid = true;
                     entry.index = indexation.create(pt);
-                    entry.indices.push_back(i);
+                    entry.indices.push_back(index);
                     entry.distribution.add({pt.x, pt.y, pt.z});
+                    entry.depth_mean.add(sqrt(pt.x * pt.x + pt.y * pt.y + pt.z * pt.z));
                     AO::cwise_min(entry.index, min_index);
                     AO::cwise_max(entry.index, max_index);
-                    entries.emplace_back(entry);
                 }
             }
         } else {
             const std::size_t cloud_size = cloud->size();
+            const PointT *points_ptr = cloud->points.data();
+
+            entries.resize(cloud_size);
+            EntryStatistical *entries_ptr = entries.data();
             for(std::size_t i = 0; i < cloud_size ; ++i) {
-                const PointT &pt = cloud->at(i);
+                const PointT &pt = points_ptr[i];
                 if(indexation.is_valid(pt)) {
-                    EntryStatistical entry;
+                    EntryStatistical &entry = entries_ptr[i];
+                    entry.valid = true;
                     entry.index = indexation.create(pt);
                     entry.indices.push_back(i);
                     entry.distribution.add({pt.x, pt.y, pt.z});
+                    entry.depth_mean.add(sqrt(pt.x * pt.x + pt.y * pt.y + pt.z * pt.z));
                     AO::cwise_min(entry.index, min_index);
                     AO::cwise_max(entry.index, max_index);
-                    entries.push_back(entry);
                 }
             }
         }
     }
+
     std::vector<EntryStatistical*> referenced;
     typename StructureType::Size size = IndexationType::size(min_index, max_index);
     StructureType array(size);
     {
         /// Setup array adressing
         typename StructureType::Index index;
-        for(EntryStatistical &e : entries) {
+        EntryStatistical *entries_ptr = entries.data();
+        const std::size_t size = entries.size();
+        for(std::size_t i = 0 ; i < size ; ++i, ++entries_ptr) {
+            EntryStatistical &e = *entries_ptr;
+
+            if(!e.valid)
+                continue;
+
             index = AOA::sub(e.index, min_index);
             EntryStatistical *& array_entry = array.at(index);
             if(!array_entry) {
                 /// put into array
                 array_entry = &e;
+                validateVoxel(*array_entry);
                 referenced.emplace_back(array_entry);
             } else {
                 /// fuse with existing
@@ -147,6 +172,8 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
                                            e.indices.begin(),
                                            e.indices.end());
                 array_entry->distribution += e.distribution;
+                array_entry->depth_mean   += e.depth_mean;
+                validateVoxel(*array_entry);
             }
         }
     }
@@ -158,6 +185,20 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_rejected_, out_rejected_cluster_indices);
 }
+
+template<typename StructureType>
+void ClusterRegularFiltered<StructureType>::validateVoxel(EntryStatistical &e)
+{
+    if(cluster_params_.voxel_min_points) {
+        std::size_t min_count = cluster_params_.voxel_min_points;
+        if(cluster_params_.voxel_min_points_scale > 0.0) {
+            const double depth = e.depth_mean.getMean();
+            min_count = floor(1.0 / (cluster_params_.voxel_min_points_scale * depth * depth) + 0.5);
+        }
+        e.valid = e.distribution.getN() >= min_count;
+    }
+}
+
 
 using PageType    = kdtree::Page<EntryStatistical*, 3>;
 using ArrayType   = kdtree::Array<EntryStatistical*, 3>;
