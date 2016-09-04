@@ -215,6 +215,10 @@
     <description>Different Morphological operators like "open", "close", "tophat", "gradient"</description>
     <tags>Vision, Filter</tags>
   </class>
+  <class type="csapex::Magnitude" base_class_type="csapex::Node">
+    <description>Calculate the magnitude fo a matrix.</description>
+    <tags>Vision, Features</tags>
+  </class>
   <class type="csapex::VJDetector" base_class_type="csapex::Node">
     <description>Viola Jones Detector</description>
     <tags>Vision</tags>
@@ -306,6 +310,12 @@
   <class type="csapex::Resize" base_class_type="csapex::Node">
     <description>
         Resize images from 10 to 10000 pixels.
+    </description>
+    <tags>Vision</tags>
+  </class>
+  <class type="csapex::Sample" base_class_type="csapex::Node">
+    <description>
+        Sample images.
     </description>
     <tags>Vision</tags>
   </class>
