@@ -21,12 +21,12 @@ public:
     typedef Validator<ClusterParamsStatistical>  ValidatorType;
 
     FilteredClustering(std::vector<EntryStatistical*> &_entries,
-                   const ClusterParamsStatistical              &_params,
-                   std::vector<pcl::PointIndices>   &_indices,
-                   std::vector<pcl::PointIndices>   &_indices_rejected,
-                   StructureType                    &_array,
-                   DataIndex                        &_min_index,
-                   DataIndex                        &_max_index) :
+                       const ClusterParamsStatistical              &_params,
+                       std::vector<pcl::PointIndices>   &_indices,
+                       std::vector<pcl::PointIndices>   &_indices_rejected,
+                       StructureType                    &_array,
+                       DataIndex                        &_min_index,
+                       DataIndex                        &_max_index) :
         cluster_count(0),
         entries(_entries),
         indices(_indices),
@@ -46,8 +46,10 @@ public:
             if(entry->cluster > -1)
                 continue;
 
-            buffer_distribution.reset();
+            if(!entry->valid)
+                continue;
 
+            buffer_distribution.reset();
             entry->cluster = cluster_count;
             ++cluster_count;
             clusterEntry(entry);
@@ -63,7 +65,7 @@ public:
                     buffer_indices.indices.clear();
             }
         }
-   }
+    }
 
 private:
     MaskType offsets;
@@ -105,6 +107,9 @@ private:
                 continue;
             if(neighbour->cluster > -1)
                 continue;
+            if(!neighbour->valid)
+                continue;
+
             assert(neighbour->cluster == -1);
 
             if (validator.params.cluster_distance_and_weights[0] != 0.0)

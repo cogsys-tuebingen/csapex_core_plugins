@@ -97,6 +97,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/matrix_operations/copymakeborder.cpp
     src/matrix_operations/merge.cpp
     src/matrix_operations/split.cpp
+    src/matrix_operations/sample.cpp
 
     src/set_color.cpp
     src/levels.cpp
@@ -155,6 +156,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/features/sobel.cpp
     src/features/scharr.cpp
     src/features/lsd.cpp
+    src/features/magnitude.cpp
 
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp

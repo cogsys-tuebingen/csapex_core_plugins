@@ -19,9 +19,9 @@ EvaluateBinaryClassifier::EvaluateBinaryClassifier()
 
 void EvaluateBinaryClassifier::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareValue("positive class label", 0),
+    parameters.addParameter(param::ParameterFactory::declareValue("positive class label", 1),
                             positive_class_label_);
-    parameters.addParameter(param::ParameterFactory::declareValue("negative class label", 1),
+    parameters.addParameter(param::ParameterFactory::declareValue("negative class label", 0),
                             negative_class_label_);
 
 }

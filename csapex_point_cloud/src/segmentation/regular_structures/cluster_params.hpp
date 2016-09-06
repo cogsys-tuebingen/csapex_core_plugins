@@ -17,6 +17,8 @@ struct ClusterParamsStatistical : public ClusterParams
     std::array<std::pair<double, double>, 3> cluster_std_devs;
     std::array<double, 4>                    cluster_distance_and_weights;
     CovarianceThresholdType                  cluster_cov_thresh_type;
+    int                                      voxel_min_points;
+    double                                   voxel_min_points_scale;
 
     bool (*validateCovariance)(math::Distribution<3> &distribution,
                                std::array<std::pair<double, double>, 3> &intervals);
