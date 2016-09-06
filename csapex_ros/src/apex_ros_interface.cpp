@@ -132,6 +132,8 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
 
     std::vector<std::string> levels;
 
+    std::cerr << "analyzing parameter " << parameter_name << std::endl;
+
     std::size_t delim = 0;
     while(delim != std::string::npos) {
         delim = apex_name.find('/');
@@ -162,7 +164,8 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
             std::copy(std::next(levels.begin(), i + 1), levels.end(), std::ostream_iterator<std::string>(param_name_builder, "/"));
             param_name = param_name_builder.str();
             param_name = param_name.substr(0, param_name.size() - 1);
-            std::cerr << "searching for param " << param_name << std::endl;
+
+            std::cerr << "searching for param " << param_name << " in node " << node->getUUID() << std::endl;
             if (node->hasParameter(param_name))
                 break;
             boost::algorithm::replace_all(param_name, " ", "_");
@@ -179,12 +182,15 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
         }
 
     }
+    std::cerr << "found parameter " << param_name << std::endl;
     if(!nh) {
+        std::cerr << "cannot set parameter " << param_name << ", no node handle exists" << std::endl;
         return;
     }
 
     NodePtr node = nh->getNode().lock();
     if(!node) {
+        std::cerr << "cannot set parameter " << param_name << ", no node exists" << std::endl;
         return;
     }
 
@@ -193,35 +199,40 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
         return;
     }
 
-    param::ParameterPtr p = node->getParameter(param_name);
+    param::ParameterPtr p = node->getMappedParameter(param_name);
 
     switch(parameter_value.getType()) {
     case XmlRpc::XmlRpcValue::TypeInt: {
         int val;
         ros::param::get(parameter_name, val);
+        std::cerr << "setting int parameter for " << nh->getUUID() << ":" << param_name << std::endl;
         p->set(val);
     }
         break;
     case XmlRpc::XmlRpcValue::TypeDouble: {
         double val;
         ros::param::get(parameter_name, val);
+        std::cerr << "setting double parameter for " << nh->getUUID() << ":" << param_name << std::endl;
         p->set(val);
     }
         break;
     case XmlRpc::XmlRpcValue::TypeBoolean: {
         bool val;
         ros::param::get(parameter_name, val);
+        std::cerr << "setting bool parameter for " << nh->getUUID() << ":" << param_name << std::endl;
         p->set(val);
     }
         break;
     case XmlRpc::XmlRpcValue::TypeString: {
         std::string val;
         ros::param::get(parameter_name, val);
+        std::cerr << "setting string parameter for " << nh->getUUID() << ":" << param_name << std::endl;
         p->set(val);
     }
         break;
 
     default:
+        std::cerr << "cannot set parameter for " << nh->getUUID() << ":" << param_name  << " is of unknown type " << (int) parameter_value.getType() << std::endl;
         break;
     }
 }
