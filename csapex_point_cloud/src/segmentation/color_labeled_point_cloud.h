@@ -6,10 +6,10 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 
 namespace csapex {
-class ColorPointCloud : public csapex::Node
+class ColorLabeledPointCloud : public csapex::Node
 {
 public:
-    ColorPointCloud();
+    ColorLabeledPointCloud();
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;

@@ -179,6 +179,12 @@
   </description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::ColorLabeledPointCloud" base_class_type="csapex::Node">
+  <description>
+    Color a labeled pointlcoud to make the labeling visible.
+  </description>
+  <tags>PointCloud</tags>
+</class>
 <class type="csapex::SacFit" base_class_type="csapex::Node">
   <description>
     Apply RANSAC on pointclouds to fit certain models.

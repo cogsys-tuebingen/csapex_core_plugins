@@ -1,5 +1,5 @@
 /// HEADER
-#include "color_pointcloud.h"
+#include "color_labeled_point_cloud.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -15,25 +15,25 @@
 #include <pcl/conversions.h>
 
 
-CSAPEX_REGISTER_CLASS(csapex::ColorPointCloud, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::ColorLabeledPointCloud, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 #define FLOOD_DEFAULT_LABEL 0
 
-ColorPointCloud::ColorPointCloud()
+ColorLabeledPointCloud::ColorLabeledPointCloud()
 {
 }
 
-void ColorPointCloud::process()
+void ColorLabeledPointCloud::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<ColorPointCloud>(this, msg), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ColorLabeledPointCloud>(this, msg), msg->value);
 }
 
-void ColorPointCloud::setup(NodeModifier& node_modifier)
+void ColorLabeledPointCloud::setup(NodeModifier& node_modifier)
 {
     input_  = node_modifier.addInput<PointCloudMessage>("Labeled PointCloud");
     output_ = node_modifier.addOutput<PointCloudMessage>("Colored PointCloud");
@@ -105,7 +105,7 @@ struct Conversion<pcl::PointXYZRGBL>{
 }
 
 template <class PointT>
-void ColorPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+void ColorLabeledPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr out_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);

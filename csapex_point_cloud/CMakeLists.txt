@@ -116,7 +116,7 @@ add_library(csapex_point_cloud_plugin_node
     src/segmentation/labeled_cloud_to_indices.cpp
     src/segmentation/label_pointcloud.cpp
     src/segmentation/cluster_pointcloud.cpp
-    src/segmentation/color_pointcloud.cpp
+    src/segmentation/color_labeled_point_cloud.cpp
     src/segmentation/split_clustered_cloud.cpp
     src/segmentation/label_clustered_pointcloud.cpp
     src/segmentation/merge_clusters.cpp
@@ -144,6 +144,7 @@ add_library(csapex_point_cloud_plugin_node
     src/math/distribution.hpp
     src/math/mean.hpp
 
+    src/color_point_cloud.cpp
     src/pointcloud_generator.cpp
     src/sac_fit.cpp
     src/model_to_marker.cpp
