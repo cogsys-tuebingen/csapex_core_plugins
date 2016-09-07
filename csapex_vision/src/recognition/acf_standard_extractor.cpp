@@ -41,8 +41,10 @@ void ACFStandardExtractor::setupParameters(Parameterizable &parameters)
                             acf_params_.hog_bin_size);
     parameters.addParameter(param::ParameterFactory::declareBool("/acf/hog/directed", false),
                             acf_params_.hog_directed);
-    parameters.addParameter(param::ParameterFactory::declareBool("/acf/normalize_magnitude", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("/acf/normalize_magnitude", true),
                             acf_params_.normalize_magnitude);
+    parameters.addParameter(param::ParameterFactory::declareBool("/acf/normalize_luv", true),
+                            acf_params_.normalize_luv);
 
     std::map<std::string, int> kernel_types =
     {{"1D", cslibs_vision::ACF::Parameters::KERNEL_1D},
