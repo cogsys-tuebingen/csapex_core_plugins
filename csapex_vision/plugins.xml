@@ -235,6 +235,10 @@
     <description>Substitute ROI classification labels.</description>
     <tags>Vision, ROI</tags>
   </class>
+  <class type="csapex::SetROIClassification" base_class_type="csapex::Node">
+    <description>Set the roi classification to a defined label.</description>
+    <tags>Vision, ROI</tags>
+  </class>
   <class type="csapex::SetROIColorByClassification" base_class_type="csapex::Node">
     <description>Set color for a certain classification.</description>
     <tags>Vision, ROI</tags>
@@ -261,10 +265,6 @@
   </class>
   <class type="csapex::ExtractROI" base_class_type="csapex::Node">
     <description>Extracts a subimage according to the given ROI</description>
-    <tags>Vision, ROI</tags>
-  </class>
-  <class type="csapex::FilterROIs" base_class_type="csapex::Node">
-    <description>Filters ROIs depending on serveral constraints</description>
     <tags>Vision, ROI</tags>
   </class>
   <class type="csapex::NumberGenerator" base_class_type="csapex::Node">
