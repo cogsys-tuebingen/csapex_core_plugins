@@ -193,7 +193,7 @@ void ClusterRegularFiltered<StructureType>::validateVoxel(EntryStatistical &e)
         std::size_t min_count = cluster_params_.voxel_min_points;
         if(cluster_params_.voxel_min_points_scale > 0.0) {
             const double depth = e.depth_mean.getMean();
-            min_count = floor(1.0 / (cluster_params_.voxel_min_points_scale * depth * depth) + 0.5);
+            min_count = cluster_params_.voxel_min_points * floor(1.0 / (cluster_params_.voxel_min_points_scale * depth * depth) + 0.5);
         }
         e.valid = e.distribution.getN() >= min_count;
     }

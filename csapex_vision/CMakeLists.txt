@@ -129,6 +129,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/roi/evaluate_roi_classification.cpp
     src/roi/exchange_roi_classification.cpp
     src/roi/set_roi_classification.cpp
+    src/roi/roi_hit_rate.cpp
 
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp
