@@ -79,13 +79,22 @@ void RandomTrees::process()
     if(!loaded_) {
         if(path_ != "") {
             cv::FileStorage fs(path_, cv::FileStorage::READ);
-            random_trees_.read(fs.fs, (CvFileNode*) fs["random_forest"].node);
-            std::vector<int> class_labels;
-            fs["classes"] >> class_labels;
-            for(int c : class_labels) {
-                class_labels_[c] = 0;
+            bool old_format = fs["random_forest"].node == nullptr;
+            if (old_format)
+            {
+                fs.release();
+                random_trees_.load(path_.c_str());
             }
-            fs.release();
+            else
+            {
+                random_trees_.read(fs.fs, (CvFileNode*) fs["random_forest"].node);
+                std::vector<int> class_labels;
+                fs["classes"] >> class_labels;
+                for(int c : class_labels) {
+                    class_labels_[c] = 0;
+                }
+                fs.release();
+            }
             loaded_ = true;
         } else {
             throw std::runtime_error("Randomforest couldn't be loaded!");
