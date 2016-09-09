@@ -2,6 +2,7 @@
 
 #include <csapex/model/node.h>
 #include <csapex_opencv/roi.h>
+#include <iostream>
 
 namespace csapex
 {

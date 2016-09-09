@@ -19,20 +19,20 @@ FilterROIs::FilterROIs()
 
 void FilterROIs::setupParameters(Parameterizable& parameters)
 {
-    addParameter(param::ParameterFactory::declareInterval("width",
+    parameters.addParameter(param::ParameterFactory::declareInterval("width",
                                                           0, 640,
                                                           0, 0,
                                                           1),
                  width_);
-    addParameter(param::ParameterFactory::declareInterval("height",
+    parameters.addParameter(param::ParameterFactory::declareInterval("height",
                                                           0, 480,
                                                           0, 0,
                                                           1),
                  height_);
-    addParameter(param::ParameterFactory::declareInterval("aspect",
+    parameters.addParameter(param::ParameterFactory::declareInterval("aspect",
                                                           0.0, 10.0,
                                                           0.0, 0.0,
-                                                          1.0),
+                                                          0.01),
                  aspect_);
 }
 
@@ -65,9 +65,9 @@ bool FilterROIs::check(const Roi& roi) const
 {
     bool passed = true;
 
-    passed = passed & check_range(roi.w(), width_);
-    passed = passed & check_range(roi.h(), height_);
-    passed = passed & check_range(static_cast<double>(roi.w()) / roi.h(), aspect_);
+    passed = passed && check_range(roi.w(), width_);
+    passed = passed && check_range(roi.h(), height_);
+    passed = passed && check_range(static_cast<double>(roi.w()) / roi.h(), aspect_);
 
     return passed;
 }

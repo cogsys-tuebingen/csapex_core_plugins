@@ -21,7 +21,7 @@ public:
     typedef Validator<ClusterParamsStatistical>  ValidatorType;
 
     FilteredClustering(std::vector<EntryStatistical*> &_entries,
-                       const ClusterParamsStatistical              &_params,
+                       const ClusterParamsStatistical   &_params,
                        std::vector<pcl::PointIndices>   &_indices,
                        std::vector<pcl::PointIndices>   &_indices_rejected,
                        StructureType                    &_array,

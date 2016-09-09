@@ -13,6 +13,7 @@
 
 #include "regular_structures/indexation.hpp"
 #include "regular_structures/filtered_clustering.hpp"
+#include <fstream>
 
 #include <cslibs_kdtree/array.hpp>
 #include <cslibs_kdtree/page.hpp>
@@ -182,6 +183,7 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
         FilteredClustering<StructureType> clustering(referenced, cluster_params_, *out_cluster_indices, *out_rejected_cluster_indices, array, min_index, max_index);
         clustering.cluster();
     }
+
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_rejected_, out_rejected_cluster_indices);
 }
