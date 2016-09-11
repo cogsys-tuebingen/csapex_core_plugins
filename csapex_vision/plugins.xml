@@ -259,6 +259,14 @@
     <description>Change the size of a ROI</description>
     <tags>Vision, ROI</tags>
   </class>
+  <class type="csapex::ScaleROIs" base_class_type="csapex::Node">
+    <description>Scale a vector of ROIs.</description>
+    <tags>Vision, ROI</tags>
+  </class>
+  <class type="csapex::ScaleROI" base_class_type="csapex::Node">
+    <description>Scale one ROI.</description>
+    <tags>Vision, ROI</tags>
+  </class>
   <class type="csapex::FilterROIs" base_class_type="csapex::Node">
     <description>Filter ROIs according to size and ratio.</description>
     <tags>Vision, ROI</tags>
