@@ -49,10 +49,10 @@ public:
         out_roi->value = in_roi->value;
 
         cv::Rect rect = out_roi->value.rect();
-        int height = rect.height * scales_[0];
-        int width  = rect.width  * scales_[1];
-        int off_x  = std::floor((rect.height - height) / 2.0);
-        int off_y  = std::floor((rect.width - width) / 2.0);
+        int height = rect.height * scales_[0] / 100.0;
+        int width  = rect.width  * scales_[1] / 100.0;
+        int off_x  = std::floor((rect.width - width) / 2.0);
+        int off_y  = std::floor((rect.height - height) / 2.0);
         rect.height = height;
         rect.width = width;
         rect.x += off_x;
