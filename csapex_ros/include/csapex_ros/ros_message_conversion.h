@@ -76,7 +76,16 @@ public:
         typename connection_types::GenericPointerMessage<T>::ConstPtr msg =
                 std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const> (apex_msg_raw);
         if(!msg) {
-            throw std::runtime_error("trying to publish an empty message");
+            typename connection_types::GenericPointerMessage<T const>::ConstPtr msg =
+                    std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T const> const> (apex_msg_raw);
+            if(!msg) {
+                throw std::runtime_error("cannot cast message to publish");
+            }
+            auto boost_ptr = shared_ptr_tools::to_boost_shared(msg->value);
+            if(!boost_ptr) {
+                throw std::runtime_error("cannot convert std shared ptr to boost shared ptr");
+            }
+            return pub.publish(boost_ptr);
         }
         auto boost_ptr = shared_ptr_tools::to_boost_shared(msg->value);
         if(!boost_ptr) {
