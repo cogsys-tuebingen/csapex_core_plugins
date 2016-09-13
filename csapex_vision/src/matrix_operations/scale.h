@@ -23,8 +23,6 @@ private:
 
     cv::Vec2d               scales_;
     int                     mode_;
-    void update();
-
 };
 
 }

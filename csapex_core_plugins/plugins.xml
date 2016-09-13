@@ -123,6 +123,16 @@
   <description>Buffer up to 50 message and hold state to publish one of the currently buffered.</description>
   <icon>:/buffer.png</icon>
 </class>
+<class type="csapex::CountMessages" base_class_type="csapex::Node">
+  <description>Counts messages coming in and published the current count.</description>
+  <icon>:/buffer.png</icon>
+  <tags>General, Buffer</tags>
+</class>
+<class type="csapex::CountMessagesInVectors" base_class_type="csapex::Node">
+  <description>Counts messages in vectors coming in and published the current count.</description>
+  <icon>:/buffer.png</icon>
+  <tags>General, Buffer</tags>
+</class>
 
 <class type="csapex::StampDelayMeasurement" base_class_type="csapex::Node">
   <description>Measure delay between time stamp of a message and the current time</description>

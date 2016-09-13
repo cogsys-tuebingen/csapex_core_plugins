@@ -100,6 +100,8 @@ add_library(csapex_core_plugins_node SHARED
     src/tools/vector_merge.cpp
     src/tools/vector_generate.cpp
     src/tools/select_vector_component.cpp
+    src/tools/count_messages_in_vectors.cpp
+    src/tools/count_messages.cpp
 
     src/display/output_display.cpp
     src/display/text_display.cpp
