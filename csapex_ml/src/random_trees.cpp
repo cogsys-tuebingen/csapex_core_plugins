@@ -104,7 +104,7 @@ void RandomTrees::process()
     output_feature->resize(n);
 
     if(compute_class_weights_) {
-        output_class_weights.reset(new std::vector<CvMatMessage::ConstPtr>(n));
+        output_class_weights.reset(new std::vector<CvMatMessage::ConstPtr>());
         for(std::size_t i = 0; i < n; ++i) {
             CvMatMessage::Ptr mat_message(new CvMatMessage(enc::unknown, 0));
             std::map<int, std::size_t> class_labels = class_labels_;
@@ -119,6 +119,7 @@ void RandomTrees::process()
                 mat.at<float>(row, 0) = entry.first;
                 mat.at<float>(row, 1) = entry.second / (float) random_trees_.get_tree_count();
             }
+            output_class_weights->push_back(mat_message);
         }
     } else {
         for(std::size_t i = 0; i < n; ++i) {
