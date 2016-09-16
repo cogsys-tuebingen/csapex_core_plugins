@@ -55,9 +55,9 @@ RandomTrees::RandomTrees()
 
 void RandomTrees::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("/path", "rforest.yaml"),
+    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("path", "rforest.yaml"),
                             path_);
-    parameters.addParameter(param::ParameterFactory::declareBool("/compute_class_weights", false),
+    parameters.addParameter(param::ParameterFactory::declareBool("compute_class_weights", false),
                             compute_class_weights_);
 }
 

@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex_ros/ros_handler.h>
 #include <csapex/utility/assert.h>
+#include <csapex/utility/singleton.hpp>
 
 /// SYSTEM
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
@@ -14,9 +15,10 @@ namespace csapex
 
 class LockedTFListener;
 
-class TFListener
+class TFListener : public Singleton<TFListener>
 {
     friend class LockedTFListener;
+    friend class Singleton<TFListener>;
 
 public:
     std::shared_ptr<tf::TransformListener> tfl;
@@ -34,12 +36,6 @@ public:
     bool ok();
 
 private:
-    static TFListener* raw_instance() {
-        static TFListener l;
-        apex_assert_hard(&l);
-        return &l;
-    }
-
     TFListener();
 
     void cb(const tf::tfMessage::ConstPtr& msg);

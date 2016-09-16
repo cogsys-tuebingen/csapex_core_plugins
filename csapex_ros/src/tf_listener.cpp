@@ -10,7 +10,7 @@ TFListener::TFListener()
 
 LockedTFListener TFListener::getLocked()
 {
-    TFListener* l = raw_instance();
+    TFListener* l = &instance();
     if(l->tfl) {
         return LockedTFListener(l);
     } else {
@@ -20,7 +20,7 @@ LockedTFListener TFListener::getLocked()
 
 void TFListener::start()
 {
-    TFListener* i = TFListener::raw_instance();
+    TFListener* i = &TFListener::instance();
 
     i->tfl.reset(new tf::TransformListener);
     i->tf_sub = ROSHandler::instance().nh()->subscribe<tf::tfMessage>("/tf", 0, std::bind(&TFListener::cb, i, std::placeholders::_1));
@@ -29,7 +29,7 @@ void TFListener::start()
 
 void TFListener::stop()
 {
-    TFListener* i = TFListener::raw_instance();
+    TFListener* i = &TFListener::instance();
     i->tfl.reset();
 }
 
