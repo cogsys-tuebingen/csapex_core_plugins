@@ -136,6 +136,7 @@ add_library(csapex_point_cloud_plugin_node
     src/segmentation/cluster_regular_filtered.cpp
     src/segmentation/cluster_regular_filtered_color.cpp
     src/segmentation/cluster_regular_filtered_mono.cpp
+    src/segmentation/extract_clusters.cpp
 
     src/analysis/ray_angles.cpp
     src/analysis/estimate_normals.cpp

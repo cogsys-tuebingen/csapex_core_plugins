@@ -13,6 +13,7 @@
 #include <csapex/view/utility/color.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
+#include <csapex/view/utility/color.hpp>
 
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>
@@ -163,6 +164,13 @@ public:
                 marker.scale.x = (x_max - x_min);
                 marker.scale.y = (y_max - y_min);
                 marker.scale.z = (z_max - z_min);
+
+
+                double r = 0,g = 0,b = 0;
+                color::fromCount(marker.id, r,g,b);
+                marker.color.r = r / 255.;
+                marker.color.g = g / 255.;
+                marker.color.b = b / 255.;
 
                 marker_array->markers.push_back(marker);
                 marker.id ++;

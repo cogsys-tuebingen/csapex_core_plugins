@@ -37,6 +37,12 @@
 </class>
 
 
+<class type="csapex::ExtractClusters" base_class_type="csapex::Node">
+  <description>Splits a point cloud into several smaller clouds by clusters</description>
+  <tags>PointCloud</tags>
+</class>
+
+
 <class type="csapex::CloudRenderer" base_class_type="csapex::Node">
   <description>Displays a point cloud</description>
   <tags>PointCloud, Output</tags>
