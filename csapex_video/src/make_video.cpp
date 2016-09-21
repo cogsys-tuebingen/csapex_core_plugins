@@ -5,7 +5,6 @@
 #include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/signal/slot.h>
 #include <csapex/model/node_modifier.h>
 
 /// SYSTEM
@@ -24,10 +23,6 @@ MakeVideo::MakeVideo()
 void MakeVideo::setup(NodeModifier &node_modifier)
 {
     input_ = node_modifier.addInput<CvMatMessage>("Input image");
-    clear_ = node_modifier.addSlot("clear",
-                                   std::bind(&MakeVideo::clear, this));
-    write_ = node_modifier.addSlot("write",
-                                   std::bind(&MakeVideo::writeBuffer, this));
 }
 
 void MakeVideo::setupParameters(Parameterizable &parameters)
@@ -74,6 +69,9 @@ void MakeVideo::setupParameters(Parameterizable &parameters)
                             frame_size_.height);
     parameters.addParameter(param::ParameterFactory::declareBool("buffer", true),
                             buffer_);
+
+    parameters.addParameter(param::ParameterFactory::declareTrigger("clear"),
+                            std::bind(&MakeVideo::clear, this));
 
     parameters.addParameter(param::ParameterFactory::declareTrigger("write"),
                             std::bind(&MakeVideo::writeBuffer, this));

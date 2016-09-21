@@ -235,6 +235,10 @@
     <description>Substitute ROI classification labels.</description>
     <tags>Vision, ROI</tags>
   </class>
+  <class type="csapex::FilterROIsByClassification" base_class_type="csapex::Node">
+    <description>Substitute ROI classification labels.</description>
+    <tags>Vision, ROI</tags>
+  </class>
   <class type="csapex::SetROIClassification" base_class_type="csapex::Node">
     <description>Set the roi classification to a defined label.</description>
     <tags>Vision, ROI</tags>

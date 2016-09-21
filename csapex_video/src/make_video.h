@@ -17,8 +17,6 @@ public:
 
 private:
     Input *input_;
-    Slot  *clear_;
-    Slot  *write_;
 
     std::string path_;
     std::map<int, std::string> file_extensions_;
