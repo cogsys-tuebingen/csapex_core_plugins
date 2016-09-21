@@ -34,29 +34,28 @@ void MakeVideo::setupParameters(Parameterizable &parameters)
     std::map<std::string, int> codec_types =
     {
         {"Uncompressed", 0},
-        {"FLV1", CV_FOURCC('F', 'L', 'V', '1')},
-    //  {"H.263I", CV_FOURCC('I', '2', '6', '3')}, -> currently not supported
         {"H.263", CV_FOURCC('U', '2', '6', '3')},
-    //  {"H.264", CV_FOURCC('X','2','6','4')}, -> currently not supported
         {"motion-jpeg", CV_FOURCC('M','J','P','G')},
         {"MPEG-1", CV_FOURCC('P','I','M','1')},
+        {"MPEG-2", CV_FOURCC('m', 'p', 'g', '2')},
+        {"MPEG-4", CV_FOURCC('D', 'I', 'V', 'X')},
         {"MPEG-4.2", CV_FOURCC('M', 'P', '4', '2')},
         {"MPEG-4.3", CV_FOURCC('D', 'I', 'V', '3')},
-        {"MPEG-4", CV_FOURCC('D', 'I', 'V', 'X')},
+        {"DIVX", CV_FOURCC('D', 'I', 'V', 'X')},
+        {"XVID", CV_FOURCC('X', 'V', 'I', 'D')}
     };
 
     file_extensions_ =
     {
         {codec_types["Uncompressed"], ".avi"},
-        {codec_types["FLV1"], ".avi"},
-     // {codec_types["H.263I"], ".avi"}, -> currently not supported
         {codec_types["H.263"], ".avi"},
-     // {codec_types["H.264"], ".avi"}, -> currently not supported
         {codec_types["motion-jpeg"], ".mpg"},
         {codec_types["MPEG-1"], ".mpg"},
+        {codec_types["MPEG-2"], ".mpg"},
+        {codec_types["MPEG-4"], ".mpg"},
         {codec_types["MPEG-4.2"], ".mpg"},
         {codec_types["MPEG-4.3"], ".mpg"},
-        {codec_types["MPEG-4"], ".mpg"}
+        {codec_types["XVID"], ".avi"},
     };
 
     parameters.addParameter(param::ParameterFactory::declareParameterSet("codec", codec_types, 0),
