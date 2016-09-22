@@ -80,6 +80,7 @@ public:
             for(int i : cluster_idx.indices) {
                 cluster_pts->push_back(cloud.at(i));
             }
+            cluster_pts->header = cloud_ptr->header;
 
             PointCloudMessage::Ptr cluster = std::make_shared<PointCloudMessage>(cloud.header.frame_id, cloud.header.stamp);
             cluster->value = cluster_pts;
