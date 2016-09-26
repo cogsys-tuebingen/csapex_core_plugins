@@ -132,6 +132,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/roi/roi_hit_rate.cpp
     src/roi/scale_rois.cpp
     src/roi/scale_roi.cpp
+    src/roi/filter_roi_by_classification.cpp
 
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp

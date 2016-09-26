@@ -2,6 +2,9 @@
 <class type="csapex::MakeScreenshot" base_class_type="csapex::Node">
   <description>Creates a screenshot of the fullscreen</description>
 </class>
+<class type="csapex::MakeVideo" base_class_type="csapex::Node">
+  <description>Creates a video from single images.</description>
+</class>
 <class type="csapex::ImageCollage" base_class_type="csapex::Node">
   <description>Composes two images</description>
 </class>
