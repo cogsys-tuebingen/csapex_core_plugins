@@ -25,7 +25,6 @@ class PoseToTransform : public Node
 public:
     void setup(csapex::NodeModifier& modifier) override
     {
-        //        in_ = modifier.addInput<geometry_msgs::PoseStamped>("Pose");
         in_ = modifier.addMultiInput<geometry_msgs::PoseStamped, geometry_msgs::PoseWithCovarianceStamped>("Pose");
         out_ = modifier.addOutput<TransformMessage>("Transform");
     }
@@ -37,8 +36,6 @@ public:
 
     void process()
     {
-        ainfo << "process" << std::endl;
-
         geometry_msgs::PoseStamped ps;
 
         if(msg::isMessage<GenericPointerMessage<geometry_msgs::PoseStamped>>(in_)) {
@@ -59,7 +56,6 @@ public:
 
         tf::poseMsgToTF(ps.pose, trafo);
 
-        ainfo << "publish" << std::endl;
         msg::publish(out_, result);
     }
 private:
