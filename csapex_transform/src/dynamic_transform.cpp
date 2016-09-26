@@ -22,7 +22,7 @@ CSAPEX_REGISTER_CLASS(csapex::DynamicTransform, csapex::Node)
 using namespace csapex;
 
 DynamicTransform::DynamicTransform()
-    : init_(false), initial_retries_(10)
+    : init_(false), initial_retries_(10), frozen_(false)
 {
 }
 
@@ -40,6 +40,22 @@ void DynamicTransform::setupParameters(Parameterizable& parameters)
 
     parameters.addParameter(csapex::param::ParameterFactory::declareBool("exact_time", false), exact_time_);
 
+    auto is_frozen = csapex::param::ParameterFactory::declareBool("freeze_transformation", false);
+    parameters.addParameter(is_frozen, [this](param::Parameter* p){
+        freeze(p->as<bool>());
+    });
+
+    std::function<bool()> freeze_condition = [this]() {
+        return frozen_;
+    };
+
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareAngle("~tf/roll", 0.0), freeze_condition, roll);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareAngle("~tf/pitch", 0.0), freeze_condition, pitch);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareAngle("~tf/yaw", 0.0), freeze_condition, yaw);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("~tf/dx", 0.0), freeze_condition, x);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("~tf/dy", 0.0), freeze_condition, y);
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("~tf/dz", 0.0), freeze_condition, z);
+
     refresh();
 }
 
@@ -53,6 +69,34 @@ void DynamicTransform::tick()
     if(source_p->noParameters() != 0 && target_p->noParameters() != 0 && !msg::isConnected(time_in_))
     {
         process();
+    }
+}
+
+void DynamicTransform::freeze(bool frozen)
+{
+    if(frozen != frozen_) {
+
+        if(frozen) {
+            if(boost::optional<tf::Transform> t = last_transform) {
+                tf::Transform last = *t;
+
+                auto o = last.getOrigin();
+                x = o.x();
+                y = o.y();
+                z = o.z();
+
+                tf::Matrix3x3(last.getRotation()).getEulerYPR(yaw, pitch, roll);
+
+                setParameter("~tf/roll", roll);
+                setParameter("~tf/pitch", pitch);
+                setParameter("~tf/yaw", yaw);
+                setParameter("~tf/dx", x);
+                setParameter("~tf/dy", y);
+                setParameter("~tf/dz", z);
+            }
+        }
+
+        frozen_ = frozen;
     }
 }
 
@@ -90,55 +134,66 @@ void DynamicTransform::publishTransform(const ros::Time& time)
         return;
     }
 
-    tf::StampedTransform t;
-
-    if(getParameter("source")->is<void>()) {
-        throw std::runtime_error("from is not a string");
-    }
-    if(getParameter("target")->is<void>()) {
-        throw std::runtime_error("to is not a string");
-    }
 
     std::string target = readParameter<std::string>("target");
     std::string source = readParameter<std::string>("source");
 
-    try {
-        LockedTFListener l = TFListener::getLocked();
+    if(frozen_) {
+        connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
+        msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
+        msg->frame_id = target;
+        msg->child_frame = source;
+        msg::publish(output_, msg);
 
-        if(l.l) {
-            tf::TransformListener& tfl = *l.l->tfl;
-            if(tfl.waitForTransform(target, source, time, ros::Duration(0.1))) {
-                tfl.lookupTransform(target, source, time, t);
+    } else {
+        tf::StampedTransform t;
+        if(getParameter("source")->is<void>()) {
+            throw std::runtime_error("from is not a string");
+        }
+        if(getParameter("target")->is<void>()) {
+            throw std::runtime_error("to is not a string");
+        }
 
-            } else if(exact_time_) {
-                node_modifier_->setWarning(std::string("cannot exactly transform between ") +
-                                           target + " and " + source);
-                return;
+        try {
+            LockedTFListener l = TFListener::getLocked();
 
-            } else {
-                if(tfl.canTransform(target, source, ros::Time(0))) {
-                    node_modifier_->setWarning("cannot transform, using latest transform");
-                    tfl.lookupTransform(target, source, ros::Time(0), t);
-                } else {
-                    node_modifier_->setWarning(std::string("cannot transform between ") +
-                                               target + " and " + source + " at all...");
+            if(l.l) {
+                tf::TransformListener& tfl = *l.l->tfl;
+                if(tfl.waitForTransform(target, source, time, ros::Duration(0.1))) {
+                    tfl.lookupTransform(target, source, time, t);
+
+                } else if(exact_time_) {
+                    node_modifier_->setWarning(std::string("cannot exactly transform between ") +
+                                               target + " and " + source);
                     return;
+
+                } else {
+                    if(tfl.canTransform(target, source, ros::Time(0))) {
+                        node_modifier_->setWarning("cannot transform, using latest transform");
+                        tfl.lookupTransform(target, source, ros::Time(0), t);
+                    } else {
+                        node_modifier_->setWarning(std::string("cannot transform between ") +
+                                                   target + " and " + source + " at all...");
+                        return;
+                    }
                 }
+                node_modifier_->setNoError();
+            } else {
+                return;
             }
-            node_modifier_->setNoError();
-        } else {
+        } catch(const tf2::TransformException& e) {
+            node_modifier_->setWarning(e.what());
             return;
         }
-    } catch(const tf2::TransformException& e) {
-        node_modifier_->setWarning(e.what());
-        return;
-    }
 
-    connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
-    msg->value = t;
-    msg->frame_id = target;
-    msg->child_frame = source;
-    msg::publish(output_, msg);
+        connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
+        msg->value = t;
+        msg->frame_id = target;
+        msg->child_frame = source;
+        msg::publish(output_, msg);
+
+        last_transform = t;
+    }
 }
 
 void DynamicTransform::setup(NodeModifier& node_modifier)

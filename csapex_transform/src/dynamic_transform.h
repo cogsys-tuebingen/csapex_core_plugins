@@ -7,6 +7,8 @@
 
 /// SYSTEM
 #include <ros/time.h>
+#include <tf/tf.h>
+#include <boost/optional.hpp>
 
 namespace csapex {
 
@@ -26,6 +28,8 @@ public:
     void refresh();
     void resetTf();
 
+    void freeze(bool frozen);
+
 private:
     void publishTransform(const ros::Time& time);
 
@@ -43,6 +47,17 @@ private:
     param::SetParameter::Ptr target_p;
 
     bool exact_time_;
+
+    bool frozen_;
+
+    double roll;
+    double pitch;
+    double yaw;
+    double x;
+    double y;
+    double z;
+
+    boost::optional<tf::Transform> last_transform;
 };
 
 }

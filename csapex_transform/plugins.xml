@@ -19,6 +19,9 @@
 <class type="csapex::PoseToTransform" base_class_type="csapex::Node">
 <description>Creates a transform message from a pose</description>
 </class>
+<class type="csapex::OdometryToTransform" base_class_type="csapex::Node">
+<description>Creates a transform message from an odometry</description>
+</class>
 
 <class type="csapex::StaticTransform" base_class_type="csapex::Node">
   <description>Computes a static 6D transformation</description>
