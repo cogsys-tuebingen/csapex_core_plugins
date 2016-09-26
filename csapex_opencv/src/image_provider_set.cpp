@@ -10,7 +10,7 @@ ImageProviderSet::ImageProviderSet()
     : next_frame(-1)
 {
     state.addParameter(csapex::param::ParameterFactory::declareBool("set/playing", true));
-    state.addParameter(csapex::param::ParameterFactory::declareBool("set/loop", true));
+    state.addParameter(csapex::param::ParameterFactory::declareBool("set/loop", false));
     state.addParameter(csapex::param::ParameterFactory::declareRange("set/current_frame", 0, 1000, 0, 1));
     // TODO: interval param for playback borders
 }
