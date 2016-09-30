@@ -27,7 +27,11 @@
   <tags>RosIO, General, Debug</tags>
 </class>
 <class type="csapex::RosTrigger" base_class_type="csapex::Node">
-  <description>Seng a signal using ROS topics</description>
+  <description>Send a signal using ROS topics</description>
+  <tags>RosIO, General</tags>
+</class>
+<class type="csapex::BagWriter" base_class_type="csapex::Node">
+  <description>Write streams into a ROS bag file</description>
   <tags>RosIO, General</tags>
 </class>
 </library>

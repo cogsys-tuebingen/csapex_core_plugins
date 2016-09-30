@@ -60,6 +60,21 @@ ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &to
     }
 }
 
+std::shared_ptr<topic_tools::ShapeShifter const> RosMessageConversion::convert(const connection_types::Message::ConstPtr &message)
+{
+    auto gen_ros = std::dynamic_pointer_cast<connection_types::GenericRosMessage const>(message);
+    if(gen_ros) {
+        return gen_ros->value;
+    } else {
+        std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(message->descriptiveName());
+        if(it == converters_inv_.end()) {
+            throw std::runtime_error(std::string("cannot convert type ") + message->descriptiveName());
+        }
+        Convertor::Ptr converter = it->second;
+        return converter->convert(message);
+    }
+}
+
 ros::Publisher RosMessageConversion::advertise(TokenData::ConstPtr type, const std::string &topic, int queue, bool latch)
 {
     auto gen_ros = std::dynamic_pointer_cast<connection_types::GenericRosMessage const>(type);
@@ -121,11 +136,6 @@ connection_types::Message::Ptr RosMessageConversion::instantiate(const rosbag::M
         return msg;
     }
 }
-
-//std::vector<std::string> RosMessageConversion::getRegisteredRosTypes()
-//{
-//    return ros_types_;
-//}
 
 void Convertor::publish_apex(Callback callback, TokenData::ConstPtr msg)
 {

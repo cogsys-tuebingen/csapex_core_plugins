@@ -404,12 +404,6 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 
 }
 
-
-void ImportRos::setParameterState(Memento::Ptr memento)
-{
-    Node::setParameterState(memento);
-}
-
 void ImportRos::reset()
 {
     running_ = false;

@@ -8,6 +8,7 @@
 #include <csapex/param/interval_parameter.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/param/set_parameter.h>
 
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>

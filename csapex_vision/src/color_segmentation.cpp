@@ -8,9 +8,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/profiling/timer.h>
-
-/// SYSTEM
-
+#include <csapex/model/generic_state.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ColorSegmentation, csapex::Node)
 
@@ -124,9 +122,8 @@ void ColorSegmentation::setup(NodeModifier& node_modifier)
 void ColorSegmentation::setupParameters(Parameterizable &params)
 {
     if(loaded_state_) {
-        for(auto it = loaded_state_->params.begin(); it != loaded_state_->params.end(); ++it) {
-            csapex::param::Parameter::Ptr p = it->second;
-            params.addParameter(param::ParameterFactory::clone(p));
+        for(auto pair : loaded_state_->params) {
+            params.addParameter(param::ParameterFactory::clone(pair.second));
         }
         Node::setParameterState(loaded_state_);
         loaded_ = true;

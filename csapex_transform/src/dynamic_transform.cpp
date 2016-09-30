@@ -138,6 +138,9 @@ void DynamicTransform::publishTransform(const ros::Time& time)
     std::string target = readParameter<std::string>("target");
     std::string source = readParameter<std::string>("source");
 
+    apex_assert(!target.empty());
+    apex_assert(!source.empty());
+
     if(frozen_) {
         connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
         msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));

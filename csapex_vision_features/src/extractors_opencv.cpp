@@ -13,6 +13,7 @@
 #include <opencv2/nonfree/nonfree.hpp>
 #endif
 #include <boost/bind.hpp>
+#include <boost/static_assert.hpp>
 
 using namespace csapex;
 using namespace param;

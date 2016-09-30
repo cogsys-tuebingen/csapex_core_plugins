@@ -24,7 +24,7 @@ public:
     OutputDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node);
     ~OutputDisplayAdapter();
 
-    virtual Memento::Ptr getState() const override;
+    virtual MementoPtr getState() const override;
     virtual void setParameterState(Memento::Ptr memento) override;
 
     virtual void setupUi(QBoxLayout* layout) override;

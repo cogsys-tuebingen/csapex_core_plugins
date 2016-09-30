@@ -29,6 +29,8 @@ public:
     typedef std::function<void(TokenDataConstPtr)> Callback;
 
 public:
+    virtual std::shared_ptr<topic_tools::ShapeShifter const> convert(const TokenData::ConstPtr &message) = 0;
+
     virtual ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) = 0;
     virtual ros::Publisher advertise(const std::string& topic,  int queue, bool latch = false) = 0;
 
@@ -48,15 +50,34 @@ class IdentityConvertor : public Convertor
 {
     typedef IdentityConvertor<T> Self;
 public:
-    std::string rosType() {
+    std::string rosType() override
+    {
         return ros::message_traits::DataType<T>::value();
     }
-    std::string apexType() {
+    std::string apexType() override
+    {
         typename connection_types::GenericPointerMessage<T>::Ptr type = std::make_shared<connection_types::GenericPointerMessage<T>>();
         return type->typeName();//ros::message_traits::DataType<T>::value();
     }
 
-    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) {
+    virtual std::shared_ptr<topic_tools::ShapeShifter const> convert(const TokenData::ConstPtr &message) override
+    {
+        auto msg_ptr = std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const>(message);
+        if(!msg_ptr) {
+            throw std::runtime_error("didn't receive a ros message");
+        }
+
+        auto serialized = ros::serialization::serializeMessage(*msg_ptr->value);
+        ros::serialization::IStream stream(serialized.buf.get(), serialized.num_bytes);
+
+        auto res = std::make_shared<topic_tools::ShapeShifter>();
+        res->read(stream);
+        res->morph(ros::message_traits::md5sum<T>(), ros::message_traits::datatype<T>(), ros::message_traits::definition<T>(), "");
+        return res;
+    }
+
+    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) override
+    {
         std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
@@ -64,7 +85,9 @@ public:
 
         return nh->subscribe<T>(topic.name, queue, std::bind(&Self::callback, this, callback, std::placeholders::_1));
     }
-    ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) {
+
+    ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) override
+    {
         std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
@@ -72,7 +95,8 @@ public:
 
         return nh->advertise<T>(topic, queue, latch);
     }
-    void publish(ros::Publisher& pub, TokenData::ConstPtr apex_msg_raw) {
+    void publish(ros::Publisher& pub, TokenData::ConstPtr apex_msg_raw) override
+    {
         typename connection_types::GenericPointerMessage<T>::ConstPtr msg =
                 std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const> (apex_msg_raw);
         if(!msg) {
@@ -94,7 +118,8 @@ public:
         return pub.publish(boost_ptr);
     }
 
-    void callback(Callback callback, const typename T::ConstPtr& ros_msg) {
+    void callback(Callback callback, const typename T::ConstPtr& ros_msg)
+    {
         if(!ros_msg) {
             throw std::runtime_error("received an empty ros message");
         }
@@ -103,7 +128,8 @@ public:
         publish_apex(callback, apex_msg);
     }
 
-    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& i) {
+    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& i) override
+    {
         typename connection_types::GenericPointerMessage<T>::Ptr res(new connection_types::GenericPointerMessage<T>);
         auto boost_ptr = i.instantiate<T>();
         res->value = shared_ptr_tools::to_std_shared(boost_ptr);
@@ -117,11 +143,31 @@ class ConverterTemplate : public Convertor
     typedef ConverterTemplate<ROS, APEX, Converter> Self;
 
 public:
-    std::string rosType() {
+    std::string rosType() override
+    {
         return ros::message_traits::DataType<ROS>::value();
     }
-    std::string apexType() {
+    std::string apexType() override
+    {
         return connection_types::type<APEX>::name();
+    }
+
+    std::shared_ptr<topic_tools::ShapeShifter const> convert(const TokenData::ConstPtr &apex_token) override
+    {
+        std::shared_ptr<const APEX> apex_msg = std::dynamic_pointer_cast<const APEX>(apex_token);
+        apex_assert_hard(apex_msg);
+        auto ros_msg = Converter::apex2ros(apex_msg);
+        if(!ros_msg) {
+            throw std::runtime_error("cannot convert apex message to ros message");
+        }
+
+        auto serialized = ros::serialization::serializeMessage(*ros_msg);
+        ros::serialization::IStream stream(serialized.buf.get(), serialized.num_bytes);
+
+        auto res = std::make_shared<topic_tools::ShapeShifter>();
+        res->read(stream);
+        res->morph(ros::message_traits::md5sum<ROS>(), ros::message_traits::datatype<ROS>(), ros::message_traits::definition<ROS>(), "");
+        return res;
     }
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) {
@@ -132,7 +178,8 @@ public:
 
         return nh->subscribe<ROS>(topic.name, queue, std::bind(&Self::callback, this, callback, std::placeholders::_1));
     }
-    ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) {
+    ros::Publisher advertise(const std::string& topic, int queue, bool latch = false) override
+    {
         std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if(!nh) {
             throw std::runtime_error("no ros connection");
@@ -140,7 +187,8 @@ public:
 
         return nh->advertise<ROS>(topic, queue, latch);
     }
-    void publish(ros::Publisher& pub, TokenData::ConstPtr apex_msg_raw) {
+    void publish(ros::Publisher& pub, TokenData::ConstPtr apex_msg_raw) override
+    {
         typename APEX::ConstPtr apex_msg = std::dynamic_pointer_cast<APEX const> (apex_msg_raw);
         if(!apex_msg->isValid()) {
             throw std::runtime_error("trying to publish an empty message");
@@ -149,7 +197,8 @@ public:
         return pub.publish(ros_msg);
     }
 
-    void callback(Callback callback, const typename ROS::ConstPtr& ros_msg) {
+    void callback(Callback callback, const typename ROS::ConstPtr& ros_msg)
+    {
         if(!ros_msg) {
             throw std::runtime_error("received an empty ros message");
         }
@@ -185,6 +234,8 @@ public:
     bool isTopicTypeRegistered(const ros::master::TopicInfo &topic);
 
     void shutdown();
+
+    std::shared_ptr<topic_tools::ShapeShifter const> convert(const connection_types::Message::ConstPtr &source);
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output);
     ros::Publisher advertise(TokenData::ConstPtr, const std::string& topic,  int queue, bool latch = false);

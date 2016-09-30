@@ -36,8 +36,6 @@ protected:
     bool doSetTopic();
     void setTopic(const ros::master::TopicInfo& topic);
 
-    virtual void setParameterState(Memento::Ptr memento) override;
-
     void publishLatestMessage();
     bool isStampCovered(const ros::Time& stamp);
 

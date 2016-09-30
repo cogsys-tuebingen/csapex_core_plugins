@@ -15,7 +15,7 @@ public:
     void setupParameters(Parameterizable& parameters);
     virtual void process() override;
 
-    void setParameterState(Memento::Ptr memento);
+    void setParameterState(MementoPtr memento);
     void setPreset();
 
 private:

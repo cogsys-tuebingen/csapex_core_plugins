@@ -7,7 +7,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-
+#include <csapex/param/set_parameter.h>
+#include <csapex/param/value_parameter.h>
 
 CSAPEX_REGISTER_CLASS(csapex::LoadFilestorage, csapex::Node)
 

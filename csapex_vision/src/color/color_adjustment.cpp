@@ -8,6 +8,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/generic_state.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ColorAdjustment, csapex::Node)
 
