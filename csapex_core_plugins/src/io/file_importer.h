@@ -22,6 +22,7 @@ public:
     void setupParameters(Parameterizable& parameters);
     void setup(csapex::NodeModifier& node_modifier) override;
 
+    void requestImport();
     void import();
 
     virtual void process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
@@ -55,6 +56,8 @@ private:
 
     bool trigger_signal_begin_;
     bool trigger_signal_end_;
+
+    bool import_requested_;
 
     Event* begin_;
     Event* end_;

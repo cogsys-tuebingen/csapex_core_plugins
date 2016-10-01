@@ -34,7 +34,7 @@ using namespace connection_types;
 
 FileImporter::FileImporter()
     : playing_(false), abort_(false), end_triggered_(false),
-      trigger_signal_begin_(false), trigger_signal_end_(false),
+      trigger_signal_begin_(false), trigger_signal_end_(false), import_requested_(false),
       directory_import_(false), last_directory_index_(-1), cache_enabled_(false)
 {
 }
@@ -61,9 +61,9 @@ void FileImporter::setupParameters(Parameterizable& parameters)
                             split_container_messages_);
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
-    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::import, this));
+    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::requestImport, this));
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::import, this));
+    parameters.addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::requestImport, this));
     parameters.addConditionalParameter(param::ParameterFactory::declareText("directory/current_file", ""), cond_dir);
     parameters.addConditionalParameter(param::ParameterFactory::declareBool(
                                            "directory/sort_numerically",
@@ -160,6 +160,9 @@ void FileImporter::process(NodeModifier& node_modifier, Parameterizable& paramet
 
 bool FileImporter::canTick()
 {
+    if(import_requested_) {
+        return true;
+    }
     if(trigger_signal_end_ || trigger_signal_begin_ || abort_) {
         return true;
     }
@@ -189,6 +192,11 @@ bool FileImporter::canTick()
 
 bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
 {
+    if(import_requested_) {
+        import_requested_ = false;
+        import();
+    }
+
     if(trigger_signal_begin_) {
         signalBegin();
         return false;
@@ -575,6 +583,11 @@ void FileImporter::changeDirIndex()
 {
     //    int set_to = readParameter<int>("directory/current");
     //    setParameter("directory/current", set_to);
+}
+
+void FileImporter::requestImport()
+{
+    import_requested_ = true;
 }
 
 void FileImporter::import()
