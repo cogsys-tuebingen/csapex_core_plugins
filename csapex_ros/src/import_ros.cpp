@@ -366,8 +366,8 @@ void ImportRos::callback(TokenDataConstPtr message)
     if(msg) {
         std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
 
-        if(!msgs_.empty() && msg->stamp_micro_seconds < msgs_.front()->stamp_micro_seconds) {
-            awarn << "detected time anomaly -> reset";
+        if(!msgs_.empty() && msg->stamp_micro_seconds + int(2*1e9) < msgs_.back()->stamp_micro_seconds) {
+            awarn << "detected time anomaly -> reset (" << msg->stamp_micro_seconds + int(2*1e9) << " < " << msgs_.back()->stamp_micro_seconds << ")" << std::endl;;
             msgs_.clear();
         }
 

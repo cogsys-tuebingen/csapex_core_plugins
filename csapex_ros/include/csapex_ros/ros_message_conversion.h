@@ -29,7 +29,7 @@ public:
     typedef std::function<void(TokenDataConstPtr)> Callback;
 
 public:
-    virtual std::shared_ptr<topic_tools::ShapeShifter const> convert(const TokenData::ConstPtr &message) = 0;
+    virtual void write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &source, const std::string& topic) = 0;
 
     virtual ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) = 0;
     virtual ros::Publisher advertise(const std::string& topic,  int queue, bool latch = false) = 0;
@@ -60,20 +60,18 @@ public:
         return type->typeName();//ros::message_traits::DataType<T>::value();
     }
 
-    virtual std::shared_ptr<topic_tools::ShapeShifter const> convert(const TokenData::ConstPtr &message) override
+    virtual void write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &message, const std::string& topic) override
     {
         auto msg_ptr = std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const>(message);
         if(!msg_ptr) {
             throw std::runtime_error("didn't receive a ros message");
         }
 
-        auto serialized = ros::serialization::serializeMessage(*msg_ptr->value);
-        ros::serialization::IStream stream(serialized.buf.get(), serialized.num_bytes);
-
-        auto res = std::make_shared<topic_tools::ShapeShifter>();
-        res->read(stream);
-        res->morph(ros::message_traits::md5sum<T>(), ros::message_traits::datatype<T>(), ros::message_traits::definition<T>(), "");
-        return res;
+        if(message->stamp_micro_seconds > 0) {
+            ros::Time time;
+            time.fromNSec(message->stamp_micro_seconds * 1e3);
+            bag.write(topic, time, *msg_ptr->value);
+        }
     }
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) override
@@ -152,22 +150,20 @@ public:
         return connection_types::type<APEX>::name();
     }
 
-    std::shared_ptr<topic_tools::ShapeShifter const> convert(const TokenData::ConstPtr &apex_token) override
+    void write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &message, const std::string& topic) override
     {
-        std::shared_ptr<const APEX> apex_msg = std::dynamic_pointer_cast<const APEX>(apex_token);
+        std::shared_ptr<const APEX> apex_msg = std::dynamic_pointer_cast<const APEX>(message);
         apex_assert_hard(apex_msg);
         auto ros_msg = Converter::apex2ros(apex_msg);
         if(!ros_msg) {
             throw std::runtime_error("cannot convert apex message to ros message");
         }
 
-        auto serialized = ros::serialization::serializeMessage(*ros_msg);
-        ros::serialization::IStream stream(serialized.buf.get(), serialized.num_bytes);
-
-        auto res = std::make_shared<topic_tools::ShapeShifter>();
-        res->read(stream);
-        res->morph(ros::message_traits::md5sum<ROS>(), ros::message_traits::datatype<ROS>(), ros::message_traits::definition<ROS>(), "");
-        return res;
+        if(message->stamp_micro_seconds > 0) {
+            ros::Time time;
+            time.fromNSec(message->stamp_micro_seconds * 1e3);
+            bag.write(topic, time, *ros_msg);
+        }
     }
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) {
@@ -235,13 +231,12 @@ public:
 
     void shutdown();
 
-    std::shared_ptr<topic_tools::ShapeShifter const> convert(const connection_types::Message::ConstPtr &source);
-
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output);
     ros::Publisher advertise(TokenData::ConstPtr, const std::string& topic,  int queue, bool latch = false);
     void publish(ros::Publisher& pub, TokenData::ConstPtr msg);
 
     connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source);
+    void write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &source, const std::string& topic);
 
     std::vector<std::string> getRegisteredRosTypes() {
         return ros_types_;

@@ -60,18 +60,22 @@ ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &to
     }
 }
 
-std::shared_ptr<topic_tools::ShapeShifter const> RosMessageConversion::convert(const connection_types::Message::ConstPtr &message)
+void RosMessageConversion::write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &message, const std::string& topic)
 {
     auto gen_ros = std::dynamic_pointer_cast<connection_types::GenericRosMessage const>(message);
     if(gen_ros) {
-        return gen_ros->value;
+        if(message->stamp_micro_seconds > 0) {
+            ros::Time time;
+            time.fromNSec(message->stamp_micro_seconds * 1e3);
+            bag.write(topic, time, *gen_ros->value);
+        }
     } else {
         std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(message->descriptiveName());
         if(it == converters_inv_.end()) {
             throw std::runtime_error(std::string("cannot convert type ") + message->descriptiveName());
         }
         Convertor::Ptr converter = it->second;
-        return converter->convert(message);
+        converter->write(bag, message, topic);
     }
 }
 

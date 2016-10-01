@@ -68,9 +68,7 @@ public:
             if(msg::hasMessage(in)) {
                 connection_types::MessageConstPtr message = msg::getMessage<connection_types::Message>(in);
 
-                std::shared_ptr<topic_tools::ShapeShifter const> instance = RosMessageConversion::instance().convert(message);
-
-                write(in->getLabel(), message->stamp_micro_seconds, instance);
+                RosMessageConversion::instance().write(bag, message, in->getLabel());
             }
         }
     }
@@ -89,9 +87,7 @@ public:
     {
         auto cb = [this](Slot* slot, const TokenPtr& token) {
             auto message = std::dynamic_pointer_cast<connection_types::Message const>(token->getTokenData());
-            std::shared_ptr<topic_tools::ShapeShifter const> instance = RosMessageConversion::instance().convert(message);
-
-            write(slot->getLabel(), message->stamp_micro_seconds, instance);
+            RosMessageConversion::instance().write(bag, message, slot->getLabel());
         };
 
         return VariadicSlots::createVariadicSlot(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, cb);
@@ -106,6 +102,8 @@ public:
                 time.fromNSec(stamp * 1e3);
                 bag.write(label, time, *instance);
             }
+        } else {
+            aerr << "cannot write " << label << ", instance is null" << std::endl;
         }
     }
 
