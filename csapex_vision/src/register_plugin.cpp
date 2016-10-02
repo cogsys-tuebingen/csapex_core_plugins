@@ -29,31 +29,68 @@ RegisterPlugin::RegisterPlugin()
 {
 }
 
+namespace impl
+{
+void convertImage(const connection_types::CvMatMessage::ConstPtr& in, cv_bridge::CvImage& out)
+{
+    out.image = in->value;
+
+    switch(in->value.type()) {
+    case CV_8UC1:
+        out.encoding = sensor_msgs::image_encodings::MONO8;
+        break;
+    default:
+    case CV_8UC3:
+        if(in->getEncoding().matches(enc::bgr)) {
+            out.encoding = sensor_msgs::image_encodings::BGR8;
+        } else if(in->getEncoding().matches(enc::rgb)) {
+            out.encoding = sensor_msgs::image_encodings::RGB8;
+        } else if(in->getEncoding().matches(enc::yuv)) {
+            out.encoding = sensor_msgs::image_encodings::YUV422;
+        } else if(in->getEncoding().matches(enc::mono)) {
+            out.encoding = sensor_msgs::image_encodings::MONO8;
+        } else if(in->getEncoding().matches(enc::depth)) {
+            out.encoding = sensor_msgs::image_encodings::TYPE_16UC1;
+        } else {
+            std::cerr << "cannot convert encoding " << in->getEncoding().toString() << " to ROS" << std::endl;
+        }
+        break;
+    }
+
+    out.header.frame_id = in->frame_id;
+    if(in->stamp_micro_seconds != 0) {
+        out.header.stamp = out.header.stamp.fromNSec(in->stamp_micro_seconds);
+    } else {
+        out.header.stamp = ros::Time::now();
+    }
+}
+
+csapex::Encoding convertEncoding(const std::string& in)
+{
+    if(in == sensor_msgs::image_encodings::BGR8 || in == sensor_msgs::image_encodings::BGR16) {
+        return enc::bgr;
+    } else if(in == sensor_msgs::image_encodings::RGB8 || in == sensor_msgs::image_encodings::RGB16) {
+        return enc::rgb;
+    } else if(in == sensor_msgs::image_encodings::MONO8 || in == sensor_msgs::image_encodings::MONO16) {
+        return enc::mono;
+    } else if(in == sensor_msgs::image_encodings::YUV422) {
+        return enc::yuv;
+    } else if(in.size() > 6 && in.substr(6) == "bayer_") {
+        return enc::mono;
+    } else if(in == sensor_msgs::image_encodings::TYPE_16UC1) {
+        return enc::depth;
+    } else {
+        return enc::unknown;
+    }
+}
+}
+
 struct Image2CvMat
 {
     static connection_types::CvMatMessage::Ptr ros2apex(const sensor_msgs::Image::ConstPtr &ros_msg) {
         u_int64_t stamp_micro_seconds = ros_msg->header.stamp.toNSec() * 1e-3;
 
-        std::string source_encoding = ros_msg->encoding;
-        csapex::Encoding target_encoding;
-        if(source_encoding == sensor_msgs::image_encodings::BGR8 ||
-                source_encoding == sensor_msgs::image_encodings::BGR16) {
-            target_encoding = enc::bgr;
-        } else if(source_encoding == sensor_msgs::image_encodings::RGB8 ||
-                  source_encoding == sensor_msgs::image_encodings::RGB16) {
-            target_encoding = enc::rgb;
-        } else if(source_encoding == sensor_msgs::image_encodings::MONO8 ||
-                  source_encoding == sensor_msgs::image_encodings::MONO16) {
-            target_encoding = enc::mono;
-        } else if(source_encoding == sensor_msgs::image_encodings::YUV422) {
-            target_encoding = enc::yuv;
-        } else if(source_encoding.size() > 6 && source_encoding.substr(6) == "bayer_") {
-            target_encoding = enc::mono;
-        } else if(source_encoding == sensor_msgs::image_encodings::TYPE_16UC1) {
-            target_encoding = enc::depth;
-        } else {
-            target_encoding = enc::unknown;
-        }
+        csapex::Encoding target_encoding = impl::convertEncoding(ros_msg->encoding);
 
         connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(target_encoding, stamp_micro_seconds));
 
@@ -69,36 +106,7 @@ struct Image2CvMat
     }
     static sensor_msgs::Image::Ptr apex2ros(const connection_types::CvMatMessage::ConstPtr& apex_msg) {
         cv_bridge::CvImage cvb;
-        cvb.image = apex_msg->value;
-
-        switch(apex_msg->value.type()) {
-        case CV_8UC1:
-            cvb.encoding = sensor_msgs::image_encodings::MONO8;
-            break;
-        default:
-        case CV_8UC3:
-            if(apex_msg->getEncoding().matches(enc::bgr)) {
-                cvb.encoding = sensor_msgs::image_encodings::BGR8;
-            } else if(apex_msg->getEncoding().matches(enc::rgb)) {
-                cvb.encoding = sensor_msgs::image_encodings::RGB8;
-            } else if(apex_msg->getEncoding().matches(enc::yuv)) {
-                cvb.encoding = sensor_msgs::image_encodings::YUV422;
-            } else if(apex_msg->getEncoding().matches(enc::mono)) {
-                cvb.encoding = sensor_msgs::image_encodings::MONO8;
-            } else if(apex_msg->getEncoding().matches(enc::depth)) {
-                cvb.encoding = sensor_msgs::image_encodings::TYPE_16UC1;
-            } else {
-                std::cerr << "cannot convert encoding " << apex_msg->getEncoding().toString() << " to ROS" << std::endl;
-            }
-            break;
-        }
-
-        cvb.header.frame_id = apex_msg->frame_id;
-        if(apex_msg->stamp_micro_seconds != 0) {
-            cvb.header.stamp = cvb.header.stamp.fromNSec(apex_msg->stamp_micro_seconds);
-        } else {
-            cvb.header.stamp = ros::Time::now();
-        }
+        impl::convertImage(apex_msg, cvb);
         return cvb.toImageMsg();
     }
 };
@@ -108,36 +116,28 @@ struct CompressedImage2CvMat
     static connection_types::CvMatMessage::Ptr ros2apex(const sensor_msgs::CompressedImage::ConstPtr &ros_msg) {
         u_int64_t stamp_micro_seconds = ros_msg->header.stamp.toNSec() * 1e-3;
 
-        std::string source_encoding = ros_msg->format;
-        csapex::Encoding target_encoding;
-        if(source_encoding == sensor_msgs::image_encodings::BGR8 ||
-                source_encoding == sensor_msgs::image_encodings::BGR16) {
-            target_encoding = enc::bgr;
-        } else if(source_encoding == sensor_msgs::image_encodings::RGB8 ||
-                  source_encoding == sensor_msgs::image_encodings::RGB16) {
-            target_encoding = enc::rgb;
-        } else if(source_encoding == sensor_msgs::image_encodings::MONO8 ||
-                  source_encoding == sensor_msgs::image_encodings::MONO16) {
-            target_encoding = enc::mono;
-        } else if(source_encoding == sensor_msgs::image_encodings::YUV422) {
-            target_encoding = enc::yuv;
-        } else if(source_encoding.size() > 6 && source_encoding.substr(6) == "bayer_") {
-            target_encoding = enc::mono;
-        } else if(source_encoding == sensor_msgs::image_encodings::TYPE_16UC1) {
-            target_encoding = enc::depth;
-        } else {
-            target_encoding = enc::unknown;
+        connection_types::CvMatMessage::Ptr out;
+
+        try {
+            cv_bridge::CvImagePtr img = cv_bridge::toCvCopy(ros_msg);
+            csapex::Encoding target_encoding = impl::convertEncoding(img->encoding);
+
+            out.reset(new connection_types::CvMatMessage(target_encoding, stamp_micro_seconds));
+            out->value = img->image;
+            out->frame_id = ros_msg->header.frame_id;
+
+        } catch (const cv_bridge::Exception& e) {
+            std::cerr << "cv_bridge exception: " << e.what() << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "some other exception in cv_bridge: " << e.what() << std::endl;
         }
-
-        connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(target_encoding, stamp_micro_seconds));
-
-        out->value = cv::imdecode(cv::Mat(ros_msg->data),1);
 
         return out;
     }
     static sensor_msgs::CompressedImage::Ptr apex2ros(const connection_types::CvMatMessage::ConstPtr& apex_msg) {
-        // TODO: implement after SBC...
-        return nullptr;
+        cv_bridge::CvImage cvb;
+        impl::convertImage(apex_msg, cvb);
+        return cvb.toCompressedImageMsg();
     }
 };
 

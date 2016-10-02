@@ -22,7 +22,7 @@ CSAPEX_REGISTER_CLASS(csapex::ExportRos, csapex::Node)
 using namespace csapex;
 
 ExportRos::ExportRos()
-    : connector_(nullptr), create_pub(false)
+    : connector_(nullptr), target_type_(-1)
 {
 }
 
@@ -61,20 +61,51 @@ void ExportRos::processROS()
         type = msg;//->toType();
     }
 
-    if(create_pub) {
-        pub = RosMessageConversion::instance().advertise(type, topic_, queue_, true);
-        create_pub = false;
+    int selected_target_type = -1;
+    if(hasParameter("target_type")) {
+        selected_target_type = readParameter<int>("target_type");
+    }
 
-        msg::setLabel(connector_, pub.getTopic());
+    if(selected_target_type >= 0 && selected_target_type != target_type_) {
+        if(pub) {
+            pub.get().shutdown();
+            pub.reset();
+        }
+    }
+
+    if(!pub) {
+        RosMessageConversion& ros_conv = RosMessageConversion::instance();
+
+        std::map<std::string, int> possible_conversions = ros_conv.getAvailableRosConversions(type);
+        if(possible_conversions.size() == 1) {
+            pub = ros_conv.advertise(type, topic_, queue_, true);
+            msg::setLabel(connector_, pub.get().getTopic());
+
+        } else {
+            if(!hasParameter("target_type")) {
+                addTemporaryParameter(param::ParameterFactory::declareParameterSet("target_type", possible_conversions, 0));
+                selected_target_type = readParameter<int>("target_type");
+            }
+
+            apex_assert(selected_target_type >= 0);
+
+            pub = ros_conv.advertise(type, topic_, queue_, true, selected_target_type);
+            msg::setLabel(connector_, pub.get().getTopic());
+        }
+
+    }
+
+    if(!pub) {
+        return;
     }
 
     if(vector) {
         for(std::size_t i = 0, n = vector->nestedValueCount(); i < n; ++i) {
             TokenDataConstPtr msg = vector->nestedValue(i);
-            RosMessageConversion::instance().publish(pub, msg);
+            RosMessageConversion::instance().publish(pub.get(), msg);
         }
     } else {
-        RosMessageConversion::instance().publish(pub, msg);
+        RosMessageConversion::instance().publish(pub.get(), msg, selected_target_type);
     }
 }
 
@@ -82,5 +113,5 @@ void ExportRos::updateTopic()
 {
     topic_ = readParameter<std::string>("topic");
     queue_ = readParameter<int>("queue");
-    create_pub = true;
+    pub.reset();
 }

@@ -22,12 +22,12 @@ protected:
 private:
     Input* connector_;
 
-    bool create_pub;
-
-    ros::Publisher pub;
+    boost::optional<ros::Publisher> pub;
 
     std::string topic_;
     int queue_;
+
+    int target_type_;
 };
 
 }

@@ -190,6 +190,7 @@ public:
             throw std::runtime_error("trying to publish an empty message");
         }
         typename ROS::Ptr ros_msg = Converter::apex2ros(apex_msg);
+        apex_assert(ros_msg);
         return pub.publish(ros_msg);
     }
 
@@ -199,6 +200,7 @@ public:
             throw std::runtime_error("received an empty ros message");
         }
         typename APEX::Ptr apex_msg = Converter::ros2apex(ros_msg);
+        apex_assert(apex_msg);
         publish_apex(callback, apex_msg);
     }
 
@@ -206,6 +208,18 @@ public:
         return Converter::ros2apex(source.instantiate<ROS>());
     }
 };
+
+
+
+class AmbigousRosConversion : public std::exception
+{
+public:
+    AmbigousRosConversion(const std::string& from);
+    const char* what() const noexcept override;
+
+    const std::string from;
+};
+
 
 class RosMessageConversion : public Singleton<RosMessageConversion>
 {
@@ -231,12 +245,15 @@ public:
 
     void shutdown();
 
-    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output);
-    ros::Publisher advertise(TokenData::ConstPtr, const std::string& topic,  int queue, bool latch = false);
-    void publish(ros::Publisher& pub, TokenData::ConstPtr msg);
-
-    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source);
+    // outward
+    std::map<std::string, int> getAvailableRosConversions(const TokenDataConstPtr& source) const;
+    ros::Publisher advertise(TokenData::ConstPtr, const std::string& topic,  int queue, bool latch = false, int target_type = -1);
+    void publish(ros::Publisher& pub, TokenData::ConstPtr msg, int target_type = -1);
     void write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &source, const std::string& topic);
+
+    // inward
+    ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output, int target_type = -1);
+    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source);
 
     std::vector<std::string> getRegisteredRosTypes() {
         return ros_types_;
