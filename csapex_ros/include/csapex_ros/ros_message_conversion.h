@@ -259,8 +259,8 @@ private:
 
 private:
     std::vector<std::string> ros_types_;
-    std::map<std::string, Convertor::Ptr> converters_;
-    std::map<std::string, Convertor::Ptr> converters_inv_;
+    std::map<std::string, std::vector<Convertor::Ptr>> converters_;
+    std::map<std::string, std::vector<Convertor::Ptr>> converters_inv_;
 };
 
 

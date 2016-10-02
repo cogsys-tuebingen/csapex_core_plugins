@@ -32,14 +32,19 @@ bool RosMessageConversion::isTopicTypeRegistered(const ros::master::TopicInfo &t
 void RosMessageConversion::doRegisterConversion(const std::string& apex_type, const std::string& ros_type, Convertor::Ptr c)
 {
     ros_types_.push_back(ros_type);
-    converters_[ros_type] = c;
-    converters_inv_[apex_type] = c;
+    converters_[ros_type].push_back(c);
+    converters_inv_[apex_type].push_back(c);
 }
 
 ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &topic, int queue, Callback output)
 {
     if(isTopicTypeRegistered(topic)) {
-        return converters_.at(topic.datatype)->subscribe(topic, queue, output);
+        const auto& converters = converters_.at(topic.datatype);
+        if(converters.size() == 1) {
+            return converters.front()->subscribe(topic, queue, output);
+        } else {
+            throw std::runtime_error("ambiguous ros convertion");
+        }
 
     } else {
         std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
@@ -70,12 +75,18 @@ void RosMessageConversion::write(rosbag::Bag& bag, const connection_types::Messa
             bag.write(topic, time, *gen_ros->value);
         }
     } else {
-        std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(message->descriptiveName());
+        auto it = converters_inv_.find(message->descriptiveName());
         if(it == converters_inv_.end()) {
             throw std::runtime_error(std::string("cannot convert type ") + message->descriptiveName());
+        }        
+
+        const auto& converters = it->second;
+        if(converters.size() == 1) {
+            Convertor::Ptr converter = converters.front();
+            converter->write(bag, message, topic);
+        } else {
+            throw std::runtime_error("ambiguous ros convertion");
         }
-        Convertor::Ptr converter = it->second;
-        converter->write(bag, message, topic);
     }
 }
 
@@ -86,11 +97,16 @@ ros::Publisher RosMessageConversion::advertise(TokenData::ConstPtr type, const s
         return advertiseGenericRos(gen_ros, topic, queue, latch);
 
     } else {
-        std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(type->descriptiveName());
+        auto it = converters_inv_.find(type->descriptiveName());
         if(it == converters_inv_.end()) {
             throw std::runtime_error(std::string("cannot advertise type ") + type->descriptiveName() + " on topic " + topic);
         }
-        return it->second->advertise(topic, queue, latch);
+        const auto& converters = it->second;
+        if(converters.size() == 1) {
+            return it->second.front()->advertise(topic, queue, latch);
+        } else {
+            throw std::runtime_error("ambiguous ros convertion");
+        }
     }
 }
 
@@ -119,19 +135,29 @@ void RosMessageConversion::publish(ros::Publisher &pub, TokenData::ConstPtr msg)
         pub.publish(*gen_ros->value);
 
     } else {
-        std::map<std::string, Convertor::Ptr>::iterator it = converters_inv_.find(msg->descriptiveName());
+        auto it = converters_inv_.find(msg->descriptiveName());
         if(it == converters_inv_.end()) {
             throw std::runtime_error(std::string("cannot publish message of type ") + msg->descriptiveName());
         }
-        it->second->publish(pub, msg);
+        const auto& converters = it->second;
+        if(converters.size() == 1) {
+            return it->second.front()->publish(pub, msg);
+        } else {
+            throw std::runtime_error("ambiguous ros convertion");
+        }
     }
 }
 
 connection_types::Message::Ptr RosMessageConversion::instantiate(const rosbag::MessageInstance &source)
 {
-    auto pos = converters_.find(source.getDataType());
-    if(pos != converters_.end()) {
-        return pos->second->instantiate(source);
+    auto it = converters_.find(source.getDataType());
+    if(it != converters_.end()) {
+        const auto& converters = it->second;
+        if(converters.size() == 1) {
+            return it->second.front()->instantiate(source);
+        } else {
+            throw std::runtime_error("ambiguous ros convertion");
+        }
     } else {
         auto msg = std::make_shared<connection_types::GenericRosMessage>();
         auto ros_msg = source.instantiate<topic_tools::ShapeShifter>();
