@@ -11,6 +11,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QApplication>
+#include <QFileDialog>
 
 using namespace csapex;
 
@@ -118,11 +119,12 @@ QVariant ConfusionMatrixTableModel::headerData(int section, Qt::Orientation orie
 
 
 ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ConfusionMatrixDisplay> node)
-    : NodeAdapter(worker, parent), wrapped_(node)
+    : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
     // translate to UI thread via Qt signal
     trackConnection(n ->display_request.connect(std::bind(&ConfusionMatrixDisplayAdapter::displayRequest, this)));
+    trackConnection(n ->export_request.connect(std::bind(&ConfusionMatrixDisplayAdapter::exportRequest, this)));
 }
 
 void ConfusionMatrixDisplayAdapter::setupUi(QBoxLayout* layout)
@@ -149,6 +151,9 @@ void ConfusionMatrixDisplayAdapter::setupUi(QBoxLayout* layout)
 
 
     connect(this, SIGNAL(displayRequest()), this, SLOT(display()));
+    connect(this, SIGNAL(exportRequest()), this, SLOT(exportCsv()));
+
+    DefaultNodeAdapter::setupUi(layout);
 }
 
 void ConfusionMatrixDisplayAdapter::display()
@@ -166,5 +171,16 @@ void ConfusionMatrixDisplayAdapter::display()
 
     table_->adjustSize();
 }
+
+void ConfusionMatrixDisplayAdapter::exportCsv()
+{
+    QString filename = QFileDialog::getSaveFileName(0, "Save CSV File", "", "*.csv", 0, QFileDialog::DontUseNativeDialog);
+    if(!filename.isEmpty()) {
+        if(auto node = wrapped_.lock()){
+            node->exportCsv(filename.toStdString());
+        }
+    }
+}
+
 /// MOC
 #include "moc_confusion_matrix_display_adapter.cpp"
