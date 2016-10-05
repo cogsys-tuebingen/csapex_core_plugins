@@ -161,9 +161,9 @@ void DynamicTransform::publishTransform(const ros::Time& time)
             LockedTFListener l = TFListener::getLocked();
 
             if(l.l) {
-                tf::TransformListener& tfl = *l.l->tfl;
-                if(tfl.waitForTransform(target, source, time, ros::Duration(0.1))) {
-                    tfl.lookupTransform(target, source, time, t);
+                std::shared_ptr<tf::TransformListener>& tfl = l.l->tfl;
+                if(tfl->waitForTransform(target, source, time, ros::Duration(0.1))) {
+                    tfl->lookupTransform(target, source, time, t);
 
                 } else if(exact_time_) {
                     node_modifier_->setWarning(std::string("cannot exactly transform between ") +
@@ -171,9 +171,9 @@ void DynamicTransform::publishTransform(const ros::Time& time)
                     return;
 
                 } else {
-                    if(tfl.canTransform(target, source, ros::Time(0))) {
+                    if(tfl->canTransform(target, source, ros::Time(0))) {
                         node_modifier_->setWarning("cannot transform, using latest transform");
-                        tfl.lookupTransform(target, source, ros::Time(0), t);
+                        tfl->lookupTransform(target, source, ros::Time(0), t);
                     } else {
                         node_modifier_->setWarning(std::string("cannot transform between ") +
                                                    target + " and " + source + " at all...");
