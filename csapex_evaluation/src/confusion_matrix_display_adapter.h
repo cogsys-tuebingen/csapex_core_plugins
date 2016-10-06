@@ -3,7 +3,7 @@
 
 
 /// PROJECT
-#include <csapex/view/node/node_adapter.h>
+#include <csapex/view/node/default_node_adapter.h>
 
 /// COMPONENT
 #include "confusion_matrix_display.h"
@@ -36,7 +36,7 @@ private:
     int dim;
 };
 
-class ConfusionMatrixDisplayAdapter : public QObject, public NodeAdapter
+class ConfusionMatrixDisplayAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
 
@@ -47,9 +47,11 @@ public:
 
 public Q_SLOTS:
     void display();
+    void exportCsv();
 
 Q_SIGNALS:
     void displayRequest();
+    void exportRequest();
 
 protected:
     std::weak_ptr<ConfusionMatrixDisplay> wrapped_;

@@ -43,9 +43,21 @@ bool RosMessageConversion::isTopicTypeRegistered(const ros::master::TopicInfo &t
 
 void RosMessageConversion::doRegisterConversion(const std::string& apex_type, const std::string& ros_type, Convertor::Ptr c)
 {
-    ros_types_.push_back(ros_type);
-    converters_[ros_type].push_back(c);
-    converters_inv_[apex_type].push_back(c);
+    bool found = false;
+    for(const Convertor::Ptr& exist : converters_[ros_type]) {
+        if(exist->apexType() == c->apexType() &&
+                exist->rosType() == c->rosType())  {
+            found = true;
+            break;
+        }
+    }
+    if(!found) {
+        ros_types_.push_back(ros_type);
+        converters_[ros_type].push_back(c);
+        converters_inv_[apex_type].push_back(c);
+    } else {
+        std::cerr << "tried to register a converter from " << c->apexType() << " to " << c->rosType() << " more than once" << std::endl;
+    }
 }
 
 ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &topic, int queue, Callback output, int target_type)

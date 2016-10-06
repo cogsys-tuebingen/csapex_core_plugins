@@ -3,6 +3,8 @@ project(QWT)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets Concurrent PrintSupport OpenGL Svg REQUIRED)
 
+set(QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Concurrent Qt5::PrintSupport Qt5::OpenGL Qt5::Svg)
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Concurrent_INCLUDE_DIRS}
@@ -13,36 +15,6 @@ add_definitions(-DQWT_NO_SVG)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-#set(QWT_UI_HDRS
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_abstract_slider.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_analog_clock.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_compass.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_counter.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_dial.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_dyngrid_layout.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_knob.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_legend.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_legenditem.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_magnifier.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_panner.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_picker.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_canvas.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_magnifier.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_panner.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_picker.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_renderer.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_plot_zoomer.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_sampling_thread.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_scale_widget.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_slider.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_text_label.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_thermo.h
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/qwt_wheel.h
-#  )
-#
-#QT5_WRAP_CPP( UIHeaders ${QWT_UI_HDRS} )
 
 file(GLOB QWT_SOURCE src/*.cpp)
 file(GLOB QWT_HDR src/*.h)
@@ -61,6 +33,8 @@ list(REMOVE_ITEM QWT_HDR ${QWT_HDR_IGNORE})
 
 add_library(qwt-qt5 SHARED ${QWT_SOURCE} ${UIHeaders})
 target_link_libraries(qwt-qt5 ${QT_LIBRARIES})
+
+message(${QT_LIBRARIES}"!!!!")
 
 install(TARGETS qwt-qt5
                 RUNTIME DESTINATION lib
