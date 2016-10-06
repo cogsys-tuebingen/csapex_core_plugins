@@ -72,61 +72,15 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
         };
     };
 
-
-    auto setLineColors= [this]() {
-        return [&](param::Parameter* p) {
-            std::vector<int> c = p->as<std::vector<int>>();
-            QColor color;
-            color.setRed(c[0]);
-            color.setGreen(c[1]);
-            color.setBlue(c[2]);
-            int h,s,v;
-            color.getHsv(&h,&s,&v);
-
-            for(std::size_t i = 0; i < 4; ++i) {
-
-                double hnew =  h + i * 360/4;
-                while (hnew > 359 || hnew < 0) {
-                    if(hnew > 359) {
-                        hnew -= 360;
-                    }
-                    else if(hnew < 0) {
-                        hnew += 360;
-                    }
-
-                }
-                color.setHsv(hnew,s,v);
-                color_line_[i] = color;
-            }
-
-            update();
-        };
+    std::function<void(param::Parameter* p)> setLineColors= [this](param::Parameter* p){
+        std::vector<int> c = p->as<std::vector<int>>();
+        basic_line_color_.setRed(c[0]);
+        basic_line_color_.setGreen(c[1]);
+        basic_line_color_.setBlue(c[2]);
+        calculateLineColors();
+        basic_line_color_changed_ = true;
+        update();
     };
-
-    auto setFillColor =[this]() {
-        return [&](param::Parameter* p) {
-            std::vector<int> c = p->as<std::vector<int>>();
-            color_fill_.setRed(c[0]);
-            color_fill_.setGreen(c[1]);
-            color_fill_.setBlue(c[2]);
-            color_fill_.setAlpha(100);
-            int h,s,v,a;
-            color_fill_.getHsv(&h,&s,&v,&a);
-
-            h += 180;
-            while( h > 359 || h < 0) {
-                if(h > 359) {
-                    h -= 360;
-                }
-                else {
-                    h += 360;
-                }
-            }
-
-            update();
-        };
-    };
-
 
 
     parameters.addParameter(param::ParameterFactory::declareColorParameter(
@@ -134,14 +88,24 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
                             setColor(color_bg_));
     parameters.addParameter(param::ParameterFactory::declareColorParameter(
                                 "~plot/color/line", 100, 100, 255),
-                            setLineColors());
+                            setLineColors);
     parameters.addParameter(param::ParameterFactory::declareColorParameter(
                                 "~plot/color/fill", 200, 200, 200),
-                            setFillColor());
+                            setColor(color_fill_));
     parameters.addParameter(param::ParameterFactory::declareRange(
                                 "~plot/line/width", 0.0, 10.0, 0.0, 0.01),
                             line_width_);
 
+    parameters.addParameter(param::ParameterFactory::declareBool
+                            ("~output/time/relative",
+                             param::ParameterDescription("Use time relative to the first entry"),
+                             true),
+                            time_relative_);
+    parameters.addParameter(param::ParameterFactory::declareBool
+                            ("~output/time/seconds",
+                             param::ParameterDescription("Convert the time to seconds"),
+                             true),
+                            time_seconds_);
 
     parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
                             [this](param::Parameter*) {
@@ -160,28 +124,47 @@ void VectorPlot::process()
         return;
     }
 
-    num_plots_ = inputs.size();
-    data_v_.resize(inputs.size());
+    num_plots_ = inputs.size() -1;
+    data_v_.resize(num_plots_);
     calculateLineColors();
 
-    for(std::size_t i = 0; i < inputs.size(); ++i){
-        std::shared_ptr<std::vector<double> const> data_v = msg::getMessage<GenericVectorMessage, double>(inputs[i]);
-        data_v_[i] = *data_v;
+    std::size_t data_counter = 0;
+
+    for(std::size_t n_plots = 1; n_plots < inputs.size(); ++n_plots){
+        GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(inputs[n_plots]);
+
+        apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
+
+
+        data_v_[data_counter].resize(message->nestedValueCount());
+
+        for(std::size_t n_point = 0; n_point <message->nestedValueCount(); ++n_point){
+            auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(n_point));
+            data_v_[data_counter][n_point] = pval->value;
+        }
+        ++data_counter;
+        if(data_counter > 0){
+            //                apex_assert(data_v->size() == data_v_[data_counter -1].size());
+        }
+
     }
 
     data_t_raw_.clear();
     if(msg::hasMessage(in_time_)){
+        has_time_in_ = true;
         std::shared_ptr<std::vector<double> const> time = msg::getMessage<GenericVectorMessage, double>(in_time_);
-        data_t_raw_ = *time;
+        for(std::size_t n = 0; n < time->size(); ++n){
+            data_t_raw_[n] = time->at(n);
+        }
 
+        apex_assert(data_t_raw_.size() == data_v_.front().size());
     }
     else{
-        data_x_.resize(data_v_.front().size());
-        for(std::size_t i = 0; i < data_x_.size();++i){
-            data_x_[i] = i;
+        data_t_.resize(data_v_.front().size());
+        for(std::size_t i = 0; i < data_t_.size();++i){
+            data_t_[i] = i;
         }
     }
-
 
     preparePlot();
 
@@ -195,7 +178,6 @@ void VectorPlot::process()
 void VectorPlot::reset()
 {
     data_v_.clear();
-    data_x_.clear();
     data_t_.clear();
     data_t_raw_.clear();
     initialize_ = true;
@@ -205,23 +187,26 @@ void VectorPlot::reset()
 
 void VectorPlot::init()
 {
+    has_time_in_ = false;
     auto now = std::chrono::system_clock::now();
     start_t_ = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
 }
 
 void VectorPlot::preparePlot()
 {
-    std::size_t n = data_t_raw_.size();
-    data_t_.resize(n, 0.0);
     color_fill_.setAlpha(100);
 
-    double time_offset = time_relative_ ? data_t_raw_.front() : 0.0;
-    double time_scale = time_seconds_ ? 1e-6 : 1.0;
+    if(has_time_in_){
+        std::size_t n = data_t_raw_.size();
+        data_t_.resize(n, 0.0);
 
-    for(std::size_t i = 0; i < n; ++i) {
-        data_t_[i] = (data_t_raw_[i] - time_offset) * time_scale;
+        double time_offset = time_relative_ ? data_t_raw_.front() : 0.0;
+        double time_scale = time_seconds_ ? 1e-6 : 1.0;
+
+        for(std::size_t i = 0; i < n; ++i) {
+            data_t_[i] = (data_t_raw_[i] - time_offset) * time_scale;
+        }
     }
-
 
     std::vector<double> min_list;
     std::vector<double> max_list;
@@ -236,6 +221,8 @@ void VectorPlot::preparePlot()
     double max = std::max(0.0, *std::max_element(max_list.begin(), max_list.end()));
 
     x_map.setScaleInterval(data_t_.front(), data_t_.back());
+
+
     y_map.setScaleInterval(min - 1, max + 1);
 }
 
@@ -271,12 +258,9 @@ void VectorPlot::renderAndSend()
         curve[num_plot].setStyle(QwtPlotCurve::Lines);
 
         curve[num_plot].setBrush(QBrush(color_fill_, Qt::SolidPattern));
-        if(data_t_raw_.empty()){
-            curve[num_plot].setRawSamples(data_x_.data(), data_v_.at(num_plot).data(), data_x_.size());
-        }
-        else{
-            curve[num_plot].setRawSamples(data_t_.data(), data_v_.at(num_plot).data(), data_t_.size());
-        }
+
+        curve[num_plot].setRawSamples(data_t_.data(), data_v_.at(num_plot).data(), data_t_.size());
+
         curve[num_plot].draw(&painter, x_map, y_map, r);
     }
 
@@ -328,12 +312,7 @@ QColor VectorPlot::getFillColor() const
 
 const double* VectorPlot::getTData() const
 {
-    if(data_t_raw_.empty()){
-        return data_x_.data();
-    }
-    else{
-        return data_t_.data();
-    }
+    return data_t_.data();
 }
 const double* VectorPlot::getVData(std::size_t idx) const
 {
@@ -345,12 +324,7 @@ std::size_t VectorPlot::getVDataCountNumCurves() const
 }
 std::size_t VectorPlot::getCount() const
 {
-    if(data_t_raw_.empty()){
-        return data_x_.size();
-    }
-    else{
-        return data_t_.size();
-    }
+    return data_t_.size();
 }
 
 const QwtScaleMap& VectorPlot::getXMap() const

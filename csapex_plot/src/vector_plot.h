@@ -17,7 +17,6 @@ class VectorPlot : public csapex::Node, public csapex::VariadicInputs
 {
 public:
     VectorPlot();
-    ~VectorPlot();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters) override;
@@ -60,6 +59,7 @@ private:
 
     bool initialize_;
     bool basic_line_color_changed_;
+    bool has_time_in_;
     std::size_t num_plots_;
     Input* in_;
 
@@ -79,7 +79,7 @@ private:
 
     double start_t_;
     std::vector<double> data_t_raw_;
-    std::vector<double> data_x_;
+
 
     std::vector<double> data_t_;
     std::vector<std::vector<double>> data_v_;
