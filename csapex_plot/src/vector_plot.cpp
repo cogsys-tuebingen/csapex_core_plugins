@@ -153,6 +153,7 @@ void VectorPlot::process()
     if(msg::hasMessage(in_time_)){
         has_time_in_ = true;
         std::shared_ptr<std::vector<double> const> time = msg::getMessage<GenericVectorMessage, double>(in_time_);
+        data_t_raw_.resize(time->size());
         for(std::size_t n = 0; n < time->size(); ++n){
             data_t_raw_[n] = time->at(n);
         }

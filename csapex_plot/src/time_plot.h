@@ -10,6 +10,7 @@
 #include <qwt_plot_curve.h>
 #include <qwt_plot_scaleitem.h>
 #include <qwt_scale_map.h>
+#include <deque>
 
 namespace csapex
 {
@@ -57,6 +58,7 @@ private:
     bool initialize_;
     bool basic_line_color_changed_;
     std::size_t num_plots_;
+    std::size_t deque_size_;
     Input* in_;
     Output* out_;
 
@@ -74,9 +76,10 @@ private:
     bool time_seconds_;
 
     double start_t_;
-    std::vector<double> data_t_raw_;
+    std::deque<double> data_t_raw_;
 
     std::vector<double> data_t_;
+    std::vector<std::deque<double>> deque_v_;
     std::vector<std::vector<double>> data_v_;
 
     QwtScaleMap x_map;

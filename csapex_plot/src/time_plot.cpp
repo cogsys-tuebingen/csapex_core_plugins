@@ -93,6 +93,14 @@ void TimePlot::setupParameters(Parameterizable &parameters)
                              true),
                             time_seconds_);
 
+    parameters.addParameter(param::ParameterFactory::declareValue
+                            ("~output/plot/number_of_points",
+                             param::ParameterDescription("Show only the last n samples. -1 if you want to display all samples (might be very slow)."),
+                             1000),
+                            [this](param::Parameter* p){
+        deque_size_ = p->as<int>();
+    });
+
     parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
                             [this](param::Parameter*) {
         reset();
@@ -112,7 +120,7 @@ void TimePlot::process()
             color_line_.resize(1);
             calculateLineColors();
         }
-        data_v_.at(0).push_back(value);
+        deque_v_.at(0).push_back(value);
 
     }
     else {
@@ -120,7 +128,7 @@ void TimePlot::process()
         apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
         if(initialize_){
             num_plots_ = message->nestedValueCount();
-            data_v_.resize(num_plots_);
+            deque_v_.resize(num_plots_);
             color_line_.resize(num_plots_);
             calculateLineColors();
             initialize_ = false;
@@ -129,9 +137,9 @@ void TimePlot::process()
             auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(num_plot));
             if(pval){
                 double val = pval->value;
-                data_v_.at(num_plot).push_back(val);
+                deque_v_.at(num_plot).push_back(val);
             }
-//            double val = tval->
+            //            double val = tval->
         }
 
     }
@@ -139,6 +147,26 @@ void TimePlot::process()
     double ms = std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count();
 
     data_t_raw_.push_back(ms);
+
+    while(data_t_raw_.size() > deque_size_){
+        data_t_raw_.pop_front();
+    }
+
+    for(std::size_t i = 0; i < num_plots_; ++i)
+    {
+        while(deque_v_[i].size() > deque_size_){
+            deque_v_[i].pop_front();
+        }
+    }
+    data_v_.resize(num_plots_);
+    for(std::size_t i = 0; i < num_plots_; ++i)
+    {
+        data_v_[i].resize(deque_v_[i].size());
+        for(std::size_t j = 0; j < deque_v_[i].size(); ++j){
+            data_v_[i][j] = deque_v_[i][j];
+
+        }
+    }
 
 
     preparePlot();
@@ -154,6 +182,7 @@ void TimePlot::reset()
 {
     data_t_raw_.clear();
     data_v_.clear();
+    deque_v_.clear();
     initialize_ = true;
     num_plots_ = 1;
     init();
