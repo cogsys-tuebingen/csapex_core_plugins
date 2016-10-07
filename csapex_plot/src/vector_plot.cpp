@@ -23,6 +23,7 @@ CSAPEX_REGISTER_CLASS(csapex::VectorPlot, csapex::Node)
 VectorPlot::VectorPlot():
     initialize_(true),
     basic_line_color_changed_(true),
+    has_time_in_(false),
     num_plots_(1),
     width_(640),
     height_(320)
@@ -119,22 +120,20 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
 void VectorPlot::process()
 {
 
-    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
-    if(inputs.empty()) {
-        return;
-    }
+    num_plots_ = VariadicInputs::getVariadicInputCount();
 
-    num_plots_ = inputs.size() -1;
+
     data_v_.resize(num_plots_);
     calculateLineColors();
 
     std::size_t data_counter = 0;
 
-    for(std::size_t n_plots = 1; n_plots < inputs.size(); ++n_plots){
-        GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(inputs[n_plots]);
+    for(std::size_t n_plots = 0; n_plots < num_plots_; ++n_plots){
+
+        InputPtr in = VariadicInputs::getVariadicInput(n_plots);
+        GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in.get());
 
         apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
-
 
         data_v_[data_counter].resize(message->nestedValueCount());
 
@@ -161,6 +160,7 @@ void VectorPlot::process()
         apex_assert(data_t_raw_.size() == data_v_.front().size());
     }
     else{
+        has_time_in_ = false;
         data_t_.resize(data_v_.front().size());
         for(std::size_t i = 0; i < data_t_.size();++i){
             data_t_[i] = i;
@@ -339,7 +339,7 @@ const QwtScaleMap& VectorPlot::getYMap() const
 
 Input* VectorPlot::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)
 {
-    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::GenericVectorMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::GenericVectorMessage>(), label.empty() ? "Value" : label,  false);
 }
 
 void VectorPlot::calculateLineColors()
