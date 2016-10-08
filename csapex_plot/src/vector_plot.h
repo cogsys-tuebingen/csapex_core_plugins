@@ -1,8 +1,10 @@
-#ifndef TIME_PLOT_H
-#define TIME_PLOT_H
+#ifndef VECTORPLOT_H
+#define VECTORPLOT_H
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/utility/assert.h>
+#include <csapex/model/variadic_io.h>
 
 /// SYSTEM
 #include <chrono>
@@ -10,22 +12,17 @@
 #include <qwt_plot_curve.h>
 #include <qwt_plot_scaleitem.h>
 #include <qwt_scale_map.h>
-#include <deque>
-
-namespace csapex
+namespace csapex{
+class VectorPlot : public csapex::Node, public csapex::VariadicInputs
 {
-
-class TimePlot : public Node
-{
-private:
-    typedef std::chrono::system_clock::time_point timepoint;
-
 public:
-    void setup(NodeModifier &node_modifier);
+    VectorPlot();
 
-    void setupParameters(Parameterizable &parameters);
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
+    virtual void process() override;
 
-    void process();
+    virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override;
 
     int getWidth() const;
     int getHeight() const;
@@ -43,6 +40,12 @@ public:
     const QwtScaleMap& getXMap() const;
     const QwtScaleMap& getYMap() const;
 
+public:
+
+
+    csapex::slim_signal::Signal<void()> update;
+    csapex::slim_signal::Signal<void()> display_request;
+
 protected:
     void reset();
     void init();
@@ -50,17 +53,16 @@ protected:
     void preparePlot();
     void renderAndSend();
 
-public:
-    csapex::slim_signal::Signal<void()> update;
-    csapex::slim_signal::Signal<void()> display_request;
-
 private:
+    csapex::Input* in_time_;
+    csapex::Output* out_;
+
     bool initialize_;
     bool basic_line_color_changed_;
+    bool has_time_in_;
     std::size_t num_plots_;
-    std::size_t deque_size_;
     Input* in_;
-    Output* out_;
+
 
     int width_;
     int height_;
@@ -76,10 +78,10 @@ private:
     bool time_seconds_;
 
     double start_t_;
-    std::deque<double> data_t_raw_;
+    std::vector<double> data_t_raw_;
+
 
     std::vector<double> data_t_;
-    std::vector<std::deque<double>> deque_v_;
     std::vector<std::vector<double>> data_v_;
 
     QwtScaleMap x_map;
@@ -90,5 +92,4 @@ private:
 };
 
 }
-
-#endif // TIME_PLOT_H
+#endif // VECTORPLOT_H

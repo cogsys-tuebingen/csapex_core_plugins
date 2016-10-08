@@ -50,6 +50,7 @@ include_directories(
 
 add_library(csapex_plot_node
     src/time_plot.cpp
+    src/vector_plot.cpp
 )
 target_link_libraries(csapex_plot_node
     ${catkin_LIBRARIES} ${QWT_LIBRARY} ${QT_LIBRARIES}
@@ -59,6 +60,7 @@ add_dependencies(csapex_plot_node QWT)
 
 add_library(csapex_plot_plugin_qt
     src/time_plot_adapter.cpp
+    src/vector_plot_adapter.cpp
 )
 target_link_libraries(csapex_plot_plugin_qt
     yaml-cpp ${catkin_LIBRARIES})

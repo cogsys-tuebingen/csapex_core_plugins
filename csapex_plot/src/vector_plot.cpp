@@ -1,5 +1,5 @@
 /// HEADER
-#include "time_plot.h"
+#include "vector_plot.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -14,24 +14,39 @@
 /// SYSTEM
 #include <qwt_scale_engine.h>
 
-CSAPEX_REGISTER_CLASS(csapex::TimePlot, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
+CSAPEX_REGISTER_CLASS(csapex::VectorPlot, csapex::Node)
 
-void TimePlot::setup(NodeModifier &node_modifier)
+VectorPlot::VectorPlot():
+    initialize_(true),
+    basic_line_color_changed_(true),
+    has_time_in_(false),
+    num_plots_(1),
+    width_(640),
+    height_(320)
 {
-    in_  = node_modifier.addMultiInput<double, GenericVectorMessage>("Double");
-    out_ = node_modifier.addOutput<CvMatMessage>("Plot");
-    initialize_ = true;
-    num_plots_ = 1;
-    basic_line_color_changed_ = true;
-    color_line_.resize(1);
+
 }
 
-void TimePlot::setupParameters(Parameterizable &parameters)
+void VectorPlot::setup(NodeModifier &node_modifier)
 {
+
+    setupVariadic(node_modifier);
+    in_time_  = node_modifier.addOptionalInput<GenericVectorMessage, double>("time");
+
+    out_ = node_modifier.addOutput<CvMatMessage>("Plot");
+
+    color_line_.resize(num_plots_);
+}
+
+void VectorPlot::setupParameters(Parameterizable &parameters)
+{
+
+    setupVariadicParameters(parameters);
+
     parameters.addParameter(param::ParameterFactory::declareRange
                             ("~plot/width",
                              128, 4096, 640, 1),
@@ -93,81 +108,72 @@ void TimePlot::setupParameters(Parameterizable &parameters)
                              true),
                             time_seconds_);
 
-    parameters.addParameter(param::ParameterFactory::declareValue
-                            ("~output/plot/number_of_points",
-                             param::ParameterDescription("Show only the last n samples. -1 if you want to display all samples (might be very slow)."),
-                             1000),
-                            [this](param::Parameter* p){
-        deque_size_ = p->as<int>();
-    });
-
     parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
                             [this](param::Parameter*) {
         reset();
     });
+
+
+    color_fill_.setAlpha(100);
 }
 
-void TimePlot::process()
+void VectorPlot::process()
 {
-    timepoint time = std::chrono::system_clock::now();
-    double value;
-    if(msg::isValue<double>(in_)) {
-        value = msg::getValue<double>(in_);
-        if(initialize_){
-            data_v_.resize(1);
-            num_plots_ = 1;
-            initialize_ = false;
-            color_line_.resize(1);
-            calculateLineColors();
-        }
-        deque_v_.at(0).push_back(value);
+    std::size_t num_inputs = VariadicInputs::getVariadicInputCount();
+    num_plots_ = num_inputs;;
 
-    }
-    else {
-        GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in_);
-        apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
-        if(initialize_){
-            num_plots_ = message->nestedValueCount();
-            deque_v_.resize(num_plots_);
-            color_line_.resize(num_plots_);
-            calculateLineColors();
-            initialize_ = false;
-        }
-        for(std::size_t num_plot = 0; num_plot < num_plots_; ++num_plot){
-            auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(num_plot));
-            if(pval){
-                double val = pval->value;
-                deque_v_.at(num_plot).push_back(val);
-            }
-            //            double val = tval->
+    for(std::size_t i_inputs = 0; i_inputs < num_plots_; ++ i_inputs){
+        InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
+        if(!msg::isConnected(in.get())){
+            --num_plots_;
         }
 
     }
 
-    double ms = std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count();
-
-    data_t_raw_.push_back(ms);
-
-    while(data_t_raw_.size() > deque_size_){
-        data_t_raw_.pop_front();
-    }
-
-    for(std::size_t i = 0; i < num_plots_; ++i)
-    {
-        while(deque_v_[i].size() > deque_size_){
-            deque_v_[i].pop_front();
-        }
-    }
     data_v_.resize(num_plots_);
-    for(std::size_t i = 0; i < num_plots_; ++i)
-    {
-        data_v_[i].resize(deque_v_[i].size());
-        for(std::size_t j = 0; j < deque_v_[i].size(); ++j){
-            data_v_[i][j] = deque_v_[i][j];
+    calculateLineColors();
 
+    std::size_t data_counter = 0;
+
+    for(std::size_t i_inputs = 0; i_inputs < num_inputs; ++i_inputs){
+
+        InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
+        if(msg::isConnected(in.get())){
+            GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in.get());
+
+            apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
+
+            data_v_[data_counter].resize(message->nestedValueCount());
+
+            for(std::size_t n_point = 0; n_point <message->nestedValueCount(); ++n_point){
+                auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(n_point));
+                data_v_[data_counter][n_point] = pval->value;
+            }
+            if(data_counter > 0){
+                apex_assert(data_v_[data_counter].size() == data_v_[data_counter -1].size());
+            }
+            ++data_counter;
         }
     }
 
+    data_t_raw_.clear();
+    if(msg::hasMessage(in_time_)){
+        has_time_in_ = true;
+        std::shared_ptr<std::vector<double> const> time = msg::getMessage<GenericVectorMessage, double>(in_time_);
+        data_t_raw_.resize(time->size());
+        for(std::size_t n = 0; n < time->size(); ++n){
+            data_t_raw_[n] = time->at(n);
+        }
+
+        apex_assert(data_t_raw_.size() == data_v_.front().size());
+    }
+    else{
+        has_time_in_ = false;
+        data_t_.resize(data_v_.front().size());
+        for(std::size_t i = 0; i < data_t_.size();++i){
+            data_t_[i] = i;
+        }
+    }
 
     preparePlot();
 
@@ -178,35 +184,38 @@ void TimePlot::process()
     display_request();
 }
 
-void TimePlot::reset()
+void VectorPlot::reset()
 {
-    data_t_raw_.clear();
     data_v_.clear();
-    deque_v_.clear();
+    data_t_.clear();
+    data_t_raw_.clear();
     initialize_ = true;
     num_plots_ = 1;
     init();
 }
 
-void TimePlot::init()
+void VectorPlot::init()
 {
+    has_time_in_ = false;
     auto now = std::chrono::system_clock::now();
     start_t_ = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
 }
 
-void TimePlot::preparePlot()
+void VectorPlot::preparePlot()
 {
-    std::size_t n = data_t_raw_.size();
-    data_t_.resize(n, 0.0);
     color_fill_.setAlpha(100);
 
-    double time_offset = time_relative_ ? data_t_raw_.front() : 0.0;
-    double time_scale = time_seconds_ ? 1e-6 : 1.0;
+    if(has_time_in_){
+        std::size_t n = data_t_raw_.size();
+        data_t_.resize(n, 0.0);
 
-    for(std::size_t i = 0; i < n; ++i) {
-        data_t_[i] = (data_t_raw_[i] - time_offset) * time_scale;
+        double time_offset = time_relative_ ? data_t_raw_.front() : 0.0;
+        double time_scale = time_seconds_ ? 1e-6 : 1.0;
+
+        for(std::size_t i = 0; i < n; ++i) {
+            data_t_[i] = (data_t_raw_[i] - time_offset) * time_scale;
+        }
     }
-
 
     std::vector<double> min_list;
     std::vector<double> max_list;
@@ -221,10 +230,12 @@ void TimePlot::preparePlot()
     double max = std::max(0.0, *std::max_element(max_list.begin(), max_list.end()));
 
     x_map.setScaleInterval(data_t_.front(), data_t_.back());
+
+
     y_map.setScaleInterval(min - 1, max + 1);
 }
 
-void TimePlot::renderAndSend()
+void VectorPlot::renderAndSend()
 {
     QImage image(width_, height_, QImage::Format_RGB32);
     QPainter painter;
@@ -240,8 +251,11 @@ void TimePlot::renderAndSend()
         calculateLineColors();
     }
 
+    std::vector<double> x_data;
+
     QwtPlotCurve curve[data_v_.size()];
     for(std::size_t  num_plot= 0; num_plot < data_v_.size(); ++num_plot) {
+
         painter.setRenderHint( QPainter::Antialiasing,
                                curve[num_plot].testRenderHint( QwtPlotItem::RenderAntialiased ) );
         painter.setRenderHint( QPainter::HighQualityAntialiasing,
@@ -249,11 +263,13 @@ void TimePlot::renderAndSend()
         curve[num_plot].setBaseline(0.0);
 
         curve[num_plot].setPen(color_line_.at(num_plot), line_width_);
+
         curve[num_plot].setStyle(QwtPlotCurve::Lines);
 
         curve[num_plot].setBrush(QBrush(color_fill_, Qt::SolidPattern));
 
         curve[num_plot].setRawSamples(data_t_.data(), data_v_.at(num_plot).data(), data_t_.size());
+
         curve[num_plot].draw(&painter, x_map, y_map, r);
     }
 
@@ -275,61 +291,66 @@ void TimePlot::renderAndSend()
     msg::publish(out_, out_msg);
 }
 
-int TimePlot::getWidth() const
+int VectorPlot::getWidth() const
 {
     return width_;
 }
 
-int TimePlot::getHeight() const
+int VectorPlot::getHeight() const
 {
     return height_;
 }
 
-double TimePlot::getLineWidth() const
+double VectorPlot::getLineWidth() const
 {
     return line_width_;
 }
 
-QColor TimePlot::getBackgroundColor() const
+QColor VectorPlot::getBackgroundColor() const
 {
     return color_bg_;
 }
-QColor TimePlot::getLineColor(std::size_t idx) const
+QColor VectorPlot::getLineColor(std::size_t idx) const
 {
     return color_line_[idx];
 }
-QColor TimePlot::getFillColor() const
+QColor VectorPlot::getFillColor() const
 {
     return color_fill_;
 }
 
-const double* TimePlot::getTData() const
+const double* VectorPlot::getTData() const
 {
     return data_t_.data();
 }
-const double* TimePlot::getVData(std::size_t idx) const
+const double* VectorPlot::getVData(std::size_t idx) const
 {
     return data_v_.at(idx).data();
 }
-std::size_t TimePlot::getVDataCountNumCurves() const
+std::size_t VectorPlot::getVDataCountNumCurves() const
 {
     return data_v_.size();
 }
-std::size_t TimePlot::getCount() const
+std::size_t VectorPlot::getCount() const
 {
     return data_t_.size();
 }
 
-const QwtScaleMap& TimePlot::getXMap() const
+const QwtScaleMap& VectorPlot::getXMap() const
 {
     return x_map;
 }
-const QwtScaleMap& TimePlot::getYMap() const
+const QwtScaleMap& VectorPlot::getYMap() const
 {
     return y_map;
 }
 
-void TimePlot::calculateLineColors()
+Input* VectorPlot::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)
+{
+    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::GenericVectorMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+}
+
+void VectorPlot::calculateLineColors()
 {
     int r,g,b,a;
     basic_line_color_.getRgb(&r,&g,&b,&a);
