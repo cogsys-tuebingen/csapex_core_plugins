@@ -119,33 +119,41 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
 
 void VectorPlot::process()
 {
+    std::size_t num_inputs = VariadicInputs::getVariadicInputCount();
+    num_plots_ = num_inputs;;
 
-    num_plots_ = VariadicInputs::getVariadicInputCount();
+    for(std::size_t i_inputs = 0; i_inputs < num_plots_; ++ i_inputs){
+        InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
+        if(!msg::isConnected(in.get())){
+            --num_plots_;
+        }
 
+    }
 
     data_v_.resize(num_plots_);
     calculateLineColors();
 
     std::size_t data_counter = 0;
 
-    for(std::size_t n_plots = 0; n_plots < num_plots_; ++n_plots){
+    for(std::size_t i_inputs = 0; i_inputs < num_inputs; ++i_inputs){
 
-        InputPtr in = VariadicInputs::getVariadicInput(n_plots);
-        GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in.get());
+        InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
+        if(msg::isConnected(in.get())){
+            GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in.get());
 
-        apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
+            apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
 
-        data_v_[data_counter].resize(message->nestedValueCount());
+            data_v_[data_counter].resize(message->nestedValueCount());
 
-        for(std::size_t n_point = 0; n_point <message->nestedValueCount(); ++n_point){
-            auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(n_point));
-            data_v_[data_counter][n_point] = pval->value;
+            for(std::size_t n_point = 0; n_point <message->nestedValueCount(); ++n_point){
+                auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(n_point));
+                data_v_[data_counter][n_point] = pval->value;
+            }
+            if(data_counter > 0){
+                apex_assert(data_v_[data_counter].size() == data_v_[data_counter -1].size());
+            }
+            ++data_counter;
         }
-        ++data_counter;
-        if(data_counter > 0){
-            //                apex_assert(data_v->size() == data_v_[data_counter -1].size());
-        }
-
     }
 
     data_t_raw_.clear();
@@ -339,7 +347,7 @@ const QwtScaleMap& VectorPlot::getYMap() const
 
 Input* VectorPlot::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)
 {
-    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::GenericVectorMessage>(), label.empty() ? "Value" : label,  false);
+    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::GenericVectorMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
 }
 
 void VectorPlot::calculateLineColors()
