@@ -106,9 +106,52 @@ void ROCCurve::process()
     display_request();
 
     // TODO!
-    double auc = 1.0;
+    if(msg::isConnected(out_auc_)) {
+        double auc = 0.0;
 
-    msg::publish(out_auc_, auc);
+        // approximate the area:
+        /**             +  point b
+         *             /|
+         *            / |
+         * point a   +  |
+         *           |  |
+         *           |  |
+         *           +--+
+         */
+
+        std::vector<ROCCurve::Entry> entries = getEntries();
+        if(entries.size() >= 2) {
+            std::vector<ROCCurve::Entry> sorted;
+            sorted.reserve(entries.size() + 2);
+
+            ROCCurve::Entry first;
+            first.specificity = 0.0;
+            first.recall = 0.0;
+            ROCCurve::Entry last;
+            last.specificity = 1.0;
+            last.recall = 1.0;
+
+            sorted.push_back(first);
+            sorted.insert(sorted.end(), entries.begin(), entries.end());
+            sorted.push_back(last);
+
+
+            ROCCurve::Entry* a = &sorted.front();
+            ROCCurve::Entry* b = a + 1;
+
+            ROCCurve::Entry* end = &sorted.back();
+            for(; a != end; ++b, ++a) {
+                double dx = std::abs(b->specificity - a->specificity);
+                double dy = (b->recall + a->recall) / 2.0;
+
+                double area = dx * dy;
+                auc += area;
+            }
+        }
+
+
+        msg::publish(out_auc_, auc);
+    }
 }
 
 std::vector<ROCCurve::Entry> ROCCurve::getEntries() const

@@ -12,6 +12,7 @@
 #include <csapex/signal/event.h>
 #include <csapex/param/trigger_parameter.h>
 #include <csapex/msg/end_of_sequence_message.h>
+#include <csapex/model/token.h>
 
 CSAPEX_REGISTER_CLASS(csapex::BFOptimizer, csapex::Node)
 
@@ -21,7 +22,7 @@ using namespace csapex::connection_types;
 
 BFOptimizer::BFOptimizer()
     : last_fitness_(std::numeric_limits<double>::infinity()),
-      best_fitness_(std::numeric_limits<double>::infinity()),
+      best_fitness_(-std::numeric_limits<double>::infinity()),
       init_(false),
       running_(false),
       next_tick_(false)
@@ -49,6 +50,7 @@ void BFOptimizer::setup(NodeModifier& node_modifier)
     out_best_fitness_  = node_modifier.addOutput<double>("Best Fitness");
 
     trigger_start_evaluation_ = node_modifier.addEvent("Evaluate");
+    trigger_iteration_finished = node_modifier.addEvent<connection_types::GenericValueMessage<double>>("Iteration finished");
 
     node_modifier_->setIsSource(true);
     node_modifier_->setIsSink(true);
@@ -98,6 +100,9 @@ void BFOptimizer::restart()
 {
     step_ = 0;
     current_index_.resize(getPersistentParameters().size(), 0);
+
+    last_fitness_ = std::numeric_limits<double>::infinity();
+    best_fitness_ = -std::numeric_limits<double>::infinity();
 }
 
 bool BFOptimizer::nextStep()
@@ -157,6 +162,8 @@ void BFOptimizer::process()
 void BFOptimizer::start()
 {
     ainfo << "starting optimization" << std::endl;
+    restart();
+
     init_ = false;
     running_ = true;
     next_tick_ = true;
@@ -180,6 +187,10 @@ void BFOptimizer::start()
 void BFOptimizer::stop()
 {
     stop_->trigger();
+
+    connection_types::GenericValueMessage<double>::Ptr msg = std::make_shared<connection_types::GenericValueMessage<double>>();
+    msg->value = best_fitness_;
+    trigger_iteration_finished->triggerWith(std::make_shared<Token>(msg));
 }
 
 void BFOptimizer::doStop()
@@ -205,11 +216,11 @@ void BFOptimizer::finish()
         return;
     }
 
-    //DEBUGainfo << "got fitness: " << fitness_ << " after " << msg::getMessage(in_)->sequenceNumber() << std::endl;
+    ainfo << "got fitness: " << fitness_ << ", best is " << best_fitness_ << std::endl;
 
     last_fitness_ = fitness_;
 
-    if(fitness_ < best_fitness_) {
+    if(best_fitness_ < fitness_) {
         best_fitness_ = fitness_;
     }
 

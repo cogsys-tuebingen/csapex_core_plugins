@@ -70,10 +70,14 @@ void ROCCurveAdapter::display()
     QVector<double> y;
 
     if(node->getType() == ROCCurve::Type::ROC) {
+        x.push_back(0);
+        y.push_back(0);
         for(const ROCCurve::Entry& entry : node->getEntries()) {
             y.push_back(entry.recall);
             x.push_back(entry.specificity);
         }
+        x.push_back(1);
+        y.push_back(1);
 
     } else if(node->getType() == ROCCurve::Type::PR) {
         for(const ROCCurve::Entry& entry : node->getEntries()) {
