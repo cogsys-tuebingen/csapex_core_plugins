@@ -149,9 +149,9 @@ void VectorPlot::process()
                 auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(n_point));
                 data_v_[data_counter][n_point] = pval->value;
             }
-            if(data_counter > 0){
-                apex_assert(data_v_[data_counter].size() == data_v_[data_counter -1].size());
-            }
+//            if(data_counter > 0){
+//                apex_assert(data_v_[data_counter].size() == data_v_[data_counter -1].size());
+//            }
             ++data_counter;
         }
     }
@@ -312,28 +312,40 @@ QColor VectorPlot::getBackgroundColor() const
 }
 QColor VectorPlot::getLineColor(std::size_t idx) const
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return color_line_[idx];
 }
 QColor VectorPlot::getFillColor() const
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return color_fill_;
 }
 
 const double* VectorPlot::getTData() const
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return data_t_.data();
 }
 const double* VectorPlot::getVData(std::size_t idx) const
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return data_v_.at(idx).data();
 }
 std::size_t VectorPlot::getVDataCountNumCurves() const
 {
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
     return data_v_.size();
 }
 std::size_t VectorPlot::getCount() const
 {
-    return data_t_.size();
+    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::vector<std::size_t> min_sz(1+data_v_.size());
+    min_sz[0] = data_t_.size();
+    for(std::size_t i = 0; i < data_v_.size(); ++i){
+        min_sz[i+1] = data_v_[i].size();
+    }
+    std::size_t res  = std::min(data_t_.size(), *std::min_element(min_sz.begin(), min_sz.end()));
+    return res;
 }
 
 const QwtScaleMap& VectorPlot::getXMap() const
