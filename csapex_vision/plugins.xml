@@ -233,7 +233,11 @@
   </class>
   <class type="csapex::EvaluateROIClassification" base_class_type="csapex::Node">
     <description>Evaluate the ROI classifications to build up a confusion matrix.</description>
-    <tags>Vision, ROI</tags>
+    <tags>Vision, ROI, Evaluation</tags>
+  </class>
+  <class type="csapex::EvaluateROIDetections" base_class_type="csapex::Node">
+    <description>Evaluate the ROI detections to build up a confusion matrix.</description>
+    <tags>Vision, ROI, Evaluation</tags>
   </class>
   <class type="csapex::ExchangeROIClassification" base_class_type="csapex::Node">
     <description>Substitute ROI classification labels.</description>

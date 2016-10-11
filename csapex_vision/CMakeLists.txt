@@ -129,6 +129,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/roi/assign_roi_classification_max_vote.cpp
     src/roi/set_roi_color_by_classification.cpp
     src/roi/evaluate_roi_classification.cpp
+    src/roi/evaluate_roi_detections.cpp
     src/roi/exchange_roi_classification.cpp
     src/roi/set_roi_classification.cpp
     src/roi/roi_hit_rate.cpp
