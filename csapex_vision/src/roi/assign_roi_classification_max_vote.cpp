@@ -13,10 +13,10 @@ namespace csapex {
 
 using namespace connection_types;
 
-class AssignRoiClassiifcationMaxVote : public csapex::Node
+class AssignROIClassificationMaxVote : public csapex::Node
 {
 public:
-    AssignRoiClassiifcationMaxVote()
+    AssignROIClassificationMaxVote()
     {
     }
 
@@ -69,5 +69,5 @@ private:
 };
 }
 
-CSAPEX_REGISTER_CLASS(csapex::AssignRoiClassiifcationMaxVote, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::AssignROIClassificationMaxVote, csapex::Node)
 

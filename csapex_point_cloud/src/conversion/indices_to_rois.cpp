@@ -18,10 +18,10 @@ using namespace csapex::connection_types;
 namespace csapex
 {
 
-class IndicesToROIs : public Node
+class PointIndicesToROIs : public Node
 {
 public:
-    IndicesToROIs()
+    PointIndicesToROIs()
     {
     }
 
@@ -51,7 +51,7 @@ public:
 
         clusters_ = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(in_indices_);
 
-        boost::apply_visitor (PointCloudMessage::Dispatch<IndicesToROIs>(this, cloud), cloud->value);
+        boost::apply_visitor (PointCloudMessage::Dispatch<PointIndicesToROIs>(this, cloud), cloud->value);
     }
 
 
@@ -222,5 +222,5 @@ private:
 
 }
 
-CSAPEX_REGISTER_CLASS(csapex::IndicesToROIs, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::PointIndicesToROIs, csapex::Node)
 
