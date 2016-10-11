@@ -120,6 +120,10 @@
   <description>Converts point indices to a binary mask.</description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::PointIndicesToROIs" base_class_type="csapex::Node">
+  <description>Converts point indices to ROIs.</description>
+  <tags>PointCloud, ROI</tags>
+</class>
 <class type="csapex::PointCloudToIntensityImage" base_class_type="csapex::Node">
   <description>Converts a point cloud to an intensity image</description>
   <tags>PointCloud</tags>
