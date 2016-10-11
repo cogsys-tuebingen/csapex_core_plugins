@@ -113,6 +113,7 @@ add_library(csapex_point_cloud_plugin_node
     src/filter/passthrough_by_cluster.cpp
     src/filter/passthrough_by_indices.cpp
     src/filter/crop_box.cpp
+    src/filter/filter_rois_by_distance.cpp
 
     src/segmentation/labeled_cloud_to_indices.cpp
     src/segmentation/label_pointcloud.cpp

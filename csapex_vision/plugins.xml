@@ -244,7 +244,7 @@
     <tags>Vision, ROI</tags>
   </class>
   <class type="csapex::FilterROIsByClassification" base_class_type="csapex::Node">
-    <description>Substitute ROI classification labels.</description>
+    <description>Filter ROIs based on classification label.</description>
     <tags>Vision, ROI</tags>
   </class>
   <class type="csapex::SetROIClassification" base_class_type="csapex::Node">
