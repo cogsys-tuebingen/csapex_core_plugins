@@ -51,7 +51,7 @@ public:
 
     void updateLabels()
     {
-        std::string label_string = readParameter<std::string>("labels");
+        std::string label_string = readParameter<std::string>("classes");
 
         labels_.clear();
 
