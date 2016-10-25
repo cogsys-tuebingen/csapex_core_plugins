@@ -2,5 +2,10 @@
     <qresource prefix="/">
         <file>database.png</file>
         <file>shield.png</file>
+        <file>activity_add.png</file>
+        <file>activity_remove.png</file>
+        <file>branch.png</file>
+        <file>join.png</file>
+        <file>activity_guard.png</file>
     </qresource>
 </RCC>

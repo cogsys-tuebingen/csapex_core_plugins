@@ -15,25 +15,23 @@ namespace csapex
 namespace state
 {
 
-class ActivityGate : public Node
+class ActivitySwitch : public Node
 {
 public:
-    ActivityGate()
+    ActivitySwitch()
     {
     }
 
     void setup(csapex::NodeModifier& modifier) override
     {
         in_ = modifier.addInput<AnyMessage>("Input");
-        out_ = modifier.addOutput<AnyMessage>("Output");
+        out_active_ = modifier.addOutput<AnyMessage>("Active");
+        out_inactive_ = modifier.addOutput<AnyMessage>("Inactive");
     }
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareBool("inverted",
-                                                                 param::ParameterDescription("If inverted, messages are forwarded when the node is <b>not</b> active."),
-                                                                 false),
-                            inverted_);
+
     }
 
     void activation() override
@@ -48,23 +46,27 @@ public:
 
     void process() override
     {
-        if(active_ ^ inverted_) {
-            auto message = msg::getMessage(in_);
-            apex_assert(message);
-            msg::publish(out_, message);
+        auto message = msg::getMessage(in_);
+        apex_assert(message);
+
+        if(active_) {
+            msg::publish(out_active_, message);
+
+        } else {
+            msg::publish(out_inactive_, message);
         }
     }
 
 private:
     Input* in_;
-    Output* out_;
+    Output* out_active_;
+    Output* out_inactive_;
 
-    bool inverted_;
     bool active_;
 };
 
 }
 }
 
-CSAPEX_REGISTER_CLASS(csapex::state::ActivityGate, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::state::ActivitySwitch, csapex::Node)
 

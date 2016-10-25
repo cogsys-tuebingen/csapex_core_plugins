@@ -18,6 +18,11 @@ set(CMAKE_AUTOMOC ON)
 qt5_add_resources(QT_RESOURCES res/csapex_state_resources.qrc)
 
 add_library(${PROJECT_NAME}_node SHARED
+    src/join.cpp
+    src/switch.cpp
+    src/activity_generator.cpp
+    src/activity_absorber.cpp
+    src/activity_switch.cpp
     src/activity_gate.cpp
     src/memory_cell.cpp
 

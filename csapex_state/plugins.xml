@@ -1,8 +1,37 @@
 <library path="libcsapex_state_node">
+<class type="csapex::Join" base_class_type="csapex::Node">
+  <description>Joins several streams, thereby synchronizing them. Also known as a barrier or fence.</description>
+  <tags>State, FSM, control flow</tags>
+  <icon>:/join.png</icon>
+</class>
+<class type="csapex::Switch" base_class_type="csapex::Node">
+  <description>Forwards a message to one of two outputs, depending on a predicate</description>
+  <tags>State, FSM, control flow</tags>
+  <icon>:/branch.png</icon>
+</class>
+<class type="csapex::state::ActivityGenerator" base_class_type="csapex::Node">
+  <description>Generates activity and therefore acts as a source for the activity flow.
+               Corresponds to an <b>initial node</b> in UML activity diagrams.
+  </description>
+  <tags>State, FSM, activity</tags>
+  <icon>:/activity_add.png</icon>
+</class>
+<class type="csapex::state::ActivityAbsorber" base_class_type="csapex::Node">
+  <description>Absorbs activity and therefore acts as a sink for the activity flow.
+               Corresponds to an <b>activity final node</b> in UML activity diagrams.
+  </description>
+  <tags>State, FSM, activity</tags>
+  <icon>:/activity_remove.png</icon>
+</class>
+<class type="csapex::state::ActivitySwitch" base_class_type="csapex::Node">
+  <description>Forwards a message to one of two outputs, depending on the activity of the node.</description>
+  <tags>State, FSM, activity</tags>
+  <icon>:/branch.png</icon>
+</class>
 <class type="csapex::state::ActivityGate" base_class_type="csapex::Node">
   <description>Passes a message onward, if the node is active. Else drops the message</description>
   <tags>State, FSM, activity</tags>
-  <icon>:/shield.png</icon>
+  <icon>:/activity_guard.png</icon>
 </class>
 <class type="csapex::state::MemoryCell" base_class_type="csapex::Node">
   <description>Keeps a named parameter synchronized across different instances in the graph</description>
