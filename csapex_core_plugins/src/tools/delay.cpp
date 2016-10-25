@@ -108,7 +108,7 @@ void Delay::doSleep()
 }
 
 void Delay::process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters,
-                    std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation)
+                    Continuation continuation)
 {
     if(future.valid()) {
         future.wait();
@@ -124,7 +124,7 @@ void Delay::process(csapex::NodeModifier& node_modifier, csapex::Parameterizable
     }
 }
 
-void Delay::delayInput(std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation)
+void Delay::delayInput(Continuation continuation)
 {
     TokenData::ConstPtr msg = msg::getMessage<TokenData>(input_);
     doSleep();

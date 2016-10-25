@@ -13,6 +13,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/model/node_handle.h>
 
 /// SYSTEM
 #include <tf/transform_datatypes.h>
@@ -59,17 +60,24 @@ void DynamicTransform::setupParameters(Parameterizable& parameters)
     refresh();
 }
 
-bool DynamicTransform::canTick()
+void DynamicTransform::setupROS()
 {
-    return true;
+
 }
 
-void DynamicTransform::tick()
+bool DynamicTransform::canTick()
+{
+    return node_handle_->isSource() && RosNode::canTick();
+}
+
+bool DynamicTransform::tickROS()
 {
     if(source_p->noParameters() != 0 && target_p->noParameters() != 0 && !msg::isConnected(time_in_))
     {
         process();
     }
+
+    return true;
 }
 
 void DynamicTransform::freeze(bool frozen)
@@ -100,7 +108,7 @@ void DynamicTransform::freeze(bool frozen)
     }
 }
 
-void DynamicTransform::process()
+void DynamicTransform::processROS()
 {
     if(!init_) {
         refresh();
@@ -201,6 +209,8 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
 void DynamicTransform::setup(NodeModifier& node_modifier)
 {
+    RosNode::setup(node_modifier);
+
     time_in_ = node_modifier.addOptionalInput<connection_types::TimestampMessage>("Time");
 
     output_ = node_modifier.addOutput<connection_types::TransformMessage>("Transform");

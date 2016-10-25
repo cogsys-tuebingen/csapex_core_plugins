@@ -19,7 +19,7 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);
     virtual void process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters,
-                         std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation);
+                         Continuation continuation);
 
     virtual void tearDown() override;
 
@@ -28,7 +28,7 @@ public:
 private:
     void doSleep();
 
-    void delayInput(std::function<void(std::function<void (csapex::NodeModifier&, Parameterizable &)>)> continuation);
+    void delayInput(Continuation continuation);
     void delayEvent();
 
 private:

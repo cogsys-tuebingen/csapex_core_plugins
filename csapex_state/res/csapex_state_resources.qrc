@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>database.png</file>
+        <file>shield.png</file>
     </qresource>
 </RCC>

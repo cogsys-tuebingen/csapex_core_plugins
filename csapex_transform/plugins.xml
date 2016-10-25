@@ -5,6 +5,9 @@
 </library>
 
 <library path="libcsapex_transform_plugin_node">
+<class type="csapex::ExtractFrames" base_class_type="csapex::Node">
+  <description>Extracts the frame a transform is defined in and the frame it defines</description>
+</class>
 <class type="csapex::TransformToOdometry" base_class_type="csapex::Node">
   <description>Creates odometry information from a transform</description>
 </class>

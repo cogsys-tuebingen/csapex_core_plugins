@@ -1,4 +1,9 @@
 <library path="libcsapex_state_node">
+<class type="csapex::state::ActivityGate" base_class_type="csapex::Node">
+  <description>Passes a message onward, if the node is active. Else drops the message</description>
+  <tags>State, FSM, activity</tags>
+  <icon>:/shield.png</icon>
+</class>
 <class type="csapex::state::MemoryCell" base_class_type="csapex::Node">
   <description>Keeps a named parameter synchronized across different instances in the graph</description>
   <tags>State, FSM</tags>

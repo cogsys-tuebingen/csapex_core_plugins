@@ -47,6 +47,7 @@ target_link_libraries(csapex_transform_plugin_core csapex_transform
 
 
 add_library(csapex_transform_plugin_node
+    src/extract_frames.cpp
     src/transform_to_odometry.cpp
     src/transform_to_pose.cpp
     src/odometry_to_transform.cpp
