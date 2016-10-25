@@ -42,16 +42,29 @@ void VectorPlotAdapter::display()
     plot_widget_->detachItems();
 
 
-    QwtPlotCurve* curve[n->getVDataCountNumCurves()] /*= new QwtPlotCurve[n->getVDataCountNumCurves()];*/;
-    for(std::size_t i = 0; i < n->getVDataCountNumCurves(); ++i){
+    //these getters are blocking. Collect data first then render.
+    std::size_t num_curves = n->getVDataCountNumCurves();
+    std::size_t num_points = n->getCount();
+    QwtPlotCurve* curve[num_curves]/*= new QwtPlotCurve[n->getVDataCountNumCurves()];*/;
+    std::vector<QColor> colors(num_curves);
+    std::vector<QColor> line_colors(num_curves);
+    std::vector<const double*> data(num_curves);
+    const double* tdata = n->getTData();
+    for(std::size_t i = 0; i < num_curves; ++i){
+        colors[i] = n->getFillColor();
+        line_colors[i] = n->getLineColor(i);
+        data[i] = n->getVData(i);
+    }
+
+    for(std::size_t i = 0; i < num_curves; ++i){
         curve[i] = new QwtPlotCurve;
         curve[i]->setBaseline(0.0);
-        curve[i]->setPen(n->getLineColor(i), n->getLineWidth());
+        curve[i]->setPen(line_colors[i], n->getLineWidth());
         curve[i]->setStyle(QwtPlotCurve::Lines);
 
-        curve[i]->setBrush(QBrush(n->getFillColor(), Qt::SolidPattern));
+        curve[i]->setBrush(QBrush(colors[i], Qt::SolidPattern));
 
-        curve[i]->setRawSamples(n->getTData(), n->getVData(i), n->getCount());
+        curve[i]->setRawSamples(tdata, data[i], num_points);
 
         curve[i]->attach(plot_widget_);
         plot_widget_->replot();

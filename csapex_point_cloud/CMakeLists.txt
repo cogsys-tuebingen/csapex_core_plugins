@@ -96,6 +96,7 @@ add_library(csapex_point_cloud_plugin_node
     src/conversion/image_to_point_cloud.cpp
     src/conversion/pointcloud_to_xyz.cpp
     src/conversion/indices_to_mask.cpp
+    src/conversion/indices_to_rois.cpp
     src/conversion/normals_to_colorimage.cpp
 
     src/filter/conditional_outlier_removal.cpp
@@ -112,6 +113,7 @@ add_library(csapex_point_cloud_plugin_node
     src/filter/passthrough_by_cluster.cpp
     src/filter/passthrough_by_indices.cpp
     src/filter/crop_box.cpp
+    src/filter/filter_rois_by_distance.cpp
 
     src/segmentation/labeled_cloud_to_indices.cpp
     src/segmentation/label_pointcloud.cpp

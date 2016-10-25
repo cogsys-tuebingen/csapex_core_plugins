@@ -227,16 +227,24 @@
     <description>Assign ROI classifications from classified feature messages.</description>
     <tags>Vision, ROI</tags>
   </class>
+  <class type="csapex::AssignROIClassificationMaxVote" base_class_type="csapex::Node">
+    <description>Assign ROI classifications from weighted classes.</description>
+    <tags>Vision, ROI</tags>
+  </class>
   <class type="csapex::EvaluateROIClassification" base_class_type="csapex::Node">
     <description>Evaluate the ROI classifications to build up a confusion matrix.</description>
-    <tags>Vision, ROI</tags>
+    <tags>Vision, ROI, Evaluation</tags>
+  </class>
+  <class type="csapex::EvaluateROIDetections" base_class_type="csapex::Node">
+    <description>Evaluate the ROI detections to build up a confusion matrix.</description>
+    <tags>Vision, ROI, Evaluation</tags>
   </class>
   <class type="csapex::ExchangeROIClassification" base_class_type="csapex::Node">
     <description>Substitute ROI classification labels.</description>
     <tags>Vision, ROI</tags>
   </class>
   <class type="csapex::FilterROIsByClassification" base_class_type="csapex::Node">
-    <description>Substitute ROI classification labels.</description>
+    <description>Filter ROIs based on classification label.</description>
     <tags>Vision, ROI</tags>
   </class>
   <class type="csapex::SetROIClassification" base_class_type="csapex::Node">

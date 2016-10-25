@@ -29,9 +29,6 @@ public:
         input_gt_         = node_modifier.addInput<GenericVectorMessage, RoiMessage>("Ground Truth");
         input_prediction_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("Predicted");
         output_hit_rate_ = node_modifier.addOutput<std::string>("Hitrate");
-
-        node_modifier.addSlot("Reset",
-                              std::bind(&ROIHitRate::reset, this));
     }
     virtual void setupParameters(Parameterizable &parameters) override
     {
