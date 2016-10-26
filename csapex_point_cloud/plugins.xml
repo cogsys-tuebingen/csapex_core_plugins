@@ -5,6 +5,12 @@
 </library>
 
 <library path="libcsapex_point_cloud_plugin_node">
+
+<class type="csapex::RoiGenerator" base_class_type="csapex::Node">
+  <description>Converts point cloud clusters to regions of interest</description>
+  <tags>Point Cloud, ROI, Person Detection</tags>
+</class>
+
 <class type="csapex::MergeClouds" base_class_type="csapex::Node">
   <description>Merge two clouds into one</description>
 </class>

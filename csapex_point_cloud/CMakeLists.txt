@@ -83,6 +83,7 @@ add_library(csapex_point_cloud_plugin_node
     src/set_timestamp.cpp
     src/row.cpp
     src/col.cpp
+    src/roi_generator.cpp
 
     src/cloud_test.cpp
 
