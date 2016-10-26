@@ -19,7 +19,6 @@ CSAPEX_REGISTER_CLASS(csapex::TimePlot, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-
 void TimePlot::setup(NodeModifier &node_modifier)
 {
     in_  = node_modifier.addMultiInput<double, GenericVectorMessage>("Double");
@@ -114,6 +113,7 @@ void TimePlot::process()
     if(msg::isValue<double>(in_)) {
         value = msg::getValue<double>(in_);
         if(initialize_){
+            deque_v_.resize(1);
             data_v_.resize(1);
             num_plots_ = 1;
             initialize_ = false;
