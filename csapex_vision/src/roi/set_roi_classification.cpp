@@ -30,11 +30,11 @@ public:
     }
     virtual void process() override
     {
-        std::shared_ptr<std::vector<RoiMessage> const> inpurt_rois =
+        std::shared_ptr<std::vector<RoiMessage> const> input_rois =
                 msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_);
         std::shared_ptr<std::vector<RoiMessage>> output_rois(new std::vector<RoiMessage>);
 
-        for(const RoiMessage &fm : *inpurt_rois) {
+        for(const RoiMessage &fm : *input_rois) {
             output_rois->emplace_back(fm);
             output_rois->back().value.setClassification(set_);
         }

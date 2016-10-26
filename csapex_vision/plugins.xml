@@ -6,6 +6,12 @@
 
 
 <library path="libcsapex_vision_plugin_node">
+<class type="csapex::MaskBorderFill" base_class_type="csapex::Node">
+  <description>Fills a mask from all borders</description>
+</class>
+<class type="csapex::SetRoiLabel" base_class_type="csapex::Node">
+  <description>Set the roi label to a given value</description>
+</class>
 <class type="csapex::EventAND" base_class_type="csapex::Node">
   <description>Check if two events have happened.</description>
   <tags>Vision</tags>
