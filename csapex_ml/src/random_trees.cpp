@@ -118,7 +118,11 @@ void RandomTrees::process()
             for(const auto &entry : class_labels) {
                 mat.at<float>(row, 0) = entry.first;
                 mat.at<float>(row, 1) = entry.second / (float) random_trees_.get_tree_count();
+                ++row;
             }
+
+            std::cout << mat << " | " <<  output_feature->at(i).classification << std::endl;
+
             output_class_weights->push_back(mat_message);
         }
     } else {

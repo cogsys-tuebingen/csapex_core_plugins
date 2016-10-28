@@ -34,11 +34,17 @@ void SacFit::setupParameters(Parameterizable &parameters)
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("sphere min radius", 0.0, 2.0, 0.02, 0.005));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("sphere max radius", 0.0, 2.0, 0.8, 0.005));
 
+    parameters.addParameter(csapex::param::ParameterFactory::declareValue<double>("model_main_axis_x",0),model_main_axis_x_);
+    parameters.addParameter(csapex::param::ParameterFactory::declareValue<double>("model_main_axis_y",0),model_main_axis_y_);
+    parameters.addParameter(csapex::param::ParameterFactory::declareValue<double>("model_main_axis_z",0),model_main_axis_z_);
+    parameters.addParameter(csapex::param::ParameterFactory::declareValue<double>("model_angle_offset",0),model_angle_offset_);
+
     std::map<std::string, int> models = {
         {"fit sphere", (int) pcl::SACMODEL_SPHERE},
         {"fit plane", (int) pcl::SACMODEL_PLANE},
-        //{"fit cylinder", (int) pcl::SACMODEL_CYLINDER},
-        {"fit cone", (int) pcl::SACMODEL_CONE}
+        {"fit cylinder", (int) pcl::SACMODEL_CYLINDER},
+        {"fit cone", (int) pcl::SACMODEL_CONE},
+        {"plane with normal", (int) pcl::SACMODEL_NORMAL_PARALLEL_PLANE}
     };
 
 
@@ -203,6 +209,7 @@ int SacFit::findModels(typename pcl::PointCloud<PointT>::ConstPtr  cloud_in,
     pcl::ExtractIndices<PointT> extract_points;
     pcl::ExtractIndices<pcl::Normal> extract_normals;
 
+
     // Create data objects
     pcl::PointCloud<pcl::Normal>::Ptr normals (new pcl::PointCloud<pcl::Normal>);
     typename pcl::PointCloud<PointT>::Ptr cloud;
@@ -345,6 +352,12 @@ void SacFit::initializeSegmenter(pcl::SACSegmentationFromNormals<PointT, pcl::No
     segmenter.setRadiusLimits (sphere_r_min_, sphere_r_max_);
     segmenter.setMinMaxOpeningAngle(sphere_r_min_, sphere_r_max_);
     segmenter.setNormalDistanceWeight (normal_distance_weight_);
+    if(model_main_axis_x_ != 0 || model_main_axis_y_ != 0 || model_main_axis_z_ != 0){
+        Eigen::Vector3f axis(model_main_axis_x_, model_main_axis_y_, model_main_axis_z_);
+        segmenter.setAxis(axis);
+        segmenter.setEpsAngle(model_angle_offset_);
+    }
+
 }
 
 //

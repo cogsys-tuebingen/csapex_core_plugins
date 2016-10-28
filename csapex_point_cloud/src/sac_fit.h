@@ -16,6 +16,7 @@
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/features/normal_3d.h>
+#include <pcl/sample_consensus/sac_model_normal_parallel_plane.h>
 #if __clang__
 #pragma clang diagnostic pop
 #endif //__clang__
@@ -52,6 +53,12 @@ private:
     double distance_threshold_;
     double sphere_r_min_;
     double sphere_r_max_;
+
+    double model_main_axis_x_;
+    double model_main_axis_y_;
+    double model_main_axis_z_;
+    double model_angle_offset_;
+
     pcl::SacModel model_;
 
     std::shared_ptr<std::vector<pcl::PointIndices> const> cluster_indices_;
