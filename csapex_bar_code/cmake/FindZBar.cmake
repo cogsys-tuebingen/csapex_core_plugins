@@ -15,12 +15,12 @@ if(WIN32)
 		
 else()
 	find_package(PkgConfig)
-	pkg_check_modules(PC_ZBAR QUIET zbar)
+        pkg_check_modules(PC_ZBAR QUIET zbar)
 	set(ZBAR_DEFINITIONS ${PC_ZBAR_CFLAGS_OTHER})
 	find_library(ZBAR_LIBRARIES NAMES zbar
-	HINTS ${PC_ZBAR_LIBDIR} ${PC_ZBAR_LIBRARY_DIRS} )
+            HINTS ${PC_ZBAR_LIBDIR} ${PC_ZBAR_LIBRARY_DIRS} /usr/lib/)
 	find_path(ZBAR_INCLUDE_DIR Decoder.h
-	HINTS ${PC_ZBAR_INCLUDEDIR} ${PC_ZBAR_INCLUDE_DIRS})
+            HINTS ${PC_ZBAR_INCLUDEDIR} ${PC_ZBAR_INCLUDE_DIRS}  /usr/include/zbar/)
 endif()
 
 include(FindPackageHandleStandardArgs)

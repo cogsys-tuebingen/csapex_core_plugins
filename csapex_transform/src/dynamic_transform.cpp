@@ -167,31 +167,30 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
         try {
             LockedTFListener l = TFListener::getLocked();
+            apex_assert(l.l);
+            auto listener = l.l->tfl;
+            apex_assert(listener);
+            tf::TransformListener& tfl = *listener;
 
-            if(l.l) {
-                std::shared_ptr<tf::TransformListener>& tfl = l.l->tfl;
-                if(tfl->waitForTransform(target, source, time, ros::Duration(0.1))) {
-                    tfl->lookupTransform(target, source, time, t);
+            if(tfl.waitForTransform(target, source, time, ros::Duration(0.1))) {
+                tfl.lookupTransform(target, source, time, t);
 
-                } else if(exact_time_) {
-                    node_modifier_->setWarning(std::string("cannot exactly transform between ") +
-                                               target + " and " + source);
-                    return;
-
-                } else {
-                    if(tfl->canTransform(target, source, ros::Time(0))) {
-                        node_modifier_->setWarning("cannot transform, using latest transform");
-                        tfl->lookupTransform(target, source, ros::Time(0), t);
-                    } else {
-                        node_modifier_->setWarning(std::string("cannot transform between ") +
-                                                   target + " and " + source + " at all...");
-                        return;
-                    }
-                }
-                node_modifier_->setNoError();
-            } else {
+            } else if(exact_time_) {
+                node_modifier_->setWarning(std::string("cannot exactly transform between ") +
+                                           target + " and " + source);
                 return;
+
+            } else {
+                if(tfl.canTransform(target, source, ros::Time(0))) {
+                    node_modifier_->setWarning("cannot transform, using latest transform");
+                    tfl.lookupTransform(target, source, ros::Time(0), t);
+                } else {
+                    node_modifier_->setWarning(std::string("cannot transform between ") +
+                                               target + " and " + source + " at all...");
+                    return;
+                }
             }
+            node_modifier_->setNoError();
         } catch(const tf2::TransformException& e) {
             node_modifier_->setWarning(e.what());
             return;
@@ -248,39 +247,34 @@ void DynamicTransform::refresh()
     }
 
     LockedTFListener l = TFListener::getLocked();
-    if(!l.l) {
-        return;
+    apex_assert(l.l);
+    auto listener = l.l->tfl;
+    apex_assert(listener);
+    tf::TransformListener& tfl = *listener;
+
+    std::vector<std::string> f;
+    tfl.getFrameStrings(f);
+
+    bool has_from = false;
+    bool has_to = false;
+    for(std::size_t i = 0; i < f.size(); ++i) {
+        std::string frame = std::string("/") + f[i];
+        frames.push_back(frame);
+
+        if(frame == from) {
+            has_from = true;
+        }
+        if(frame == to) {
+            has_to = true;
+        }
     }
 
-    if(l.l) {
-        std::vector<std::string> f;
-        l.l->tfl->getFrameStrings(f);
-
-        bool has_from = false;
-        bool has_to = false;
-        for(std::size_t i = 0; i < f.size(); ++i) {
-            std::string frame = std::string("/") + f[i];
-            frames.push_back(frame);
-
-            if(frame == from) {
-                has_from = true;
-            }
-            if(frame == to) {
-                has_to = true;
-            }
+    if((!from.empty() && !has_from) ||
+            (!to.empty() && !has_to)) {
+        if(initial_retries_ --> 0) {
+            ainfo << "retry" << std::endl;
+            return;
         }
-
-        if((!from.empty() && !has_from) ||
-                (!to.empty() && !has_to)) {
-            if(initial_retries_ --> 0) {
-                ainfo << "retry" << std::endl;
-                return;
-            }
-        }
-
-
-    } else {
-        return;
     }
 
     if(!from.empty()) {

@@ -15,10 +15,14 @@ using namespace connection_types;
 
 TransformMessage::TransformMessage(const std::string& frame_id, const std::string& child_frame_id)
     : MessageTemplate<tf::Transform, TransformMessage> (frame_id), child_frame(child_frame_id)
-{}
+{
+    if(child_frame.size() > 0 && child_frame.at(0) == '/') {
+        child_frame = child_frame.substr(1);
+    }
+}
 
 TransformMessage::TransformMessage()
-    : MessageTemplate<tf::Transform, TransformMessage> ("/"), child_frame("/")
+    : MessageTemplate<tf::Transform, TransformMessage> (""), child_frame("")
 {}
 
 TokenData::Ptr TransformMessage::clone() const

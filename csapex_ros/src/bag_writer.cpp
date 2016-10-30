@@ -83,14 +83,14 @@ public:
         return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
     }
 
-    virtual csapex::Slot* createVariadicSlot(TokenDataConstPtr type, const std::string& label, std::function<void (const TokenPtr&)> callback) override
+    virtual csapex::Slot* createVariadicSlot(TokenDataConstPtr type, const std::string& label, std::function<void (const TokenPtr&)> callback, bool active, bool asynchronous) override
     {
         auto cb = [this](Slot* slot, const TokenPtr& token) {
             auto message = std::dynamic_pointer_cast<connection_types::Message const>(token->getTokenData());
             RosMessageConversion::instance().write(bag, message, slot->getLabel());
         };
 
-        return VariadicSlots::createVariadicSlot(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, cb);
+        return VariadicSlots::createVariadicSlot(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, cb, active, asynchronous);
     }
 
     void write(const std::string& label, long stamp, std::shared_ptr<topic_tools::ShapeShifter const> instance)
@@ -115,7 +115,7 @@ public:
         case ConnectorType::INPUT:
             return createVariadicInput(type, label, optional);
         case ConnectorType::SLOT_T:
-            return createVariadicSlot(type, label, [](const TokenPtr&){});
+            return createVariadicSlot(type, label, [](const TokenPtr&){}, false, false);
         default:
             throw std::logic_error(std::string("Variadic port of type ") + port_type::name(port_type) + " is not supported.");
         }
