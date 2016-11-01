@@ -5,7 +5,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ros/ros_handler.h>
 #include "import_ros.h"
-#include <csapex/model/graph.h>
+#include <csapex/model/subgraph_node.h>
 #include <csapex/model/node_state.h>
 #include <csapex/factory/message_factory.h>
 #include <csapex_ros/ros_message_conversion.h>
@@ -119,7 +119,7 @@ void APEXRosInterface::init(CsApexCore &core)
     });
 }
 
-void APEXRosInterface::setupGraph(Graph *graph)
+void APEXRosInterface::setupGraph(SubgraphNode *graph)
 {
     clock_reset_event_ = graph->createInternalEvent(connection_types::makeEmpty<connection_types::AnyMessage>(), graph->makeUUID("event_ros_time_reset"), "ros time reset");
 }

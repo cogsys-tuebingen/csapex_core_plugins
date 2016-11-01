@@ -22,7 +22,7 @@ public:
     ~APEXRosInterface();
     void prepare(Settings& settings);
     void init(CsApexCore& core);
-    void setupGraph(Graph* graph);
+    void setupGraph(SubgraphNode *graph);
     void shutdown() override;
 
 private:
