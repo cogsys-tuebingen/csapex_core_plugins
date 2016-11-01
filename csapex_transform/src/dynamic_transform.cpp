@@ -56,13 +56,11 @@ void DynamicTransform::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("~tf/dx", 0.0), freeze_condition, x);
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("~tf/dy", 0.0), freeze_condition, y);
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("~tf/dz", 0.0), freeze_condition, z);
-
-    refresh();
 }
 
 void DynamicTransform::setupROS()
 {
-
+    refresh();
 }
 
 bool DynamicTransform::canTick()
@@ -132,6 +130,24 @@ void DynamicTransform::processROS()
     }
 }
 
+namespace {
+bool waitForTransform(tf::TransformListener& tfl, const std::string& target, const std::string& source, const ros::Time& time,
+                      const ros::WallDuration& duration, const ros::WallDuration& poll_duration)
+{
+    ros::WallTime start = ros::WallTime::now();
+    ros::WallTime end = start + duration;
+    while(ros::WallTime::now() < end) {
+        if(tfl.canTransform(target, source, time)) {
+            return true;
+        }
+
+        poll_duration.sleep();
+    }
+
+    return false;
+}
+}
+
 void DynamicTransform::publishTransform(const ros::Time& time)
 {
     if(!init_ || source_p->noParameters() == 0 || target_p->noParameters() == 0) {
@@ -172,7 +188,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
             apex_assert(listener);
             tf::TransformListener& tfl = *listener;
 
-            if(tfl.waitForTransform(target, source, time, ros::Duration(0.1))) {
+            if(waitForTransform(tfl, target, source, time, ros::WallDuration(0.1), ros::WallDuration(0.01))) {
                 tfl.lookupTransform(target, source, time, t);
 
             } else if(exact_time_) {

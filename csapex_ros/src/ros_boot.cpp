@@ -55,4 +55,9 @@ void RosBoot::boot(csapex::PluginLocator* locator)
     locator->registerLocator<DragIOHandler>(std::bind(
                                                 &get_plugin_xml_paths<DragIOHandler>,
                                                 &loader_drag_io_, std::placeholders::_1));
+
+    std::vector<std::string> exports;
+    ros::package::getPlugins("csapex", "snippets", exports);
+
+    locator->setPluginPaths("snippets", exports);
 }

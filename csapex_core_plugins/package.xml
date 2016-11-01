@@ -13,6 +13,6 @@
   <run_depend>csapex</run_depend>
 
   <export>
-    <csapex plugin="${prefix}/plugins.xml" />
+    <csapex plugin="${prefix}/plugins.xml" snippets="${prefix}/snippets" />
   </export>
 </package>
