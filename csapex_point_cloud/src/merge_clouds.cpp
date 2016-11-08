@@ -41,9 +41,9 @@ void MergeClouds::process()
 
     std::string frame;
     uint64_t stamp = 0;
-    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
+    std::vector<InputPtr> inputs = node_modifier_->getMessageInputs();
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
-        Input *in = inputs[i];
+        Input *in = inputs[i].get();
         if(msg::hasMessage(in)) {
 
             PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in));

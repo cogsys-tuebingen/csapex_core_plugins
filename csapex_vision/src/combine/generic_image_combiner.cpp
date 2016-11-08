@@ -143,7 +143,7 @@ void GenericImageCombiner::process()
         return;
     }
 
-    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
+    std::vector<InputPtr> inputs = node_modifier_->getMessageInputs();
     if(inputs.empty()) {
         return;
     }
@@ -153,7 +153,7 @@ void GenericImageCombiner::process()
     CvMatMessage::ConstPtr img_0;
 
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
-        Input *in = inputs[i];
+        Input *in = inputs[i].get();
 
         if(!msg::hasMessage(in)) {
             vm.get(std::to_string(i+1)) = cv::Mat();

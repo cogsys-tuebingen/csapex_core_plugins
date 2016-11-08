@@ -26,7 +26,7 @@ void GenericTextCombiner::updateFormula()
 
 void GenericTextCombiner::process()
 {
-    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
+    std::vector<InputPtr> inputs = node_modifier_->getMessageInputs();
     if(inputs.empty()) {
         return;
     }
@@ -45,7 +45,7 @@ void GenericTextCombiner::process()
             }
             int param_num = atoi(num.c_str());
 
-            Input* i = inputs.at(param_num-1);
+            Input* i = inputs.at(param_num-1).get();
             if(msg::isValue<std::string>(i)) {
                 ss << msg::getValue<std::string>(i);
 

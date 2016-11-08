@@ -79,7 +79,7 @@ void Split::process()
 
     bool enforce_mono = readParameter<bool>("enforce mono");
 
-    std::vector<Output*> outputs = node_modifier_->getMessageOutputs();
+    std::vector<OutputPtr> outputs = node_modifier_->getMessageOutputs();
     for(unsigned i = 0 ; i < channels.size() ; i++) {
         Encoding e;
         if(i < encoding_.channelCount()) {
@@ -94,13 +94,13 @@ void Split::process()
 
         CvMatMessage::Ptr channel_out(new CvMatMessage(e, m->stamp_micro_seconds));
         channel_out->value = channels[i];
-        msg::publish(outputs[i], channel_out);
+        msg::publish(outputs[i].get(), channel_out);
     }
 }
 
 void Split::updateOutputs()
 {
-    std::vector<Output*> outputs = node_modifier_->getMessageOutputs();
+    std::vector<OutputPtr> outputs = node_modifier_->getMessageOutputs();
     int n = outputs.size();
 
     if(channel_count_ > n) {
@@ -114,7 +114,7 @@ void Split::updateOutputs()
     } else {
         bool del = true;
         for(int i = n-1 ; i >= (int) channel_count_; --i) {
-            Output* output = outputs[i];
+            Output* output = outputs[i].get();
             if(msg::isConnected(output)) {
                 del = false;
             }
@@ -130,7 +130,7 @@ void Split::updateOutputs()
 
     outputs = node_modifier_->getMessageOutputs();
     for(int i = 0, n = channel_count_; i < n; ++i) {
-        Output* output = outputs[i];
+        Output* output = outputs[i].get();
         if(i < (int) encoding_.channelCount()) {
             msg::setLabel(output, encoding_.getChannel(i).name);
         } else {

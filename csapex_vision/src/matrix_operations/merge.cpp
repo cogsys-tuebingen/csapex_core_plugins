@@ -54,9 +54,9 @@ void Merge::process()
 void Merge::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
 {
     bool first = true;
-    std::vector<Input*> inputs = node_modifier_->getMessageInputs();
+    std::vector<InputPtr> inputs = node_modifier_->getMessageInputs();
     for(std::size_t i = 0 ; i < inputs.size() ; i++) {
-        Input *in = inputs[i];
+        Input *in = inputs[i].get();
         if(msg::hasMessage(in)) {
             CvMatMessage::ConstPtr msg = msg::getMessage<CvMatMessage>(in);
             if(first) {
