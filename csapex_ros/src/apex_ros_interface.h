@@ -45,6 +45,8 @@ private:
 
     ros::Time last_clock_;
     EventPtr clock_reset_event_;
+
+    slim_signal::ScopedConnection connection_;
 };
 }
 #endif // APEX_ROS_INTERFACE_H

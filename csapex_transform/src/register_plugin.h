@@ -12,6 +12,9 @@ public:
     RegisterTransformPlugin();
 
     void init(CsApexCore& core);
+
+private:
+    std::vector<slim_signal::ScopedConnection> connections_;
 };
 
 }

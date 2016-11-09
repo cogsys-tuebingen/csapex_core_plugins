@@ -39,8 +39,9 @@ public:
     void waitForConnection();
     void refresh();
 
-    void registerConnectionCallback(std::function<void()>);
-    void registerShutdownCallback(std::function<void()>);
+public:
+    slim_signal::Signal<void()> connected;
+    slim_signal::Signal<void()> shutdown;
 
 private:
     ROSHandler(Settings& settings);
@@ -64,9 +65,6 @@ private:
 
     bool check_is_running;
     std::condition_variable_any check_is_done;
-
-    std::vector<std::function<void()> > connection_callbacks_;
-    std::vector<std::function<void()> > shutdown_callbacks_;
 };
 
 }

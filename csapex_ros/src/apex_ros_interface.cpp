@@ -69,10 +69,15 @@ void APEXRosInterface::init(CsApexCore &core)
 {
     core_ = &core;
 
-    ROSHandler::instance().registerConnectionCallback([this]() {
+    auto init = [this]() {
         registerCommandListener();
         registerClockWatchdog();
-    });
+    };
+    if(ROSHandler::instance().isConnected()) {
+        init();
+    } else {
+        connection_ = ROSHandler::instance().connected.connect(init);
+    }
 
     RosMessageConversion::registerConversion<std_msgs::Bool, connection_types::GenericValueMessage<bool>, ConvertIntegral<std_msgs::Bool, bool> >();
     RosMessageConversion::registerConversion<std_msgs::Int32, connection_types::GenericValueMessage<int>, ConvertIntegral<std_msgs::Int32, int> >();

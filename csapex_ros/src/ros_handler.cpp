@@ -26,9 +26,7 @@ void ROSHandler::stop()
         check_is_done.notify_all();
     }
 
-    for (const std::function<void()>& f : shutdown_callbacks_) {
-        f();
-    }
+    shutdown();
 
     if(ros::isStarted()) {
         if(nh_) {
@@ -73,9 +71,7 @@ void ROSHandler::initHandle(bool try_only)
         }
     }
     if(make_spinner) {
-        for (const auto& f : connection_callbacks_) {
-            f();
-        }
+        connected();
     }
 }
 
@@ -101,19 +97,19 @@ bool ROSHandler::topicExists(const std::string &topic)
     return false;
 }
 
-void ROSHandler::registerConnectionCallback(std::function<void ()> f)
-{
-    if(isConnected()) {
-        f();
-    }
-    connection_callbacks_.push_back(f);
-}
+//void ROSHandler::registerConnectionCallback(std::function<void ()> f)
+//{
+//    if(isConnected()) {
+//        f();
+//    }
+//    connection_callbacks_.push_back(f);
+//}
 
-void ROSHandler::registerShutdownCallback(std::function<void ()> f)
-{
+//void ROSHandler::registerShutdownCallback(std::function<void ()> f)
+//{
 
-    shutdown_callbacks_.push_back(f);
-}
+//    shutdown_callbacks_.push_back(f);
+//}
 
 void ROSHandler::waitForCheck()
 {

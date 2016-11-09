@@ -55,8 +55,15 @@ void RegisterTransformPlugin::init(CsApexCore& core)
     Tag::createIfNotExists("Transform");
     Tag::createIfNotExists("Time");
 
-    ROSHandler::instance().registerConnectionCallback(std::bind(&TFListener::start));
-    ROSHandler::instance().registerShutdownCallback(std::bind(&TFListener::stop));
+    auto init = std::bind(&TFListener::start);
+
+    if(ROSHandler::instance().isConnected()) {
+        init();
+    } else {
+        connections_.emplace_back(ROSHandler::instance().connected.connect(init));
+    }
+
+    connections_.emplace_back(ROSHandler::instance().shutdown.connect(std::bind(&TFListener::stop)));
 
     RosMessageConversion::registerConversion<tf2_msgs::TFMessage, connection_types::TransformMessage, ConvertTf>();
 }
