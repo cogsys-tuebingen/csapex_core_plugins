@@ -5,6 +5,9 @@
 </library>
 
 <library path="libcsapex_boolean_plugin_node">
+<class type="csapex::Threshold" base_class_type="csapex::Node">
+  <description>Checks if a number is larger than a threshold, returns the predicate.</description>
+</class>
 <class type="csapex::boolean::NAND" base_class_type="csapex::Node">
   <description>Computes a logical not and of its two inputs</description>
   <tags>Boolean</tags>

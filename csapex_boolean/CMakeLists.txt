@@ -20,6 +20,8 @@ target_link_libraries(csapex_boolean_plugin_core
 
 
 add_library(csapex_boolean_plugin_node SHARED
+    src/threshold.cpp
+
     src/nand.cpp
     src/toggle.cpp
     src/indicator.cpp
