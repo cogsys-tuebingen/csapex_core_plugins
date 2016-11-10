@@ -15,9 +15,9 @@ class ModelMessage
 {
 public:
     ModelMessage();
-    pcl::SacModel model_type;
+    pcl::SacModel               model_type;
     pcl::ModelCoefficients::Ptr coefficients;
-    std::string                  frame_id;
+    std::string                 frame_id;
     double probability;
 };
 
