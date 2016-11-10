@@ -20,6 +20,7 @@
 #include <csapex/msg/any_message.h>
 
 /// SYSTEM
+#include <console_bridge/console.h>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <std_msgs/Int32.h>
@@ -68,6 +69,10 @@ void APEXRosInterface::prepare(Settings &settings)
 void APEXRosInterface::init(CsApexCore &core)
 {
     core_ = &core;
+
+    if(core_->getSettings().get<bool>("debug")) {
+        console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_DEBUG);
+    }
 
     auto init = [this]() {
         registerCommandListener();
