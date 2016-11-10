@@ -86,6 +86,7 @@ add_library(csapex_core_plugins_node SHARED
     src/text/generic_text_combiner.cpp
 
     src/tools/cache.cpp
+    src/tools/throttle.cpp
     src/tools/calculate_duration.cpp
     src/tools/composer.cpp
     src/tools/decomposer.cpp
