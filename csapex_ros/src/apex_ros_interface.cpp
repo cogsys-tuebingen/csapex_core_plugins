@@ -309,7 +309,7 @@ void APEXRosInterface::clock(const rosgraph_msgs::ClockConstPtr &clock)
 
         TokenDataConstPtr data(new connection_types::AnyMessage);
         TokenPtr token = std::make_shared<Token>(data);
-        token->setActive(true);
+        token->setActivityModifier(ActivityModifier::ACTIVATE);
         clock_reset_event_->triggerWith(token);
     }
 

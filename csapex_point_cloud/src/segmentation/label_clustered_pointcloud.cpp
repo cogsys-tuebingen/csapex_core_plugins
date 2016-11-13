@@ -113,6 +113,10 @@ struct Label<pcl::PointXYZRGB> {
     {
         pcl::PointCloud<pcl::PointXYZRGBL>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGBL>);
         Impl<pcl::PointXYZRGB, pcl::PointXYZRGBL>::label(src, cloud, indices);
+        cloud->header = src->header;
+        cloud->width = src->width;
+        cloud->height = src->height;
+        cloud->is_dense = src->is_dense;
         dst_msg->value = cloud;
     }
 };

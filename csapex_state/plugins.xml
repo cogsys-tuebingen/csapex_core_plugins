@@ -16,6 +16,11 @@
   <tags>State, FSM, activity</tags>
   <icon>:/activity_add.png</icon>
 </class>
+<class type="csapex::state::InactivityGenerator" base_class_type="csapex::Node">
+  <description>Generates a message to deactivate all following nodes</description>
+  <tags>State, FSM, activity</tags>
+  <icon>:/activity_remove.png</icon>
+</class>
 <class type="csapex::state::ActivityAbsorber" base_class_type="csapex::Node">
   <description>Absorbs activity and therefore acts as a sink for the activity flow.
                Corresponds to an <b>activity final node</b> in UML activity diagrams.
