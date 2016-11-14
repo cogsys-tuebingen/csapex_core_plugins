@@ -61,6 +61,8 @@ private:
     template <class PointT>
     void estimateNormals(typename pcl::PointCloud<PointT>::ConstPtr cloud,
                          pcl::PointCloud<pcl::Normal>::Ptr normals);
+
+    bool need_normals();
 };
 }
 #endif // SAC_FIT_H
