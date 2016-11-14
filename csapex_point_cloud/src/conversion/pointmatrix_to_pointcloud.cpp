@@ -92,7 +92,6 @@ inline void convert(const CvMatMessage::ConstPtr &in,
     } else {
         throw std::runtime_error("Unsupported encoding!");
     }
-    std::cout << std::endl;
 }
 }
 
