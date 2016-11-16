@@ -61,14 +61,14 @@ void ExportFile::setupParameters(Parameterizable& parameters)
     addParameter(csapex::param::ParameterFactory::declareBool("vector_as_single_file", false),
                  vector_as_single_file_);
 
-    std::function<bool()> compress_cond    = [this]() {
-        return vector_as_single_file_;};
+
 
     addConditionalParameter(csapex::param::ParameterFactory::declareBool("compress",
                                                                          csapex::param::ParameterDescription("Compress File?"),
                                                                          false),
-                            compress_cond,
-                            vector_as_single_file_ );
+                            vector_as_single_file_,
+                            compress_);
+
 
 
 }
