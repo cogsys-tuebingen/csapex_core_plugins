@@ -115,7 +115,8 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
     /// configure the segmentation
     pcl::SACSegmentation<PointT> *segmenter;
-    if(from_normals_) {
+    bool normals_needed = need_normals();  // some SAC models need normals / access conditional
+    if(from_normals_ || normals_needed) {
         pcl::SACSegmentationFromNormals<PointT, pcl::Normal> *normal_segmenter;
         normal_segmenter = new pcl::SACSegmentationFromNormals<PointT, pcl::Normal>;
         normal_segmenter->setNormalDistanceWeight (normal_distance_weight_);
@@ -203,4 +204,18 @@ void SacFit::estimateNormals(typename pcl::PointCloud<PointT>::ConstPtr cloud,
     normal_estimation.setInputCloud (cloud);
     normal_estimation.setKSearch (50);
     normal_estimation.compute (*normals);
+}
+
+bool SacFit::need_normals()
+{
+    switch(model_type_){
+    case pcl::SACMODEL_NORMAL_PARALLEL_PLANE:
+        return true;
+    case pcl::SACMODEL_NORMAL_PLANE:
+        return true;
+    case pcl::SACMODEL_CONE:
+        return true;
+    default:
+        return false;
+    }
 }

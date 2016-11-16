@@ -11,8 +11,12 @@
 /// SYSTEM
 #include <functional>
 
-
 namespace csapex {
+
+enum Modes{
+    CENTERED,
+    LINEAR
+};
 
 using namespace csapex;
 using namespace connection_types;
@@ -20,7 +24,8 @@ using namespace connection_types;
 class ScaleROIs : public csapex::Node
 {
 public:
-    ScaleROIs()
+    ScaleROIs():
+        mode_(0)
     {
 
     }
@@ -34,6 +39,14 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
+
+        std::map<std::string, int> modes = {
+            {"centered", CENTERED},
+            {"linear", LINEAR}};
+
+        parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("mode", modes, 0),
+                                mode_);
+
         parameters.addParameter(csapex::param::ParameterFactory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
                                 scales_[0]);
         parameters.addParameter(csapex::param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
@@ -55,28 +68,14 @@ public:
             const cv::Rect image_bounds(0,0, in_img->value.cols, in_img->value.rows);
             for(RoiMessage &r : *out_rois) {
                 cv::Rect rect = r.value.rect();
-                int height = rect.height * scales_[1] / 100.0;
-                int width  = rect.width  * scales_[0] / 100.0;
-                int off_x  = std::floor((rect.width - width) / 2.0);
-                int off_y  = std::floor((rect.height - height) / 2.0);
-                rect.height = height;
-                rect.width = width;
-                rect.x += off_x;
-                rect.y += off_y;
+                scale(rect);
 
                 r.value.setRect(rect & image_bounds);
             }
         } else {
             for(RoiMessage &r : *out_rois) {
                 cv::Rect rect = r.value.rect();
-                int height = rect.height * scales_[1] / 100.0;
-                int width  = rect.width  * scales_[0] / 100.0;
-                int off_x  = std::floor((rect.width - width) / 2.0);
-                int off_y  = std::floor((rect.height - height) / 2.0);
-                rect.height = height;
-                rect.width = width;
-                rect.x += off_x;
-                rect.y += off_y;
+                scale(rect);
 
                 r.value.setRect(rect);
             }
@@ -86,11 +85,40 @@ public:
     }
 
 private:
+
+    void scale(cv::Rect& rect)
+    {
+        int height = rect.height * scales_[1] / 100.0;
+        int width  = rect.width  * scales_[0] / 100.0;
+
+        rect.height = height;
+        rect.width = width;
+
+        int off_x  = std::floor((rect.width - width) / 2.0);
+        int off_y  = std::floor((rect.height - height) / 2.0);
+        switch (mode_) {
+        case CENTERED:
+            rect.x += off_x;
+            rect.y += off_y;
+            break;
+        case LINEAR:
+            rect.x *= scales_[0] / 100.0;
+            rect.y *= scales_[1] / 100.0;
+            break;
+        default:
+            break;
+        }
+    }
+
+private:
     Input  *in_img_;
     Input  *in_rois_;
     Output *out_rois_;
 
+    int mode_;
+
     cv::Vec2d scales_;
+
 };
 }
 

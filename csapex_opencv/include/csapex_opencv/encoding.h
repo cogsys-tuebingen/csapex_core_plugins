@@ -7,6 +7,7 @@
 /// SYSTEM
 #include <string>
 #include <vector>
+#include <limits>
 
 namespace csapex {
 
@@ -137,6 +138,11 @@ static const Channel L("L",  0.f, 1.f, g_channels);
 static const Channel C("C",  0.f, 1.f, g_channels);
 static const Channel H("H",  0.f, 1.f, g_channels);
 
+static const Channel X("x", std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max(), g_channels);
+static const Channel Y("y", std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max(), g_channels);
+static const Channel Z("z", std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max(), g_channels);
+static const Channel I("I", 0.f, std::numeric_limits<float>::max(), g_channels);
+
 }
 
 static const Encoding mono = { channel::gray };
@@ -149,6 +155,9 @@ static const Encoding yuv = { channel::y, channel::u, channel::v };
 static const Encoding depth = { channel::depth };
 static const Encoding lab = {channel::l, channel::a, channel::b };
 static const Encoding LCh = {channel::L, channel::C, channel::H };
+static const Encoding pointXYZ = {channel::X, channel::Y, channel::Z};
+static const Encoding pointXYZI = {channel::X, channel::Y, channel::Z, channel::I};
+static const Encoding pointXYZRGB = {channel::X, channel::Y, channel::Z, channel::red, channel::green, channel::blue};
 }
 
 }

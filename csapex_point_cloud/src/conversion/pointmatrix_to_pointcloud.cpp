@@ -19,28 +19,79 @@ using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace implementation {
-inline void convert(const cv::Mat &matrix, pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud)
+inline void convert(const CvMatMessage::ConstPtr &in,
+                    PointCloudMessage::Ptr &out)
 {
-    if(matrix.type() != CV_32FC3) {
-        throw std::runtime_error("3Channel float matrix required!");
-    }
+    const cv::Mat &matrix = in->value;
 
-    cloud.reset(new pcl::PointCloud<pcl::PointXYZ>);
+    if(in->getEncoding().matches(enc::pointXYZ)) {
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
-    for(int i = 0 ; i < matrix.rows ; ++i) {
-        for(int j = 0 ; j < matrix.cols ; ++j) {
-            pcl::PointXYZ pt;
-            pt.x = matrix.at<float>(i, (j * 3 + 0));
-            pt.y = matrix.at<float>(i, (j * 3 + 1));
-            pt.z = matrix.at<float>(i, (j * 3 + 2));
-            cloud->push_back(pt);
+        for(int i = 0 ; i < matrix.rows ; ++i) {
+            for(int j = 0 ; j < matrix.cols ; ++j) {
+                pcl::PointXYZ pt;
+                pt.x = matrix.at<float>(i, (j * 3 + 0));
+                pt.y = matrix.at<float>(i, (j * 3 + 1));
+                pt.z = matrix.at<float>(i, (j * 3 + 2));
+                cloud->push_back(pt);
+            }
         }
+
+        cloud->height = matrix.rows;
+        cloud->width  = matrix.cols;
+        cloud->is_dense = true;
+        cloud->header.frame_id = in->frame_id;
+        cloud->header.stamp = in->stamp_micro_seconds;
+
+        out->value = cloud;
+    } else if(in->getEncoding().matches(enc::pointXYZI)) {
+        pcl::PointCloud<pcl::PointXYZI>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZI>);
+
+        for(int i = 0 ; i < matrix.rows ; ++i) {
+            for(int j = 0 ; j < matrix.cols ; ++j) {
+                pcl::PointXYZI pt;
+                pt.x = matrix.at<float>(i, (j * 4 + 0));
+                pt.y = matrix.at<float>(i, (j * 4 + 1));
+                pt.z = matrix.at<float>(i, (j * 4 + 2));
+                pt.intensity = matrix.at<float>(i, (j * 4 + 3));
+                cloud->push_back(pt);
+            }
+        }
+
+        cloud->height = matrix.rows;
+        cloud->width  = matrix.cols;
+        cloud->is_dense = true;
+        cloud->header.frame_id = in->frame_id;
+        cloud->header.stamp = in->stamp_micro_seconds;
+
+        out->value = cloud;
+    } else if(in->getEncoding().matches(enc::pointXYZRGB)) {
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+
+
+        for(int i = 0 ; i < matrix.rows ; ++i) {
+            for(int j = 0 ; j < matrix.cols ; ++j) {
+                pcl::PointXYZRGB pt;
+                pt.x = matrix.at<float>(i, (j * 6 + 0));
+                pt.y = matrix.at<float>(i, (j * 6 + 1));
+                pt.z = matrix.at<float>(i, (j * 6 + 2));
+                pt.r = matrix.at<float>(i, (j * 6 + 3));
+                pt.g = matrix.at<float>(i, (j * 6 + 4));
+                pt.b = matrix.at<float>(i, (j * 6 + 5));
+                cloud->push_back(pt);
+            }
+        }
+
+        cloud->height = matrix.rows;
+        cloud->width  = matrix.cols;
+        cloud->is_dense = true;
+        cloud->header.frame_id = in->frame_id;
+        cloud->header.stamp = in->stamp_micro_seconds;
+
+        out->value = cloud;
+    } else {
+        throw std::runtime_error("Unsupported encoding!");
     }
-
-    cloud->height = matrix.rows;
-    cloud->width  = matrix.cols;
-    cloud->is_dense = false;
-
 }
 }
 
@@ -51,11 +102,8 @@ PointmatrixToPointcloud::PointmatrixToPointcloud()
 void PointmatrixToPointcloud::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-    PointCloudMessage::Ptr out(new PointCloudMessage(readParameter<std::string>("frame"), in->stamp_micro_seconds));
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
-
-    implementation::convert(in->value, cloud);
-    out->value = cloud;
+    PointCloudMessage::Ptr out(new PointCloudMessage(in->frame_id, in->stamp_micro_seconds));
+    implementation::convert(in, out);
     msg::publish(output_, out);
 }
 
@@ -67,5 +115,4 @@ void PointmatrixToPointcloud::setup(NodeModifier& node_modifier)
 
 void PointmatrixToPointcloud::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("frame", "/camera"));
 }
