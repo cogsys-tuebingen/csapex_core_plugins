@@ -27,8 +27,8 @@ TransformMessage::TransformMessage()
 
 TokenData::Ptr TransformMessage::clone() const
 {
-    Ptr new_msg(new TransformMessage(frame_id, child_frame));
-    new_msg->value = value;
+    Ptr new_msg = cloneInstance();
+    new_msg->child_frame = child_frame;
     return new_msg;
 }
 

@@ -5,6 +5,9 @@
 </library>
 
 <library path="libcsapex_point_cloud_plugin_node">
+<class type="csapex::ProjectZ" base_class_type="csapex::Node">
+  <description>Projects all points to the x-y plane, settings z=0</description>
+</class>
 
 <class type="csapex::RoiGenerator" base_class_type="csapex::Node">
   <description>Converts point cloud clusters to regions of interest</description>

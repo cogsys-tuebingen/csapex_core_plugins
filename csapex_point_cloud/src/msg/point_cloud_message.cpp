@@ -92,6 +92,18 @@ struct Import  {
     std::string type;
 };
 
+template <typename PointT>
+void write(std::stringstream& ss, const PointT& pt)
+{
+    ss << pt.x << "," << pt.y << ", " << pt.z << ", ";
+}
+
+
+template <>
+void write<pcl::PointXYZI>(std::stringstream& ss, const pcl::PointXYZI& pt)
+{
+    ss << pt.x << "," << pt.y << ", " << pt.z << ", " << pt.intensity << ", ";
+}
 struct Export : public boost::static_visitor<void> {
     Export(YAML::Node& node)
         : node(node)
@@ -114,7 +126,12 @@ struct Export : public boost::static_visitor<void> {
         node["is_bigendian"] = pcl_pc.is_bigendian;
         node["point_step"] = pcl_pc.point_step;
         node["row_step"] = pcl_pc.row_step;
-        node["data"] = YAML::Binary(pcl_pc.data.data(), pcl_pc.data.size());
+        //node["data"] = YAML::Binary(pcl_pc.data.data(), pcl_pc.data.size());
+        std::stringstream ss;
+        for(const PointT& point : cloud_ptr->points) {
+            write(ss, point);
+            node["data"] = ss.str();
+        }
         node["is_dense"] = pcl_pc.is_dense;
     }
 
