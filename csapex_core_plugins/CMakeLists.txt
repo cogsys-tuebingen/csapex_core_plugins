@@ -14,6 +14,7 @@ csapex_package(
 )
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Boost REQUIRED COMPONENTS iostreams)
 
 set(CMAKE_AUTOMOC ON)
 qt5_add_resources(QT_RESOURCES
@@ -31,6 +32,7 @@ include_directories(include
     ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
     ${csapex_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIR}
 )
 
 add_library(csapex_core_lib SHARED
@@ -112,6 +114,7 @@ add_library(csapex_core_plugins_node SHARED
 target_link_libraries(csapex_core_plugins_node csapex_core_lib
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
+    ${Boost_LIBRARIES}
     Qt5::Core Qt5::Gui Qt5::Widgets
 )
 
