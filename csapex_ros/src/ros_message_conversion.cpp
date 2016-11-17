@@ -55,8 +55,6 @@ void RosMessageConversion::doRegisterConversion(const std::string& apex_type, co
         ros_types_.push_back(ros_type);
         converters_[ros_type].push_back(c);
         converters_inv_[apex_type].push_back(c);
-    } else {
-        std::cerr << "tried to register a converter from " << c->apexType() << " to " << c->rosType() << " more than once" << std::endl;
     }
 }
 
