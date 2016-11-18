@@ -16,6 +16,9 @@
 /// SYSTEM
 #include <fstream>
 #include <QDir>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ExportFile, csapex::Node)
 
@@ -47,16 +50,27 @@ void ExportFile::setupParameters(Parameterizable& parameters)
     });
 
     addParameter(csapex::param::ParameterFactory::declareBool("yaml",
-                                                      csapex::param::ParameterDescription("Export message in cs::APEX-YAML format?"),
-                                                      true));
+                                                              csapex::param::ParameterDescription("Export message in cs::APEX-YAML format?"),
+                                                              true));
     addParameter(csapex::param::ParameterFactory::declareText("filename",
-                                                      csapex::param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
-                                                      "msg"), std::bind(&ExportFile::setExportPath, this));
+                                                              csapex::param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
+                                                              "msg"), std::bind(&ExportFile::setExportPath, this));
     addParameter(csapex::param::ParameterFactory::declareDirectoryOutputPath("path",
-                                                                     csapex::param::ParameterDescription("Directory to write messages to"),
-                                                                     "", ""), std::bind(&ExportFile::setExportPath, this));
+                                                                             csapex::param::ParameterDescription("Directory to write messages to"),
+                                                                             "", ""), std::bind(&ExportFile::setExportPath, this));
     addParameter(csapex::param::ParameterFactory::declareBool("vector_as_single_file", false),
                  vector_as_single_file_);
+
+
+
+    addConditionalParameter(csapex::param::ParameterFactory::declareBool("compress",
+                                                                         csapex::param::ParameterDescription("Compress File?"),
+                                                                         false),
+                            vector_as_single_file_,
+                            compress_);
+
+
+
 }
 
 void ExportFile::setup(NodeModifier& node_modifier)
@@ -105,16 +119,33 @@ void ExportFile::exportVector(const connection_types::GenericVectorMessage::Cons
     if(vector_as_single_file_) {
         while(true) {
             std::stringstream file_s;
-            file_s << path_ << "/" << base_ << "_" << suffix_ << Settings::message_extension;
+            if(compress_){
+                file_s << path_ << "/" << base_ << "_" << suffix_ << Settings::message_extension_compressed;
+            }
+            else{
+                file_s << path_ << "/" << base_ << "_" << suffix_ << Settings::message_extension;
+            }
             std::string file = file_s.str();
 
             if(!QFile(QString::fromStdString(file)).exists()) {
-                YAML::Emitter em;
-                MessageFactory::writeMessage(em, *vector);
-                std::ofstream out(file);
-                out << em.c_str();
-                out.close();
-                break;
+                if(compress_){
+                    std::ofstream out (file, std::ios_base::out | std::ios_base::binary);
+                    boost::iostreams::filtering_ostream zipped_out;
+                    zipped_out.push(boost::iostreams::gzip_compressor());
+                    zipped_out.push(out);
+                    YAML::Emitter em;
+                    MessageFactory::writeMessage(em, *vector);
+                    zipped_out << em.c_str();
+                    break;
+                }
+                else{
+                    YAML::Emitter em;
+                    MessageFactory::writeMessage(em, *vector);
+                    std::ofstream out(file);
+                    out << em.c_str();
+                    out.close();
+                    break;
+                }
             } else {
                 ++suffix_;
             }
@@ -140,7 +171,7 @@ void ExportFile::exportSingle(const TokenData::ConstPtr& msg)
     if(readParameter<bool>("yaml")) {
         while(true) {
             std::stringstream file_s;
-            file_s << path_ << "/" << base_ << "_" << suffix_ << Settings::message_extension;
+                file_s << path_ << "/" << base_ << "_" << suffix_ << Settings::message_extension;
             std::string file = file_s.str();
 
             if(!QFile(QString::fromStdString(file)).exists()) {
