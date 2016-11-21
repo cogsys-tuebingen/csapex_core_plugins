@@ -214,6 +214,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
         connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
         msg->value = t;
+        msg->stamp_micro_seconds = t.stamp_.toNSec() / 1000;
         msg->frame_id = target;
         msg->child_frame = source;
         msg::publish(output_, msg);

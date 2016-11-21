@@ -74,6 +74,7 @@ target_link_libraries(csapex_point_cloud_plugin_core
 )
 
 add_library(csapex_point_cloud_plugin_node
+    src/project_z.cpp
     src/merge_clouds.cpp
     src/point_count.cpp
     src/cloud_renderer.cpp
