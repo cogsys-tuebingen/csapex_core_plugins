@@ -32,7 +32,7 @@ public:
     void restart();
 
 public:
-    csapex::slim_signal::Signal<void(int)> step;
+    slim_signal::Signal<void(int)> step;
 
 private:
     void start();

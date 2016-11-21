@@ -25,8 +25,8 @@ private:
     void showPainter();
 
 public:
-    csapex::slim_signal::Signal<void(cv::Mat&)> input;
-    csapex::slim_signal::Signal<void()> show_painter;
+    slim_signal::Signal<void(cv::Mat&)> input;
+    slim_signal::Signal<void()> show_painter;
 
 private:
     cv::Mat mask_;

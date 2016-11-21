@@ -32,7 +32,7 @@ protected:
     Input* input_;
 
 public:
-    csapex::slim_signal::Signal<void(QImage)> display_request;
+    slim_signal::Signal<void(QImage)> display_request;
     MessageRendererPtr renderer_;
 
     bool adapted_;

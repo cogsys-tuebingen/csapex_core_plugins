@@ -26,8 +26,8 @@ public:
     void exportCsv(const std::string& file);
 
 public:
-    csapex::slim_signal::Signal<void()> display_request;
-    csapex::slim_signal::Signal<void()> export_request;
+    slim_signal::Signal<void()> display_request;
+    slim_signal::Signal<void()> export_request;
 
 
 private:

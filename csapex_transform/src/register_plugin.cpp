@@ -60,10 +60,10 @@ void RegisterTransformPlugin::init(CsApexCore& core)
     if(ROSHandler::instance().isConnected()) {
         init();
     } else {
-        connections_.emplace_back(ROSHandler::instance().connected.connect(init));
+        observe(ROSHandler::instance().connected, init);
     }
 
-    connections_.emplace_back(ROSHandler::instance().shutdown.connect(std::bind(&TFListener::stop)));
+    observe(ROSHandler::instance().shutdown, std::bind(&TFListener::stop));
 
     RosMessageConversion::registerConversion<tf2_msgs::TFMessage, connection_types::TransformMessage, ConvertTf>();
 }

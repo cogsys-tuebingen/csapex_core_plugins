@@ -38,8 +38,8 @@ protected:
     connection_types::LabeledScanMessage::Ptr result_;
 
 public:
-    csapex::slim_signal::Signal<void(const lib_laser_processing::Scan* )> display_request;
-    csapex::slim_signal::Signal<void()> submit_request;
+    slim_signal::Signal<void(const lib_laser_processing::Scan* )> display_request;
+    slim_signal::Signal<void()> submit_request;
 };
 
 }

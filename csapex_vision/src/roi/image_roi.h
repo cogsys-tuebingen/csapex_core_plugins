@@ -42,9 +42,9 @@ protected:
     connection_types::RoiMessage::Ptr result_;
 
 public:
-    csapex::slim_signal::Signal<void(QImage)> display_request;
-    csapex::slim_signal::Signal<void()>                       submit_request;
-    csapex::slim_signal::Signal<void()>                       drop_request;
+    slim_signal::Signal<void(QImage)> display_request;
+    slim_signal::Signal<void()>                       submit_request;
+    slim_signal::Signal<void()>                       drop_request;
 };
 
 }

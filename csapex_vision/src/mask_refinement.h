@@ -30,10 +30,10 @@ private:
     void drop();
 
 public:
-    csapex::slim_signal::Signal<void(QImage&, QImage&)> input;
-    csapex::slim_signal::Signal<void()> next_image;
+    slim_signal::Signal<void(QImage&, QImage&)> input;
+    slim_signal::Signal<void()> next_image;
 
-    csapex::slim_signal::Signal<void()> update_brush;
+    slim_signal::Signal<void()> update_brush;
 
 private:
     Input* in_mask_;

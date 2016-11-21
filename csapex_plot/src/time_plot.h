@@ -51,8 +51,8 @@ protected:
     void renderAndSend();
 
 public:
-    csapex::slim_signal::Signal<void()> update;
-    csapex::slim_signal::Signal<void()> display_request;
+    slim_signal::Signal<void()> update;
+    slim_signal::Signal<void()> display_request;
 
 private:
     bool initialize_;

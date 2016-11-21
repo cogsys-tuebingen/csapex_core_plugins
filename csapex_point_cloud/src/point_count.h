@@ -26,7 +26,7 @@ private:
     bool filter_;
 
 public:
-    csapex::slim_signal::Signal<void(int)> display_request;
+    slim_signal::Signal<void(int)> display_request;
 };
 
 }

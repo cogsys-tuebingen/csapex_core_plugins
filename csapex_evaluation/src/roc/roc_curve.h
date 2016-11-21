@@ -43,7 +43,7 @@ public:
     std::vector<Entry> getEntries() const;
 
 public:
-    csapex::slim_signal::Signal<void()> display_request;
+    slim_signal::Signal<void()> display_request;
 
 private:
     Input* in_confusion_;

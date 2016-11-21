@@ -44,12 +44,12 @@ protected:
     std::vector<csapex::connection_types::RoiMessage>      rois_;
 
 public:
-    csapex::slim_signal::Signal<void(QImage)> display_request;
-    csapex::slim_signal::Signal<void()>                       submit_request;
-    csapex::slim_signal::Signal<void()>                       drop_request;
-    csapex::slim_signal::Signal<void()>                       clear_request;
-    csapex::slim_signal::Signal<void(int)>                    set_class;
-    csapex::slim_signal::Signal<void(int,int,int)>            set_color;
+    slim_signal::Signal<void(QImage)> display_request;
+    slim_signal::Signal<void()>                       submit_request;
+    slim_signal::Signal<void()>                       drop_request;
+    slim_signal::Signal<void()>                       clear_request;
+    slim_signal::Signal<void(int)>                    set_class;
+    slim_signal::Signal<void(int,int,int)>            set_color;
 };
 
 }

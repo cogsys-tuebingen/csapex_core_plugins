@@ -32,9 +32,9 @@ private:
     Output* output_;
 
 public:
-    csapex::slim_signal::Signal<void()> display_request;
-    csapex::slim_signal::Signal<void()> refresh_request;
-    csapex::slim_signal::Signal<void()> done_request;
+    slim_signal::Signal<void()> display_request;
+    slim_signal::Signal<void()> refresh_request;
+    slim_signal::Signal<void()> done_request;
 
 private:
     mutable std::mutex message_mutex_;

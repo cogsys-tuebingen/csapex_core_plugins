@@ -43,8 +43,8 @@ public:
 public:
 
 
-    csapex::slim_signal::Signal<void()> update;
-    csapex::slim_signal::Signal<void()> display_request;
+    slim_signal::Signal<void()> update;
+    slim_signal::Signal<void()> display_request;
 
 protected:
     void reset();
