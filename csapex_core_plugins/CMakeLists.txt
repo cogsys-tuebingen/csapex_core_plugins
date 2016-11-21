@@ -72,6 +72,7 @@ target_link_libraries(csapex_core_plugins_core csapex_core_lib
 
 
 add_library(csapex_core_plugins_node SHARED
+src/tools/latch.cpp
 
     src/io/export_cout.cpp
     src/io/export_file.cpp
