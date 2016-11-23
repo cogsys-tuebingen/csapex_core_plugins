@@ -22,7 +22,12 @@ private:
     Output     *out_;
     Slot       *reload_;
 
+
+#if CV_MAJOR_VERSION == 2
     ExtendedSVM svm_;
+#elif CV_MAJOR_VERSION == 3
+    cv::Ptr<cv::ml::SVM> svm_;
+#endif
     std::string path_;
     bool        loaded_;
 

@@ -45,40 +45,48 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
                              0, 100, 1, 1),
                             std::bind(&MLPCvTrainer::updateLayers, this));
 
+#if CV_MAJOR_VERSION == 2
+    typedef cv::ANN_MLP_TrainParams Params;
+    typedef cv::NeuralNet_MLP Ann;
+#elif CV_MAJOR_VERSION == 3
+    typedef cv::ml::ANN_MLP Params;
+    typedef cv::ml::ANN_MLP Ann;
+#endif
+
     std::map<std::string, int> training_method = {
-        {"backprop", cv::ANN_MLP_TrainParams::BACKPROP},
-        {"rprop", cv::ANN_MLP_TrainParams::RPROP},
+        {"backprop", Params::BACKPROP},
+        {"rprop", Params::RPROP},
     };
 
     csapex::param::Parameter::Ptr training_parameter = csapex::param::ParameterFactory::declareParameterSet<int>
             ("trainig method",
              training_method,
-             cv::ANN_MLP_TrainParams::BACKPROP);
+             Params::BACKPROP);
     parameters.addParameter(training_parameter);
 
     parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("training param 1", 0, 10, 0.1, 0.01));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("training param 2", 0, 10, 0.1, 0.01));
 
     std::map<std::string, int> activation_functions = {
-        {"identity", cv::NeuralNet_MLP::IDENTITY},
-        {"sigmoid", cv::NeuralNet_MLP::SIGMOID_SYM},
-        {"gaussian", cv::NeuralNet_MLP::GAUSSIAN},
+        {"identity", Ann::IDENTITY},
+        {"sigmoid", Ann::SIGMOID_SYM},
+        {"gaussian", Ann::GAUSSIAN},
     };
 
     csapex::param::Parameter::Ptr activation_parameter = csapex::param::ParameterFactory::declareParameterSet<int>
             ("activation function",
              activation_functions,
-             cv::NeuralNet_MLP::SIGMOID_SYM);
+             Ann::SIGMOID_SYM);
     parameters.addParameter(activation_parameter);
 
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
                                        ("activation alpha",
                                         -10, 10, 0, 0.01),
-                                       [=](){ return activation_parameter->as<int>() != cv::NeuralNet_MLP::IDENTITY; });
+                                       [=](){ return activation_parameter->as<int>() != Ann::IDENTITY; });
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
                                        ("activation beta",
                                         -10, 10, 0, 0.01),
-                                       [=](){ return activation_parameter->as<int>() != cv::NeuralNet_MLP::IDENTITY; });
+                                       [=](){ return activation_parameter->as<int>() != Ann::IDENTITY; });
 
 
     std::map<std::string, int> termcrit_type = {
@@ -167,6 +175,7 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
         }
     }
 
+#if CV_MAJOR_VERSION == 2
     cv::ANN_MLP_TrainParams params(
                 cv::TermCriteria(readParameter<int>("termcrit_type"),
                                  readParameter<int>("max iterations"),
@@ -201,6 +210,43 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
         return false;
     }
     return true;
+
+#elif CV_MAJOR_VERSION == 3
+    cv::Ptr<cv::ml::ANN_MLP> mlp = cv::ml::ANN_MLP::create();
+    cv::TermCriteria term(readParameter<int>("termcrit_type"),
+                          readParameter<int>("max iterations"),
+                          readParameter<double>("epsilon"));
+    mlp->setTermCriteria(term);
+
+    cv::Mat layers(1, 1 + layers_ + 1, CV_32SC1);
+    layers.at<int>(0, 0) = feature_length;
+    for (int l = 0; l < layers_; ++l)
+        layers.at<int>(0, 1 + l) = layer_params_[l]->as<int>();
+    layers.at<int>(0, layers.cols - 1) = classes;
+
+    mlp->setActivationFunction(readParameter<int>("activation function"),
+                               readParameter<double>("activation alpha"),
+                               readParameter<double>("activation beta"));
+
+    mlp->setLayerSizes(layers);
+
+    std::cout << "[ANN]: Started training with " << trainig_data.rows << " samples!" << std::endl;
+
+    cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(trainig_data,
+                                                                             cv::ml::ROW_SAMPLE,
+                                                                             responses,
+                                                                             cv::noArray(), cv::noArray(), cv::noArray(),
+                                                                             cv::noArray());
+
+    if(mlp->train(train_data_struct)) {
+        mlp->save(readParameter<std::string>("file"));
+        std::cout << "[MLP_ANN]: Finished training!" << std::endl;
+    } else {
+        return false;
+    }
+    return true;
+#endif
+
 
     /*
     auto print_res = [](const cv::Mat& mat)

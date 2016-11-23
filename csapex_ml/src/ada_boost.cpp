@@ -46,7 +46,12 @@ void AdaBoost::process()
 
     if(!loaded_) {
         if(path_ != "") {
+
+#if CV_MAJOR_VERSION == 2
             boost_.load(path_.c_str(), "adaboost");
+#elif CV_MAJOR_VERSION == 3
+            boost_->load<cv::ml::Boost>(path_, "adaboost");
+#endif
             loaded_ = true;
         } else {
             throw std::runtime_error("Classifier ensemble is not loaded!");
@@ -58,10 +63,20 @@ void AdaBoost::process()
     {
         cv::Mat sample(output->at(i).value);
         if (compute_labels_)
+        {
+#if CV_MAJOR_VERSION == 2
             output->at(i).classification = boost_.predict(sample);
+#elif CV_MAJOR_VERSION == 3
+            output->at(i).classification = boost_->predict(sample);
+#endif
+        }
         else
         {
+#if CV_MAJOR_VERSION == 2
             const float response = boost_.predict(sample, cv::Mat(), cv::Range::all(), false, true);
+#elif CV_MAJOR_VERSION == 3
+            const float response = boost_->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
+#endif
             output->at(i).classification = std::floor(response + 0.5f);
         }
     }

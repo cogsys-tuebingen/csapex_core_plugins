@@ -59,16 +59,25 @@ connection_types::FeaturesMessage DecisionTree::classify(const FeaturesMessage &
     connection_types::FeaturesMessage result = input;
 
     cv::Mat feature(1, input.value.size(), CV_32FC1, result.value.data());
-    CvDTreeNode* node = dtree_.predict(feature);
 
+#if CV_MAJOR_VERSION == 2
+    CvDTreeNode* node = dtree_.predict(feature);
     result.classification = node->class_idx;
+#elif CV_MAJOR_VERSION == 3
+    result.classification = dtree_->predict(feature);
+#endif
+
     return result;
 }
 
 void DecisionTree::loadTree()
 {
     std::string file = readParameter<std::string>("file");
-    dtree_.load(file.c_str());
 
+#if CV_MAJOR_VERSION == 2
+    dtree_.load(file.c_str());
     loaded_ = dtree_.get_root() != nullptr;
+#elif CV_MAJOR_VERSION == 3
+    dtree_ = cv::ml::StatModel::load<cv::ml::DTrees>( file );
+#endif
 }

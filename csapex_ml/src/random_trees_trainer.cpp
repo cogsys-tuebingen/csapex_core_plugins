@@ -157,7 +157,12 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     cv::Mat missing(collection.size(), feature_length, CV_8UC1, cv::Scalar(0));
 
     cv::Mat responses(collection.size(), 1, CV_32SC1, cv::Scalar());
+
+#if CV_MAJOR_VERSION == 2
     int tflag = CV_ROW_SAMPLE;
+#elif CV_MAJOR_VERSION == 3
+    int tflag = cv::ml::ROW_SAMPLE;
+#endif
 
     std::set<int> classifications;
     std::size_t n = collection.size();
@@ -177,6 +182,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
         classifications.insert(feature.classification);
     }
 
+#if CV_MAJOR_VERSION == 2
     CvRTParams params( readParameter<int>("max depth"),
                        readParameter<int>("min sample count"),
                        readParameter<double>("regression accuracy"),
@@ -206,6 +212,41 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     } else {
         return false;
     }
+
+#elif CV_MAJOR_VERSION == 3
+    auto rtrees = cv::ml::RTrees::create();
+    rtrees->setMaxDepth(readParameter<int>("max depth"));
+    rtrees->setMinSampleCount(readParameter<int>("min sample count"));
+    rtrees->setRegressionAccuracy(readParameter<double>("regression accuracy"));
+    rtrees->setUseSurrogates(readParameter<bool>("use surrogates"));
+    rtrees->setMaxCategories(readParameter<int>("max categories"));
+    rtrees->setCalculateVarImportance(readParameter<bool>("calc_var_importance"));
+    rtrees->setActiveVarCount(readParameter<int>("nactive_vars"));
+
+    cv::TermCriteria term(readParameter<int>("termcrit_type"), readParameter<int>("max_num_of_trees_in_the_forest"), readParameter<double>("forest_accuracy"));
+    rtrees->setTermCriteria(term);
+
+    cv::Mat priors(priors_);
+    rtrees->setPriors(priors);
+
+    cv::Mat var_type( train_data.cols + 1, 1, CV_8U, cv::ml::VAR_NUMERICAL);
+
+    cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(train_data,
+                                                                             tflag,
+                                                                             responses,
+                                                                             cv::noArray(), cv::noArray(), cv::noArray(),
+                                                                             var_type);
+
+    std::cout << "[RandomTrees]: Started training with " << train_data.rows << " samples!" << std::endl;
+    if(rtrees->train(train_data_struct)) {
+        cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+        fs.writeObj(readParameter<std::string>("file").c_str(), rtrees);
+        std::cout << "[RandomTrees]: Finished training!" << std::endl;
+    } else {
+        return false;
+    }
+#endif
+
     return true;
 }
 

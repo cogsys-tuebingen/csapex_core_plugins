@@ -32,86 +32,106 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
                                                                            param::ParameterDescription("File to write svm to."),
                                                                            "",
                                                                            "*.yaml *.tar.gz"),
-                 path_);
+                            path_);
 
     parameters.addParameter(param::ParameterFactory::declareBool("svm/save_coeffs",
-                                                      param::ParameterDescription("Save precomputed vector for HOG."),
-                                                      false),
-                 save_for_hog_);
+                                                                 param::ParameterDescription("Save precomputed vector for HOG."),
+                                                                 false),
+                            save_for_hog_);
 
 
+#if CV_MAJOR_VERSION == 2
     std::map<std::string, int> kernel_types = {
         {"LINEAR", cv::SVM::LINEAR},
         {"POLY", cv::SVM::POLY},
         {"RBF", cv::SVM::RBF},
         {"SIGMOID", cv::SVM::SIGMOID}
     };
+#elif CV_MAJOR_VERSION == 3
+    std::map<std::string, int> kernel_types = {
+        {"LINEAR", cv::ml::SVM::LINEAR},
+        {"POLY", cv::ml::SVM::POLY},
+        {"RBF", cv::ml::SVM::RBF},
+        {"SIGMOID", cv::ml::SVM::SIGMOID}//,
+        //{"CHI2", cv::ml::SVM::CHI2},
+        //{"INTER", cv::ml::SVM::INTER}
+    };
+
+#endif
+
+
+#if CV_MAJOR_VERSION == 2
+    typedef cv::SVM SVM;
+#elif CV_MAJOR_VERSION == 3
+    typedef cv::ml::SVM SVM;
+#endif
 
     parameters.addParameter(param::ParameterFactory::declareParameterSet("svm/kernel_type",
                                                                          csapex::param::ParameterDescription("Kernel type to be trained."),
                                                                          kernel_types,
-                                                                         (int) cv::SVM::RBF),
-                            svm_params_.kernel_type);
+                                                                         (int) SVM::RBF),
+                            kernel_type);
+
 
     std::map<std::string, int> svm_types = {
-        {"C_SVC", cv::SVM::C_SVC},
-        {"NU_SVC", cv::SVM::NU_SVC},
-        {"ONE_CLASS", cv::SVM::ONE_CLASS},
-        {"EPS_SVR", cv::SVM::EPS_SVR},
-        {"NU_SVR", cv::SVM::NU_SVR}
+        {"C_SVC", SVM::C_SVC},
+        {"NU_SVC", SVM::NU_SVC},
+        {"ONE_CLASS", SVM::ONE_CLASS},
+        {"EPS_SVR", SVM::EPS_SVR},
+        {"NU_SVR", SVM::NU_SVR}
     };
 
     parameters.addParameter(param::ParameterFactory::declareParameterSet("svm type",
                                                                          csapex::param::ParameterDescription("SVM type to be trained."),
                                                                          svm_types,
-                                                                         (int) cv::SVM::EPS_SVR),
-                            svm_params_.svm_type);
+                                                                         (int) SVM::EPS_SVR),
+                            svm_type);
 
 
     std::function<bool()> deg_cond    = [this]() {
-            return svm_params_.kernel_type == cv::SVM::POLY;};
+        return kernel_type == SVM::POLY;};
 
     std::function<bool()> gamma_cond  = [this]() {
-            return svm_params_.kernel_type == cv::SVM::POLY ||
-                   svm_params_.kernel_type == cv::SVM::RBF ||
-                   svm_params_.kernel_type == cv::SVM::SIGMOID;};
+        return kernel_type == SVM::POLY ||
+                kernel_type == SVM::RBF ||
+                kernel_type == SVM::SIGMOID;};
 
     std::function<bool()> coeff0_cond = [this]() {
-            return svm_params_.kernel_type == cv::SVM::POLY ||
-                   svm_params_.kernel_type == cv::SVM::SIGMOID;};
+        return kernel_type == SVM::POLY ||
+                kernel_type == SVM::SIGMOID;};
 
     std::function<bool()> c_cond = [this]() {
-            return svm_params_.svm_type == cv::SVM::C_SVC ||
-                   svm_params_.svm_type == cv::SVM::EPS_SVR ||
-                   svm_params_.svm_type == cv::SVM::NU_SVR;};
+        return svm_type == SVM::C_SVC ||
+                svm_type == SVM::EPS_SVR ||
+                svm_type == SVM::NU_SVR;};
 
     std::function<bool()> nu_cond = [this]() {
-            return svm_params_.svm_type == cv::SVM::ONE_CLASS ||
-                   svm_params_.svm_type == cv::SVM::NU_SVR ||
-                   svm_params_.svm_type == cv::SVM::EPS_SVR;};
+        return svm_type == SVM::ONE_CLASS ||
+                svm_type == SVM::NU_SVR ||
+                svm_type == SVM::EPS_SVR;};
 
     std::function<bool()> p_cond = [this]() {
-            return svm_params_.svm_type == cv::SVM::EPS_SVR;};
+        return svm_type == SVM::EPS_SVR;};
 
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, 9.0, 3.0, 1.0),
                                        deg_cond,
-                                       svm_params_.degree);
+                                       degree);
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", 0.0, 10.0, 0.0, 0.01),
                                        gamma_cond,
-                                       svm_params_.gamma);
+                                       gamma);
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -10.0, 10.0, 0.0, 0.01),
                                        coeff0_cond,
-                                       svm_params_.coef0);
+                                       coef0);
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("C", 0.0, 10.0, 0.01, 0.01),
                                        c_cond,
-                                       svm_params_.C);
+                                       C);
     parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("nu", 0.0, 1.0, 0.5, 0.01),
                                        nu_cond,
-                                       svm_params_.nu);
+                                       nu);
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("p", 0.0, 1.0, 0.1, 0.01),
                                        p_cond,
-                                       svm_params_.p);
+                                       p);
 }
 
 bool SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
@@ -123,7 +143,6 @@ bool SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
     }
 
 
-    ExtendedSVM     svm;
     cv::Mat samples(collection.size(), step, CV_32FC1, cv::Scalar::all(0));
     cv::Mat labels (collection.size(), 1, CV_32FC1, cv::Scalar::all(0));
     for(int i = 0 ; i < samples.rows ; ++i) {
@@ -133,12 +152,27 @@ bool SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
         }
     }
 
-    if (svm_params_.gamma == 0) {
-        svm_params_.gamma = 1.0 / labels.rows;
-        getParameter("gamma")->set(svm_params_.gamma);
+    if (gamma == 0) {
+        gamma = 1.0 / labels.rows;
+        getParameter("gamma")->set(gamma);
     }
 
     std::cout << "[SVM]: started training with " << samples.rows << " samples!"  << std::endl;
+
+#if CV_MAJOR_VERSION == 2
+    ExtendedSVM svm;
+
+    cv::SVMParams   svm_params_;
+    svm_params_.svm_type = svm_type;
+    svm_params_.kernel_type = kernel_type;
+    svm_params_.degree = degree;
+    svm_params_.gamma = gamma;
+    svm_params_.coef0 = coef0;
+
+    svm_params_.C = C;
+    svm_params_.nu = nu;
+    svm_params_.p = p;
+    //svm_params_.term_crit; // termination criteria
     if(svm.train(samples, labels,cv::Mat(), cv::Mat(), svm_params_)) {
         std::cout << "[SVM]: Finished training!" << std::endl;
         if(save_for_hog_) {
@@ -161,6 +195,56 @@ bool SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
     } else {
         return false;
     }
+
+#elif CV_MAJOR_VERSION == 3
+    cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
+
+    svm->setType(svm_type);
+    svm->setKernel(kernel_type);
+    svm->setDegree(degree);
+    svm->setGamma(gamma);
+    svm->setCoef0(coef0);
+    svm->setC(C);
+    svm->setNu(nu);
+    svm->setP(p);
+//    svm->setTermCriteria();
+
+    cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(samples,
+                                                                             cv::ml::ROW_SAMPLE,
+                                                                             labels);
+
+    if(svm->train(train_data_struct)) {
+        std::cout << "[SVM]: Finished training!" << std::endl;
+        if(save_for_hog_) {
+            cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+            cv::Mat supvec = svm->getSupportVectors();
+//            CvSVMDecisionFunc *df = svm.get_decision_function();
+            std::vector<float> alpha;
+            std::vector<int> idx;
+            auto rho = svm->getDecisionFunction(0, alpha, idx);
+
+            std::vector<float> coeffs(svm->getVarCount(), 0.f);
+            for(int i = 0 ; i < alpha.size(); ++i) {
+                std::vector<float> sv = supvec.row(idx.at(i));
+                for(int j = 0 ; j < svm->getVarCount() ; ++j) {
+                    coeffs[j] += alpha[i] * sv[j] * -1;
+                }
+            }
+
+            fs << "svm_coeffs" << coeffs;
+            fs << "svm_alpha" << "[";
+            for(int i = 0 ; i < alpha.size(); ++i)
+                fs << alpha.at(i);
+            fs << "]";
+            fs << "svm_rho" << rho;
+            fs.release();
+        } else {
+            svm->save(path_.c_str());
+        }
+    } else {
+        return false;
+    }
+#endif
 
     return true;
 }

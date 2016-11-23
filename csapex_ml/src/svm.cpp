@@ -73,7 +73,12 @@ void SVM::process()
 
     if(!loaded_) {
         if(path_ != "") {
+
+#if CV_MAJOR_VERSION == 2
             svm_.load(path_.c_str(), "svm");
+#elif CV_MAJOR_VERSION == 3
+            svm_->load(path_.c_str());
+#endif
             loaded_ = true;
         } else {
             throw std::runtime_error("SVM couldn't be loaded!");
@@ -110,10 +115,20 @@ void SVM::process()
     {
         cv::Mat sample(output->at(i).value);
         if (compute_label)
+        {
+#if CV_MAJOR_VERSION == 2
             output->at(i).classification = svm_.predict(sample);
+#elif CV_MAJOR_VERSION == 3
+            output->at(i).classification = svm_->predict(sample);
+#endif
+        }
         else
         {
+#if CV_MAJOR_VERSION == 2
             const float response = svm_.predict(sample, true);
+#elif CV_MAJOR_VERSION == 3
+            const float response = svm_->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
+#endif
             output->at(i).classification = comparator(response) ? 1 : 0;
         }
     }

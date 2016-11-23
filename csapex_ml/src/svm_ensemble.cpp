@@ -126,11 +126,20 @@ void SVMEnsemble::process()
 
         for(std::size_t j = 0 ; j < svms_size_ ; ++j) {
             double           thresh = thresholds_[j];
+
+#if CV_MAJOR_VERSION == 2
             ExtendedSVM::Ptr svm = svms_.at(j);
+#elif CV_MAJOR_VERSION == 3
+            SVMPtr svm = svms_.at(j);
+#endif
             if (compute_label) {
                 result_value.at<float>(j,1) = svm->predict(sample);
             } else {
+#if CV_MAJOR_VERSION == 2
                 const float response = svm->predict(sample, true);
+#else
+                const float response = svm->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
+#endif
                 result_value.at<float>(j,1) = comparator(response, thresh) ? POSITIVE : NEGATIVE;
             }
         }
@@ -162,14 +171,26 @@ void SVMEnsemble::load()
     double min_rho = std::numeric_limits<double>::max();
     for(std::size_t i = 0 ; i < labels.size() ; ++i) {
         std::string label = prefix + std::to_string(labels.at(i));
-        ExtendedSVM::Ptr svm(new ExtendedSVM);
 
+#if CV_MAJOR_VERSION == 2
+        ExtendedSVM::Ptr svm(new ExtendedSVM);
         svm->read(fs.fs, (CvFileNode*) fs[label].node);
+#elif CV_MAJOR_VERSION == 3
+        SVMPtr svm = cv::ml::SVM::create();
+        svm->read(*(cv::FileNode*) fs[label].node);
+#endif
+
         svms_.push_back(svm);
         svm_responses_.at<float>(i, 0) = labels.at(i);
 
-        if(svm->rho() < min_rho)
-            min_rho = fabs(svm->rho());
+#if CV_MAJOR_VERSION == 2
+        auto rho = svm->rho();
+#elif CV_MAJOR_VERSION == 3
+        auto rho = svm->getDecisionFunction(0, cv::noArray(), cv::noArray());
+#endif
+
+        if(rho < min_rho)
+            min_rho = fabs(rho);
     }
 
     if(!params_thresholds_.empty()) {

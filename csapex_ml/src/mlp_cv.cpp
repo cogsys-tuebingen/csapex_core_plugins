@@ -35,7 +35,11 @@ void MLPCv::setupParameters(Parameterizable &parameters)
 
 void MLPCv::loadMLP()
 {
+#if CV_MAJOR_VERSION == 2
     mlp_.load(readParameter<std::string>("file").c_str());
+#elif CV_MAJOR_VERSION == 3
+    mlp_->load(readParameter<std::string>("file"));
+#endif
     loaded_ = true;
 }
 
@@ -68,7 +72,12 @@ void MLPCv::classify(const FeaturesMessage &input,
 
     cv::Mat feature(input.value);
     cv::Mat response;
+
+#if CV_MAJOR_VERSION == 2
     mlp_.predict(feature, response);
+#elif CV_MAJOR_VERSION == 3
+    mlp_->predict(feature, response);
+#endif
 
     cv::Point max;
     cv::minMaxLoc(response, nullptr, nullptr, nullptr, &max);

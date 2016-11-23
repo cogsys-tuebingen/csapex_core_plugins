@@ -390,7 +390,7 @@ bool HOGDescriptor::load(const std::string &filename, const std::string &objname
 void HOGDescriptor::save(const std::string &filename, const std::string &objName) const
 {
     cv::FileStorage fs(filename, cv::FileStorage::WRITE);
-    write(fs, !objName.empty() ? objName : cv::FileStorage::getDefaultObjectName(filename));
+    write(fs, !objName.empty() ? objName : std::string(cv::FileStorage::getDefaultObjectName(filename)));
 }
 
 void HOGDescriptor::copyTo(HOGDescriptor& c) const

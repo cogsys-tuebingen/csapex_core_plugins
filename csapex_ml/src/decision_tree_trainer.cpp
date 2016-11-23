@@ -136,7 +136,12 @@ bool DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
     cv::Mat missing(collection.size(), feature_length, CV_8UC1, cv::Scalar(0));
 
     cv::Mat responses(collection.size(), 1, CV_32SC1);
+
+#if CV_MAJOR_VERSION == 2
     int tflag = CV_ROW_SAMPLE;
+#elif CV_MAJOR_VERSION == 3
+    int tflag = cv::ml::ROW_SAMPLE;
+#endif
 
     std::size_t n = collection.size();
     for(std::size_t i = 0; i < n; ++i) {
@@ -154,6 +159,8 @@ bool DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
         responses.at<int>(i,0) = feature.classification;
     }
 
+
+#if CV_MAJOR_VERSION == 2
     CvDTreeParams params( readParameter<int>("max depth"),
                           readParameter<int>("min sample count"),
                           readParameter<double>("regression accuracy"),
@@ -174,6 +181,37 @@ bool DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
     } else {
         return false;
     }
+
+#elif CV_MAJOR_VERSION == 3
+    auto dtree = cv::ml::DTrees::create();
+    dtree->setMaxDepth(readParameter<int>("max depth"));
+    dtree->setMinSampleCount(readParameter<int>("min sample count"));
+    dtree->setRegressionAccuracy(readParameter<double>("regression accuracy"));
+    dtree->setUseSurrogates(readParameter<bool>("use surrogates"));
+    dtree->setMaxCategories(readParameter<int>("max categories"));
+    dtree->setCVFolds(readParameter<int>("cv folds"));
+    dtree->setUse1SERule(readParameter<bool>("use 1se rule"));
+    dtree->setTruncatePrunedTree(readParameter<bool>("truncate pruned tree"));
+
+    cv::Mat priors(priors_);
+    dtree->setPriors(priors);
+
+    cv::Mat var_type( train_data.cols + 1, 1, CV_8U, cv::ml::VAR_NUMERICAL);
+
+    cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(train_data,
+                                                                             tflag,
+                                                                             responses,
+                                                                             cv::noArray(), cv::noArray(), cv::noArray(),
+                                                                             var_type);
+
+    std::cout << "[DecisionTree]: Started training with " << train_data.rows << " samples!" << std::endl;
+    if(dtree->train(train_data_struct)) {
+        dtree->save(readParameter<std::string>("file").c_str());
+        std::cout << "[DecisionTree]: Finished training!" << std::endl;
+    } else {
+        return false;
+    }
+#endif
     //    if(result) {
     //    } else {
     //        throw std::runtime_error("training failed for an unknown reason");

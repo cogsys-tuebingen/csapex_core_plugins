@@ -14,6 +14,12 @@
 namespace csapex {
 
 
+#if CV_MAJOR_VERSION == 2
+    typedef cv::RandomTrees RandomTree;
+#elif CV_MAJOR_VERSION == 3
+    typedef cv::Ptr<cv::ml::RTrees> RandomTree;
+#endif
+
 class CSAPEX_EXPORT_PLUGIN RandomTrees : public csapex::Node
 {
 public:
@@ -33,7 +39,7 @@ private:
 
     Slot*   reload_;
 
-    cv::RandomTrees            random_trees_;
+    RandomTree                 random_trees_;
     std::string                path_;
     bool                       loaded_;
     bool                       compute_class_weights_;

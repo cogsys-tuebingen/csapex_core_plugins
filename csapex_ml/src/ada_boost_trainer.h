@@ -20,7 +20,15 @@ public:
 
 private:
     std::string     path_;
-    cv::BoostParams boost_params_;
+
+    int boost_type;
+    int weak_count;
+    int split_criteria;
+
+    int max_depth;
+    bool use_surrogates;
+
+
     double          weight_trim_rate_;
 
     bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;

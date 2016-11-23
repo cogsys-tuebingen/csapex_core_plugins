@@ -22,7 +22,18 @@ public:
 private:
     std::string     path_;
     bool            save_for_hog_;
-    cv::SVMParams   svm_params_;
+
+    int         svm_type;
+    int         kernel_type;
+    double      degree; // for poly
+    double      gamma;  // for poly/rbf/sigmoid
+    double      coef0;  // for poly/sigmoid
+
+    double      C;  // for CV_SVM_C_SVC, CV_SVM_EPS_SVR and CV_SVM_NU_SVR
+    double      nu; // for CV_SVM_NU_SVC, CV_SVM_ONE_CLASS, and CV_SVM_NU_SVR
+    double      p; // for CV_SVM_EPS_SVR
+//    CvMat*      class_weights; // for CV_SVM_C_SVC
+    CvTermCriteria term_crit; // termination criteria
 
     bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
 

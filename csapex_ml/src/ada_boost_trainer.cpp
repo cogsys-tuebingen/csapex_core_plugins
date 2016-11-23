@@ -26,36 +26,45 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
                                                                            "",
                                                                            "*.yaml, *.tar.gz"),
                             path_);
+
+#if CV_MAJOR_VERSION == 2
+    typedef cv::Boost Boost;
+#elif CV_MAJOR_VERSION == 3
+    typedef cv::ml::Boost Boost;
+#endif
+
+#if CV_MAJOR_VERSION == 2
     std::map<std::string, int> split_criteria = {
-        {"DEFAULT", cv::Boost::DEFAULT},
-        {"GINI", cv::Boost::GINI},
-        {"MISCLASS", cv::Boost::MISCLASS},
-        {"SQERR", cv::Boost::SQERR}
+        {"DEFAULT", Boost::DEFAULT},
+        {"GINI", Boost::GINI},
+        {"MISCLASS", Boost::MISCLASS},
+        {"SQERR", Boost::SQERR}
     };
 
     parameters.addParameter(param::ParameterFactory::declareParameterSet("boost/split_criteria",
                                                                          split_criteria,
-                                                                         (int) cv::Boost::DEFAULT),
+                                                                         (int) Boost::DEFAULT),
                             boost_params_.split_criteria);
+#endif
 
     std::map<std::string, int> boost_types = {
-        {"DISCRETE", cv::Boost::DISCRETE},
-        {"REAL", cv::Boost::REAL},
-        {"LOGIT", cv::Boost::LOGIT},
-        {"GENTLE", cv::Boost::GENTLE}
+        {"DISCRETE", Boost::DISCRETE},
+        {"REAL", Boost::REAL},
+        {"LOGIT", Boost::LOGIT},
+        {"GENTLE", Boost::GENTLE}
     };
 
     parameters.addParameter(param::ParameterFactory::declareParameterSet("boost/type",
                                                                          boost_types,
-                                                                         (int) cv::Boost::DISCRETE),
-                            boost_params_.boost_type);
+                                                                         (int) Boost::DISCRETE),
+                            boost_type);
 
     parameters.addParameter(param::ParameterFactory::declareRange("boost/classifier_count",
                                                                   1,
                                                                   4096,
                                                                   100,
                                                                   1),
-                            boost_params_.weak_count);
+                            weak_count);
 
     parameters.addParameter(param::ParameterFactory::declareRange("boost/trim_rate",
                                                                   0.0,
@@ -69,11 +78,11 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
                                                                   64,
                                                                   8,
                                                                   1),
-                            boost_params_.max_depth);
+                            max_depth);
 
     parameters.addParameter(param::ParameterFactory::declareBool("boost/use_surrogates",
                                                                  false),
-                            boost_params_.use_surrogates);
+                            use_surrogates);
 }
 
 bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection)
@@ -87,8 +96,7 @@ bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
             throw std::runtime_error("Only class labels supported are '-1' and '1'!");
     }
 
-    boost_params_.weight_trim_rate = weight_trim_rate_;
-    cv::Boost boost;
+
     cv::Mat samples(collection.size(), step, CV_32FC1, cv::Scalar());
     cv::Mat labels(collection.size(), 1, CV_32SC1, cv::Scalar());
     cv::Mat missing(collection.size(), step, CV_8UC1, cv::Scalar());
@@ -107,6 +115,18 @@ bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
         }
     }
 
+#if CV_MAJOR_VERSION == 2
+    cv::Boost boost;
+    cv::BoostParams boost_params_;
+
+    boost_params_.boost_type = boost_type;
+    boost_params_.weak_count = weak_count;
+    boost_params_.split_criteria = split_criteria;
+    boost_params_.weight_trim_rate = weight_trim_rate_;
+
+    boost_params_.max_depth = max_depth;
+    boost_params_.use_surrogates = use_surrogates;
+
     std::cout << "[AdaBoost]: Started training with " << samples.rows << " samples!" << std::endl;
     if(boost.train(samples, CV_ROW_SAMPLE, labels, cv::Mat(), cv::Mat(), cv::Mat(), cv::Mat(), boost_params_)) {
         std::cout << "[AdaBoost]: Finished training" << std::endl;
@@ -114,5 +134,30 @@ bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
     } else {
         return false;
     }
+
+#elif CV_MAJOR_VERSION == 3
+    cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
+    boost->setBoostType(boost_type);
+    boost->setWeakCount(weak_count);
+    boost->setWeightTrimRate(weight_trim_rate_);
+
+    boost->setUseSurrogates(use_surrogates);
+    boost->setMaxDepth(max_depth);
+
+    std::cout << "[AdaBoost]: Started training with " << samples.rows << " samples!" << std::endl;
+
+    cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(samples,
+                                                                             cv::ml::ROW_SAMPLE,
+                                                                             labels,
+                                                                             cv::noArray(), cv::noArray(), cv::noArray(),
+                                                                             cv::noArray());
+    if(boost->train(train_data_struct)) {
+        std::cout << "[AdaBoost]: Finished training" << std::endl;
+        boost->save(path_);
+    } else {
+        return false;
+    }
+#endif
+
     return true;
 }

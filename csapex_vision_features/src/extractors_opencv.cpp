@@ -60,7 +60,11 @@ struct Orb : public ExtractorManager::ExtractorInitializer {
 
         e->keypoint = "orb";
         e->has_orientation = true;
+#if CV_MAJOR_VERSION == 2
         e->detector = new cv::ORB((200-et)*10, scale, levels, edge, first_level, WTA_K, type, patch_size);
+#elif CV_MAJOR_VERSION == 3
+        e->detector = cv::ORB::create((200-et)*10, scale, levels, edge, first_level, WTA_K, type, patch_size);
+#endif
 
         if(complete) {
             e->is_binary = true;
@@ -72,7 +76,11 @@ struct Orb : public ExtractorManager::ExtractorInitializer {
     static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param) {
         e->is_binary = true;
         e->descriptor = "orb";
+#if CV_MAJOR_VERSION == 2
         e->descriptor_extractor = new cv::ORB();
+#elif CV_MAJOR_VERSION == 3
+        e->descriptor_extractor = cv::ORB::create();
+#endif
     }
 };
 REGISTER_FEATURE_DETECTOR(Orb, ORB);
@@ -104,8 +112,11 @@ struct Brisk : public ExtractorManager::ExtractorInitializer {
 
         e->keypoint = "brisk";
         e->has_orientation = true;
+#if CV_MAJOR_VERSION == 2
         e->detector = new cv::BRISK(et, octaves, scale);
-
+#elif CV_MAJOR_VERSION == 3
+        e->descriptor_extractor = cv::BRISK::create(et, octaves, scale);
+#endif
         if(complete) {
             e->is_binary = true;
             e->descriptor = "brisk";
@@ -119,7 +130,11 @@ struct Brisk : public ExtractorManager::ExtractorInitializer {
 
         e->is_binary = true;
         e->descriptor = "brisk";
+#if CV_MAJOR_VERSION == 2
         e->descriptor_extractor = new cv::BRISK(et, octaves);
+#elif CV_MAJOR_VERSION == 3
+        e->descriptor_extractor = cv::BRISK::create(et, octaves);
+#endif
     }
 
 };
@@ -253,7 +268,11 @@ struct Fast : public ExtractorManager::ExtractorInitializer {
         bool nonmaxSuppression = params().read<bool> (param, "fast/nonmaxSuppression");
         e->keypoint = "fast";
         e->has_orientation = false;
+#if CV_MAJOR_VERSION == 2
         e->detector = new cv::FastFeatureDetector(et, nonmaxSuppression);
+#elif CV_MAJOR_VERSION == 3
+        e->detector = cv::FastFeatureDetector::create(et, nonmaxSuppression);
+#endif
     }
 };
 REGISTER_FEATURE_DETECTOR(Fast, FAST);
@@ -299,7 +318,12 @@ struct Mser : public ExtractorManager::ExtractorInitializer {
 
         e->keypoint = "mser";
         e->has_orientation = true;
+
+#if CV_MAJOR_VERSION == 2
         e->detector = new cv::MSER(delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize);
+#elif CV_MAJOR_VERSION == 3
+        e->detector = cv::MSER::create(delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize);
+#endif
     }
 };
 REGISTER_FEATURE_DETECTOR(Mser, MSER);
@@ -307,6 +331,7 @@ BOOST_STATIC_ASSERT(DetectorTraits<Mser>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<Mser>::HasDescriptor);
 
 
+#if CV_MAJOR_VERSION == 2
 
 struct Star : public ExtractorManager::ExtractorInitializer {
     EXTRACTOR_IMPLEMENTATION
@@ -329,6 +354,7 @@ struct Star : public ExtractorManager::ExtractorInitializer {
 
         e->keypoint = "star";
         e->has_orientation = true;
+
         e->detector = new cv::StarFeatureDetector(16, et);
     }
 };
@@ -336,6 +362,7 @@ REGISTER_FEATURE_DETECTOR(Star, STAR);
 BOOST_STATIC_ASSERT(DetectorTraits<Star>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<Star>::HasDescriptor);
 
+#endif
 
 struct Gftt : public ExtractorManager::ExtractorInitializer {
     EXTRACTOR_IMPLEMENTATION
@@ -358,7 +385,12 @@ struct Gftt : public ExtractorManager::ExtractorInitializer {
 
         e->keypoint = "gftt";
         e->has_orientation = true;
+
+#if CV_MAJOR_VERSION == 2
         e->detector = new cv::GoodFeaturesToTrackDetector(et * 50.0, 0.005);
+#elif CV_MAJOR_VERSION == 3
+        e->detector = cv::GFTTDetector::create(et * 50.0, 0.005);
+#endif
     }
 };
 REGISTER_FEATURE_DETECTOR(Gftt, GFTT);
@@ -387,7 +419,12 @@ struct GfttHarris : public ExtractorManager::ExtractorInitializer {
 
         e->keypoint = "gftt_harris";
         e->has_orientation = true;
+
+#if CV_MAJOR_VERSION == 2
         e->detector = new cv::GoodFeaturesToTrackDetector(et * 50.0, 0.005, 2, 3, true);
+#elif CV_MAJOR_VERSION == 3
+        e->detector = cv::GFTTDetector::create(et * 50.0, 0.005, 2, 3, true);
+#endif
     }
 };
 REGISTER_FEATURE_DETECTOR(GfttHarris, GFTT_HARRIS);
@@ -397,6 +434,8 @@ BOOST_STATIC_ASSERT(!DetectorTraits<GfttHarris>::HasDescriptor);
 
 
 /// DESCRIPTORS ONLY
+
+#if CV_MAJOR_VERSION == 2
 
 struct Brief : public ExtractorManager::ExtractorInitializer {
     EXTRACTOR_IMPLEMENTATION
@@ -416,7 +455,12 @@ struct Brief : public ExtractorManager::ExtractorInitializer {
     static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param) {
         e->is_binary = true;
         e->descriptor = "brief";
+
+#if CV_MAJOR_VERSION == 2
         e->descriptor_extractor = new cv::BriefDescriptorExtractor(64);
+#elif CV_MAJOR_VERSION == 3
+        e->descriptor_extractor = cv::BriefDescriptorExtractor(64);
+#endif
     }
 };
 REGISTER_FEATURE_DETECTOR(Brief, BRIEF);
@@ -449,4 +493,5 @@ REGISTER_FEATURE_DETECTOR(Freak, FREAK);
 BOOST_STATIC_ASSERT(!DetectorTraits<Freak>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Freak>::HasDescriptor);
 
+#endif
 #endif // EXTRACTORS_DEFAULT_HPP

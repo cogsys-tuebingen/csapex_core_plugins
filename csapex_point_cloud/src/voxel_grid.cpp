@@ -58,7 +58,7 @@ void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
         tmp->points.reserve(cloud->points.size());
 
         for(auto it = cloud->begin(); it != cloud->end(); ++it) {
-            if(!isnan(it->x)) {
+            if(!std::isnan(it->x)) {
                 tmp->points.push_back(*it);
             }
         }

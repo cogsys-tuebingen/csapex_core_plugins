@@ -6,7 +6,10 @@
 
 
 namespace csapex {
-struct ExtendedSVM : public cv::SVM {
+#if CV_MAJOR_VERSION == 2
+struct ExtendedSVM :
+        public cv::SVM
+{
     typedef std::shared_ptr<ExtendedSVM> Ptr;
 
     inline CvSVMDecisionFunc* get_decision_function()
@@ -47,6 +50,8 @@ struct ExtendedSVM : public cv::SVM {
         set_params(params);
     }
 };
+
+#endif
 }
 
 

@@ -27,7 +27,12 @@ private:
 
     bool        loaded_;
     bool        compute_labels_;
+
+#if CV_MAJOR_VERSION == 2
     cv::Boost   boost_;
+#elif CV_MAJOR_VERSION == 3
+    cv::Ptr<cv::ml::Boost>   boost_;
+#endif
     std::string path_;
 
     void reload();

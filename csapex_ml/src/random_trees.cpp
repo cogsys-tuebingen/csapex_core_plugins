@@ -16,7 +16,7 @@ using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace impl {
-inline void classify(const cv::RandomTrees        &random_trees,
+inline void classify(const RandomTree             &random_trees,
                      const FeaturesMessage        &in_feature,
                      FeaturesMessage              &out_feature,
                      std::map<int, std::size_t>   &votes)
@@ -25,6 +25,7 @@ inline void classify(const cv::RandomTrees        &random_trees,
 
     const cv::Mat sample(1, in_feature.value.size(), CV_32FC1, out_feature.value.data());
 
+#if CV_MAJOR_VERSION == 2
     std::size_t max_votes    = 0;
     int max_class_id = 0;
     int ntrees = random_trees.get_tree_count();
@@ -42,6 +43,18 @@ inline void classify(const cv::RandomTrees        &random_trees,
 
     out_feature.confidence     = votes[max_class_id] / (float) ntrees;
     out_feature.classification = max_class_id;
+
+#elif CV_MAJOR_VERSION == 3
+    std::vector<float> results;
+    int prediction_class_id = random_trees->predict(sample, results);
+
+    for(float vote : results) {
+        ++votes[std::round(vote)];
+    }
+
+    out_feature.confidence     = votes[prediction_class_id] / (double) results.size();
+    out_feature.classification = prediction_class_id;
+#endif
 }
 
 
@@ -83,11 +96,20 @@ void RandomTrees::process()
             if (old_format)
             {
                 fs.release();
+
+#if CV_MAJOR_VERSION == 2
                 random_trees_.load(path_.c_str());
+#elif CV_MAJOR_VERSION == 3
+                random_trees_ = cv::ml::StatModel::load<cv::ml::RTrees>(path_);
+#endif
             }
             else
             {
+#if CV_MAJOR_VERSION == 2
                 random_trees_.read(fs.fs, (CvFileNode*) fs["random_forest"].node);
+#elif CV_MAJOR_VERSION == 3
+                random_trees_->read(*(cv::FileNode*) fs["random_forest"].node);
+#endif
                 std::vector<int> class_labels;
                 fs["classes"] >> class_labels;
                 for(int c : class_labels) {
@@ -115,9 +137,16 @@ void RandomTrees::process()
             cv::Mat &mat = mat_message->value;
             mat = cv::Mat(class_labels.size(), 2, CV_32FC1, cv::Scalar());
             int row = 0;
+
+#if CV_MAJOR_VERSION == 2
+            float n = (float) random_trees_.get_tree_count();
+#elif CV_MAJOR_VERSION == 3
+            float n = (float) random_trees_->getRoots().size();
+#endif
+
             for(const auto &entry : class_labels) {
                 mat.at<float>(row, 0) = entry.first;
-                mat.at<float>(row, 1) = entry.second / (float) random_trees_.get_tree_count();
+                mat.at<float>(row, 1) = entry.second / n;
                 ++row;
             }
 

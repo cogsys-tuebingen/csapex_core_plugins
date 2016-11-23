@@ -89,7 +89,7 @@ void TransformFromModels::process()
 
         // check for nan and set values to zero
         double test = x + y + z + roll + pitch + yaw; // to test if one is nan
-        if (isnan(test)) {
+        if (std::isnan(test)) {
             x = y = z = 0.0;
             roll = pitch = yaw = 0.0;
         }
