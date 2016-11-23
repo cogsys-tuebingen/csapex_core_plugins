@@ -1,20 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_rqt)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS class_loader roscpp rqt_gui rqt_gui_cpp csapex)
 
-###################################
-## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES csapex_rqt
@@ -22,13 +12,6 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-###########
-## Build ##
-###########
-
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-# include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
@@ -37,7 +20,12 @@ include_directories(
 add_library(csapex_rqt
     src/rqt_evaluation.cpp
 )
-target_link_libraries(csapex_rqt ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+target_link_libraries(csapex_rqt
+    ${catkin_LIBRARIES}
+    csapex_param csapex_util csapex_qt csapex_command csapex_profiling csapex
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTGUI_LIBRARY}
+    Qt5::Core Qt5::Gui Qt5::Widgets)
 
 class_loader_hide_library_symbols(csapex_rqt)
 

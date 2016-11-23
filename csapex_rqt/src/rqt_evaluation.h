@@ -2,8 +2,13 @@
 #define RQT_EVALUATION_H
 
 /// PROJECT
+#include <csapex/core/csapex_core.h>
+#include <csapex/core/settings.h>
+#include <csapex/command/command_fwd.h>
+#include <csapex/utility/exceptions.h>
+#include <csapex/core/exception_handler.h>
+#include <csapex/model/observer.h>
 #include <csapex/view/csapex_window.h>
-#include <csapex/core/drag_io.h>
 
 /// SYSTEM
 #include <rqt_gui_cpp/plugin.h>
@@ -25,21 +30,13 @@ private:
     qt_gui_cpp::PluginContext* context_;
 
     csapex::Settings settings_;
-    csapex::GraphPtr graph_;
-    csapex::GraphWorkerPtr graph_worker_;
-    csapex::NodeFactoryPtr node_factory_;
-    csapex::NodeAdapterFactoryPtr node_adapter_factory_;
-    csapex::WidgetControllerPtr widget_controller_;
-    csapex::CommandDispatcher::Ptr dispatcher_;
-    csapex::CsApexCore core_;
-    csapex::ThreadPoolPtr thread_pool_;
-    csapex::CsApexWindow* eva_;
+    csapex::ExceptionHandler handler;
 
+    csapex::CsApexCorePtr core;
 
-    csapex::DragIO drag_io_;
-    csapex::DesignerScene* scene_;
-    csapex::DesignerView* view_;
-    csapex::Designer* designer_;
+    std::shared_ptr<csapex::CsApexViewCore> view_core;
+    csapex::CsApexWindow*  window;
+
 };
 
 }

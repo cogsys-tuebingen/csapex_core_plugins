@@ -44,7 +44,7 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
     parameters.addParameter(param::ParameterFactory::declareParameterSet("boost/split_criteria",
                                                                          split_criteria,
                                                                          (int) Boost::DEFAULT),
-                            boost_params_.split_criteria);
+                            split_criteria);
 #endif
 
     std::map<std::string, int> boost_types = {
