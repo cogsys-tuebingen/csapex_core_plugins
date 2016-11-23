@@ -10,18 +10,45 @@
 #include <csapex/view/node/node_adapter_builder.h>
 #include <csapex/view/designer/drag_io_handler.h>
 
+/// SYSTEM
+#include <boost/filesystem.hpp>
+#include <boost/version.hpp>
+#if (BOOST_VERSION / 100000) >= 1 && (BOOST_VERSION / 100 % 1000) >= 54
+namespace bf3 = boost::filesystem;
+#else
+namespace bf3 = boost::filesystem3;
+#endif
+
+
 using namespace csapex;
 using namespace pluginlib;
 
-CSAPEX_REGISTER_BOOT(RosBoot)
+CSAPEX_REGISTER_BOOT(RosBoot);
+
+namespace {
+std::vector<std::string> getValidPluginXMLFiles()
+{
+    std::vector<std::pair<std::string, std::string>> out;
+    ros::package::getPlugins("csapex", "plugin", out, false);
+    std::vector<std::string> vector;
+    for(const auto& pair : out) {
+        std::string xml = pair.second;
+        if(bf3::exists(xml)) {
+            vector.push_back(xml);
+        }
+    }
+    return vector;
+}
+}
 
 RosBoot::RosBoot() :
-    loader_core_("csapex", "csapex::CorePlugin"),
-    loader_msg_("csapex", "csapex::MessageProvider"),
-    loader_msg_renderer_("csapex", "csapex::MessageRenderer"),
-    loader_node_("csapex", "csapex::Node"),
-    loader_node_adapter_("csapex", "csapex::NodeAdapterBuilder"),
-    loader_drag_io_("csapex", "csapex::DragIOHandler")
+    valid_plugin_xml_files_(getValidPluginXMLFiles()),
+    loader_core_("csapex", "csapex::CorePlugin", "plugin", valid_plugin_xml_files_),
+    loader_msg_("csapex", "csapex::MessageProvider", "plugin", valid_plugin_xml_files_),
+    loader_msg_renderer_("csapex", "csapex::MessageRenderer", "plugin", valid_plugin_xml_files_),
+    loader_node_("csapex", "csapex::Node", "plugin", valid_plugin_xml_files_),
+    loader_node_adapter_("csapex", "csapex::NodeAdapterBuilder", "plugin", valid_plugin_xml_files_),
+    loader_drag_io_("csapex", "csapex::DragIOHandler", "plugin", valid_plugin_xml_files_)
 {
 
 }

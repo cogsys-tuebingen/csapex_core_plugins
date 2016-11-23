@@ -10,25 +10,25 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
-add_library(csapex_boolean_plugin_core SHARED
+add_library(${PROJECT_NAME}_plugin_core SHARED
     src/register_plugin.cpp
 )
-target_link_libraries(csapex_boolean_plugin_core
+target_link_libraries(${PROJECT_NAME}_plugin_core
     ${catkin_LIBRARIES}
 	${csapex_LIBRARIES}
 	)
 
 
-add_library(csapex_boolean_plugin_node SHARED
+add_library(${PROJECT_NAME}_plugin_node SHARED
     src/threshold.cpp
 
     src/nand.cpp
     src/toggle.cpp
     src/indicator.cpp
 
-    res/csapex_boolean_resources.qrc
+    res/${PROJECT_NAME}_resources.qrc
 )
-target_link_libraries(csapex_boolean_plugin_node
+target_link_libraries(${PROJECT_NAME}_plugin_node
 	${catkin_LIBRARIES}
 	${csapex_LIBRARIES}
 	)
@@ -40,13 +40,8 @@ target_link_libraries(csapex_boolean_plugin_node
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_boolean_plugin_core
+install(TARGETS ${PROJECT_NAME}_plugin_core ${PROJECT_NAME}_plugin_node
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-install(TARGETS csapex_boolean_plugin_node
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 

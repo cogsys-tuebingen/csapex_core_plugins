@@ -56,14 +56,14 @@ target_link_libraries(csapex_core_lib
     Qt5::Core
 )
 
-add_library(csapex_core_plugins_core SHARED
+add_library(${PROJECT_NAME}_core SHARED
     src/core/register_core_plugins.cpp
 
     src/core/file_drag_io.cpp
 )
 
 
-target_link_libraries(csapex_core_plugins_core csapex_core_lib
+target_link_libraries(${PROJECT_NAME}_core csapex_core_lib
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
     Qt5::Core Qt5::Gui 
@@ -71,7 +71,7 @@ target_link_libraries(csapex_core_plugins_core csapex_core_lib
 
 
 
-add_library(csapex_core_plugins_node SHARED
+add_library(${PROJECT_NAME}_node SHARED
 src/tools/latch.cpp
 
     src/io/export_cout.cpp
@@ -112,25 +112,25 @@ src/tools/latch.cpp
     src/display/signal_light.cpp
 )
 
-target_link_libraries(csapex_core_plugins_node csapex_core_lib
+target_link_libraries(${PROJECT_NAME}_node csapex_core_lib
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
     ${Boost_LIBRARIES}
     Qt5::Core Qt5::Gui Qt5::Widgets
 )
 
-generate_export_header(csapex_core_plugins_node)
+generate_export_header(${PROJECT_NAME}_node)
 
 
-add_library(csapex_core_plugins_qt SHARED
+add_library(${PROJECT_NAME}_qt SHARED
     src/display/output_display_adapter.cpp
     src/display/text_display_adapter.cpp
     src/display/signal_light_adapter.cpp
 )
 
 
-target_link_libraries(csapex_core_plugins_qt 
-	csapex_core_plugins_node
+target_link_libraries(${PROJECT_NAME}_qt
+        ${PROJECT_NAME}_node
 	csapex_core_lib
 
     ${catkin_LIBRARIES}
@@ -145,26 +145,14 @@ target_link_libraries(csapex_core_plugins_qt
 
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-		
-install(TARGETS csapex_core_lib
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
-install(TARGETS csapex_core_plugins_core
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(DIRECTORY snippets
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_core_plugins_node
+install(TARGETS csapex_core_lib ${PROJECT_NAME}_core ${PROJECT_NAME}_node ${PROJECT_NAME}_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-install(TARGETS csapex_core_plugins_qt
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 if(WIN32)
 	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/csapex_core_lib_export.h
@@ -189,6 +177,6 @@ else()
 endif()
 
 if(NOT ${catkin_FOUND})
-	install(FILES cmake/csapex_core_plugins-config.cmake
+        install(FILES cmake/${PROJECT_NAME}-config.cmake
 			DESTINATION ${CSAPEX_MODULE_DESTINATION})
 endif()

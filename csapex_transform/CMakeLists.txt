@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS csapex csapex_core_plugins csapex_ros tf
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES csapex_transform
+  LIBRARIES ${PROJECT_NAME}
 #  CATKIN_DEPENDS csapex csapex_core_plugins
 #  DEPENDS system_lib
 )
@@ -30,23 +30,23 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(csapex_transform
+add_library(${PROJECT_NAME}
     src/transform_message.cpp
 )
-target_link_libraries(csapex_transform
+target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
 
 
-add_library(csapex_transform_plugin_core
+add_library(${PROJECT_NAME}_plugin_core
     src/register_plugin.cpp
 )
-target_link_libraries(csapex_transform_plugin_core csapex_transform
+target_link_libraries(${PROJECT_NAME}_plugin_core ${PROJECT_NAME}
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
 
 
 
 
-add_library(csapex_transform_plugin_node
+add_library(${PROJECT_NAME}_plugin_node
     src/extract_frames.cpp
     src/transform_to_odometry.cpp
     src/transform_to_pose.cpp
@@ -63,7 +63,7 @@ add_library(csapex_transform_plugin_node
     src/extract_timestamp.cpp
     src/extract_measures.cpp
 )
-target_link_libraries(csapex_transform_plugin_node csapex_transform
+target_link_libraries(${PROJECT_NAME}_plugin_node ${PROJECT_NAME}
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
 
 
@@ -74,19 +74,10 @@ target_link_libraries(csapex_transform_plugin_node csapex_transform
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_transform
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugin_core ${PROJECT_NAME}_plugin_node
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-install(TARGETS csapex_transform_plugin_core
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_transform_plugin_node
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

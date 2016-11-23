@@ -17,7 +17,7 @@ find_package(csapex_core_plugins REQUIRED)
 
 csapex_package(
 	INCLUDE_DIRS include
-	LIBRARIES csapex_ml
+        LIBRARIES ${PROJECT_NAME}
 	CATKIN_DEPENDS csapex csapex_core_plugins csapex_opencv
 )
 
@@ -30,11 +30,11 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUED_DIRS}
 )
-add_library(csapex_ml SHARED
+add_library(${PROJECT_NAME} SHARED
     src/features_message.cpp
 )
-generate_export_header(csapex_ml)
-target_link_libraries(csapex_ml
+generate_export_header(${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME}
     ${csapex_LIBRARIES}
     ${csapex_core_plugins_LIBRARIES}
     ${csapex_opencv_LIBRARIES}
@@ -43,7 +43,7 @@ target_link_libraries(csapex_ml
 	${catkin_LIBRARIES})
 
 
-add_library(csapex_ml_plugin SHARED
+add_library(${PROJECT_NAME}_plugin SHARED
     src/decision_tree.cpp
     src/decision_tree_trainer.cpp
 
@@ -78,14 +78,14 @@ add_library(csapex_ml_plugin SHARED
     src/random_vector.hpp
 )
 
-target_link_libraries(csapex_ml_plugin
-	csapex_ml
+target_link_libraries(${PROJECT_NAME}_plugin
+    ${PROJECT_NAME}
     ${csapex_LIBRARIES}
     ${csapex_core_plugins_LIBRARIES}
     ${csapex_opencv_LIBRARIES}
     ${catkin_LIBRARIES}
-	${OpenCV_LIBRARIES}
-	)
+    ${OpenCV_LIBRARIES}
+)
 
 #
 # INSTALL
@@ -94,15 +94,10 @@ target_link_libraries(csapex_ml_plugin
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_ml_plugin
+install(TARGETS ${PROJECT_NAME}_plugin ${PROJECT_NAME}
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-install(TARGETS csapex_ml
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 if(WIN32)
 	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h
@@ -125,6 +120,6 @@ else()
 endif()
 
 if(NOT ${catkin_FOUND})
-	install(FILES cmake/csapex_ml-config.cmake
+        install(FILES cmake/${PROJECT_NAME}-config.cmake
 			DESTINATION ${CSAPEX_MODULE_DESTINATION})
 endif()

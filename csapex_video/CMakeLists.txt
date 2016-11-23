@@ -13,13 +13,13 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(csapex_video_plugin
+add_library(${PROJECT_NAME}_plugin
     src/make_screenshot.cpp
     src/make_video.cpp
     src/image_collage.cpp
 )
 
-target_link_libraries(csapex_video_plugin
+target_link_libraries(${PROJECT_NAME}_plugin
     yaml-cpp ${catkin_LIBRARIES})
 
 #
@@ -29,8 +29,8 @@ target_link_libraries(csapex_video_plugin
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_video_plugin
+install(TARGETS ${PROJECT_NAME}_plugin
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 

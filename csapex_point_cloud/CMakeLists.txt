@@ -38,7 +38,7 @@ add_definitions(${PCL_DEFINITIONS})
 
 catkin_package(
   INCLUDE_DIRS include ${PCL_INCLUDE_DIRS}
-  LIBRARIES csapex_point_cloud
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS csapex
 #  DEPENDS system_lib
 )
@@ -54,26 +54,26 @@ include_directories(
   ${Qt5Widgets_INCLUDE_DIRS}
 )
 
-add_library(csapex_point_cloud
+add_library(${PROJECT_NAME}
     src/msg/point_cloud_message.cpp
     src/msg/model_message.cpp
     src/msg/normals_message.cpp
     src/msg/indeces_message.cpp
 )
-target_link_libraries(csapex_point_cloud
+target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${catkin_LIBRARIES})
 
 
-add_library(csapex_point_cloud_plugin_core
+add_library(${PROJECT_NAME}_plugin_core
     src/register_plugin.cpp
 )
 
-target_link_libraries(csapex_point_cloud_plugin_core
+target_link_libraries(${PROJECT_NAME}_plugin_core
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
-    csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
+    ${PROJECT_NAME} ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
 )
 
-add_library(csapex_point_cloud_plugin_node
+add_library(${PROJECT_NAME}_plugin_node
     src/project_z.cpp
     src/merge_clouds.cpp
     src/point_count.cpp
@@ -160,20 +160,20 @@ add_library(csapex_point_cloud_plugin_node
     ${clustering_kd_tree_SRCS}
 )
 
-target_link_libraries(csapex_point_cloud_plugin_node
+target_link_libraries(${PROJECT_NAME}_plugin_node
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
-    csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
+    ${PROJECT_NAME} ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
 )
 
-add_library(csapex_point_cloud_plugin_qt
+add_library(${PROJECT_NAME}_plugin_qt
     src/point_count_adapter.cpp
     src/cloud_renderer_adapter.cpp
     src/labeling/cloud_labeler_adapter.cpp
 )
 
-target_link_libraries(csapex_point_cloud_plugin_qt
+target_link_libraries(${PROJECT_NAME}_plugin_qt
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
-    csapex_point_cloud ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
+    ${PROJECT_NAME} ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
 )
 
 
@@ -184,23 +184,10 @@ target_link_libraries(csapex_point_cloud_plugin_qt
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_point_cloud
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugin_core ${PROJECT_NAME}_plugin_node ${PROJECT_NAME}_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-install(TARGETS csapex_point_cloud_plugin_core
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_point_cloud_plugin_node
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_point_cloud_plugin_qt
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

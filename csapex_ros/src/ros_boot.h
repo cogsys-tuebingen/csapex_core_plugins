@@ -21,6 +21,8 @@ public:
     void boot(csapex::PluginLocator *locator);
 
 private:
+    std::vector<std::string> valid_plugin_xml_files_;
+
     pluginlib::ClassLoader<CorePlugin> loader_core_;
     pluginlib::ClassLoader<MessageProvider> loader_msg_;
     pluginlib::ClassLoader<MessageRenderer> loader_msg_renderer_;

@@ -25,13 +25,13 @@ if(${ZBAR_FOUND})
 
 	file(GLOB_RECURSE plugin_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS *.h*)
 	
-    add_library(csapex_bar_code_plugin SHARED
+    add_library(${PROJECT_NAME}_plugin SHARED
 		${plugin_HEADERS}
 		
         src/bar_code_reader.cpp
     )
 	
-    target_link_libraries(csapex_bar_code_plugin
+    target_link_libraries(${PROJECT_NAME}_plugin
 		${csapex_LIBRARIES}
 		${csapex_opencv_LIBRARIES}
 		${catkin_LIBRARIES}
@@ -45,10 +45,10 @@ if(${ZBAR_FOUND})
     install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-    install(TARGETS csapex_bar_code_plugin
+    install(TARGETS ${PROJECT_NAME}_plugin
             ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
             LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-            RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+            RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 
 endif(${ZBAR_FOUND})

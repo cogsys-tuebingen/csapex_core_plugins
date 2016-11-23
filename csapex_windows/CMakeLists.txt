@@ -10,10 +10,10 @@ include_directories(include
     ${csapex_INCLUDE_DIR}
     ${catkin_INCLUDE_DIRS}
 )
-add_library(csapex_windows_boot SHARED
+add_library(${PROJECT_NAME}_boot SHARED
     src/windows_boot.cpp
 )
-target_link_libraries(csapex_windows_boot
+target_link_libraries(${PROJECT_NAME}_boot
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
 )
@@ -22,7 +22,7 @@ target_link_libraries(csapex_windows_boot
 # INSTALL
 #
 
-install(TARGETS csapex_windows_boot
+install(TARGETS ${PROJECT_NAME}_boot
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

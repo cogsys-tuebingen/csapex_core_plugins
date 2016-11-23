@@ -10,7 +10,7 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES csapex_ros_core
+  LIBRARIES ${PROJECT_NAME}_core
   CATKIN_DEPENDS pluginlib csapex_core_plugins
 )
 
@@ -23,18 +23,18 @@ catkin_package(
 include_directories(include ${catkin_INCLUDE_DIRS} ${Qt5Core_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS})
 
 ## booting
-add_library(csapex_ros_boot
+add_library(${PROJECT_NAME}_boot
     src/ros_boot.cpp
 )
-target_link_libraries(csapex_ros_boot
+target_link_libraries(${PROJECT_NAME}_boot
   ${catkin_LIBRARIES}
 )
 
-add_custom_command(TARGET csapex_ros_boot POST_BUILD
-    COMMAND mkdir -p ${CSAPEX_BOOT_PLUGIN_DIR} && ln -sf ${CATKIN_DEVEL_PREFIX}/lib/libcsapex_ros_boot.so ${CSAPEX_BOOT_PLUGIN_DIR}/libcsapex_ros_boot.so)
+add_custom_command(TARGET ${PROJECT_NAME}_boot POST_BUILD
+    COMMAND mkdir -p ${CSAPEX_BOOT_PLUGIN_DIR} && ln -sf ${CATKIN_DEVEL_PREFIX}/lib/lib${PROJECT_NAME}_boot.so ${CSAPEX_BOOT_PLUGIN_DIR}/lib${PROJECT_NAME}_boot.so)
 
 ## extensions
-add_library(csapex_ros_core
+add_library(${PROJECT_NAME}_core
     src/generic_ros_message.cpp
 
     src/ros_node.cpp
@@ -43,23 +43,23 @@ add_library(csapex_ros_core
     src/tf_listener.cpp
 )
 
-target_link_libraries(csapex_ros_core
+target_link_libraries(${PROJECT_NAME}_core
   ${catkin_LIBRARIES}
 )
 
 ## core plugins
-add_library(csapex_ros_plugin_core
+add_library(${PROJECT_NAME}_plugin_core
     src/apex_ros_interface.cpp
     src/bag_provider.cpp
 )
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(csapex_ros_plugin_core csapex_ros_core
+target_link_libraries(${PROJECT_NAME}_plugin_core ${PROJECT_NAME}_core
   ${catkin_LIBRARIES}
 )
 
 ## node plugins
-add_library(csapex_ros_plugin_node
+add_library(${PROJECT_NAME}_plugin_node
     src/ros_param.cpp
     src/export_ros.cpp
     src/import_ros.cpp
@@ -69,17 +69,17 @@ add_library(csapex_ros_plugin_node
 )
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(csapex_ros_plugin_node csapex_ros_core
+target_link_libraries(${PROJECT_NAME}_plugin_node ${PROJECT_NAME}_core
   ${catkin_LIBRARIES}
 )
 
 ## qt plugins
-add_library(csapex_ros_plugin_qt
+add_library(${PROJECT_NAME}_plugin_qt
     src/file_drag_io.cpp
 )
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(csapex_ros_plugin_qt csapex_ros_core
+target_link_libraries(${PROJECT_NAME}_plugin_qt ${PROJECT_NAME}_core
   ${catkin_LIBRARIES}
 )
 
@@ -90,23 +90,8 @@ target_link_libraries(csapex_ros_plugin_qt csapex_ros_core
 
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-install(TARGETS csapex_ros_boot
+
+install(TARGETS ${PROJECT_NAME}_boot ${PROJECT_NAME}_core ${PROJECT_NAME}_plugin_core ${PROJECT_NAME}_plugin_node ${PROJECT_NAME}_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_ros_core
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_ros_plugin_core
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_ros_plugin_node
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_ros_plugin_qt
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

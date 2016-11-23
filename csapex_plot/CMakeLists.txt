@@ -48,20 +48,30 @@ include_directories(
 )
 
 
-add_library(csapex_plot_node
+add_library(${PROJECT_NAME}_node
     src/time_plot.cpp
     src/vector_plot.cpp
 )
-target_link_libraries(csapex_plot_node
+target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES} ${QWT_LIBRARY} ${QT_LIBRARIES}
 )
-add_dependencies(csapex_plot_node QWT)
+add_dependencies(${PROJECT_NAME}_node QWT)
 
 
-add_library(csapex_plot_plugin_qt
+add_library(${PROJECT_NAME}_plugin_qt
     src/time_plot_adapter.cpp
     src/vector_plot_adapter.cpp
 )
-target_link_libraries(csapex_plot_plugin_qt
+target_link_libraries(${PROJECT_NAME}_plugin_qt
     yaml-cpp ${catkin_LIBRARIES})
-add_dependencies(csapex_plot_plugin_qt QWT)
+add_dependencies(${PROJECT_NAME}_plugin_qt QWT)
+
+
+
+install(FILES plugins.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(TARGETS ${PROJECT_NAME}_node ${PROJECT_NAME}_plugin_qt
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

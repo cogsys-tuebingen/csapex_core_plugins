@@ -31,7 +31,7 @@ find_package(Boost REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES csapex_scan_2d
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS cslibs_laser_processing
 #  DEPENDS system_lib
 )
@@ -48,23 +48,23 @@ include_directories(include
   ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
-add_library(csapex_scan_2d
+add_library(${PROJECT_NAME}
     src/scan_message.cpp
     src/labeled_scan_message.cpp
     src/renderer.cpp
 )
-target_link_libraries(csapex_scan_2d
+target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
 
 
-add_library(csapex_scan_2d_plugin_core
+add_library(${PROJECT_NAME}_plugin_core
     src/register_plugin.cpp
     src/scan_message_renderer.cpp
 )
 
-target_link_libraries(csapex_scan_2d_plugin_core
-    yaml-cpp csapex_scan_2d ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_plugin_core
+    yaml-cpp ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
 find_package(Ceres QUIET)
@@ -75,7 +75,7 @@ set(ADDITIONAL_SRCS "src/roll_pitch_angles.cpp")
 set(ADDITIONAL_LIBS "${CERES_LIBRARIES}")
 endif()
 
-add_library(csapex_scan_2d_plugin_node
+add_library(${PROJECT_NAME}_plugin_node
     src/segment_labeler.cpp
     src/split_labeled_scan.cpp
     src/labeled_scan_to_scan.cpp
@@ -106,26 +106,26 @@ add_library(csapex_scan_2d_plugin_node
 
 )
 
-target_link_libraries(csapex_scan_2d_plugin_node
+target_link_libraries(${PROJECT_NAME}_plugin_node
     yaml-cpp
-    csapex_scan_2d
+    ${PROJECT_NAME}
     ${catkin_LIBRARIES}
     ${ADDITIONAL_LIBS}
 )
 
 
 
-add_library(csapex_scan_2d_plugin_qt
+add_library(${PROJECT_NAME}_plugin_qt
     src/scan_labeler_adapter.cpp
     src/polygon_scan_filter_adapter.cpp
 )
 
-target_link_libraries(csapex_scan_2d_plugin_qt
-    yaml-cpp csapex_scan_2d ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_plugin_qt
+    yaml-cpp ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
 #add_executable(scan_test src/test.cpp)
-#target_link_libraries(scan_test csapex_scan_2d_plugin csapex_scan_2d)
+#target_link_libraries(scan_test ${PROJECT_NAME}_plugin ${PROJECT_NAME})
 
 #
 # INSTALL
@@ -134,18 +134,10 @@ target_link_libraries(csapex_scan_2d_plugin_qt
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_scan_2d_plugin_core
+install(TARGETS ${PROJECT_NAME}_plugin_core ${PROJECT_NAME}_plugin_node ${PROJECT_NAME}_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_scan_2d_plugin_node
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-install(TARGETS csapex_scan_2d_plugin_qt
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

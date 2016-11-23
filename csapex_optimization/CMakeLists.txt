@@ -11,7 +11,7 @@ set(CMAKE_AUTOMOC ON)
 
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES csapex_optimization
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS csapex
 )
 
@@ -21,31 +21,31 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(csapex_optimization
+add_library(${PROJECT_NAME}
     src/parameter_dialog.cpp
-    include/csapex_optimization/parameter_dialog.h
+    include/${PROJECT_NAME}/parameter_dialog.h
 )
-target_link_libraries(csapex_optimization
+target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES}
 )
 
 
-add_library(csapex_optimization_plugin_node
+add_library(${PROJECT_NAME}_plugin_node
     src/optimization_dummy.cpp
     src/bf_optimizer.cpp
 )
 
-target_link_libraries(csapex_optimization_plugin_node
-    yaml-cpp csapex_optimization ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_plugin_node
+    yaml-cpp ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
-add_library(csapex_optimization_plugin_qt
+add_library(${PROJECT_NAME}_plugin_qt
     src/parameter_dialog.cpp
     src/bf_optimizer_adapter.cpp
 )
 
-target_link_libraries(csapex_optimization_plugin_qt
-    yaml-cpp csapex_optimization ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_plugin_qt
+    yaml-cpp ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 #
 # INSTALL
@@ -54,20 +54,10 @@ target_link_libraries(csapex_optimization_plugin_qt
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS csapex_optimization
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugin_node ${PROJECT_NAME}_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-install(TARGETS csapex_optimization_plugin_node
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-install(TARGETS csapex_optimization_plugin_qt
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
