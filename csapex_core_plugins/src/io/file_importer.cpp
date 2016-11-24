@@ -379,22 +379,23 @@ void FileImporter::doImportDir(const QString &dir_string)
     boost::regex filter_regex(directory_filter_);
 
     std::function<void(const boost::filesystem::path&)> crawl_dir = [&](const boost::filesystem::path& directory) {
-        boost::filesystem::directory_iterator dir(directory);
-        boost::filesystem::directory_iterator end;
-        for(; dir != end; ++dir) {
-            boost::filesystem::path path = dir->path();
+        if(boost::filesystem::exists(directory)) {
+            boost::filesystem::directory_iterator dir(directory);
+            boost::filesystem::directory_iterator end;
+            for(; dir != end; ++dir) {
+                boost::filesystem::path path = dir->path();
 
-            if(boost::filesystem::is_directory(path)) {
-                if(recursive) {
-                    crawl_dir(path);
-                }
-            } else {
-                std::string path_string = path.string();
-                if (boost::regex_match(path_string, filter_regex)) {
-                    dir_files_.push_back(path_string);
+                if(boost::filesystem::is_directory(path)) {
+                    if(recursive) {
+                        crawl_dir(path);
+                    }
+                } else {
+                    std::string path_string = path.string();
+                    if (boost::regex_match(path_string, filter_regex)) {
+                        dir_files_.push_back(path_string);
+                    }
                 }
             }
-
         }
     };
     boost::filesystem::path directory(dir_string.toStdString());
