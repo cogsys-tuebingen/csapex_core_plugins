@@ -8,6 +8,12 @@
 </library>
 
 <library path="libcsapex_core_plugins_node">
+<class type="csapex::MessageEvent" base_class_type="csapex::Node">
+  <description>Triggers an event once a message arrives. Can translate messages to events</description>
+</class>
+<class type="csapex::MarkerMessageDetector" base_class_type="csapex::Node">
+  <description>Triggers events when a special type of Marker message reaches the node</description>
+</class>
 <class type="csapex::Latch" base_class_type="csapex::Node">
   <description>Buffers the latest message and repeatedly publishes it</description>
 </class>
