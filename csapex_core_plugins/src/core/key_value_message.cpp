@@ -2,8 +2,10 @@
 #include <csapex_core_plugins/key_value_message.h>
 
 /// PROJECT
-#include <csapex/utility/assert.h>
+#include <csapex/msg/token_traits.h>
 #include <csapex/utility/register_msg.h>
+#include <csapex/serialization/yaml.h>
+#include <csapex/msg/any_message.h>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::KeyValueMessage)
 
@@ -12,10 +14,15 @@ using namespace connection_types;
 
 using namespace std::chrono;
 
-KeyValueMessage::KeyValueMessage(std::string name, TokenData::Ptr msg)
-    : MessageTemplate<std::pair<std::string, TokenData::Ptr>,KeyValueMessage>("/", stamp)
+KeyValueMessage::KeyValueMessage(const std::string &frame_id, Stamp stamp)
+    : MessageTemplate<std::pair<std::string, TokenData::ConstPtr>,KeyValueMessage>(frame_id, stamp)
 {
-    value = std::pair<std::string, TokenData::Ptr>(name,msg);
+}
+
+KeyValueMessage::KeyValueMessage(std::string name, TokenData::ConstPtr msg, const std::string &frame_id, Stamp stamp)
+    : MessageTemplate<std::pair<std::string, TokenData::ConstPtr>,KeyValueMessage>(frame_id, stamp)
+{
+    value = std::pair<std::string, TokenData::ConstPtr>(name,msg);
 }
 
 /// YAML
@@ -23,8 +30,8 @@ namespace YAML {
 Node convert<csapex::connection_types::KeyValueMessage>::encode(const csapex::connection_types::KeyValueMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
-    node["msg_name"] = rhs.value.first;
-    node[rhs.value.first] = rhs.value.second;
+    node["name"] = rhs.value.first;
+    node["value"] = rhs.value.second;
     return node;
 }
 
@@ -36,10 +43,10 @@ bool convert<csapex::connection_types::KeyValueMessage>::decode(const Node& node
 
     convert<csapex::connection_types::Message>::decode(node, rhs);
 
-    std::string name = node["msg_name"].as<std::string>();
-    TokenData::Ptr  data;
+    std::string name = node["name" ].as<std::string>();
 
-    rhs.value = std::make_pair<std::string, TokenData::Ptr>(name, data);
+    TokenData::ConstPtr data_ptr = node["value"].as<TokenDataConstPtr>();
+    rhs.value = std::make_pair(name, data_ptr);
     return true;
 }
 }

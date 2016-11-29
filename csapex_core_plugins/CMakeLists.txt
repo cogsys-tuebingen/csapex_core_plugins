@@ -43,6 +43,8 @@ add_library(csapex_core_lib SHARED
     src/core/interactive_node.cpp
     src/core/collection_node.cpp
     src/core/vector_process_node.cpp
+    src/core/key_value_message.cpp
+    src/core/map_message.cpp
 	
 	${core_HEADERS}
 

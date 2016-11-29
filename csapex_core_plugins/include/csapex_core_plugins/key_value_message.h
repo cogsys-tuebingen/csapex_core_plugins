@@ -8,12 +8,13 @@ namespace csapex {
 namespace connection_types {
 
 struct CSAPEX_CORE_LIB_EXPORT KeyValueMessage : public MessageTemplate<
-        std::pair<std::string, TokenData::Ptr>,
+        std::pair<std::string, TokenData::ConstPtr>,
         KeyValueMessage>
 {
 
 public:
-    KeyValueMessage(std::string name, TokenData::Ptr msg);
+    KeyValueMessage(const std::string& frame_id = "/", Stamp stamp = 0);
+    KeyValueMessage(std::string name, TokenData::ConstPtr msg, const std::string& frame_id = "/", Stamp stamp = 0);
 };
 
 
@@ -28,7 +29,7 @@ struct CSAPEX_CORE_LIB_EXPORT type<KeyValueMessage> {
 template <>
 inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<KeyValueMessage> makeEmpty<KeyValueMessage>()
 {
-    return std::shared_ptr<KeyValueMessage>(new KeyValueMessage());
+    return std::shared_ptr<KeyValueMessage>(new KeyValueMessage);
 }
 
 }
