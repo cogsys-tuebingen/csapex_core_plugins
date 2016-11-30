@@ -74,6 +74,7 @@ target_link_libraries(${PROJECT_NAME}_core csapex_core_lib
 
 
 add_library(${PROJECT_NAME}_node SHARED
+src/tools/create_map_message.cpp
 src/tools/create_key_value_message.cpp
 src/tools/message_event.cpp
 src/tools/marker_message_detector.cpp
