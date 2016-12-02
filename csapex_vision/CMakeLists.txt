@@ -51,7 +51,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
    INCLUDE_DIRS include
-   #LIBRARIES ${PROJECT_NAME}
+   LIBRARIES ${PROJECT_NAME}
    CATKIN_DEPENDS csapex csapex_opencv cslibs_vision csapex_core_plugins
 )
 
@@ -66,11 +66,18 @@ include_directories(include
   ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
+add_library(${PROJECT_NAME}
+    src/ros_converters.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+
 
 add_library(${PROJECT_NAME}_plugin_core
     src/register_plugin.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_core
+    ${PROJECT_NAME}
     yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 
@@ -235,7 +242,7 @@ install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 
-install(TARGETS ${PROJECT_NAME}_plugin_core ${PROJECT_NAME}_plugin_node ${PROJECT_NAME}_plugin_qt
+install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_plugin_core ${PROJECT_NAME}_plugin_node ${PROJECT_NAME}_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
