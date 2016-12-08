@@ -21,13 +21,11 @@ public:
     typedef typename MaskFiller::Type            MaskType;
     typedef typename StructureType::Index        StructureIndex;
 
-    Clustering(std::vector<Entry*>            &_entries,
-                    std::vector<pcl::PointIndices> &_indices,
+    Clustering(std::vector<pcl::PointIndices> &_indices,
                     StructureType                  &_array,
                     DataIndex                      &_min_index,
                     DataIndex                      &_max_index) :
         cluster_count(0),
-        entries(_entries),
         indices(_indices),
         array(_array),
         min_index(_min_index),
@@ -38,13 +36,33 @@ public:
 
     inline void cluster()
     {
-        for(Entry *entry : entries)
+        for(Entry& entry : array)
         {
-            if(entry->cluster > -1)
+            if (!entry.valid)
                 continue;
-            entry->cluster = cluster_count;
+            if (entry.cluster > -1)
+                continue;
+            entry.cluster = cluster_count;
             indices.emplace_back(pcl::PointIndices());
-            indices.back().indices = entry->indices;
+            indices.back().indices = entry.indices;
+            ++cluster_count;
+            clusterEntry(entry);
+        }
+    }
+
+    template<typename Itr>
+    inline void cluster(Itr begin, Itr end)
+    {
+        for(; begin != end; ++begin)
+        {
+            Entry& entry = *(*begin);
+            if (!entry.valid)
+                continue;
+            if (entry.cluster > -1)
+                continue;
+            entry.cluster = cluster_count;
+            indices.emplace_back(pcl::PointIndices());
+            indices.back().indices = entry.indices;
             ++cluster_count;
             clusterEntry(entry);
         }
@@ -54,13 +72,12 @@ private:
     MaskType offsets;
     int      cluster_count;
 
-    std::vector<Entry*>                      &entries;
     std::vector<pcl::PointIndices>           &indices;
     StructureType                            &array;
     DataIndex                                 min_index;
     DataIndex                                 max_index;
 
-    inline void clusterEntry(Entry *entry)
+    inline void clusterEntry(Entry& entry)
     {
         StructureIndex array_index;
         DataIndex index;
@@ -68,7 +85,7 @@ private:
             if(AO::is_zero(offset))
                 continue;
 
-            AO::add(entry->index, offset, index);
+            AO::add(entry.index, offset, index);
 
             bool out_of_bounds = false;
             for(std::size_t j = 0 ; j < 3 ; ++j) {
@@ -80,19 +97,18 @@ private:
             if(out_of_bounds)
                 continue;
 
-            Entry *neighbour = array.at(array_index);
-            if(!neighbour)
+            Entry& neighbour = array.at(array_index);
+            if (!neighbour.valid)
                 continue;
-            if(neighbour->cluster > -1) {
+            if (neighbour.cluster > -1)
                 continue;
-            }
-            assert(neighbour->cluster == -1);
-            const int cluster = entry->cluster;
-            neighbour->cluster = cluster;
+            assert(neighbour.cluster == -1);
+            const int cluster = entry.cluster;
+            neighbour.cluster = cluster;
             pcl::PointIndices &pcl_indices = indices[cluster];
             pcl_indices.indices.insert(pcl_indices.indices.end(),
-                                       neighbour->indices.begin(),
-                                       neighbour->indices.end());
+                                       neighbour.indices.begin(),
+                                       neighbour.indices.end());
             clusterEntry(neighbour);
         }
     }

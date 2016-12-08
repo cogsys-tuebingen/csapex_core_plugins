@@ -18,6 +18,18 @@ struct Entry {
         valid(false)
     {
     }
+
+    // Note: intentially not virtual, called by templated class so we can avoid overhead
+    inline Entry& merge(const Entry& other)
+    {
+        if (!valid)
+        {
+            index = other.index;
+            valid = true;
+        }
+        indices.insert(indices.end(), other.indices.begin(), other.indices.end());
+        return *this;
+    }
 };
 
 struct EntryStatistical  : public Entry
@@ -28,6 +40,14 @@ struct EntryStatistical  : public Entry
         Entry()
     {
     }
+
+    inline EntryStatistical& merge(const EntryStatistical& other)
+    {
+        Entry::merge(other);
+        depth_mean += other.depth_mean;
+        distribution += other.distribution;
+        return *this;
+    }
 };
 
 struct EntryStatisticalColor : public EntryStatistical
@@ -37,6 +57,13 @@ struct EntryStatisticalColor : public EntryStatistical
         EntryStatistical()
     {
     }
+
+    inline EntryStatisticalColor& merge(const EntryStatisticalColor& other)
+    {
+        EntryStatistical::merge(other);
+        color_mean += other.color_mean;
+        return *this;
+    }
 };
 
 struct EntryStatisticalMono : public EntryStatistical
@@ -45,6 +72,13 @@ struct EntryStatisticalMono : public EntryStatistical
     EntryStatisticalMono() :
         EntryStatistical()
     {
+    }
+
+    inline EntryStatisticalMono& merge(const EntryStatisticalMono& other)
+    {
+        EntryStatistical::merge(other);
+        mono_mean += other.mono_mean;
+        return *this;
     }
 };
 
