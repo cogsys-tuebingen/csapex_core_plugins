@@ -20,15 +20,13 @@ public:
     typedef typename StructureType::Index        StructureIndex;
     typedef Validator<ClusterParamsStatistical>  ValidatorType;
 
-    FilteredClustering(std::vector<EntryStatistical*> &_entries,
-                       const ClusterParamsStatistical   &_params,
+    FilteredClustering(const ClusterParamsStatistical   &_params,
                        std::vector<pcl::PointIndices>   &_indices,
                        std::vector<pcl::PointIndices>   &_indices_rejected,
                        StructureType                    &_array,
                        DataIndex                        &_min_index,
                        DataIndex                        &_max_index) :
         cluster_count(0),
-        entries(_entries),
         indices(_indices),
         indices_rejected(_indices_rejected),
         array(_array),
@@ -41,16 +39,23 @@ public:
 
     inline void cluster()
     {
-        for(EntryStatistical *entry : entries)
+        return cluster(array.begin(), array.end());
+    }
+
+    template<typename Itr>
+    inline void cluster(Itr begin, Itr end)
+    {
+        for (; begin != end; ++begin)
         {
-            if(entry->cluster > -1)
+            auto& entry = *(*begin);
+            if(entry.cluster > -1)
                 continue;
 
-            if(!entry->valid)
+            if(!entry.valid)
                 continue;
 
             buffer_distribution.reset();
-            entry->cluster = cluster_count;
+            entry.cluster = cluster_count;
             ++cluster_count;
             clusterEntry(entry);
 
@@ -71,7 +76,6 @@ private:
     MaskType offsets;
     int      cluster_count;
 
-    std::vector<EntryStatistical*>   &entries;
     std::vector<pcl::PointIndices> &indices;
     std::vector<pcl::PointIndices> &indices_rejected;
     StructureType                  &array;
@@ -82,7 +86,7 @@ private:
     pcl::PointIndices               buffer_indices;
     math::Distribution<3>           buffer_distribution;
 
-    inline void clusterEntry(EntryStatistical *entry)
+    inline void clusterEntry(EntryStatistical& entry)
     {
         StructureIndex array_index;
         DataIndex index;
@@ -90,7 +94,7 @@ private:
             if(AO::is_zero(offset))
                 continue;
 
-            AO::add(entry->index, offset, index);
+            AO::add(entry.index, offset, index);
 
             bool out_of_bounds = false;
             for(std::size_t j = 0 ; j < 3 ; ++j) {
@@ -102,20 +106,18 @@ private:
             if(out_of_bounds)
                 continue;
 
-            EntryStatistical *neighbour = array.at(array_index);
-            if(!neighbour)
+            EntryStatistical& neighbour = array.at(array_index);
+            if(!neighbour.valid)
                 continue;
-            if(neighbour->cluster > -1)
-                continue;
-            if(!neighbour->valid)
+            if(neighbour.cluster > -1)
                 continue;
 
-            assert(neighbour->cluster == -1);
+            assert(neighbour.cluster == -1);
 
             if (validator.params.cluster_distance_and_weights[0] != 0.0)
             {
                 using MeanType = math::Distribution<3>::PointType;
-                MeanType diff = entry->distribution.getMean() - neighbour->distribution.getMean();
+                MeanType diff = entry.distribution.getMean() - neighbour.distribution.getMean();
                 diff(0) *= validator.params.cluster_distance_and_weights[1];
                 diff(1) *= validator.params.cluster_distance_and_weights[2];
                 diff(2) *= validator.params.cluster_distance_and_weights[3];
@@ -124,13 +126,13 @@ private:
                     continue;
             }
 
-            const int cluster = entry->cluster;
-            neighbour->cluster = cluster;
+            const int cluster = entry.cluster;
+            neighbour.cluster = cluster;
 
-            buffer_distribution += neighbour->distribution;
+            buffer_distribution += neighbour.distribution;
             buffer_indices.indices.insert(buffer_indices.indices.end(),
-                                          neighbour->indices.begin(),
-                                          neighbour->indices.end());
+                                          neighbour.indices.begin(),
+                                          neighbour.indices.end());
 
             clusterEntry(neighbour);
         }

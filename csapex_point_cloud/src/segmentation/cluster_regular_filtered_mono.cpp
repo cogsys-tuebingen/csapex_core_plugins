@@ -20,6 +20,8 @@
 #include <cslibs_kdtree/array.hpp>
 #include <cslibs_kdtree/page.hpp>
 
+#include <unordered_set>
+
 using namespace csapex;
 using namespace csapex::connection_types;
 using EntryType = EntryStatisticalMono;
@@ -104,6 +106,7 @@ inline void prepareEntries(typename pcl::PointCloud<PointT>::ConstPtr &cloud,
         const PointT &pt = cloud->at(i);
         if(indexation.is_valid(pt)) {
             EntryType entry;
+            entry.valid = true;
             entry.index = indexation.create(pt);
             entry.indices.push_back(i);
             entry.distribution.add({pt.x, pt.y, pt.z});
@@ -134,6 +137,7 @@ inline void prepareEntries(typename pcl::PointCloud<PointT>::ConstPtr &cloud,
         const PointT &pt = cloud->at(i);
         if(indexation.is_valid(pt)) {
             EntryType entry;
+            entry.valid = true;
             entry.index = indexation.create(pt);
             entry.indices.push_back(i);
             entry.distribution.add({pt.x, pt.y, pt.z});
@@ -312,46 +316,32 @@ void ClusterRegularFilteredMono<StructureType>::inputCloud(typename pcl::PointCl
         }
     }
 
-    std::vector<EntryType*> referenced;
     typename StructureType::Size size = IndexationType::size(min_index, max_index);
     StructureType array(size);
-    /// Setup array adressing
-    typename StructureType::Index index;
-    for(EntryType &e : entries) {
-        index = AOA::sub(e.index, min_index);
-        EntryType *& array_entry = array.at(index);
-        if(!array_entry) {
-            /// put into array
-            array_entry = &e;
-            referenced.emplace_back(array_entry);
-        } else {
-            /// fuse with existing
-            std::vector<int> &array_entry_indices = array_entry->indices;
-            array_entry_indices.insert(array_entry_indices.end(),
-                                       e.indices.begin(),
-                                       e.indices.end());
-            array_entry->distribution += e.distribution;
-            array_entry->mono_mean    += e.mono_mean;
-        }
+    std::unordered_set<EntryType*> to_check;
+    for (auto& entry : entries)
+    {
+        typename StructureType::Index index;
+        index = AOA::sub(entry.index, min_index);
+        to_check.emplace(&array.insert(index, entry));
     }
     {
         /// Clustering stage
-        FilteredClusteringMono<StructureType> clustering(referenced,
-                                                         cluster_params_,
+        FilteredClusteringMono<StructureType> clustering(cluster_params_,
                                                          *out_cluster_indices,
                                                          *out_rejected_cluster_indices,
                                                           array,
                                                           min_index,
                                                           max_index);
-        clustering.cluster();
+        clustering.cluster(to_check.begin(), to_check.end());
     }
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_rejected_, out_rejected_cluster_indices);
 }
 
 
-using PageType    = kdtree::Page<EntryType*, 3>;
-using ArrayType   = kdtree::Array<EntryType*, 3>;
+using PageType    = kdtree::Page<EntryType, 3>;
+using ArrayType   = kdtree::Array<EntryType, 3>;
 namespace csapex {
 typedef ClusterRegularFilteredMono<PageType>  ClusterPointCloudPagingFilteredMono;
 typedef ClusterRegularFilteredMono<ArrayType> ClusterPointCloudArrayFilteredMono;

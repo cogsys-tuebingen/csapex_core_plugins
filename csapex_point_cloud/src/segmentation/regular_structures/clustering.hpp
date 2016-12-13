@@ -36,18 +36,7 @@ public:
 
     inline void cluster()
     {
-        for(Entry& entry : array)
-        {
-            if (!entry.valid)
-                continue;
-            if (entry.cluster > -1)
-                continue;
-            entry.cluster = cluster_count;
-            indices.emplace_back(pcl::PointIndices());
-            indices.back().indices = entry.indices;
-            ++cluster_count;
-            clusterEntry(entry);
-        }
+        return cluster(array.begin(), array.end());
     }
 
     template<typename Itr>

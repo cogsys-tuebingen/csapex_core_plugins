@@ -20,6 +20,8 @@
 #include <cslibs_kdtree/array.hpp>
 #include <cslibs_kdtree/page.hpp>
 
+#include <unordered_set>
+
 using namespace csapex;
 using namespace csapex::connection_types;
 using EntryType   = EntryStatisticalColor;
@@ -137,6 +139,7 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
                     EntryType entry;
+                    entry.valid = true;
                     entry.index = indexation.create(pt);
                     entry.indices.push_back(i);
                     entry.distribution.add({pt.x, pt.y, pt.z});
@@ -155,6 +158,7 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
                 const PointT &pt = cloud->at(i);
                 if(indexation.is_valid(pt)) {
                     EntryType entry;
+                    entry.valid = true;
                     entry.index = indexation.create(pt);
                     entry.indices.push_back(i);
                     entry.distribution.add({pt.x, pt.y, pt.z});
@@ -169,40 +173,24 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
             }
         }
     }
-    std::vector<EntryType*> referenced;
     typename StructureType::Size size = IndexationType::size(min_index, max_index);
     StructureType array(size);
+    std::unordered_set<EntryType*> to_check;
+    for (auto& entry : entries)
     {
-        /// Setup array adressing
         typename StructureType::Index index;
-        for(EntryType &e : entries) {
-            index = AOA::sub(e.index, min_index);
-            EntryType *& array_entry = array.at(index);
-            if(!array_entry) {
-                /// put into array
-                array_entry = &e;
-                referenced.emplace_back(array_entry);
-            } else {
-                /// fuse with existing
-                std::vector<int> &array_entry_indices = array_entry->indices;
-                array_entry_indices.insert(array_entry_indices.end(),
-                                           e.indices.begin(),
-                                           e.indices.end());
-                array_entry->distribution += e.distribution;
-                array_entry->color_mean   += e.color_mean;
-            }
-        }
+        index = AOA::sub(entry.index, min_index);
+        to_check.emplace(&array.insert(index, entry));
     }
     {
         /// Clustering stage
-        FilteredClusteringColor<StructureType> clustering(referenced,
-                                                          cluster_params_,
+        FilteredClusteringColor<StructureType> clustering(cluster_params_,
                                                           *out_cluster_indices,
                                                           *out_rejected_cluster_indices,
                                                           array,
                                                           min_index,
                                                           max_index);
-        clustering.cluster();
+        clustering.cluster(to_check.begin(), to_check.end());
     }
 
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
@@ -210,8 +198,8 @@ void ClusterRegularFilteredColor<StructureType>::inputCloud(typename pcl::PointC
 }
 
 
-using PageType    = kdtree::Page<EntryType*, 3>;
-using ArrayType   = kdtree::Array<EntryType*, 3>;
+using PageType    = kdtree::Page<EntryType, 3>;
+using ArrayType   = kdtree::Array<EntryType, 3>;
 namespace csapex {
 typedef ClusterRegularFilteredColor<PageType>  ClusterPointCloudPagingFilteredColor;
 typedef ClusterRegularFilteredColor<ArrayType> ClusterPointCloudArrayFilteredColor;

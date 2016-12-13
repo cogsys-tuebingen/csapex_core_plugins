@@ -22,15 +22,13 @@ public:
     typedef EntryStatisticalColor                EntryType;
     typedef Validator<ClusterParamsStatisticalColor> ValidatorType;
 
-    FilteredClusteringColor(std::vector<EntryType*> &_entries,
-                            const ClusterParamsStatisticalColor &_params,
+    FilteredClusteringColor(const ClusterParamsStatisticalColor &_params,
                             std::vector<pcl::PointIndices>      &_indices,
                             std::vector<pcl::PointIndices>      &_indices_rejected,
                             StructureType                       &_array,
                             DataIndex                           &_min_index,
                             DataIndex                           &_max_index) :
         cluster_count(0),
-        entries(_entries),
         indices(_indices),
         indices_rejected(_indices_rejected),
         array(_array),
@@ -41,16 +39,20 @@ public:
         MaskFiller::assign(offsets);
     }
 
-    inline void cluster()
+    template<typename Itr>
+    inline void cluster(Itr begin, Itr end)
     {
-        for(EntryType *entry : entries)
+        for(; begin != end; ++begin)
         {
-            if(entry->cluster > -1)
+            auto& entry = *(*begin);
+            if (!entry.valid)
+                continue;
+            if(entry.cluster > -1)
                 continue;
 
             buffer_distribution.reset();
 
-            entry->cluster = cluster_count;
+            entry.cluster = cluster_count;
             ++cluster_count;
             clusterEntry(entry);
 
@@ -71,7 +73,6 @@ private:
     MaskType offsets;
     int      cluster_count;
 
-    std::vector<EntryType*>        &entries;
     std::vector<pcl::PointIndices> &indices;
     std::vector<pcl::PointIndices> &indices_rejected;
     StructureType                  &array;
@@ -87,7 +88,7 @@ private:
         return offset[0] == 0 && offset[1] == 0 && offset[2] != 0;
     }
 
-    inline void clusterEntry(EntryType *entry)
+    inline void clusterEntry(EntryType& entry)
     {
         StructureIndex array_index;
         DataIndex index;
@@ -95,7 +96,7 @@ private:
             if(AO::is_zero(offset))
                 continue;
 
-            AO::add(entry->index, offset, index);
+            AO::add(entry.index, offset, index);
 
             bool out_of_bounds = false;
             for(std::size_t j = 0 ; j < 3 ; ++j) {
@@ -107,17 +108,16 @@ private:
             if(out_of_bounds)
                 continue;
 
-            EntryType *neighbour = array.at(array_index);
-            if(!neighbour)
+            EntryType& neighbour = array.at(array_index);
+            if (!neighbour.valid)
                 continue;
-            if(neighbour->cluster > -1)
+            if(neighbour.cluster > -1)
                 continue;
-            assert(neighbour->cluster == -1);
 
             if (validator.params.cluster_distance_and_weights[0] != 0.0)
             {
                 using MeanType = math::Distribution<3>::PointType;
-                MeanType diff = entry->distribution.getMean() - neighbour->distribution.getMean();
+                MeanType diff = entry.distribution.getMean() - neighbour.distribution.getMean();
                 diff(0) *= validator.params.cluster_distance_and_weights[1];
                 diff(1) *= validator.params.cluster_distance_and_weights[2];
                 diff(2) *= validator.params.cluster_distance_and_weights[3];
@@ -129,18 +129,18 @@ private:
                 double diff = 0.0;
                 switch(validator.params.color_difference_type) {
                 case ClusterParamsStatisticalColor::CIE76:
-                    diff = color_differences::CIE76(entry->color_mean.getMean(),
-                                                    neighbour->color_mean.getMean(),
+                    diff = color_differences::CIE76(entry.color_mean.getMean(),
+                                                    neighbour.color_mean.getMean(),
                                                     validator.params.color_difference_weights);
                     break;
                 case ClusterParamsStatisticalColor::CIE94Grahpics:
-                    diff = color_differences::CIE94Grahpics(entry->color_mean.getMean(),
-                                                            neighbour->color_mean.getMean(),
+                    diff = color_differences::CIE94Grahpics(entry.color_mean.getMean(),
+                                                            neighbour.color_mean.getMean(),
                                                             validator.params.color_difference_weights);
                     break;
                 case ClusterParamsStatisticalColor::CIE94Textiles:
-                    diff = color_differences::CIE94Textiles(entry->color_mean.getMean(),
-                                                            neighbour->color_mean.getMean(),
+                    diff = color_differences::CIE94Textiles(entry.color_mean.getMean(),
+                                                            neighbour.color_mean.getMean(),
                                                             validator.params.color_difference_weights);
                     break;
                 default:
@@ -151,13 +151,13 @@ private:
                 }
             }
 
-            const int cluster = entry->cluster;
-            neighbour->cluster = cluster;
+            const int cluster = entry.cluster;
+            neighbour.cluster = cluster;
 
-            buffer_distribution += neighbour->distribution;
+            buffer_distribution += neighbour.distribution;
             buffer_indices.indices.insert(buffer_indices.indices.end(),
-                                          neighbour->indices.begin(),
-                                          neighbour->indices.end());
+                                          neighbour.indices.begin(),
+                                          neighbour.indices.end());
 
             clusterEntry(neighbour);
         }

@@ -18,6 +18,8 @@
 #include <cslibs_kdtree/array.hpp>
 #include <cslibs_kdtree/page.hpp>
 
+#include <unordered_set>
+
 using namespace csapex;
 using namespace csapex::connection_types;
 
@@ -145,43 +147,20 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
         }
     }
 
-    std::vector<EntryStatistical*> referenced;
     typename StructureType::Size size = IndexationType::size(min_index, max_index);
     StructureType array(size);
+    std::unordered_set<EntryStatistical*> to_check;
+    for (EntryStatistical& entry : entries)
     {
-        /// Setup array adressing
+        validateVoxel(entry);
         typename StructureType::Index index;
-        EntryStatistical *entries_ptr = entries.data();
-        const std::size_t size = entries.size();
-        for(std::size_t i = 0 ; i < size ; ++i, ++entries_ptr) {
-            EntryStatistical &e = *entries_ptr;
-
-            if(!e.valid)
-                continue;
-
-            index = AOA::sub(e.index, min_index);
-            EntryStatistical *& array_entry = array.at(index);
-            if(!array_entry) {
-                /// put into array
-                array_entry = &e;
-                validateVoxel(*array_entry);
-                referenced.emplace_back(array_entry);
-            } else {
-                /// fuse with existing
-                std::vector<int> &array_entry_indices = array_entry->indices;
-                array_entry_indices.insert(array_entry_indices.end(),
-                                           e.indices.begin(),
-                                           e.indices.end());
-                array_entry->distribution += e.distribution;
-                array_entry->depth_mean   += e.depth_mean;
-                validateVoxel(*array_entry);
-            }
-        }
+        index = AOA::sub(entry.index, min_index);
+        to_check.emplace(&array.insert(index, entry));
     }
     {
         /// Clustering stage
-        FilteredClustering<StructureType> clustering(referenced, cluster_params_, *out_cluster_indices, *out_rejected_cluster_indices, array, min_index, max_index);
-        clustering.cluster();
+        FilteredClustering<StructureType> clustering(cluster_params_, *out_cluster_indices, *out_rejected_cluster_indices, array, min_index, max_index);
+        clustering.cluster(to_check.begin(), to_check.end());
     }
 
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
@@ -202,8 +181,8 @@ void ClusterRegularFiltered<StructureType>::validateVoxel(EntryStatistical &e)
 }
 
 
-using PageType    = kdtree::Page<EntryStatistical*, 3>;
-using ArrayType   = kdtree::Array<EntryStatistical*, 3>;
+using PageType    = kdtree::Page<EntryStatistical, 3>;
+using ArrayType   = kdtree::Array<EntryStatistical, 3>;
 namespace csapex {
 typedef ClusterRegularFiltered<PageType>  ClusterPointCloudPagingFiltered;
 typedef ClusterRegularFiltered<ArrayType> ClusterPointCloudArrayFiltered;

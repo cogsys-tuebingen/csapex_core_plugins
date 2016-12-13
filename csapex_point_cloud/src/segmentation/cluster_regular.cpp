@@ -20,6 +20,8 @@
 #include "regular_structures/indexation.hpp"
 #include "regular_structures/clustering.hpp"
 
+#include <unordered_set>
+
 using namespace csapex;
 using namespace csapex::connection_types;
 
@@ -107,12 +109,12 @@ void ClusterRegular<StructureType>::inputCloud(typename pcl::PointCloud<PointT>:
     }
     typename StructureType::Size size = IndexationType::size(min_index, max_index);
     StructureType array(size);
-    std::vector<Entry*> to_check;
+    std::unordered_set<Entry*> to_check;
     for (const Entry& entry : entries)
     {
         typename StructureType::Index index;
         index = AOA::sub(entry.index, min_index);
-        to_check.emplace_back(&array.insert(index, entry));
+        to_check.emplace(&array.insert(index, entry));
     }
     {
         /// Clustering stage
