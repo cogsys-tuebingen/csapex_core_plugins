@@ -26,6 +26,16 @@ RegisterCorePlugins::RegisterCorePlugins()
 {
 }
 
+namespace {
+template <typename M>
+void registerMessage()
+{
+    connection_types::GenericVectorMessage::registerType<M>();
+    MessageFactory::registerMessage<connection_types::GenericValueMessage<M>>();
+    MessageSerializer::registerMessage<connection_types::GenericValueMessage<M>>();
+}
+}
+
 void RegisterCorePlugins::init(CsApexCore& core)
 {
     Tag::createIfNotExists("Buffer");
@@ -36,10 +46,9 @@ void RegisterCorePlugins::init(CsApexCore& core)
     Tag::createIfNotExists("ConsoleIO");
     Tag::createIfNotExists("Debug");
 
-
-    connection_types::GenericVectorMessage::registerType<int>();
-    connection_types::GenericVectorMessage::registerType<double>();
-    connection_types::GenericVectorMessage::registerType<std::string>();
+    registerMessage<int>();
+    registerMessage<double>();
+    registerMessage<std::string>();
 }
 
 void RegisterCorePlugins::shutdown()
