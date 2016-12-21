@@ -2,7 +2,7 @@
 #define IMPORT_CIN_H
 
 /// PROJECT
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 
 /// SYSTEM
 #include <deque>
@@ -10,15 +10,14 @@
 
 namespace csapex {
 
-class CSAPEX_EXPORT_PLUGIN ImportCin : public TickableNode
+class CSAPEX_EXPORT_PLUGIN ImportCin : public Node
 {
 public:
     ImportCin();
 
-    virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& params) override;
-    virtual void tick() override;
+    virtual void process() override;
 
 private:
     void readCin();
@@ -36,6 +35,7 @@ private:
 
     bool import_yaml_;
     bool latch_;
+    bool signal_end_;
 };
 
 }
