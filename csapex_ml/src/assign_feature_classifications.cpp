@@ -36,7 +36,7 @@ void AssignFeatureClassifications::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> in_features =
             msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_features_);
-    std::shared_ptr<std::vector<FeaturesMessage>> out_features;
+    std::shared_ptr<std::vector<FeaturesMessage>> out_features = std::make_shared<std::vector<FeaturesMessage>>();
 
     if(msg::hasMessage(in_labels_)) {
         std::shared_ptr<std::vector<int> const> in_labels = msg::getMessage<GenericVectorMessage, int>(in_labels_);
