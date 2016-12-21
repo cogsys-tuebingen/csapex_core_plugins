@@ -22,7 +22,6 @@ public:
 
 private:
     std::string     path_;
-    bool            save_for_hog_;
     bool            one_vs_all_;
     bool            balance_;
 

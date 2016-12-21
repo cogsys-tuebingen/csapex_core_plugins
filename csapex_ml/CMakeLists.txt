@@ -47,6 +47,9 @@ add_library(${PROJECT_NAME}_plugin SHARED
     src/decision_tree.cpp
     src/decision_tree_trainer.cpp
 
+    src/decision_tree_forest.cpp
+    src/decision_tree_forest_trainer.cpp
+
     src/random_trees.cpp
     src/random_trees_trainer.cpp
 

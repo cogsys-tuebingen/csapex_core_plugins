@@ -35,11 +35,6 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
                                                                            "*.yaml *.tar.gz"),
                             path_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("svm/save_coeffs",
-                                                                 param::ParameterDescription("Save precomputed vector for HOG."),
-                                                                 false),
-                            save_for_hog_);
-
 
 #if CV_MAJOR_VERSION == 2
     std::map<std::string, int> kernel_types = {
