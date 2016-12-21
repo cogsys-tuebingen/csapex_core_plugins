@@ -25,17 +25,17 @@ private:
     bool            one_vs_all_;
     bool            balance_;
 
-    int         svm_type;
-    int         kernel_type;
-    double      degree; // for poly
-    double      gamma;  // for poly/rbf/sigmoid
-    double      coef0;  // for poly/sigmoid
+    int         svm_type_;
+    int         kernel_type_;
+    double      degree_;        // for poly
+    double      gamma_;         // for poly/rbf/sigmoid
+    double      coef0_;         // for poly/sigmoid
 
-    double      C;  // for CV_SVM_C_SVC, CV_SVM_EPS_SVR and CV_SVM_NU_SVR
-    double      nu; // for CV_SVM_NU_SVC, CV_SVM_ONE_CLASS, and CV_SVM_NU_SVR
-    double      p; // for CV_SVM_EPS_SVR
+    double      C_;             // for CV_SVM_C_SVC, CV_SVM_EPS_SVR and CV_SVM_NU_SVR
+    double      nu_;            // for CV_SVM_NU_SVC, CV_SVM_ONE_CLASS, and CV_SVM_NU_SVR
+    double      p_;             // for CV_SVM_EPS_SVR
 //    CvMat*      class_weights; // for CV_SVM_C_SVC
-    CvTermCriteria term_crit; // termination criteria
+    CvTermCriteria term_crit_;  // termination criteria
 
 
     enum ClassTypes {NEGATIVE = -1, POSITIVE = 1};
