@@ -44,7 +44,7 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
     parameters.addParameter(param::ParameterFactory::declareParameterSet("boost/split_criteria",
                                                                          split_criteria,
                                                                          (int) Boost::DEFAULT),
-                            split_criteria);
+                            split_criteria_);
 #endif
 
     std::map<std::string, int> boost_types = {
@@ -57,14 +57,14 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
     parameters.addParameter(param::ParameterFactory::declareParameterSet("boost/type",
                                                                          boost_types,
                                                                          (int) Boost::DISCRETE),
-                            boost_type);
+                            boost_type_);
 
     parameters.addParameter(param::ParameterFactory::declareRange("boost/classifier_count",
                                                                   1,
                                                                   4096,
                                                                   100,
                                                                   1),
-                            weak_count);
+                            weak_count_);
 
     parameters.addParameter(param::ParameterFactory::declareRange("boost/trim_rate",
                                                                   0.0,
@@ -78,11 +78,11 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
                                                                   64,
                                                                   8,
                                                                   1),
-                            max_depth);
+                            max_depth_);
 
     parameters.addParameter(param::ParameterFactory::declareBool("boost/use_surrogates",
                                                                  false),
-                            use_surrogates);
+                            use_surrogates_);
 }
 
 bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection)
@@ -119,13 +119,13 @@ bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
     cv::Boost boost;
     cv::BoostParams boost_params_;
 
-    boost_params_.boost_type = boost_type;
-    boost_params_.weak_count = weak_count;
-    boost_params_.split_criteria = split_criteria;
+    boost_params_.boost_type = boost_type_;
+    boost_params_.weak_count = weak_count_;
+    boost_params_.split_criteria = split_criteria_;
     boost_params_.weight_trim_rate = weight_trim_rate_;
 
-    boost_params_.max_depth = max_depth;
-    boost_params_.use_surrogates = use_surrogates;
+    boost_params_.max_depth = max_depth_;
+    boost_params_.use_surrogates = use_surrogates_;
 
     std::cout << "[AdaBoost]: Started training with " << samples.rows << " samples!" << std::endl;
     if(boost.train(samples, CV_ROW_SAMPLE, labels, cv::Mat(), cv::Mat(), cv::Mat(), cv::Mat(), boost_params_)) {

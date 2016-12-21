@@ -33,13 +33,13 @@ private:
 
     void load();
 
-    std::vector<size_t> layers;
-    std::vector<double> weights;
+    std::vector<size_t> layers_;
+    std::vector<double> weights_;
 
-    std::vector<std::vector<double>> norm;
+    std::vector<std::vector<double>> norm_;
 
-    std::string mlp_path;
-    std::string norm_path;
+    std::string mlp_path_;
+    std::string norm_path_;
 };
 }
 

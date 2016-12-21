@@ -3,12 +3,17 @@
   <name>csapex_ml</name>
 
   <version>0.0.1</version>
-  <description>The csapex_scan_2d package</description>
+  <description>
+    The csapex_ml package contains a set of machine learning algorithms
+    mostly provided by the OpenCV library.
+  </description>
 
   <maintainer email="sebastian.buck@uni-tuebingen.de">buck</maintainer>
+  <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
 
   <license>BSD</license>
   <author email="sebastian.buck@uni-tuebingen.de">buck</author>
+  <author email="richard.hanten@uni-tuebingen.de">hanten</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
