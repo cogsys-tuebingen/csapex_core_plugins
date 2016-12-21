@@ -49,8 +49,11 @@ include_directories(
 
 
 add_library(${PROJECT_NAME}_node
+    src/plot.cpp
+
     src/time_plot.cpp
     src/vector_plot.cpp
+    src/scatter_plot.cpp
 )
 target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES} ${QWT_LIBRARY} ${QT_LIBRARIES}
@@ -61,6 +64,7 @@ add_dependencies(${PROJECT_NAME}_node QWT)
 add_library(${PROJECT_NAME}_plugin_qt
     src/time_plot_adapter.cpp
     src/vector_plot_adapter.cpp
+    src/scatter_plot_adapter.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_qt
     yaml-cpp ${catkin_LIBRARIES})

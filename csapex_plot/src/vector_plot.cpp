@@ -24,16 +24,13 @@ VectorPlot::VectorPlot():
     initialize_(true),
     basic_line_color_changed_(true),
     has_time_in_(false),
-    num_plots_(1),
-    width_(640),
-    height_(320)
+    num_plots_(1)
 {
 
 }
 
 void VectorPlot::setup(NodeModifier &node_modifier)
 {
-
     setupVariadic(node_modifier);
     in_time_  = node_modifier.addOptionalInput<GenericVectorMessage, double>("time");
 
@@ -62,17 +59,6 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
         update();
     });
 
-    auto setColor = [this](QColor& color) {
-        return [&](param::Parameter* p) {
-            std::vector<int> c = p->as<std::vector<int>>();
-            color.setRed(c[0]);
-            color.setGreen(c[1]);
-            color.setBlue(c[2]);
-
-            update();
-        };
-    };
-
     std::function<void(param::Parameter* p)> setLineColors= [this](param::Parameter* p){
         std::vector<int> c = p->as<std::vector<int>>();
         basic_line_color_.setRed(c[0]);
@@ -84,15 +70,11 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
     };
 
 
-    parameters.addParameter(param::ParameterFactory::declareColorParameter(
-                                "~plot/color/background", 255, 255, 255),
-                            setColor(color_bg_));
+    Plot::setupParameters(parameters);
+
     parameters.addParameter(param::ParameterFactory::declareColorParameter(
                                 "~plot/color/line", 100, 100, 255),
                             setLineColors);
-    parameters.addParameter(param::ParameterFactory::declareColorParameter(
-                                "~plot/color/fill", 200, 200, 200),
-                            setColor(color_fill_));
     parameters.addParameter(param::ParameterFactory::declareRange(
                                 "~plot/line/width", 0.0, 10.0, 0.0, 0.01),
                             line_width_);
@@ -230,8 +212,6 @@ void VectorPlot::preparePlot()
     double max = std::max(0.0, *std::max_element(max_list.begin(), max_list.end()));
 
     x_map.setScaleInterval(data_t_.front(), data_t_.back());
-
-
     y_map.setScaleInterval(min - 1, max + 1);
 }
 
@@ -290,35 +270,15 @@ void VectorPlot::renderAndSend()
 
     msg::publish(out_, out_msg);
 }
-
-int VectorPlot::getWidth() const
-{
-    return width_;
-}
-
-int VectorPlot::getHeight() const
-{
-    return height_;
-}
-
 double VectorPlot::getLineWidth() const
 {
     return line_width_;
 }
 
-QColor VectorPlot::getBackgroundColor() const
-{
-    return color_bg_;
-}
 QColor VectorPlot::getLineColor(std::size_t idx) const
 {
     std::unique_lock<std::recursive_mutex> lock(mutex_);
     return color_line_[idx];
-}
-QColor VectorPlot::getFillColor() const
-{
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
-    return color_fill_;
 }
 
 const double* VectorPlot::getTData() const
@@ -348,14 +308,6 @@ std::size_t VectorPlot::getCount() const
     return res;
 }
 
-const QwtScaleMap& VectorPlot::getXMap() const
-{
-    return x_map;
-}
-const QwtScaleMap& VectorPlot::getYMap() const
-{
-    return y_map;
-}
 
 Input* VectorPlot::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)
 {
