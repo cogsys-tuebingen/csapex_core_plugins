@@ -77,8 +77,8 @@ add_library(${PROJECT_NAME}_plugin SHARED
 
     src/assign_feature_classifications.cpp
     src/exchange_feature_classification.cpp
-
-    src/random_vector.hpp
+#
+ #   src/random_vector.hpp
 )
 
 target_link_libraries(${PROJECT_NAME}_plugin

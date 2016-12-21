@@ -48,7 +48,7 @@ void SVMEnsemble::setup(NodeModifier& node_modifier)
     in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("features");
     out_ = node_modifier.addOutput<GenericVectorMessage, CvMatMessage::ConstPtr>("responses");
 
-    reload_ = node_modifier.addSlot("Reload", [this](){load();});
+    reload_ = node_modifier.addSlot("Reload", std::bind(&SVMEnsemble::load, this) /*[this](){load();}*/);
 
 }
 
