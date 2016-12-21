@@ -22,6 +22,7 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
 
     const ConfusionMatrix& getConfusionMatrix() const;
+    void save();
 
     void exportCsv(const std::string& file);
 
@@ -35,6 +36,8 @@ private:
 
     mutable std::recursive_mutex mutex_;
     ConfusionMatrix confusion_;
+    std::string filename_;
+    std::string path_;
 };
 
 }

@@ -23,9 +23,20 @@ private:
     bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
 
 private:
-    int categories_;
+    int     classes_;
+    int     max_depth_;
+    int     min_sample_count_;
+    double  regression_accuracy_;
+    bool    use_surrogates_;
+    int     max_categories_;
+    int     cv_folds_;
+    bool    use_1se_rule_;
+    bool    truncate_pruned_tree_;
+
     std::vector<csapex::param::ParameterPtr> priors_params_;
     std::vector<float> priors_;
+
+    std::string path_;
 
 };
 

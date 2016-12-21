@@ -123,6 +123,9 @@ public:
 
         params.addParameter(param::ParameterFactory::declareRange("min cluster size", 0, 1000, 100, 1),
                             cluster_min_size_);
+        params.addParameter(param::ParameterFactory::declareRange("min cluster distance factor", 0.0, 100.0, 0.0, 0.001),
+                            cluster_min_size_distance_factor_);
+
     }
 
     void process()
@@ -190,7 +193,20 @@ public:
 
         for(auto it = merged_indices.begin(); it != merged_indices.end();) {
             pcl::PointIndices& c = *it;
-            if(c.indices.size() < cluster_min_size_) {
+            std::size_t min_size;
+            if(cluster_min_size_distance_factor_ != 0.0) {
+                double min_dist = std::numeric_limits<double>::infinity();
+                for(const int& i : c.indices) {
+                    const PointT& pt = cloud.at(i);
+                    min_dist = std::min<double>(min_dist, std::hypot(pt.x, pt.y));
+                }
+
+                int min_size_falloff = (1.0 / std::sqrt(min_dist) * cluster_min_size_distance_factor_) * cluster_min_size_;
+                min_size = std::max(3, min_size_falloff);
+            } else {
+                min_size = cluster_min_size_;
+            }
+            if(c.indices.size() < min_size) {
                 it = merged_indices.erase(it);
             } else {
                 ++it;
@@ -213,6 +229,7 @@ private:
     double cluster_distance_z_;
     double cluster_max_mean_xyz_;
     int    cluster_min_size_;
+    double cluster_min_size_distance_factor_;
 };
 
 

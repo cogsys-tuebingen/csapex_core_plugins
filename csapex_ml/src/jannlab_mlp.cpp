@@ -103,13 +103,13 @@ void JANNLabMLP::process()
             std::vector<double> mlp_input;
             convertNumeric(it_out->value, mlp_input);
 
-            if(!norm.empty()) {
-                apex_assert(norm.size() == 2);
-                apex_assert(norm[0].size() == mlp_input_size_);
-                apex_assert(norm[1].size() == mlp_input_size_);
+            if(!norm_.empty()) {
+                apex_assert(norm_.size() == 2);
+                apex_assert(norm_[0].size() == mlp_input_size_);
+                apex_assert(norm_[1].size() == mlp_input_size_);
 
                 for(std::size_t i = 0; i < mlp_input.size(); ++i) {
-                    mlp_input[i] = (mlp_input[i] - norm[0][i]) / (norm[1][i]);
+                    mlp_input[i] = (mlp_input[i] - norm_[0][i]) / (norm_[1][i]);
                 }
             }
 
@@ -129,25 +129,25 @@ void JANNLabMLP::load()
     auto mlp_p = readParameter<std::string>("MLP path");
     auto norm_p = readParameter<std::string>("normalization path");
 
-    if(mlp_path == mlp_p && norm_path == norm_p) {
+    if(mlp_path_ == mlp_p && norm_path_ == norm_p) {
         return;
     }
 
-    mlp_path = mlp_p;
-    norm_path = norm_p;
+    mlp_path_ = mlp_p;
+    norm_path_ = norm_p;
 
-    if(mlp_path.empty()) {
+    if(mlp_path_.empty()) {
         return;
     }
 
 
     try {
-        YAML::Node document = YAML::LoadFile(mlp_path);
-        layers.clear();
+        YAML::Node document = YAML::LoadFile(mlp_path_);
+        layers_.clear();
         YAML::Node y_layers = document["layers"];
         for(auto it = y_layers.begin() ; it != y_layers.end() ; ++it)
-            layers.push_back((*it).as<size_t>());
-        weights           = document["weights"].as<std::vector<double>>();
+            layers_.push_back((*it).as<size_t>());
+        weights_           = document["weights"].as<std::vector<double>>();
         mlp_class_labels_ = document["classes"].as<std::vector<int>>();
     } catch (const YAML::Exception &e) {
         std::cerr << e.what() << std::endl;
@@ -155,16 +155,16 @@ void JANNLabMLP::load()
         return;
     }
 
-    if(!norm_path.empty()) {
+    if(!norm_path_.empty()) {
         std::string line;
-        std::ifstream in(norm_path);
+        std::ifstream in(norm_path_);
         while (std::getline(in, line)) {
-            norm.emplace_back();
+            norm_.emplace_back();
 
             std::istringstream iss(line);
             double num = 0;
             while(iss >> num)  {
-                norm.back().push_back(num);
+                norm_.back().push_back(num);
             }
         }
     }
@@ -175,36 +175,36 @@ void JANNLabMLP::load()
     mlp_input_size_  = 0;
     mlp_output_size_ = 0;
 
-    if(layers.size() == 0 || weights.size() == 0) {
+    if(layers_.size() == 0 || weights_.size() == 0) {
         node_modifier_->setWarning("Couldn't load layers or weights!");
         return;
     }
-    if(layers.size() < 3) {
+    if(layers_.size() < 3) {
         node_modifier_->setWarning("MLP must have at least 3 layers!");
         return;
     }
-    if(mlp_class_labels_.size() != layers.back()) {
+    if(mlp_class_labels_.size() != layers_.back()) {
         mlp_class_labels_.clear();
         return;
     }
 
     int connections = 0;
-    for(std::size_t i = 0; i < layers.size() - 1; ++i) {
-        int l = layers[i];
-        int lnext = layers[i+1];
+    for(std::size_t i = 0; i < layers_.size() - 1; ++i) {
+        int l = layers_[i];
+        int lnext = layers_[i+1];
         connections += (l * lnext);
     }
 
-    if(connections != (int) weights.size()) {
-        node_modifier_->setWarning(std::string("Net has ") + std::to_string(connections) + " connections but " + std::to_string(weights.size()) + " weights");
+    if(connections != (int) weights_.size()) {
+        node_modifier_->setWarning(std::string("Net has ") + std::to_string(connections) + " connections but " + std::to_string(weights_.size()) + " weights");
         return;
     }
 
-    mlp_input_size_  = layers.front();
-    mlp_output_size_ = layers.back();
+    mlp_input_size_  = layers_.front();
+    mlp_output_size_ = layers_.back();
 
-    mlp_.reset(new mlp::MLP(layers.size(),
-                            layers.data(),
-                            weights.size(),
-                            weights.data()));
+    mlp_.reset(new mlp::MLP(layers_.size(),
+                            layers_.data(),
+                            weights_.size(),
+                            weights_.data()));
 }

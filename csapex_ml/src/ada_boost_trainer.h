@@ -21,15 +21,15 @@ public:
 private:
     std::string     path_;
 
-    int boost_type;
-    int weak_count;
-    int split_criteria;
+    int boost_type_;
+    int weak_count_;
+    int split_criteria_;
 
-    int max_depth;
-    bool use_surrogates;
+    int     max_depth_;
+    bool    use_surrogates_;
 
 
-    double          weight_trim_rate_;
+    double  weight_trim_rate_;
 
     bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
 };

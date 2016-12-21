@@ -21,6 +21,8 @@ namespace csapex
 
 class CSAPEX_EXPORT_PLUGIN DecomposeMapMessage : public Node
 {
+    friend class DecomposeMapMessageSerializer;
+
 public:
     DecomposeMapMessage()
     {
@@ -77,3 +79,29 @@ private:
 
 CSAPEX_REGISTER_CLASS(csapex::DecomposeMapMessage, csapex::Node)
 
+
+
+
+namespace csapex
+{
+class DecomposeMapMessageSerializer
+{
+public:
+    static void serialize(const DecomposeMapMessage& decomposer, YAML::Node& doc)
+    {
+        doc["channel_count"] = decomposer.outputs_.size();
+    }
+
+    static void deserialize(DecomposeMapMessage& decomposer, const YAML::Node& doc)
+    {
+        int c = 0;
+        if(doc["channel_count"].IsDefined()) {
+            c = doc["channel_count"].as<int>();
+        }
+
+        decomposer.updateOutputs(c);
+    }
+};
+}
+
+CSAPEX_REGISTER_SERIALIZER(csapex::DecomposeMapMessage, DecomposeMapMessageSerializer)
