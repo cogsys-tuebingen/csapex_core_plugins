@@ -29,7 +29,7 @@ private:
     void doSleep();
 
     void delayInput(Continuation continuation);
-    void delayEvent();
+    void delayEvent(const TokenPtr &token);
 
 private:
     Input* input_;
