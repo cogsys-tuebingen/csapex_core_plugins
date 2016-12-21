@@ -44,6 +44,9 @@ target_link_libraries(${PROJECT_NAME}
 
 
 add_library(${PROJECT_NAME}_plugin SHARED
+    src/sample/features_message_filter.cpp
+    src/sample/sample_splitter.cpp
+    src/sample/function_sample_generator.cpp
     src/decision_tree.cpp
     src/decision_tree_trainer.cpp
 
