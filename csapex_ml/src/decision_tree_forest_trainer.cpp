@@ -33,4 +33,5 @@ void DecisionTreeForestTrainer::setupParameters(Parameterizable &parameters)
 bool DecisionTreeForestTrainer::processCollection(std::vector<connection_types::FeaturesMessage> &collection)
 {
 
+    return true;
 }
