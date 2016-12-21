@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <package>
   <name>csapex_vision_histograms</name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>This package contains nodes to generate histograms</description>
   <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
- <license>BSD</license>
+  <author email="richard.hanten@uni-tuebingen.de">hanten</author>
 
- <buildtool_depend>catkin</buildtool_depend>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
 
  <build_depend>csapex_opencv</build_depend>
  <build_depend>csapex_ml</build_depend>
