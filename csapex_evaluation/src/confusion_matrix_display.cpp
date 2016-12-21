@@ -13,6 +13,7 @@
 
 /// SYSTEM
 #include <fstream>
+#include <QDir>
 
 CSAPEX_REGISTER_CLASS(csapex::ConfusionMatrixDisplay, csapex::Node)
 
@@ -25,10 +26,44 @@ ConfusionMatrixDisplay::ConfusionMatrixDisplay()
 
 void ConfusionMatrixDisplay::setupParameters(Parameterizable &params)
 {
-    params.addParameter(param::ParameterFactory::declareTrigger("export as .csv file"),
-                        [this](param::Parameter* p) {
-        export_request();
+    params.addParameter(csapex::param::ParameterFactory::declareText(
+                                "filename",
+                                csapex::param::ParameterDescription("Name of csv file"),
+                                "rel_conf_mat"),
+                            filename_);
+
+    params.addParameter(csapex::param::ParameterFactory::declareDirectoryOutputPath(
+                                "path",
+                                csapex::param::ParameterDescription("Directory to write file to"),
+                                "",
+                                ""),
+                            path_);
+
+    params.addParameter(param::ParameterFactory::declareTrigger("save csv file"),
+                            [this](param::Parameter*) {
+        save();
     });
+
+}
+
+void ConfusionMatrixDisplay::save()
+{
+    int suffix = 0;
+    while(true) {
+        std::stringstream file_s;
+
+        file_s << path_ << "/" << filename_ << "_" << suffix << ".csv";
+
+        std::string file = file_s.str();
+
+        if(!QFile(QString::fromStdString(file)).exists()) {
+            exportCsv(file);
+            break;
+        }
+        else {
+        ++suffix;
+        }
+    }
 }
 
 void ConfusionMatrixDisplay::setup(NodeModifier& node_modifier)
