@@ -200,7 +200,7 @@ bool DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
     dtree->setMaxCategories(max_categories_);
     dtree->setCVFolds(cv_folds_);
     dtree->setUse1SERule(use_1se_rule_);
-    dtree->setTruncatePrunedTree(truncate_pruned_tree_));
+    dtree->setTruncatePrunedTree(truncate_pruned_tree_);
 
     cv::Mat priors(priors_);
     dtree->setPriors(priors);

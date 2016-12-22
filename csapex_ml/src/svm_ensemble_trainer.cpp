@@ -161,7 +161,7 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
 #if CV_MAJOR_VERSION == 2
     if(svm_type_ != cv::SVM::ONE_CLASS) {
 #elif CV_MAJOR_VERSION == 3
-    if(svm_type != cv::ml::SVM::ONE_CLASS) {
+    if(svm_type_ != cv::ml::SVM::ONE_CLASS) {
 #endif
         if(indices_by_label.size() == 1) {
             throw std::runtime_error("Multi class SVMs require multiple classes!");
@@ -270,14 +270,14 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
 #elif CV_MAJOR_VERSION == 3
                 cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
-                svm->setType(svm_type);
-                svm->setKernel(kernel_type);
-                svm->setDegree(degree);
-                svm->setGamma(gamma);
-                svm->setCoef0(coef0);
-                svm->setC(C);
-                svm->setNu(nu);
-                svm->setP(p);
+                svm->setType(svm_type_);
+                svm->setKernel(kernel_type_);
+                svm->setDegree(degree_);
+                svm->setGamma(gamma_);
+                svm->setCoef0(coef0_);
+                svm->setC(C_);
+                svm->setNu(nu_);
+                svm->setP(p_);
                 //    svm->setTermCriteria();
 
                 cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(samples,
@@ -392,14 +392,14 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
 #elif CV_MAJOR_VERSION == 3
                 cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
-                svm->setType(svm_type);
-                svm->setKernel(kernel_type);
-                svm->setDegree(degree);
-                svm->setGamma(gamma);
-                svm->setCoef0(coef0);
-                svm->setC(C);
-                svm->setNu(nu);
-                svm->setP(p);
+                svm->setType(svm_type_);
+                svm->setKernel(kernel_type_);
+                svm->setDegree(degree_);
+                svm->setGamma(gamma_);
+                svm->setCoef0(coef0_);
+                svm->setC(C_);
+                svm->setNu(nu_);
+                svm->setP(p_);
                 //    svm->setTermCriteria();
 
 
@@ -494,14 +494,14 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
 #elif CV_MAJOR_VERSION == 3
             cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
-            svm->setType(svm_type);
-            svm->setKernel(kernel_type);
-            svm->setDegree(degree);
-            svm->setGamma(gamma);
-            svm->setCoef0(coef0);
-            svm->setC(C);
-            svm->setNu(nu);
-            svm->setP(p);
+            svm->setType(svm_type_);
+            svm->setKernel(kernel_type_);
+            svm->setDegree(degree_);
+            svm->setGamma(gamma_);
+            svm->setCoef0(coef0_);
+            svm->setC(C_);
+            svm->setNu(nu_);
+            svm->setP(p_);
             //    svm->setTermCriteria();
 
 
