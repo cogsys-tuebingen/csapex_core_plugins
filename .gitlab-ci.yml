@@ -18,14 +18,13 @@ before_script:
 
   # Here we are at /build/$CI_PROJECT_NAME
   # For pure catkin projects, we need a workspace:
-  - export BRANCH=$(git rev-parse --abbrev-ref HEAD) && echo "BRANCH = $BRANCH"
   - mkdir -p /build/ws/src/
   - cd /build/ws
   - ln -s $CI_PROJECT_DIR src/$CI_PROJECT_NAME
   - cd src
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:csapex/csapex csapex
   - cd csapex
-  - git checkout $BRANCH || true # select same branch name, if it exists. Defaults to master
+  - git checkout $CI_BUILD_REF_NAME || true # select same branch name, if it exists. Defaults to master
   - cd ..
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vision
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_laser_processing
