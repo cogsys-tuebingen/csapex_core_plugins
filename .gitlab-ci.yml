@@ -1,8 +1,7 @@
 before_script:
   # Install ssh-agent if not already installed, it is required by Docker.
   # (change apt-get to yum if you use a CentOS-based image)
-  - 'apt-get -qq update -y'
-  - 'apt-get -qq install build-essential openssh-client sudo -y'
+  - 'apt-get -qq update -y && apt-get -qq install build-essential openssh-client sudo -y --no-install-recommends'
 
   # Run ssh-agent (inside the build environment)
   - eval $(ssh-agent -s)
