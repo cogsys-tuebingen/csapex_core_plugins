@@ -18,9 +18,7 @@
 #include <csapex/profiling/timer.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/profiling/interlude.hpp>
-
-/// SYSTEM
-#include <yaml-cpp/eventhandler.h>
+#include <csapex/model/node_handle.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportRos, csapex::Node)
 
@@ -48,6 +46,8 @@ ImportRos::~ImportRos()
 
 void ImportRos::setup(NodeModifier& node_modifier)
 {
+    RosNode::setup(node_modifier);
+
     input_time_ = node_modifier.addOptionalInput<connection_types::TimestampMessage>("time");
     connector_ = node_modifier.addOutput<connection_types::AnyMessage>("Something");
 }
@@ -62,8 +62,6 @@ void ImportRos::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("refresh"),
                             std::bind(&ImportRos::refresh, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("rate", 0.1, 100.0, 60.0, 0.1),
-                            std::bind(&ImportRos::updateRate, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
                             std::bind(&ImportRos::updateSubscriber, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareBool("latch", false));
@@ -83,47 +81,43 @@ void ImportRos::setupROS()
 void ImportRos::refresh()
 {
     ROSHandler& rh = getRosHandler();
+    apex_assert(rh.isConnected());
 
-    if(rh.nh()) {
-        std::string old_topic = readParameter<std::string>("topic");
+    node_modifier_->setNoError();
 
-        ros::master::V_TopicInfo topics;
-        ros::master::getTopics(topics);
+    std::string old_topic = readParameter<std::string>("topic");
 
-        param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
-        if(setp) {
-            node_modifier_->setNoError();
-            bool found = false;
-            std::vector<std::string> topics_str;
-            topics_str.push_back(no_topic_);
-            for(ros::master::V_TopicInfo::const_iterator it = topics.begin(); it != topics.end(); ++it) {
-                topics_str.push_back(it->name);
-                if(it->name == old_topic) {
-                    found = true;
-                }
+    ros::master::V_TopicInfo topics;
+    ros::master::getTopics(topics);
+
+    param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
+    if(setp) {
+        bool found = false;
+        std::vector<std::string> topics_str;
+        topics_str.push_back(no_topic_);
+        for(ros::master::V_TopicInfo::const_iterator it = topics.begin(); it != topics.end(); ++it) {
+            topics_str.push_back(it->name);
+            if(it->name == old_topic) {
+                found = true;
             }
-            if(!found) {
-                topics_str.push_back(old_topic);
-            }
-            setp->setSet(topics_str);
+        }
+        if(!found) {
+            topics_str.push_back(old_topic);
+        }
+        setp->setSet(topics_str);
 
-            if(old_topic != no_topic_) {
-                setp->set(old_topic);
-            }
-            return;
+        if(old_topic != no_topic_) {
+            setp->set(old_topic);
         }
     }
 
-    node_modifier_->setWarning("no ROS connection");
+    if(doSetTopic()) {
+        yield();
+    }
 }
 
 void ImportRos::update()
 {
-}
-
-void ImportRos::updateRate()
-{
-    setTickFrequency(readParameter<double>("rate"));
 }
 
 void ImportRos::updateSubscriber()
@@ -135,12 +129,7 @@ void ImportRos::updateSubscriber()
 
 bool ImportRos::doSetTopic()
 {
-    getRosHandler().refresh();
-
-    if(!getRosHandler().isConnected()) {
-        node_modifier_->setError("no connection to ROS");
-        return false;
-    }
+    apex_assert(getRosHandler().isConnected());
 
     ros::master::V_TopicInfo topics;
     ros::master::getTopics(topics);
@@ -162,8 +151,20 @@ bool ImportRos::doSetTopic()
         std::stringstream ss;
         ss << "cannot set topic, " << topic << " doesn't exist";
         node_modifier_->setWarning(ss.str());
+
+        getRosHandler().waitForTopic(topic, [topic, this](){
+            ainfo << "topic " << topic << " exists now" << std::endl;
+            node_modifier_->setNoError();
+            refresh();
+        });
     }
     return false;
+}
+
+bool ImportRos::canProcess() const
+{
+    std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
+    return !msgs_.empty();
 }
 
 void ImportRos::processROS()
@@ -173,15 +174,22 @@ void ImportRos::processROS()
 
     // first check if connected -> if not connected, we only use tick
     if(!msg::isConnected(input_time_)) {
+        processSource();
         return;
     }
 
     // now that we are connected, check that we have a valid message
     if(!msg::hasMessage(input_time_)) {
+        processSource();
         return;
     }
 
     // INPUT CONNECTED
+    processNotSource();
+}
+
+void ImportRos::processNotSource()
+{
     connection_types::TimestampMessage::ConstPtr time = msg::getMessage<connection_types::TimestampMessage>(input_time_);
 
     if(msgs_.empty()) {
@@ -276,23 +284,7 @@ void ImportRos::processROS()
     }
 }
 
-bool ImportRos::isStampCovered(const ros::Time &stamp)
-{
-    std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
-    if(msgs_.empty()) {
-        return false;
-    }
-    return rosTime(msgs_.back()->stamp_micro_seconds) >= stamp;
-}
-
-
-bool ImportRos::canTick()
-{
-    std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
-    return current_topic_.name.empty() || (!msg::isConnected(input_time_) && !msgs_.empty());
-}
-
-bool ImportRos::tickROS()
+void ImportRos::processSource()
 {
     INTERLUDE("tick");
 
@@ -301,12 +293,10 @@ bool ImportRos::tickROS()
     }
 
     if(current_topic_.name.empty()) {
-        return false;
+        throw std::runtime_error("no topic set");
     }
 
-    if(msg::isConnected(input_time_)) {
-        return false;
-    }
+    apex_assert(!msg::isConnected(input_time_));
 
     // NO INPUT CONNECTED -> ONLY KEEP CURRENT MESSAGE
     {
@@ -316,16 +306,21 @@ bool ImportRos::tickROS()
         }
     }
 
-    if(!current_topic_.name.empty()) {
-        if(msgs_.empty()) {
-            return false;
-        }
-        publishLatestMessage();
-    }
+    apex_assert(!msgs_.empty());
+    publishLatestMessage();
 
     node_modifier_->setNoError();
-    return true;
 }
+
+bool ImportRos::isStampCovered(const ros::Time &stamp)
+{
+    std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
+    if(msgs_.empty()) {
+        return false;
+    }
+    return rosTime(msgs_.back()->stamp_micro_seconds) >= stamp;
+}
+
 
 void ImportRos::publishLatestMessage()
 {
@@ -380,6 +375,8 @@ void ImportRos::callback(TokenDataConstPtr message)
         while((int) msgs_.size() > buffer_size_) {
             msgs_.pop_front();
         }
+
+        yield();
     }
 }
 

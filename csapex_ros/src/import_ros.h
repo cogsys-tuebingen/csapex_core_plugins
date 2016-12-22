@@ -22,16 +22,17 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
     virtual void setupROS() override;
     virtual void processROS() override;
-    virtual bool canTick() override;
-    virtual bool tickROS() override;
+    virtual bool canProcess() const override;
     virtual void reset() override;
 
     void callback(TokenDataConstPtr message);
 
 protected:
+    void processSource();
+    void processNotSource();
+
     void refresh();
     void update();
-    void updateRate();
     void updateSubscriber();
     bool doSetTopic();
     void setTopic(const ros::master::TopicInfo& topic);
@@ -43,7 +44,7 @@ private:
     Input* input_time_;
     Output* connector_;
 
-    std::recursive_mutex msgs_mtx_;
+    mutable std::recursive_mutex msgs_mtx_;
     std::deque<connection_types::Message::ConstPtr> msgs_;
 
     ros::Subscriber current_subscriber;

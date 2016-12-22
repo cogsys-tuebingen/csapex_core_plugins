@@ -22,8 +22,7 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
     virtual void processROS() override;
-    virtual bool canTick() override;
-    virtual bool tickROS() override;
+    virtual bool canProcess() const override;
 
     void update();
 

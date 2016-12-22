@@ -72,7 +72,7 @@ void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 
     layout->addLayout(sub);
 
-    connect(this, SIGNAL(displayRequest(QImage)), this, SLOT(display(QImage)));
+    connect(this, SIGNAL(displayRequest(QImage)), this, SLOT(display(QImage)), Qt::QueuedConnection);
 
     DefaultNodeAdapter::setupUi(layout);
 }

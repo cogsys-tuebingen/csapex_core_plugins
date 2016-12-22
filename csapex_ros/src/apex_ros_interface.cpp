@@ -304,7 +304,7 @@ void APEXRosInterface::registerClockWatchdog()
 void APEXRosInterface::clock(const rosgraph_msgs::ClockConstPtr &clock)
 {
     ros::Time now = clock->clock;
-    if(now < last_clock_) {
+    if(now < last_clock_ && clock_reset_event_) {
         std::cerr << "time reset" << std::endl;
 
         TokenDataConstPtr data(new connection_types::AnyMessage);
