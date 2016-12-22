@@ -137,12 +137,12 @@ bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage> &collection
 
 #elif CV_MAJOR_VERSION == 3
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
-    boost->setBoostType(boost_type);
-    boost->setWeakCount(weak_count);
+    boost->setBoostType(boost_type_);
+    boost->setWeakCount(weak_count_);
     boost->setWeightTrimRate(weight_trim_rate_);
 
-    boost->setUseSurrogates(use_surrogates);
-    boost->setMaxDepth(max_depth);
+    boost->setUseSurrogates(use_surrogates_);
+    boost->setMaxDepth(max_depth_);
 
     std::cout << "[AdaBoost]: Started training with " << samples.rows << " samples!" << std::endl;
 
