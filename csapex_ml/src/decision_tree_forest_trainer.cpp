@@ -149,6 +149,240 @@ void DecisionTreeForestTrainer::updatePriorValues()
 
 bool DecisionTreeForestTrainer::processCollection(std::vector<connection_types::FeaturesMessage> &collection)
 {
+    std::size_t step = collection.front().value.size();
+    std::map<int, std::vector<std::size_t>> indices_by_label;
+
+    for(std::size_t i = 0 ; i < collection.size() ; ++i) {
+        const FeaturesMessage &fm = collection[i];
+        if(fm.value.size() != step)
+            throw std::runtime_error("All descriptors must have the same length!");
+        indices_by_label[fm.classification].push_back(i);
+    }
+
+
+    std::vector<int> dtree_labels;
+    cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+    const static std::string prefix = "dtree_";
+
+#if CV_MAJOR_VERSION == 2
+    int tflag = CV_ROW_SAMPLE;
+#elif CV_MAJOR_VERSION == 3
+    int tflag = cv::ml::ROW_SAMPLE;
+#endif
+
+
+    if(indices_by_label.size() == 1) {
+        throw std::runtime_error("At least 2 classes are required!");
+    }
+
+
+
+    if(one_vs_all_) {
+        std::vector<std::size_t> num_of_neg(indices_by_label.size());
+
+        auto it = indices_by_label.begin();
+        for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
+            num_of_neg[i] = it->second.size() /(indices_by_label.size() - 1);
+            auto it2 = indices_by_label.begin();
+            for(std::size_t j = 0 ; j < indices_by_label.size() ; ++j) {
+                if(i != j){
+                    if(num_of_neg[i] > it2->second.size())
+                    {
+                        num_of_neg[i] = it2->second.size() /(indices_by_label.size() - 1);
+                    }
+                }
+                ++it2;
+            }
+            ++it;
+        }
+
+        /// iterate samples
+        for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
+            /// this is the current goal class
+            auto it = indices_by_label.begin();
+            std::advance(it, i);
+
+            std::vector<std::size_t> neg_indices;
+            /// now we gather negative samples, which is basically collecting all the other classes
+            for(const auto &entry : indices_by_label) {
+                if(entry.first == it->first)
+                    continue;
+
+                if(balance_){
+                    std::vector<std::size_t> shuffled = rand_vec_.newPermutation(entry.second.size());
+                    for(std::size_t n = 0; n < num_of_neg[i]; ++ n){
+                        neg_indices.push_back(entry.second[shuffled[n]]);
+                    }
+                }
+                else{
+                    neg_indices.insert(neg_indices.end(),
+                                       entry.second.begin(),
+                                       entry.second.end());
+                }
+            }
+
+            /// gather data
+            const std::vector<std::size_t> &pos_indices = it->second;
+            const std::size_t sample_size = pos_indices.size() + neg_indices.size();
+
+            cv::Mat samples(sample_size, step, CV_32FC1, cv::Scalar());
+            cv::Mat labels(sample_size, 1, CV_32SC1, cv::Scalar());
+            cv::Mat missing(collection.size(), step, CV_8UC1, cv::Scalar());
+
+            cv::Mat neg_samples = samples.rowRange(0, neg_indices.size());
+            cv::Mat pos_samples = samples.rowRange(neg_indices.size(), sample_size);
+            cv::Mat neg_labels = labels.rowRange(0, neg_indices.size());
+            cv::Mat pos_labels = labels.rowRange(neg_indices.size(), sample_size);
+            cv::Mat neg_missing = missing.rowRange(0, neg_indices.size());
+            cv::Mat pos_missing = missing.rowRange(neg_indices.size(), sample_size);
+            for(int i = 0 ; i < neg_samples.rows; ++i) {
+                const std::vector<float> &data = collection.at(neg_indices.at(i)).value;
+                neg_labels.at<float>(i) = NEGATIVE;
+                for(std::size_t j = 0 ; j < step ; ++j) {
+                    const float val = data.at(j);
+                    if(std::abs(val) >= FLT_MAX * 0.5f) {
+                        neg_missing.at<uchar>(i,j) = 1;
+                    } else {
+                        neg_samples.at<float>(i,j) = val;
+                    }
+                }
+            }
+            for(int i = 0 ; i < pos_samples.rows ; ++i) {
+                const std::vector<float> &data = collection.at(pos_indices.at(i)).value;
+                pos_labels.at<float>(i) = POSITIVE;
+                for(std::size_t j = 0 ; j < step ; ++j) {
+                    const float val = data.at(j);
+                    if(std::abs(val) >= FLT_MAX * 0.5f) {
+                        pos_missing.at<uchar>(i,j) = 1;
+                    } else {
+                        pos_samples.at<float>(i,j) = val;
+                    }
+                }
+            }
+
+#if CV_MAJOR_VERSION == 2
+            CvDTreeParams params ( max_depth_,
+                                   min_sample_count_,
+                                   regression_accuracy_,
+                                   use_surrogates_,
+                                   max_categories_,
+                                   cv_folds_,
+                                   use_1se_rule_,
+                                   truncate_pruned_tree_,
+                                   priors_.data());
+            cv::Mat var_type( samples.cols + 1, 1, CV_8U, CV_VAR_NUMERICAL);
+            cv::DecisionTree dtree;
+            std::cout << "[DecisionTree]: Started training with " << samples.rows << " samples!" << std::endl;
+            if(dtree.train(samples, tflag, labels, cv::Mat(), cv::Mat(), var_type, missing, params)) {
+                std::string label = prefix + std::to_string(it->first);
+                std::cout << "Finished training for tree '" << label << "'!" << std::endl;
+                dtree.write(fs.fs, label.c_str());
+                dtree_labels.push_back(it->first);
+            } else {
+                return false;
+            }
+#elif CV_MAJOR_VERSION == 3
+        throw std::runtime_error("Not implemented yet!");
+#endif
+        }
+    } else {
+        if(indices_by_label.find(NEGATIVE) == indices_by_label.end()) {
+            throw std::runtime_error("Need common negative examples labelled with -1");
+        }
+
+
+
+        if(indices_by_label.size() != priors_.size()) {
+            throw std::runtime_error("Make sure to set the right amount of classes / update the priors!");
+        }
+
+        std::vector<std::size_t> neg_indices_org = indices_by_label[NEGATIVE];
+        indices_by_label.erase(NEGATIVE);
+
+        /// iterate samples
+        for(std::size_t i = 0 ; i < indices_by_label.size() ; ++i) {
+            auto it = indices_by_label.begin();
+            std::advance(it, i);
+            std::vector<std::size_t> neg_indices = neg_indices_org;
+            if(balance_){
+                std::vector<std::size_t> shuffled = rand_vec_.newPermutation(it->second.size());
+                neg_indices.resize(shuffled.size());
+                for(std::size_t i = 0; i < neg_indices.size(); ++i)
+                {
+                    neg_indices[i] = neg_indices_org[shuffled[i]];
+                }
+            }
+            /// gather data
+            const std::vector<std::size_t> &pos_indices = it->second;
+            const std::size_t sample_size = pos_indices.size() + neg_indices.size();
+
+            cv::Mat samples(sample_size, step, CV_32FC1, cv::Scalar());
+            cv::Mat labels(sample_size, 1, CV_32SC1, cv::Scalar());
+
+            cv::Mat neg_samples = samples.rowRange(0, neg_indices.size());
+            cv::Mat pos_samples = samples.rowRange(neg_indices.size(), sample_size);
+            cv::Mat neg_labels = labels.rowRange(0, neg_indices.size());
+            cv::Mat pos_labels = labels.rowRange(neg_indices.size(), sample_size);
+            for(int i = 0 ; i < neg_samples.rows; ++i) {
+                const std::vector<float> &data = collection.at(neg_indices.at(i)).value;
+                neg_labels.at<float>(i) = NEGATIVE;
+                for(std::size_t j = 0 ; j < step ; ++j) {
+                    neg_samples.at<float>(i,j) = data.at(j);
+                }
+            }
+            for(int i = 0 ; i < pos_samples.rows ; ++i) {
+                const std::vector<float> &data = collection.at(pos_indices.at(i)).value;
+                pos_labels.at<float>(i) = POSITIVE;
+                for(std::size_t j = 0 ; j < step ; ++j) {
+                    pos_samples.at<float>(i,j) = data.at(j);
+                }
+            }
+
+#if CV_MAJOR_VERSION == 2
+//            ExtendedSVM svm;
+
+//            cv::SVMParams   svm_params_;
+//            svm_params_.svm_type = svm_type_;
+//            svm_params_.kernel_type = kernel_type_;
+//            svm_params_.degree = degree_;
+//            svm_params_.gamma = gamma_;
+//            svm_params_.coef0 = coef0_;
+
+//            svm_params_.C = C_;
+//            svm_params_.nu = nu_;
+//            svm_params_.p = p_;
+//            //svm_params_.term_crit; // termination criteria
+
+//            /// train the svm
+//            std::cout << "Started training for '" << it->first << std::endl;
+//            if(svm.train(samples, labels, cv::Mat(), cv::Mat(), svm_params_)) {
+//                std::cout << "Finished training for '" << it->first << "'!" << std::endl;
+//                std::string label = prefix + std::to_string(it->first);
+//                svm.write(fs.fs, label.c_str());
+//                svm_labels.push_back(it->first);
+//            } else {
+//                return false;
+//            }
+//            /// train the svm
+//            std::cout << "[SVMEnsemble]: Started training for svm #"
+//                      << it->first << " with " << samples.rows << std::endl;
+//            if(svm.train(samples, labels, cv::Mat(), cv::Mat(), svm_params_)) {
+//                std::string label = prefix + std::to_string(it->first);
+//                svm.write(fs.fs, label.c_str());
+//                svm_labels.push_back(it->first);
+//                std::cout << "[SVMEnsemble]: Finished training for svm #"
+//                          << it->first << "!" << std::endl;
+//            } else {
+//                return false;
+//            }
+
+#elif CV_MAJOR_VERSION == 3
+        throw std::runtime_error("Not implemented yet!");
+#endif
+        }
+    }
+
+
 
     return true;
 }
