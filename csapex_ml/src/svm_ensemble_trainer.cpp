@@ -76,7 +76,7 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
         {"NU_SVR", SVM::NU_SVR}
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("svm type",
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("svm/type",
                                                                          csapex::param::ParameterDescription("SVM type to be trained."),
                                                                          svm_types,
                                                                          (int) SVM::EPS_SVR),
@@ -112,30 +112,30 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
         return svm_type_ != SVM::ONE_CLASS;};
 
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, 9.0, 3.0, 1.0),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/degree", 0.0, 9.0, 3.0, 1.0),
                                        deg_cond,
                                        degree_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", 0.0, 10.0, 0.0, 0.01),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/gamma", 0.0, 10.0, 0.0, 0.01),
                                        gamma_cond,
                                        gamma_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -10.0, 10.0, 0.0, 0.01),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/coef0", -10.0, 10.0, 0.0, 0.01),
                                        coeff0_cond,
                                        coef0_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("C", 0.0, 10.0, 0.01, 0.01),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/C", 0.0, 10.0, 0.01, 0.01),
                                        c_cond,
                                        C_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("nu", 0.0, 1.0, 0.5, 0.01),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/nu", 0.0, 1.0, 0.5, 0.01),
                                        nu_cond,
                                        nu_);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("p", 0.0, 1.0, 0.1, 0.01),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("svm/p", 0.0, 1.0, 0.1, 0.01),
                                        p_cond,
                                        p_);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("one-vs-all", false),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("classes/one-vs-all", false),
                                        one_class_cond,
                                        one_vs_all_);
 
     parameters.addParameter(param::ParameterFactory::declareBool
-                            ("balance",
+                            ("classes/balance",
                              param::ParameterDescription("Use the same amount of samples per class."),
                              false),
                             balance_);
