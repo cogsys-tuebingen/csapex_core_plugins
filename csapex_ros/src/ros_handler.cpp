@@ -11,7 +11,7 @@ using namespace csapex;
 ROSHandler* ROSHandler::g_instance_ = nullptr;
 
 ROSHandler::ROSHandler(Settings& settings)
-    : settings_(settings), initialized_(false), check_is_running(false)
+    : settings_(settings), initialized_(false), has_connection(false), check_is_running(false)
 {    
     init();
     connection_thread_ = std::thread([this]() {
