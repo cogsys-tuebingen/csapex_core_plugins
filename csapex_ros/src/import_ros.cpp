@@ -41,7 +41,6 @@ ImportRos::ImportRos()
 
 ImportRos::~ImportRos()
 {
-    current_subscriber.shutdown();
 }
 
 void ImportRos::setup(NodeModifier& node_modifier)
@@ -354,7 +353,6 @@ void ImportRos::publishLatestMessage()
     }
 }
 
-// FIXME: this can be still called after the object is destroyed!
 void ImportRos::callback(TokenDataConstPtr message)
 {
     connection_types::Message::ConstPtr msg = std::dynamic_pointer_cast<connection_types::Message const>(message);
@@ -380,6 +378,11 @@ void ImportRos::callback(TokenDataConstPtr message)
     }
 }
 
+void ImportRos::tearDown()
+{
+    reset();
+}
+
 void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 {
     if(topic.name == current_topic_.name) {
@@ -403,5 +406,6 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 
 void ImportRos::reset()
 {
+    current_subscriber.shutdown();
     running_ = false;
 }

@@ -24,6 +24,7 @@ public:
     virtual void processROS() override;
     virtual bool canProcess() const override;
     virtual void reset() override;
+    virtual void tearDown() override;
 
     void callback(TokenDataConstPtr message);
 

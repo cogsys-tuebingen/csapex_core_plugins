@@ -43,7 +43,7 @@ bool RosNode::isConnected() const
 
 bool RosNode::canProcess() const
 {
-    return isConnected();
+    return Node::canProcess() && isConnected();
 }
 
 void RosNode::process()
