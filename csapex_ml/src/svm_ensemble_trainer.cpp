@@ -364,18 +364,8 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
                 svm_params_.C = C_;
                 svm_params_.nu = nu_;
                 svm_params_.p = p_;
-                //svm_params_.term_crit; // termination criteria
+                svm_params_.term_crit = term_crit_;
 
-                /// train the svm
-                std::cout << "Started training for '" << it->first << std::endl;
-                if(svm.train(samples, labels, cv::Mat(), cv::Mat(), svm_params_)) {
-                    std::cout << "Finished training for '" << it->first << "'!" << std::endl;
-                    std::string label = prefix + std::to_string(it->first);
-                    svm.write(fs.fs, label.c_str());
-                    svm_labels.push_back(it->first);
-                } else {
-                    return false;
-                }
                 /// train the svm
                 std::cout << "[SVMEnsemble]: Started training for svm #"
                           << it->first << " with " << samples.rows << std::endl;

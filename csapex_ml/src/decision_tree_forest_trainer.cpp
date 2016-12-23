@@ -318,71 +318,65 @@ bool DecisionTreeForestTrainer::processCollection(std::vector<connection_types::
 
             cv::Mat samples(sample_size, step, CV_32FC1, cv::Scalar());
             cv::Mat labels(sample_size, 1, CV_32SC1, cv::Scalar());
+            cv::Mat missing(collection.size(), step, CV_8UC1, cv::Scalar());
 
             cv::Mat neg_samples = samples.rowRange(0, neg_indices.size());
             cv::Mat pos_samples = samples.rowRange(neg_indices.size(), sample_size);
             cv::Mat neg_labels = labels.rowRange(0, neg_indices.size());
             cv::Mat pos_labels = labels.rowRange(neg_indices.size(), sample_size);
+            cv::Mat neg_missing = missing.rowRange(0, neg_indices.size());
+            cv::Mat pos_missing = missing.rowRange(neg_indices.size(), sample_size);
             for(int i = 0 ; i < neg_samples.rows; ++i) {
                 const std::vector<float> &data = collection.at(neg_indices.at(i)).value;
                 neg_labels.at<float>(i) = NEGATIVE;
                 for(std::size_t j = 0 ; j < step ; ++j) {
-                    neg_samples.at<float>(i,j) = data.at(j);
-                }
+                    const float val = data.at(j);
+                    if(std::abs(val) >= FLT_MAX * 0.5f) {
+                        neg_missing.at<uchar>(i,j) = 1;
+                    } else {
+                        neg_samples.at<float>(i,j) = val;
+                    }                }
             }
             for(int i = 0 ; i < pos_samples.rows ; ++i) {
                 const std::vector<float> &data = collection.at(pos_indices.at(i)).value;
                 pos_labels.at<float>(i) = POSITIVE;
                 for(std::size_t j = 0 ; j < step ; ++j) {
-                    pos_samples.at<float>(i,j) = data.at(j);
+                    const float val = data.at(j);
+                    if(std::abs(val) >= FLT_MAX * 0.5f) {
+                        pos_missing.at<uchar>(i,j) = 1;
+                    } else {
+                        pos_samples.at<float>(i,j) = val;
+                    }
                 }
             }
 
 #if CV_MAJOR_VERSION == 2
-//            ExtendedSVM svm;
-
-//            cv::SVMParams   svm_params_;
-//            svm_params_.svm_type = svm_type_;
-//            svm_params_.kernel_type = kernel_type_;
-//            svm_params_.degree = degree_;
-//            svm_params_.gamma = gamma_;
-//            svm_params_.coef0 = coef0_;
-
-//            svm_params_.C = C_;
-//            svm_params_.nu = nu_;
-//            svm_params_.p = p_;
-//            //svm_params_.term_crit; // termination criteria
-
-//            /// train the svm
-//            std::cout << "Started training for '" << it->first << std::endl;
-//            if(svm.train(samples, labels, cv::Mat(), cv::Mat(), svm_params_)) {
-//                std::cout << "Finished training for '" << it->first << "'!" << std::endl;
-//                std::string label = prefix + std::to_string(it->first);
-//                svm.write(fs.fs, label.c_str());
-//                svm_labels.push_back(it->first);
-//            } else {
-//                return false;
-//            }
-//            /// train the svm
-//            std::cout << "[SVMEnsemble]: Started training for svm #"
-//                      << it->first << " with " << samples.rows << std::endl;
-//            if(svm.train(samples, labels, cv::Mat(), cv::Mat(), svm_params_)) {
-//                std::string label = prefix + std::to_string(it->first);
-//                svm.write(fs.fs, label.c_str());
-//                svm_labels.push_back(it->first);
-//                std::cout << "[SVMEnsemble]: Finished training for svm #"
-//                          << it->first << "!" << std::endl;
-//            } else {
-//                return false;
-//            }
-
+            CvDTreeParams params ( max_depth_,
+                                   min_sample_count_,
+                                   regression_accuracy_,
+                                   use_surrogates_,
+                                   max_categories_,
+                                   cv_folds_,
+                                   use_1se_rule_,
+                                   truncate_pruned_tree_,
+                                   priors_.data());
+            cv::Mat var_type( samples.cols + 1, 1, CV_8U, CV_VAR_NUMERICAL);
+            cv::DecisionTree dtree;
+            std::cout << "[DecisionTree]: Started training with " << samples.rows << " samples!" << std::endl;
+            if(dtree.train(samples, tflag, labels, cv::Mat(), cv::Mat(), var_type, missing, params)) {
+                std::string label = prefix + std::to_string(it->first);
+                std::cout << "Finished training for tree '" << label << "'!" << std::endl;
+                dtree.write(fs.fs, label.c_str());
+                dtree_labels.push_back(it->first);
+            } else {
+                return false;
+            }
 #elif CV_MAJOR_VERSION == 3
         throw std::runtime_error("Not implemented yet!");
 #endif
         }
     }
-
-
-
+    fs << "labels" << dtree_labels;
+    fs.release();
     return true;
 }
