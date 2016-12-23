@@ -10,20 +10,20 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
- <build_depend>csapex_opencv</build_depend>
- <build_depend>csapex_ml</build_depend>
- <build_depend>csapex_vision_features</build_depend>
- <build_depend>csapex</build_depend>
- <build_depend>cslibs_vision</build_depend>
- <build_depend>roscpp</build_depend>
+   <build_depend>csapex_opencv</build_depend>
+   <build_depend>csapex_ml</build_depend>
+   <build_depend>csapex_vision_features</build_depend>
+   <build_depend>csapex</build_depend>
+   <build_depend>cslibs_vision</build_depend>
+   <build_depend>roscpp</build_depend>
 
- <run_depend>csapex_opencv</run_depend>
- <run_depend>csapex_vision_features</run_depend>
- <run_depend>csapex_ml</run_depend>
- <run_depend>csapex</run_depend>
- <run_depend>cslibs_vision</run_depend>
+   <run_depend>csapex_opencv</run_depend>
+   <run_depend>csapex_vision_features</run_depend>
+   <run_depend>csapex_ml</run_depend>
+   <run_depend>csapex</run_depend>
+   <run_depend>cslibs_vision</run_depend>
 
- <export>
+  <export>
    <csapex plugin="${prefix}/plugins.xml" />
- </export>
+  </export>
 </package>

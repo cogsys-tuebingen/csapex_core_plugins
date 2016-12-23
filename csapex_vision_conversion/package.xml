@@ -5,6 +5,8 @@
   <description>Conversion plugins for csapex_vision message types.</description>
 
   <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
+  <author email="richard.hanten@uni-tuebingen.de">hanten</author>
+
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>

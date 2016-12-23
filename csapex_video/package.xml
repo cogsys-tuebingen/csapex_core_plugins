@@ -3,7 +3,10 @@
   <name>csapex_video</name>
 
   <version>0.0.1</version>
-  <description>The csapex_video package</description>
+  <description>
+    The csapex_video contains plugins which allow the creation of videos and screenshots.
+    Besides that, it is possible to create image in image views.
+  </description>
 
   <maintainer email="sebastian.buck@uni-tuebingen.de">buck</maintainer>
 
