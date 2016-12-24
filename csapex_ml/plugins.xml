@@ -33,6 +33,14 @@
   <description>Train SVMArray representing an ensemble of binary classifiers.</description>
   <tags>ML</tags>
 </class>
+<class type="csapex::DecisionTreeForest" base_class_type="csapex::Node">
+  <description>Forest of decision trees.</description>
+  <tags>ML</tags>
+</class>
+<class type="csapex::DecisionTreeForestTrainer" base_class_type="csapex::Node">
+  <description>Decision tree forest trainer.</description>
+  <tags>ML</tags>
+</class>
 <class type="csapex::ArffFormatExport" base_class_type="csapex::Node">
   <description>Export features messages to the weka arff file format.</description>
   <tags>ML</tags>

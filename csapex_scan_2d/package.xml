@@ -2,12 +2,18 @@
 <package>
   <name>csapex_scan_2d</name>
   <version>0.0.1</version>
-  <description>The csapex_scan_2d package</description>
+  <description>
+    The csapex_scan_2d package contains plugins which allow processing
+    2D laser range finder scans in different ways. The Package provides
+    rendering, segmentation and anaysis plugins.
+  </description>
 
   <maintainer email="sebastian.buck@uni-tuebingen.de">buck</maintainer>
+  <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
 
   <license>BSD</license>
   <author email="sebastian.buck@uni-tuebingen.de">buck</author>
+  <author email="richard.hanten@uni-tuebingen.de">hanten</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 

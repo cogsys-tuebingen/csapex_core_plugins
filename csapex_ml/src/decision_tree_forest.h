@@ -7,6 +7,9 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
+/// SYSTEM
+#include <opencv2/opencv.hpp>
+
 namespace csapex {
 class CSAPEX_EXPORT_PLUGIN DecisionTreeForest : public Node
 {
@@ -22,7 +25,18 @@ private:
     Output     *out_;
     Slot       *reload_;
     bool        loaded_;
+
+    cv::Mat     forest_responses_;
     std::size_t forest_size_;
+#if CV_MAJOR_VERSION == 2
+    typedef std::shared_ptr<cv::DecisionTree> DTreePtr;
+    std::vector<DTreePtr> forest_;
+
+#elif CV_MAJOR_VERSION == 3
+    typedef cv::Ptr<cv::ml::DTrees> DTreePtr
+    std::vector<DTreePtr> dtrees_;
+#endif
+
 
     void load();
 

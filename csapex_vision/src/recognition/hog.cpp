@@ -57,7 +57,7 @@
 namespace csapex
 {
 
-#define CV_SSE2 0
+#define CV_GENERIC_HOG_SSE2 0
 
 class MeanshiftGrouping
 {
@@ -429,7 +429,7 @@ void HOGDescriptor::computeGradientDefault(const cv::Mat& img, cv::Mat& grad, cv
 
     cv::Mat_<float> _lut(1, 256);
     const float* const lut = &_lut(0,0);
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
     const int indeces[] = { 0, 1, 2, 3 };
     __m128i idx = _mm_loadu_si128((const __m128i*)indeces);
     __m128i ifour = _mm_set1_epi32(4);
@@ -482,7 +482,7 @@ void HOGDescriptor::computeGradientDefault(const cv::Mat& img, cv::Mat& grad, cv
     {
         int end = gradsize.width + 2;
         xmap -= 1, x = 0;
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
         __m128i ithree = _mm_set1_epi32(3);
         for ( ; x <= end - 4; x += 4)
             _mm_storeu_si128((__m128i*)(xmap + x), _mm_mullo_epi16(ithree,
@@ -517,7 +517,7 @@ void HOGDescriptor::computeGradientDefault(const cv::Mat& img, cv::Mat& grad, cv
         else
         {
             x = 0;
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
             for( ; x <= width - 4; x += 4 )
             {
                 int x0 = xmap[x], x1 = xmap[x+1], x2 = xmap[x+2], x3 = xmap[x+3];
@@ -598,7 +598,7 @@ void HOGDescriptor::computeGradientDefault(const cv::Mat& img, cv::Mat& grad, cv
 
         // filling the result matrix
         x = 0;
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
         __m128 fhalf = _mm_set1_ps(0.5f), fzero = _mm_setzero_ps();
         __m128 _angleScale = _mm_set1_ps(angleScale), fone = _mm_set1_ps(1.0f);
         __m128i ione = _mm_set1_epi32(1), _nbins = _mm_set1_epi32(nbins), izero = _mm_setzero_si128();
@@ -971,7 +971,7 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
         float bh = blockSize.height * 0.5f, bw = blockSize.width * 0.5f;
 
         i = 0;
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
         const int a[] = { 0, 1, 2, 3 };
         __m128i idx = _mm_loadu_si128((__m128i*)a);
         __m128 _bw = _mm_set1_ps(bw), _bh = _mm_set1_ps(bh);
@@ -992,7 +992,7 @@ void HOGCache::init(const HOGDescriptor* _descriptor,
         }
 
         j = 0;
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
         idx = _mm_loadu_si128((__m128i*)a);
         for (; j <= blockSize.width - 4; j += 4)
         {
@@ -1197,7 +1197,7 @@ const float* HOGCache::getBlock(cv::Point pt, float* buf)
         hist[h0] = t0; hist[h1] = t1;
     }
 
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
     float hist0[4], hist1[4];
     for( ; k < C2; k++ )
     {
@@ -1246,7 +1246,7 @@ const float* HOGCache::getBlock(cv::Point pt, float* buf)
     }
 #endif
 
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
     for( ; k < C4; k++ )
     {
         const PixData& pk = _pixData[k];
@@ -1347,7 +1347,7 @@ void HOGCache::normalizeBlockHistogram(float* _hist) const
     float* hist = &_hist[0], sum = 0.0f, partSum[4];
     size_t i = 0, sz = blockHistogramSize;
 
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
     __m128 p0 = _mm_loadu_ps(hist);
     __m128 s = _mm_mul_ps(p0, p0);
 
@@ -1379,7 +1379,7 @@ void HOGCache::normalizeBlockHistogram(float* _hist) const
     float scale = 1.f/(std::sqrt(sum)+sz*0.1f), thresh = (float)descriptor->L2HysThreshold;
     i = 0, sum = 0.0f;
 
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
     __m128 _scale = _mm_set1_ps(scale);
     static __m128 _threshold = _mm_set1_ps(thresh);
 
@@ -1425,7 +1425,7 @@ void HOGCache::normalizeBlockHistogram(float* _hist) const
     }
 
     scale = 1.f/(std::sqrt(sum)+1e-3f), i = 0;
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
     __m128 _scale2 = _mm_set1_ps(scale);
     for ( ; i <= sz - 4; i += 4)
     {
@@ -1642,7 +1642,7 @@ void HOGDescriptor::detect(const cv::Mat& img,
     double rho = svmDetector.size() > dsize ? svmDetector[dsize] : 0;
     std::vector<float> blockHist(blockHistogramSize);
 
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
     float partSum[4];
 #endif
 
@@ -1671,7 +1671,7 @@ void HOGDescriptor::detect(const cv::Mat& img,
             cv::Point pt = pt0 + bj.imgOffset;
 
             const float* vec = cache.getBlock(pt, &blockHist[0]);
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
             __m128 _vec = _mm_loadu_ps(vec);
             __m128 _svmVec = _mm_loadu_ps(svmVec);
             __m128 sum = _mm_mul_ps(_svmVec, _vec);
@@ -3307,7 +3307,7 @@ void HOGDescriptor::detectROI(const cv::Mat& img, const std::vector<cv::Point> &
     double rho = svmDetector.size() > dsize ? svmDetector[dsize] : 0;
     std::vector<float> blockHist(blockHistogramSize);
 
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
     float partSum[4];
 #endif
 
@@ -3334,7 +3334,7 @@ void HOGDescriptor::detectROI(const cv::Mat& img, const std::vector<cv::Point> &
 
             // need to devide this into 4 parts!
             const float* vec = cache.getBlock(pt, &blockHist[0]);
-#if CV_SSE2
+#if CV_GENERIC_HOG_SSE2
             __m128 _vec = _mm_loadu_ps(vec);
             __m128 _svmVec = _mm_loadu_ps(svmVec);
             __m128 sum = _mm_mul_ps(_svmVec, _vec);

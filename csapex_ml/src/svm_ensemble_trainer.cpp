@@ -76,7 +76,7 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
         {"NU_SVR", SVM::NU_SVR}
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("svm type",
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("svm/type",
                                                                          csapex::param::ParameterDescription("SVM type to be trained."),
                                                                          svm_types,
                                                                          (int) SVM::EPS_SVR),
@@ -112,30 +112,30 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
         return svm_type_ != SVM::ONE_CLASS;};
 
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("degree", 0.0, 9.0, 3.0, 1.0),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/degree", 0.0, 9.0, 3.0, 1.0),
                                        deg_cond,
                                        degree_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("gamma", 0.0, 10.0, 0.0, 0.01),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/gamma", 0.0, 10.0, 0.0, 0.01),
                                        gamma_cond,
                                        gamma_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("coef0", -10.0, 10.0, 0.0, 0.01),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/coef0", -10.0, 10.0, 0.0, 0.01),
                                        coeff0_cond,
                                        coef0_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("C", 0.0, 10.0, 0.01, 0.01),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/C", 0.0, 10.0, 0.01, 0.01),
                                        c_cond,
                                        C_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("nu", 0.0, 1.0, 0.5, 0.01),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/nu", 0.0, 1.0, 0.5, 0.01),
                                        nu_cond,
                                        nu_);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("p", 0.0, 1.0, 0.1, 0.01),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("svm/p", 0.0, 1.0, 0.1, 0.01),
                                        p_cond,
                                        p_);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("one-vs-all", false),
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("classes/one-vs-all", false),
                                        one_class_cond,
                                        one_vs_all_);
 
     parameters.addParameter(param::ParameterFactory::declareBool
-                            ("balance",
+                            ("classes/balance",
                              param::ParameterDescription("Use the same amount of samples per class."),
                              false),
                             balance_);
@@ -161,7 +161,7 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
 #if CV_MAJOR_VERSION == 2
     if(svm_type_ != cv::SVM::ONE_CLASS) {
 #elif CV_MAJOR_VERSION == 3
-    if(svm_type != cv::ml::SVM::ONE_CLASS) {
+    if(svm_type_ != cv::ml::SVM::ONE_CLASS) {
 #endif
         if(indices_by_label.size() == 1) {
             throw std::runtime_error("Multi class SVMs require multiple classes!");
@@ -270,14 +270,14 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
 #elif CV_MAJOR_VERSION == 3
                 cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
-                svm->setType(svm_type);
-                svm->setKernel(kernel_type);
-                svm->setDegree(degree);
-                svm->setGamma(gamma);
-                svm->setCoef0(coef0);
-                svm->setC(C);
-                svm->setNu(nu);
-                svm->setP(p);
+                svm->setType(svm_type_);
+                svm->setKernel(kernel_type_);
+                svm->setDegree(degree_);
+                svm->setGamma(gamma_);
+                svm->setCoef0(coef0_);
+                svm->setC(C_);
+                svm->setNu(nu_);
+                svm->setP(p_);
                 //    svm->setTermCriteria();
 
                 cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(samples,
@@ -364,18 +364,8 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
                 svm_params_.C = C_;
                 svm_params_.nu = nu_;
                 svm_params_.p = p_;
-                //svm_params_.term_crit; // termination criteria
+                svm_params_.term_crit = term_crit_;
 
-                /// train the svm
-                std::cout << "Started training for '" << it->first << std::endl;
-                if(svm.train(samples, labels, cv::Mat(), cv::Mat(), svm_params_)) {
-                    std::cout << "Finished training for '" << it->first << "'!" << std::endl;
-                    std::string label = prefix + std::to_string(it->first);
-                    svm.write(fs.fs, label.c_str());
-                    svm_labels.push_back(it->first);
-                } else {
-                    return false;
-                }
                 /// train the svm
                 std::cout << "[SVMEnsemble]: Started training for svm #"
                           << it->first << " with " << samples.rows << std::endl;
@@ -392,14 +382,14 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
 #elif CV_MAJOR_VERSION == 3
                 cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
-                svm->setType(svm_type);
-                svm->setKernel(kernel_type);
-                svm->setDegree(degree);
-                svm->setGamma(gamma);
-                svm->setCoef0(coef0);
-                svm->setC(C);
-                svm->setNu(nu);
-                svm->setP(p);
+                svm->setType(svm_type_);
+                svm->setKernel(kernel_type_);
+                svm->setDegree(degree_);
+                svm->setGamma(gamma_);
+                svm->setCoef0(coef0_);
+                svm->setC(C_);
+                svm->setNu(nu_);
+                svm->setP(p_);
                 //    svm->setTermCriteria();
 
 
@@ -494,14 +484,14 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
 #elif CV_MAJOR_VERSION == 3
             cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
-            svm->setType(svm_type);
-            svm->setKernel(kernel_type);
-            svm->setDegree(degree);
-            svm->setGamma(gamma);
-            svm->setCoef0(coef0);
-            svm->setC(C);
-            svm->setNu(nu);
-            svm->setP(p);
+            svm->setType(svm_type_);
+            svm->setKernel(kernel_type_);
+            svm->setDegree(degree_);
+            svm->setGamma(gamma_);
+            svm->setCoef0(coef0_);
+            svm->setC(C_);
+            svm->setNu(nu_);
+            svm->setP(p_);
             //    svm->setTermCriteria();
 
 

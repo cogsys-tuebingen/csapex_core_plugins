@@ -5,9 +5,11 @@
   <description>The csapex_point_cloud package</description>
 
   <maintainer email="sebastian.buck@uni-tuebingen.de">buck</maintainer>
+  <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
 
   <license>BSD</license>
   <author email="sebastian.buck@uni-tuebingen.de">buck</author>
+  <author email="richard.hanten@uni-tuebingen.de">hanten</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 

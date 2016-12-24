@@ -1,27 +1,29 @@
 <?xml version="1.0"?>
 <package>
   <name>csapex_vision_histograms</name>
-  <version>0.0.0</version>
+  <version>0.0.1</version>
   <description>This package contains nodes to generate histograms</description>
   <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
- <license>BSD</license>
+  <author email="richard.hanten@uni-tuebingen.de">hanten</author>
 
- <buildtool_depend>catkin</buildtool_depend>
+  <license>BSD</license>
 
- <build_depend>csapex_opencv</build_depend>
- <build_depend>csapex_ml</build_depend>
- <build_depend>csapex_vision_features</build_depend>
- <build_depend>csapex</build_depend>
- <build_depend>cslibs_vision</build_depend>
- <build_depend>roscpp</build_depend>
+  <buildtool_depend>catkin</buildtool_depend>
 
- <run_depend>csapex_opencv</run_depend>
- <run_depend>csapex_vision_features</run_depend>
- <run_depend>csapex_ml</run_depend>
- <run_depend>csapex</run_depend>
- <run_depend>cslibs_vision</run_depend>
+   <build_depend>csapex_opencv</build_depend>
+   <build_depend>csapex_ml</build_depend>
+   <build_depend>csapex_vision_features</build_depend>
+   <build_depend>csapex</build_depend>
+   <build_depend>cslibs_vision</build_depend>
+   <build_depend>roscpp</build_depend>
 
- <export>
+   <run_depend>csapex_opencv</run_depend>
+   <run_depend>csapex_vision_features</run_depend>
+   <run_depend>csapex_ml</run_depend>
+   <run_depend>csapex</run_depend>
+   <run_depend>cslibs_vision</run_depend>
+
+  <export>
    <csapex plugin="${prefix}/plugins.xml" />
- </export>
+  </export>
 </package>
