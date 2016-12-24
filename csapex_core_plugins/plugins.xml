@@ -29,9 +29,6 @@
 <class type="csapex::Throttle" base_class_type="csapex::Node">
   <description>Drops messages to achieve a given maximal frequency</description>
 </class>
-<class type="csapex::ImportFile" base_class_type="csapex::Node">
-  <description>Imports messages from a directory (in APEX-YAML format)</description>
-</class>
 <class type="csapex::Cache" base_class_type="csapex::Node">
   <description>Caches all incoming messages and allows to play them back</description>
   <tags>General, Caching</tags>

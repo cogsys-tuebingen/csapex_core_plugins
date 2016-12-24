@@ -89,6 +89,7 @@ void APEXRosInterface::init(CsApexCore &core)
     RosMessageConversion::registerConversion<std_msgs::Float64, connection_types::GenericValueMessage<double>, ConvertIntegral<std_msgs::Float64, double> >();
     RosMessageConversion::registerConversion<std_msgs::String, connection_types::GenericValueMessage<std::string>, ConvertIntegral<std_msgs::String, std::string> >();
 
+
     core_->loaded.connect([this](){
         if(ROSHandler::instance().isConnected()) {
             XmlRpc::XmlRpcValue params, result, payload;

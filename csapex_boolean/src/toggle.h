@@ -2,13 +2,13 @@
 #define TOGGLE_H
 
 /// COMPONENT
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 
 namespace csapex {
 
 namespace boolean {
 
-class CSAPEX_EXPORT_PLUGIN Toggle : public TickableNode
+class CSAPEX_EXPORT_PLUGIN Toggle : public Node
 {
 public:
     Toggle();
@@ -17,13 +17,14 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
     virtual void process() override;
-    virtual void tick() override;
 
 private:
     void setSignal();
 
 private:
-    Output* out;
+    Output* out_;
+    Event* event_;
+
     bool signal_;
 };
 

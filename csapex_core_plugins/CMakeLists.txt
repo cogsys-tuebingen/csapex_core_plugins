@@ -85,7 +85,6 @@ add_library(${PROJECT_NAME}_node SHARED
     src/io/export_file.cpp
     src/io/file_importer.cpp
     src/io/import_cin.cpp
-    src/io/import_file.cpp
 
     src/math/double_input.cpp
     src/math/statistics.cpp
