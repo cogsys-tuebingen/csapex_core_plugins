@@ -29,7 +29,7 @@ void ConfusionMatrixDisplay::setupParameters(Parameterizable &params)
     params.addParameter(csapex::param::ParameterFactory::declareText(
                                 "filename",
                                 csapex::param::ParameterDescription("Name of csv file"),
-                                "rel_conf_mat"),
+                                "conf_mat"),
                             filename_);
 
     params.addParameter(csapex::param::ParameterFactory::declareDirectoryOutputPath(
@@ -116,3 +116,4 @@ void ConfusionMatrixDisplay::exportCsv(const std::string &file)
         of.close();
     }
 }
+

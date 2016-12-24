@@ -8,6 +8,7 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_core_plugins/map_message.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/serialization/serialization.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -58,8 +59,14 @@ public:
     virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override
     {
         std::size_t i = getVariadicInputCount();
-        param::Parameter::Ptr key_param = param::ParameterFactory::declareText("key_" +std::to_string(i),
-                                                                               "name");
+        std::string param_name = std::string("key_") + std::to_string(i);
+
+        param::Parameter::Ptr key_param;
+        if(hasParameter(param_name)) {
+            key_param = getParameter(param_name);
+        } else  {
+            key_param = param::ParameterFactory::declareText(param_name, "name");
+        }
 
         keys_.push_back("");
 
@@ -73,7 +80,8 @@ public:
         }
 
         params_keys_.emplace_back(key_param);
-        addTemporaryParameter(key_param, cb);
+        addPersistentParameter(key_param);
+        addParameterCallback(key_param, cb);
 
         return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
     }
@@ -91,4 +99,3 @@ private:
 
 
 CSAPEX_REGISTER_CLASS(csapex::CreateMapMessage, csapex::Node)
-
