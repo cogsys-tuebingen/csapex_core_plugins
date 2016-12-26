@@ -2,7 +2,7 @@
 #define CAMERA_H_
 
 /// PROJECT
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
@@ -13,17 +13,16 @@
 namespace csapex
 {
 
-class Camera : public TickableNode
+class Camera : public Node
 {
 public:
     Camera();
 
     virtual void process() override;
-    virtual void tick() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
 
-    virtual bool canTick() override;
+    virtual bool canProcess() const override;
 
 protected:
     void update();

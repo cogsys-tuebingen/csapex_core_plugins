@@ -37,15 +37,6 @@ void EmptyLabeledFeaturesMessage::setupParameters(Parameterizable& parameters)
 
 void EmptyLabeledFeaturesMessage::process()
 {
-}
-
-bool EmptyLabeledFeaturesMessage::canTick()
-{
-    return true;
-}
-
-void EmptyLabeledFeaturesMessage::tick()
-{
     FeaturesMessage::Ptr static_feature(new FeaturesMessage);
     static_feature->classification = readParameter<int>("class id");
     msg::publish(output_, static_feature);

@@ -2,13 +2,13 @@
 #define TO_FEATURE_H
 
 /// PROJECT
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 #include <csapex/model/token_data.h>
 #include <csapex/msg/generic_vector_message.hpp>
 
 namespace csapex {
 
-class EmptyLabeledFeaturesMessage : public TickableNode
+class EmptyLabeledFeaturesMessage : public Node
 {
 public:
     EmptyLabeledFeaturesMessage();
@@ -16,9 +16,6 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);
     virtual void process() override;
-    virtual void tick() override;
-
-    virtual bool canTick() override;
 
 protected:
     csapex::Output *output_;

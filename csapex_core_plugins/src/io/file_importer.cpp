@@ -94,6 +94,8 @@ void FileImporter::setupParameters(Parameterizable& parameters)
         }
     });
 
+    TickableNode::setupParameters(parameters);
+
     changeMode();
 }
 

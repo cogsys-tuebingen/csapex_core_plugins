@@ -1,6 +1,6 @@
 
 /// PROJECT
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -18,7 +18,7 @@ namespace csapex
 {
 
 
-class FunctionSampleGenerator : public TickableNode
+class FunctionSampleGenerator : public Node
 {
 public:
     FunctionSampleGenerator()
@@ -39,7 +39,7 @@ public:
 
     }
 
-    void tick() override
+    void process() override
     {
         // TODO: make function configurable
         double rval_rel = twister() / double(std::numeric_limits<uint_fast64_t>::max());
