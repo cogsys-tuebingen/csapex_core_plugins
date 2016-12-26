@@ -59,7 +59,12 @@ void DecisionTreeForest::process()
 
         for(std::size_t j = 0 ; j < forest_size_ ; ++j) {
             DTreePtr &dtree = forest_.at(j);
-            result_value.at<float>(j,1) = dtree->predict(sample)->class_idx;
+#if CV_MAJOR_VERSION == 2
+	    result_value.at<float>(j,1) = dtree->predict(sample)->class_idx;
+#elif CV_MAJOR_VERSION == 3
+        result_value.at<float>(j,1) = dtree->predict(sample);
+#endif
+
         }
         output->push_back(result_msg);
     }
@@ -86,12 +91,13 @@ void DecisionTreeForest::load()
     int size = labels.size();
     for(int i = 0 ; i < size ; ++i) {
         std::string label = prefix + std::to_string(labels.at(i));
-#if CV_MAJOR_VERSION == 2
+#if CV_MAJOR_VERSION==2
         DTreePtr dtree(new cv::DecisionTree);
         dtree->read(fs.fs, (CvFileNode*) fs[label].node);
-#elif CV_MAJOR_VERSION == 3
-
+#elif CV_MAJOR_VERSION==3
+        DTreePtr dtree(cv::ml::StatModel::read<cv::ml::DTrees>(fs[label]));
 #endif
+	
         forest_.emplace_back(dtree);
         forest_responses_.at<float>(i,0) = labels.at(i);
     }
