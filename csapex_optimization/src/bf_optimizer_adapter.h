@@ -2,7 +2,7 @@
 #define BF_OPTIMIZER_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/node/default_node_adapter.h>
+#include <csapex_optimization/optimizer_adapter.h>
 
 /// COMPONENT
 #include "bf_optimizer.h"
@@ -12,7 +12,7 @@ class QProgressBar;
 
 namespace csapex {
 
-class BFOptimizerAdapter : public QObject, public DefaultNodeAdapter
+class BFOptimizerAdapter : public OptimizerAdapter
 {
     Q_OBJECT
 
@@ -22,22 +22,15 @@ public:
 
     virtual void setupUi(QBoxLayout* layout);
 
-public Q_SLOTS:
-    void createParameter();
-    void startOptimization();
-    void stopOptimization();
-
-    void setNextParameterType(const QString& type);
+    virtual void parameterAdded(param::ParameterPtr p) override;
 
 private:
     void triggerStep(int step);
-    QDialog* makeTypeDialog();
 
 protected:
     std::weak_ptr<BFOptimizer> wrapped_;
 
     QProgressBar* progress_;
-    std::string next_type_;
 };
 
 }

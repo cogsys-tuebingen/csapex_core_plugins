@@ -21,65 +21,7 @@ using namespace csapex::connection_types;
 
 
 BFOptimizer::BFOptimizer()
-    : last_fitness_(std::numeric_limits<double>::infinity()),
-      best_fitness_(-std::numeric_limits<double>::infinity()),
-      init_(false),
-      running_(false),
-      next_tick_(false)
 {
-}
-
-void BFOptimizer::setupParameters(Parameterizable& parameters)
-{
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("start"), [this](csapex::param::Parameter*) {
-        start();
-    });
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("finish"), [this](csapex::param::Parameter*) {
-        finish();
-    });
-    stop_ = csapex::param::ParameterFactory::declareTrigger("stop").build<param::TriggerParameter>();
-    parameters.addParameter(stop_, [this](csapex::param::Parameter*) {
-        doStop();
-    });
-}
-
-void BFOptimizer::setup(NodeModifier& node_modifier)
-{
-    in_  = node_modifier.addInput<double>("Fitness");
-    out_last_fitness_  = node_modifier.addOutput<double>("Last Fitness");
-    out_best_fitness_  = node_modifier.addOutput<double>("Best Fitness");
-
-    trigger_start_evaluation_ = node_modifier.addEvent("Evaluate");
-    trigger_iteration_finished = node_modifier.addEvent<connection_types::GenericValueMessage<double>>("Iteration finished");
-
-    node_modifier_->setIsSource(true);
-    node_modifier_->setIsSink(true);
-
-    restart();
-}
-
-bool BFOptimizer::canTick()
-{
-    bool can_tick = running_ && next_tick_;
-    return can_tick;
-}
-
-bool BFOptimizer::tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters)
-{
-    if(!next_tick_) {
-        return false;
-    }
-
-    next_tick_ = false;
-
-    if(best_fitness_ != std::numeric_limits<double>::infinity()) {
-        msg::publish(out_best_fitness_, best_fitness_);
-    }
-    if(last_fitness_ != std::numeric_limits<double>::infinity()) {
-        msg::publish(out_last_fitness_, last_fitness_);
-    }
-
-    return true;
 }
 
 int BFOptimizer::stepsNecessary()
@@ -96,27 +38,30 @@ int BFOptimizer::stepsNecessary()
     return steps;
 }
 
-void BFOptimizer::restart()
+void BFOptimizer::reset()
 {
+    Optimizer::reset();
+
     step_ = 0;
     current_index_.resize(getPersistentParameters().size(), 0);
 
-    last_fitness_ = std::numeric_limits<double>::infinity();
-    best_fitness_ = -std::numeric_limits<double>::infinity();
+    for(auto p : getPersistentParameters()) {
+        param::RangeParameter::Ptr range_p = std::dynamic_pointer_cast<param::RangeParameter>(p);
+        if(range_p) {
+            if(range_p->is<double>()) {
+                range_p->set(range_p->min<double>());
+            } else if(range_p->is<int>()) {
+                range_p->set(range_p->min<int>());
+            }
+        }
+    }
 }
 
-bool BFOptimizer::nextStep()
+bool BFOptimizer::generateNextParameterSet()
 {
     step(step_);
 
-    sent_ = 0;
-
-    bool p = increaseParameter(0);
-
-    //DEBUGainfo << "trigger next" << std::endl;
-    trigger_start_evaluation_->trigger();
-
-    return p;
+    return increaseParameter(0);
 }
 
 bool BFOptimizer::increaseParameter(std::size_t i)
@@ -144,91 +89,8 @@ bool BFOptimizer::increaseParameter(std::size_t i)
     }
 }
 
-void BFOptimizer::process()
-{
-    if(!running_) {
-        return;
-    }
-
-    auto m = msg::getMessage(in_);
-
-    if(auto vm = std::dynamic_pointer_cast<connection_types::GenericValueMessage<double> const>(m)){
-        fitness_ = msg::getValue<double>(in_);
-    }
-
-    next_tick_ = true;
-}
-
-void BFOptimizer::start()
-{
-    ainfo << "starting optimization" << std::endl;
-    restart();
-
-    init_ = false;
-    running_ = true;
-    next_tick_ = true;
-
-    sent_ = 0;
-    step_ = 0;
-
-    std::vector<csapex::param::Parameter::Ptr> params = getPersistentParameters();
-    for(auto p : params) {
-        param::RangeParameter::Ptr dbl_range = std::dynamic_pointer_cast<param::RangeParameter>(p);
-        if(dbl_range && dbl_range->is<double>()) {
-            dbl_range->set(dbl_range->min<double>());
-        }
-    }
-
-    setTickEnabled(true);
-    setTickFrequency(100.);
-}
-
-
-void BFOptimizer::stop()
-{
-    stop_->trigger();
-
-    connection_types::GenericValueMessage<double>::Ptr msg = std::make_shared<connection_types::GenericValueMessage<double>>();
-    msg->value = best_fitness_;
-    trigger_iteration_finished->triggerWith(std::make_shared<Token>(msg));
-}
-
 void BFOptimizer::doStop()
 {
     step(stepsNecessary());
-    ainfo << "stopping optimization" << std::endl;
-    setTickEnabled(false);
-    running_ = false;
-}
-
-void BFOptimizer::processMarker(const MessageConstPtr &marker)
-{
-    if(std::dynamic_pointer_cast<connection_types::EndOfSequenceMessage const>(marker)) {
-        finish();
-    }
-}
-
-void BFOptimizer::finish()
-{
-    //DEBUGainfo << "called finish" << std::endl;
-    if(!running_) {
-        ainfo << "not finishing - not running" << std::endl;
-        return;
-    }
-
-    ainfo << "got fitness: " << fitness_ << ", best is " << best_fitness_ << std::endl;
-
-    last_fitness_ = fitness_;
-
-    if(best_fitness_ < fitness_) {
-        best_fitness_ = fitness_;
-    }
-
-    if(!nextStep()) {
-        stop();
-    }
-
-    next_tick_ = true;
-
-    //DEBUGainfo << "sent " << ++sent_ << std::endl;
+    Optimizer::doStop();
 }
