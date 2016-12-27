@@ -2,7 +2,7 @@
 #define VECTORPLOT_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include "plot.h"
 #include <csapex/utility/assert.h>
 #include <csapex/model/variadic_io.h>
 
@@ -12,8 +12,9 @@
 #include <qwt_plot_curve.h>
 #include <qwt_plot_scaleitem.h>
 #include <qwt_scale_map.h>
+
 namespace csapex{
-class VectorPlot : public csapex::Node, public csapex::VariadicInputs
+class VectorPlot : public Plot, public csapex::VariadicInputs
 {
 public:
     VectorPlot();
@@ -24,27 +25,14 @@ public:
 
     virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override;
 
-    int getWidth() const;
-    int getHeight() const;
     double getLineWidth() const;
 
-    QColor getBackgroundColor() const;
     QColor getLineColor(std::size_t idx) const;
-    QColor getFillColor() const;
 
     const double *getTData() const;
     const double* getVData(std::size_t idx) const;
     std::size_t getVDataCountNumCurves() const;
     std::size_t getCount() const;
-
-    const QwtScaleMap& getXMap() const;
-    const QwtScaleMap& getYMap() const;
-
-public:
-
-
-    slim_signal::Signal<void()> update;
-    slim_signal::Signal<void()> display_request;
 
 protected:
     void reset();
@@ -64,14 +52,8 @@ private:
     std::size_t num_plots_;
     Input* in_;
 
-
-    int width_;
-    int height_;
-
-    QColor color_bg_;
     QColor basic_line_color_;
     std::vector<QColor> color_line_;
-    QColor color_fill_;
 
     double line_width_;
 
@@ -84,9 +66,6 @@ private:
 
     std::vector<double> data_t_;
     std::vector<std::vector<double>> data_v_;
-
-    QwtScaleMap x_map;
-    QwtScaleMap y_map;
 
 private:
     void calculateLineColors();

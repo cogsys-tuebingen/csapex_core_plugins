@@ -15,7 +15,6 @@ using namespace csapex::connection_types;
 
 
 OptimizationDummy::OptimizationDummy()
-    : evaluate_(false)
 {
 }
 
@@ -35,24 +34,12 @@ void OptimizationDummy::setupParameters(Parameterizable& parameters)
 
 void OptimizationDummy::setup(NodeModifier& node_modifier)
 {
-    in_  = node_modifier.addSlot("Evaluate", std::bind(&OptimizationDummy::start, this));
+    in_ = node_modifier.addInput<double>("argument");
     out_ = node_modifier.addOutput<double>("Fitness");
 }
 
-void OptimizationDummy::start()
+void OptimizationDummy::process()
 {
-    evaluate_ = true;
-}
-
-bool OptimizationDummy::canTick()
-{
-    return evaluate_;
-}
-
-void OptimizationDummy::tick()
-{
-    evaluate_ = false;
-
     double a = readParameter<double>("a");
     double b = readParameter<double>("b");
     double c = readParameter<double>("c");
@@ -64,23 +51,19 @@ void OptimizationDummy::tick()
     double i = readParameter<double>("i");
     double j = readParameter<double>("j");
 
+    double x = msg::getValue<double>(in_);
 
-    double fitness = std::pow(0.0 - a, 2)
-            + std::pow(1.0 - b, 2)
-            + std::pow(2.0 - c, 2)
-            + std::pow(3.0 - d, 2)
-            + std::pow(4.0 - e, 2)
-            + std::pow(5.0 - f, 2)
-            + std::pow(6.0 - g, 2)
-            + std::pow(7.0 - h, 2)
-            + std::pow(8.0 - i, 2)
-            + std::pow(9.0 - j, 2)
+    double fitness = -std::pow((a - 4), 2)
+            + std::pow(x + 1.0 - b, 2)
+            + std::pow(x + 2.0 - c, 2)
+            + std::pow(x + 3.0 - d, 2)
+            + std::pow(x + 4.0 - e, 2)
+            + std::pow(x + 5.0 - f, 2)
+            + std::pow(x + 6.0 - g, 2)
+            + std::pow(x + 7.0 - h, 2)
+            + std::pow(x + 8.0 - i, 2)
+            + std::pow(x + 9.0 - j, 2)
             ;
 
     msg::publish(out_, fitness);
-}
-
-void OptimizationDummy::process()
-{
-
 }

@@ -5,6 +5,9 @@
 <class type="csapex::VectorPlot" base_class_type="csapex::Node">
   <description>Plots multiple vetors.</description>
 </class>
+<class type="csapex::ScatterPlot" base_class_type="csapex::Node">
+  <description>Plots two dimensional data.</description>
+</class>
 </library>
 
 
@@ -13,6 +16,9 @@
   <description></description>
 </class>
 <class type="csapex::VectorPlotAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+<class type="csapex::ScatterPlotAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
 </library>

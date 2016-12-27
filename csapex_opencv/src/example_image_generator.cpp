@@ -1,6 +1,5 @@
 /// PROJECT
-#include <csapex/model/tickable_node.h>
-#include <csapex/msg/io.h>
+#include <csapex/model/node.h>
 #include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
@@ -15,7 +14,7 @@
 namespace csapex
 {
 
-class CSAPEX_EXPORT_PLUGIN ExampleImageGenerator : public TickableNode
+class CSAPEX_EXPORT_PLUGIN ExampleImageGenerator : public Node
 {
 public:
     ExampleImageGenerator()
@@ -35,7 +34,7 @@ public:
 
     }
 
-    virtual void tick() override
+    virtual void process() override
     {
         connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
         msg->value = image.clone();
@@ -44,11 +43,6 @@ public:
             msg->setEncoding(enc::mono);
 
         msg::publish(output_, msg);
-    }
-
-    virtual bool canTick() override
-    {
-        return true;
     }
 
 private:

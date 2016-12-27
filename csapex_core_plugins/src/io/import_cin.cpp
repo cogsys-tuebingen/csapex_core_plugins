@@ -12,21 +12,17 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/end_of_sequence_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportCin, csapex::Node)
 
 using namespace csapex;
+using namespace csapex::connection_types;
 
 ImportCin::ImportCin()
     : connector_(nullptr)
 {
 }
-
-void ImportCin::process()
-{
-
-}
-
 void ImportCin::setup(NodeModifier& node_modifier)
 {
     connector_ = node_modifier.addOutput<connection_types::AnyMessage>("Anything");
@@ -36,10 +32,11 @@ void ImportCin::setupParameters(Parameterizable &params)
 {
     params.addParameter(param::ParameterFactory::declareBool("import yaml", true), import_yaml_);
     params.addParameter(param::ParameterFactory::declareBool("latch", false), latch_);
+    params.addParameter(param::ParameterFactory::declareBool("signal end", false), signal_end_);
 }
 
 
-void ImportCin::tick()
+void ImportCin::process()
 {
     readCin();
 
@@ -58,6 +55,9 @@ void ImportCin::publishNextMessage()
 
     } else if(latch_ && last_message_) {
         msg::publish(connector_, last_message_);
+
+    } else if(signal_end_) {
+        msg::publish(connector_, connection_types::makeEmpty<EndOfSequenceMessage>());
     }
 }
 

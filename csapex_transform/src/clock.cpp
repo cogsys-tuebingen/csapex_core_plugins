@@ -30,21 +30,23 @@ void Clock::setupParameters(Parameterizable &parameters)
 }
 
 
-void Clock::tick()
+void Clock::process()
 {
     connection_types::TimestampMessage::Tp tp;
 
     switch(readParameter<int>("method")) {
     case CURRENT:
     {
-        getRosHandler().waitForConnection();
+        ROSHandler& ros_handler = ROSHandler::instance();
 
-        if(!getRosHandler().isConnected()) {
-            node_modifier_->setWarning("No ROS connection");
-            return;
+        if(!ros_handler.isConnected()) {
+            node_modifier_->setWarning("Waiting for ROS connection");
+            ros_handler.waitForConnection();
         }
 
-        getRosHandler().nh();
+        apex_assert(ros_handler.isConnected());
+
+        ros_handler.nh();
 
         std::chrono::nanoseconds ns(ros::Time::now().toNSec());
         auto ms = std::chrono::duration_cast<std::chrono::microseconds>(ns);
@@ -67,15 +69,6 @@ void Clock::tick()
 
     connection_types::TimestampMessage::Ptr time(new connection_types::TimestampMessage(tp));
     msg::publish(output_, time);
-}
-
-void Clock::setupROS()
-{
-
-}
-void Clock::processROS()
-{
-
 }
 
 void Clock::setup(NodeModifier& node_modifier)

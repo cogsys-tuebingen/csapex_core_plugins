@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/message_provider.h>
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 #include <csapex/signal/signal_fwd.h>
 #include <csapex/msg/generic_vector_message.hpp>
 
@@ -13,7 +13,7 @@
 namespace csapex
 {
 
-class CSAPEX_EXPORT_PLUGIN FileImporter : public TickableNode
+class CSAPEX_EXPORT_PLUGIN FileImporter : public Node
 {
 public:
     FileImporter();
@@ -25,12 +25,12 @@ public:
     void requestImport();
     void import();
 
-    virtual void process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
-    virtual bool canTick() override;
-    virtual bool tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
+    virtual void process() override;
+    virtual bool canProcess() const override;
 
     bool createMessageProvider(const QString& file_path);
     void doImportDir(const QString& dir);
+
 
 private:
     void changeDirIndex();
@@ -45,6 +45,13 @@ private:
     void signalBegin();
     void signalEnd();
 
+    bool isPlaying();
+
+    void sendToken();
+
+    void advanceDirectory();
+    void createProviderForNextFile();
+
 private:
     MessageProvider::Ptr provider_;
 
@@ -54,7 +61,6 @@ private:
     bool end_triggered_;
     bool quit_on_end_;
 
-    bool trigger_signal_begin_;
     bool trigger_signal_end_;
 
     bool import_requested_;

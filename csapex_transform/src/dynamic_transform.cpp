@@ -63,18 +63,8 @@ void DynamicTransform::setupROS()
     refresh();
 }
 
-bool DynamicTransform::canTick()
+bool DynamicTransform::canProcess() const
 {
-    return node_handle_->isSource() && RosNode::canTick();
-}
-
-bool DynamicTransform::tickROS()
-{
-    if(source_p->noParameters() != 0 && target_p->noParameters() != 0 && !msg::isConnected(time_in_))
-    {
-        process();
-    }
-
     return true;
 }
 

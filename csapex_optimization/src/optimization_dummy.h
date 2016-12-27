@@ -6,14 +6,14 @@
 #include <csapex/signal/signal_fwd.h>
 
 /// PROJECT
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 
 /// SYSTEM
 
 namespace csapex {
 
 
-class OptimizationDummy : public csapex::TickableNode
+class OptimizationDummy : public csapex::Node
 {
 public:
     OptimizationDummy();
@@ -22,17 +22,9 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
 
-    virtual bool canTick() override;
-
 private:
-    void start();
-    virtual void tick() override;
-
-private:
-    Slot* in_;
+    Input* in_;
     Output* out_;
-
-    bool evaluate_;
 };
 
 

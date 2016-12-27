@@ -1,4 +1,13 @@
 <library path="libcsapex_ml_plugin">
+<class type="csapex::FeaturesMessageFilter" base_class_type="csapex::Node">
+  <description>Filters messages by their classification.</description>
+</class>
+<class type="csapex::SampleSplitter" base_class_type="csapex::Node">
+  <description>Gives access to the components of a FeaturesMessage</description>
+</class>
+<class type="csapex::FunctionSampleGenerator" base_class_type="csapex::Node">
+  <description>Draws samples from a user defined function. Can generate outliers</description>
+</class>
 <class type="csapex::DecisionTree" base_class_type="csapex::Node">
   <description>Apply a decision tree to a feature vector</description>
 </class>

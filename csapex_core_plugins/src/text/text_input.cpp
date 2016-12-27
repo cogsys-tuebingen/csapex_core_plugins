@@ -34,20 +34,11 @@ void TextInput::setupParameters(Parameterizable &parameters)
 
 void TextInput::process()
 {
-}
-
-void TextInput::tick()
-{
-    publish();
+    msg::publish(output_, text_);
 }
 
 void TextInput::setup(NodeModifier& node_modifier)
 {
     output_ = node_modifier.addOutput<std::string>("Text");
     event_ = node_modifier.addEvent("text changed");
-}
-
-void TextInput::publish()
-{
-    msg::publish(output_, text_);
 }

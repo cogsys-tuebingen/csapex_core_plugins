@@ -2,11 +2,11 @@
 #define CLOCK_H
 
 /// PROJECT
-#include <csapex_ros/ros_node.h>
+#include <csapex/model/node.h>
 
 namespace csapex {
 
-class Clock : public RosNode
+class Clock : public Node
 {
 private:
     enum Type {
@@ -18,12 +18,10 @@ private:
 public:    
     Clock();
 
-    virtual void setupROS() override;
-    virtual void processROS() override;
+    virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
 
-    virtual void tick() override;
 
 private:
     Output* output_;

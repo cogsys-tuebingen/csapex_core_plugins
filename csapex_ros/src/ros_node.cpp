@@ -7,14 +7,13 @@
 using namespace csapex;
 
 RosNode::RosNode()
-    : ros_init_(false)
 {
 
 }
 
 void RosNode::getProperties(std::vector<std::string>& properties) const
 {
-    TickableNode::getProperties(properties);
+    Node::getProperties(properties);
     properties.push_back("ROS");
 }
 
@@ -25,46 +24,16 @@ ROSHandler& RosNode::getRosHandler() const
 
 void RosNode::setup(NodeModifier& node_modifier)
 {
-    ensureROSisSetUp();
-}
-
-void RosNode::ensureROSisSetUp()
-{
-    if(!ros_init_) {
-        if(isConnected()) {
-            setupROS();
-            ros_init_ = true;
-            node_modifier_->setNoError();
-
-        } else if(!node_modifier_->isError()) {
-            node_modifier_->setWarning("no ROS connection");
-        }
-    }
-}
-
-bool RosNode::canTick()
-{
-    return isConnected();
-}
-
-bool RosNode::tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters)
-{
-    ensureROSisSetUp();
-
     if(isConnected()) {
-        return tickROS();
+        setupROS();
 
-    } else if(ros_init_) {
-        ros_init_ = false;
-        node_modifier_->setWarning("[tick] no ROS connection");
+    } else {
+        node_modifier_->setError("no connection to ROS");
+        connection_ = getRosHandler().connected.connect([this](){
+            setupROS();
+            yield();
+        });
     }
-
-    return false;
-}
-
-bool RosNode::tickROS()
-{
-    return false;
 }
 
 bool RosNode::isConnected() const
@@ -72,16 +41,15 @@ bool RosNode::isConnected() const
     return getRosHandler().isConnected();
 }
 
+bool RosNode::canProcess() const
+{
+    return Node::canProcess() && isConnected();
+}
+
 void RosNode::process()
 {
-    ensureROSisSetUp();
+    apex_assert(isConnected());
 
-    if(isConnected()) {
-        processROS();
-
-    } else if(ros_init_) {
-        ros_init_ = false;
-        node_modifier_->setWarning("[process] no ROS connection");
-    }
+    processROS();
 }
 

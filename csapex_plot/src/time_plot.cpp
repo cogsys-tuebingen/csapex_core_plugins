@@ -46,17 +46,6 @@ void TimePlot::setupParameters(Parameterizable &parameters)
         update();
     });
 
-    auto setColor = [this](QColor& color) {
-        return [&](param::Parameter* p) {
-            std::vector<int> c = p->as<std::vector<int>>();
-            color.setRed(c[0]);
-            color.setGreen(c[1]);
-            color.setBlue(c[2]);
-
-            update();
-        };
-    };
-
     std::function<void(param::Parameter* p)> setLineColors= [this](param::Parameter* p){
         std::vector<int> c = p->as<std::vector<int>>();
         basic_line_color_.setRed(c[0]);
@@ -67,16 +56,11 @@ void TimePlot::setupParameters(Parameterizable &parameters)
         update();
     };
 
+    Plot::setupParameters(parameters);
 
-    parameters.addParameter(param::ParameterFactory::declareColorParameter(
-                                "~plot/color/background", 255, 255, 255),
-                            setColor(color_bg_));
     parameters.addParameter(param::ParameterFactory::declareColorParameter(
                                 "~plot/color/line", 100, 100, 255),
                             setLineColors);
-    parameters.addParameter(param::ParameterFactory::declareColorParameter(
-                                "~plot/color/fill", 200, 200, 200),
-                            setColor(color_fill_));
     parameters.addParameter(param::ParameterFactory::declareRange(
                                 "~plot/line/width", 0.0, 10.0, 0.0, 0.01),
                             line_width_);
@@ -275,32 +259,14 @@ void TimePlot::renderAndSend()
     msg::publish(out_, out_msg);
 }
 
-int TimePlot::getWidth() const
-{
-    return width_;
-}
-
-int TimePlot::getHeight() const
-{
-    return height_;
-}
-
 double TimePlot::getLineWidth() const
 {
     return line_width_;
 }
 
-QColor TimePlot::getBackgroundColor() const
-{
-    return color_bg_;
-}
 QColor TimePlot::getLineColor(std::size_t idx) const
 {
     return color_line_[idx];
-}
-QColor TimePlot::getFillColor() const
-{
-    return color_fill_;
 }
 
 const double* TimePlot::getTData() const
@@ -318,15 +284,6 @@ std::size_t TimePlot::getVDataCountNumCurves() const
 std::size_t TimePlot::getCount() const
 {
     return data_t_.size();
-}
-
-const QwtScaleMap& TimePlot::getXMap() const
-{
-    return x_map;
-}
-const QwtScaleMap& TimePlot::getYMap() const
-{
-    return y_map;
 }
 
 void TimePlot::calculateLineColors()
