@@ -40,8 +40,19 @@ target_link_libraries(${PROJECT_NAME}
     ${csapex_opencv_LIBRARIES}
     ${catkin_LIBRARIES}
     ${Boost_LIBRARIES} 
-	${catkin_LIBRARIES})
+    ${catkin_LIBRARIES})
 
+find_package(cslibs_arff QUIET)
+set(${PROJECT_NAME}_additional_srcs "")
+if(${cslibs_arff_FOUND})
+    include_directories(${cslibs_arff_INCLUDE_DIRS})
+    list(APPEND
+        ${PROJECT_NAME}_additional_srcs
+
+        src/arff_file_exporter.cpp
+        src/arff_file_importer.cpp
+    )
+endif()
 
 add_library(${PROJECT_NAME}_plugin SHARED
     src/decision_tree.cpp
@@ -73,12 +84,12 @@ add_library(${PROJECT_NAME}_plugin SHARED
     src/mlp_cv.cpp
     src/mlp_cv_trainer.cpp
 
-    src/arff_format_export.cpp
-
     src/assign_feature_classifications.cpp
     src/exchange_feature_classification.cpp
 
     src/random_vector.hpp
+
+    ${${PROJECT_NAME}_additional_srcs}
 )
 
 target_link_libraries(${PROJECT_NAME}_plugin
@@ -88,6 +99,7 @@ target_link_libraries(${PROJECT_NAME}_plugin
     ${csapex_opencv_LIBRARIES}
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
+    ${cslibs_arff_LIBRARIES}
 )
 
 #

@@ -41,7 +41,11 @@
   <description>Decision tree forest trainer.</description>
   <tags>ML</tags>
 </class>
-<class type="csapex::ArffFormatExport" base_class_type="csapex::Node">
+<class type="csapex::ARFFFileExporter" base_class_type="csapex::Node">
+  <description>Export features messages to the weka arff file format.</description>
+  <tags>ML</tags>
+</class>
+<class type="csapex::ARFFFileImporter" base_class_type="csapex::Node">
   <description>Export features messages to the weka arff file format.</description>
   <tags>ML</tags>
 </class>
