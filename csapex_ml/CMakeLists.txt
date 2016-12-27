@@ -50,7 +50,7 @@ if(${cslibs_arff_FOUND})
         ${PROJECT_NAME}_additional_srcs
 
         src/arff_file_exporter.cpp
-        src/arff_file_importer.cpp
+        src/arff_feature_message_provider.cpp
     )
 endif()
 
