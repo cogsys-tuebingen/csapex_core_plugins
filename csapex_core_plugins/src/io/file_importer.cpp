@@ -94,8 +94,6 @@ void FileImporter::setupParameters(Parameterizable& parameters)
         }
     });
 
-    TickableNode::setupParameters(parameters);
-
     changeMode();
 }
 
@@ -152,9 +150,10 @@ bool FileImporter::canProcess() const
     if(trigger_signal_end_ || abort_) {
         return true;
     }
-    if(!node_modifier_->isSource()) {
+    if(!Node::canProcess()) {
         return false;
     }
+
     if(directory_import_) {
         if(play_->isConnected()) {
             bool can_tick = playing_ && readParameter<int>("directory/current") <= (int) dir_files_.size();
@@ -172,7 +171,12 @@ bool FileImporter::canProcess() const
                 return false;
             }
         }
-        return provider_ != nullptr;
+
+        if(provider_) {
+            return provider_->hasNext();
+        } else {
+            return false;
+        }
     }
 }
 

@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/message_provider.h>
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 #include <csapex/signal/signal_fwd.h>
 #include <csapex/msg/generic_vector_message.hpp>
 
@@ -13,7 +13,7 @@
 namespace csapex
 {
 
-class CSAPEX_EXPORT_PLUGIN FileImporter : public TickableNode
+class CSAPEX_EXPORT_PLUGIN FileImporter : public Node
 {
 public:
     FileImporter();
