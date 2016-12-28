@@ -16,42 +16,50 @@ find_package(csapex_opencv REQUIRED)
 find_package(csapex_core_plugins REQUIRED)
 
 csapex_package(
-	INCLUDE_DIRS include
-        LIBRARIES ${PROJECT_NAME}
-	CATKIN_DEPENDS csapex csapex_core_plugins csapex_opencv
-)
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS csapex csapex_core_plugins csapex_opencv
+    )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
-  include
-  ${csapex_INCLUDE_DIRS}
-  ${csapex_core_plugins_INCLUDE_DIRS}
-  ${csapex_opencv_INCLUDE_DIRS}
-  ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUED_DIRS}
-)
+    include
+    ${csapex_INCLUDE_DIRS}
+    ${csapex_core_plugins_INCLUDE_DIRS}
+    ${csapex_opencv_INCLUDE_DIRS}
+    ${catkin_INCLUDE_DIRS}
+    ${OpenCV_INCLUED_DIRS}
+    )
 add_library(${PROJECT_NAME} SHARED
     src/features_message.cpp
-)
+    )
 generate_export_header(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}
     ${csapex_LIBRARIES}
     ${csapex_core_plugins_LIBRARIES}
     ${csapex_opencv_LIBRARIES}
     ${catkin_LIBRARIES}
-    ${Boost_LIBRARIES} 
+    ${Boost_LIBRARIES}
     ${catkin_LIBRARIES})
 
 find_package(cslibs_arff QUIET)
 set(${PROJECT_NAME}_additional_srcs "")
+set(${PROJECT_NAME}_additional_libs "")
 if(${cslibs_arff_FOUND})
     include_directories(${cslibs_arff_INCLUDE_DIRS})
     list(APPEND
         ${PROJECT_NAME}_additional_srcs
-
         src/arff_file_exporter.cpp
         src/arff_feature_message_provider.cpp
-    )
+        )
+endif()
+find_package(csapex_point_cloud QUIET)
+if(${csapex_point_cloud_FOUND})
+    include_directories(${csapex_point_cloud_INCLUDE_DIRS})
+    list(APPEND
+        ${PROJECT_NAME}_additional_srcs
+        src/features_message_to_labelled_pointcloud.cpp
+        )
 endif()
 
 add_library(${PROJECT_NAME}_plugin SHARED
@@ -93,7 +101,7 @@ add_library(${PROJECT_NAME}_plugin SHARED
     src/random_vector.hpp
 
     ${${PROJECT_NAME}_additional_srcs}
-)
+    )
 
 target_link_libraries(${PROJECT_NAME}_plugin
     ${PROJECT_NAME}
@@ -102,42 +110,46 @@ target_link_libraries(${PROJECT_NAME}_plugin
     ${csapex_opencv_LIBRARIES}
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
+    ${${PROJECT_NAME}_additional_libs}
     ${cslibs_arff_LIBRARIES}
-)
+    ${csapex_point_cloud_LIBRARIES}
+    )
+
+message("666 ${${PROJECT_NAME}_additional_libs}")
 
 #
 # INSTALL
 #
 
 install(FILES plugins.xml
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(TARGETS ${PROJECT_NAME}_plugin ${PROJECT_NAME}
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 if(WIN32)
-	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h
-		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
-	install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
-			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME}/)
+    file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h
+        DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
+    install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME}/)
 else()
-	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h
-		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
-	install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
-			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+    file(COPY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h
+        DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/)
+    install(FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_export.h
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 endif()
 
 if(WIN32)
-	install(DIRECTORY include/${PROJECT_NAME}/
-			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME})
+    install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/${PROJECT_NAME})
 else()
-        install(DIRECTORY include/${PROJECT_NAME}/
-			DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+    install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 endif()
 
 if(NOT ${catkin_FOUND})
-        install(FILES cmake/${PROJECT_NAME}-config.cmake
-			DESTINATION ${CSAPEX_MODULE_DESTINATION})
+    install(FILES cmake/${PROJECT_NAME}-config.cmake
+        DESTINATION ${CSAPEX_MODULE_DESTINATION})
 endif()

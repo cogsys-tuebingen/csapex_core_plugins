@@ -89,5 +89,9 @@
   <description>Train WaldBoost (OpenCV) to classify data</description>
   <tags>ML</tags>
 </class>
+<class type="csapex::FeaturesMessageToLabelledPointCloud" base_class_type="csapex::Node">
+  <description>Convert low diemensional features to point clouds.</description>
+  <tags>ML</tags>
+</class>
 </library>
 

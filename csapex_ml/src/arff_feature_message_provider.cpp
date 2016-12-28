@@ -9,36 +9,25 @@
 #include <cslibs_arff/arff_parser.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ml/features_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::ARFFFeatureMessageProvider, csapex::MessageProvider)
 
 using namespace csapex;
+using namespace connection_types;
 
 std::map<std::string, ARFFFeatureMessageProvider::ProviderConstructor> ARFFFeatureMessageProvider::plugins;
 
 ARFFFeatureMessageProvider::ARFFFeatureMessageProvider() :
-    next_feature_message_(-1)
+    sent_(false)
 {
-    state.addParameter(param::ParameterFactory::declareBool("playing", true));
-    state.addParameter(param::ParameterFactory::declareBool("loop", false));
-    state.addParameter(param::ParameterFactory::declareRange("current_feature_message", 0, 1000, 0, 1));
-
-    setType(connection_types::makeEmpty<connection_types::FeaturesMessage>());
+    setType(connection_types::makeEmpty<GenericVectorMessage>());
 }
 
 void ARFFFeatureMessageProvider::load(const std::string& arff_file)
 {
     cslibs_arff::ArffParser parser(arff_file);
     arff_ = parser.parse();
-
-    features_messages_ = arff_->num_instances();
-
-    csapex::param::Parameter::Ptr p = state.getParameter("current_feature_message");
-    param::RangeParameter::Ptr range_p = std::dynamic_pointer_cast<param::RangeParameter>(p);
-
-    if(range_p) {
-        range_p->setMax(features_messages_ - 1);
-    }
 }
 
 std::vector<std::string> ARFFFeatureMessageProvider::getExtensions() const
@@ -48,86 +37,43 @@ std::vector<std::string> ARFFFeatureMessageProvider::getExtensions() const
 
 bool ARFFFeatureMessageProvider::hasNext()
 {
-    if(!arff_) {
-        return false;
-    } else {
-        if(state.readParameter<bool>("playback/resend")) {
-            return true;
-        }
-
-        if(!state.readParameter<bool>("playing")) {
-            // not resend and not playing
-            return false;
-        }
-
-        if(state.readParameter<bool>("loop")) {
-            return true;
-        }
-
-        int requested_message = state.readParameter<int>("current_feature_message");
-        return next_feature_message_ < features_messages_ ||
-                requested_message < features_messages_;
-    }
+    return !sent_ || state.readParameter<bool>("playback/resend");
 }
 
 connection_types::Message::Ptr ARFFFeatureMessageProvider::next(std::size_t slot)
 {
-    connection_types::FeaturesMessage::Ptr msg(new connection_types::FeaturesMessage);
-    next(msg->value, msg->classification);
-    std::cout << msg->value.front() << " " << msg->value.back() << std::endl;
-    return msg;
-}
 
+    GenericVectorMessage::Ptr msg(connection_types::makeEmpty<GenericVectorMessage>());
+    std::shared_ptr<std::vector<FeaturesMessage>> msgs(new std::vector<FeaturesMessage>);
+    const std::size_t instances = arff_->num_instances();
+    if(instances == 0) {
+        throw std::runtime_error("Tried to open empty file, nothing to playback here!");
+    } else {
+        const std::size_t step = arff_->get_instance(0)->size() - 1;
+        std::cout << step << std::endl;
 
-void ARFFFeatureMessageProvider::next(std::vector<float> &value,
-                                      int &classification)
-{
-    if(!arff_) {
-        throw std::runtime_error("No arff file loaded!");
-    }
+        for(std::size_t i = 0 ; i < instances; ++i) {
+            cslibs_arff::ArffInstance::Ptr arff_instance = arff_->get_instance(i);
+            FeaturesMessage f;
+            const std::size_t instance_size = arff_instance->size() - 1;
+            if(instance_size != step)
+                throw std::runtime_error("All instances in ARFF file should have the same size!");
 
-    int requested_message = state.readParameter<int>("current_feature_message");
-    if(state.readParameter<bool>("playing") || requested_message != next_feature_message_) {
-        bool skip = next_feature_message_ != requested_message;
-
-        if(next_feature_message_ >= features_messages_ && !skip) {
-            value = last_data_;
-            classification = last_classification_;
-            setPlaying(false);
-            return;
-        }
-
-        cslibs_arff::ArffInstance::Ptr arff_instance = arff_->get_instance(requested_message);
-
-        last_data_.resize(arff_instance->size() - 1);
-        for(std::size_t i = 0 ; i < last_data_.size() ; ++i) {
-            last_data_[i] = (float) *(arff_instance->get(i));
-        }
-
-        std::stringstream ss;
-        ss << (std::string) *(arff_instance->get(arff_instance->size() - 1));
-        ss >> last_classification_;
-
-        ++next_feature_message_;
-        state["current_feature_message"] = next_feature_message_;
-
-        if(next_feature_message_ == features_messages_) {
-            bool loop = state.readParameter<bool>("loop");
-            if(loop) {
-                state["current_feature_message"] = 0;
-            } else {
-                setPlaying(false);
+            f.value.resize(step);
+            for(std::size_t i = 0 ; i < step ; ++i) {
+                f.value[i] = (float) *(arff_instance->get(i));
             }
+            std::stringstream ss;
+            ss << (std::string) *(arff_instance->get(arff_instance->size() - 1));
+            ss >> f.classification;
+
+            msgs->emplace_back(f);
         }
+        msg->set(msgs);
+        sent_ = true;
     }
-    value  = last_data_;
-    classification = last_classification_;
 
-}
-
-void ARFFFeatureMessageProvider::setPlaying(bool playing)
-{
-    state["playing"] = playing;
+    return msg;
 }
 
 Memento::Ptr ARFFFeatureMessageProvider::getState() const

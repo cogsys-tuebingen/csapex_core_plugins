@@ -31,9 +31,6 @@ public:
 
     connection_types::Message::Ptr next(std::size_t slot);
 
-    void next(std::vector<float> &value,
-              int &classification);
-
     std::vector<std::string> getExtensions() const;
 
     Memento::Ptr getState() const;
@@ -41,16 +38,9 @@ public:
 
 private:
     cslibs_arff::ArffData::Ptr arff_;
-
-    std::vector<float> last_data_;
-    int                last_classification_;
-
-    int                features_messages_;
-    int                next_feature_message_;
+    bool sent_;
 
     static std::map<std::string, ProviderConstructor> plugins;
-
-    void setPlaying(bool playing);
 };
 }
 
