@@ -35,7 +35,11 @@ private:
     double      nu_;            // for CV_SVM_NU_SVC, CV_SVM_ONE_CLASS, and CV_SVM_NU_SVR
     double      p_;             // for CV_SVM_EPS_SVR
 //    CvMat*      class_weights; // for CV_SVM_C_SVC
+    double epsilon_;            // termination criteria accuracy
+    int term_crit_type_;        // termination criteria type
+    int term_crit_iterations_;
     CvTermCriteria term_crit_;  // termination criteria
+
 
 
     enum ClassTypes {NEGATIVE = -1, POSITIVE = 1};

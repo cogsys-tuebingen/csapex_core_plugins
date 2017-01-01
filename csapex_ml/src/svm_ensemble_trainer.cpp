@@ -140,6 +140,33 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
                              false),
                             balance_);
 
+    parameters.addParameter(csapex::param::ParameterFactory::declareValue<double>
+                            ("svm_accuracy",
+                             csapex::param::ParameterDescription("Termination criteria of the iterative SVM training. Accuracy"),
+                             1e-3),
+                            epsilon_);
+
+    parameters.addParameter(param::ParameterFactory::declareRange(
+                                "svm_training_iterations",
+                                0, 10000, 1000, 100),
+                            term_crit_iterations_);
+
+    std::map<std::string, int> termcrit_type = {
+        {"CV_TERMCRIT_ITER", (int) CV_TERMCRIT_ITER},
+        {"CV_TERMCRIT_EPS", (int) CV_TERMCRIT_EPS},
+        {"CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int) CV_TERMCRIT_ITER | CV_TERMCRIT_EPS}
+    };
+
+    parameters.addParameter(param::ParameterFactory::declareParameterSet(
+                                "termcrit_type",
+                                csapex::param::ParameterDescription("The type of the termination criteria:\n"
+                                                                    "CV_TERMCRIT_ITER Terminate learning by the max_num_of_trees_in_the_forest;\n"
+                                                                    "CV_TERMCRIT_EPS Terminate learning by the forest_accuracy;\n"
+                                                                    "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS Use both termination criteria."),
+                                termcrit_type,
+                                (int) (CV_TERMCRIT_ITER | CV_TERMCRIT_EPS)),
+                            term_crit_type_);
+
 }
 
 bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collection)
@@ -153,6 +180,8 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
             throw std::runtime_error("All descriptors must have the same length!");
         indices_by_label[fm.classification].push_back(i);
     }
+
+
 
 
     std::vector<int> svm_labels;
@@ -242,6 +271,10 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
                 }
 
 #if CV_MAJOR_VERSION == 2
+
+                // termination criteria
+                term_crit_ = cv::TermCriteria( term_crit_type_, term_crit_iterations_, epsilon_ );
+
                 ExtendedSVM svm;
 
                 cv::SVMParams   svm_params_;
@@ -254,7 +287,7 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
                 svm_params_.C = C_;
                 svm_params_.nu = nu_;
                 svm_params_.p = p_;
-                //svm_params_.term_crit; // termination criteria
+                svm_params_.term_crit = term_crit_; // termination criteria
 
                 /// train the svm
                 std::cout << "Started training for '" << it->first << std::endl;
@@ -353,6 +386,9 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
 
 #if CV_MAJOR_VERSION == 2
                 ExtendedSVM svm;
+
+                // termination criteria
+                term_crit_ = cv::TermCriteria( term_crit_type_, term_crit_iterations_, epsilon_ );
 
                 cv::SVMParams   svm_params_;
                 svm_params_.svm_type = svm_type_;
@@ -466,6 +502,7 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage> &collect
             svm_params_.C = C_;
             svm_params_.nu = nu_;
             svm_params_.p = p_;
+            svm_params_.term_crit = cv::TermCriteria( CV_TERMCRIT_ITER, 1000, FLT_EPSILON );
             //svm_params_.term_crit; // termination criteria
 
             /// train the svm
