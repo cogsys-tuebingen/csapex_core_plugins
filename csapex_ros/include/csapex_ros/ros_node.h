@@ -5,7 +5,7 @@
 #include <csapex_ros/ros_handler.h>
 
 /// PROJECT
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 
 /// SYSTEM
 #include <ros/ros.h>
@@ -13,20 +13,17 @@
 namespace csapex
 {
 
-class RosNode : public TickableNode
+class RosNode : public Node
 {
 protected:
     RosNode();
 
+    virtual bool canProcess() const override;
     virtual void process() override;
     virtual void setup(NodeModifier& node_modifier) override;
 
     virtual void setupROS() = 0;
     virtual void processROS() = 0;
-
-    virtual bool canTick() override;
-    virtual bool tick(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters) override;
-    virtual bool tickROS();
 
     virtual void getProperties(std::vector<std::string>& properties) const override;
 
@@ -34,11 +31,10 @@ protected:
     ROSHandler& getRosHandler() const;
 
 protected:
-    void ensureROSisSetUp();
     bool isConnected() const;
 
 private:
-    bool ros_init_;
+    slim_signal::ScopedConnection connection_;
 };
 
 }

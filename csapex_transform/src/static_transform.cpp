@@ -37,33 +37,29 @@ void StaticTransform::setupParameters(Parameterizable &parameters)
 
 void StaticTransform::process()
 {
-    if(!msg::hasMessage(input_)) {
-        return;
+    if(msg::hasMessage(input_)) {
+        connection_types::TransformMessage::ConstPtr pose = msg::getMessage<connection_types::TransformMessage>(input_);
+        tf::Transform trafo = pose->value;
+
+        tf::Matrix3x3 rot_mat(trafo.getRotation());
+        rot_mat.getEulerYPR(yaw, pitch, roll);
+
+        x = trafo.getOrigin().x();
+        y = trafo.getOrigin().y();
+        z = trafo.getOrigin().z();
+
+        setParameter("frame", pose->frame_id);
+        setParameter("child_frame", pose->child_frame);
+
+        setParameter("roll", roll);
+        setParameter("pitch", pitch);
+        setParameter("yaw", yaw);
+        setParameter("dx", x);
+        setParameter("dy", y);
+        setParameter("dz", z);
     }
 
-    connection_types::TransformMessage::ConstPtr pose = msg::getMessage<connection_types::TransformMessage>(input_);
-    tf::Transform trafo = pose->value;
 
-    tf::Matrix3x3 rot_mat(trafo.getRotation());
-    rot_mat.getEulerYPR(yaw, pitch, roll);
-
-    x = trafo.getOrigin().x();
-    y = trafo.getOrigin().y();
-    z = trafo.getOrigin().z();
-
-    setParameter("frame", pose->frame_id);
-    setParameter("child_frame", pose->child_frame);
-
-    setParameter("roll", roll);
-    setParameter("pitch", pitch);
-    setParameter("yaw", yaw);
-    setParameter("dx", x);
-    setParameter("dy", y);
-    setParameter("dz", z);
-}
-
-void StaticTransform::tick()
-{
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
     msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
     msg->frame_id = frame;

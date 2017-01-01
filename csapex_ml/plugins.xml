@@ -1,4 +1,13 @@
 <library path="libcsapex_ml_plugin">
+<class type="csapex::FeaturesMessageFilter" base_class_type="csapex::Node">
+  <description>Filters messages by their classification.</description>
+</class>
+<class type="csapex::SampleSplitter" base_class_type="csapex::Node">
+  <description>Gives access to the components of a FeaturesMessage</description>
+</class>
+<class type="csapex::FunctionSampleGenerator" base_class_type="csapex::Node">
+  <description>Draws samples from a user defined function. Can generate outliers</description>
+</class>
 <class type="csapex::DecisionTree" base_class_type="csapex::Node">
   <description>Apply a decision tree to a feature vector</description>
 </class>
@@ -41,9 +50,12 @@
   <description>Decision tree forest trainer.</description>
   <tags>ML</tags>
 </class>
-<class type="csapex::ArffFormatExport" base_class_type="csapex::Node">
+<class type="csapex::ARFFFileExporter" base_class_type="csapex::Node">
   <description>Export features messages to the weka arff file format.</description>
   <tags>ML</tags>
+</class>
+<class type="csapex::ARFFFeatureMessageProvider" base_class_type="csapex::MessageProvider">
+  <description></description>
 </class>
 <class type="csapex::AssignFeatureClassifications" base_class_type="csapex::Node">
   <description>Assign classes to Featuresmessages by introducing a vector of messages.</description>
@@ -75,6 +87,10 @@
 </class>
 <class type="csapex::WaldBoostTrainer" base_class_type="csapex::Node">
   <description>Train WaldBoost (OpenCV) to classify data</description>
+  <tags>ML</tags>
+</class>
+<class type="csapex::FeaturesMessageToLabelledPointCloud" base_class_type="csapex::Node">
+  <description>Convert low diemensional features to point clouds.</description>
   <tags>ML</tags>
 </class>
 </library>

@@ -37,19 +37,25 @@ public:
     bool topicExists(const std::string& topic);
 
     void waitForConnection();
-    void refresh();
+    void waitForTopic(const std::string& name, std::function<void()> callback);
 
 public:
     slim_signal::Signal<void()> connected;
+    slim_signal::Signal<void()> connection_lost;
     slim_signal::Signal<void()> shutdown;
 
 private:
     ROSHandler(Settings& settings);
 
-    void initHandle(bool try_only = false);
+    void init();
+
+    void waitForInitializatedHandle();
     void checkMasterConnection();
 
-    void waitForCheck();
+    void doWaitForTopic(const std::string& name, std::function<void()> callback);
+
+    void connectionEstablished();
+    void connectionLost();
 
 private:
     static ROSHandler* g_instance_;
@@ -63,8 +69,13 @@ private:
     std::recursive_mutex has_connection_mutex;
     bool has_connection;
 
+    std::thread connection_thread_;
+
     bool check_is_running;
-    std::condition_variable_any check_is_done;
+    std::condition_variable_any connection_established;
+
+    std::map<std::string, ros::Subscriber> topic_subscribers_;
+    std::map<std::string, std::function<void()>> topic_callbacks_;
 };
 
 }

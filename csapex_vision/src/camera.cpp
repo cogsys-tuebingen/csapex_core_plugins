@@ -32,11 +32,6 @@ void Camera::setupParameters(Parameterizable &parameters)
 
 void Camera::process()
 {
-
-}
-
-void Camera::tick()
-{
     connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
     cap_ >> msg->value;
     if(msg->value.channels() == 1)
@@ -45,7 +40,7 @@ void Camera::tick()
     msg::publish(output_, msg);
 }
 
-bool Camera::canTick()
+bool Camera::canProcess() const
 {
     return cap_.isOpened();
 }

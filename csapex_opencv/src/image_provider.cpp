@@ -20,7 +20,7 @@ ImageProvider::ImageProvider()
 }
 
 ImageProvider::~ImageProvider()
-{;
+{
 }
 
 

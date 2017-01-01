@@ -29,9 +29,6 @@ void MakeScreenshot::setup(NodeModifier& node_modifier)
 {
     in_ = node_modifier.addSlot("Trigger", std::bind(&MakeScreenshot::makeScreenshot, this));
     done_ = node_modifier.addEvent("Done");
-
-    node_modifier_->setIsSource(true);
-    node_modifier_->setIsSink(true);
 }
 
 void MakeScreenshot::process()

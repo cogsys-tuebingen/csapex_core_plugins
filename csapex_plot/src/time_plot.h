@@ -2,7 +2,7 @@
 #define TIME_PLOT_H
 
 /// PROJECT
-#include <csapex/model/node.h>
+#include "plot.h"
 
 /// SYSTEM
 #include <chrono>
@@ -15,33 +15,24 @@
 namespace csapex
 {
 
-class TimePlot : public Node
+class TimePlot : public Plot
 {
 private:
     typedef std::chrono::system_clock::time_point timepoint;
 
 public:
     void setup(NodeModifier &node_modifier);
-
     void setupParameters(Parameterizable &parameters);
-
     void process();
 
-    int getWidth() const;
-    int getHeight() const;
     double getLineWidth() const;
 
-    QColor getBackgroundColor() const;
     QColor getLineColor(std::size_t idx) const;
-    QColor getFillColor() const;
 
     const double *getTData() const;
     const double* getVData(std::size_t idx) const;
     std::size_t getVDataCountNumCurves() const;
     std::size_t getCount() const;
-
-    const QwtScaleMap& getXMap() const;
-    const QwtScaleMap& getYMap() const;
 
 protected:
     void reset();
@@ -49,10 +40,6 @@ protected:
 
     void preparePlot();
     void renderAndSend();
-
-public:
-    slim_signal::Signal<void()> update;
-    slim_signal::Signal<void()> display_request;
 
 private:
     bool initialize_;
@@ -62,13 +49,8 @@ private:
     Input* in_;
     Output* out_;
 
-    int width_;
-    int height_;
-
-    QColor color_bg_;
     QColor basic_line_color_;
     std::vector<QColor> color_line_;
-    QColor color_fill_;
 
     double line_width_;
 
@@ -81,9 +63,6 @@ private:
     std::vector<double> data_t_;
     std::vector<std::deque<double>> deque_v_;
     std::vector<std::vector<double>> data_v_;
-
-    QwtScaleMap x_map;
-    QwtScaleMap y_map;
 
 private:
     void calculateLineColors();

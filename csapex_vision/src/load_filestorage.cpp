@@ -27,10 +27,6 @@ LoadFilestorage::~LoadFilestorage()
 
 void LoadFilestorage::process()
 {
-}
-
-void LoadFilestorage::tick()
-{
     connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::unknown, 0));
     bool resend  = readParameter<bool>("resend");
     bool iterate = readParameter<bool>("iterate");
@@ -50,11 +46,11 @@ void LoadFilestorage::tick()
         mats_last_ = mats_it_;
         ++mats_it_;
     }
-    msg::publish(output_, out);
 
+    msg::publish(output_, out);
 }
 
-bool LoadFilestorage::canTick()
+bool LoadFilestorage::canProcess() const
 {
     bool resend  = readParameter<bool>("resend");
     bool iterate = readParameter<bool>("iterate");

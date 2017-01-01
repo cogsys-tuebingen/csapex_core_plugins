@@ -1,11 +1,13 @@
 /// PROJECT
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
+#include <csapex/model/token.h>
+#include <csapex/param/output_progress_parameter.h>
 
 /// SYSTEM
 #include <deque>
@@ -13,7 +15,7 @@
 namespace csapex
 {
 
-class CSAPEX_EXPORT_PLUGIN Cache : public TickableNode
+class CSAPEX_EXPORT_PLUGIN Cache : public Node
 {
 public:
     Cache()
@@ -24,18 +26,24 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier) override
     {
-        input = node_modifier.addOptionalInput<connection_types::AnyMessage>("multidimensional message");
+        slot = node_modifier.addTypedSlot<connection_types::AnyMessage>("multidimensional message", [this](const TokenPtr& token) {
+            msgs.push_back(token->getTokenData());
+            update();
+        });
         output = node_modifier.addOutput<connection_types::AnyMessage>("demultiplexed message");
     }
 
     void setupParameters(csapex::Parameterizable& params) override
     {
+        csapex::param::Parameter::Ptr p = param::ParameterFactory::declareOutputProgress("buffered messages");
+        buffered_ = dynamic_cast<param::OutputProgressParameter*>(p.get());
+        params.addParameter(p);
+
         params.addParameter(csapex::param::ParameterFactory::declareValue("buffer size", 128), [this](param::Parameter* p) {
             buffer_size_ = p->as<int>();
-            while(msgs.size() > buffer_size_) {
-                msgs.pop_front();
-            }
+            update();
         });
+
         params.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"), [this](param::Parameter*) {
             reset();
         });
@@ -51,15 +59,14 @@ public:
 
         params.addConditionalParameter(csapex::param::ParameterFactory::declareTrigger("start"), not_playing, [this](param::Parameter*) {
             setParameter("playback", true);
+            yield();
         });
         params.addConditionalParameter(csapex::param::ParameterFactory::declareTrigger("stop"), playing, [this](param::Parameter*) {
             setParameter("playback", false);
+            yield();
         });
 
         params.addConditionalParameter(csapex::param::ParameterFactory::declareRange("frame", 0, 128, 0 , 1), playing);
-        params.addConditionalParameter(csapex::param::ParameterFactory::declareRange("hz", 1.0, 400.0, 30.0, 0.1), playing, [this](param::Parameter* p){
-            setTickFrequency(p->as<double>());
-        });
 
         params.addConditionalParameter(csapex::param::ParameterFactory::declareValue("play", true), playing, playing_);
         params.addConditionalParameter(csapex::param::ParameterFactory::declareValue("loop", true), playing, loop_);
@@ -68,34 +75,27 @@ public:
     void reset()
     {
         msgs.clear();
-        updateParams();
+        update();
     }
 
-    void updateParams()
+    void update()
     {
+        while(msgs.size() > buffer_size_) {
+            msgs.pop_front();
+        }
+
         param::RangeParameter::Ptr range = getParameter<param::RangeParameter>("frame");
         range->setMax<int>(msgs.size()-1);
+
+        buffered_->setProgress(msgs.size(), buffer_size_);
     }
 
-    void process() override
-    {
-        if(msg::hasMessage(input)) {
-            auto m = msg::getMessage(input);
-
-            msgs.push_back(m);
-
-            updateParams();
-
-            msg::publish(output, m);
-        }
-    }
-
-    bool canTick() override
+    bool canProcess() const override
     {
         return playback_;
     }
 
-    void tick() override
+    void process() override
     {
         std::size_t frame = readParameter<int>("frame");
         apex_assert(frame < msgs.size());
@@ -118,10 +118,12 @@ public:
     }
 
 private:
-    Input* input;
+    Slot* slot;
     Output* output;
 
     std::size_t buffer_size_;
+    param::OutputProgressParameter* buffered_;
+
     std::deque<TokenDataConstPtr> msgs;
 
     bool playback_;

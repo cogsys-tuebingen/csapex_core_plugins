@@ -1,6 +1,6 @@
 
 /// PROJECT
-#include <csapex/model/tickable_node.h>
+#include <csapex/model/node.h>
 
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/io.h>
@@ -19,7 +19,7 @@ inline double degToRad(const double deg)
     return fac * deg;
 }
 
-class DegToRad : public csapex::TickableNode {
+class DegToRad : public csapex::Node {
 public:
 
     DegToRad() :
@@ -39,7 +39,7 @@ public:
                                 std::bind(&DegToRad::publish, this));
     }
 
-    virtual void tick() override
+    virtual void process() override
     {
         if(publish_) {
             msg::publish(output_, degToRad(angle_));

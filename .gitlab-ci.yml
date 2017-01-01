@@ -1,8 +1,7 @@
 before_script:
   # Install ssh-agent if not already installed, it is required by Docker.
   # (change apt-get to yum if you use a CentOS-based image)
-  - 'apt-get -qq update -y'
-  - 'apt-get -qq install build-essential openssh-client sudo -y'
+  - 'apt-get -qq update -y && apt-get -qq install build-essential openssh-client sudo -y --no-install-recommends'
 
   # Run ssh-agent (inside the build environment)
   - eval $(ssh-agent -s)
@@ -24,6 +23,9 @@ before_script:
   - ln -s $CI_PROJECT_DIR src/$CI_PROJECT_NAME
   - cd src
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:csapex/csapex csapex
+  - cd csapex
+  - git checkout $CI_BUILD_REF_NAME || true # select same branch name, if it exists. Defaults to master
+  - cd ..
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vision
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_laser_processing
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_kdtree

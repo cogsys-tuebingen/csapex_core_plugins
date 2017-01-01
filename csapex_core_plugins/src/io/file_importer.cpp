@@ -34,7 +34,7 @@ using namespace connection_types;
 
 FileImporter::FileImporter()
     : playing_(false), abort_(false), end_triggered_(false),
-      trigger_signal_begin_(false), trigger_signal_end_(false), import_requested_(false),
+      trigger_signal_end_(false), import_requested_(false),
       directory_import_(false), last_directory_index_(-1), cache_enabled_(false)
 {
 }
@@ -86,12 +86,6 @@ void FileImporter::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
     parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/latch", false), cond_dir);
     parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/quit on end", false), cond_dir, quit_on_end_);
-
-    param::Parameter::Ptr immediate = param::ParameterFactory::declareBool("playback/immediate", false);
-    parameters.addParameter(immediate, std::bind(&FileImporter::changeMode, this));
-
-    std::function<bool()> conditionf = [immediate]() { return !immediate->as<bool>(); };
-    addConditionalParameter(param::ParameterFactory::declareRange("playback/frequency", 1.0, 512.0, 30.0, 0.5), conditionf, std::bind(&FileImporter::changeMode, this));
 
     parameters.addParameter(param::ParameterFactory::declareBool("cache", 0), [this](param::Parameter* p) {
         cache_enabled_ = p->as<bool>();
@@ -146,29 +140,20 @@ void FileImporter::setup(NodeModifier& node_modifier)
 
 void FileImporter::changeMode()
 {
-    if(readParameter<bool>("playback/immediate")) {
-        setTickImmediate(true);
-    } else {
-        setTickFrequency(readParameter<double>("playback/frequency"));
-    }
 }
 
-void FileImporter::process(NodeModifier& node_modifier, Parameterizable& parameters)
-{
-    tick(node_modifier, parameters);
-}
-
-bool FileImporter::canTick()
+bool FileImporter::canProcess() const
 {
     if(import_requested_) {
         return true;
     }
-    if(trigger_signal_end_ || trigger_signal_begin_ || abort_) {
+    if(trigger_signal_end_ || abort_) {
         return true;
     }
-    if(!node_modifier_->isSource()) {
+    if(!Node::canProcess()) {
         return false;
     }
+
     if(directory_import_) {
         if(play_->isConnected()) {
             bool can_tick = playing_ && readParameter<int>("directory/current") <= (int) dir_files_.size();
@@ -186,50 +171,45 @@ bool FileImporter::canTick()
                 return false;
             }
         }
-        return provider_ != nullptr;
+
+        if(provider_) {
+            return provider_->hasNext();
+        } else {
+            return false;
+        }
     }
 }
 
-bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
+void FileImporter::process()
 {
-    if(import_requested_) {
-        import_requested_ = false;
-        import();
-    }
-
-    if(trigger_signal_begin_) {
-        signalBegin();
-        return false;
-    }
-
+    // check if we need to send marker messages:
     if(trigger_signal_end_) {
         signalEnd();
-        return true;
+        return;
     }
-
     if(abort_) {
         abort_ = false;
 
-        //setParameter("directory/play", false);
-        //setParameter("directory/latch", false);
         setParameter("directory/current", (int) dir_files_.size());
 
         end_triggered_ = false;
         signalEnd();
 
-        return true;
+        return;
     }
 
-
-    bool play = readParameter<bool>("directory/play") ||
-            (play_->isConnected() && playing_);
+    // check if we need to do the import
+    if(import_requested_) {
+        import_requested_ = false;
+        import();
+    }
 
     if(current_container_msg_) {
         if(current_container_index_ < current_container_msg_->nestedValueCount()) {
             TokenDataConstPtr msg = current_container_msg_->nestedValue(current_container_index_);
             msg::publish(outputs_[0], msg);
             ++current_container_index_;
-            return true;
+            return;
 
         } else {
             current_container_msg_.reset();
@@ -238,104 +218,58 @@ bool FileImporter::tick(NodeModifier& nm, Parameterizable& p)
 
     if(provider_) {
         if(provider_->hasNext()) {
-            for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
-                INTERLUDE_STREAM("slot " << slot);
-
-                Output* output = outputs_[slot];
-
-                if(msg::isConnected(output)) {
-                    Message::Ptr msg = provider_->next(slot);
-
-                    if(split_container_messages_ && slot == 0) {
-                        if(GenericVectorMessage::ConstPtr vector = std::dynamic_pointer_cast<GenericVectorMessage>(msg)) {
-                            current_container_msg_ = vector;
-                            current_container_index_ = 0;
-                            return tick(nm, p);
-                        }
-                    }
-
-                    if(msg) {
-                        msg::publish(output, msg);
-                    }
-                }
-            }
-            return true;
-
-        } else {
-            if(directory_import_) {
-                if(play) {
-                    int current = readParameter<int>("directory/current");
-                    if(current == last_directory_index_) {
-                        ++current;
-
-                        //DEBUGainfo << "increasing current to " << current << std::endl;
-                        setParameter("directory/current", current);
-                    }
-                }
-            } else {
-                // the importer is done and we are only importing one file
-                // -> report tick as successful
-                return true;
-            }
+            sendToken();
+            // we have a message -> return
+            return;
         }
     }
 
-    if((!provider_ || !provider_->hasNext()) && directory_import_) {
-        bool latch = readParameter<bool>("directory/latch");
-        bool loop = readParameter<bool>("directory/loop");
-
-        int current = readParameter<int>("directory/current");
-        bool index_changed = current != last_directory_index_;
-
-        if(!play && !latch && !index_changed) {
-            return false;
-        }
-        INTERLUDE("directory");
-
-        int files = dir_files_.size();
-
-        //DEBUGainfo << "current: " << current << std::endl;
-        if(current >= files) {
-            if(!end_triggered_) {
-                signalEnd();
-                return true;
-            }
-
-            if((play_->isConnected() && playing_)) {
-                return false;
-            }
-
-            if(loop) {
-                current = 0;
-            } else if(latch && files > 0) {
-                current = files - 1;
-            } else {
-                setParameter("directory/play", false);
+    // no message was available
+    if(directory_import_) {
+        if(provider_) {
+            apex_assert(!provider_->hasNext());
+            if(isPlaying()) {
+                advanceDirectory();
             }
         }
 
-        if(current < 0) {
-            current = 0;
+        if(!provider_ || !provider_->hasNext()) {
+            createProviderForNextFile();
         }
 
-        if(current < files) {
-            if(current == 0) {
-                signalBegin();
-            }
-
-            createMessageProvider(QString::fromStdString(dir_files_.at(current)));
-            new_provider_->trigger();
-
-            last_directory_index_ = current;
-
-            //DEBUGainfo << "setting current to " << current << std::endl;
-            setParameter("directory/current", current);
-            //            int current = readParameter<int>("directory/current");
+        if(provider_ && provider_->hasNext()) {
+            sendToken();
         }
     }
+}
 
+void FileImporter::sendToken()
+{
+    apex_assert(provider_);
+    apex_assert(provider_->hasNext());
 
-    return false;
+    for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
+        INTERLUDE_STREAM("slot " << slot);
+
+        Output* output = outputs_[slot];
+
+        if(msg::isConnected(output)) {
+            Message::Ptr msg = provider_->next(slot);
+
+            if(split_container_messages_ && slot == 0) {
+                if(GenericVectorMessage::ConstPtr vector = std::dynamic_pointer_cast<GenericVectorMessage>(msg)) {
+                    current_container_msg_ = vector;
+                    current_container_index_ = 0;
+                    process();
+                    return;
+                }
+            }
+
+            if(msg) {
+                msg::publish(output, msg);
+            }
+        }
+    }
 }
 
 namespace {
@@ -376,6 +310,7 @@ void FileImporter::doImportDir(const QString &dir_string)
 
     bool recursive = readParameter<bool>("recursive import");
 
+    //    directory_filter_ = readParameter<std::string>("directory/filter");
     boost::regex filter_regex(directory_filter_);
 
     std::function<void(const boost::filesystem::path&)> crawl_dir = [&](const boost::filesystem::path& directory) {
@@ -508,8 +443,7 @@ void FileImporter::updateProvider()
 
 void FileImporter::triggerSignalBegin()
 {
-    //DEBUGainfo << "triggerSignalBegin" << std::endl;
-    trigger_signal_begin_ = true;
+    signalBegin();
 }
 
 void FileImporter::triggerSignalEnd()
@@ -519,8 +453,6 @@ void FileImporter::triggerSignalEnd()
 
 void FileImporter::signalBegin()
 {
-    trigger_signal_begin_ = false;
-
     end_triggered_ = false;
     begin_->trigger();
 }
@@ -601,5 +533,77 @@ void FileImporter::import()
         doImportDir(QString::fromStdString(readParameter<std::string>("directory")));
     } else {
         createMessageProvider(QString::fromStdString(readParameter<std::string>("path")));
+    }
+}
+
+bool FileImporter::isPlaying()
+{
+    return readParameter<bool>("directory/play") || (play_->isConnected() && playing_);
+}
+
+void FileImporter::advanceDirectory()
+{
+    int current = readParameter<int>("directory/current");
+    if(current == last_directory_index_) {
+        ++current;
+
+        //DEBUGainfo << "increasing current to " << current << std::endl;
+        setParameter("directory/current", current);
+    }
+}
+
+
+void FileImporter::createProviderForNextFile()
+{
+    bool latch = readParameter<bool>("directory/latch");
+    bool loop = readParameter<bool>("directory/loop");
+
+    int current = readParameter<int>("directory/current");
+    bool index_changed = current != last_directory_index_;
+
+    if(!isPlaying() && !latch && !index_changed) {
+        return;
+    }
+    INTERLUDE("directory");
+
+    int files = dir_files_.size();
+
+    //DEBUGainfo << "current: " << current << std::endl;
+    if(current >= files) {
+        if(!end_triggered_) {
+            signalEnd();
+            return;
+        }
+
+        if((play_->isConnected() && playing_)) {
+            return;
+        }
+
+        if(loop) {
+            current = 0;
+        } else if(latch && files > 0) {
+            current = files - 1;
+        } else {
+            setParameter("directory/play", false);
+        }
+    }
+
+    if(current < 0) {
+        current = 0;
+    }
+
+    if(current < files) {
+        if(current == 0) {
+            signalBegin();
+        }
+
+        createMessageProvider(QString::fromStdString(dir_files_.at(current)));
+        new_provider_->trigger();
+
+        last_directory_index_ = current;
+
+        //DEBUGainfo << "setting current to " << current << std::endl;
+        setParameter("directory/current", current);
+        //            int current = readParameter<int>("directory/current");
     }
 }

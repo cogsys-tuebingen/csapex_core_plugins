@@ -7,6 +7,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/signal/event.h>
 
 CSAPEX_REGISTER_CLASS(csapex::boolean::Toggle, csapex::Node)
 
@@ -25,20 +26,20 @@ void Toggle::setupParameters(Parameterizable &parameters)
 
 void Toggle::setup(NodeModifier& node_modifier)
 {
-    out = node_modifier.addOutput<bool>("Signal");
+    out_ = node_modifier.addOutput<bool>("Signal");
+    event_ = node_modifier.addEvent("Changed");
 }
 
 void Toggle::process()
 {
-
-}
-
-void Toggle::tick()
-{
-    msg::publish(out, signal_);
+    msg::publish(out_, signal_);
 }
 
 void Toggle::setSignal()
 {
-    signal_ = readParameter<bool>("true");
+    auto s = readParameter<bool>("true");
+    if(signal_  != s) {
+        signal_  = s;
+        event_->trigger();
+    }
 }

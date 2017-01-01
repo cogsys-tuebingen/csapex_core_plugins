@@ -62,18 +62,18 @@ void Delay::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<connection_types::AnyMessage>("Delayed Input");
 
     delayed_forward_ = node_modifier.addEvent("delayed forwarded signal");
-    delayed_slot_ = node_modifier.addSlot("delayed slot", [this]() {
+    delayed_slot_ = node_modifier.addTypedSlot<connection_types::AnyMessage>("delayed slot", [this](const TokenPtr& token) {
         if(future.valid()) {
             future.wait();
         }
 
         if(blocking_) {
-            delayEvent();
+            delayEvent(token);
 
         } else {
             if(delayed_forward_) {
-                future = std::async(std::launch::async, [this]{
-                    delayEvent();
+                future = std::async(std::launch::async, [this, token]{
+                    delayEvent(token);
                 });
             }
         }
@@ -134,10 +134,10 @@ void Delay::delayInput(Continuation continuation)
     }
 }
 
-void Delay::delayEvent()
+void Delay::delayEvent(const TokenPtr& token)
 {
     doSleep();
     if(delayed_forward_) {
-        delayed_forward_->trigger();
+        delayed_forward_->triggerWith(token);
     }
 }
