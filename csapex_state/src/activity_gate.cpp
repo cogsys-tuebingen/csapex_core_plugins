@@ -19,6 +19,7 @@ class ActivityGate : public Node
 {
 public:
     ActivityGate()
+        : inverted_(false), active_(false)
     {
     }
 

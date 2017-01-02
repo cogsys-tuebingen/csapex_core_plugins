@@ -31,6 +31,14 @@ private:
             }
         }
 
+        void clear()
+        {
+            if(message) {
+                message.reset();
+                changed(message);
+            }
+        }
+
     public:
         slim_signal::Signal<void (connection_types::MessageConstPtr)> changed;
 
@@ -41,6 +49,7 @@ private:
 
 public:
     MemoryCell()
+        : changed_(false)
     {
     }
 
@@ -56,6 +65,25 @@ public:
                 connection_ = c.changed.connect([this](connection_types::MessageConstPtr new_val) {
                        updateValue(new_val);
             });
+            }
+        });
+
+        parameters.addParameter(param::ParameterFactory::declareTrigger("export"), [this](param::Parameter*) {
+            std::unique_lock<std::recursive_mutex> lock(value_mutex_);
+            if(value_) {
+                TokenPtr token = std::make_shared<Token>(value_);
+                lock.unlock();
+
+                publish_event_->triggerWith(token);
+            } else {
+                lock.unlock();
+
+                empty_event_->trigger();
+            }
+        });
+        parameters.addParameter(param::ParameterFactory::declareTrigger("clear"), [this](param::Parameter*) {
+            if(!name_.empty()) {
+                getCell(name_).clear();
             }
         });
 
@@ -75,26 +103,57 @@ public:
         });
 
         change_event_ = modifier.addEvent("changed");
+        clear_event_ = modifier.addEvent("cleared");
+        publish_event_ = modifier.addEvent("published");
+        empty_event_ = modifier.addEvent("empty");
+    }
+
+    bool canProcess() const
+    {
+        return changed_;
     }
 
     void process()
     {
+        if(changed_cell_) {
+            TokenPtr token;
+            {
+                std::unique_lock<std::recursive_mutex> lock(value_mutex_);
+                value_ = changed_cell_;
+                token = std::make_shared<Token>(value_->clone());
+            }
+            change_event_->triggerWith(token);
+
+            if(show_content_) {
+                YAML::Node node;
+                node = MessageSerializer::serializeMessage(*changed_cell_);
+
+                std::stringstream ss;
+                convert(ss, node, "");
+                setParameter("text", ss.str());
+            }
+
+        } else {
+            {
+                std::unique_lock<std::recursive_mutex> lock(value_mutex_);
+                value_.reset();
+            }
+            clear_event_->trigger();
+
+            if(show_content_) {
+                setParameter("text", std::string(""));
+            }
+        }
+
+        changed_cell_.reset();
+        changed_ = false;
     }
 
 private:
     void updateValue(const connection_types::MessageConstPtr& new_val) {
-        TokenPtr token = std::make_shared<Token>(new_val);
-        change_event_->triggerWith(token);
-
-
-        if(show_content_) {
-            YAML::Node node;
-            node = MessageSerializer::serializeMessage(*new_val);
-
-            std::stringstream ss;
-            convert(ss, node, "");
-            setParameter("text", ss.str());
-        }
+        changed_cell_ = new_val;
+        changed_ = true;
+        yield();
     }
 
     void convert(std::stringstream &ss, const YAML::Node &node, const std::string& prefix)
@@ -145,9 +204,17 @@ private:
     std::string name_;
 
     bool show_content_;
+    bool changed_;
+    connection_types::MessageConstPtr  changed_cell_;
 
     Event* change_event_;
+    Event* clear_event_;
+    Event* publish_event_;
+    Event* empty_event_;
     slim_signal::ScopedConnection connection_;
+
+    std::recursive_mutex value_mutex_;
+    connection_types::MessageConstPtr value_;
 };
 
 }

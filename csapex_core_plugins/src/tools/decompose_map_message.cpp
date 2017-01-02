@@ -48,6 +48,9 @@ public:
 
         std::size_t i = 0;
         for(KeyValueMessage part : message->value) {
+            apex_assert_msg(!part.value.first.empty(), "invalid key (empty)");
+            apex_assert_msg(part.value.second, "invalid value (null)");
+
             Output* o = outputs_[i++];
 
             std::string label = part.value.first + ": " + part.value.second->typeName();
