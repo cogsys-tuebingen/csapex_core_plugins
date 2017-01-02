@@ -11,6 +11,7 @@
 #include <csapex/param/output_progress_parameter.h>
 #include <csapex/signal/event.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/model/token.h>
 
 /// SYSTEM
 #include <thread>
@@ -62,10 +63,13 @@ void Delay::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<connection_types::AnyMessage>("Delayed Input");
 
     delayed_forward_ = node_modifier.addEvent("delayed forwarded signal");
-    delayed_slot_ = node_modifier.addTypedSlot<connection_types::AnyMessage>("delayed slot", [this](const TokenPtr& token) {
+    delayed_slot_ = node_modifier.addTypedSlot<connection_types::AnyMessage>("delayed slot", [this](const TokenPtr& token_orig) {
         if(future.valid()) {
             future.wait();
         }
+
+        TokenPtr token(new Token(*token_orig));
+        token->setActivityModifier(ActivityModifier::NONE);
 
         if(blocking_) {
             delayEvent(token);
