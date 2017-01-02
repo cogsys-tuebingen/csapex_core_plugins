@@ -8,6 +8,12 @@
 </library>
 
 <library path="libcsapex_core_plugins_node">
+<class type="csapex::LookupMapEntry" base_class_type="csapex::Node">
+  <description>Gets the value for a given key in a map</description>
+</class>
+<class type="csapex::TextCompare" base_class_type="csapex::Node">
+  <description>Compares two strings and signals if they are equal</description>
+</class>
 <class type="csapex::DecomposeMapMessage" base_class_type="csapex::Node">
   <description>Decomposes a MapMessage and publishes all values</description>
 </class>
