@@ -63,11 +63,6 @@ void DynamicTransform::setupROS()
     refresh();
 }
 
-bool DynamicTransform::canProcess() const
-{
-    return true;
-}
-
 void DynamicTransform::freeze(bool frozen)
 {
     if(frozen != frozen_) {
