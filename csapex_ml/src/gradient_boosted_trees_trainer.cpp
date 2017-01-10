@@ -1,3 +1,6 @@
+#include <opencv2/opencv.hpp>
+
+#if CV_MAJOR_VERSION == 2
 /// HEADER
 #include "gradient_boosted_trees_trainer.h"
 
@@ -21,7 +24,7 @@ GradientBoostedTreesTrainer::GradientBoostedTreesTrainer() :
 void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
 {
     CollectionNode<FeaturesMessage>::setupParameters(parameters);
-#if CV_MAJOR_VERSION == 2
+
     /// output path
     parameters.addParameter(param::ParameterFactory::declareFileOutputPath("path", "", "*.yaml"),
                             path_);
@@ -123,14 +126,11 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
                             params_.truncate_pruned_tree),
                             params_.truncate_pruned_tree);;
 
-#elif CV_MAJOR_VERSION == 3
 
-#endif
 }
 
 bool GradientBoostedTreesTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
-#if CV_MAJOR_VERSION == 2
     int tflag = CV_ROW_SAMPLE;
     FeaturesMessage& first_feature = collection[0];
     std::size_t feature_length = first_feature.value.size();
@@ -168,9 +168,7 @@ bool GradientBoostedTreesTrainer::processCollection(std::vector<FeaturesMessage>
     } else {
         return false;
     }
-#elif CV_MAJOR_VERSION == 3
 
-#endif
     return true;
 }
 
@@ -207,4 +205,7 @@ void GradientBoostedTreesTrainer::udpatePriorValues()
         priors_[i] = priors_params_[i]->as<double>();
     }
 }
+#else
+#warning Gradient boosted trees are not supported in OpenCV 3.
+#endif
 

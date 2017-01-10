@@ -25,12 +25,8 @@ private:
     std::vector<param::ParameterPtr> priors_params_;
     std::vector<float> priors_;
 
-#if CV_MAJOR_VERSION == 2
     int classes_;
     cv::GradientBoostingTreeParams params_;
-#elif CV_MAJOR_VERSION == 3
-
-#endif
 
     void updatePriors();
     void udpatePriorValues();

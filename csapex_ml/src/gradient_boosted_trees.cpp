@@ -1,3 +1,6 @@
+#include <opencv2/opencv.hpp>
+
+#if CV_MAJOR_VERSION == 2
 /// HEADER
 #include "gradient_boosted_trees.h"
 
@@ -49,25 +52,20 @@ void GradientBoostedTrees::process()
 void GradientBoostedTrees::load()
 {
     const std::string path = readParameter<std::string>("path");
-#if CV_MAJOR_VERSION == 2
     trees_.reset();
 
     std::shared_ptr<cv::GradientBoostingTrees> trees(new cv::GradientBoostingTrees);
     trees->load(path.c_str());
     trees_ = trees;
-#elif CV_MAJOR_VERSION == 3
-
-#endif
 }
 
 void GradientBoostedTrees::classify(const FeaturesMessage &input, FeaturesMessage &output)
 {
     FeaturesMessage result = input;
     const cv::Mat feature(1, input.value.size(), CV_32FC1, result.value.data());
-#if CV_MAJOR_VERSION == 2
     result.classification = trees_->predict(feature);
-#elif CV_MAJOR_VERSION == 3
-
-#endif
 }
 
+#else
+#warning Gradient boosted trees are not supported in OpenCV 3.
+#endif
