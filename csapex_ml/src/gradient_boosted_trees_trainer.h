@@ -25,7 +25,11 @@ private:
     std::vector<param::ParameterPtr> priors_params_;
     std::vector<float> priors_;
 
-    int classes_;
+    double  subsample_portion_;
+    double  shrinkage_;
+    int     classes_;
+    double  regression_accuracy_;
+
     cv::GradientBoostingTreeParams params_;
 
     void updatePriors();
