@@ -1,5 +1,5 @@
-#ifndef GRADIENTBOOSTEDTREES_H
-#define GRADIENTBOOSTEDTREES_H
+#ifndef GRADIENT_BOOSTED_TREES_H
+#define GRADIENT_BOOSTED_TREES_H
 
 /// COMPONENT
 #include <csapex_ml/features_message.h>
@@ -35,4 +35,4 @@ private:
 };
 }
 
-#endif // GRADIENTBOOSTEDTREES_H
+#endif // GRADIENT_BOOSTED_TREES_H
