@@ -10,9 +10,8 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
-
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN DecisionTree : public csapex::Node
 {
 public:
