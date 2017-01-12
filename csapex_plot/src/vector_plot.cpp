@@ -207,11 +207,20 @@ void VectorPlot::preparePlot()
             max_list.push_back(std::max(0.0, *std::max_element(data.begin(), data.end())));
         }
     }
-
-    double min = std::min(0.0, *std::min_element(min_list.begin(), min_list.end()));
-    double max = std::max(0.0, *std::max_element(max_list.begin(), max_list.end()));
-
-    x_map.setScaleInterval(data_t_.front(), data_t_.back());
+    double min = 0;
+    double max = 0;
+    if(min_list.size() > 0){
+        min = std::min(0.0, *std::min_element(min_list.begin(), min_list.end()));
+    }
+    if(max_list.size() > 0){
+        max = std::max(0.0, *std::max_element(max_list.begin(), max_list.end()));
+    }
+    if(data_t_.size() == 0){
+        x_map.setScaleInterval(-1,1);
+    }
+    else{
+        x_map.setScaleInterval(data_t_.front(), data_t_.back());
+    }
     y_map.setScaleInterval(min - 1, max + 1);
 }
 
