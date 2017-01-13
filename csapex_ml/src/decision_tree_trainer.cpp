@@ -221,10 +221,6 @@ bool DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
         return false;
     }
 #endif
-    //    if(result) {
-    //    } else {
-    //        throw std::runtime_error("training failed for an unknown reason");
-    //    }
    return true;
 }
 

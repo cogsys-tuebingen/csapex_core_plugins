@@ -5,9 +5,8 @@
 #include <csapex_core_plugins/collection_node.h>
 #include <csapex_ml/features_message.h>
 
-namespace csapex {
-
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN DecisionTreeTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:

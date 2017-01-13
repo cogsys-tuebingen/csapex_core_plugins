@@ -81,6 +81,14 @@
   <description>Train AdaBoost (OpenCV) to classify data</description>
   <tags>ML</tags>
 </class>
+<class type="csapex::GradientBoostedTrees" base_class_type="csapex::Node">
+  <description>Gradient boosted trees (OpenCV) are another weak classifier ensemble for data classification.</description>
+  <tags>ML</tags>
+</class>
+<class type="csapex::GradientBoostedTreesTrainer" base_class_type="csapex::Node">
+  <description>Trainer for gradient boosted trees (OpenCV).</description>
+  <tags>ML</tags>
+</class>
 <class type="csapex::WaldBoost" base_class_type="csapex::Node">
   <description>WaldBoost (OpenCV) to classify data.</description>
   <tags>ML</tags>
