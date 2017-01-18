@@ -17,7 +17,7 @@ using namespace csapex;
 using namespace csapex::connection_types;
 
 GradientBoostedTreesTrainer::GradientBoostedTreesTrainer() :
-    classes_(2)
+    classes_(0)
 {
 }
 
@@ -161,7 +161,7 @@ bool GradientBoostedTreesTrainer::processCollection(std::vector<FeaturesMessage>
         responses.at<int>(i,0) = feature.classification;
     }
 
-    params_.priors = priors_.data();
+//    params_.priors = priors_.data();
     params_.subsample_portion = subsample_portion_;
     params_.shrinkage = shrinkage_;
     params_.regression_accuracy = regression_accuracy_;
@@ -183,6 +183,8 @@ bool GradientBoostedTreesTrainer::processCollection(std::vector<FeaturesMessage>
 void GradientBoostedTreesTrainer::updatePriors()
 {
     int classes = readParameter<int>("dtree/classes");
+
+    awarn << "Due to segfault during training, priors are currently not used" << std::endl;
 
     if(classes != classes_) {
         if(classes > classes_) {

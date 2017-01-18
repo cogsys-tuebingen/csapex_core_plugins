@@ -61,9 +61,10 @@ void GradientBoostedTrees::load()
 
 void GradientBoostedTrees::classify(const FeaturesMessage &input, FeaturesMessage &output)
 {
-    FeaturesMessage result = input;
-    const cv::Mat feature(1, input.value.size(), CV_32FC1, result.value.data());
-    result.classification = trees_->predict(feature);
+//    FeaturesMessage result = input;
+    output = input;
+    const cv::Mat feature(1, input.value.size(), CV_32FC1, output.value.data());
+    output.classification = trees_->predict(feature);
 }
 
 #else
