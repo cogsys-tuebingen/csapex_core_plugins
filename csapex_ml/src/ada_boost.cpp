@@ -73,7 +73,7 @@ void AdaBoost::process()
         else
         {
 #if CV_MAJOR_VERSION == 2
-            const float response = boost_.predict(sample, cv::Mat(), cv::Range::all(), false, true);
+            const float response = boost_.predict(sample, cv::Mat(), cv::Range::all(), false, false);
 #elif CV_MAJOR_VERSION == 3
             const float response = boost_->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
 #endif
