@@ -53,16 +53,16 @@ void OptimizationDummy::process()
 
     double x = msg::getValue<double>(in_);
 
-    double fitness = -std::pow((a - 4), 2)
-            + std::pow(x + 1.0 - b, 2)
-            + std::pow(x + 2.0 - c, 2)
-            + std::pow(x + 3.0 - d, 2)
-            + std::pow(x + 4.0 - e, 2)
-            + std::pow(x + 5.0 - f, 2)
-            + std::pow(x + 6.0 - g, 2)
-            + std::pow(x + 7.0 - h, 2)
-            + std::pow(x + 8.0 - i, 2)
-            + std::pow(x + 9.0 - j, 2)
+    double fitness = std::abs(a - 4)
+            + std::pow(x - 5.0 - b, 2)
+            + std::pow(x - 2.0 - c, 2)
+            + std::pow(x - 3.0 - d, 2)
+            + std::pow(x - 4.0 - e, 2)
+            + std::pow(x - 5.0 - f, 2)
+            + std::pow(x - 6.0 - g, 2)
+            + std::pow(x - 7.0 - h, 2)
+            + std::pow(x - 8.0 - i, 2)
+            + std::pow(x - 9.0 - j, 2)
             ;
 
     msg::publish(out_, fitness);
