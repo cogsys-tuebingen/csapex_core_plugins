@@ -117,9 +117,6 @@ target_link_libraries(${PROJECT_NAME}_plugin
     ${cslibs_arff_LIBRARIES}
     ${csapex_point_cloud_LIBRARIES}
     )
-
-message("666 ${${PROJECT_NAME}_additional_libs}")
-
 #
 # INSTALL
 #

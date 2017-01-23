@@ -39,7 +39,8 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
     {
         {"ABSOLUTE_LOSS", CvGBTrees::ABSOLUTE_LOSS},
         {"HUBER_LOSS", CvGBTrees::HUBER_LOSS},
-        {"DEVIANCE_LOSS", CvGBTrees::DEVIANCE_LOSS}
+        {"DEVIANCE_LOSS", CvGBTrees::DEVIANCE_LOSS},
+        {"SQUARED_LOSS", CvGBTrees::SQUARED_LOSS}
     };
     parameters.addParameter(param::ParameterFactory::declareParameterSet
                             ("gb/loss_function_type",
@@ -54,13 +55,13 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
                                                          "Subsample_portion == 1.0 when whole dataset is"
                                                          "used on each step. Count of sample used on each"
                                                          "step is computed as."),
-                             0.01, 1.0, params_.subsample_portion, 0.01),
+                             0.001, 1.000, params_.subsample_portion, 0.001),
                             subsample_portion_);
     parameters.addParameter(param::ParameterFactory::declareRange<double>
                             ("gb/shrinkage",
                              param::ParameterDescription("A regularization parameter.\n"
                                                          "Each tree prediction is multiplied on shrinkage value."),
-                             0.01, 1.0, params_.shrinkage, 0.01),
+                             0.001, 1.000, params_.shrinkage, 0.001),
                             shrinkage_);
 
     /// tree specific parameters
@@ -88,7 +89,7 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
                              param::ParameterDescription("Termination criteria for regression trees. \n"
                                                          "If all absolute differences between an estimated value in a node and values of train samples in this node \n"
                                                          "are less than this parameter then the node will not be split."),
-                             0.0, 255.0, params_.regression_accuracy, 0.01),
+                             0.0, 255.0, params_.regression_accuracy, 0.001),
                             regression_accuracy_);;
     parameters.addParameter(param::ParameterFactory::declareBool
                             ("use surrogates",
