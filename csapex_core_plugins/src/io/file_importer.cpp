@@ -118,10 +118,12 @@ void FileImporter::setup(NodeModifier& node_modifier)
                 provider_->restart();
             }
         }
+        yield();
     });
     play_ = node_modifier.addSlot("play", [this](){
         setParameter("directory/play", true);
         playing_ = true;
+        yield();
     });
     node_modifier.addSlot("stop", [this](){
         setParameter("directory/current", -1);
@@ -131,6 +133,7 @@ void FileImporter::setup(NodeModifier& node_modifier)
     node_modifier.addSlot("abort", [this](){
         //        playing_ = false;
         abort_ = true;
+        yield();
     });
     play_->connection_added.connect([this](ConnectionPtr){
         setParameter("directory/play", false);
@@ -144,7 +147,7 @@ void FileImporter::changeMode()
 
 bool FileImporter::canProcess() const
 {
-    if(import_requested_) {
+    if(import_requested_ && playing_) {
         return true;
     }
     if(trigger_signal_end_ || abort_) {
@@ -156,7 +159,7 @@ bool FileImporter::canProcess() const
 
     if(directory_import_) {
         if(play_->isConnected()) {
-            bool can_tick = playing_ && readParameter<int>("directory/current") <= (int) dir_files_.size();
+            bool can_tick = playing_ && readParameter<int>("directory/current") < (int) dir_files_.size();
             if(!can_tick) {
                 ////DEBUGainfo << "cannot tick: " << playing_ << ", " << readParameter<int>("directory/current") << " <= " <<  (int) dir_files_.size()<< std::endl;
             }
@@ -453,7 +456,6 @@ void FileImporter::triggerSignalEnd()
 
 void FileImporter::signalBegin()
 {
-    end_triggered_ = false;
     begin_->trigger();
 }
 
@@ -595,6 +597,10 @@ void FileImporter::createProviderForNextFile()
     if(current < files) {
         if(current == 0) {
             signalBegin();
+        }
+
+        if(current < files - 1) {
+            end_triggered_ = false;
         }
 
         createMessageProvider(QString::fromStdString(dir_files_.at(current)));

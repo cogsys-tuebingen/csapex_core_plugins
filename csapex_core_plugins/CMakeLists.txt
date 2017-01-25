@@ -74,6 +74,7 @@ target_link_libraries(${PROJECT_NAME}_core csapex_core_lib
 
 
 add_library(${PROJECT_NAME}_node SHARED
+    src/tools/triggered_latch.cpp
     src/tools/lookup_map_entry.cpp
     src/text/text_compare.cpp
     src/tools/decompose_map_message.cpp

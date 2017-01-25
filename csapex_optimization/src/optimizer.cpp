@@ -37,6 +37,13 @@ void Optimizer::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("finish"), [this](csapex::param::Parameter*) {
         finish();
     });
+
+    parameters.addParameter(param::ParameterFactory::declareBool
+                            ("finish_immediately",
+                             param::ParameterDescription("evaluate for every received fitness value, w/o relying on EndOfSequence."),
+                             false),
+                            evaluate_immediately_);
+
     stop_ = csapex::param::ParameterFactory::declareTrigger("stop").build<param::TriggerParameter>();
     parameters.addParameter(stop_, [this](csapex::param::Parameter*) {
         doStop();
@@ -65,8 +72,13 @@ void Optimizer::setup(NodeModifier& node_modifier)
                 fitness_ = vm->value;
             }
 
-            can_send_next_parameters_ = true;
-            yield();
+            if(evaluate_immediately_) {
+                finish();
+
+            } else {
+                can_send_next_parameters_ = true;
+                yield();
+            }
         }
     });
     out_last_fitness_  = node_modifier.addOutput<double>("Last Fitness");

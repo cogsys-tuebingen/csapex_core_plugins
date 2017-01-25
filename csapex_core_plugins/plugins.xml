@@ -8,6 +8,9 @@
 </library>
 
 <library path="libcsapex_core_plugins_node">
+<class type="csapex::TriggeredLatch" base_class_type="csapex::Node">
+  <description>A latching node that publishes only when a slot is triggered</description>
+</class>
 <class type="csapex::LookupMapEntry" base_class_type="csapex::Node">
   <description>Gets the value for a given key in a map</description>
 </class>
