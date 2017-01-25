@@ -209,6 +209,7 @@ bool SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
     svm->setP(p_);
 //    svm->setTermCriteria();
 
+    labels.convertTo(labels, CV_32SC1);
     cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(samples,
                                                                              cv::ml::ROW_SAMPLE,
                                                                              labels);

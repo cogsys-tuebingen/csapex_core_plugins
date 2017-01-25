@@ -92,24 +92,16 @@ void RandomTrees::process()
     if(!loaded_) {
         if(path_ != "") {
             cv::FileStorage fs(path_, cv::FileStorage::READ);
+#if CV_MAJOR_VERSION == 2
             bool old_format = fs["random_forest"].node == nullptr;
             if (old_format)
             {
                 fs.release();
-
-#if CV_MAJOR_VERSION == 2
                 random_trees_.load(path_.c_str());
-#elif CV_MAJOR_VERSION == 3
-                random_trees_ = cv::ml::StatModel::load<cv::ml::RTrees>(path_);
-#endif
             }
             else
             {
-#if CV_MAJOR_VERSION == 2
                 random_trees_.read(fs.fs, (CvFileNode*) fs["random_forest"].node);
-#elif CV_MAJOR_VERSION == 3
-                random_trees_->read(*(cv::FileNode*) fs["random_forest"].node);
-#endif
                 std::vector<int> class_labels;
                 fs["classes"] >> class_labels;
                 for(int c : class_labels) {
@@ -117,6 +109,10 @@ void RandomTrees::process()
                 }
                 fs.release();
             }
+#elif CV_MAJOR_VERSION == 3
+            random_trees_ = cv::ml::RTrees::create();
+            random_trees_->read(fs.root());
+#endif
             loaded_ = true;
         } else {
             throw std::runtime_error("Randomforest couldn't be loaded!");
