@@ -34,7 +34,7 @@ void GradientBoostedTrees::setup(NodeModifier &node_modifier)
 void GradientBoostedTrees::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
-    std::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
+    std::shared_ptr<std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
 
     std::size_t n = input->size();
     if(trees_) {

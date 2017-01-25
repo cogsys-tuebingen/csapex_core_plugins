@@ -27,7 +27,7 @@ include_directories(
     ${OpenCV_INCLUED_DIRS}
     )
 add_library(${PROJECT_NAME} SHARED
-    src/features_message.cpp
+    src/feature/features_message.cpp
     )
 generate_export_header(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}
@@ -54,7 +54,7 @@ if(${csapex_point_cloud_FOUND})
     include_directories(${csapex_point_cloud_INCLUDE_DIRS})
     list(APPEND
         ${PROJECT_NAME}_additional_srcs
-        src/features_message_to_labelled_pointcloud.cpp
+        src/feature/features_message_to_labelled_pointcloud.cpp
         )
 endif()
 
@@ -94,8 +94,9 @@ add_library(${PROJECT_NAME}_plugin SHARED
     src/mlp_cv.cpp
     src/mlp_cv_trainer.cpp
 
-    src/assign_feature_classifications.cpp
-    src/exchange_feature_classification.cpp
+    src/feature/assign_feature_classifications.cpp
+    src/feature/exchange_feature_classification.cpp
+    src/feature/join_features.cpp
 
     src/random_vector.hpp
 
@@ -113,7 +114,6 @@ target_link_libraries(${PROJECT_NAME}_plugin
     ${cslibs_arff_LIBRARIES}
     ${csapex_point_cloud_LIBRARIES}
     )
-
 
 #
 # INSTALL
