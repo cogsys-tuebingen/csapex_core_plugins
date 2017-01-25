@@ -1,7 +1,3 @@
-#include <vector>
-#include <random>
-#include <iostream>
-#include <algorithm>
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_ml)
 
@@ -35,9 +31,9 @@ add_library(${PROJECT_NAME} SHARED
     )
 generate_export_header(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}
-    ${csapex_LIBRARIES}
     ${csapex_core_plugins_LIBRARIES}
     ${csapex_opencv_LIBRARIES}
+    ${csapex_LIBRARIES}
     ${catkin_LIBRARIES}
     ${Boost_LIBRARIES}
     ${catkin_LIBRARIES})
@@ -118,7 +114,6 @@ target_link_libraries(${PROJECT_NAME}_plugin
     ${csapex_point_cloud_LIBRARIES}
     )
 
-message("666 ${${PROJECT_NAME}_additional_libs}")
 
 #
 # INSTALL
