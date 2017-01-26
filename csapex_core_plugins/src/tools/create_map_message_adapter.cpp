@@ -1,8 +1,10 @@
+
 /// HEADER
-#include <csapex_optimization/optimizer_adapter.h>
+#include "create_map_message_adapter.h"
 
 /// COMPONENT
 #include <csapex_core_plugins/parameter_dialog.h>
+
 
 /// PROJECT
 #include <csapex/view/utility/register_node_adapter.h>
@@ -18,6 +20,7 @@
 #include <csapex/model/node_handle.h>
 #include <csapex/command/command_factory.h>
 #include <csapex/command/meta.h>
+#include <csapex/msg/input.h>
 
 /// SYSTEM
 #include <QPushButton>
@@ -29,18 +32,21 @@
 
 using namespace csapex;
 
+CSAPEX_REGISTER_NODE_ADAPTER(CreateMapMessageAdapter, csapex::CreateMapMessage)
 
-OptimizerAdapter::OptimizerAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node)
+CreateMapMessageAdapter::CreateMapMessageAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node)
     : DefaultNodeAdapter(worker, parent), wrapped_base_(node)
 {
     QObject::connect(&widget_picker_, SIGNAL(widgetPicked()), this, SLOT(widgetPicked()));
+    auto n = wrapped_base_.lock();
+
 }
 
-OptimizerAdapter::~OptimizerAdapter()
+CreateMapMessageAdapter::~CreateMapMessageAdapter()
 {
 }
 
-void OptimizerAdapter::setupUi(QBoxLayout* layout)
+void CreateMapMessageAdapter::setupUi(QBoxLayout* layout)
 {
     DefaultNodeAdapter::setupUi(layout);
 
@@ -58,12 +64,15 @@ void OptimizerAdapter::setupUi(QBoxLayout* layout)
     QObject::connect(btn_remove_param, SIGNAL(clicked()), this, SLOT(removeParameters()));
 }
 
-void OptimizerAdapter::parameterAdded(param::ParameterPtr param)
+
+
+
+void CreateMapMessageAdapter::parameterAdded(param::ParameterPtr param)
 {
 
 }
 
-void OptimizerAdapter::widgetPicked()
+void CreateMapMessageAdapter::widgetPicked()
 {
     auto node = wrapped_base_.lock();
     if(!node) {
@@ -83,25 +92,21 @@ void OptimizerAdapter::widgetPicked()
             if(connected_parameter != nullptr) {
                 node->ainfo << "picked parameter " << connected_parameter->name()  << " with UUID " << connected_parameter->getUUID() << std::endl;
 
-                csapex::param::Parameter::Ptr new_parameter = csapex::param::ParameterFactory::clone(connected_parameter);
-                node->addPersistentParameter(new_parameter);
+                std::string label = connected_parameter->name();
+                Input* i = node->createVariadicInput(connection_types::makeEmptyMessage<connection_types::AnyMessage>(), label, false);
+
+                UUID input = i->getUUID();
+                UUID output = UUIDProvider::makeDerivedUUID_forced(connected_parameter->getUUID().parentUUID(), std::string("out_") + connected_parameter->name());
 
                 if(!connected_parameter->isInteractive()) {
                     connected_parameter->setInteractive(true);
                 }
-                new_parameter->setInteractive(true);
-
-                UUID from = UUIDProvider::makeDerivedUUID_forced(new_parameter->getUUID().parentUUID(), std::string("out_") + new_parameter->name());
-                UUID to = UUIDProvider::makeDerivedUUID_forced(connected_parameter->getUUID().parentUUID(), std::string("in_") + connected_parameter->name());
 
                 GraphFacade* facade = parent_->getGraphView()->getGraphFacade();
 
-                if(!facade->getGraph()->getConnection(from, to)) {
+                if(!facade->getGraph()->getConnection(input, output)) {
                     AUUID parent_uuid = facade->getAbsoluteUUID();
-
-                    command::AddConnection::Ptr cmd(new command::AddConnection(parent_uuid, from, to, false));
-
-                    executeCommand(cmd);
+                    executeCommand(std::make_shared<command::AddConnection>(parent_uuid, output, input, false));
 
                 } else {
                     node->getNodeHandle()->setError("the selected parameter is already connected.");
@@ -118,26 +123,9 @@ void OptimizerAdapter::widgetPicked()
     }
 }
 
-void OptimizerAdapter::startOptimization()
-{
-    auto node = wrapped_base_.lock();
-    if(!node) {
-        return;
-    }
-    node->start();
-}
 
 
-void OptimizerAdapter::stopOptimization()
-{
-    auto node = wrapped_base_.lock();
-    if(!node) {
-        return;
-    }
-    node->stop();
-}
-
-QDialog* OptimizerAdapter::makeTypeDialog()
+QDialog* CreateMapMessageAdapter::makeTypeDialog()
 {
     QVBoxLayout* layout = new QVBoxLayout;
 
@@ -169,12 +157,12 @@ QDialog* OptimizerAdapter::makeTypeDialog()
     return dialog;
 }
 
-void OptimizerAdapter::setNextParameterType(const QString &type)
+void CreateMapMessageAdapter::setNextParameterType(const QString &type)
 {
     next_type_ = type.toStdString();
 }
 
-void OptimizerAdapter::pickParameter()
+void CreateMapMessageAdapter::pickParameter()
 {
     auto designer = parent_->getGraphView()->designerScene();
     if(designer) {
@@ -183,8 +171,9 @@ void OptimizerAdapter::pickParameter()
 }
 
 
-void OptimizerAdapter::createParameter()
+void CreateMapMessageAdapter::createParameter()
 {
+    std::cerr << "parmeters currently unused" << std::endl;
     auto node = wrapped_base_.lock();
     if(!node) {
         return;
@@ -204,7 +193,7 @@ void OptimizerAdapter::createParameter()
     }
 }
 
-void OptimizerAdapter::removeParameters()
+void CreateMapMessageAdapter::removeParameters()
 {
     auto node = wrapped_base_.lock();
     if(!node) {
@@ -232,3 +221,5 @@ void OptimizerAdapter::removeParameters()
     node->removePersistentParameters();
 }
 
+/// MOC
+#include "moc_create_map_message_adapter.cpp"
