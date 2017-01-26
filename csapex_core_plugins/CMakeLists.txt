@@ -133,6 +133,8 @@ generate_export_header(${PROJECT_NAME}_node)
 
 
 add_library(${PROJECT_NAME}_qt SHARED
+    src/tools/create_map_message_adapter.cpp
+    src/tools/parameter_dialog.cpp
     src/display/output_display_adapter.cpp
     src/display/text_display_adapter.cpp
     src/display/signal_light_adapter.cpp

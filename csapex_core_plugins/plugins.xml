@@ -198,6 +198,9 @@
 </library>
 
 <library path="libcsapex_core_plugins_qt">
+<class type="csapex::CreateMapMessageAdapter" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
 <class type="csapex::OutputDisplayAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
   <description></description>
 </class>
