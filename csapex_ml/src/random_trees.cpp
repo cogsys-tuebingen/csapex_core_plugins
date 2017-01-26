@@ -46,14 +46,10 @@ inline void classify(const RandomTree             &random_trees,
 
 #elif CV_MAJOR_VERSION == 3
     std::vector<float> results;
-    int prediction_class_id = random_trees->predict(sample, results);
-
-    for(float vote : results) {
-        ++votes[std::round(vote)];
-    }
-
-    out_feature.confidence     = votes[prediction_class_id] / (double) results.size();
-    out_feature.classification = prediction_class_id;
+    float prediction_value = random_trees->predict(sample, results, cv::ml::StatModel::Flags::RAW_OUTPUT);
+    int class_id = std::round(prediction_value);
+    out_feature.confidence     = 0; // @todo: fix this confidence, somehow prediction is wierd in cv3
+    out_feature.classification = class_id;
 #endif
 }
 
