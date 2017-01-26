@@ -37,8 +37,8 @@ private:
     Input* in_;
     Output* out_;
 
-    std::vector<param::Parameter::Ptr> params_keys_;
-    std::vector<std::string> keys_;
+//    std::vector<param::Parameter::Ptr> params_keys_;
+//    std::vector<std::string> keys_;
 
 };
 

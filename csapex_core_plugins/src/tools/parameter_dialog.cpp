@@ -1,5 +1,5 @@
 /// HEADER
-#include "parameter_dialog.h"
+#include <csapex_core_plugins/parameter_dialog.h>
 
 /// PROJECT
 #include <csapex/param/parameter.h>
@@ -79,4 +79,3 @@ void ParameterDialog::finish()
         Q_EMIT reject();
     }
 }
-

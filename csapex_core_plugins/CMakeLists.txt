@@ -9,7 +9,7 @@ list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 
 csapex_package(
 	INCLUDE_DIRS include
-	LIBRARIES csapex_core_lib
+        LIBRARIES csapex_core_lib csapex_core_lib_qt
         CATKIN_DEPENDS csapex
 )
 
@@ -132,9 +132,22 @@ target_link_libraries(${PROJECT_NAME}_node csapex_core_lib
 generate_export_header(${PROJECT_NAME}_node)
 
 
+add_library(csapex_core_lib_qt
+    src/tools/parameter_dialog.cpp
+    include/${PROJECT_NAME}/parameter_dialog.h
+)
+
+target_link_libraries(csapex_core_lib_qt
+    ${PROJECT_NAME}_node
+    csapex_core_lib
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+    Qt5::Core Qt5::Gui Qt5::Widgets
+)
+
+
 add_library(${PROJECT_NAME}_qt SHARED
     src/tools/create_map_message_adapter.cpp
-    src/tools/parameter_dialog.cpp
     src/display/output_display_adapter.cpp
     src/display/text_display_adapter.cpp
     src/display/signal_light_adapter.cpp
@@ -142,9 +155,9 @@ add_library(${PROJECT_NAME}_qt SHARED
 
 
 target_link_libraries(${PROJECT_NAME}_qt
-        ${PROJECT_NAME}_node
-	csapex_core_lib
-
+    ${PROJECT_NAME}_node
+    csapex_core_lib_qt
+    csapex_core_lib
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
     Qt5::Core Qt5::Gui Qt5::Widgets

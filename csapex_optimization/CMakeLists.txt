@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.11)
 project(csapex_optimization)
 
 find_package(catkin REQUIRED COMPONENTS
+  csapex_core_plugins
   csapex
 )
 
@@ -31,10 +32,10 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 add_library(${PROJECT_NAME}_qt
-    src/parameter_dialog.cpp
+#    src/parameter_dialog.cpp
     src/optimizer_adapter.cpp
 
-    include/${PROJECT_NAME}/parameter_dialog.h
+#    include/${PROJECT_NAME}/parameter_dialog.h
     include/${PROJECT_NAME}/optimizer_adapter.h
 )
 set_target_properties(${PROJECT_NAME}_qt PROPERTIES AUTOMOC TRUE)
