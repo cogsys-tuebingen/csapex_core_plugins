@@ -8,6 +8,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <fstream>
 
 namespace csapex {
 
@@ -16,6 +17,7 @@ using namespace connection_types;
 class ROIHitRate : public csapex::Node
 {
 public:
+    enum OverlapMode {OVERLAP_IOU, OVERLAP_MAX};
     typedef std::shared_ptr<std::vector<RoiMessage> const> RoiMessagesPtr;
 
     ROIHitRate() :
@@ -32,10 +34,25 @@ public:
     }
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
-                                std::bind(&ROIHitRate::reset, this));
+        std::map<std::string, int> overlap_mode_types = {
+                {"MAX", OVERLAP_MAX},
+                {"IOU", OVERLAP_IOU},
+        };
+        parameters.addParameter(param::ParameterFactory::declareParameterSet("overlap_mode",
+                                                                             overlap_mode_types,
+                                                                             static_cast<int>(OVERLAP_MAX)),
+                                reinterpret_cast<int&>(overlap_mode_));
         parameters.addParameter(param::ParameterFactory::declareRange("min_overlap", 0.0, 1.0, 0.7,0.01),
                                 min_overlap_);
+        parameters.addParameter(param::ParameterFactory::declareFileOutputPath("statistic path",
+                                                                               "",
+                                                                               "*.txt"),
+                                path_of_statistic_);
+
+        parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+                                std::bind(&ROIHitRate::reset, this));
+        parameters.addParameter(param::ParameterFactory::declareTrigger("save"),
+                                std::bind(&ROIHitRate::save, this));
 
     }
     virtual void process() override
@@ -58,8 +75,16 @@ public:
                     continue;
 
                 const RoiMessage &roi_pred = input_prediction->at(j);
-                const double overlap = ROIHitRate::overlap(roi_pred.value.rect(),
-                                                           roi_gt.value.rect());
+                double overlap = 0.0;
+                switch (overlap_mode_) {
+                    default:
+                    case OVERLAP_MAX:
+                        overlap = overlap_max(roi_pred.value.rect(), roi_gt.value.rect());
+                        break;
+                    case OVERLAP_IOU:
+                        overlap = overlap_iou(roi_pred.value.rect(), roi_gt.value.rect());
+                        break;
+                }
                 if(overlap > max_overlap) {
                     max_idx = j;
                     max_overlap = overlap;
@@ -85,13 +110,34 @@ private:
 
     std::size_t ground_truth_rois_;
     std::size_t ground_truth_rois_hit_;
+    OverlapMode overlap_mode_;
     double      min_overlap_;
+    std::string path_of_statistic_;
 
-    inline double overlap(const cv::Rect &prediction,
-                          const cv::Rect &groundtruth)
+    inline double overlap_max(const cv::Rect &prediction,
+                              const cv::Rect &groundtruth)
     {
         return (prediction & groundtruth).area() / (double) std::max(prediction.area(),
                                                                      groundtruth.area());
+    }
+
+    inline double overlap_iou(const cv::Rect &prediction,
+                              const cv::Rect &groundtruth)
+    {
+        return (prediction & groundtruth).area() / (double) (prediction | groundtruth).area();
+    }
+
+    void save()
+    {
+        std::ofstream out(path_of_statistic_);
+        if(!out.is_open())
+            throw std::runtime_error("Cannot open path '" + path_of_statistic_ + "'!");
+
+        out << "total : hit : pct" << std::endl;
+        out << ground_truth_rois_ << " : "
+            << ground_truth_rois_hit_ << " : "
+            << (ground_truth_rois_hit_ / (double) ground_truth_rois_) << std::endl;
+        out.close();
     }
 
     void reset()

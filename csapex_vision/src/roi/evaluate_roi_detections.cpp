@@ -33,6 +33,10 @@ void EvaluateROIDetections::setupParameters(Parameterizable &parameters)
         {"IGNORE_PARTLY_VISIBLE", IGNORE_PARTLY_VISIBLE},
         {"INTEGRATE_PARTLY_VISIBLE", INTEGRATE_PARTLY_VISIBLE}
     };
+    std::map<std::string, int> overlap_mode_types = {
+            {"MAX", OVERLAP_MAX},
+            {"IOU", OVERLAP_IOU},
+    };
 
     parameters.addParameter(param::ParameterFactory::declareParameterSet("mode",
                                                                          mode_types,
@@ -42,8 +46,13 @@ void EvaluateROIDetections::setupParameters(Parameterizable &parameters)
                                                                            "",
                                                                            "*.txt"),
                             path_of_statistic_);
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("overlap_mode",
+                                                                         overlap_mode_types,
+                                                                         static_cast<int>(OVERLAP_MAX)),
+                            reinterpret_cast<int&>(overlap_mode_));
     parameters.addParameter(param::ParameterFactory::declareRange("overlap", 0.25, 1.0, 0.7, 0.01),
                             percentage_of_overlap_);
+
 
 
     parameters.addParameter(param::ParameterFactory::declareTrigger("save"),
@@ -56,18 +65,25 @@ void EvaluateROIDetections::setupParameters(Parameterizable &parameters)
 using RoiMessagesConstPtr = std::shared_ptr<std::vector<RoiMessage> const>;
 
 namespace impl {
-inline double overlap(const cv::Rect &prediction,
-                      const cv::Rect &groundtruth)
+
+inline double overlap_max(const cv::Rect &prediction,
+                          const cv::Rect &groundtruth)
 {
     return (prediction & groundtruth).area() / (double) std::max(prediction.area(),
                                                                  groundtruth.area());
+}
+inline double overlap_iou(const cv::Rect &prediction,
+                          const cv::Rect &groundtruth)
+{
+    return (prediction & groundtruth).area() / (double) (prediction | groundtruth).area();
 }
 
 inline void evaluateIgnoringPartlyVisible(const RoiMessagesConstPtr &groundtruth,
                                           const RoiMessagesConstPtr &predition,
                                           const double min_overlap,
                                           ConfusionMatrix &confury,
-                                          std::array<std::size_t, 2> &human_parts)
+                                          std::array<std::size_t, 2> &human_parts,
+                                          std::function<double(const cv::Rect&, const cv::Rect&)> overlap_fn)
 {
     /// step 1 : remove all partly visible entries
     const std::size_t size_groundtruth = groundtruth->size();
@@ -88,8 +104,7 @@ inline void evaluateIgnoringPartlyVisible(const RoiMessagesConstPtr &groundtruth
                     continue;
 
                 const RoiMessage &roi_pred = predition->at(j);
-                const double overlap = impl::overlap(roi_pred.value.rect(),
-                                                     roi_gt.value.rect());
+                const double overlap = overlap_fn(roi_pred.value.rect(), roi_gt.value.rect());
                 if(overlap > max_overlap) {
                     max_idx = j;
                     max_overlap = overlap;
@@ -127,8 +142,7 @@ inline void evaluateIgnoringPartlyVisible(const RoiMessagesConstPtr &groundtruth
                 continue;
 
             const RoiMessage &roi_pred = predition->at(j);
-            const double overlap = impl::overlap(roi_pred.value.rect(),
-                                                 roi_gt.value.rect());
+            const double overlap = overlap_fn(roi_pred.value.rect(), roi_gt.value.rect());
             if(overlap > max_overlap) {
                 max_idx = j;
                 max_overlap = overlap;
@@ -162,8 +176,8 @@ inline void evaluateIgnoringPartlyVisible(const RoiMessagesConstPtr &groundtruth
 inline void evaluteIntegratingPartlyVisible(const RoiMessagesConstPtr &groundtruth,
                                             const RoiMessagesConstPtr &prediction,
                                             const double min_overlap,
-                                            ConfusionMatrix &confury)
-
+                                            ConfusionMatrix &confury,
+                                            std::function<double(const cv::Rect&, const cv::Rect&)> overlap_fn)
 {
     /// step 1 : find out which groundtruth rios were found
     const std::size_t size_groundtruth = groundtruth->size();
@@ -181,8 +195,7 @@ inline void evaluteIntegratingPartlyVisible(const RoiMessagesConstPtr &groundtru
                 continue;
 
             const RoiMessage &roi_pred = prediction->at(j);
-            const double overlap = impl::overlap(roi_pred.value.rect(),
-                                                 roi_gt.value.rect());
+            const double overlap = overlap_fn(roi_pred.value.rect(), roi_gt.value.rect());
             if(overlap > max_overlap) {
                 max_idx = j;
                 max_overlap = overlap;
@@ -237,19 +250,32 @@ void EvaluateROIDetections::process()
     RoiMessagesConstPtr in_groundtruth =
             msg::getMessage<GenericVectorMessage, RoiMessage>(in_groundtruth_);
 
+    std::function<double(const cv::Rect&, const cv::Rect&)> overlap_fn;
+    switch (overlap_mode_) {
+        default:
+        case OVERLAP_MAX:
+            overlap_fn = &impl::overlap_max;
+            break;
+        case OVERLAP_IOU:
+            overlap_fn = &impl::overlap_iou;
+            break;
+    }
+
     switch(mode_) {
     case IGNORE_PARTLY_VISIBLE:
         impl::evaluateIgnoringPartlyVisible(in_groundtruth,
                                             in_prediction,
                                             percentage_of_overlap_,
                                             confusion_,
-                                            human_parts_found_);
+                                            human_parts_found_,
+                                            overlap_fn);
         break;
     case INTEGRATE_PARTLY_VISIBLE:
         impl::evaluteIntegratingPartlyVisible(in_groundtruth,
                                               in_prediction,
                                               percentage_of_overlap_,
-                                              confusion_);
+                                              confusion_,
+                                              overlap_fn);
         break;
     default:
         throw std::runtime_error("Unknown mode type!");

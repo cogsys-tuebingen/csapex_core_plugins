@@ -11,6 +11,7 @@ class EvaluateROIDetections : public csapex::Node
 {
 public:
     enum ClassificationType {BACKGROUND = 0, HUMAN = 1, HUMAN_PART = 2, UNKNOWN = 3};
+    enum OverlapMode {OVERLAP_IOU, OVERLAP_MAX};
 
     EvaluateROIDetections();
 
@@ -23,6 +24,7 @@ private:
 
     std::string     path_of_statistic_;
     Mode            mode_;
+    OverlapMode     overlap_mode_;
 
     double          percentage_of_overlap_;
 
