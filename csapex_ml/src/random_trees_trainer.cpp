@@ -240,7 +240,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     std::cout << "[RandomTrees]: Started training with " << train_data.rows << " samples!" << std::endl;
     if(rtrees->train(train_data_struct)) {
         cv::FileStorage fs(path_, cv::FileStorage::WRITE);
-        fs.writeObj(readParameter<std::string>("file").c_str(), rtrees);
+        rtrees->write(fs);
         std::cout << "[RandomTrees]: Finished training!" << std::endl;
     } else {
         return false;

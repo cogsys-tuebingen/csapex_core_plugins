@@ -60,7 +60,7 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
 
 
     std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
-    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz"),
+    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz *.yaml.gz"),
                                        custom_active, std::bind(&HOGClassifier::load, this));
 
 

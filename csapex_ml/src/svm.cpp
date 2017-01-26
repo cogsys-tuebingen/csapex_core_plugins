@@ -34,7 +34,7 @@ void SVM::setupParameters(Parameterizable& parameters)
                                                                  csapex::param::ParameterDescription("Path to a saved svm."),
                                                                  true,
                                                                  "",
-                                                                 "*.yaml *.tar.gz"),
+                                                                 "*.yaml *.tar.gz *.yaml.gz"),
                             path_);
 
     csapex::param::ParameterPtr param_label = csapex::param::ParameterFactory::declareBool("/svm/compute_labels",
@@ -77,7 +77,7 @@ void SVM::process()
 #if CV_MAJOR_VERSION == 2
             svm_.load(path_.c_str(), "svm");
 #elif CV_MAJOR_VERSION == 3
-            svm_->load(path_.c_str());
+            svm_ = cv::ml::SVM::load(path_.c_str());
 #endif
             loaded_ = true;
         } else {
@@ -119,6 +119,7 @@ void SVM::process()
 #if CV_MAJOR_VERSION == 2
             output->at(i).classification = svm_.predict(sample);
 #elif CV_MAJOR_VERSION == 3
+            cv::transpose(sample, sample);
             output->at(i).classification = svm_->predict(sample);
 #endif
         }
@@ -127,6 +128,7 @@ void SVM::process()
 #if CV_MAJOR_VERSION == 2
             const float response = svm_.predict(sample, true);
 #elif CV_MAJOR_VERSION == 3
+            cv::transpose(sample, sample);
             const float response = svm_->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
 #endif
             output->at(i).classification = comparator(response) ? 1 : 0;
