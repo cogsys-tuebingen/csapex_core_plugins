@@ -25,7 +25,7 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
         input_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
-        output_ = node_modifier.addOutput<std::size_t>("Count");
+        output_ = node_modifier.addOutput<int>("Count");
         reset_ = node_modifier.addSlot("Reset",
                                             std::bind(&CountMessages::reset, this));
     }
@@ -47,7 +47,7 @@ private:
     Output* output_;
     Slot*   reset_;
 
-    std::size_t count_;
+    int count_;
 
     void reset()
     {
