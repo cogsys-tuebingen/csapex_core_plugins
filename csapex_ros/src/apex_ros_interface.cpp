@@ -18,6 +18,7 @@
 #include <csapex/msg/no_message.h>
 #include <csapex/model/token.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/param/trigger_parameter.h>
 
 /// SYSTEM
 #include <console_bridge/console.h>
@@ -261,7 +262,7 @@ void APEXRosInterface::registerCommandListener()
 
 void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd, bool global_cmd)
 {
-    std::string command = cmd->data;
+    std::string command_string = cmd->data;
     bool local_cmd = !global_cmd;
 
     /*
@@ -277,21 +278,47 @@ void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd, bool global_
 
     if(!disabled_) {
         // disabled state is stronger than pause / unpause
-        if(command == "pause") {
+        if(command_string == "pause") {
             core_->setPause(true);
 
-        } else if(command == "unpause"){
+        } else if(command_string == "unpause"){
             core_->setPause(false);
         }
     }
 
     if(local_cmd) {
+        std::size_t parameter_offset = command_string.find_first_of(" ");
+        std::string command = command_string.substr(0, parameter_offset);
+        std::string parameter_values = command_string.substr(parameter_offset + 1);
+
         if(command == "stop") {
             disabled_ = true;
             core_->setPause(true);
         } else if(command == "resume") {
             disabled_ = false;
             core_->setPause(false);
+        } else if(command == "trigger") {
+            Graph* graph = core_->getRoot()->getGraph();
+
+            std::size_t index = parameter_values.find_first_of("/");
+            if (index != std::string::npos) {
+                std::string node_name = parameter_values.substr(0, index);
+                std::string parameter_name = parameter_values.substr(index + 1);
+
+                if (NodeHandle* node_handle = graph->findNodeHandleWithLabel(node_name)) {
+                    if (NodePtr node = node_handle->getNode().lock()) {
+                        if (node->hasParameter(parameter_name)) {
+                            if (auto trigger = node->getParameter<param::TriggerParameter>(parameter_name))
+                                trigger->trigger();
+                            else
+                                std::cerr << "[ROS Command] '" << command_string << "': parameter is not a trigger '" << parameter_name << "'" << std::endl;
+                        } else
+                            std::cerr << "[ROS Command] '" << command_string << "': unknown parameter '" << parameter_name << "'" << std::endl;
+                    }
+                } else {
+                    std::cerr << "[ROS Command] '" << command_string << "': unknown node '" << node_name << "'" << std::endl;
+                }
+            }
         }
     }
 }
