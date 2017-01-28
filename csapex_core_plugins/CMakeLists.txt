@@ -116,6 +116,8 @@ add_library(${PROJECT_NAME}_node SHARED
     src/tools/select_vector_component.cpp
     src/tools/count_messages_in_vectors.cpp
     src/tools/count_messages.cpp
+    src/tools/mux.cpp
+    src/tools/demux.cpp
 
     src/display/output_display.cpp
     src/display/text_display.cpp
