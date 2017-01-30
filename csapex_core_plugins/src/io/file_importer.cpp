@@ -147,8 +147,11 @@ void FileImporter::changeMode()
 
 bool FileImporter::canProcess() const
 {
-    if(import_requested_ && playing_) {
-        return true;
+    if(import_requested_) {
+        // only import if playing, or the play slot is unconnected
+        if(playing_ || !msg::isConnected(play_)) {
+            return true;
+        }
     }
     if(trigger_signal_end_ || abort_) {
         return true;
@@ -523,6 +526,7 @@ void FileImporter::changeDirIndex()
 void FileImporter::requestImport()
 {
     import_requested_ = true;
+    yield();
 }
 
 void FileImporter::import()
