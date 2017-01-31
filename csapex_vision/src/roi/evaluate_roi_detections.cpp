@@ -15,7 +15,8 @@ using namespace csapex::connection_types;
 CSAPEX_REGISTER_CLASS(csapex::EvaluateROIDetections, csapex::Node)
 
 EvaluateROIDetections::EvaluateROIDetections() :
-    human_parts_found_({0,0})
+    human_parts_found_({0,0}),
+    frame_count_(0)
 {
 }
 
@@ -250,6 +251,9 @@ void EvaluateROIDetections::process()
     RoiMessagesConstPtr in_groundtruth =
             msg::getMessage<GenericVectorMessage, RoiMessage>(in_groundtruth_);
 
+    /// every recieved message equals to one processed frame/image, so just increment the count
+    frame_count_ += 1;
+
     std::function<double(const cv::Rect&, const cv::Rect&)> overlap_fn;
     switch (overlap_mode_) {
         default:
@@ -300,6 +304,8 @@ void EvaluateROIDetections::save() const
     }
     out << "human parts found : human parts seen" << std::endl;
     out << human_parts_found_[0] << " " << human_parts_found_[1] << std::endl;
+    out << "frames" << std::endl;
+    out << frame_count_ << std::endl;
     out.close();
 }
 
@@ -308,4 +314,5 @@ void EvaluateROIDetections::resetConfusion()
     confusion_.reset();
     human_parts_found_[0] = 0;
     human_parts_found_[1] = 0;
+    frame_count_ = 0;
 }

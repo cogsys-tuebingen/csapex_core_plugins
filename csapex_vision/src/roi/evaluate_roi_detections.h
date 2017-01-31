@@ -35,6 +35,7 @@ private:
     csapex::Slot                *slot_reset_;
     csapex::ConfusionMatrix      confusion_;
     std::array<std::size_t, 2>   human_parts_found_;
+    std::size_t                  frame_count_;
 
     void save() const;
     void resetConfusion();
