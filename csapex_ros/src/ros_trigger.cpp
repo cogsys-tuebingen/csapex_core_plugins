@@ -55,7 +55,7 @@ protected:
             ainfo << "subscribing to " << ti.name << std::endl;
             sub = RosMessageConversion::instance().subscribe(ti, 1, [this](const TokenDataConstPtr& msg){
                 ainfo << "trigger" << std::endl;
-                trigger_->trigger();
+                msg::trigger(trigger_);
             });
         }
     }

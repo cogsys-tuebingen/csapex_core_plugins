@@ -9,7 +9,6 @@
 #include <csapex/param/range_parameter.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/any_message.h>
-#include <csapex/signal/event.h>
 #include <csapex/param/trigger_parameter.h>
 #include <csapex/msg/end_of_sequence_message.h>
 #include <csapex/model/token.h>
@@ -130,7 +129,7 @@ void Optimizer::start()
     can_send_next_parameters_ = true;
 
 
-    trigger_start_evaluation_->trigger();
+    msg::trigger(trigger_start_evaluation_);
     yield();
 }
 
@@ -141,7 +140,7 @@ void Optimizer::stop()
 
     connection_types::GenericValueMessage<double>::Ptr msg = std::make_shared<connection_types::GenericValueMessage<double>>();
     msg->value = best_fitness_;
-    trigger_iteration_finished->triggerWith(std::make_shared<Token>(msg));
+    msg::trigger(trigger_iteration_finished, std::make_shared<Token>(msg));
 }
 
 void Optimizer::doStop()
@@ -153,7 +152,7 @@ void Optimizer::doStop()
     setBest();
 
     validation_running_ = true;
-    trigger_start_evaluation_->trigger();
+    msg::trigger(trigger_start_evaluation_);
     yield();
 }
 
@@ -182,7 +181,7 @@ void Optimizer::finish()
     }
 
     if(generateNextParameterSet()) {
-        trigger_start_evaluation_->trigger();
+        msg::trigger(trigger_start_evaluation_);
         can_send_next_parameters_ = true;
         yield();
     } else {

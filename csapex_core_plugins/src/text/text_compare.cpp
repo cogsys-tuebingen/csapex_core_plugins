@@ -40,9 +40,9 @@ public:
         std::string B = msg::getValue<std::string>(in_b_);
 
         if(A == B) {
-            e_->trigger();
+            msg::trigger(e_);
         } else {
-            ne_->trigger();
+            msg::trigger(ne_);
         }
     }
 

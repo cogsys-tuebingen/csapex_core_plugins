@@ -40,6 +40,6 @@ void Toggle::setSignal()
     auto s = readParameter<bool>("true");
     if(signal_  != s) {
         signal_  = s;
-        event_->trigger();
+        msg::trigger(event_);
     }
 }

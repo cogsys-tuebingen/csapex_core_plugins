@@ -27,7 +27,7 @@ public:
     {
         modifier.addTypedSlot<AnyMessage>("Message", [this](const TokenPtr& token) {
             auto marker = std::dynamic_pointer_cast<MarkerMessage const>(token->getTokenData());
-            if(marker != nullptr ^ ignore_markers_) {
+            if((marker != nullptr) ^ ignore_markers_) {
                 data_ = token->getTokenData();
                 yield();
             }

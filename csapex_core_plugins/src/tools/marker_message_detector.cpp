@@ -61,17 +61,17 @@ public:
     {
         if(std::dynamic_pointer_cast<NoMessage const>(marker)) {
             if(types_->isSet("No Message")) {
-                event_->trigger();
+                msg::trigger(event_);
             }
 
         } else if(std::dynamic_pointer_cast<EndOfSequenceMessage const>(marker)) {
             if(types_->isSet("End Of Sequence")) {
-                event_->trigger();
+                msg::trigger(event_);
             }
 
         } else if(std::dynamic_pointer_cast<EndOfProgramMessage const>(marker)) {
             if(types_->isSet("End Of Program")) {
-                event_->trigger();
+                msg::trigger(event_);
             }
         }
     }

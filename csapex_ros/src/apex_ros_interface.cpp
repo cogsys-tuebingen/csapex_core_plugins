@@ -75,6 +75,18 @@ void APEXRosInterface::init(CsApexCore &core)
         console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_DEBUG);
     }
 
+    core_->getSettings().setting_changed.connect([this](const std::string& name) {
+        if(name == "debug") {
+            if(core_->getSettings().get<bool>("debug")) {
+                console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_DEBUG);
+            } else {
+                console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_INFO);
+            }
+        }
+    });
+
+
+
     auto init = [this]() {
         registerCommandListener();
         registerClockWatchdog();
