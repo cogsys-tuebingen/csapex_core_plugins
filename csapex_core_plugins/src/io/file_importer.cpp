@@ -164,7 +164,7 @@ bool FileImporter::canProcess() const
         if(play_->isConnected()) {
             bool can_tick = playing_ && readParameter<int>("directory/current") < (int) dir_files_.size();
             if(!can_tick) {
-                ////DEBUGainfo << "cannot tick: " << playing_ << ", " << readParameter<int>("directory/current") << " <= " <<  (int) dir_files_.size()<< std::endl;
+                ainfo << "cannot tick: " << playing_ << ", " << readParameter<int>("directory/current") << " <= " <<  (int) dir_files_.size()<< std::endl;
             }
             return can_tick;
         }
