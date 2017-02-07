@@ -78,7 +78,7 @@ public:
             } else {
                 lock.unlock();
 
-                empty_event_->trigger();
+                msg::trigger(empty_event_);
             }
         });
         parameters.addParameter(param::ParameterFactory::declareTrigger("clear"), [this](param::Parameter*) {
@@ -138,7 +138,7 @@ public:
                 std::unique_lock<std::recursive_mutex> lock(value_mutex_);
                 value_.reset();
             }
-            clear_event_->trigger();
+            msg::trigger(clear_event_);
 
             if(show_content_) {
                 setParameter("text", std::string(""));

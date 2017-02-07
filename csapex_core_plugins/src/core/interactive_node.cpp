@@ -19,8 +19,7 @@ void InteractiveNode::process(csapex::NodeModifier& node_modifier, Parameterizab
     throw std::runtime_error("not implemented");
 }
 
-void InteractiveNode::process(csapex::NodeModifier& node_modifier, Parameterizable &parameters,
-                              std::function<void(std::function<void (NodeModifier &, Parameterizable &)>)> continuation)
+void InteractiveNode::process(csapex::NodeModifier& node_modifier, Parameterizable &parameters, Continuation continuation)
 {
     continuation_ = continuation;
 

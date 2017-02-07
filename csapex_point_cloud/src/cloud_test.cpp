@@ -49,12 +49,12 @@ public:
             }
 
             if(count >= min_count_) {
-                trigger_not_empty_->trigger();
+                msg::trigger(trigger_not_empty_);
                 return;
             }
         }
 
-        trigger_empty_->trigger();
+        msg::trigger(trigger_empty_);
     }
 
 private:

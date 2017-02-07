@@ -66,7 +66,7 @@ private:
     void trigger()
     {
         if(caught_a_ && caught_b_) {
-            and_event_->trigger();
+            msg::trigger(and_event_);
             caught_a_ = false;
             caught_b_ = false;
         }

@@ -230,7 +230,7 @@ void DynamicTransform::resetTf()
         }
     }
 
-    reset_->trigger();
+    msg::trigger(reset_);
 
     refresh();
 }

@@ -32,9 +32,6 @@ protected:
 
 protected:
     bool isConnected() const;
-
-private:
-    slim_signal::ScopedConnection connection_;
 };
 
 }

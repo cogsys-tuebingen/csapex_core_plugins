@@ -38,7 +38,7 @@ protected:
     bool stopped_;
     bool done_;
 
-    std::function<void (std::function<void (csapex::NodeModifier& node_modifier, Parameterizable &parameters)>)> continuation_;
+    Continuation continuation_;
 };
 
 }

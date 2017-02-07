@@ -29,7 +29,7 @@ void RosNode::setup(NodeModifier& node_modifier)
 
     } else {
         node_modifier_->setError("no connection to ROS");
-        connection_ = getRosHandler().connected.connect([this](){
+        observe(getRosHandler().connected, [this](){
             setupROS();
             yield();
         });

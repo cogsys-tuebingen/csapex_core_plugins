@@ -2,8 +2,7 @@
 #include "make_screenshot.h"
 
 /// PROJECT
-#include <csapex/signal/slot.h>
-#include <csapex/signal/event.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -48,6 +47,6 @@ void MakeScreenshot::makeScreenshot()
     }
 
 
-    done_->trigger();
+    msg::trigger(done_);
 }
 

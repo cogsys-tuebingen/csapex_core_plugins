@@ -40,7 +40,8 @@ add_library(${PROJECT_NAME}_core
     src/ros_node.cpp
     src/ros_handler.cpp
     src/ros_message_conversion.cpp
-    src/tf_listener.cpp
+    src/tf_listener.cpp    
+    src/actionlib_node.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_core

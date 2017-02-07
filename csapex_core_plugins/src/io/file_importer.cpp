@@ -459,7 +459,7 @@ void FileImporter::triggerSignalEnd()
 
 void FileImporter::signalBegin()
 {
-    begin_->trigger();
+    msg::trigger(begin_);
 }
 
 void FileImporter::signalEnd()
@@ -468,7 +468,7 @@ void FileImporter::signalEnd()
 
     if(!end_triggered_) {
         end_triggered_ = true;
-        end_->trigger();
+        msg::trigger(end_);
 
         TokenDataConstPtr end;
 
@@ -608,7 +608,7 @@ void FileImporter::createProviderForNextFile()
         }
 
         createMessageProvider(QString::fromStdString(dir_files_.at(current)));
-        new_provider_->trigger();
+        msg::trigger(new_provider_);
 
         last_directory_index_ = current;
 
