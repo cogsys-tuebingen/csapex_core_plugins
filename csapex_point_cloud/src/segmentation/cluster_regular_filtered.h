@@ -30,6 +30,7 @@ private:
     Input*        in_indices_;
     Output*       out_;
     Output*       out_rejected_;
+    Output*       out_voxels_;
 
     ClusterParamsStatistical cluster_params_;
 
