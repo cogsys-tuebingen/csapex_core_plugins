@@ -48,7 +48,7 @@ void MLPCv::process()
     std::shared_ptr<std::vector<FeaturesMessage> const> input =
             msg::getMessage<GenericVectorMessage, FeaturesMessage>(input_);
 
-    std::shared_ptr<std::vector<FeaturesMessage>> output;
+    std::shared_ptr<std::vector<FeaturesMessage>> output(new std::vector<FeaturesMessage>);
 
     if(loaded_) {
         std::size_t n = input->size();
