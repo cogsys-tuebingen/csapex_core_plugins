@@ -10,16 +10,37 @@
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
+#include <csapex/msg/output.h>
+#include <csapex_ros/yaml_io.hpp>
+#include <csapex_ros/ros_message_conversion.h>
+#include <csapex/view/utility/color.hpp>
 
 #include "regular_structures/indexation.hpp"
 #include "regular_structures/filtered_clustering.hpp"
+
 #include <fstream>
+#include <visualization_msgs/MarkerArray.h>
 
 #include <cslibs_kdtree/array.hpp>
 #include <cslibs_kdtree/page.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
+
+namespace implementation {
+
+struct Color {
+    using uchar = unsigned char;
+    Color(uchar _r = 0, uchar _g = 0, uchar _b = 0) :
+        r(_r),
+        g(_g),
+        b(_b){}
+
+    uchar r;
+    uchar g;
+    uchar b;
+};
+}
 
 template<typename StructureType>
 void ClusterRegularFiltered<StructureType>::setup(NodeModifier &node_modifier)
@@ -29,6 +50,7 @@ void ClusterRegularFiltered<StructureType>::setup(NodeModifier &node_modifier)
 
     out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
     out_rejected_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Rejected Clusters");
+    out_voxels_ = node_modifier.addOutput<PointCloudMessage>("Voxels");
 }
 
 template<typename StructureType>
@@ -95,6 +117,7 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
 
     std::shared_ptr<std::vector<pcl::PointIndices>> out_cluster_indices(new std::vector<pcl::PointIndices>);
     std::shared_ptr<std::vector<pcl::PointIndices>> out_rejected_cluster_indices(new std::vector<pcl::PointIndices>);
+    std::set<int> valid_clusters;
     DataIndex  min_index = AO::max();
     DataIndex  max_index = AO::min();
     IndexationType indexation(cluster_params_.bin_sizes);
@@ -180,8 +203,54 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
     }
     {
         /// Clustering stage
-        FilteredClustering<StructureType> clustering(referenced, cluster_params_, *out_cluster_indices, *out_rejected_cluster_indices, array, min_index, max_index);
+        FilteredClustering<StructureType> clustering(referenced, cluster_params_, *out_cluster_indices, *out_rejected_cluster_indices, valid_clusters, array, min_index, max_index);
         clustering.cluster();
+    }
+
+    if(out_voxels_->isConnected()) {
+        /// build up markers
+        PointCloudMessage::Ptr voxel_cloud_msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
+        typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr voxel_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+        auto index2position = [min_index, this](typename StructureType::Index index) {
+            pcl::PointXYZRGB p;
+            p.x = ((int) index[0] + min_index[0]) * cluster_params_.bin_sizes[0] + 0.5 * cluster_params_.bin_sizes[0];
+            p.y = ((int) index[1] + min_index[1]) * cluster_params_.bin_sizes[1] + 0.5 * cluster_params_.bin_sizes[1];
+            p.z = ((int) index[2] + min_index[2]) * cluster_params_.bin_sizes[2] + 0.5 * cluster_params_.bin_sizes[2];
+            p.r = 255;
+            p.g = 255;
+            p.b = 255;
+            return p;
+        };
+
+
+        std::map<unsigned int, implementation::Color> colors;
+        colors.insert(std::make_pair(-1, implementation::Color(255,255,255)));
+        for(std::size_t x = 0 ; x < size[0] ; ++x) {
+            for(std::size_t y = 0 ; y < size[1] ; ++y) {
+                for(std::size_t z = 0 ;  z < size[2] ; ++z) {
+                    typename StructureType::Index index {x,y,z};
+                    EntryStatistical *& array_entry = array.at(index);
+                    auto p = index2position(index);
+                    if(array_entry) {
+                        const int cluster = array_entry->cluster;
+                        if(colors.find(cluster) == colors.end()) {
+                            double r = 255.0, g = 255.0, b = 255.0;
+                            if(valid_clusters.find(cluster) != valid_clusters.end())
+                                color::fromCount(cluster+1, r,g,b);
+                            colors.insert(std::make_pair(cluster, implementation::Color(r,g,b)));
+                        }
+                        implementation::Color c = colors.at(cluster);
+                        p.r = c.r;
+                        p.g = c.g;
+                        p.b = c.b;
+                        voxel_cloud->push_back(p);
+                    }
+                }
+            }
+        }
+        std::reverse(voxel_cloud->begin(), voxel_cloud->end());
+        voxel_cloud_msg->value = voxel_cloud;
+        msg::publish(out_voxels_, voxel_cloud_msg);
     }
 
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);

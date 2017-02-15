@@ -4,6 +4,8 @@
 #include <cslibs_kdtree/fill.hpp>
 #include <cslibs_kdtree/index.hpp>
 
+#include <set>
+
 #include "entry.hpp"
 #include "validator.hpp"
 
@@ -24,6 +26,7 @@ public:
                        const ClusterParamsStatistical   &_params,
                        std::vector<pcl::PointIndices>   &_indices,
                        std::vector<pcl::PointIndices>   &_indices_rejected,
+                       std::set<int>                    &_valid_clusters,
                        StructureType                    &_array,
                        DataIndex                        &_min_index,
                        DataIndex                        &_max_index) :
@@ -31,6 +34,7 @@ public:
         entries(_entries),
         indices(_indices),
         indices_rejected(_indices_rejected),
+        valid_clusters(_valid_clusters),
         array(_array),
         min_index(_min_index),
         max_index(_max_index),
@@ -55,10 +59,10 @@ public:
             clusterEntry(entry);
 
             ValidatorType::Result validation = validator.validate();
-            if (validation == ValidatorType::Result::ACCEPTED)
+            if (validation == ValidatorType::Result::ACCEPTED) {
                 indices.emplace_back(std::move(buffer_indices));
-            else
-            {
+                valid_clusters.insert(entry->cluster);
+            } else {
                 if (validation != ValidatorType::Result::TOO_SMALL)
                     indices_rejected.emplace_back(std::move(buffer_indices));
                 else
@@ -74,6 +78,7 @@ private:
     std::vector<EntryStatistical*>   &entries;
     std::vector<pcl::PointIndices> &indices;
     std::vector<pcl::PointIndices> &indices_rejected;
+    std::set<int>                  &valid_clusters;
     StructureType                  &array;
     DataIndex                       min_index;
     DataIndex                       max_index;
