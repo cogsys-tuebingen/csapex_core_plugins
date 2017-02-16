@@ -81,11 +81,11 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
 
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
                                        ("activation alpha",
-                                        -10, 10, 0, 0.01),
+                                        -10, 10, 1.0, 0.01),
                                        [=](){ return activation_parameter->as<int>() != Ann::IDENTITY; });
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
                                        ("activation beta",
-                                        -10, 10, 0, 0.01),
+                                        -10, 10, 1.0, 0.01),
                                        [=](){ return activation_parameter->as<int>() != Ann::IDENTITY; });
 
 
@@ -183,6 +183,7 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
                 readParameter<int>("trainig method"),
                 readParameter<double>("training param 1"),
                 readParameter<double>("training param 2"));
+
 
     cv::Mat layers(1, 1 + layers_ + 1, CV_32SC1);
     layers.at<int>(0, 0) = feature_length;

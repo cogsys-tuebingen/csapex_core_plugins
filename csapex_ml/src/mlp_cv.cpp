@@ -70,8 +70,12 @@ void MLPCv::classify(const FeaturesMessage &input,
 {
     output = input;
 
-    cv::Mat feature(input.value);
+    cv::Mat feature(1, input.value.size(),cv::DataType<float>::type);
+    for(std::size_t i = 0; i < input.value.size(); ++i){
+        feature.at<float>(0,i) = input.value[i];
+    }
     cv::Mat response;
+
 
 #if CV_MAJOR_VERSION == 2
     mlp_.predict(feature, response);
