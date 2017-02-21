@@ -216,15 +216,12 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
             p.x = ((int) index[0] + min_index[0]) * cluster_params_.bin_sizes[0] + 0.5 * cluster_params_.bin_sizes[0];
             p.y = ((int) index[1] + min_index[1]) * cluster_params_.bin_sizes[1] + 0.5 * cluster_params_.bin_sizes[1];
             p.z = ((int) index[2] + min_index[2]) * cluster_params_.bin_sizes[2] + 0.5 * cluster_params_.bin_sizes[2];
-            p.r = 255;
-            p.g = 255;
-            p.b = 255;
             return p;
         };
 
-
+        auto default_color = implementation::Color(50,65,75);
         std::map<unsigned int, implementation::Color> colors;
-        colors.insert(std::make_pair(-1, implementation::Color(255,255,255)));
+        colors.insert(std::make_pair(-1,default_color));
         for(std::size_t x = 0 ; x < size[0] ; ++x) {
             for(std::size_t y = 0 ; y < size[1] ; ++y) {
                 for(std::size_t z = 0 ;  z < size[2] ; ++z) {
@@ -234,7 +231,7 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
                     if(array_entry) {
                         const int cluster = array_entry->cluster;
                         if(colors.find(cluster) == colors.end()) {
-                            double r = 255.0, g = 255.0, b = 255.0;
+                            double r = default_color.r, g = default_color.g, b = default_color.b;
                             if(valid_clusters.find(cluster) != valid_clusters.end())
                                 color::fromCount(cluster+1, r,g,b);
                             colors.insert(std::make_pair(cluster, implementation::Color(r,g,b)));

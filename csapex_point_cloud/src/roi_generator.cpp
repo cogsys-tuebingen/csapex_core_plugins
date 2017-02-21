@@ -39,6 +39,8 @@ public:
         params.addParameter(param::ParameterFactory::declareValue("fov/y",  60.0), fov_y_);
         params.addParameter(param::ParameterFactory::declareValue("centre/x", 0), c_x_);
         params.addParameter(param::ParameterFactory::declareValue("centre/y", 0), c_y_);
+        params.addParameter(param::ParameterFactory::declareValue("offset/x", 0), off_x_);
+        params.addParameter(param::ParameterFactory::declareValue("offset/y", 0), off_y_);
         params.addParameter(param::ParameterFactory::declareValue("width", 640), w_);
         params.addParameter(param::ParameterFactory::declareValue("height", 480), h_);
 
@@ -104,8 +106,8 @@ public:
                 RoiMessage roi;
 
                 cv::Rect rect;
-                rect.x = min_col;
-                rect.y = min_row;
+                rect.x = min_col + off_x_;
+                rect.y = min_row + off_y_;
                 rect.width  = max_col - min_col;
                 rect.height = max_row - min_row;
 
@@ -184,8 +186,8 @@ public:
 
             RoiMessage roi;
             cv::Rect rect;
-            rect.x = min_x;
-            rect.y = min_y;
+            rect.x = min_x + off_x_;
+            rect.y = min_y + off_y_;
             rect.width  = max_x - min_x;
             rect.height = max_y - min_y;
 
@@ -212,6 +214,8 @@ private:
     double fov_y_;
     int c_x_;
     int c_y_;
+    int off_x_;
+    int off_y_;
     int w_;
     int h_;
 

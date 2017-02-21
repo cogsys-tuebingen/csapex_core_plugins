@@ -132,7 +132,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/filter/filter_rois_by_distance.cpp
 
     src/segmentation/label_pointcloud.cpp
-    src/segmentation/cluster_pointcloud.cpp
+    src/segmentation/cluster_pcl.cpp
     src/segmentation/split_clustered_cloud.cpp
     src/segmentation/merge_clusters.cpp
     src/segmentation/cluster_kdtree.cpp

@@ -1,4 +1,4 @@
-#include "cluster_pointcloud.h"
+#include "cluster_pcl.h"
 
 #include "polar_clustering.hpp"
 
@@ -52,18 +52,48 @@ ClusterPointcloud::ClusterPointcloud()
 
 void ClusterPointcloud::setupParameters(Parameterizable &parameters)
 {
+
     std::map<std::string, int> methods = {
         {"PCL_EUCLIDEAN", (int) Method::PCL_EUCLIDEAN},
-        {"POLAR", (int) Method::POLAR},
+        {"PCL_REGION_GROWING", (int) Method::PCL_REGION_GROWING},
+        {"PCL_NORMAL", (int) Method::PCL_NORMAL},
+        {"PCL_POLAR", (int) Method::PCL_POLAR},
     };
     parameters.addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) Method::PCL_EUCLIDEAN),
                             [this](param::Parameter* p) {method_ = static_cast<Method>(p->as<int>());});
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("ClusterTolerance", 0.001, 2.0, 0.02, 0.001), param_cluster_tolerance_);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MinClusterSize", 0, 20000, 100, 1), param_cluster_min_size_);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("MaxClusterSize", 0, 100000, 25000, 1), param_cluster_max_size_);
+    parameters.addParameter(param::ParameterFactory::declareRange("cluster tolerance", 0.001, 2.0, 0.02, 0.001), cluster_tolerance_);
+    parameters.addParameter(param::ParameterFactory::declareRange("minimum cluster size", 0, 20000, 100, 1),          cluster_min_size_);
+    parameters.addParameter(param::ParameterFactory::declareRange("maximum cluster size", 0, 100000, 25000, 1),       cluster_max_size_);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareAngle("opening_angle", 0.001), opening_angle_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal est. k nearest", 1, 500, 50, 1),
+                                       [this]{return method_ == Method::PCL_NORMAL || method_ == Method::PCL_REGION_GROWING;},
+                                       normal_estimator_k_nearest_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal est. radius", 0.001, 2.0, 0.02, 0.001),
+                                       [this]{return method_ == Method::PCL_REGION_GROWING;},
+                                       normal_estimator_radius_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("region growing neighbours", 1, 500, 50, 1),
+                                       [this]{return method_ == Method::PCL_REGION_GROWING;},
+                                       region_growing_neighbours_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareAngle("region growing smoothness", 3.0 / 180.0 * M_PI),
+                                       [this]{return method_ == Method::PCL_REGION_GROWING;},
+                                       region_growing_smoothness_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("region growing threshold", 0.0, 5.0, 1.0, 0.001),
+                                       [this]{return method_ == Method::PCL_REGION_GROWING;},
+                                       region_growing_curvature_threshold_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal small radius", 0.001, 2.0, 0.02, 0.001),
+                                       [this]{return method_ == Method::PCL_NORMAL;},
+                                       normal_small_radius_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal large radius", 0.001, 2.0, 0.02, 0.001),
+                                       [this]{return method_ == Method::PCL_NORMAL;},
+                                       normal_large_radius_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareAngle("opening_angle", 0.001),
+                                       [this](){return method_ == Method::PCL_POLAR;} ,
+                                        polar_opening_angle_);
 }
 
 void ClusterPointcloud::process()
@@ -92,8 +122,8 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
     case Method::PCL_EUCLIDEAN:
         cluster_indices = pclEuclidean<PointT>(cloud);
         break;
-    case Method::POLAR:
-        cluster_indices = polar<PointT>(cloud);
+    case Method::PCL_POLAR:
+        cluster_indices = pclPolar<PointT>(cloud);
         break;
 
     default:
@@ -105,63 +135,6 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
     std::string text_msg("Found clusters: ");
     text_msg += std::to_string(cluster_indices->size());
     msg::publish(out_debug_, text_msg);
-}
-
-namespace {
-template <class PointT>
-bool customRegionGrowing (const PointT& point_a,
-                          const PointT& point_b,
-                          float squared_distance)
-{
-    return false;
-}
-template <>
-bool customRegionGrowing<pcl::PointXYZI> (const pcl::PointXYZI& point_a,
-                                          const pcl::PointXYZI& point_b,
-                                          float squared_distance)
-{
-    if (squared_distance < 10000)
-    {
-        if (fabs (point_a.intensity - point_b.intensity) < 8.0f)
-            return true;
-
-    } else {
-        if (fabs (point_a.intensity - point_b.intensity) < 3.0f)
-            return true;
-    }
-    return false;
-}
-}
-
-template <class PointT>
-std::shared_ptr<std::vector<pcl::PointIndices> >
-ClusterPointcloud::polar(typename pcl::PointCloud<PointT>::ConstPtr cloud)
-{
-    pcl::PointIndicesPtr indices;
-    if(msg::isConnected(in_indices_)) {
-        auto indices_msg = msg::getMessage<PointIndecesMessage>(in_indices_);
-        indices = indices_msg->value;
-    }
-
-    typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
-    tree->setInputCloud (cloud);
-
-    std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
-
-    {
-        INTERLUDE("clustering");
-        PolarClustering<PointT> ec;
-        ec.setClusterTolerance (param_cluster_tolerance_);
-        ec.setOpeningAngle(opening_angle_);
-
-        ec.setMinClusterSize (param_cluster_min_size_);
-        ec.setMaxClusterSize (param_cluster_max_size_);
-        ec.setSearchMethod (tree);
-        ec.setInputCloud (cloud);
-        ec.extract (*cluster_indices);
-    }
-
-    return cluster_indices;
 }
 
 template <class PointT>
@@ -222,10 +195,10 @@ ClusterPointcloud::pclEuclidean(typename pcl::PointCloud<PointT>::ConstPtr cloud
 
     std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
     typename pcl::EuclideanClusterExtraction<PointT> ec;
-    ec.setClusterTolerance (param_cluster_tolerance_); // 2cm
+    ec.setClusterTolerance (cluster_tolerance_); // 2cm
 
-    ec.setMinClusterSize (param_cluster_min_size_);
-    ec.setMaxClusterSize (param_cluster_max_size_);
+    ec.setMinClusterSize (cluster_min_size_);
+    ec.setMaxClusterSize (cluster_max_size_);
     ec.setSearchMethod (tree);
     ec.setInputCloud (cloud_clean);
     // NOTE: not using indices here directly, because that is way slower!
@@ -250,4 +223,42 @@ std::shared_ptr<std::vector<pcl::PointIndices> >
 ClusterPointcloud::pclRegionGrowing(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
 }
+
+template <class PointT>
+std::shared_ptr<std::vector<pcl::PointIndices> >
+ClusterPointcloud::pclNormal(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+{
+}
+
+template <class PointT>
+std::shared_ptr<std::vector<pcl::PointIndices> >
+ClusterPointcloud::pclPolar(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+{
+    pcl::PointIndicesPtr indices;
+    if(msg::isConnected(in_indices_)) {
+        auto indices_msg = msg::getMessage<PointIndecesMessage>(in_indices_);
+        indices = indices_msg->value;
+    }
+
+    typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
+    tree->setInputCloud (cloud);
+
+    std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
+
+    {
+        INTERLUDE("clustering");
+        PolarClustering<PointT> ec;
+        ec.setClusterTolerance (cluster_tolerance_);
+        ec.setOpeningAngle(polar_opening_angle_);
+
+        ec.setMinClusterSize (cluster_min_size_);
+        ec.setMaxClusterSize (cluster_max_size_);
+        ec.setSearchMethod (tree);
+        ec.setInputCloud (cloud);
+        ec.extract (*cluster_indices);
+    }
+
+    return cluster_indices;
+}
+
 

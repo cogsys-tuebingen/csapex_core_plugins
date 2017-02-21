@@ -32,13 +32,18 @@ private:
 
     template <class PointT>
     std::shared_ptr<std::vector<pcl::PointIndices> >
-    polar(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+    pclNormal(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+
+    template <class PointT>
+    std::shared_ptr<std::vector<pcl::PointIndices> >
+    pclPolar(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
     enum class Method {
         PCL_EUCLIDEAN,
         PCL_REGION_GROWING,
-        POLAR
+        PCL_NORMAL,
+        PCL_POLAR
     };
 
 private:
@@ -49,16 +54,24 @@ private:
 
     Method  method_;
 
-    double  param_cluster_tolerance_;
-    int     param_cluster_min_size_;
-    int     param_cluster_max_size_;
+    double  cluster_tolerance_;
+    int     cluster_min_size_;
+    int     cluster_max_size_;
 
-    int     param_k_search_;
-    int     param_neighbours_;
-    double  param_smoothness_;
-    double  param_curvature_threshold_;
+    int     normal_estimator_k_nearest_;
+    double  normal_estimator_radius_;
 
-    double opening_angle_;
+    int     region_growing_neighbours_;
+    double  region_growing_smoothness_;
+    double  region_growing_curvature_threshold_;
+
+    double  normal_large_radius_;
+    double  normal_small_radius_;
+
+
+    double  polar_opening_angle_;
+
+
 };
 }
 #endif // CLUSTER_POINTCLOUD_H
