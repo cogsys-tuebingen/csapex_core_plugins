@@ -75,21 +75,35 @@ target_link_libraries(${PROJECT_NAME}_plugin_core
 
 add_library(${PROJECT_NAME}_plugin_node
     src/project_z.cpp
-    src/merge_clouds.cpp
-    src/point_count.cpp
-    src/cloud_renderer.cpp
-    src/transform_cloud.cpp
-    src/voxel_grid.cpp
-    src/extract_timestamp.cpp
-    src/set_timestamp.cpp
-    src/row.cpp
-    src/col.cpp
+    src/operations/merge_clouds.cpp
+    src/operations/transform_cloud.cpp
+    src/operations/extract_timestamp.cpp
+    src/operations/row.cpp
+    src/operations/col.cpp
+    src/operations/set_timestamp.cpp
+    src/operations/color_point_cloud.cpp
+    src/operations/scale_intensity.cpp
+    src/operations/ray_angles.cpp
+    src/operations/estimate_normals.cpp
+    src/operations/estimate_center.cpp
+
+    src/visualization/point_count.cpp
+    src/visualization/cloud_renderer.cpp
+    src/visualization/clusters_to_markerarray.cpp
+    src/visualization/model_to_marker.cpp
+
+    src/sampling/voxel_grid.cpp
+
+
     src/roi_generator.cpp
 
     src/cloud_test.cpp
 
     src/labeling/cloud_labeler.cpp
 
+    src/conversion/label_clustered_pointcloud.cpp
+    src/conversion/color_labeled_point_cloud.cpp
+    src/conversion/labeled_cloud_to_indices.cpp
     src/conversion/pointcloud_to_depthimage.cpp
     src/conversion/pointcloud_to_colorimage.cpp
     src/conversion/pointcloud_to_intensityimage.cpp
@@ -117,17 +131,12 @@ add_library(${PROJECT_NAME}_plugin_node
     src/filter/crop_box.cpp
     src/filter/filter_rois_by_distance.cpp
 
-    src/segmentation/labeled_cloud_to_indices.cpp
     src/segmentation/label_pointcloud.cpp
     src/segmentation/cluster_pointcloud.cpp
-    src/segmentation/color_labeled_point_cloud.cpp
     src/segmentation/split_clustered_cloud.cpp
-    src/segmentation/label_clustered_pointcloud.cpp
     src/segmentation/merge_clusters.cpp
-
     src/segmentation/cluster_kdtree.cpp
     src/segmentation/cluster_kdtree_filtered.cpp
-
     src/segmentation/regular_structures/entry.hpp
     src/segmentation/regular_structures/validator.hpp
     src/segmentation/regular_structures/indexation.hpp
@@ -142,20 +151,12 @@ add_library(${PROJECT_NAME}_plugin_node
     src/segmentation/cluster_regular_filtered_mono.cpp
     src/segmentation/extract_clusters.cpp
 
-    src/analysis/ray_angles.cpp
-    src/analysis/estimate_normals.cpp
-    src/analysis/estimate_center.cpp
-
     src/math/distribution.hpp
     src/math/mean.hpp
 
-    src/color_point_cloud.cpp
-    src/pointcloud_generator.cpp
     src/sac_fit.cpp
-    src/model_to_marker.cpp
+    src/pointcloud_generator.cpp
     src/transform_from_models.cpp
-    src/scale_intensity.cpp
-    src/clusters_to_markerarray.cpp
 
     ${clustering_kd_tree_SRCS}
 )
@@ -166,8 +167,8 @@ target_link_libraries(${PROJECT_NAME}_plugin_node
 )
 
 add_library(${PROJECT_NAME}_plugin_qt
-    src/point_count_adapter.cpp
-    src/cloud_renderer_adapter.cpp
+    src/visualization/point_count_adapter.cpp
+    src/visualization/cloud_renderer_adapter.cpp
     src/labeling/cloud_labeler_adapter.cpp
 )
 

@@ -28,25 +28,35 @@ private:
 
     template <class PointT>
     std::shared_ptr<std::vector<pcl::PointIndices> >
+    pclRegionGrowing(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+
+    template <class PointT>
+    std::shared_ptr<std::vector<pcl::PointIndices> >
     polar(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
     enum class Method {
         PCL_EUCLIDEAN,
+        PCL_REGION_GROWING,
         POLAR
     };
 
 private:
-    Input* in_cloud_;
-    Input* in_indices_;
+    Input*  in_cloud_;
+    Input*  in_indices_;
     Output* out_;
     Output* out_debug_;
 
-    Method method_;
+    Method  method_;
 
-    double param_clusterTolerance_;
-    int param_clusterMinSize_;
-    int param_clusterMaxSize_;
+    double  param_cluster_tolerance_;
+    int     param_cluster_min_size_;
+    int     param_cluster_max_size_;
+
+    int     param_k_search_;
+    int     param_neighbours_;
+    double  param_smoothness_;
+    double  param_curvature_threshold_;
 
     double opening_angle_;
 };
