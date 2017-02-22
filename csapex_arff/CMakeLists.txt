@@ -35,7 +35,6 @@ add_library(${PROJECT_NAME}_plugin SHARED
 	)
 
 target_link_libraries(${PROJECT_NAME}_plugin
-    ${PROJECT_NAME}
     ${csapex_LIBRARIES}
     ${csapex_core_plugins_LIBRARIES}
     ${csapex_ml_LIBRARIES}

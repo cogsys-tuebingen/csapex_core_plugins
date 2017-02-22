@@ -102,7 +102,6 @@ target_link_libraries(${PROJECT_NAME}_plugin
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
     ${${PROJECT_NAME}_additional_libs}
-    ${cslibs_arff_LIBRARIES}
     ${csapex_point_cloud_LIBRARIES}
     )
 
