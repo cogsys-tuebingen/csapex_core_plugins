@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_arff)
 
-include (GenerateExportHeader)
-
 list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
-list(APPEND CMAKE_MODULE_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 
 find_package(catkin REQUIRED COMPONENTS
         csapex
@@ -15,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 
 csapex_package(
-    LIBRARIES ${PROJECT_NAME}
     CATKIN_DEPENDS csapex_ml csapex_core_plugins cslibs_arff
     )
 
@@ -40,7 +36,7 @@ target_link_libraries(${PROJECT_NAME}_plugin
     ${csapex_ml_LIBRARIES}
     ${catkin_LIBRARIES}
     ${cslibs_arff_LIBRARIES}
-    )
+)
 
 #
 # INSTALL

@@ -30,7 +30,7 @@ find_package(Qt5 COMPONENTS Core OpenGL Gui Widgets REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(PCL REQUIRED COMPONENTS common filters segmentation)
+find_package(PCL REQUIRED COMPONENTS common filters segmentation io)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
@@ -74,7 +74,6 @@ target_link_libraries(${PROJECT_NAME}_plugin_core
 )
 
 add_library(${PROJECT_NAME}_plugin_node
-    src/project_z.cpp
     src/operations/merge_clouds.cpp
     src/operations/transform_cloud.cpp
     src/operations/extract_timestamp.cpp
@@ -93,11 +92,6 @@ add_library(${PROJECT_NAME}_plugin_node
     src/visualization/model_to_marker.cpp
 
     src/sampling/voxel_grid.cpp
-
-
-    src/roi_generator.cpp
-
-    src/cloud_test.cpp
 
     src/labeling/cloud_labeler.cpp
 
@@ -152,11 +146,15 @@ add_library(${PROJECT_NAME}_plugin_node
     src/segmentation/extract_clusters.cpp
     src/segmentation/polar_clustering.hpp
 
+    src/provider/pcd_provider.cpp
+
     src/math/distribution.hpp
     src/math/mean.hpp
 
+    src/project_z.cpp
+    src/cloud_test.cpp
+
     src/sac_fit.cpp
-    src/pointcloud_generator.cpp
     src/transform_from_models.cpp
 
     ${clustering_kd_tree_SRCS}
@@ -164,7 +162,7 @@ add_library(${PROJECT_NAME}_plugin_node
 
 target_link_libraries(${PROJECT_NAME}_plugin_node
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES} Qt5::OpenGL
-    ${PROJECT_NAME} ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES}
+    ${PROJECT_NAME} ${PCL_COMMON_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES} ${PCL_IO_LIBRARIES}
 )
 
 add_library(${PROJECT_NAME}_plugin_qt

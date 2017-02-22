@@ -30,6 +30,6 @@
   <run_depend>cslibs_arff</run_depend>
 
   <export>
-    <csapex plugin="${prefix}/plugins.xml" snippets="${prefix}/snippets" />
+     <csapex plugin="${prefix}/plugins.xml" />
   </export>
 </package>

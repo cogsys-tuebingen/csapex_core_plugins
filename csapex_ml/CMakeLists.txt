@@ -40,14 +40,14 @@ target_link_libraries(${PROJECT_NAME}
 
 set(${PROJECT_NAME}_additional_srcs "")
 set(${PROJECT_NAME}_additional_libs "")
-find_package(csapex_point_cloud QUIET)
-if(${csapex_point_cloud_FOUND})
-    include_directories(${csapex_point_cloud_INCLUDE_DIRS})
-    list(APPEND
-        ${PROJECT_NAME}_additional_srcs
-        src/feature/features_message_to_labelled_pointcloud.cpp
-        )
-endif()
+#find_package(csapex_point_cloud QUIET)
+#if(${csapex_point_cloud_FOUND})
+#    include_directories(${csapex_point_cloud_INCLUDE_DIRS})
+#    list(APPEND
+#        ${PROJECT_NAME}_additional_srcs
+#        src/feature/features_message_to_labelled_pointcloud.cpp
+#        )
+#endif()
 
 add_library(${PROJECT_NAME}_plugin SHARED
     src/sample/features_message_filter.cpp
