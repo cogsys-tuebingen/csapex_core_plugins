@@ -7,6 +7,7 @@
 
 /// SYSTEM
 #include <pcl/PointIndices.h>
+#include <pcl/pcl_base.h>
 
 namespace csapex {
 class ClusterPointcloud : public csapex::Node
@@ -24,19 +25,23 @@ public:
 private:
     template <class PointT>
     std::shared_ptr<std::vector<pcl::PointIndices> >
-    pclEuclidean(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+    pclEuclidean(typename pcl::PointCloud<PointT>::ConstPtr cloud,
+                 pcl::IndicesConstPtr indices);
 
     template <class PointT>
     std::shared_ptr<std::vector<pcl::PointIndices> >
-    pclRegionGrowing(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+    pclRegionGrowing(typename pcl::PointCloud<PointT>::ConstPtr cloud,
+                     pcl::IndicesConstPtr indices);
 
     template <class PointT>
     std::shared_ptr<std::vector<pcl::PointIndices> >
-    pclNormal(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+    pclNormal(typename pcl::PointCloud<PointT>::ConstPtr cloud,
+              pcl::IndicesConstPtr indices);
 
     template <class PointT>
     std::shared_ptr<std::vector<pcl::PointIndices> >
-    pclPolar(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+    pclPolar(typename pcl::PointCloud<PointT>::ConstPtr cloud,
+             pcl::IndicesConstPtr indices);
 
 private:
     enum class Method {
