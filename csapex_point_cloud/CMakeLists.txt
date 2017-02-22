@@ -150,6 +150,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/segmentation/cluster_regular_filtered_color.cpp
     src/segmentation/cluster_regular_filtered_mono.cpp
     src/segmentation/extract_clusters.cpp
+    src/segmentation/polar_clustering.hpp
 
     src/math/distribution.hpp
     src/math/mean.hpp

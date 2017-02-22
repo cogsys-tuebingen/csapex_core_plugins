@@ -38,17 +38,8 @@ target_link_libraries(${PROJECT_NAME}
     ${Boost_LIBRARIES}
     ${catkin_LIBRARIES})
 
-find_package(cslibs_arff QUIET)
 set(${PROJECT_NAME}_additional_srcs "")
 set(${PROJECT_NAME}_additional_libs "")
-if(${cslibs_arff_FOUND})
-    include_directories(${cslibs_arff_INCLUDE_DIRS})
-    list(APPEND
-        ${PROJECT_NAME}_additional_srcs
-        src/arff_file_exporter.cpp
-        src/arff_feature_message_provider.cpp
-        )
-endif()
 find_package(csapex_point_cloud QUIET)
 if(${csapex_point_cloud_FOUND})
     include_directories(${csapex_point_cloud_INCLUDE_DIRS})

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>csapex_arff</name>
+
+  <version>0.0.1</version>
+  <description>
+    The csapex_arff package contains plugins to import files using the 
+    weka ARFF format.
+  </description>
+
+  <maintainer email="sebastian.buck@uni-tuebingen.de">buck</maintainer>
+  <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
+
+  <license>BSD</license>
+  <author email="sebastian.buck@uni-tuebingen.de">buck</author>
+  <author email="richard.hanten@uni-tuebingen.de">hanten</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>csapex</build_depend>
+  <run_depend>csapex</run_depend>
+
+  <build_depend>csapex_core_plugins</build_depend>
+  <run_depend>csapex_core_plugins</run_depend>
+
+  <build_depend>csapex_ml</build_depend>
+  <run_depend>csapex_ml</run_depend>
+
+  <build_depend>cslibs_arff</build_depend>
+  <run_depend>cslibs_arff</run_depend>
+
+  <export>
+    <csapex plugin="${prefix}/plugins.xml" snippets="${prefix}/snippets" />
+  </export>
+</package>
