@@ -30,6 +30,7 @@
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/features/normal_3d.h>
+#include <pcl/features/normal_3d_omp.h>
 #include <pcl/kdtree/kdtree.h>
 #include <pcl/search/impl/kdtree.hpp>
 #include <pcl/segmentation/extract_clusters.h>
@@ -67,10 +68,10 @@ void ClusterPointcloud::setupParameters(Parameterizable &parameters)
     parameters.addParameter(param::ParameterFactory::declareRange("minimum cluster size", 0, 20000, 100, 1),          cluster_min_size_);
     parameters.addParameter(param::ParameterFactory::declareRange("maximum cluster size", 0, 100000, 25000, 1),       cluster_max_size_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal est. k nearest", 1, 500, 50, 1),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal est. k nearest", 0, 500, 50, 1),
                                        [this]{return method_ == Method::PCL_NORMAL || method_ == Method::PCL_REGION_GROWING;},
     normal_estimator_k_nearest_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal est. radius", 0.001, 2.0, 0.02, 0.001),
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal est. radius", 0.0, 2.0, 0.02, 0.001),
                                        [this]{return method_ == Method::PCL_REGION_GROWING;},
     normal_estimator_radius_);
 
@@ -123,7 +124,7 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
     auto invalid = [] (const PointT &pt) {
         const bool nan = std::isnan(pt.x) || std::isnan(pt.y) || std::isnan(pt.z);
         const bool inf = std::isinf(pt.x) || std::isinf(pt.z) || std::isinf(pt.z);
-        return nan && inf;
+        return nan || inf;
     };
 
     /// step 1 : determine valid indices for clustering
@@ -146,7 +147,6 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
         /// build up filtered indices
         indices.reset(new std::vector<int> );
         const std::size_t size = cloud->points.size();
-        indices->reserve(size);
         for(std::size_t i = 0 ; i < size; ++i) {
             const auto &pt = cloud->points.at(i);
             if(!invalid(pt)) {
@@ -222,13 +222,14 @@ ClusterPointcloud::pclRegionGrowing(typename pcl::PointCloud<PointT>::ConstPtr c
     tree->setInputCloud(cloud, indices);
 
     pcl::PointCloud <pcl::Normal>::Ptr                normals (new pcl::PointCloud <pcl::Normal>);
-    typename pcl::NormalEstimation<PointT, pcl::Normal> normal_estimator;
+    typename pcl::NormalEstimationOMP<PointT, pcl::Normal> normal_estimator;
     {
         INTERLUDE("normal estimation");
         normal_estimator.setSearchMethod(tree);
         normal_estimator.setIndices(indices);
         normal_estimator.setInputCloud(cloud);
         normal_estimator.setKSearch(normal_estimator_k_nearest_);
+        normal_estimator.setRadiusSearch(normal_estimator_radius_);
         normal_estimator.compute (*normals);
     }
     std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices(new std::vector<pcl::PointIndices>);
