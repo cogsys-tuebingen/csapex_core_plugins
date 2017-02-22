@@ -29,6 +29,7 @@ before_script:
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_vision
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_laser_processing
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_kdtree
+  - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_arff
   - cd ..
 
 
