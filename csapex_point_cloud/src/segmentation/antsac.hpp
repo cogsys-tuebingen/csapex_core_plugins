@@ -59,7 +59,7 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
         // Warn and exit if no threshold was set
         if (threshold_ == std::numeric_limits<double>::max())
         {
-          PCL_ERROR ("[pcl::RandomSampleConsensus::computeModel] No threshold set!\n");
+          PCL_ERROR ("[pcl::AntSampleConsensus::computeModel] No threshold set!\n");
           return (false);
         }
 
