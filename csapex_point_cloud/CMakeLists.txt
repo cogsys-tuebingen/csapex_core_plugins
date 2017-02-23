@@ -145,6 +145,9 @@ add_library(${PROJECT_NAME}_plugin_node
     src/segmentation/cluster_regular_filtered_mono.cpp
     src/segmentation/extract_clusters.cpp
     src/segmentation/polar_clustering.hpp
+    src/segmentation/sac_fit.cpp
+    src/segmentation/antsac.hpp
+    src/segmentation/sac_segmentation.hpp
 
     src/provider/pcd_provider.cpp
 
@@ -154,7 +157,6 @@ add_library(${PROJECT_NAME}_plugin_node
     src/project_z.cpp
     src/cloud_test.cpp
 
-    src/sac_fit.cpp
     src/transform_from_models.cpp
 
     ${clustering_kd_tree_SRCS}
