@@ -16,10 +16,10 @@ protected:
 
     void initSAC (const int method_type) override
     {
-        if (Base::sac_)
-            Base::sac_.reset ();
         // Build the sample consensus method
         if(method_type == SAC_ANTSAC) {
+            if (Base::sac_)
+                Base::sac_.reset ();
             // Set the Sample Consensus parameters if they are given/changed
             if (Base::sac_->getProbability () != Base::probability_)
             {
@@ -50,10 +50,10 @@ protected:
     using Base = pcl::SACSegmentationFromNormals<PointT, NormalT>;
     void initSAC (const int method_type) override
     {
-        if (Base::sac_)
-            Base::sac_.reset ();
         // Build the sample consensus method
         if(method_type == SAC_ANTSAC) {
+            if (Base::sac_)
+                Base::sac_.reset ();
             // Set the Sample Consensus parameters if they are given/changed
             if (Base::sac_->getProbability () != Base::probability_)
             {
