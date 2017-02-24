@@ -9,6 +9,9 @@
 #include <csapex_point_cloud/indeces_message.h>
 #include <csapex/msg/generic_value_message.hpp>
 
+
+#include "sac_segmentation.hpp"
+
 /// SYSTEM
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <tf/tf.h>
@@ -117,8 +120,8 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     pcl::SACSegmentation<PointT> *segmenter;
     bool normals_needed = need_normals();  // some SAC models need normals / access conditional
     if(from_normals_ || normals_needed) {
-        pcl::SACSegmentationFromNormals<PointT, pcl::Normal> *normal_segmenter;
-        normal_segmenter = new pcl::SACSegmentationFromNormals<PointT, pcl::Normal>;
+        SACSegmentationFromNormals<PointT, pcl::Normal> *normal_segmenter;
+        normal_segmenter = new SACSegmentationFromNormals<PointT, pcl::Normal>;
         normal_segmenter->setNormalDistanceWeight (normal_distance_weight_);
 
         pcl::PointCloud<pcl::Normal>::Ptr normals (new pcl::PointCloud<pcl::Normal>);
@@ -127,7 +130,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
         segmenter = normal_segmenter;
     } else {
-        segmenter = new pcl::SACSegmentation<PointT>;
+        segmenter = new SACSegmentation<PointT>;
     }
     segmenter->setOptimizeCoefficients(optimize_coefficients_);
     segmenter->setModelType (model_type_);
