@@ -3,7 +3,7 @@
 
 
 /// PROJECT
-#include <csapex/view/node/node_adapter.h>
+#include <csapex/view/node/resizable_node_adapter.h>
 
 /// COMPONENT
 #include "text_display.h"
@@ -13,16 +13,19 @@
 
 namespace csapex {
 
-class TextDisplayAdapter : public QObject, public NodeAdapter
+class TextDisplayAdapter : public QObject, public ResizableNodeAdapter
 {
     Q_OBJECT
 
 public:
     TextDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node);
 
-    virtual void setupUi(QBoxLayout* layout);
+    bool eventFilter(QObject* o, QEvent* e);
 
-    virtual bool isResizable() const override;
+    virtual void setupUi(QBoxLayout* layout);
+    virtual void resize(const QSize& size) override;
+
+    virtual void setManualResize(bool manual) override;
 
 public Q_SLOTS:
     void display(const std::string& txt);

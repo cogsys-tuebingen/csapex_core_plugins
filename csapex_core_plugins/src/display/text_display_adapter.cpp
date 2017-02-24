@@ -7,6 +7,7 @@
 
 /// SYSTEM
 #include <QBoxLayout>
+#include <QEvent>
 
 using namespace csapex;
 
@@ -14,7 +15,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
 
 TextDisplayAdapter::TextDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node)
-    : NodeAdapter(worker, parent), wrapped_(node)
+    : ResizableNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
@@ -41,25 +42,48 @@ static QFont getMonospaceFont(){
 }
 }
 
+bool TextDisplayAdapter::eventFilter(QObject *o, QEvent *e)
+{
+    if (e->type() == QEvent::Resize){
+        QSize s = txt_->sizeHint();
+        setSize(s.width(), s.height());
+    }
+
+    return false;
+}
+
+
 void TextDisplayAdapter::setupUi(QBoxLayout* layout)
 {
     txt_ = new QLabel;
 
     txt_->setFont(getMonospaceFont());
     layout->addWidget(txt_);
+    txt_->installEventFilter(this);
 
-    connect(this, SIGNAL(displayRequest(std::string)), this, SLOT(display(std::string)));
+    connect(this, &TextDisplayAdapter::displayRequest, this, &TextDisplayAdapter::display);
+
+    ResizableNodeAdapter::setupUi(layout);
+}
+
+void TextDisplayAdapter::resize(const QSize& size)
+{
+    txt_->setFixedSize(size);
+}
+
+void TextDisplayAdapter::setManualResize(bool manual)
+{
+    if(manual) {
+        txt_->setMinimumSize(QSize(10, 10));
+    } else {
+        txt_->setMinimumSize(txt_->size());
+    }
 }
 
 void TextDisplayAdapter::display(const std::string& txt)
 {
     txt_->setMaximumWidth(txt_->parentWidget()->width());
     txt_->setText(QString::fromStdString(txt));
-}
-
-bool TextDisplayAdapter::isResizable() const
-{
-    return true;
 }
 
 /// MOC

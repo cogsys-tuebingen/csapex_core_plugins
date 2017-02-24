@@ -14,7 +14,7 @@ CSAPEX_REGISTER_NODE_ADAPTER(SignalLightAdapter, csapex::SignalLight)
 
 
 SignalLightAdapter::SignalLightAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_(node)
+    : ResizableNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
@@ -22,19 +22,11 @@ SignalLightAdapter::SignalLightAdapter(NodeHandleWeakPtr worker, NodeBox* parent
     trackConnection(n->display_request.connect(std::bind(&SignalLightAdapter::displayRequest, this, std::placeholders::_1)));
 }
 
-Memento::Ptr SignalLightAdapter::getState() const
+
+
+void SignalLightAdapter::resize(const QSize& size)
 {
-    return std::shared_ptr<State>(new State(state));
-}
-
-void SignalLightAdapter::setParameterState(Memento::Ptr memento)
-{
-    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
-    apex_assert(m.get());
-
-    state = *m;
-
-    light_->setFixedSize(QSize(state.width, state.height));
+    light_->setFixedSize(size);
 }
 
 void SignalLightAdapter::setupUi(QBoxLayout* layout)
@@ -55,8 +47,9 @@ void SignalLightAdapter::setupUi(QBoxLayout* layout)
     light_->yellow()->setEnabled(false);
     light_->red()->setEnabled(false);
 
+    connect(this, &SignalLightAdapter::displayRequest, this, &SignalLightAdapter::display);
 
-    connect(this, SIGNAL(displayRequest(int)), this, SLOT(display(int)));
+    ResizableNodeAdapter::setupUi(layout);
 }
 
 void SignalLightAdapter::display(int state)
@@ -66,10 +59,7 @@ void SignalLightAdapter::display(int state)
     light_->red()->setEnabled(state == 2);
 }
 
-bool SignalLightAdapter::isResizable() const
-{
-    return true;
-}
+
 void SignalLightAdapter::setManualResize(bool manual)
 {
     if(manual) {
@@ -78,8 +68,7 @@ void SignalLightAdapter::setManualResize(bool manual)
     } else {
         QSize s = light_->size();
         light_->setFixedSize(s);
-        state.width = s.width();
-        state.height = s.height();
+        setSize(s.width(), s.height());
     }
 }
 

@@ -5,12 +5,13 @@
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/utility/assert.h>
+#include <csapex/model/node.h>
+#include <csapex/model/node_state.h>
 
 /// SYSTEM
 #include <QPainter>
 #include <QGraphicsSceneEvent>
 #include <QGraphicsPixmapItem>
-#include <QCheckBox>
 #include <QPushButton>
 #include <QBoxLayout>
 #include <QResizeEvent>
@@ -21,8 +22,9 @@ CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
 OutputDisplayAdapter::OutputDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_(node)
+    : ResizableNodeAdapter(worker, parent), wrapped_(node)
 {
+
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal
@@ -40,16 +42,15 @@ bool OutputDisplayAdapter::eventFilter(QObject *o, QEvent *e)
 {
     if (e->type() == QEvent::Resize){
         QSize s = label_view_->sizeHint();
-        state.width = s.width();
-        state.height = s.height();
+        setSize(s.width(), s.height());
     }
 
     return false;
 }
 
-void OutputDisplayAdapter::resize()
+void OutputDisplayAdapter::resize(const QSize& size)
 {
-    label_view_->setSize(state.width, state.height);
+    label_view_->setSize(size);
 }
 
 
@@ -72,9 +73,9 @@ void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 
     layout->addLayout(sub);
 
-    connect(this, SIGNAL(displayRequest(QImage)), this, SLOT(display(QImage)));
+    connect(this, &OutputDisplayAdapter::displayRequest, this, &OutputDisplayAdapter::display);
 
-    DefaultNodeAdapter::setupUi(layout);
+    ResizableNodeAdapter::setupUi(layout);
 }
 
 void OutputDisplayAdapter::setManualResize(bool manual)
@@ -82,37 +83,17 @@ void OutputDisplayAdapter::setManualResize(bool manual)
     label_view_->setManualResize(manual);
 }
 
-bool OutputDisplayAdapter::isResizable() const
-{
-    return true;
-}
 
 void OutputDisplayAdapter::fitInView()
 {
-    state.width = last_size_.width();
-    state.height = last_size_.height();
+    setSize(last_image_size_.width(), last_image_size_.height());
 
-    resize();
-}
-
-Memento::Ptr OutputDisplayAdapter::getState() const
-{
-    return std::shared_ptr<State>(new State(state));
-}
-
-void OutputDisplayAdapter::setParameterState(Memento::Ptr memento)
-{
-    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
-    apex_assert(m.get());
-
-    state = *m;
-
-    resize();
+    doResize();
 }
 
 void OutputDisplayAdapter::display(const QImage& img)
 {
-    last_size_ = img.size();
+    last_image_size_ = img.size();
     label_view_->setPixmap(QPixmap::fromImage(img));
     label_view_->repaint();
 }

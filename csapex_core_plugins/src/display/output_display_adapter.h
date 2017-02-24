@@ -1,8 +1,8 @@
-#ifndef OUTPUD_DISPLAY_ADAPTER_H
-#define OUTPUD_DISPLAY_ADAPTER_H
+#ifndef OUTPUT_DISPLAY_ADAPTER_H
+#define OUTPUT_DISPLAY_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/node/default_node_adapter.h>
+#include <csapex/view/node/resizable_node_adapter.h>
 
 /// COMPONENT
 #include "output_display.h"
@@ -16,7 +16,7 @@ namespace csapex {
 
 class ImageWidget;
 
-class OutputDisplayAdapter : public QObject, public DefaultNodeAdapter
+class OutputDisplayAdapter : public QObject, public ResizableNodeAdapter
 {
     Q_OBJECT
 
@@ -24,13 +24,10 @@ public:
     OutputDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node);
     ~OutputDisplayAdapter();
 
-    virtual MementoPtr getState() const override;
-    virtual void setParameterState(Memento::Ptr memento) override;
 
     virtual void setupUi(QBoxLayout* layout) override;
 
     virtual void setManualResize(bool manual) override;
-    virtual bool isResizable() const override;
 
 public Q_SLOTS:
     void display(const QImage& img);
@@ -41,32 +38,13 @@ Q_SIGNALS:
 
 protected:
     bool eventFilter(QObject* o, QEvent* e);
-    void resize();
+    virtual void resize(const QSize& size) override;
 
     std::weak_ptr<OutputDisplay> wrapped_;
 
-    struct State : public Memento {
-        int width;
-        int height;
-
-        State()
-            : width(100), height(100)
-        {}
-
-        virtual void writeYaml(YAML::Node& out) const {
-            out["width"] = width;
-            out["height"] = height;
-        }
-        virtual void readYaml(const YAML::Node& node) {
-            width = node["width"].as<int>();
-            height = node["height"].as<int>();
-        }
-    };
-
-
 private:
-    QSize last_size_;
-    State state;
+
+    QSize last_image_size_;
 
     ImageWidget* label_view_;
 };
@@ -104,4 +82,4 @@ private:
 
 }
 
-#endif // OUTPUD_DISPLAY_ADAPTER_H
+#endif // OUTPUT_DISPLAY_ADAPTER_H

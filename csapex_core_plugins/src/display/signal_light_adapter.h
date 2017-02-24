@@ -3,7 +3,7 @@
 
 
 /// PROJECT
-#include <csapex/view/node/default_node_adapter.h>
+#include <csapex/view/node/resizable_node_adapter.h>
 
 /// COMPONENT
 #include "signal_light.h"
@@ -105,20 +105,18 @@ private:
     LightWidget *green;
 };
 
-class SignalLightAdapter : public QObject, public DefaultNodeAdapter
+class SignalLightAdapter : public QObject, public ResizableNodeAdapter
 {
     Q_OBJECT
 
 public:
     SignalLightAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node);
 
-    virtual Memento::Ptr getState() const override;
-    virtual void setParameterState(Memento::Ptr memento) override;
-
     virtual void setupUi(QBoxLayout* layout);
 
-    virtual bool isResizable() const override;
     virtual void setManualResize(bool manual) override;
+
+    virtual void resize(const QSize &size) override;
 
 public Q_SLOTS:
     void display(int state);
@@ -129,27 +127,8 @@ Q_SIGNALS:
 protected:
     std::weak_ptr<SignalLight> wrapped_;
 
-    struct State : public Memento {
-        int width;
-        int height;
-
-        State()
-            : width(100), height(100)
-        {}
-
-        virtual void writeYaml(YAML::Node& out) const {
-            out["width"] = width;
-            out["height"] = height;
-        }
-        virtual void readYaml(const YAML::Node& node) {
-            width = node["width"].as<int>();
-            height = node["height"].as<int>();
-        }
-    };
-
 private:
     SignalLightWidget* light_;
-    State state;
 };
 
 }
