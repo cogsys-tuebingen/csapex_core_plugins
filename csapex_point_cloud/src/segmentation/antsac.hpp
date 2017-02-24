@@ -4,6 +4,8 @@
 #include <pcl/sample_consensus/sac.h>
 #include <pcl/sample_consensus/sac_model.h>
 
+#include <random>
+
 namespace csapex {
 /** \brief @b RandomSampleConsensus represents an implementation of the RANSAC (RAndom SAmple Consensus) algorithm, as
   * described in: "Random Sample Consensus: A Paradigm for Model Fitting with Applications to Image Analysis and
@@ -14,26 +16,31 @@ namespace csapex {
 template <typename PointT>
 class AntSampleConsensus : public pcl::SampleConsensus<PointT>
 {
-  typedef typename SampleConsensusModel<PointT>::Ptr SampleConsensusModelPtr;
+  typedef typename AntSampleConsensus<PointT>::Ptr SampleConsensusModelPtr;
 
   public:
     typedef boost::shared_ptr<AntSampleConsensus> Ptr;
     typedef boost::shared_ptr<const AntSampleConsensus> ConstPtr;
 
-    using SampleConsensus<PointT>::max_iterations_;
-    using SampleConsensus<PointT>::threshold_;
-    using SampleConsensus<PointT>::iterations_;
-    using SampleConsensus<PointT>::sac_model_;
-    using SampleConsensus<PointT>::model_;
-    using SampleConsensus<PointT>::model_coefficients_;
-    using SampleConsensus<PointT>::inliers_;
-    using SampleConsensus<PointT>::probability_;
+    using pcl::SampleConsensus<PointT>::max_iterations_;
+    using pcl::SampleConsensus<PointT>::threshold_;
+    using pcl::SampleConsensus<PointT>::iterations_;
+    using pcl::SampleConsensus<PointT>::sac_model_;
+    using pcl::SampleConsensus<PointT>::model_;
+    using pcl::SampleConsensus<PointT>::model_coefficients_;
+    using pcl::SampleConsensus<PointT>::inliers_;
+    using pcl::SampleConsensus<PointT>::probability_;
 
     /** \brief RANSAC (RAndom SAmple Consensus) main constructor
       * \param[in] model a Sample Consensus model
       */
-    AntSampleConsensus (const SampleConsensusModelPtr &model)
-      : SampleConsensus<PointT> (model)
+    AntSampleConsensus (const SampleConsensusModelPtr &model,
+                        double rho = 0.9,
+                        double alpha = 0.1)
+      : pcl::SampleConsensus<PointT> (model),
+        rho_(rho),
+        alpha_(alpha),
+        distribution_(0.0, 1.0)
     {
       // Maximum number of trials before we give up.
       max_iterations_ = 10000;
@@ -42,9 +49,17 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
     /** \brief RANSAC (RAndom SAmple Consensus) main constructor
       * \param[in] model a Sample Consensus model
       * \param[in] threshold distance to model threshold
+      * \param[in] rho is the pheromone level evaporation [0.0, 1.0]
+      * \param[in] alpha sample importance gain [0.1, 2.0]
       */
-    AntSampleConsensus (const SampleConsensusModelPtr &model, double threshold)
-      : SampleConsensus<PointT> (model, threshold)
+    AntSampleConsensus (const SampleConsensusModelPtr &model,
+                        double threshold,
+                        double rho = 0.9,
+                        double alpha = 0.1)
+      : pcl::SampleConsensus<PointT> (model, threshold),
+        rho_(rho),
+        alpha_(alpha),
+        distribution_(0.0, 1.0)
     {
       // Maximum number of trials before we give up.
       max_iterations_ = 10000;
@@ -63,6 +78,7 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
           return (false);
         }
 
+
         iterations_ = 0;
         int n_best_inliers_count = -INT_MAX;
         double k = 1.0;
@@ -70,8 +86,76 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
         std::vector<int> selection;
         Eigen::VectorXf model_coefficients;
 
-        double log_probability  = log (1.0 - probability_);
-        double one_over_indices = 1.0 / static_cast<double> (sac_model_->getIndices ()->size ());
+
+
+        const std::size_t size = sac_model_->getIndices()->size();
+        const double log_probability  = log (1.0 - probability_);
+        const double one_over_indices = 1.0 / static_cast<double> (size);
+
+        std::vector<double> tau(size, one_over_indices);
+        std::vector<double> D;
+
+        auto update_D = [&D, &tau, this]() {
+
+        };
+
+        const std::size_t model_samples = sac_model_->getSampleSize();
+        const auto        indices = sac_model_->getIndices();
+
+        /// implement drawing
+        /// implement update of tau
+        /// the rest should be as ransac
+
+
+//        std::size_t k = size;
+//        math::random::Uniform<1> rng(0.0, 1.0);
+//        std::vector<double> u(size, std::pow(rng.get(), 1.0 / k));
+//        {
+//            for(int k = u.size() - 2; k >= 0 ; --k) {
+//                double u_ = std::pow(rng.get(), 1.0 / k);
+//                u[k] = u[k+1] * u_;
+//            }
+//        }
+
+
+
+
+//        virtual void
+//        getSamples (int &iterations, std::vector<int> &samples)
+//        {
+//          // We're assuming that indices_ have already been set in the constructor
+//          if (indices_->size () < getSampleSize ())
+//          {
+//            PCL_ERROR ("[pcl::SampleConsensusModel::getSamples] Can not select %zu unique points out of %zu!\n",
+//                       samples.size (), indices_->size ());
+//            // one of these will make it stop :)
+//            samples.clear ();
+//            iterations = INT_MAX - 1;
+//            return;
+//          }
+
+//          // Get a second point which is different than the first
+//          samples.resize (getSampleSize ());
+//          for (unsigned int iter = 0; iter < max_sample_checks_; ++iter)
+//          {
+//            // Choose the random indices
+//            if (samples_radius_ < std::numeric_limits<double>::epsilon ())
+//                SampleConsensusModel<PointT>::drawIndexSample (samples);
+//            else
+//                SampleConsensusModel<PointT>::drawIndexSampleRadius (samples);
+
+//            // If it's a good sample, stop here
+//            if (isSampleGood (samples))
+//            {
+//              PCL_DEBUG ("[pcl::SampleConsensusModel::getSamples] Selected %zu samples.\n", samples.size ());
+//              return;
+//            }
+//          }
+//          PCL_DEBUG ("[pcl::SampleConsensusModel::getSamples] WARNING: Could not select %d sample points in %d iterations!\n", getSampleSize (), max_sample_checks_);
+//          samples.clear ();
+//        }
+
+
 
         int n_inliers_count = 0;
         unsigned skipped_count = 0;
@@ -143,6 +227,12 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
         sac_model_->selectWithinDistance (model_coefficients_, threshold_, inliers_);
         return (true);
     }
+
+protected:
+    double rho_;
+    double alpha_;
+    std::default_random_engine             rne_;
+    std::uniform_real_distribution<double> distribution_;
 };
 
 }

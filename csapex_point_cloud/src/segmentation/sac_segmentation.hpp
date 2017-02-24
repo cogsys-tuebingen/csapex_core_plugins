@@ -3,6 +3,7 @@
 
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/impl/sac_segmentation.hpp>
+#include "antsac.hpp"
 
 namespace csapex {
 
