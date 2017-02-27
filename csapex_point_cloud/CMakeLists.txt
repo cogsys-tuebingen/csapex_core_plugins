@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
         csapex_transform
         csapex_opencv
         cslibs_kdtree
+        cslibs_indexed_storage
 )
 
 find_package(pcl_ros REQUIRED)
@@ -148,6 +149,16 @@ add_library(${PROJECT_NAME}_plugin_node
     src/segmentation/sac_fit.cpp
     src/segmentation/antsac.hpp
     src/segmentation/sac_segmentation.hpp
+
+    src/clustering/cluster.cpp
+    src/clustering/cluster.hpp
+    src/clustering/data/cluster_data.hpp
+    src/clustering/data/cluster_index.hpp
+    src/clustering/storage/cluster_op.hpp
+    src/clustering/storage/storage_ops.hpp
+    src/clustering/validator/noop_validator.hpp
+    src/clustering/validator/distribution_validator.hpp
+    src/clustering/validator/color_validator.hpp
 
     src/provider/pcd_provider.cpp
 
