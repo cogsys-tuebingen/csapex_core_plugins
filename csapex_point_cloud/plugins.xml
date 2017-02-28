@@ -205,6 +205,12 @@
   </description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::SacFit2" base_class_type="csapex::Node">
+  <description>
+    Apply RANSAC on pointclouds to fit certain models.
+  </description>
+  <tags>PointCloud</tags>
+</class>
 <class type="csapex::ModelToMarker" base_class_type="csapex::Node">
   <description>Takes a model message and creates a marker for rviz</description>
   <tags>PointCloud</tags>

@@ -23,6 +23,8 @@ using namespace csapex;
 using namespace csapex::connection_types;
 using namespace std;
 
+#include "sac_fit/sac_model.hpp"
+
 
 SacFit::SacFit()
 {
