@@ -7,6 +7,93 @@
 #include <random>
 
 namespace csapex {
+template<typename PointT>
+struct AntSampleConsensusModel : public pcl::SampleConsensusModel<PointT>
+{
+    virtual bool
+    computeModelCoefficients (const std::vector<int> &samples,
+                              Eigen::VectorXf &model_coefficients)
+    {
+        throw std::runtime_error("[AntSampleConsensusModel]: Do not use this method!");
+        return false;
+    }
+
+    virtual void
+    optimizeModelCoefficients (const std::vector<int> &inliers,
+                               const Eigen::VectorXf &model_coefficients,
+                               Eigen::VectorXf &optimized_coefficients)
+    {
+        throw std::runtime_error("[AntSampleConsensusModel]: Do not use this method!");
+    }
+
+    virtual void
+    getDistancesToModel (const Eigen::VectorXf &model_coefficients,
+                         std::vector<double> &distances)
+    {
+        throw std::runtime_error("[AntSampleConsensusModel]: Do not use this method!");
+    }
+
+    virtual void
+    selectWithinDistance (const Eigen::VectorXf &model_coefficients,
+                          const double threshold,
+                          std::vector<int> &inliers)
+    {
+        throw std::runtime_error("[AntSampleConsensusModel]: Do not use this method!");
+    }
+
+    virtual int
+    countWithinDistance (const Eigen::VectorXf &model_coefficients,
+                         const double threshold)
+
+    {
+        throw std::runtime_error("[AntSampleConsensusModel]: Do not use this method!");
+        return -1;
+    }
+
+    virtual void
+    projectPoints (const std::vector<int> &inliers,
+                   const Eigen::VectorXf &model_coefficients,
+                   pcl::PointCloud<PointT> &projected_points,
+                   bool copy_data_fields = true)
+
+    {
+        throw std::runtime_error("[AntSampleConsensusModel]: Do not use this method!");
+    }
+
+    virtual bool
+    doSamplesVerifyModel (const std::set<int> &indices,
+                          const Eigen::VectorXf &model_coefficients,
+                          const double threshold)
+    {
+        throw std::runtime_error("[AntSampleConsensusModel]: Do not use this method!");
+        return false;
+    }
+
+    virtual inline bool
+    isModelValid (const Eigen::VectorXf &model_coefficients)
+
+    {
+        throw std::runtime_error("[AntSampleConsensusModel]: Do not use this method!");
+        return false;
+    }
+
+    virtual inline bool
+    isSampleGood(const std::vector<int> &samples) const
+    {
+        throw std::runtime_error("[AntSampleConsensusModel]: Do not use this method!");
+        return false;
+    }
+
+    inline bool isSampleGood(typename pcl::SampleConsensusModel<PointT>::Ptr &model,
+                             const std::vector<int> &samples) const
+    {
+        return model->isSampleGood(samples);
+    }
+
+};
+
+
+
 /** \brief @b RandomSampleConsensus represents an implementation of the RANSAC (RAndom SAmple Consensus) algorithm, as
   * described in: "Random Sample Consensus: A Paradigm for Model Fitting with Applications to Image Analysis and
   * Automated Cartography", Martin A. Fischler and Robert C. Bolles, Comm. Of the ACM 24: 381–395, June 1981.
@@ -16,9 +103,9 @@ namespace csapex {
 template <typename PointT>
 class AntSampleConsensus : public pcl::SampleConsensus<PointT>
 {
-  typedef typename AntSampleConsensus<PointT>::Ptr SampleConsensusModelPtr;
+    typedef typename pcl::SampleConsensusModel<PointT>::Ptr SampleConsensusModelPtr;
 
-  public:
+public:
     typedef boost::shared_ptr<AntSampleConsensus> Ptr;
     typedef boost::shared_ptr<const AntSampleConsensus> ConstPtr;
 
@@ -34,16 +121,15 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
     /** \brief RANSAC (RAndom SAmple Consensus) main constructor
       * \param[in] model a Sample Consensus model
       */
-    AntSampleConsensus (const SampleConsensusModelPtr &model,
-                        double rho = 0.9,
-                        double alpha = 0.1)
-      : pcl::SampleConsensus<PointT> (model),
-        rho_(rho),
-        alpha_(alpha),
-        distribution_(0.0, 1.0)
+    AntSampleConsensus (const SampleConsensusModelPtr &model)
+        : pcl::SampleConsensus<PointT> (model),
+          rho_(0.9),
+          alpha_(0.1),
+          theta_(0.025),
+          distribution_(0.0, 1.0)
     {
-      // Maximum number of trials before we give up.
-      max_iterations_ = 10000;
+        // Maximum number of trials before we give up.
+        max_iterations_ = 10000;
     }
 
     /** \brief RANSAC (RAndom SAmple Consensus) main constructor
@@ -55,14 +141,16 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
     AntSampleConsensus (const SampleConsensusModelPtr &model,
                         double threshold,
                         double rho = 0.9,
-                        double alpha = 0.1)
-      : pcl::SampleConsensus<PointT> (model, threshold),
-        rho_(rho),
-        alpha_(alpha),
-        distribution_(0.0, 1.0)
+                        double alpha = 0.1,
+                        double theta = 0.025)
+        : pcl::SampleConsensus<PointT> (model, threshold),
+          rho_(rho),
+          alpha_(alpha),
+          theta_(theta),
+          distribution_(0.0, 1.0)
     {
-      // Maximum number of trials before we give up.
-      max_iterations_ = 10000;
+        // Maximum number of trials before we give up.
+        max_iterations_ = 10000;
     }
 
     /** \brief Compute the actual model and find the inliers
@@ -74,8 +162,8 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
         // Warn and exit if no threshold was set
         if (threshold_ == std::numeric_limits<double>::max())
         {
-          PCL_ERROR ("[pcl::AntSampleConsensus::computeModel] No threshold set!\n");
-          return (false);
+            PCL_ERROR ("[pcl::AntSampleConsensus::computeModel] No threshold set!\n");
+            return (false);
         }
 
 
@@ -83,144 +171,142 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
         int n_best_inliers_count = -INT_MAX;
         double k = 1.0;
 
-        std::vector<int> selection;
         Eigen::VectorXf model_coefficients;
 
 
 
-        const std::size_t size = sac_model_->getIndices()->size();
-        const double log_probability  = log (1.0 - probability_);
-        const double one_over_indices = 1.0 / static_cast<double> (size);
-
-        std::vector<double> tau(size, one_over_indices);
-        std::vector<double> D;
-
-        auto update_D = [&D, &tau, this]() {
-
-        };
-
-        const std::size_t model_samples = sac_model_->getSampleSize();
         const auto        indices = sac_model_->getIndices();
+        const std::size_t indices_size = sac_model_->getIndices()->size();
+        const std::size_t model_size = sac_model_->getSampleSize();
 
-        /// implement drawing
-        /// implement update of tau
-        /// the rest should be as ransac
-
-
-//        std::size_t k = size;
-//        math::random::Uniform<1> rng(0.0, 1.0);
-//        std::vector<double> u(size, std::pow(rng.get(), 1.0 / k));
-//        {
-//            for(int k = u.size() - 2; k >= 0 ; --k) {
-//                double u_ = std::pow(rng.get(), 1.0 / k);
-//                u[k] = u[k+1] * u_;
-//            }
-//        }
-
-
-
-
-//        virtual void
-//        getSamples (int &iterations, std::vector<int> &samples)
-//        {
-//          // We're assuming that indices_ have already been set in the constructor
-//          if (indices_->size () < getSampleSize ())
-//          {
-//            PCL_ERROR ("[pcl::SampleConsensusModel::getSamples] Can not select %zu unique points out of %zu!\n",
-//                       samples.size (), indices_->size ());
-//            // one of these will make it stop :)
-//            samples.clear ();
-//            iterations = INT_MAX - 1;
-//            return;
-//          }
-
-//          // Get a second point which is different than the first
-//          samples.resize (getSampleSize ());
-//          for (unsigned int iter = 0; iter < max_sample_checks_; ++iter)
-//          {
-//            // Choose the random indices
-//            if (samples_radius_ < std::numeric_limits<double>::epsilon ())
-//                SampleConsensusModel<PointT>::drawIndexSample (samples);
-//            else
-//                SampleConsensusModel<PointT>::drawIndexSampleRadius (samples);
-
-//            // If it's a good sample, stop here
-//            if (isSampleGood (samples))
-//            {
-//              PCL_DEBUG ("[pcl::SampleConsensusModel::getSamples] Selected %zu samples.\n", samples.size ());
-//              return;
-//            }
-//          }
-//          PCL_DEBUG ("[pcl::SampleConsensusModel::getSamples] WARNING: Could not select %d sample points in %d iterations!\n", getSampleSize (), max_sample_checks_);
-//          samples.clear ();
-//        }
-
-
-
-        int n_inliers_count = 0;
-        unsigned skipped_count = 0;
-        // supress infinite loops by just allowing 10 x maximum allowed iterations for invalid model parameters!
-        const unsigned max_skip = max_iterations_ * 10;
-
-        // Iterate
-        while (iterations_ < k && skipped_count < max_skip)
-        {
-          // Get X samples which satisfy the model criteria
-          sac_model_->getSamples (iterations_, selection);
-
-          if (selection.empty ())
-          {
-            PCL_ERROR ("[pcl::RandomSampleConsensus::computeModel] No samples could be selected!\n");
-            break;
-          }
-
-          // Search for inliers in the point cloud for the current plane model M
-          if (!sac_model_->computeModelCoefficients (selection, model_coefficients))
-          {
-            //++iterations_;
-            ++skipped_count;
-            continue;
-          }
-
-          // Select the inliers that are within threshold_ from the model
-          //sac_model_->selectWithinDistance (model_coefficients, threshold_, inliers);
-          //if (inliers.empty () && k > 1.0)
-          //  continue;
-
-          n_inliers_count = sac_model_->countWithinDistance (model_coefficients, threshold_);
-
-          // Better match ?
-          if (n_inliers_count > n_best_inliers_count)
-          {
-            n_best_inliers_count = n_inliers_count;
-
-            // Save the current model/inlier/coefficients selection as being the best so far
-            model_              = selection;
-            model_coefficients_ = model_coefficients;
-
-            // Compute the k parameter (k=log(z)/log(1-w^n))
-            double w = static_cast<double> (n_best_inliers_count) * one_over_indices;
-            double p_no_outliers = 1.0 - pow (w, static_cast<double> (selection.size ()));
-            p_no_outliers = (std::max) (std::numeric_limits<double>::epsilon (), p_no_outliers);       // Avoid division by -Inf
-            p_no_outliers = (std::min) (1.0 - std::numeric_limits<double>::epsilon (), p_no_outliers);   // Avoid division by 0.
-            k = log_probability / log (p_no_outliers);
-          }
-
-          ++iterations_;
-          PCL_DEBUG ("[pcl::RandomSampleConsensus::computeModel] Trial %d out of %f: %d inliers (best is: %d so far).\n", iterations_, k, n_inliers_count, n_best_inliers_count);
-          if (iterations_ > max_iterations_)
-          {
-            PCL_DEBUG ("[pcl::RandomSampleConsensus::computeModel] RANSAC reached the maximum number of trials.\n");
-            break;
-          }
+        if(indices_size < model_size) {
+            PCL_ERROR ("[pcl::RandomSampleConsensus::computeModel] Too few points in pointcloud!\n");
+            return false;
         }
 
-        PCL_DEBUG ("[pcl::RandomSampleConsensus::computeModel] Model: %zu size, %d inliers.\n", model_.size (), n_best_inliers_count);
+        const double log_probability  = log (1.0 - probability_);
+        const double one_over_indices = 1.0 / static_cast<double> (indices_size);
+
+        int    n_inliers_count = 0;
+        double n_inliers_mean = 0.0;
+        std::vector<double> tau(indices_size, one_over_indices);
+        std::vector<double> distances(indices_size);
+        std::vector<double> U;
+        std::vector<int> selection(model_size, -1);
+
+        /// update the pheromnone matrix - keep it normalized
+        auto updateTau = [&tau, indices_size, n_inliers_mean,  distances, n_inliers_count, this]() {
+            double delta_tau = n_inliers_count / (indices_size + n_inliers_mean);
+            double sum_tau = 0.0;
+            for(std::size_t i = 0 ; i < indices_size ; ++i) {
+                tau[i] = rho_ * tau[i] + delta_tau * std::exp(-0.5 * (distances[i] / theta_));
+                sum_tau += tau[i];
+            }
+            for(double &t : tau) {
+                t /= sum_tau;
+            }
+        };
+
+        /// prepare the cumulative sum for each step
+        auto updateU = [&U, indices_size, one_over_indices, this] () {
+            U.resize(indices_size, one_over_indices);
+            for(int k = (int) indices_size - 2 ; k >= 0 ; --k) {
+                double u_ = std::pow(distribution_(rne_), one_over_indices);
+                U[k] = U[k+1] * u_;
+            }
+        };
+        /// draw samples according to the pheromone matrix
+        auto draw = [&tau, &selection, &indices, model_size, U, this] () {
+            AntSampleConsensusModel<PointT> ant_model;
+            double cumsum_last = 0.0;
+            double cumsum      = tau.front();
+            int last_drawn = -1;
+
+            assert(model_size == selection.size());
+
+            auto in_range = [&cumsum, &cumsum_last](double u) {
+                return u >= cumsum_last && u < cumsum;
+            };
+
+            std::size_t sample_index = 0;
+            std::size_t selection_index = 0;
+            for(auto u : U) {
+                const int drawn = indices->at(sample_index);
+                while(!in_range(u) || last_drawn == drawn) {
+                    ++sample_index;
+                    cumsum_last = cumsum;
+                    cumsum += tau[sample_index];
+                }
+                selection[selection_index] = drawn;
+                if(!ant_model.isSampleGood(model_, selection)){
+                    continue;
+                }
+
+                ++selection_index;
+                if(selection_index == model_size)
+                    return;
+
+                last_drawn = drawn;
+            }
+            return ant_model.isSampleGood(model_, selection);
+        };
+
+        std::size_t       skipped = 0;
+        const std::size_t max_skip = max_iterations_ * 10;
+        for(std::size_t iteration = 0 ; iteration < k ; ) {
+            if(skipped >= max_skip)
+                break;
+
+            /// 1. update the cumulative sum vector for randomized drawing
+            updateU();
+
+            /// 2. draw with respect to the pheromone levels
+            if(!draw()) {
+                PCL_ERROR ("[pcl::RandomSampleConsensus::computeModel] No samples could be selected!\n");
+                break;
+            }
+
+            if(!sac_model_->computeModelCoefficients(selection, model_coefficients)) {
+                ++skipped;
+                continue;
+            }
+
+            n_inliers_count = sac_model_->countWithinDistance (model_coefficients, threshold_);
+            n_inliers_mean = iteration * n_inliers_mean + n_inliers_count;
+            n_inliers_mean /= static_cast<double>(iteration + 1);
+
+            // Better match ?
+            if (n_inliers_count > n_best_inliers_count)
+            {
+                n_best_inliers_count = n_inliers_count;
+
+                // Save the current model/inlier/coefficients selection as being the best so far
+                model_              = selection;
+                model_coefficients_ = model_coefficients;
+
+                // Compute the k parameter (k=log(z)/log(1-w^n))
+                double w = static_cast<double> (n_best_inliers_count) * one_over_indices;
+                double p_no_outliers = 1.0 - pow (w, static_cast<double> (selection.size ()));
+                p_no_outliers = (std::max) (std::numeric_limits<double>::epsilon (), p_no_outliers);       // Avoid division by -Inf
+                p_no_outliers = (std::min) (1.0 - std::numeric_limits<double>::epsilon (), p_no_outliers);   // Avoid division by 0.
+                k = log_probability / log (p_no_outliers);
+            }
+
+            updateTau(n_inliers_count);
+
+            ++iterations_;
+            PCL_DEBUG ("[pcl::RandomSampleConsensus::computeModel] Trial %d out of %f: %d inliers (best is: %d so far).\n", iterations_, k, n_inliers_count, n_best_inliers_count);
+            if (iterations_ > max_iterations_)
+            {
+                PCL_DEBUG ("[pcl::RandomSampleConsensus::computeModel] RANSAC reached the maximum number of trials.\n");
+                break;
+            }
+        }
 
         if (model_.empty ())
         {
-          inliers_.clear ();
-          return (false);
+            inliers_.clear ();
+            return (false);
         }
 
         // Get the set of inliers that correspond to the best model found so far
@@ -231,6 +317,7 @@ class AntSampleConsensus : public pcl::SampleConsensus<PointT>
 protected:
     double rho_;
     double alpha_;
+    double theta_;
     std::default_random_engine             rne_;
     std::uniform_real_distribution<double> distribution_;
 };

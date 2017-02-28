@@ -19,8 +19,8 @@ protected:
     {
         // Build the sample consensus method
         if(method_type == SAC_ANTSAC) {
-            if (Base::sac_)
-                Base::sac_.reset ();
+            Base::sac_.reset(new AntSampleConsensus<PointT>(Base::model_, Base::threshold_));
+
             // Set the Sample Consensus parameters if they are given/changed
             if (Base::sac_->getProbability () != Base::probability_)
             {
@@ -53,8 +53,8 @@ protected:
     {
         // Build the sample consensus method
         if(method_type == SAC_ANTSAC) {
-            if (Base::sac_)
-                Base::sac_.reset ();
+            Base::sac_.reset(new AntSampleConsensus<PointT>(Base::getModel(),Base::threshold_));
+
             // Set the Sample Consensus parameters if they are given/changed
             if (Base::sac_->getProbability () != Base::probability_)
             {
