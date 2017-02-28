@@ -154,7 +154,6 @@ add_library(${PROJECT_NAME}_plugin_node
     src/segmentation/sac_fit/sac_segmentation.hpp
     src/segmentation/sac_fit/sac_model.hpp
     src/segmentation/sac_fit/sac_model_plane.hpp
-    src/segmentation/sac_fit/sac_selection.hpp
     src/segmentation/sac_fit/ransac.hpp
     src/segmentation/sac_fit/antsac.hpp
 

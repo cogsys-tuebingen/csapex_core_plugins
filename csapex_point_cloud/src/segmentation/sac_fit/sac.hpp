@@ -12,9 +12,34 @@ public:
     using Model = SampleConsensusModel<PointT>;
 
     struct Parameters {
-        float            threshold = 0.1;
-        std::size_t      maximum_iterations = 5000;
-        double           probability = 0.99;
+        enum TerminationCriteria {MAX_ITERATION = 1,    /// maximum iteration reached
+                                  MIN_DISTANCE  = 2,    /// minimum mean distance reached
+                                  MAX_RETRY     = 4     /// maximum retries to find better model
+                                 };
+
+        inline bool terminate(const std::size_t iteration,
+                              const float mean_distance,
+                              const std::size_t retries,
+                              const std::size_t inliers) const
+        {
+            bool t = false;
+            t |= (MAX_ITERATION & termination_criteria) && iteration >= maximum_iterations;
+            t |= (MIN_DISTANCE & termination_criteria) && mean_distance <= maximum_mean_distance;
+            t |= (MAX_RETRY & termination_criteria) && retries >= maximum_retries;
+            return t && (inliers >= minimum_inliers);
+        }
+
+        float            maximum_model_distance = 0.1;
+        double           probability            = 0.99;
+
+        int termination_criteria = (MAX_ITERATION | MIN_DISTANCE);
+
+        float            maximum_mean_distance  = 0.05;
+        std::size_t      maximum_iterations     = 5000;
+        std::size_t      maximum_retries        = 500;
+        std::size_t      minimum_inliers        = 10000;
+
+
     };
 
     SampleConsensus(const std::vector<int> &indices) :
@@ -33,7 +58,7 @@ public:
 
     virtual bool computeModel(typename Model::Ptr &model) = 0;
 
-    void setIndices(const std::vector<int> &indices)
+    virtual void setIndices(const std::vector<int> &indices)
     {
         indices_ = indices;
     }

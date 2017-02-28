@@ -13,6 +13,7 @@
 /// POINT CLOUD
 #include "sac_fit/sac.hpp"
 #include "sac_fit/ransac.hpp"
+#include "sac_fit/antsac.hpp"
 #include "sac_fit/sac_model.hpp"
 #include "sac_fit/sac_model_plane.hpp"
 
@@ -28,7 +29,6 @@ using namespace csapex;
 using namespace csapex::connection_types;
 using namespace std;
 
-#include "sac_fit/sac_model.hpp"
 
 
 SacFit2::SacFit2()
@@ -64,7 +64,7 @@ void SacFit2::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
 
     typename sample_consensus::SampleConsensusModel<PointT>::Ptr model(new sample_consensus::ModelPlane<PointT>(cloud));
-    typename sample_consensus::SampleConsensus<PointT>::Ptr sac(new sample_consensus::Ransac<PointT>(cloud->size(), typename sample_consensus::Ransac<PointT>::Parameters()));
+    typename sample_consensus::Ransac<PointT>::Ptr sac(new sample_consensus::Ransac<PointT>(cloud->size(), typename sample_consensus::Ransac<PointT>::Parameters()));
 
     sac->computeModel(model);
 

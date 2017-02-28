@@ -13,14 +13,17 @@ public:
     using PointCloud   = pcl::PointCloud<PointT>;
     using Coefficients = Eigen::VectorXf;
 
+    struct InlierStatistic {
+        double      mean_distance = -1.0;
+        std::size_t count = -1;
+    };
+
     SampleConsensusModel(const typename PointCloud::ConstPtr &pointcloud) :
         pointcloud_(pointcloud)
     {
     }
 
-    virtual SampleConsensusModel::Ptr clone() const = 0;
-
-    bool computeModelCoefficients(const std::vector<int> &indices)
+    inline bool computeModelCoefficients(const std::vector<int> &indices)
     {
         if(doComputeModelCoefficients(indices)) {
             model_indices_ = indices;
@@ -29,26 +32,20 @@ public:
         return false;
     }
 
-    bool getModelCoefficients(Coefficients &coefficients) const
+    inline bool getModelCoefficients(Coefficients &coefficients) const
     {
         coefficients = model_coefficients_;
         return isModelValid();
     }
 
-    bool getModelIndices(std::vector<int> &indices) const
+    inline bool getModelIndices(std::vector<int> &indices) const
     {
         indices = model_indices_;
         return isModelValid();
     }
 
-    virtual bool        isModelValid() const = 0;
-    virtual bool        validateSamples(const std::vector<int> &indices) const = 0;
-    virtual std::size_t getModelDimension() const = 0;
-    virtual double      getDistanceToModel(const int &index) const = 0;
-    virtual void        getDistancesToModel(const std::vector<int> &indices, std::vector<float> &distances) const = 0;
-
-    std::size_t countInliers(const std::vector<int> &indices,
-                             const float maximum_distance) const
+    inline std::size_t countInliers(const std::vector<int> &indices,
+                                    const float maximum_distance) const
     {
         if(!isModelValid())
             return 0;
@@ -62,8 +59,29 @@ public:
         return count;
     }
 
-    void getInliers(const float maximum_distance,
-                    std::vector<int> &dst_indices) const
+    inline void getInlierStatistic(const std::vector<int> &indices,
+                                   const float maximum_distance,
+                                   InlierStatistic &statistic) const
+    {
+        if(!isModelValid())
+            return;
+
+        statistic.count = 0;
+        statistic.mean_distance = 0.0;
+
+        double distance = 0.0;
+        for(const int i : indices) {
+            distance = getDistanceToModel(i);
+            if(distance <= maximum_distance) {
+                statistic.mean_distance += distance;
+                ++statistic.count;
+            }
+        }
+        statistic.mean_distance /= static_cast<double>(statistic.count);
+    }
+
+    inline void getInliers(const float maximum_distance,
+                           std::vector<int> &dst_indices) const
     {
         const std::size_t size = pointcloud_->size();
         dst_indices.reserve(size);
@@ -74,9 +92,9 @@ public:
         }
     }
 
-    void getInliers(const std::vector<int> &src_indices,
-                    const float maximum_distance,
-                    std::vector<int> &dst_indices) const
+    inline void getInliers(const std::vector<int> &src_indices,
+                           const float maximum_distance,
+                           std::vector<int> &dst_indices) const
     {
         if(!isModelValid())
             return;
@@ -89,9 +107,9 @@ public:
         }
     }
 
-    void getOutliers(const std::vector<int> &src_indices,
-                     const float maximum_distance,
-                     std::vector<int> &dst_indices)
+    inline void getOutliers(const std::vector<int> &src_indices,
+                            const float maximum_distance,
+                            std::vector<int> &dst_indices)
     {
         if(!isModelValid())
             return;
@@ -104,15 +122,13 @@ public:
         }
     }
 
-    Coefficients getModelCoefficients() const
-    {
-        return model_coefficients_;
-    }
-
-    std::vector<int> getModelSampleInices()
-    {
-        return model_indices_;
-    }
+    /// Methods to be implemented by the different model types
+    virtual SampleConsensusModel::Ptr clone() const = 0;
+    virtual bool                      isModelValid() const = 0;
+    virtual bool                      validateSamples(const std::vector<int> &indices) const = 0;
+    virtual std::size_t               getModelDimension() const = 0;
+    virtual double                    getDistanceToModel(const int &index) const = 0;
+    virtual void                      getDistancesToModel(const std::vector<int> &indices, std::vector<float> &distances) const = 0;
 
 protected:
     virtual bool   doComputeModelCoefficients(const std::vector<int> &indices) = 0;
