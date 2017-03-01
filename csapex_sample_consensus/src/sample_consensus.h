@@ -9,10 +9,10 @@
 
 
 namespace csapex {
-class SacFit2 : public csapex::Node
+class SampleConsensus : public csapex::Node
 {
 public:
-    SacFit2();
+    SampleConsensus();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;

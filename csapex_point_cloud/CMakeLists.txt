@@ -146,16 +146,6 @@ add_library(${PROJECT_NAME}_plugin_node
     src/segmentation/extract_clusters.cpp
     src/segmentation/polar_clustering.hpp
     src/segmentation/sac_fit.cpp
-    #src/segmentation/antsac.hpp
-    #src/segmentation/sac_segmentation.hpp
-
-    src/segmentation/sacfit2.cpp
-    src/segmentation/sac_fit/sac.hpp
-    src/segmentation/sac_fit/sac_segmentation.hpp
-    src/segmentation/sac_fit/sac_model.hpp
-    src/segmentation/sac_fit/sac_model_plane.hpp
-    src/segmentation/sac_fit/ransac.hpp
-    src/segmentation/sac_fit/antsac.hpp
 
     src/provider/pcd_provider.cpp
 

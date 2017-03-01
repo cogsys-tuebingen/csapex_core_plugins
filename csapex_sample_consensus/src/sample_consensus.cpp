@@ -1,4 +1,4 @@
-#include "sacfit2.h"
+#include "sample_consensus.h"
 
 /// PROJECT
 #include <csapex/msg/io.h>
@@ -11,11 +11,11 @@
 
 
 /// POINT CLOUD
-#include "sac_fit/sac.hpp"
-#include "sac_fit/ransac.hpp"
-#include "sac_fit/antsac.hpp"
-#include "sac_fit/sac_model.hpp"
-#include "sac_fit/sac_model_plane.hpp"
+#include "sac.hpp"
+#include "ransac.hpp"
+#include "antsac.hpp"
+#include "sac_model.hpp"
+#include "sac_model_plane.hpp"
 
 
 /// SYSTEM
@@ -23,7 +23,7 @@
 #include <tf/tf.h>
 #include <boost/mpl/for_each.hpp>
 
-CSAPEX_REGISTER_CLASS(csapex::SacFit2, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::SampleConsensus, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -31,23 +31,23 @@ using namespace std;
 
 
 
-SacFit2::SacFit2()
+SampleConsensus::SampleConsensus()
 {
 }
 
-void SacFit2::setupParameters(Parameterizable &parameters)
+void SampleConsensus::setupParameters(Parameterizable &parameters)
 {
 
 }
 
 
-void SacFit2::process()
+void SampleConsensus::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_cloud_));
-    boost::apply_visitor (PointCloudMessage::Dispatch<SacFit2>(this, msg), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<SampleConsensus>(this, msg), msg->value);
 }
 
-void SacFit2::setup(NodeModifier& node_modifier)
+void SampleConsensus::setup(NodeModifier& node_modifier)
 {
     in_cloud_    = node_modifier.addInput<PointCloudMessage>("PointCloud");
     in_indices_  = node_modifier.addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Indices"); // optional input
@@ -57,7 +57,7 @@ void SacFit2::setup(NodeModifier& node_modifier)
 }
 
 template <class PointT>
-void SacFit2::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+void SampleConsensus::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     std::shared_ptr<std::vector<pcl::PointIndices> > out_indices(new std::vector<pcl::PointIndices>);
     std::shared_ptr<std::vector<ModelMessage> >      out_models(new std::vector<ModelMessage>);

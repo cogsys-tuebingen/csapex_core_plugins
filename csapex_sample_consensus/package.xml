@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+  <name>csapex_sample_consensus</name>
+  <version>0.0.1</version>
+  <description>The csapex_sample_consensus package contains sample consensus methods to fit models to 3D data.</description>
+
+  <maintainer email="richard.hanten@uni-tuebingen.de">hanten</maintainer>
+  <license>BSD</license>
+  <author email="richard.hanten@uni-tuebingen.de">hanten</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>csapex</build_depend>
+  <build_depend>csapex_core_plugins</build_depend>
+  <build_depend>csapex_point_cloud</build_depend>
+
+  <run_depend>csapex</run_depend>
+  <run_depend>csapex_core_plugins</run_depend>
+  <run_depend>csapex_point_cloud</run_depend>
+
+  <export>
+    <csapex plugin="${prefix}/plugins.xml" />
+  </export>
+</package>
