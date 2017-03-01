@@ -33,6 +33,7 @@ private:
     Input*  in_indices_;
     Output* out_clusters_accepted_;
     Output* out_clusters_rejected_;
+    Output* out_voxels_;
 
     BackendType backend_;
 

@@ -10,15 +10,32 @@
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/view/utility/color.hpp>
 
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex_point_cloud/indeces_message.h>
 #include <cslibs_indexed_storage/backends.hpp>
 
+#include <boost/make_shared.hpp>
+
 using namespace csapex;
 using namespace csapex::connection_types;
 using namespace csapex::clustering;
 namespace cis = cslibs_indexed_storage;
+
+namespace
+{
+struct Color
+{
+    Color(uint8_t r, uint8_t g, uint8_t b) :
+            r(r), g(g), b(b)
+    {}
+
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+};
+}
 
 void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 {
@@ -120,6 +137,7 @@ void ClusterPointCloud::setup(NodeModifier& node_modifier)
 
     out_clusters_accepted_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Clusters (accepted)");
     out_clusters_rejected_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Clusters (rejected)");
+    out_voxels_            = node_modifier.addOutput<PointCloudMessage>("Voxels");
 }
 
 void ClusterPointCloud::process()
@@ -214,24 +232,22 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
                                offsite_storage, std::integral_constant<bool, BackendTraits::IsFixedSize>{});
     }
 
+    if (voxel_validation_enabled_)
     {
         NAMED_INTERLUDE(validate_voxels);
-        if (voxel_validation_enabled_)
-        {
-            storage.traverse([this](const VoxelIndex::Type&, DataType& data)
-                             {
-                                 std::size_t min_count = static_cast<std::size_t>(voxel_validation_min_count_);
-                                 if (voxel_validation_scale_ > 0.0) {
-                                     const double depth = data.depth.getMean();
-                                     min_count = static_cast<std::size_t>(voxel_validation_min_count_
-                                                                          * std::floor(1.0
-                                                                                       / (voxel_validation_scale_ * depth * depth)
-                                                                                       + 0.5));
-                                 }
-                                 if (data.indices.size() < min_count)
-                                     data.state = VoxelState::INVALID;
-                             });
-        }
+        storage.traverse([this](const VoxelIndex::Type&, DataType& data)
+                         {
+                             std::size_t min_count = static_cast<std::size_t>(voxel_validation_min_count_);
+                             if (voxel_validation_scale_ > 0.0) {
+                                 const double depth = data.depth.getMean();
+                                 min_count = static_cast<std::size_t>(voxel_validation_min_count_
+                                                                      * std::floor(1.0
+                                                                                   / (voxel_validation_scale_ * depth * depth)
+                                                                                   + 0.5));
+                             }
+                             if (data.indices.size() < min_count)
+                                 data.state = VoxelState::INVALID;
+                         });
     }
 
     DistributionValidator<DataType> distribution_validator(distribution_type_,
@@ -273,6 +289,59 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
         filter(*clusters_accepted_message_);
         filter(*clusters_rejected_message_);
+    }
+
+    if (msg::isConnected(out_voxels_))
+    {
+        NAMED_INTERLUDE(voxel_cloud);
+
+        using VoxelCloud = pcl::PointCloud<pcl::PointXYZRGB>;
+        auto voxel_cloud = boost::make_shared<VoxelCloud>();
+
+        auto default_color = Color(50, 65, 75);
+        std::map<std::size_t, Color> colors;
+
+        VoxelIndex::Type min_index;
+        min_index.fill(std::numeric_limits<int>::max());
+
+        storage.traverse([&min_index](const VoxelIndex::Type& index, const DataType&)
+                         {
+                             for (std::size_t i = 0; i < 3; ++i)
+                                 min_index[i] = std::min(min_index[i], index[i]);
+                         });
+
+        auto create_point = [min_index, this](const VoxelIndex::Type& index)
+        {
+            pcl::PointXYZRGB point;
+            point.x = static_cast<float>((index[0] + min_index[0]) * voxel_size_[0] + voxel_size_[0] * 0.5);
+            point.y = static_cast<float>((index[1] + min_index[1]) * voxel_size_[1] + voxel_size_[1] * 0.5);
+            point.z = static_cast<float>((index[2] + min_index[2]) * voxel_size_[2] + voxel_size_[2] * 0.5);
+            return point;
+        };
+
+        storage.traverse([&voxel_cloud, &colors, default_color, create_point](const VoxelIndex::Type& index, const DataType& data)
+                         {
+                             auto point = create_point(index);
+                             const auto cluster = data.cluster;
+
+                             if (colors.find(cluster) == colors.end())
+                             {
+                                 double r = default_color.r, g = default_color.g, b = default_color.b;
+                                 if (data.state == VoxelState::ACCEPTED)
+                                     color::fromCount(cluster + 1, r, g, b);
+                                 colors.emplace(cluster, Color(r, g, b));
+                             }
+
+                             const auto& color = colors.at(cluster);
+                             point.r = color.r;
+                             point.g = color.g;
+                             point.b = color.b;
+                             voxel_cloud->push_back(point);
+                         });
+
+        auto voxel_message = std::make_shared<PointCloudMessage>(cloud->header.frame_id, cloud->header.stamp);
+        voxel_message->value = std::move(voxel_cloud);
+        msg::publish(out_voxels_, voxel_message);
     }
 
     msg::publish<GenericVectorMessage, pcl::PointIndices>(out_clusters_accepted_, clusters_accepted_message_);
