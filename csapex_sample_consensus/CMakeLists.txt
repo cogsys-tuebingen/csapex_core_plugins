@@ -38,8 +38,7 @@ add_library(${PROJECT_NAME}_plugin_node
 
     src/sac_model_plane.hpp
     src/sac_model_normal_plane.hpp
-
-
+    src/sac_model_parallel_normal_plane.hpp
 
     src/sac_segmentation.hpp
     src/sample_consensus.cpp

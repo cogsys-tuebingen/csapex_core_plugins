@@ -19,7 +19,7 @@
 #include "sac_model_plane.hpp"
 #include "sac_model_from_normals.hpp"
 #include "sac_model_normal_plane.hpp"
-
+#include "sac_model_parallel_normal_plane.hpp"
 
 /// SYSTEM
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
