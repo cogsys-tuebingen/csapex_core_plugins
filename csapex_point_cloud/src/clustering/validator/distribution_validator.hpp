@@ -1,12 +1,13 @@
 #pragma once
 
-#include "../data/cluster_data.hpp"
+#include "../data/feature_distribution.hpp"
+#include "../data/feature_helpers.hpp"
 #include "noop_validator.hpp"
 
-namespace csapex
+namespace csapex { namespace clustering
 {
 
-enum class ClusterDistributionAnalysisType
+enum class DistributionAnalysisType
 {
     DEFAULT,
     PCA2D,
@@ -17,7 +18,7 @@ template<typename Data>
 struct DistributionValidatorImpl
 {
 public:
-    DistributionValidatorImpl(ClusterDistributionAnalysisType type,
+    DistributionValidatorImpl(DistributionAnalysisType type,
                               std::array<std::pair<double, double>, 3> std_dev) :
         type_(type),
         std_dev_(std_dev)
@@ -32,7 +33,7 @@ public:
 
     bool start(const Data& data)
     {
-        auto& feature = data.template getFeature<ClusterFeatureDistribution>();
+        auto& feature = data.template getFeature<DistributionFeature>();
 
         current_distribution_.reset();
         current_distribution_ += feature.distribution;
@@ -42,7 +43,7 @@ public:
 
     bool extend(const Data&, const Data& data)
     {
-        auto& feature = data.template getFeature<ClusterFeatureDistribution>();
+        auto& feature = data.template getFeature<DistributionFeature>();
 
         current_distribution_ += feature.distribution;
 
@@ -54,11 +55,11 @@ public:
         switch (type_)
         {
             default:
-            case ClusterDistributionAnalysisType::DEFAULT:
+            case DistributionAnalysisType::DEFAULT:
                 return validateCovDefault();
-            case ClusterDistributionAnalysisType::PCA2D:
+            case DistributionAnalysisType::PCA2D:
                 return validateCovPCA2D();
-            case ClusterDistributionAnalysisType::PCA3D:
+            case DistributionAnalysisType::PCA3D:
                 return validateCovPCA3D();
         }
     }
@@ -118,20 +119,20 @@ private:
     math::Distribution<3> current_distribution_;
 
 private:
-    ClusterDistributionAnalysisType type_;
+    DistributionAnalysisType type_;
     std::array<std::pair<double, double>, 3> std_dev_;
 };
 
 template<typename Data>
 struct DistributionValidator :
         std::conditional<
-                detail::tuple_contains<typename Data::FeatureList, ClusterFeatureDistribution>::value,
+                detail::tuple_contains<typename Data::FeatureList, DistributionFeature>::value,
                 DistributionValidatorImpl<Data>,
                 NoOpValidator<Data>
         >::type
 {
     using BaseType = typename std::conditional<
-            detail::tuple_contains<typename Data::FeatureList, ClusterFeatureDistribution>::value,
+            detail::tuple_contains<typename Data::FeatureList, DistributionFeature>::value,
             DistributionValidatorImpl<Data>,
             NoOpValidator<Data>
     >::type;
@@ -140,4 +141,4 @@ struct DistributionValidator :
 
 };
 
-}
+}}

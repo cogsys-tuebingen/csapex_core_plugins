@@ -152,13 +152,17 @@ add_library(${PROJECT_NAME}_plugin_node
 
     src/clustering/cluster.cpp
     src/clustering/cluster.hpp
-    src/clustering/data/cluster_data.hpp
-    src/clustering/data/cluster_index.hpp
+    src/clustering/data/voxel_data.hpp
+    src/clustering/data/voxel_index.hpp
+    src/clustering/data/feature_color.hpp
+    src/clustering/data/feature_distribution.hpp
+    src/clustering/data/feature_helpers.hpp
     src/clustering/storage/cluster_op.hpp
     src/clustering/storage/storage_ops.hpp
     src/clustering/validator/noop_validator.hpp
     src/clustering/validator/distribution_validator.hpp
     src/clustering/validator/color_validator.hpp
+    src/clustering/validator/color_differences.hpp
 
     src/provider/pcd_provider.cpp
 

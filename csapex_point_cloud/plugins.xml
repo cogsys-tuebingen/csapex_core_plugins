@@ -213,7 +213,7 @@
   <description>Cluster implementation from pcl</description>
   <tags>PointCloud</tags>
 </class>
-<class type="csapex::ClusterPointCloud" base_class_type="csapex::Node">
+<class type="csapex::clustering::ClusterPointCloud" base_class_type="csapex::Node">
   <description>Cluster</description>
   <tags>PointCloud</tags>
 </class>

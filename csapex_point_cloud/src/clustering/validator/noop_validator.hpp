@@ -1,7 +1,6 @@
 #pragma once
 
-namespace csapex
-{
+namespace csapex { namespace clustering {
 
 template<typename Data>
 class NoOpValidator
@@ -27,4 +26,4 @@ public:
     }
 };
 
-}
+}}

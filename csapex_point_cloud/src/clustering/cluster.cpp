@@ -1,5 +1,5 @@
 #include "cluster.hpp"
-#include "data/cluster_data.hpp"
+#include "data/voxel_data.hpp"
 #include "storage/storage_ops.hpp"
 #include "storage/cluster_op.hpp"
 
@@ -9,16 +9,15 @@
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/utility/register_apex_plugin.h>
-
 #include <csapex/msg/generic_vector_message.hpp>
+
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex_point_cloud/indeces_message.h>
-
-#include <cslibs_indexed_storage/storage.hpp>
 #include <cslibs_indexed_storage/backends.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
+using namespace csapex::clustering;
 namespace cis = cslibs_indexed_storage;
 
 void ClusterPointCloud::setupParameters(Parameterizable& parameters)
@@ -46,16 +45,16 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
     param::ParameterPtr param_distribution = param::ParameterFactory::declareBool("filter/distribution", false);
     std::function<bool()> enable_distribution = [param_distribution]() -> bool  { return param_distribution->as<bool>(); };
     static const std::map<std::string, int> distribution_types{
-            { "DEFAULT", static_cast<int>(ClusterDistributionAnalysisType::DEFAULT) },
-            { "PCA2D", static_cast<int>(ClusterDistributionAnalysisType::PCA2D) },
-            { "PCA3D", static_cast<int>(ClusterDistributionAnalysisType::PCA3D) },
+            { "DEFAULT", static_cast<int>(DistributionAnalysisType::DEFAULT) },
+            { "PCA2D", static_cast<int>(DistributionAnalysisType::PCA2D) },
+            { "PCA3D", static_cast<int>(DistributionAnalysisType::PCA3D) },
     };
 
     parameters.addParameter(param_distribution,
                             distribution_enabled_);
     parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("filter/distribution/type",
                                                                                     distribution_types,
-                                                                                    static_cast<int>(ClusterDistributionAnalysisType::DEFAULT)),
+                                                                                    static_cast<int>(DistributionAnalysisType::DEFAULT)),
                                        enable_distribution,
                                        reinterpret_cast<int&>(distribution_type_));
     parameters.addConditionalParameter(param::ParameterFactory::declareInterval("filter/distribution/std_dev/x", 0.0, 10.0, 0.0, 10.0, 0.01),
@@ -71,16 +70,16 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
     param::ParameterPtr param_color = param::ParameterFactory::declareBool("filter/color", false);
     std::function<bool()> enable_color = [param_color]() -> bool { return param_color->as<bool>(); };
     static const std::map<std::string, int> color_types{
-            { "CIE76", static_cast<int>(ClusterColorType::CIE76) },
-            { "CIE94Grahpics", static_cast<int>(ClusterColorType::CIE94Grahpics) },
-            { "CIE94Textiles", static_cast<int>(ClusterColorType::CIE94Textiles) },
+            { "CIE76", static_cast<int>(ColorDifferenceType::CIE76) },
+            { "CIE94Grahpics", static_cast<int>(ColorDifferenceType::CIE94Grahpics) },
+            { "CIE94Textiles", static_cast<int>(ColorDifferenceType::CIE94Textiles) },
     };
 
     parameters.addParameter(param_color,
                             color_enabled_);
     parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("filter/color/type",
                                                                                     color_types,
-                                                                                    static_cast<int>(ClusterColorType::CIE76)),
+                                                                                    static_cast<int>(ColorDifferenceType::CIE76)),
                                        enable_color,
                                        reinterpret_cast<int&>(color_type_));
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/color/max_difference", 0.0, 4000.0, 0.0, 0.1),
@@ -125,22 +124,22 @@ void ClusterPointCloud::selectData(typename pcl::PointCloud<PointT>::ConstPtr cl
 {
     if (distribution_enabled_ && color_enabled_)
     {
-        using Data = ClusterData<ClusterFeatureDistribution, ClusterFeatureColor>;
+        using Data = VoxelData<DistributionFeature, ColorFeature>;
         selectStorage<Data, PointT>(cloud);
     }
     else if (distribution_enabled_)
     {
-        using Data = ClusterData<ClusterFeatureDistribution>;
+        using Data = VoxelData<DistributionFeature>;
         selectStorage<Data, PointT>(cloud);
     }
     else if (color_enabled_)
     {
-        using Data = ClusterData<ClusterFeatureColor>;
+        using Data = VoxelData<ColorFeature>;
         selectStorage<Data, PointT>(cloud);
     }
     else
     {
-        using Data = ClusterData<>;
+        using Data = VoxelData<>;
         selectStorage<Data, PointT>(cloud);
     }
 }
@@ -153,9 +152,20 @@ void ClusterPointCloud::selectStorage(typename pcl::PointCloud<PointT>::ConstPtr
     {
         default:
         case BackendType::PAGED:
-            return clusterCloud<cis::AutoIndexStorage<DataType, cis::backend::simple::UnorderedComponentMap>, PointT>(cloud);
+        {
+            using Storage = cis::AutoIndexStorage<DataType, cis::backend::simple::UnorderedComponentMap>;
+            return clusterCloud<Storage, PointT>(cloud);
+        }
         case BackendType::KDTREE:
-            return clusterCloud<cis::AutoIndexStorage<DataType, cis::backend::kdtree::KDTreeBuffered>, PointT>(cloud);
+        {
+            using Storage = cis::AutoIndexStorage<DataType, cis::backend::kdtree::KDTreeBuffered>;
+            return clusterCloud<Storage, PointT>(cloud);
+        }
+        case BackendType::ARRAY:
+        {
+            using Storage = cis::AutoIndexStorage<cis::interface::non_owning<DataType>, cis::backend::array::Array>;
+            return clusterCloud<Storage, PointT>(cloud);
+        }
     }
 }
 
@@ -176,14 +186,16 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     auto clusters_rejected_message_ = std::make_shared<std::vector<pcl::PointIndices>>();
 
     using DataType = typename Storage::data_t;
-    using StorageOps = ClusterStorageOps<true>;
-    using Clusterer = ClusterOp<Storage, DistributionValidator<DataType>, ColorValidator<DataType>>;
+    using BackendTraits = cis::backend::backend_traits<typename Storage::backend_tag>;
+    using Clusterer = ClusterOperation<Storage, DistributionValidator<DataType>, ColorValidator<DataType>>;
 
+    std::vector<DataType> offsite_storage;
     Storage storage;
     {
         NAMED_INTERLUDE(init);
-        ClusterIndex indexer(voxel_size_[0], voxel_size_[1], voxel_size_[2]);
-        StorageOps::init(*cloud, input_indices, indexer, storage);
+        VoxelIndex indexer(voxel_size_[0], voxel_size_[1], voxel_size_[2]);
+        StorageOperation::init(*cloud, input_indices, indexer, storage,
+                               offsite_storage, std::integral_constant<bool, BackendTraits::IsFixedSize>{});
     }
 
     DistributionValidator<DataType> distribution_validator(distribution_type_,
@@ -203,7 +215,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
     {
         NAMED_INTERLUDE(extract);
-        StorageOps::extract(storage,
+        StorageOperation::extract(storage,
                             cluster_op,
                             *clusters_accepted_message_,
                             *clusters_rejected_message_);
@@ -231,4 +243,4 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     msg::publish<GenericVectorMessage, pcl::PointIndices>(out_clusters_rejected_, clusters_rejected_message_);
 }
 
-CSAPEX_REGISTER_CLASS(csapex::ClusterPointCloud, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::clustering::ClusterPointCloud, csapex::Node)

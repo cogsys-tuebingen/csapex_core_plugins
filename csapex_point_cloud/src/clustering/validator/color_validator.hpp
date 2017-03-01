@@ -1,11 +1,14 @@
 #pragma once
 
-#include "../../segmentation/regular_structures/color_differences.hpp"
+#include "../data/feature_color.hpp"
+#include "../data/feature_helpers.hpp"
+#include "noop_validator.hpp"
+#include "color_differences.hpp"
 
-namespace csapex
+namespace csapex { namespace clustering
 {
 
-enum ClusterColorType
+enum ColorDifferenceType
 {
     CIE76,
     CIE94Grahpics,
@@ -16,7 +19,7 @@ template<typename Data>
 class ColorValidatorImpl
 {
 public:
-    ColorValidatorImpl(ClusterColorType type,
+    ColorValidatorImpl(ColorDifferenceType type,
                        const std::array<double, 3>& weights,
                        double threshold) :
         weights_(weights),
@@ -44,8 +47,8 @@ public:
 
     bool extend(const Data& center, const Data& data)
     {
-        const auto& ref_feature = data.template getFeature<ClusterFeatureColor>();
-        const auto& feature = data.template getFeature<ClusterFeatureColor>();
+        const auto& ref_feature = data.template getFeature<ColorFeature>();
+        const auto& feature = data.template getFeature<ColorFeature>();
 
         double diff = ref_feature.difference(difference_, weights_, feature);
         return diff <= threshold_;
@@ -57,7 +60,7 @@ public:
     }
 
 private:
-    ClusterFeatureColor::DifferenceFunction difference_;
+    ColorFeature::DifferenceFunction difference_;
     std::array<double, 3> weights_;
     double threshold_;
 };
@@ -65,13 +68,13 @@ private:
 template<typename Data>
 struct ColorValidator :
         std::conditional<
-                detail::tuple_contains<typename Data::FeatureList, ClusterFeatureColor>::value,
+                detail::tuple_contains<typename Data::FeatureList, ColorFeature>::value,
                 ColorValidatorImpl<Data>,
                 NoOpValidator<Data>
         >::type
 {
     using BaseType = typename std::conditional<
-            detail::tuple_contains<typename Data::FeatureList, ClusterFeatureColor>::value,
+            detail::tuple_contains<typename Data::FeatureList, ColorFeature>::value,
             ColorValidatorImpl<Data>,
             NoOpValidator<Data>
     >::type;
@@ -80,4 +83,4 @@ struct ColorValidator :
 
 };
 
-}
+}}

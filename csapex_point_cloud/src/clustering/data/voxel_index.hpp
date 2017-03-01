@@ -2,16 +2,16 @@
 
 #include <array>
 
-namespace csapex
+namespace csapex { namespace clustering
 {
 
-class ClusterIndex
+class VoxelIndex
 {
 public:
     using Type = std::array<int, 3>;
 
-    constexpr ClusterIndex(float size_x, float size_y, float size_z) :
-            voxel_size_{size_x, size_y, size_z}
+    constexpr VoxelIndex(float size_x, float size_y, float size_z) :
+            voxel_size_{ size_x, size_y, size_z }
     {}
 
     template<typename PointT>
@@ -28,8 +28,17 @@ public:
         return std::isfinite(point.x) && std::isfinite(point.y) && std::isfinite(point.z);
     }
 
+    static inline void minmax(const Type& index, Type& min, Type& max)
+    {
+        for (std::size_t i = 0; i < 3; ++i)
+        {
+            min[i] = std::min(index[i], min[i]);
+            max[i] = std::max(index[i], max[i]);
+        }
+    }
+
 private:
     std::array<float, 3> voxel_size_;
 };
 
-}
+}}

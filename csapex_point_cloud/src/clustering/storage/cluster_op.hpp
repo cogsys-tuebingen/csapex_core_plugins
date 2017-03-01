@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../data/cluster_index.hpp"
-#include "../data/cluster_data.hpp"
+#include "../data/voxel_index.hpp"
+#include "../data/voxel_data.hpp"
 #include <cslibs_indexed_storage/operations/clustering.hpp>
 
-namespace csapex
+namespace csapex { namespace clustering
 {
 
 namespace detail
@@ -72,21 +72,21 @@ struct ValidatorVisitor
 }
 
 template<typename Storage, typename... Validators>
-class ClusterOp
+class ClusterOperation
 {
 public:
     using Index = typename Storage::index_t;
     using Data = typename Storage::data_t;
     using ValidatorList = std::tuple<Validators&...>;
 
-    ClusterOp(const Storage& storage, Validators&... validator) :
+    ClusterOperation(const Storage& storage, Validators&... validator) :
             storage_(storage),
             validators_(std::forward_as_tuple(validator...))
     {}
 
     std::size_t getClusterCount() const
     {
-        return current_cluster_index_ + 1;
+        return static_cast<std::size_t>(current_cluster_index_ + 1);
     }
 
     bool start(const Index&, Data& data)
@@ -122,11 +122,10 @@ public:
         return true;
     }
 
-    // 3x3x3 neighborhood
+    // use 3x3x3 neighborhood
     using neighborhood_t = cslibs_indexed_storage::operations::clustering::GridNeighborhoodStatic<std::tuple_size<Index>::value, 3>;
     using visitor_index_t = typename neighborhood_t::offset_t;
 
-    //! vistor implementation for neighbors
     template<typename visitor_t>
     void visit_neighbours(const Index&, const visitor_t& visitior)
     {
@@ -138,7 +137,7 @@ private:
     void commitCluster(bool accepted)
     {
         for (Data* data : current_cluster_)
-            data->state = accepted ? ClusterDataState::ACCEPTED : ClusterDataState::REJECTED;
+            data->state = accepted ? VoxelState::ACCEPTED : VoxelState::REJECTED;
 
         current_cluster_.clear();
     }
@@ -150,4 +149,4 @@ private:
     ValidatorList validators_;
 };
 
-}
+}}
