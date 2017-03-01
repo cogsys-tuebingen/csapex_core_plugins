@@ -91,11 +91,14 @@ public:
 
     bool start(const Index&, Data& data)
     {
+        if (!current_cluster_.empty())
+            commitCluster(detail::ValidatorVisitor<ValidatorList>::finish(validators_));
+
         if (data.cluster != -1)
             return false;
 
-        if (!current_cluster_.empty())
-            commitCluster(detail::ValidatorVisitor<ValidatorList>::finish(validators_));
+        if (data.state == VoxelState::INVALID)
+            return false;
 
         if (!detail::ValidatorVisitor<ValidatorList>::start(validators_, data))
             return false;
@@ -111,6 +114,9 @@ public:
     bool extend(const Index& center, const Index&, Data& data)
     {
         if (data.cluster != -1)
+            return false;
+
+        if (data.state == VoxelState::INVALID)
             return false;
 
         if (!detail::ValidatorVisitor<ValidatorList>::extend(validators_, *(storage_.get(center)), data))

@@ -2,6 +2,7 @@
 
 #include "voxel_index.hpp"
 #include "feature_helpers.hpp"
+#include "../../math/mean.hpp"
 #include <cslibs_indexed_storage/storage/auto_index_storage.hpp>
 #include <vector>
 
@@ -11,7 +12,8 @@ enum class VoxelState
 {
     UNDECIDED,
     ACCEPTED,
-    REJECTED
+    REJECTED,
+    INVALID,
 };
 
 template<typename... Features>
@@ -24,6 +26,7 @@ struct VoxelData
     VoxelIndex::Type    index;
     std::vector<int>    indices;
     FeatureList         features;
+    math::Mean<1>       depth;
 
     VoxelData() = default;
 
@@ -32,12 +35,14 @@ struct VoxelData
             index(std::move(index))
     {
         indices.push_back(id);
+        depth.add(std::sqrt(point.x * point.x + point.y * point.y + point.z * point.z));
         detail::FeatureOp<FeatureList>::create(features, point);
     }
 
     inline void merge(const VoxelData& other)
     {
         indices.insert(indices.end(), other.indices.begin(), other.indices.end());
+        depth += other.depth;
         detail::FeatureOp<FeatureList>::merge(features, other.features);
     }
 

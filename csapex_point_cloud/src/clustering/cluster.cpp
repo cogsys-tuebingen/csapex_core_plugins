@@ -32,6 +32,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                                                          static_cast<int>(BackendType::PAGED)),
                             reinterpret_cast<int&>(backend_));
 
+
     parameters.addParameter(param::ParameterFactory::declareRange("voxel/size/x", 0.01, 10.0, 0.1, 0.01),
                             voxel_size_[0]);
     parameters.addParameter(param::ParameterFactory::declareRange("voxel/size/y", 0.01, 10.0, 0.1, 0.01),
@@ -39,8 +40,23 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
     parameters.addParameter(param::ParameterFactory::declareRange("voxel/size/z", 0.01, 10.0, 0.1, 0.01),
                             voxel_size_[2]);
 
+
     parameters.addParameter(param::ParameterFactory::declareInterval("filter/point_count", 1, 10000000, 1, 10000000, 1),
                            cluster_point_count_);
+
+
+    param::ParameterPtr param_voxel_validation = param::ParameterFactory::declareBool("filter/voxel_validation", false);
+    std::function<bool()> enable_voxel_validation = [param_voxel_validation]() -> bool { return param_voxel_validation->as<bool>(); };
+
+    parameters.addParameter(param_voxel_validation,
+                            voxel_validation_enabled_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/voxel_validation/min_count", 1, 1000, 1, 1),
+                                       enable_voxel_validation,
+                                       voxel_validation_min_count_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/voxel_validation/scale", 0.0, 1.0, 0.0, 0.001),
+                                       enable_voxel_validation,
+                                       voxel_validation_scale_);
+
 
     param::ParameterPtr param_distribution = param::ParameterFactory::declareBool("filter/distribution", false);
     std::function<bool()> enable_distribution = [param_distribution]() -> bool  { return param_distribution->as<bool>(); };
@@ -66,6 +82,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(param::ParameterFactory::declareInterval("filter/distribution/std_dev/z", 0.0, 10.0, 0.0, 10.0, 0.01),
                                        enable_distribution,
                                        distribution_std_dev_[2]);
+
 
     param::ParameterPtr param_color = param::ParameterFactory::declareBool("filter/color", false);
     std::function<bool()> enable_color = [param_color]() -> bool { return param_color->as<bool>(); };
@@ -94,7 +111,6 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/color/weights/b", 0.0, 1.0, 1.0, 0.01),
                                        enable_color,
                                        color_weights_[2]);
-
 }
 
 void ClusterPointCloud::setup(NodeModifier& node_modifier)
@@ -192,10 +208,30 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     std::vector<DataType> offsite_storage;
     Storage storage;
     {
-        NAMED_INTERLUDE(init);
+        NAMED_INTERLUDE(fill_voxel_grid);
         VoxelIndex indexer(voxel_size_[0], voxel_size_[1], voxel_size_[2]);
         StorageOperation::init(*cloud, input_indices, indexer, storage,
                                offsite_storage, std::integral_constant<bool, BackendTraits::IsFixedSize>{});
+    }
+
+    {
+        NAMED_INTERLUDE(validate_voxels);
+        if (voxel_validation_enabled_)
+        {
+            storage.traverse([this](const VoxelIndex::Type&, DataType& data)
+                             {
+                                 std::size_t min_count = static_cast<std::size_t>(voxel_validation_min_count_);
+                                 if (voxel_validation_scale_ > 0.0) {
+                                     const double depth = data.depth.getMean();
+                                     min_count = static_cast<std::size_t>(voxel_validation_min_count_
+                                                                          * std::floor(1.0
+                                                                                       / (voxel_validation_scale_ * depth * depth)
+                                                                                       + 0.5));
+                                 }
+                                 if (data.indices.size() < min_count)
+                                     data.state = VoxelState::INVALID;
+                             });
+        }
     }
 
     DistributionValidator<DataType> distribution_validator(distribution_type_,
@@ -214,7 +250,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     }
 
     {
-        NAMED_INTERLUDE(extract);
+        NAMED_INTERLUDE(extract_clusters);
         StorageOperation::extract(storage,
                             cluster_op,
                             *clusters_accepted_message_,

@@ -39,6 +39,10 @@ private:
     std::array<double, 3> voxel_size_;
     std::pair<int, int> cluster_point_count_;
 
+    bool voxel_validation_enabled_;
+    int voxel_validation_min_count_;
+    double voxel_validation_scale_;
+
     bool distribution_enabled_;
     DistributionAnalysisType distribution_type_;
     std::array<std::pair<double, double>, 3> distribution_std_dev_;
