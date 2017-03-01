@@ -1,5 +1,4 @@
-#ifndef CLUSTER_POINTCLOUD_H
-#define CLUSTER_POINTCLOUD_H
+#pragma once
 
 /// PROJECT
 #include <csapex/model/node.h>
@@ -9,11 +8,12 @@
 #include <pcl/PointIndices.h>
 #include <pcl/pcl_base.h>
 
-namespace csapex {
-class ClusterPointcloud : public csapex::Node
+namespace csapex { namespace clustering {
+
+class ClusterPointCloudPCL : public csapex::Node
 {
 public:
-    ClusterPointcloud();
+    ClusterPointCloudPCL();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable &parameters) override;
@@ -54,5 +54,5 @@ private:
     double  polar_opening_angle_;
 
 };
-}
-#endif // CLUSTER_POINTCLOUD_H
+
+}}

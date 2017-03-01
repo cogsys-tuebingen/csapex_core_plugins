@@ -209,7 +209,7 @@
   <description>Takes a model message and creates a marker for rviz</description>
   <tags>PointCloud</tags>
 </class>
-<class type="csapex::ClusterPointcloud" base_class_type="csapex::Node">
+<class type="csapex::clustering::ClusterPointCloudPCL" base_class_type="csapex::Node">
   <description>Cluster implementation from pcl</description>
   <tags>PointCloud</tags>
 </class>
