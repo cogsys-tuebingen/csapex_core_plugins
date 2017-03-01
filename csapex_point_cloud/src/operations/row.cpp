@@ -48,11 +48,11 @@ public:
             throw std::runtime_error("Clouds have to be organized!");
 
         if(row_->max<int>() == 0 ||
-                row_->max<int>() != cloud->height) {
+                static_cast<std::size_t>(row_->max<int>()) != cloud->height) {
             row_->setMax<int>(cloud->height);
         }
 
-        int selected = row_->as<int>();
+        std::size_t selected = static_cast<std::size_t>(row_->as<int>());
         if(msg::isConnected(output_cloud_)) {
             typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
             out->header = cloud->header;
