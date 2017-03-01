@@ -30,9 +30,11 @@ include_directories(
 add_library(${PROJECT_NAME}_plugin_node
     src/antsac.hpp
     src/ransac.hpp
+
+    src/sac_model_plane.hpp
+
     src/sac.hpp
     src/sac_model.hpp
-    src/sac_model_plane.hpp
     src/sac_segmentation.hpp
     src/sample_consensus.cpp
     src/sample_consensus.h

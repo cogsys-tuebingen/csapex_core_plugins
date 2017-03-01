@@ -83,6 +83,9 @@ public:
     inline void getInliers(const float maximum_distance,
                            std::vector<int> &dst_indices) const
     {
+        if(!isModelValid())
+            return;
+
         const std::size_t size = pointcloud_->size();
         dst_indices.reserve(size);
         for(std::size_t i = 0 ; i < size ; ++i) {
@@ -107,9 +110,24 @@ public:
         }
     }
 
+    inline void getOutliers(const float maximum_distance,
+                           std::vector<int> &dst_indices) const
+    {
+        if(!isModelValid())
+            return;
+
+        const std::size_t size = pointcloud_->size();
+        dst_indices.reserve(size);
+        for(std::size_t i = 0 ; i < size ; ++i) {
+            if(getDistanceToModel(i) > maximum_distance) {
+                dst_indices.emplace_back(i);
+            }
+        }
+    }
+
     inline void getOutliers(const std::vector<int> &src_indices,
                             const float maximum_distance,
-                            std::vector<int> &dst_indices)
+                            std::vector<int> &dst_indices) const
     {
         if(!isModelValid())
             return;
@@ -121,6 +139,48 @@ public:
             }
         }
     }
+
+    inline void getInliersAndOutliers(const std::vector<int> &src_indices,
+                                     const float maximum_distance,
+                                     std::vector<int> &dst_inliers,
+                                     std::vector<int> &dst_outliers) const
+    {
+        if(!isModelValid())
+            return;
+
+        dst_inliers.reserve(src_indices.size());
+        dst_outliers.reserve(dst_outliers.size());
+        for(const int i : src_indices) {
+            if(getDistanceToModel(i) <= maximum_distance) {
+                dst_inliers.emplace_back(i);
+            } else {
+                dst_outliers.emplace_back(i);
+            }
+        }
+    }
+
+
+    inline void getInliersAndOutliers(const float maximum_distance,
+                                     std::vector<int> &dst_inliers,
+                                     std::vector<int> &dst_outliers) const
+    {
+        if(!isModelValid())
+            return;
+
+        const std::size_t size = pointcloud_->size();
+        dst_inliers.reserve(size);
+        dst_outliers.reserve(size);
+        for(std::size_t i = 0 ; i < size ; ++i) {
+            if(getDistanceToModel(i) <= maximum_distance) {
+                dst_inliers.emplace_back(i);
+            } else {
+                dst_outliers.emplace_back(i);
+            }
+        }
+    }
+
+
+
 
     /// Methods to be implemented by the different model types
     virtual SampleConsensusModel::Ptr clone() const = 0;

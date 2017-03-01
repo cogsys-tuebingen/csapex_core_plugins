@@ -14,6 +14,7 @@
 #include "sac.hpp"
 #include "ransac.hpp"
 #include "antsac.hpp"
+
 #include "sac_model.hpp"
 #include "sac_model_plane.hpp"
 
@@ -52,16 +53,17 @@ void SampleConsensus::setup(NodeModifier& node_modifier)
     in_cloud_    = node_modifier.addInput<PointCloudMessage>("PointCloud");
     in_indices_  = node_modifier.addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Indices"); // optional input
 
-    out_models_  = node_modifier.addOutput<GenericVectorMessage, ModelMessage >("Models");
-    out_indices_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Model Points");
+    out_models_         = node_modifier.addOutput<GenericVectorMessage, ModelMessage >("Models");
+    out_inlier_indices_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Model Points");
+    out_outlier_indices_= node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Rejected Points");
 }
 
 template <class PointT>
 void SampleConsensus::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    std::shared_ptr<std::vector<pcl::PointIndices> > out_indices(new std::vector<pcl::PointIndices>);
+    std::shared_ptr<std::vector<pcl::PointIndices> > out_inliers(new std::vector<pcl::PointIndices>);
+    std::shared_ptr<std::vector<pcl::PointIndices> > out_outliers(new std::vector<pcl::PointIndices>);
     std::shared_ptr<std::vector<ModelMessage> >      out_models(new std::vector<ModelMessage>);
-
 
     typename sample_consensus::SampleConsensusModel<PointT>::Ptr model(new sample_consensus::ModelPlane<PointT>(cloud));
     typename sample_consensus::Ransac<PointT>::Ptr sac(new sample_consensus::Ransac<PointT>(cloud->size(), typename sample_consensus::Ransac<PointT>::Parameters()));
@@ -69,39 +71,16 @@ void SampleConsensus::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr clou
     sac->computeModel(model);
 
     if(model) {
-        pcl::PointIndices indices;
-        indices.header = cloud->header;
-        model->getInliers(0.1f, indices.indices);
-        out_indices->emplace_back(indices);
+        pcl::PointIndices outliers;
+        pcl::PointIndices inliers;
+        inliers.header = cloud->header;
+        outliers.header = cloud->header;
+        model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
+        out_inliers->emplace_back(inliers);
+        out_outliers->emplace_back(outliers);
     }
 
-    msg::publish<GenericVectorMessage, pcl::PointIndices>(out_indices_, out_indices);
+    msg::publish<GenericVectorMessage, pcl::PointIndices>(out_inlier_indices_, out_inliers);
+    msg::publish<GenericVectorMessage, pcl::PointIndices>(out_outlier_indices_, out_outliers);
     msg::publish<GenericVectorMessage, ModelMessage>(out_models_, out_models);
 }
-
-//template <class PointT>
-//void SacFit2::estimateNormals(typename pcl::PointCloud<PointT>::ConstPtr cloud,
-//                             pcl::PointCloud<pcl::Normal>::Ptr normals)
-//{
-//    typename pcl::NormalEstimation<PointT, pcl::Normal> normal_estimation;
-//    typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
-
-//    normal_estimation.setSearchMethod (tree);
-//    normal_estimation.setInputCloud (cloud);
-//    normal_estimation.setKSearch (50);
-//    normal_estimation.compute (*normals);
-//}
-
-//bool SacFit2::need_normals()
-//{
-//    switch(model_type_){
-//    case pcl::SACMODEL_NORMAL_PARALLEL_PLANE:
-//        return true;
-//    case pcl::SACMODEL_NORMAL_PLANE:
-//        return true;
-//    case pcl::SACMODEL_CONE:
-//        return true;
-//    default:
-//        return false;
-//    }
-//}

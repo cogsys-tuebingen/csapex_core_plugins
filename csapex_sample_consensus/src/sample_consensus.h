@@ -25,7 +25,8 @@ private:
     Input*  in_cloud_;
     Input*  in_indices_;
     Output* out_models_;
-    Output* out_indices_;
+    Output* out_inlier_indices_;
+    Output* out_outlier_indices_;
 
 };
 }
