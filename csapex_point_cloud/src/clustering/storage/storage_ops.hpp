@@ -74,10 +74,14 @@ public:
         for (const auto& data : data_storage)
             VoxelIndex::minmax(data.index, min, max);
 
-        storage.template set<cslibs_indexed_storage::option::tags::array_offset>(min);
-        storage.template set<cslibs_indexed_storage::option::tags::array_size>(static_cast<std::size_t>(max[0] - min[0] + 1),
-                                                                               static_cast<std::size_t>(max[1] - min[1] + 1),
-                                                                               static_cast<std::size_t>(max[2] - min[2] + 1));
+        VoxelIndex::Type size;
+        for (std::size_t i = 0; i < 3; ++i)
+            size[i] = max[i] - min[i] + 1;
+
+        storage.template set<cslibs_indexed_storage::option::tags::array_offset>(min[0], min[1], min[2]);
+        storage.template set<cslibs_indexed_storage::option::tags::array_size>(static_cast<std::size_t>(size[0]),
+                                                                               static_cast<std::size_t>(size[1]),
+                                                                               static_cast<std::size_t>(size[2]));
 
         for (auto& data : data_storage)
             storage.insert(&data);
