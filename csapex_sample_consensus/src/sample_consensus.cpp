@@ -17,6 +17,8 @@
 
 #include "sac_model.hpp"
 #include "sac_model_plane.hpp"
+#include "sac_model_from_normals.hpp"
+#include "sac_model_normal_plane.hpp"
 
 
 /// SYSTEM

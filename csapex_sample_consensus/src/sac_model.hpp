@@ -180,8 +180,6 @@ public:
     }
 
 
-
-
     /// Methods to be implemented by the different model types
     virtual SampleConsensusModel::Ptr clone() const = 0;
     virtual bool                      isModelValid() const = 0;

@@ -1,27 +1,28 @@
-#ifndef SAC_MODEL_PLANE_HPP
-#define SAC_MODEL_PLANE_HPP
+#ifndef SAC_MODEL_NORMAL_PLANE_HPP
+#define SAC_MODEL_NORMAL_PLANE_HPP
 
 /// PROJECT
-#include "sac_model.hpp"
+#include "sac_model_from_normals.hpp"
 
 /// SYSTEM
 #include <pcl/point_types.h>
+#include <pcl/common/common.h>
 
 namespace sample_consensus {
-template<typename PointT>
-class ModelPlane : public SampleConsensusModel<PointT> {
+template<typename PointT, typename NormalT>
+class ModelNormalPlane : public SampleConsensusModelFromNormals<PointT, NormalT> {
 public:
     using PointCloud = pcl::PointCloud<PointT>;
     using Base = SampleConsensusModel<PointT>;
 
-    ModelPlane(const typename PointCloud::ConstPtr &pointcloud):
+    ModelNormalPlane(const typename PointCloud::ConstPtr &pointcloud):
        Base(pointcloud)
     {
     }
 
     virtual typename Base::Ptr clone() const override
     {
-        ModelPlane *plane = new ModelPlane(Base::pointcloud_);
+        ModelNormalPlane *plane = new ModelNormalPlane(Base::pointcloud_, Base::normalcloud_);
         plane->model_coefficients_ = Base::model_coefficients_;
         plane->model_indices_ = Base::model_indices_;
         return typename Base::Ptr(plane);
@@ -54,8 +55,21 @@ public:
     {
         if(!isModelValid())
             return std::numeric_limits<float>::lowest();
-        Eigen::Vector4f pt = convert(Base::pointcloud_->at(index), 1.f);
-        return std::abs(Base::model_coefficients_.dot(pt));
+
+        Eigen::Vector4f coefficients = Base::model_coefficients_;
+        coefficients[3] = 0.f;
+
+        const auto &nt = Base::normalcloud_->at(index);
+
+        Eigen::Vector4f p = convert(Base::pointcloud_->at(index));
+        Eigen::Vector4f n = convert(nt);
+        float eucledian = std::abs(coefficients.dot(p) + Base::model_coefficients_[3]);
+        float angular   = std::abs(pcl::getAngle3D(n, coefficients));
+        angular = std::min(angular, static_cast<float>(M_PI - angular));
+
+        float weight = Base::normal_distance_weight_ * (1.f - nt.curvature);
+        return std::abs(weight * angular + (1.f - weight) * eucledian);
+
     }
 
     virtual void getDistancesToModel(const std::vector<int> &indices,
@@ -64,10 +78,23 @@ public:
         if(!isModelValid())
             return;
 
+        Eigen::Vector4f coefficients = Base::model_coefficients_;
+        coefficients[3] = 0.f;
+
         const std::size_t size = indices.size();
         distances.resize(size, std::numeric_limits<float>::lowest());
         for(std::size_t i = 0 ; i < size ; ++i) {
-            distances[i] = std::abs(Base::model_coefficients_.dot(convert(Base::pointcloud_->at(indices[i]), 1.f)));
+            const int index = indices[i];
+            const auto &nt = Base::normalcloud_->at(index);
+
+            Eigen::Vector4f p = convert(Base::pointcloud_->at(index));
+            Eigen::Vector4f n = convert(nt);
+            float eucledian = std::abs(coefficients.dot(p) + Base::model_coefficients_[3]);
+            float angular   = std::abs(pcl::getAngle3D(n, coefficients));
+            angular = std::min(angular, static_cast<float>(M_PI - angular));
+
+            float weight = Base::normal_distance_weight_ * (1.f - nt.curvature);
+            distances[i] = std::abs(weight * angular + (1.f - weight) * eucledian);
         }
     }
 
@@ -106,7 +133,13 @@ protected:
     {
         return Eigen::Vector4f(pt.x, pt.y, pt.z, w);
     }
+
+    inline Eigen::Vector4f convert(const NormalT &n, const float w = 0.f) const
+    {
+        return Eigen::Vector4f(n.x, n.y, n.z, w);
+    }
+
 };
 }
 
-#endif // SAC_MODEL_PLANE_HPP
+#endif // SAC_MODEL_NORMAL_PLANE_HPP
