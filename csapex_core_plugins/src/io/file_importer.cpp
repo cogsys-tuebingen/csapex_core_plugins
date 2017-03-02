@@ -94,12 +94,16 @@ void FileImporter::setupParameters(Parameterizable& parameters)
         }
     });
 
+    parameters.addHiddenParameter(param::ParameterFactory::declareValue("output_count", 0));
+
     changeMode();
 }
 
 void FileImporter::setup(NodeModifier& node_modifier)
 {
-    outputs_.push_back(node_modifier.addOutput<connection_types::AnyMessage>("Unknown"));
+    for(int i = 0, n = readParameter<int>("output_count"); i < n; ++i) {
+        outputs_.push_back(node_modifier.addOutput<connection_types::AnyMessage>("Unknown"));
+    }
 
     begin_ = node_modifier.addEvent("begin");
     end_ = node_modifier.addEvent("end");
@@ -515,6 +519,8 @@ void FileImporter::updateOutputs()
         Output* out = outputs_[i];
         msg::setLabel(out, provider_->getLabel(i));
     }
+
+    setParameter("output_count", outputs_.size());
 }
 
 void FileImporter::changeDirIndex()

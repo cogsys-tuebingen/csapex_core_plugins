@@ -158,7 +158,7 @@ class ChanneledActionlibNode : public ActionlibNode<ActionSpec>
     using Parent::ainfo;
     using Parent::awarn;
     using Parent::aerr;
-    using Parent::event_error_;
+//    using Parent::event_error_;
 
 protected:
     void processROS()
@@ -174,7 +174,7 @@ protected:
             awarn << "waiting for action server channel " << channel << std::endl;
             if(!active_client_->waitForServer(ros::Duration(1.0))) {
                 aerr << "unknown action server channel " + channel << std::endl;;
-                msg::trigger(event_error_);
+                msg::trigger(Parent::event_error_);
                 return;
             }
         }
