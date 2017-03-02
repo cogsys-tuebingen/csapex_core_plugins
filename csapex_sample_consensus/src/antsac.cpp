@@ -11,7 +11,21 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
+        SampleConsensus::setupParameters(parameters);
 
+        parameters.addParameter(param::ParameterFactory::declareRange("inlier start probability", 0.01, 1.0, 0.9, 0.01),
+                                inlier_start_probability_);
+        parameters.addParameter(param::ParameterFactory::declareValue("random seed", -1),
+                                random_seed_);
+        parameters.addParameter(param::ParameterFactory::declareRange("maximum sampling retries", 1, 1000, 100, 1),
+                                maximum_sampling_retries_);
+
+        parameters.addParameter(param::ParameterFactory::declareRange("rho", 0.0, 1.0, 0.9, 0.01),
+                                rho_);
+        parameters.addParameter(param::ParameterFactory::declareRange("alpha", 0.01, 10.0, 0.1, 0.01),
+                                alpha_);
+        parameters.addParameter(param::ParameterFactory::declareRange("theta", 0.01, 10.0, 0.025, 0.001),
+                                theta_);
     }
 
     virtual void process() override
@@ -27,10 +41,12 @@ public:
         std::shared_ptr<std::vector<pcl::PointIndices> > out_outliers(new std::vector<pcl::PointIndices>);
         std::shared_ptr<std::vector<ModelMessage> >      out_models(new std::vector<ModelMessage>);
 
-        typename csapex_sample_consensus::SampleConsensusModel<PointT>::Ptr model(new csapex_sample_consensus::ModelPlane<PointT>(cloud));
-        typename csapex_sample_consensus::Ransac<PointT>::Ptr sac(new csapex_sample_consensus::Ransac<PointT>(cloud->size(), typename csapex_sample_consensus::Ransac<PointT>::Parameters()));
+        auto model = getModel<PointT>(cloud);
+        csapex_sample_consensus::AntsacParameters params;
+        fillParamterObject(params);
 
-        sac->computeModel(model);
+        auto sac = csapex_sample_consensus::Antsac<PointT>(cloud->size(), params);
+        sac.computeModel(model);
 
         if(model) {
             pcl::PointIndices outliers;
@@ -45,6 +61,25 @@ public:
         msg::publish<GenericVectorMessage, pcl::PointIndices>(out_inlier_indices_, out_inliers);
         msg::publish<GenericVectorMessage, pcl::PointIndices>(out_outlier_indices_, out_outliers);
         msg::publish<GenericVectorMessage, ModelMessage>(out_models_, out_models);
+    }
+protected:
+    double inlier_start_probability_;
+    int    random_seed_;
+    int    maximum_sampling_retries_;
+
+    double rho_;
+    double alpha_;
+    double theta_;
+
+    inline void fillParamterObject(csapex_sample_consensus::AntsacParameters &params)
+    {
+        SampleConsensus::fillParamterObject(params);
+        params.inlier_start_probability = inlier_start_probability_;
+        params.random_seed = random_seed_;
+        params.maximum_sampling_retries = maximum_sampling_retries_;
+        params.rho = rho_;
+        params.alpha = alpha_;
+        params.theta = theta_;
     }
 };
 }

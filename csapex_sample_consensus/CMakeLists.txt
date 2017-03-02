@@ -39,8 +39,6 @@ add_library(${PROJECT_NAME}_plugin_node
     include/csapex_sample_consensus/models/sac_model_normal_plane.hpp
     include/csapex_sample_consensus/models/sac_model_parallel_normal_plane.hpp
 
-    src/sac_segmentation.hpp
-
     src/sample_consensus.hpp
     src/antsac.cpp
     src/ransac.cpp

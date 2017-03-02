@@ -9,6 +9,14 @@
 #include <set>
 
 namespace csapex_sample_consensus {
+struct RansacParameters : public Parameters {
+    double      inlier_start_probability = 0.99;
+    int         random_seed = -1;
+    std::size_t maximum_sampling_retries = 100;
+
+    RansacParameters() = default;
+};
+
 template<typename PointT>
 class Ransac : public SampleConsensus<PointT>
 {
@@ -17,16 +25,8 @@ public:
     using Base  = SampleConsensus<PointT>;
     using Model = typename Base::Model;
 
-    struct Parameters : SampleConsensus<PointT>::Parameters {
-        int         random_seed = -1;
-        std::size_t maximum_sampling_iterations = 100;
-
-        Parameters() = default;
-    };
-
-
     Ransac(const std::vector<int> &indices,
-           const Parameters &parameters) :
+           const RansacParameters &parameters) :
         Base(indices),
         parameters_(parameters),
         distribution_(0, Base::indices_.size() - 1)
@@ -34,12 +34,13 @@ public:
         if(parameters_.random_seed >= 0) {
             rng_ = std::default_random_engine(parameters_.random_seed);
         } else {
-            rng_ = std::default_random_engine(std::random_device());
+            std::random_device rd;
+            rng_ = std::default_random_engine(rd());
         }
     }
 
     Ransac(const std::size_t cloud_size,
-           const Parameters &parameters) :
+           const RansacParameters &parameters) :
         Base(cloud_size),
         parameters_(parameters),
         distribution_(0, Base::indices_.size() - 1)
@@ -60,7 +61,7 @@ public:
 
     virtual bool computeModel(typename Model::Ptr &model) override
     {
-        const double log_probability = std::log(1.0 - parameters_.probability);
+        const double log_probability = std::log(1.0 - parameters_.inlier_start_probability);
         const double one_over_indices = 1.0 / static_cast<double>(Base::indices_.size());
         const std::size_t model_dimension = model->getModelDimension();
         const std::size_t maximum_skipped = parameters_.maximum_iterations * 10;
@@ -77,8 +78,8 @@ public:
         std::vector<int> model_samples;
         std::size_t retries = 0;
         std::size_t iteration = 0;
-        double mean_distance = 0.0;
-        while(!parameters_.terminate(iteration, mean_distance, retries, maximum_inliers)) {
+        double mean_distance = std::numeric_limits<double>::max();
+        while(!parameters_.terminate(iteration, mean_distance, retries)) {
             if(iteration >= k || skipped >= maximum_skipped)
                 break;
 
@@ -92,8 +93,8 @@ public:
             }
 
             typename SampleConsensusModel<PointT>::InlierStatistic stat;
-            model->getInlierStatistic(Base::indices_, parameters_.maximum_model_distance, stat);
-            if(stat.count > maximum_inliers) {
+            model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
+            if(stat.count > maximum_inliers && stat.count * one_over_indices >= parameters_.minimum_inlier_percentage) {
                 maximum_inliers = stat.count;
                 mean_distance = stat.mean_distance;
                 best_model = model->clone();
@@ -114,7 +115,7 @@ public:
     }
 
 protected:
-    Parameters                                 parameters_;
+    RansacParameters                           parameters_;
     std::default_random_engine                 rng_;
     std::uniform_int_distribution<std::size_t> distribution_;
 
@@ -127,12 +128,12 @@ protected:
         auto drawTuple = [&indices, samples, this]() {
               std::set<int> tuple;
               while(tuple.size() < samples) {
-                tuple.insert(distribution_(rng_));
+                tuple.insert(Base::getIndices()[distribution_(rng_)]);
               }
               indices.assign(tuple.begin(), tuple.end());
         };
 
-        for(std::size_t i = 0 ; i < parameters_.maximum_sampling_iterations ; ++i) {
+        for(std::size_t i = 0 ; i < parameters_.maximum_sampling_retries ; ++i) {
             drawTuple();
 
             if(model->validateSamples(indices))

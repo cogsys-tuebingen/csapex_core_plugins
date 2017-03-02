@@ -9,6 +9,17 @@
 #include <set>
 
 namespace csapex_sample_consensus {
+struct AntsacParameters : public Parameters {
+    double      inlier_start_probability = 0.99;
+    int         random_seed = -1;
+    std::size_t maximum_sampling_retries = 100;
+
+    double      rho = 0.9;
+    double      alpha = 0.1;
+    double      theta = 0.025;
+
+    AntsacParameters() = default;
+};
 
 template <typename PointT>
 class Antsac : public SampleConsensus<PointT>
@@ -18,20 +29,8 @@ public:
     using Base  = SampleConsensus<PointT>;
     using Model = typename Base::Model;
 
-    struct Parameters : SampleConsensus<PointT>::Parameters {
-        int         random_seed = -1;
-        std::size_t maximum_sampling_iterations = 100;
-
-        double      rho = 0.9;
-        double      alpha = 0.1;
-        double      theta = 0.025;
-
-        Parameters() = default;
-    };
-
-
     Antsac(const std::vector<int> &indices,
-           const Parameters &parameters) :
+           const AntsacParameters &parameters) :
         Base(indices),
         parameters_(parameters),
         distribution_(0.0, 1.0),
@@ -49,7 +48,7 @@ public:
     }
 
     Antsac(const std::size_t cloud_size,
-           const Parameters &parameters):
+           const AntsacParameters &parameters):
         Base(cloud_size),
         parameters_(parameters),
         distribution_(0.0, 1.0),
@@ -62,7 +61,8 @@ public:
         if(parameters_.random_seed >= 0) {
             rng_ = std::default_random_engine(parameters_.random_seed);
         } else {
-            rng_ = std::default_random_engine(std::random_device());
+            std::random_device rd;
+            rng_ = std::default_random_engine(rd());
         }
     }
 
@@ -80,8 +80,7 @@ public:
     virtual bool computeModel(typename SampleConsensusModel<PointT>::Ptr &model) override
     {
 
-        const double log_probability = std::log(1.0 - parameters_.probability);
-        const double one_over_indices = 1.0 / static_cast<double>(Base::indices_.size());
+        const double log_probability = std::log(1.0 - parameters_.inlier_start_probability);
         const std::size_t model_dimension = model->getModelDimension();
         const std::size_t maximum_skipped = parameters_.maximum_iterations * 10;
 
@@ -98,7 +97,7 @@ public:
         std::size_t retries = 0;
         std::size_t iteration = 0;
         double mean_distance = 0.0;
-        while(!parameters_.terminate(iteration, mean_distance, retries, maximum_inliers)) {
+        while(!parameters_.terminate(iteration, mean_distance, retries)) {
             if(iteration >= k || skipped >= maximum_skipped)
                 break;
 
@@ -112,15 +111,15 @@ public:
             }
 
             typename SampleConsensusModel<PointT>::InlierStatistic stat;
-            model->getInlierStatistic(Base::indices_, parameters_.maximum_model_distance, stat);
+            model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
             mean_inliers_ = (iteration * mean_inliers_ + stat.count) / (iteration + 1.0);
 
-            if(stat.count > maximum_inliers) {
+            if(stat.count > maximum_inliers && stat.count * one_over_indices_ >= parameters_.minimum_inlier_percentage) {
                 maximum_inliers = stat.count;
                 mean_distance = stat.mean_distance;
                 best_model = model->clone();
 
-                double w = maximum_inliers * one_over_indices;
+                double w = maximum_inliers * one_over_indices_;
                 double p_no_outliers = std::min(std::max(1.0 - std::pow(w, static_cast<double>(model_dimension)),
                                                          std::numeric_limits<double>::epsilon()),
                                                 1.0 - std::numeric_limits<double>::epsilon());
@@ -137,7 +136,7 @@ public:
     }
 
 protected:
-    Parameters                                 parameters_;
+    AntsacParameters                           parameters_;
     std::default_random_engine                 rng_;
     std::uniform_real_distribution<double>     distribution_;
 
@@ -193,7 +192,7 @@ protected:
                     cumsum_last = cumsum;
                     cumsum += tau_[index];
                 }
-                tuple.insert(Base::indices_[index]);
+                tuple.insert(Base::getIndices()[index]);
                 if(tuple.size() >= samples)
                     break;
             }
@@ -201,7 +200,7 @@ protected:
             indices.assign(tuple.begin(), tuple.end());
         };
 
-        for(std::size_t i = 0 ; i < parameters_.maximum_sampling_iterations ; ++i) {
+        for(std::size_t i = 0 ; i < parameters_.maximum_sampling_retries ; ++i) {
             updateU();
             drawTuple();
             if(model->validateSamples(indices))

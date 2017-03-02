@@ -67,7 +67,7 @@ public:
             return;
 
         statistic.count = 0;
-        statistic.mean_distance = 0.0;
+        statistic.mean_distance = std::numeric_limits<double>::max();
 
         double distance = 0.0;
         for(const int i : indices) {
@@ -77,7 +77,8 @@ public:
                 ++statistic.count;
             }
         }
-        statistic.mean_distance /= static_cast<double>(statistic.count);
+        if(statistic.count != 0)
+            statistic.mean_distance /= static_cast<double>(statistic.count);
     }
 
     inline void getInliers(const float maximum_distance,
