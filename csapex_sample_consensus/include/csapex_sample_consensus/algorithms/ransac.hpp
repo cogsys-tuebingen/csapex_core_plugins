@@ -34,7 +34,8 @@ public:
         if(parameters_.random_seed >= 0) {
             rng_ = std::default_random_engine(parameters_.random_seed);
         } else {
-            rng_ = std::default_random_engine(std::random_device());
+            std::random_device rd;
+            rng_ = std::default_random_engine(rd());
         }
     }
 

@@ -50,12 +50,21 @@ public:
         parameters.addParameter(param::ParameterFactory::declareRange("minimum inlier percentage", 0.0, 100.0, 50.0, 0.1),
                                 minimum_inlier_percentage_);
 
+        parameters.addParameter(param::ParameterFactory::declareBool("find multiple models", false),
+                                fit_multiple_models_);
+        parameters.addConditionalParameter(param::ParameterFactory::declareRange("minimum residual cloud size", 0, 1000, 100, 1),
+                                           [this](){return fit_multiple_models_;},
+                                minimum_residual_cloud_size_);
+        parameters.addConditionalParameter(param::ParameterFactory::declareRange("maximum model count", -1, 100, 5, 1),
+                                           [this](){return fit_multiple_models_;},
+                                maximum_model_count_);
+
     }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
         in_cloud_           = node_modifier.addInput<PointCloudMessage>("PointCloud");
-        in_indices_         = node_modifier.addOptionalInput<GenericVectorMessage, pcl::PointIndices>("Indices"); // optional input
+        in_indices_         = node_modifier.addOptionalInput<PointIndecesMessage>("Indices"); // optional input
 
         out_models_         = node_modifier.addOutput<GenericVectorMessage, ModelMessage >("Models");
         out_inlier_indices_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Model Points");
@@ -69,6 +78,10 @@ protected:
     int         maximum_iterations_;
     int         maximum_retries_;
     double      minimum_inlier_percentage_;
+
+    bool        fit_multiple_models_;
+    int         minimum_residual_cloud_size_;
+    int         maximum_model_count_;
 
     Input*  in_cloud_;
     Input*  in_indices_;

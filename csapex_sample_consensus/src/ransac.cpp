@@ -38,17 +38,40 @@ public:
         csapex_sample_consensus::RansacParameters params;
         fillParamterObject(params);
 
-        auto sac = csapex_sample_consensus::Ransac<PointT>(cloud->size(), params);
-        sac.computeModel(model);
+        typename csapex_sample_consensus::Ransac<PointT>::Ptr sac;
+        if(msg::hasMessage(in_indices_)) {
+            PointIndecesMessage::ConstPtr in_indices = msg::getMessage<PointIndecesMessage>(in_indices_);
+            sac.reset(new csapex_sample_consensus::Ransac<PointT>(in_indices->value->indices, params));
+        } else {
+            sac.reset(new csapex_sample_consensus::Ransac<PointT>(cloud->size(), params));
+        }
 
-        if(model) {
-            pcl::PointIndices outliers;
-            pcl::PointIndices inliers;
-            inliers.header = cloud->header;
-            outliers.header = cloud->header;
-            model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
-            out_inliers->emplace_back(inliers);
+        pcl::PointIndices outliers;
+        pcl::PointIndices inliers;
+        inliers.header = cloud->header;
+        outliers.header = cloud->header;
+        if(fit_multiple_models_) {
+            outliers.indices = sac->getIndices();
+            int models_found = 0;
+            while(outliers.indices.size() >= minimum_residual_cloud_size_) {
+                sac->computeModel(model);
+                if(model) {
+                    model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
+                    out_inliers->emplace_back(inliers);
+                    ++models_found;
+                    sac->setIndices(outliers.indices);
+                }
+                if(maximum_model_count_ != -1 && models_found > maximum_model_count_)
+                    break;
+            }
             out_outliers->emplace_back(outliers);
+        } else {
+            sac->computeModel(model);
+            if(model) {
+                model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
+                out_inliers->emplace_back(inliers);
+                out_outliers->emplace_back(outliers);
+            }
         }
 
         msg::publish<GenericVectorMessage, pcl::PointIndices>(out_inlier_indices_, out_inliers);
