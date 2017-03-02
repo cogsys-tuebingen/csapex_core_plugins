@@ -17,32 +17,33 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
 catkin_package(
-    #  INCLUDE_DIRS include
+    INCLUDE_DIRS include
     #  LIBRARIES csapex_sample_consensus
     #  CATKIN_DEPENDS csapex csapex_core_plugins csapex_point_cloud pcl
     #  DEPENDS system_lib
 )
 
 include_directories(
+    include
     ${catkin_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME}_plugin_node
-    src/sac.hpp
+    include/csapex_sample_consensus/algorithms/sac.hpp
+    include/csapex_sample_consensus/algorithms/antsac.hpp
+    include/csapex_sample_consensus/algorithms/ransac.hpp
 
-    src/antsac.hpp
-    src/ransac.hpp
-
-    src/sac_model.hpp
-    src/sac_model_from_normals.hpp
-
-    src/sac_model_plane.hpp
-    src/sac_model_normal_plane.hpp
-    src/sac_model_parallel_normal_plane.hpp
+    include/csapex_sample_consensus/models/sac_model.hpp
+    include/csapex_sample_consensus/models/sac_model_from_normals.hpp
+    include/csapex_sample_consensus/models/sac_model_plane.hpp
+    include/csapex_sample_consensus/models/sac_model_normal_plane.hpp
+    include/csapex_sample_consensus/models/sac_model_parallel_normal_plane.hpp
 
     src/sac_segmentation.hpp
-    src/sample_consensus.cpp
-    src/sample_consensus.h
+
+    src/sample_consensus.hpp
+    src/antsac.cpp
+    src/ransac.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_plugin_node

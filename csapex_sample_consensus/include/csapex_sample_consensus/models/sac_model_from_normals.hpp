@@ -3,7 +3,7 @@
 
 #include "sac_model.hpp"
 
-namespace sample_consensus {
+namespace csapex_sample_consensus {
 template<typename PointT, typename NormalT>
 class SampleConsensusModelFromNormals : public SampleConsensusModel<PointT>
 {

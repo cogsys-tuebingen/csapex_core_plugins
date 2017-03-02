@@ -2,9 +2,9 @@
 #define SAC_HPP
 
 #include <memory>
-#include "sac_model.hpp"
+#include <csapex_sample_consensus/models/sac_model.hpp>
 
-namespace sample_consensus {
+namespace csapex_sample_consensus {
 template<typename PointT>
 class SampleConsensus  {
 public:

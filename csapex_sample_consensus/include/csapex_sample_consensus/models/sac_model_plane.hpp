@@ -7,7 +7,7 @@
 /// SYSTEM
 #include <pcl/point_types.h>
 
-namespace sample_consensus {
+namespace csapex_sample_consensus {
 template<typename PointT>
 class ModelPlane : public SampleConsensusModel<PointT> {
 public:

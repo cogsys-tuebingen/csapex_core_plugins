@@ -1,8 +1,14 @@
 <library path="libcsapex_sample_consensus_plugin_node">
-<class type="csapex::SampleConsensus" base_class_type="csapex::Node">
+<class type="csapex::Ransac" base_class_type="csapex::Node">
   <description>
-    Apply sample consensus algorithms to pointclouds for model fitting.
+    Model fitting via Ransac.
   </description>
-  <tags>PointCloud</tags>
+  <tags>PointCloud, SampleConsensus</tags>
+</class>
+<class type="csapex::Antsac" base_class_type="csapex::Node">
+   <description>
+     Model fitting via Antsac.
+   </description>
+   <tags>PointCloud, SampleConsensus</tags>
 </class>
 </library>

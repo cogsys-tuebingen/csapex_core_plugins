@@ -1,7 +1,7 @@
 #ifndef SEGMENTATION_HPP
 #define SEGMENTATION_HPP
 
-namespace sample_consensus {
+namespace csapex_sample_consensus {
 
 }
 

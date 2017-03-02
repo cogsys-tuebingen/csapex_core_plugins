@@ -5,7 +5,7 @@
 
 #include <pcl/point_cloud.h>
 
-namespace sample_consensus {
+namespace csapex_sample_consensus {
 template<typename PointT>
 class SampleConsensusModel {
 public:

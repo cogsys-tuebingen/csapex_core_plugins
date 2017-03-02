@@ -8,7 +8,7 @@
 #include <random>
 #include <set>
 
-namespace sample_consensus {
+namespace csapex_sample_consensus {
 
 template <typename PointT>
 class Antsac : public SampleConsensus<PointT>

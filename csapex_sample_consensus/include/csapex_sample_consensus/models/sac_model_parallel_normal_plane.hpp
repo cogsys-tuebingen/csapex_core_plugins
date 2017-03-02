@@ -1,5 +1,5 @@
-#ifndef SAC_MODEL_NORMAL_PLANE_HPP
-#define SAC_MODEL_NORMAL_PLANE_HPP
+#ifndef SAC_MODEL_PARALLEL_NORMAL_PLANE_HPP
+#define SAC_MODEL_PARALLEL_NORMAL_PLANE_HPP
 
 /// PROJECT
 #include "sac_model_from_normals.hpp"
@@ -8,21 +8,23 @@
 #include <pcl/point_types.h>
 #include <pcl/common/common.h>
 
-namespace sample_consensus {
+namespace csapex_sample_consensus {
 template<typename PointT, typename NormalT>
-class ModelNormalPlane : public SampleConsensusModelFromNormals<PointT, NormalT> {
+class ModelParallelNormalPlane : public SampleConsensusModelFromNormals<PointT, NormalT> {
 public:
     using PointCloud = pcl::PointCloud<PointT>;
     using Base = SampleConsensusModel<PointT>;
 
-    ModelNormalPlane(const typename PointCloud::ConstPtr &pointcloud):
-       Base(pointcloud)
+    ModelParallelNormalPlane(const typename PointCloud::ConstPtr &pointcloud,
+                     const NormalT &expected_normal):
+       Base(pointcloud),
+       expected_normal_(expected_normal)
     {
     }
 
     virtual typename Base::Ptr clone() const override
     {
-        ModelNormalPlane *plane = new ModelNormalPlane(Base::pointcloud_, Base::normalcloud_);
+        ModelParallelNormalPlane *plane = new ModelParallelNormalPlane(Base::pointcloud_, Base::normalcloud_);
         plane->model_coefficients_ = Base::model_coefficients_;
         plane->model_indices_ = Base::model_indices_;
         return typename Base::Ptr(plane);
@@ -99,6 +101,8 @@ public:
     }
 
 protected:
+    NormalT expected_normal_;
+
     virtual bool doComputeModelCoefficients(const std::vector<int> &indices) override
     {
         if(indices.size() != 3) {
@@ -142,4 +146,4 @@ protected:
 };
 }
 
-#endif // SAC_MODEL_NORMAL_PLANE_HPP
+#endif // SAC_MODEL_PARALLEL_NORMAL_PLANE_HPP
