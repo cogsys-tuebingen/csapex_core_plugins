@@ -80,7 +80,6 @@ public:
     {
 
         const double log_probability = std::log(1.0 - parameters_.probability);
-        const double one_over_indices = 1.0 / static_cast<double>(Base::indices_.size());
         const std::size_t model_dimension = model->getModelDimension();
         const std::size_t maximum_skipped = parameters_.maximum_iterations * 10;
 
@@ -97,7 +96,7 @@ public:
         std::size_t retries = 0;
         std::size_t iteration = 0;
         double mean_distance = 0.0;
-        while(!parameters_.terminate(iteration, mean_distance, retries, maximum_inliers)) {
+        while(!parameters_.terminate(iteration, mean_distance, retries, maximum_inliers * one_over_indices_)) {
             if(iteration >= k || skipped >= maximum_skipped)
                 break;
 
@@ -119,7 +118,7 @@ public:
                 mean_distance = stat.mean_distance;
                 best_model = model->clone();
 
-                double w = maximum_inliers * one_over_indices;
+                double w = maximum_inliers * one_over_indices_;
                 double p_no_outliers = std::min(std::max(1.0 - std::pow(w, static_cast<double>(model_dimension)),
                                                          std::numeric_limits<double>::epsilon()),
                                                 1.0 - std::numeric_limits<double>::epsilon());
@@ -136,7 +135,7 @@ public:
     }
 
 protected:
-    AntsacParameters                                 parameters_;
+    AntsacParameters                           parameters_;
     std::default_random_engine                 rng_;
     std::uniform_real_distribution<double>     distribution_;
 

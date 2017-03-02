@@ -78,7 +78,7 @@ public:
         std::size_t retries = 0;
         std::size_t iteration = 0;
         double mean_distance = 0.0;
-        while(!parameters_.terminate(iteration, mean_distance, retries, maximum_inliers)) {
+        while(!parameters_.terminate(iteration, mean_distance, retries, maximum_inliers * one_over_indices)) {
             if(iteration >= k || skipped >= maximum_skipped)
                 break;
 

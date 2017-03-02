@@ -82,7 +82,7 @@ protected:
         params.maximum_mean_model_distance = maximum_mean_model_distance_;
         params.maximum_iterations          = maximum_iterations_;
         params.maximum_retries             = maximum_retries_;
-        params.minimum_inlier_percentage   = minimum_inlier_percentage_;
+        params.minimum_inlier_percentage   = minimum_inlier_percentage_ * 0.01; /// shift the representation to [0.0, 1.0]
     }
 
 };
