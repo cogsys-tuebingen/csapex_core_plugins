@@ -13,6 +13,7 @@ struct AntsacParameters : public Parameters {
     int         random_seed = -1;
     std::size_t maximum_sampling_iterations = 100;
 
+    double      probability = 0.99;
     double      rho = 0.9;
     double      alpha = 0.1;
     double      theta = 0.025;
@@ -110,7 +111,7 @@ public:
             }
 
             typename SampleConsensusModel<PointT>::InlierStatistic stat;
-            model->getInlierStatistic(Base::indices_, parameters_.maximum_model_distance, stat);
+            model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
             mean_inliers_ = (iteration * mean_inliers_ + stat.count) / (iteration + 1.0);
 
             if(stat.count > maximum_inliers) {

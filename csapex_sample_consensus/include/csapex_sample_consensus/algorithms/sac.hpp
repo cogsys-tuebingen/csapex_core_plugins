@@ -12,26 +12,24 @@ struct Parameters {
                              };
 
     inline bool terminate(const std::size_t iteration,
-                          const float mean_distance,
+                          const double mean_distance,
                           const std::size_t retries,
-                          const std::size_t inliers) const
+                          const double inliner_percentage) const
     {
         bool t = false;
         t |= (MAX_ITERATION & termination_criteria) && iteration >= maximum_iterations;
-        t |= (MIN_DISTANCE & termination_criteria) && mean_distance <= maximum_mean_distance;
+        t |= (MIN_DISTANCE & termination_criteria) && mean_distance <= maximum_mean_model_distance;
         t |= (MAX_RETRY & termination_criteria) && retries >= maximum_retries;
-        return t && (inliers >= minimum_inliers);
+        return t && (inliner_percentage >= minimum_inlier_percentage);
     }
-
-    float            maximum_model_distance = 0.1;
-    double           probability            = 0.99;
 
     int termination_criteria = (MAX_ITERATION | MIN_DISTANCE);
 
-    float            maximum_mean_distance  = 0.05;
-    std::size_t      maximum_iterations     = 5000;
-    std::size_t      maximum_retries        = 500;
-    std::size_t      minimum_inliers        = 10000;
+    double           model_search_distance        = 0.1;    /// samples in this distance are considered for fitting
+    double           maximum_mean_model_distance  = 0.05;   /// the maximum allowed mean distance
+    std::size_t      maximum_iterations           = 5000;   /// mean distance to the model
+    std::size_t      maximum_retries              = 500;    /// times of retries in case of not finding any model
+    double           minimum_inlier_percentage    = .5f;    /// the mimium amount of inliers
 
 };
 

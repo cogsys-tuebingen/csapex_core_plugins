@@ -10,6 +10,7 @@
 
 namespace csapex_sample_consensus {
 struct RansacParameters : public Parameters {
+    double      probability = 0.99;
     int         random_seed = -1;
     std::size_t maximum_sampling_iterations = 100;
 
@@ -91,7 +92,7 @@ public:
             }
 
             typename SampleConsensusModel<PointT>::InlierStatistic stat;
-            model->getInlierStatistic(Base::indices_, parameters_.maximum_model_distance, stat);
+            model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
             if(stat.count > maximum_inliers) {
                 maximum_inliers = stat.count;
                 mean_distance = stat.mean_distance;

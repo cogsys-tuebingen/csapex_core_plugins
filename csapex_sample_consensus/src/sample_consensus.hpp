@@ -39,7 +39,16 @@ public:
 
         parameters.addParameter(param::ParameterFactory::declareParameterBitSet("termination criteria",termination_criteria),
                                 termination_criteria_);
-
+        parameters.addParameter(param::ParameterFactory::declareRange("model search distance", 0.0, 10.0, 0.1, 0.01),
+                                model_search_distance_);
+        parameters.addParameter(param::ParameterFactory::declareRange("maximum mean model distance", 0.0, 10.0, 0.05, 0.01),
+                                maximum_mean_model_distance_);
+        parameters.addParameter(param::ParameterFactory::declareRange("maximum iterations", 1, 100000, 100, 1),
+                                maximum_iterations_);
+        parameters.addParameter(param::ParameterFactory::declareRange("maximum retries", 1, 100000, 100, 1),
+                                maximum_retries_);
+        parameters.addParameter(param::ParameterFactory::declareRange("minimum inlier percentage", 0.0, 100.0, 50.0, 0.1),
+                                minimum_inlier_percentage_);
     }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
@@ -53,7 +62,12 @@ public:
     }
 
 protected:
-    int termination_criteria_;
+    int         termination_criteria_;
+    double      model_search_distance_;
+    double      maximum_mean_model_distance_;
+    std::size_t maximum_iterations_;
+    std::size_t maximum_retries_;
+    double      minimum_inlier_percentage_;
 
     Input*  in_cloud_;
     Input*  in_indices_;
@@ -61,6 +75,15 @@ protected:
     Output* out_inlier_indices_;
     Output* out_outlier_indices_;
 
+    void fillParamtereObject(csapex_sample_consensus::Parameters &params)
+    {
+        params.termination_criteria        = termination_criteria_;
+        params.model_search_distance       = model_search_distance_;
+        params.maximum_mean_model_distance = maximum_mean_model_distance_;
+        params.maximum_iterations          = maximum_iterations_;
+        params.maximum_retries             = maximum_retries_;
+        params.minimum_inlier_percentage   = minimum_inlier_percentage_;
+    }
 
 };
 }
