@@ -11,7 +11,14 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
+        SampleConsensus::setupParameters(parameters);
 
+        parameters.addParameter(param::ParameterFactory::declareRange("inlier start probability", 0.01, 1.0, 0.9, 0.01),
+                                inlier_start_probability_);
+        parameters.addParameter(param::ParameterFactory::declareValue("random seed", -1),
+                                random_seed_);
+        parameters.addParameter(param::ParameterFactory::declareRange("maximum sampling retries", 1, 1000, 100, 1),
+                                maximum_sampling_retries_);
     }
 
     virtual void process() override
@@ -46,6 +53,19 @@ public:
         msg::publish<GenericVectorMessage, pcl::PointIndices>(out_inlier_indices_, out_inliers);
         msg::publish<GenericVectorMessage, pcl::PointIndices>(out_outlier_indices_, out_outliers);
         msg::publish<GenericVectorMessage, ModelMessage>(out_models_, out_models);
+    }
+
+protected:
+    double inlier_start_probability_;
+    int    random_seed_;
+    int    maximum_sampling_retries_;
+
+    inline void fillParamtereObject(csapex_sample_consensus::RansacParameters &params)
+    {
+        SampleConsensus::fillParamtereObject(params);
+        params.inlier_start_probability = inlier_start_probability_;
+        params.random_seed = random_seed_;
+        params.maximum_sampling_retries = maximum_sampling_retries_;
     }
 };
 }

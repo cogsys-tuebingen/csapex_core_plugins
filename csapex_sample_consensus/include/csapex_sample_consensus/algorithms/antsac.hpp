@@ -10,10 +10,10 @@
 
 namespace csapex_sample_consensus {
 struct AntsacParameters : public Parameters {
+    double      inlier_start_probability = 0.99;
     int         random_seed = -1;
-    std::size_t maximum_sampling_iterations = 100;
+    std::size_t maximum_sampling_retries = 100;
 
-    double      probability = 0.99;
     double      rho = 0.9;
     double      alpha = 0.1;
     double      theta = 0.025;
@@ -79,7 +79,7 @@ public:
     virtual bool computeModel(typename SampleConsensusModel<PointT>::Ptr &model) override
     {
 
-        const double log_probability = std::log(1.0 - parameters_.probability);
+        const double log_probability = std::log(1.0 - parameters_.inlier_start_probability);
         const std::size_t model_dimension = model->getModelDimension();
         const std::size_t maximum_skipped = parameters_.maximum_iterations * 10;
 
@@ -199,7 +199,7 @@ protected:
             indices.assign(tuple.begin(), tuple.end());
         };
 
-        for(std::size_t i = 0 ; i < parameters_.maximum_sampling_iterations ; ++i) {
+        for(std::size_t i = 0 ; i < parameters_.maximum_sampling_retries ; ++i) {
             updateU();
             drawTuple();
             if(model->validateSamples(indices))
