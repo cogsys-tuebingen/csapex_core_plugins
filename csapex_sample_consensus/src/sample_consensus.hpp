@@ -30,7 +30,16 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        /// general sample consenus parameters
+        std::map<std::string, std::pair<int, bool>> termination_criteria =
+        {
+            {"MAX_ITERATION", {csapex_sample_consensus::Parameters::MAX_ITERATION, true}},
+            {"MIN_DISTANCE", {csapex_sample_consensus::Parameters::MIN_DISTANCE, true}},
+            {"MAX_RETRY", {csapex_sample_consensus::Parameters::MAX_RETRY, true}}
+        };
+
+        parameters.addParameter(param::ParameterFactory::declareParameterBitSet("termination criteria",termination_criteria),
+                                termination_criteria_);
+
     }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
@@ -44,6 +53,8 @@ public:
     }
 
 protected:
+    int termination_criteria_;
+
     Input*  in_cloud_;
     Input*  in_indices_;
     Output* out_models_;

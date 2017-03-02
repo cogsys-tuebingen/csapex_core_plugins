@@ -9,6 +9,13 @@
 #include <set>
 
 namespace csapex_sample_consensus {
+struct RansacParameters : public Parameters {
+    int         random_seed = -1;
+    std::size_t maximum_sampling_iterations = 100;
+
+    RansacParameters() = default;
+};
+
 template<typename PointT>
 class Ransac : public SampleConsensus<PointT>
 {
@@ -17,16 +24,8 @@ public:
     using Base  = SampleConsensus<PointT>;
     using Model = typename Base::Model;
 
-    struct Parameters : SampleConsensus<PointT>::Parameters {
-        int         random_seed = -1;
-        std::size_t maximum_sampling_iterations = 100;
-
-        Parameters() = default;
-    };
-
-
     Ransac(const std::vector<int> &indices,
-           const Parameters &parameters) :
+           const RansacParameters &parameters) :
         Base(indices),
         parameters_(parameters),
         distribution_(0, Base::indices_.size() - 1)
@@ -39,7 +38,7 @@ public:
     }
 
     Ransac(const std::size_t cloud_size,
-           const Parameters &parameters) :
+           const RansacParameters &parameters) :
         Base(cloud_size),
         parameters_(parameters),
         distribution_(0, Base::indices_.size() - 1)
@@ -114,7 +113,7 @@ public:
     }
 
 protected:
-    Parameters                                 parameters_;
+    RansacParameters                                 parameters_;
     std::default_random_engine                 rng_;
     std::uniform_int_distribution<std::size_t> distribution_;
 

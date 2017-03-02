@@ -9,6 +9,16 @@
 #include <set>
 
 namespace csapex_sample_consensus {
+struct AntsacParameters : public Parameters {
+    int         random_seed = -1;
+    std::size_t maximum_sampling_iterations = 100;
+
+    double      rho = 0.9;
+    double      alpha = 0.1;
+    double      theta = 0.025;
+
+    AntsacParameters() = default;
+};
 
 template <typename PointT>
 class Antsac : public SampleConsensus<PointT>
@@ -18,20 +28,8 @@ public:
     using Base  = SampleConsensus<PointT>;
     using Model = typename Base::Model;
 
-    struct Parameters : SampleConsensus<PointT>::Parameters {
-        int         random_seed = -1;
-        std::size_t maximum_sampling_iterations = 100;
-
-        double      rho = 0.9;
-        double      alpha = 0.1;
-        double      theta = 0.025;
-
-        Parameters() = default;
-    };
-
-
     Antsac(const std::vector<int> &indices,
-           const Parameters &parameters) :
+           const AntsacParameters &parameters) :
         Base(indices),
         parameters_(parameters),
         distribution_(0.0, 1.0),
@@ -49,7 +47,7 @@ public:
     }
 
     Antsac(const std::size_t cloud_size,
-           const Parameters &parameters):
+           const AntsacParameters &parameters):
         Base(cloud_size),
         parameters_(parameters),
         distribution_(0.0, 1.0),
@@ -137,7 +135,7 @@ public:
     }
 
 protected:
-    Parameters                                 parameters_;
+    AntsacParameters                                 parameters_;
     std::default_random_engine                 rng_;
     std::uniform_real_distribution<double>     distribution_;
 

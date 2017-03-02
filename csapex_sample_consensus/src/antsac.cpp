@@ -28,7 +28,8 @@ public:
         std::shared_ptr<std::vector<ModelMessage> >      out_models(new std::vector<ModelMessage>);
 
         typename csapex_sample_consensus::SampleConsensusModel<PointT>::Ptr model(new csapex_sample_consensus::ModelPlane<PointT>(cloud));
-        typename csapex_sample_consensus::Ransac<PointT>::Ptr sac(new csapex_sample_consensus::Ransac<PointT>(cloud->size(), typename csapex_sample_consensus::Ransac<PointT>::Parameters()));
+        typename csapex_sample_consensus::Ransac<PointT>::Ptr sac(new csapex_sample_consensus::Ransac<PointT>(cloud->size(),
+                                                                                                              csapex_sample_consensus::RansacParameters()));
 
         sac->computeModel(model);
 
