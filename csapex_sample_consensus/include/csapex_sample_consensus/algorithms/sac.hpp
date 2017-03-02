@@ -60,6 +60,11 @@ public:
         indices_ = indices;
     }
 
+    inline const std::vector<int> & getIndices() const
+    {
+        return indices_;
+    }
+
 protected:
     std::vector<int> indices_;
 

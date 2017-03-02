@@ -41,11 +41,12 @@ public:
         std::shared_ptr<std::vector<pcl::PointIndices> > out_outliers(new std::vector<pcl::PointIndices>);
         std::shared_ptr<std::vector<ModelMessage> >      out_models(new std::vector<ModelMessage>);
 
-        typename csapex_sample_consensus::SampleConsensusModel<PointT>::Ptr model(new csapex_sample_consensus::ModelPlane<PointT>(cloud));
-        typename csapex_sample_consensus::Ransac<PointT>::Ptr sac(new csapex_sample_consensus::Ransac<PointT>(cloud->size(),
-                                                                                                              csapex_sample_consensus::RansacParameters()));
+        auto model = getModel<PointT>(cloud);
+        csapex_sample_consensus::AntsacParameters params;
+        fillParamterObject(params);
 
-        sac->computeModel(model);
+        auto sac = csapex_sample_consensus::Antsac<PointT>(cloud->size(), params);
+        sac.computeModel(model);
 
         if(model) {
             pcl::PointIndices outliers;
@@ -70,9 +71,9 @@ protected:
     double alpha_;
     double theta_;
 
-    inline void fillParamtereObject(csapex_sample_consensus::AntsacParameters &params)
+    inline void fillParamterObject(csapex_sample_consensus::AntsacParameters &params)
     {
-        SampleConsensus::fillParamtereObject(params);
+        SampleConsensus::fillParamterObject(params);
         params.inlier_start_probability = inlier_start_probability_;
         params.random_seed = random_seed_;
         params.maximum_sampling_retries = maximum_sampling_retries_;

@@ -49,6 +49,7 @@ public:
                                 maximum_retries_);
         parameters.addParameter(param::ParameterFactory::declareRange("minimum inlier percentage", 0.0, 100.0, 50.0, 0.1),
                                 minimum_inlier_percentage_);
+
     }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
@@ -65,8 +66,8 @@ protected:
     int         termination_criteria_;
     double      model_search_distance_;
     double      maximum_mean_model_distance_;
-    std::size_t maximum_iterations_;
-    std::size_t maximum_retries_;
+    int         maximum_iterations_;
+    int         maximum_retries_;
     double      minimum_inlier_percentage_;
 
     Input*  in_cloud_;
@@ -75,7 +76,14 @@ protected:
     Output* out_inlier_indices_;
     Output* out_outlier_indices_;
 
-    void fillParamtereObject(csapex_sample_consensus::Parameters &params)
+    template<typename PointT>
+    typename csapex_sample_consensus::SampleConsensusModel<PointT>::Ptr getModel(typename pcl::PointCloud<PointT>::ConstPtr &cloud)
+    {
+        return typename csapex_sample_consensus::ModelPlane<PointT>::Ptr(new csapex_sample_consensus::ModelPlane<PointT>(cloud));
+    }
+
+
+    void fillParamterObject(csapex_sample_consensus::Parameters &params)
     {
         params.termination_criteria        = termination_criteria_;
         params.model_search_distance       = model_search_distance_;

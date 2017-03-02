@@ -127,7 +127,7 @@ protected:
         auto drawTuple = [&indices, samples, this]() {
               std::set<int> tuple;
               while(tuple.size() < samples) {
-                tuple.insert(distribution_(rng_));
+                tuple.insert(Base::getIndices()[distribution_(rng_)]);
               }
               indices.assign(tuple.begin(), tuple.end());
         };
