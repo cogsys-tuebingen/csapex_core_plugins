@@ -78,8 +78,8 @@ public:
         std::vector<int> model_samples;
         std::size_t retries = 0;
         std::size_t iteration = 0;
-        double mean_distance = 0.0;
-        while(!parameters_.terminate(iteration, mean_distance, retries, maximum_inliers * one_over_indices)) {
+        double mean_distance = std::numeric_limits<double>::max();
+        while(!parameters_.terminate(iteration, mean_distance, retries)) {
             if(iteration >= k || skipped >= maximum_skipped)
                 break;
 
@@ -94,7 +94,7 @@ public:
 
             typename SampleConsensusModel<PointT>::InlierStatistic stat;
             model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
-            if(stat.count > maximum_inliers) {
+            if(stat.count > maximum_inliers && stat.count * one_over_indices >= parameters_.minimum_inlier_percentage) {
                 maximum_inliers = stat.count;
                 mean_distance = stat.mean_distance;
                 best_model = model->clone();
@@ -115,7 +115,7 @@ public:
     }
 
 protected:
-    RansacParameters                                 parameters_;
+    RansacParameters                           parameters_;
     std::default_random_engine                 rng_;
     std::uniform_int_distribution<std::size_t> distribution_;
 

@@ -85,6 +85,9 @@ void PCDPointCloudMessageProvider::load(const std::string &file)
     pcl::PCLPointCloud2 pcl_blob;
     pcl::io::loadPCDFile(file, pcl_blob);
 
+    if(pcl_blob.header.frame_id == "") {
+        pcl_blob.header.frame_id = "cloud_frame";
+    }
 
     point_cloud_.reset(new PointCloudMessage(pcl_blob.header.frame_id, pcl_blob.header.stamp));
     bool success;

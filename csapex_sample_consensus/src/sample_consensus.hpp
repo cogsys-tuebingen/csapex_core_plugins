@@ -39,7 +39,7 @@ public:
 
         parameters.addParameter(param::ParameterFactory::declareParameterBitSet("termination criteria",termination_criteria),
                                 termination_criteria_);
-        parameters.addParameter(param::ParameterFactory::declareRange("model search distance", 0.0, 10.0, 0.1, 0.01),
+        parameters.addParameter(param::ParameterFactory::declareRange("model search distance", 0.0, 10.0, 0.1, 0.001),
                                 model_search_distance_);
         parameters.addParameter(param::ParameterFactory::declareRange("maximum mean model distance", 0.0, 10.0, 0.05, 0.01),
                                 maximum_mean_model_distance_);
@@ -49,6 +49,9 @@ public:
                                 maximum_retries_);
         parameters.addParameter(param::ParameterFactory::declareRange("minimum inlier percentage", 0.0, 100.0, 50.0, 0.1),
                                 minimum_inlier_percentage_);
+
+        parameters.addParameter(param::ParameterFactory::declareRange("minimum model cloud size", 1, 100000, 1000, 1),
+                                minimum_model_cloud_size_);
 
         parameters.addParameter(param::ParameterFactory::declareBool("find multiple models", false),
                                 fit_multiple_models_);
@@ -78,6 +81,7 @@ protected:
     int         maximum_iterations_;
     int         maximum_retries_;
     double      minimum_inlier_percentage_;
+    int         minimum_model_cloud_size_;
 
     bool        fit_multiple_models_;
     int         minimum_residual_cloud_size_;

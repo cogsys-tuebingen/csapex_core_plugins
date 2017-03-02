@@ -13,14 +13,13 @@ struct Parameters {
 
     inline bool terminate(const std::size_t iteration,
                           const double mean_distance,
-                          const std::size_t retries,
-                          const double inliner_percentage) const
+                          const std::size_t retries) const
     {
         bool t = false;
         t |= (MAX_ITERATION & termination_criteria) && iteration >= maximum_iterations;
         t |= (MIN_DISTANCE & termination_criteria) && mean_distance <= maximum_mean_model_distance;
         t |= (MAX_RETRY & termination_criteria) && retries >= maximum_retries;
-        return t && (inliner_percentage >= minimum_inlier_percentage);
+        return t;
     }
 
     int termination_criteria = (MAX_ITERATION | MIN_DISTANCE);

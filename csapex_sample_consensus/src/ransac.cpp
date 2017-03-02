@@ -52,16 +52,24 @@ public:
         outliers.header = cloud->header;
         if(fit_multiple_models_) {
             outliers.indices = sac->getIndices();
-            int models_found = 0;
+            int model_searches = 0;
             while(outliers.indices.size() >= minimum_residual_cloud_size_) {
-                sac->computeModel(model);
-                if(model) {
-                    model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
-                    out_inliers->emplace_back(inliers);
-                    ++models_found;
+                auto working_model = model->clone();
+                sac->computeModel(working_model);
+                if(working_model) {
+                    inliers.indices.clear();
+                    outliers.indices.clear();
+                    working_model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
+
+                    if(inliers.indices.size() > minimum_model_cloud_size_)
+                        out_inliers->emplace_back(inliers);
+                    else
+                        out_outliers->emplace_back(inliers);
+
                     sac->setIndices(outliers.indices);
                 }
-                if(maximum_model_count_ != -1 && models_found > maximum_model_count_)
+                ++model_searches;
+                if(maximum_model_count_ != -1 && model_searches >= maximum_model_count_)
                     break;
             }
             out_outliers->emplace_back(outliers);
@@ -69,7 +77,12 @@ public:
             sac->computeModel(model);
             if(model) {
                 model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
-                out_inliers->emplace_back(inliers);
+
+                if(inliers.indices.size() > minimum_model_cloud_size_)
+                    out_inliers->emplace_back(inliers);
+                else
+                    out_outliers->emplace_back(inliers);
+
                 out_outliers->emplace_back(outliers);
             }
         }
