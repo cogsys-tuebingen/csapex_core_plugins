@@ -124,6 +124,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/filter/passthrough_by_indices.cpp
     src/filter/crop_box.cpp
     src/filter/filter_rois_by_distance.cpp
+    src/filter/filter_indices_by_roi_classifciation.cpp
 
     src/segmentation/label_pointcloud.cpp
     src/segmentation/cluster_pcl.cpp

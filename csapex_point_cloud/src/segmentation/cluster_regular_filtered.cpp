@@ -51,6 +51,7 @@ void ClusterRegularFiltered<StructureType>::setup(NodeModifier &node_modifier)
     out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
     out_rejected_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Rejected Clusters");
     out_voxels_ = node_modifier.addOutput<PointCloudMessage>("Voxels");
+    out_voxel_cluster_indices_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Voxel Cluster Indices");
 }
 
 template<typename StructureType>
@@ -210,9 +211,10 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
     if(out_voxels_->isConnected()) {
         /// build up markers
         PointCloudMessage::Ptr voxel_cloud_msg(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
-        typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr voxel_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+        std::shared_ptr<std::vector<pcl::PointIndices>> voxel_indices(new std::vector<pcl::PointIndices>);
+        typename pcl::PointCloud<pcl::PointXYZ>::Ptr voxel_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         auto index2position = [min_index, this](typename StructureType::Index index) {
-            pcl::PointXYZRGB p;
+            pcl::PointXYZ p;
             p.x = ((int) index[0] + min_index[0]) * cluster_params_.bin_sizes[0] + 0.5 * cluster_params_.bin_sizes[0];
             p.y = ((int) index[1] + min_index[1]) * cluster_params_.bin_sizes[1] + 0.5 * cluster_params_.bin_sizes[1];
             p.z = ((int) index[2] + min_index[2]) * cluster_params_.bin_sizes[2] + 0.5 * cluster_params_.bin_sizes[2];
@@ -220,8 +222,11 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
         };
 
         auto default_color = implementation::Color(50,65,75);
-        std::map<unsigned int, implementation::Color> colors;
+        std::map<int, implementation::Color> colors;
+        std::map<int, pcl::PointIndices> indices;
         colors.insert(std::make_pair(-1,default_color));
+
+        int voxel_index = 0;
         for(std::size_t x = 0 ; x < size[0] ; ++x) {
             for(std::size_t y = 0 ; y < size[1] ; ++y) {
                 for(std::size_t z = 0 ;  z < size[2] ; ++z) {
@@ -230,24 +235,34 @@ void ClusterRegularFiltered<StructureType>::inputCloud(typename pcl::PointCloud<
                     auto p = index2position(index);
                     if(array_entry) {
                         const int cluster = array_entry->cluster;
-                        if(colors.find(cluster) == colors.end()) {
-                            double r = default_color.r, g = default_color.g, b = default_color.b;
-                            if(valid_clusters.find(cluster) != valid_clusters.end())
-                                color::fromCount(cluster+1, r,g,b);
-                            colors.insert(std::make_pair(cluster, implementation::Color(r,g,b)));
-                        }
-                        implementation::Color c = colors.at(cluster);
-                        p.r = c.r;
-                        p.g = c.g;
-                        p.b = c.b;
+                        //                        if(colors.find(cluster) == colors.end()) {
+                        //                            double r = default_color.r, g = default_color.g, b = default_color.b;
+                        //                            if(valid_clusters.find(cluster) != valid_clusters.end()) {
+                        //                                color::fromCount(cluster+1, r,g,b);
+                        //                            }
+                        //                            colors.insert(std::make_pair(cluster, implementation::Color(r,g,b)));
+                        //                        }
+                        //                        implementation::Color c = colors.at(cluster);
+                        //                        p.r = c.r;
+                        //                        p.g = c.g;
+                        //                        p.b = c.b;
                         voxel_cloud->push_back(p);
+                        if(valid_clusters.find(cluster) != valid_clusters.end()) {
+                            indices[cluster].indices.emplace_back(voxel_index);
+                        }
+                        ++voxel_index;
                     }
                 }
             }
         }
-        std::reverse(voxel_cloud->begin(), voxel_cloud->end());
+        // std::reverse(voxel_cloud->begin(), voxel_cloud->end());
         voxel_cloud_msg->value = voxel_cloud;
+        for(auto &i : indices) {
+            voxel_indices->emplace_back(i.second);
+        }
+
         msg::publish(out_voxels_, voxel_cloud_msg);
+        msg::publish<GenericVectorMessage, pcl::PointIndices>(out_voxel_cluster_indices_, voxel_indices);
     }
 
     msg::publish<GenericVectorMessage, pcl::PointIndices >(out_, out_cluster_indices);
