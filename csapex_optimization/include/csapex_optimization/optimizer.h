@@ -48,6 +48,7 @@ private:
     param::TriggerParameterPtr stop_;
 
     bool evaluate_immediately_;
+    bool perform_evaluation_;
 
     double last_fitness_;
     double best_fitness_;

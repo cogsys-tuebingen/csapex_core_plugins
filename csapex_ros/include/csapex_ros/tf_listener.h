@@ -35,6 +35,8 @@ public:
     }
     bool ok();
 
+    void addTransforms(const tf2_msgs::TFMessage& msg);
+
 private:
     TFListener();
 

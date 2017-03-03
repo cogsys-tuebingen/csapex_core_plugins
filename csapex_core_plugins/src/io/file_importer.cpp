@@ -228,6 +228,7 @@ void FileImporter::process()
 
     if(provider_) {
         if(provider_->hasNext()) {
+            end_triggered_ = false;
             sendToken();
             // we have a message -> return
             return;
@@ -459,11 +460,13 @@ void FileImporter::triggerSignalBegin()
 void FileImporter::triggerSignalEnd()
 {
     trigger_signal_end_ = true;
+    yield();
 }
 
 void FileImporter::signalBegin()
 {
     msg::trigger(begin_);
+    yield();
 }
 
 void FileImporter::signalEnd()

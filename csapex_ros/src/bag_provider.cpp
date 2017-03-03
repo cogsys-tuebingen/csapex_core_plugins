@@ -30,6 +30,7 @@ BagProvider::BagProvider()
     state.addParameter(csapex::param::ParameterFactory::declareBool("bag/latch", false));
     state.addParameter(csapex::param::ParameterFactory::declareRange("bag/frame", 0, 1, 0, 1));
     state.addParameter(csapex::param::ParameterFactory::declareBool("bag/publish tf", false));
+    state.addParameter(csapex::param::ParameterFactory::declareBool("bag/forward_tf", true));
     state.addParameter(csapex::param::ParameterFactory::declareBool("bag/publish clock", false));
 
     csapex::param::Parameter::Ptr topic_param = csapex::param::ParameterFactory::declareParameterStringSet("topic",
@@ -254,25 +255,33 @@ void BagProvider::advanceIterators()
     }
 
     bool done = !reset && !state.readParameter<bool>("bag/play");
-    bool pub_tf = state.readParameter<bool>("bag/publish tf");
+    bool publish_tf = state.readParameter<bool>("bag/publish tf");
+    bool forward_tf = state.readParameter<bool>("bag/forward_tf");
+    bool needs_tf = publish_tf && forward_tf;
+
     for(; view_it_ != view_all_->end() && !done; ++view_it_) {
         rosbag::MessageInstance next = *view_it_;
 
         std::string topic = next.getTopic();
 
-        if(pub_tf && (topic == "tf" || topic == "/tf")) {
-            if(!pub_setup_) {
+        if(needs_tf && (topic == "tf" || topic == "/tf")) {
+            if(publish_tf && !pub_setup_) {
                 setupRosPublisher();
             }
-            if(pub_setup_) {
-                tf2_msgs::TFMessage::Ptr tfm = next.instantiate<tf2_msgs::TFMessage>();
+            tf2_msgs::TFMessage::Ptr tfm = next.instantiate<tf2_msgs::TFMessage>();
 
-                if(has_last_tf_time_ && tfm->transforms.at(0).header.stamp < last_tf_time_ - ros::Duration(1.0)) {
-                    TFListener::getLocked().l->reset();
-                }
-                last_tf_time_ = tfm->transforms.at(0).header.stamp;
-                has_last_tf_time_ = true;
+            TFListener* listener = TFListener::getLocked().l;
+            if(has_last_tf_time_ && tfm->transforms.at(0).header.stamp < last_tf_time_ - ros::Duration(1.0)) {
+                listener->reset();
+            }
+            last_tf_time_ = tfm->transforms.at(0).header.stamp;
+            has_last_tf_time_ = true;
 
+            if(forward_tf) {
+                listener->addTransforms(*tfm);
+            }
+
+            if(publish_tf && pub_setup_) {
                 pub_tf_.publish(tfm);
             }
         }
