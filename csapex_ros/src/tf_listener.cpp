@@ -1,6 +1,9 @@
 /// HEADER
 #include <csapex_ros/tf_listener.h>
 
+/// SYSTEM
+#include <tf/tf.h>
+
 using namespace csapex;
 
 TFListener::TFListener()
@@ -93,4 +96,16 @@ bool TFListener::tryFrameAsReference(const tf::tfMessage::ConstPtr &msg, const s
     }
 
     return false;
+}
+
+void TFListener::addTransforms(const tf2_msgs::TFMessage &msg)
+{
+    for(const geometry_msgs::TransformStamped& trafo_msg : msg.transforms) {
+        tf::StampedTransform trafo;
+        tf::transformMsgToTF(trafo_msg.transform, trafo);
+        trafo.child_frame_id_ = trafo_msg.child_frame_id;
+        trafo.frame_id_ = trafo_msg.header.frame_id;
+        trafo.stamp_ = trafo_msg.header.stamp;
+        tfl->setTransform(trafo, "TFListener");
+    }
 }

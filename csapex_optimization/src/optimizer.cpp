@@ -39,9 +39,15 @@ void Optimizer::setupParameters(Parameterizable& parameters)
 
     parameters.addParameter(param::ParameterFactory::declareBool
                             ("finish_immediately",
-                             param::ParameterDescription("evaluate for every received fitness value, w/o relying on EndOfSequence."),
+                             param::ParameterDescription("Evaluate for every received fitness value, w/o relying on EndOfSequence."),
                              false),
                             evaluate_immediately_);
+
+    parameters.addParameter(param::ParameterFactory::declareBool
+                            ("perform_evaluation",
+                             param::ParameterDescription("Set best parameters after optimization and re-run."),
+                             false),
+                            perform_evaluation_);
 
     stop_ = csapex::param::ParameterFactory::declareTrigger("stop").build<param::TriggerParameter>();
     parameters.addParameter(stop_, [this](csapex::param::Parameter*) {
@@ -151,8 +157,11 @@ void Optimizer::doStop()
 
     setBest();
 
-    validation_running_ = true;
-    msg::trigger(trigger_start_evaluation_);
+    if(perform_evaluation_) {
+        validation_running_ = true;
+        msg::trigger(trigger_start_evaluation_);
+    }
+
     yield();
 }
 
