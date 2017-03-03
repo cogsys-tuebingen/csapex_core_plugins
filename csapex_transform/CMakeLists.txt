@@ -47,6 +47,7 @@ target_link_libraries(${PROJECT_NAME}_plugin_core ${PROJECT_NAME}
 
 
 add_library(${PROJECT_NAME}_plugin_node
+    src/change_transform_frames.cpp
     src/extract_frames.cpp
     src/transform_to_odometry.cpp
     src/transform_to_pose.cpp

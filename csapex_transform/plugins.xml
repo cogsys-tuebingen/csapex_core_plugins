@@ -5,6 +5,9 @@
 </library>
 
 <library path="libcsapex_transform_plugin_node">
+<class type="csapex::ChangeTransformFrames" base_class_type="csapex::Node">
+  <description>Changes the header of a transformation</description>
+</class>
 <class type="csapex::ExtractFrames" base_class_type="csapex::Node">
   <description>Extracts the frame a transform is defined in and the frame it defines</description>
 </class>

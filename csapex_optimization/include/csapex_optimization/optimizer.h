@@ -50,8 +50,6 @@ private:
     bool evaluate_immediately_;
     bool perform_evaluation_;
 
-    double last_fitness_;
-    double best_fitness_;
 
     bool init_;
     bool optimization_running_;
@@ -60,8 +58,11 @@ private:
 
     std::unordered_map<UUID, param::Parameter::Ptr, UUID::Hasher> best_parameters_;
 
+    double last_fitness_;
 protected:
     double fitness_;
+    double best_fitness_;
+    double worst_fitness_;
 };
 
 

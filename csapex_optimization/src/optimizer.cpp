@@ -19,12 +19,13 @@ using namespace csapex::connection_types;
 
 
 Optimizer::Optimizer()
-    : last_fitness_(std::numeric_limits<double>::infinity()),
-      best_fitness_(std::numeric_limits<double>::infinity()),
-      init_(false),
+    : init_(false),
       optimization_running_(false),
       validation_running_(false),
-      can_send_next_parameters_(false)
+      can_send_next_parameters_(false),
+      last_fitness_(std::numeric_limits<double>::infinity()),
+      best_fitness_(std::numeric_limits<double>::infinity()),
+      worst_fitness_(-std::numeric_limits<double>::infinity())
 {
 }
 
@@ -122,6 +123,7 @@ void Optimizer::reset()
 
     last_fitness_ = std::numeric_limits<double>::infinity();
     best_fitness_ = std::numeric_limits<double>::infinity();
+    worst_fitness_ = -std::numeric_limits<double>::infinity();
 }
 
 void Optimizer::start()
@@ -178,6 +180,10 @@ void Optimizer::finish()
 
 
     last_fitness_ = fitness_;
+
+    if(worst_fitness_ < fitness_) {
+        worst_fitness_ = fitness_;
+    }
 
     if(best_fitness_ > fitness_) {
         ainfo << "got better fitness: " << fitness_ << ", best was " << best_fitness_ << std::endl;
