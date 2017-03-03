@@ -19,6 +19,7 @@
 #include <csapex/model/token.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/param/trigger_parameter.h>
+#include <csapex_core_plugins/timestamp_message.h>
 
 /// SYSTEM
 #include <console_bridge/console.h>
@@ -29,6 +30,7 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
 #include <QMimeData>
+#include <chrono>
 
 CSAPEX_REGISTER_CLASS(csapex::APEXRosInterface, csapex::CorePlugin)
 
@@ -37,18 +39,39 @@ using namespace csapex;
 template <typename RosType, typename ApexType>
 struct ConvertIntegral
 {
-    static typename connection_types::GenericValueMessage<ApexType>::Ptr ros2apex(const typename RosType::ConstPtr &ros_msg) {
+    static typename connection_types::GenericValueMessage<ApexType>::Ptr ros2apex(const typename RosType::ConstPtr &ros_msg)
+    {
         typename connection_types::GenericValueMessage<ApexType>::Ptr out(new connection_types::GenericValueMessage<ApexType>);
         out->value = ros_msg->data;
         return out;
     }
-    static typename RosType::Ptr apex2ros(const typename connection_types::GenericValueMessage<ApexType>::ConstPtr& apex_msg) {
+    static typename RosType::Ptr apex2ros(const typename connection_types::GenericValueMessage<ApexType>::ConstPtr& apex_msg)
+    {
         typename RosType::Ptr out(new RosType);
         out->data = apex_msg->value;
         return out;
     }
 };
 
+
+struct ConvertTimeStamp
+{
+    static typename connection_types::TimestampMessage::Ptr ros2apex(const typename rosgraph_msgs::Clock::ConstPtr &ros_msg)
+    {
+        std::chrono::nanoseconds ns(ros_msg->clock.toNSec());
+        auto ms = std::chrono::duration_cast<std::chrono::microseconds>(ns);
+        connection_types::TimestampMessage::Tp tp = connection_types::TimestampMessage::Tp(ms);
+
+        return std::make_shared<connection_types::TimestampMessage>(tp);
+    }
+    static typename rosgraph_msgs::Clock::Ptr apex2ros(const typename connection_types::TimestampMessage::ConstPtr& apex_msg)
+    {
+        typename rosgraph_msgs::Clock::Ptr out(new rosgraph_msgs::Clock);
+        auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(apex_msg->value.time_since_epoch());
+        out->clock.fromNSec(nsec.count());
+        return out;
+    }
+};
 
 
 
@@ -96,6 +119,8 @@ void APEXRosInterface::init(CsApexCore &core)
     } else {
         connection_ = ROSHandler::instance().connected.connect(init);
     }
+
+    RosMessageConversion::registerConversion<rosgraph_msgs::Clock, connection_types::TimestampMessage, ConvertTimeStamp>();
 
     RosMessageConversion::registerConversion<std_msgs::Bool, connection_types::GenericValueMessage<bool>, ConvertIntegral<std_msgs::Bool, bool> >();
     RosMessageConversion::registerConversion<std_msgs::Int32, connection_types::GenericValueMessage<int>, ConvertIntegral<std_msgs::Int32, int> >();
