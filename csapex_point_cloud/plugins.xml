@@ -301,6 +301,10 @@
   <description>Filter ROIs by 3D distance to sensor.</description>
   <tags>PointCloud, ROI</tags>
 </class>
+<class type="csapex::FilterIndicesByRoiClassification" base_class_type="csapex::Node">
+  <description>Filter pointcloud cluster by roi classifications.</description>
+  <tags>PointCloud, ROI</tags>
+</class>
 <class type="csapex::EstimateCenter" base_class_type="csapex::Node">
   <description>Calculates center positions from point clouds</description>
   <tags>PointCloud</tags>
