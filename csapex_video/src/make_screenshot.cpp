@@ -21,7 +21,7 @@ void MakeScreenshot::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareDirectoryOutputPath("path", "/tmp"));
     parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("quality", 0, 100, 75, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("format", "%Y-%m-%d_$wx$h.png"));
+    parameters.addParameter(csapex::param::ParameterFactory::declareText("format", "%s_$wx$h.png"));
 }
 
 void MakeScreenshot::setup(NodeModifier& node_modifier)
@@ -41,9 +41,8 @@ void MakeScreenshot::makeScreenshot()
     ss << "cd " << path << " && scrot ";
     ss << '\'' << readParameter<std::string>("format") << '\'';
     ss << " -q " << readParameter<int>("quality");
-
     if(system(ss.str().c_str())) {
-        aerr << "call to " << ss.str() << " failed" << std::endl;
+        throw std::runtime_error(std::string("call to ") + ss.str() + " failed");
     }
 
 

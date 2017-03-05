@@ -141,7 +141,7 @@ add_library(csapex_core_lib_qt
 )
 
 target_link_libraries(csapex_core_lib_qt
-    ${PROJECT_NAME}_node
+    #${PROJECT_NAME}_node
     csapex_core_lib
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
@@ -158,7 +158,7 @@ add_library(${PROJECT_NAME}_qt SHARED
 
 
 target_link_libraries(${PROJECT_NAME}_qt
-    ${PROJECT_NAME}_node
+    #${PROJECT_NAME}_node
     csapex_core_lib_qt
     csapex_core_lib
     ${catkin_LIBRARIES}

@@ -26,11 +26,6 @@ void GenericTextCombiner::updateFormula()
 
 void GenericTextCombiner::process()
 {
-    std::vector<InputPtr> inputs = node_modifier_->getMessageInputs();
-    if(inputs.empty()) {
-        return;
-    }
-
     std::stringstream ss;
 
     for(std::size_t i = 0, n = format.size(); i < n;) {
@@ -45,18 +40,27 @@ void GenericTextCombiner::process()
             }
             int param_num = atoi(num.c_str());
 
-            Input* i = inputs.at(param_num-1).get();
-            if(msg::isValue<std::string>(i)) {
-                ss << msg::getValue<std::string>(i);
-
-            } else if(msg::isValue<int>(i)) {
-                ss << msg::getValue<int>(i);
-
-            } else if(msg::isValue<double>(i)) {
-                ss << msg::getValue<double>(i);
+            if(num.empty() || param_num <= 0) {
+                // has a $ sign but is no number
+                ss << num;
 
             } else {
-                ss << "[unknown]";
+                // is a real number
+                ainfo << format << ": " << i << ", " << num << " -> " << (param_num - 1) << " of " << getVariadicInputCount() << std::endl;
+
+                InputPtr input = getVariadicInput(param_num-1);
+                if(msg::isValue<std::string>(input.get())) {
+                    ss << msg::getValue<std::string>(input.get());
+
+                } else if(msg::isValue<int>(input.get())) {
+                    ss << std::fixed << msg::getValue<int>(input.get());
+
+                } else if(msg::isValue<double>(input.get())) {
+                    ss << std::fixed << msg::getValue<double>(input.get());
+
+                } else {
+                    ss << "[unknown]";
+                }
             }
 
         } else {
