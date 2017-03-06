@@ -59,7 +59,7 @@ public:
                 if(working_model) {
                     inliers.indices.clear();
                     outliers.indices.clear();
-                    working_model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
+                    working_model->getInliersAndOutliers(model_search_distance_, inliers.indices, outliers.indices);
 
                     if(inliers.indices.size() > minimum_model_cloud_size_)
                         out_inliers->emplace_back(inliers);
@@ -76,7 +76,7 @@ public:
         } else {
             sac->computeModel(model);
             if(model) {
-                model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
+                model->getInliersAndOutliers(model_search_distance_, inliers.indices, outliers.indices);
 
                 if(inliers.indices.size() > minimum_model_cloud_size_)
                     out_inliers->emplace_back(inliers);

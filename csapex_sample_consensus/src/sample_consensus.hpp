@@ -30,25 +30,12 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        std::map<std::string, std::pair<int, bool>> termination_criteria =
-        {
-            {"MAX_ITERATION", {csapex_sample_consensus::Parameters::MAX_ITERATION, true}},
-            {"MIN_DISTANCE", {csapex_sample_consensus::Parameters::MIN_DISTANCE, true}},
-            {"MAX_RETRY", {csapex_sample_consensus::Parameters::MAX_RETRY, true}}
-        };
-
-        parameters.addParameter(param::ParameterFactory::declareParameterBitSet("termination criteria",termination_criteria),
-                                termination_criteria_);
         parameters.addParameter(param::ParameterFactory::declareRange("model search distance", 0.0, 10.0, 0.1, 0.001),
                                 model_search_distance_);
         parameters.addParameter(param::ParameterFactory::declareRange("maximum mean model distance", 0.0, 10.0, 0.05, 0.01),
                                 maximum_mean_model_distance_);
         parameters.addParameter(param::ParameterFactory::declareRange("maximum iterations", 1, 100000, 100, 1),
                                 maximum_iterations_);
-        parameters.addParameter(param::ParameterFactory::declareRange("maximum retries", 1, 100000, 100, 1),
-                                maximum_retries_);
-        parameters.addParameter(param::ParameterFactory::declareRange("minimum inlier percentage", 0.0, 100.0, 50.0, 0.1),
-                                minimum_inlier_percentage_);
 
         parameters.addParameter(param::ParameterFactory::declareRange("minimum model cloud size", 1, 100000, 1000, 1),
                                 minimum_model_cloud_size_);
@@ -79,8 +66,7 @@ protected:
     double      model_search_distance_;
     double      maximum_mean_model_distance_;
     int         maximum_iterations_;
-    int         maximum_retries_;
-    double      minimum_inlier_percentage_;
+    int         minimum_fit_size_;
     int         minimum_model_cloud_size_;
 
     bool        fit_multiple_models_;
@@ -102,12 +88,8 @@ protected:
 
     void fillParamterObject(csapex_sample_consensus::Parameters &params)
     {
-        params.termination_criteria        = termination_criteria_;
-        params.model_search_distance       = model_search_distance_;
         params.maximum_mean_model_distance = maximum_mean_model_distance_;
         params.maximum_iterations          = maximum_iterations_;
-        params.maximum_retries             = maximum_retries_;
-        params.minimum_inlier_percentage   = minimum_inlier_percentage_ * 0.01; /// shift the representation to [0.0, 1.0]
     }
 
 };

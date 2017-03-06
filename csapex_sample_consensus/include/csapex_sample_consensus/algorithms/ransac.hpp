@@ -76,16 +76,21 @@ public:
         std::size_t skipped = 0;
 
         std::vector<int> model_samples;
-        std::size_t retries = 0;
         std::size_t iteration = 0;
         double mean_distance = std::numeric_limits<double>::max();
-        while(!parameters_.terminate(iteration, mean_distance, retries)) {
-            if(iteration >= k || skipped >= maximum_skipped)
+        while(iteration < k && skipped < maximum_skipped) {
+            if(iteration > parameters_.maximum_iterations)
                 break;
 
             if(!selectSamples(model, model_dimension, model_samples)) {
                 break;
             }
+
+            for(const int i : model_samples) {
+                std::cout << i << " ";
+            }
+            std::cout << std::endl;
+
 
             if(!model->computeModelCoefficients(model_samples)) {
                 ++skipped;
@@ -94,18 +99,16 @@ public:
 
             typename SampleConsensusModel<PointT>::InlierStatistic stat;
             model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
-            if(stat.count > maximum_inliers && stat.count * one_over_indices >= parameters_.minimum_inlier_percentage) {
+            if(stat.count > maximum_inliers) {
                 maximum_inliers = stat.count;
                 mean_distance = stat.mean_distance;
                 best_model = model->clone();
 
                 double w = maximum_inliers * one_over_indices;
-                double p_no_outliers = std::min(std::max(1.0 - std::pow(w, static_cast<double>(model_dimension)),
-                                                         std::numeric_limits<double>::epsilon()),
-                                                1.0 - std::numeric_limits<double>::epsilon());
+                double p_no_outliers = 1.0 - std::pow(w, static_cast<double>(model_dimension));
+                p_no_outliers = std::max(std::numeric_limits<double>::epsilon (), p_no_outliers);
+                p_no_outliers = std::min(1.0 - std::numeric_limits<double>::epsilon (), p_no_outliers);
                 k = log_probability / std::log(p_no_outliers);
-            } else {
-                ++retries;
             }
             ++iteration;
         }
@@ -121,25 +124,24 @@ protected:
 
     inline bool selectSamples(const typename Model::Ptr &model,
                               const std::size_t          samples,
-                              std::vector<int> &indices)
+                              std::vector<int>          &indices)
     {
-        indices.clear();
+        std::set<int> selection;
+        std::size_t iteration = 0;
+        do {
+            if(iteration >= parameters_.maximum_sampling_retries)
+                return false;
 
-        auto drawTuple = [&indices, samples, this]() {
-              std::set<int> tuple;
-              while(tuple.size() < samples) {
-                tuple.insert(Base::getIndices()[distribution_(rng_)]);
-              }
-              indices.assign(tuple.begin(), tuple.end());
-        };
-
-        for(std::size_t i = 0 ; i < parameters_.maximum_sampling_retries ; ++i) {
-            drawTuple();
-
-            if(model->validateSamples(indices))
-                return true;
-        }
-        return false;
+            indices.clear();
+            do {
+                int next = distribution_(rng_);
+                selection.insert(next);
+            } while(selection.size() < samples);
+            for(const int i : selection) {
+                indices.emplace_back(i);
+            }
+        } while(!model->validateSamples(indices));
+        return true;
     }
 };
 }

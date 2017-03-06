@@ -97,10 +97,7 @@ public:
         std::size_t retries = 0;
         std::size_t iteration = 0;
         double mean_distance = 0.0;
-        while(!parameters_.terminate(iteration, mean_distance, retries)) {
-            if(iteration >= k || skipped >= maximum_skipped)
-                break;
-
+        while(iteration < k && skipped < maximum_skipped) {
             if(!selectSamples(model, model_dimension, model_samples)) {
                 break;
             }
@@ -114,7 +111,7 @@ public:
             model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
             mean_inliers_ = (iteration * mean_inliers_ + stat.count) / (iteration + 1.0);
 
-            if(stat.count > maximum_inliers && stat.count * one_over_indices_ >= parameters_.minimum_inlier_percentage) {
+            if(stat.count > maximum_inliers) {
                 maximum_inliers = stat.count;
                 mean_distance = stat.mean_distance;
                 best_model = model->clone();
