@@ -1,6 +1,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/variadic_io.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
@@ -15,7 +16,7 @@ namespace csapex
 namespace state
 {
 
-class ActivityGate : public Node
+class ActivityGate : public Node, public VariadicIO
 {
 public:
     ActivityGate()
@@ -25,12 +26,14 @@ public:
 
     void setup(csapex::NodeModifier& modifier) override
     {
-        in_ = modifier.addInput<AnyMessage>("Input");
-        out_ = modifier.addOutput<AnyMessage>("Output");
+        VariadicIO::setupVariadic(modifier);
+
     }
 
     void setupParameters(csapex::Parameterizable& params) override
     {
+        VariadicIO::setupVariadicParameters(params);
+
         params.addParameter(param::ParameterFactory::declareBool("inverted",
                                                                  param::ParameterDescription("If inverted, messages are forwarded when the node is <b>not</b> active."),
                                                                  false),
@@ -50,16 +53,39 @@ public:
     void process() override
     {
         if(active_ ^ inverted_) {
-            auto message = msg::getMessage(in_);
-            apex_assert(message);
-            msg::publish(out_, message);
+            apex_assert(variadic_outputs_.size() == variadic_inputs_.size());
+
+            for(std::size_t i = 0, n = variadic_inputs_.size(); i < n; ++i) {
+                InputPtr in = variadic_inputs_.at(i);
+                OutputPtr out = variadic_outputs_.at(i);
+
+                msg::publish(out.get(), msg::getMessage(in.get()));
+            }
+        }
+    }
+
+    Input* createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/) override
+    {
+        VariadicOutputs::createVariadicOutput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label);
+        return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+    }
+
+
+    Output* createVariadicOutput(TokenDataConstPtr type, const std::string& label) override
+    {
+        VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+        return VariadicOutputs::createVariadicOutput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label);
+    }
+
+    void finishSetup() override
+    {
+        apex_assert(variadic_outputs_.size() == variadic_inputs_.size());
+        if(getVariadicInputCount() == 0) {
+            createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), "", false);
         }
     }
 
 private:
-    Input* in_;
-    Output* out_;
-
     bool inverted_;
     bool active_;
 };
