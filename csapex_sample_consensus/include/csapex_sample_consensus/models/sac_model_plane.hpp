@@ -40,6 +40,14 @@ public:
         Eigen::Vector4f p0 = convert(Base::pointcloud_->at(indices[0]));
         Eigen::Vector4f p1 = convert(Base::pointcloud_->at(indices[1]));
         Eigen::Vector4f p2 = convert(Base::pointcloud_->at(indices[2]));
+
+        if(isNan(p0) ||
+                isNan(p1) ||
+                    isNan(p2)) {
+            return false;
+        }
+
+
         Eigen::Vector4f dy1dy2 = (p1-p0).cwiseQuotient(p2-p0);
 
         return ( (dy1dy2[0] != dy1dy2[1]) || (dy1dy2[2] != dy1dy2[1]) );
@@ -97,7 +105,8 @@ protected:
         Base::model_coefficients_[3] = 0;
 
         Base::model_coefficients_.normalize ();
-        Base::model_coefficients_[3] = -1 * (Base::model_coefficients_.template head<4>().dot (p0.matrix ()));
+        float d = -1 * Base::model_coefficients_.dot(p0);
+        Base::model_coefficients_[3] = d;
 
         return true;
     }
@@ -105,6 +114,11 @@ protected:
     inline Eigen::Vector4f convert(const PointT &pt, const float w = 0.f) const
     {
         return Eigen::Vector4f(pt.x, pt.y, pt.z, w);
+    }
+
+    inline bool isNan(const Eigen::Vector4f &v) const
+    {
+        return std::isnan(v[0]) || std::isnan(v[1]) || std::isnan(v[2]) || std::isnan(v[3]);
     }
 };
 }

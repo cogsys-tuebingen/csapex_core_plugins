@@ -130,8 +130,9 @@ protected:
         std::size_t iteration = 0;
         do {
             if(iteration >= parameters_.maximum_sampling_retries)
-                return false;
+                return model->validateSamples(indices);
 
+            selection.clear();
             indices.clear();
             do {
                 int next = distribution_(rng_);
@@ -140,6 +141,7 @@ protected:
             for(const int i : selection) {
                 indices.emplace_back(i);
             }
+            ++iteration;
         } while(!model->validateSamples(indices));
         return true;
     }

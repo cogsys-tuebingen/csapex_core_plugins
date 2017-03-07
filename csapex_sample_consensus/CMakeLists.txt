@@ -3,7 +3,7 @@ project(csapex_sample_consensus)
 
 add_definitions(-DQT_NO_KEYWORDS)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-add_definitions("-O3")
+#add_definitions("-O3")
 
 find_package(catkin REQUIRED COMPONENTS
     csapex

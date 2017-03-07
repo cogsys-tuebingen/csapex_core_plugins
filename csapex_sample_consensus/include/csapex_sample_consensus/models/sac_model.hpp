@@ -67,7 +67,7 @@ public:
             return;
 
         statistic.count = 0;
-        statistic.mean_distance = std::numeric_limits<double>::max();
+        statistic.mean_distance = 0;
 
         double distance = 0.0;
         for(const int i : indices) {
