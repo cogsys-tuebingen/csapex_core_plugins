@@ -16,6 +16,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 
+#include <pcl/point_representation.h>
+
 #include <boost/mpl/for_each.hpp>
 
 #include <csapex_sample_consensus/csapex_sample_consensus.hpp>
@@ -85,6 +87,20 @@ protected:
         return typename csapex_sample_consensus::ModelPlane<PointT>::Ptr(new csapex_sample_consensus::ModelPlane<PointT>(cloud));
     }
 
+    template<typename PointT>
+    void getIndices(typename pcl::PointCloud<PointT>::ConstPtr &cloud,
+                    std::vector<int> &indices)
+    {
+        const static pcl::DefaultPointRepresentation<PointT> pr;
+        const std::size_t size = cloud->size();
+        indices.reserve(size);
+        for(std::size_t i = 0 ; i < size; ++i) {
+            if(pr.isValid(cloud->at(i))) {
+                indices.emplace_back(i);
+            }
+        }
+
+    }
 
     void fillParamterObject(csapex_sample_consensus::Parameters &params)
     {

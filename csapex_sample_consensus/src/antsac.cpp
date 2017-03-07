@@ -41,22 +41,22 @@ public:
         std::shared_ptr<std::vector<pcl::PointIndices> > out_outliers(new std::vector<pcl::PointIndices>);
         std::shared_ptr<std::vector<ModelMessage> >      out_models(new std::vector<ModelMessage>);
 
-        auto model = getModel<PointT>(cloud);
-        csapex_sample_consensus::AntsacParameters params;
-        fillParamterObject(params);
+//        auto model = getModel<PointT>(cloud);
+//        csapex_sample_consensus::AntsacParameters params;
+//        fillParamterObject(params);
 
-        auto sac = csapex_sample_consensus::Antsac<PointT>(cloud->size(), params);
-        sac.computeModel(model);
+//        auto sac = csapex_sample_consensus::Antsac<PointT>(cloud->size(), params);
+//        sac.computeModel(model);
 
-        if(model) {
-            pcl::PointIndices outliers;
-            pcl::PointIndices inliers;
-            inliers.header = cloud->header;
-            outliers.header = cloud->header;
-            model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
-            out_inliers->emplace_back(inliers);
-            out_outliers->emplace_back(outliers);
-        }
+//        if(model) {
+//            pcl::PointIndices outliers;
+//            pcl::PointIndices inliers;
+//            inliers.header = cloud->header;
+//            outliers.header = cloud->header;
+//            model->getInliersAndOutliers(0.1f, inliers.indices, outliers.indices);
+//            out_inliers->emplace_back(inliers);
+//            out_outliers->emplace_back(outliers);
+//        }
 
         msg::publish<GenericVectorMessage, pcl::PointIndices>(out_inlier_indices_, out_inliers);
         msg::publish<GenericVectorMessage, pcl::PointIndices>(out_outlier_indices_, out_outliers);

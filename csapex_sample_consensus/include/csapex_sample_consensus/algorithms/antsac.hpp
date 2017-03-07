@@ -47,25 +47,6 @@ public:
         }
     }
 
-    Antsac(const std::size_t cloud_size,
-           const AntsacParameters &parameters):
-        Base(cloud_size),
-        parameters_(parameters),
-        distribution_(0.0, 1.0),
-        mean_inliers_(0.0),
-        one_over_indices_(1.0 / static_cast<double>(Base::indices_.size())),
-        tau_(Base::indices_.size(), one_over_indices_),
-        distances_(Base::indices_.size(), std::numeric_limits<double>::max()),
-        U_(Base::indices_.size())
-    {
-        if(parameters_.random_seed >= 0) {
-            rng_ = std::default_random_engine(parameters_.random_seed);
-        } else {
-            std::random_device rd;
-            rng_ = std::default_random_engine(rd());
-        }
-    }
-
     virtual void setIndices(const std::vector<int> &indices) override
     {
         Base::setIndices(indices);

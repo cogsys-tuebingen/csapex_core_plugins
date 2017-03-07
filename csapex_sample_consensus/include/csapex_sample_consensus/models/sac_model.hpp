@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <pcl/point_cloud.h>
+#include <set>
 
 namespace csapex_sample_consensus {
 template<typename PointT>
@@ -184,6 +185,7 @@ public:
     /// Methods to be implemented by the different model types
     virtual SampleConsensusModel::Ptr clone() const = 0;
     virtual bool                      isModelValid() const = 0;
+    virtual bool                      validateSamples(const std::set<int> &indices) const = 0;
     virtual bool                      validateSamples(const std::vector<int> &indices) const = 0;
     virtual std::size_t               getModelDimension() const = 0;
     virtual double                    getDistanceToModel(const int &index) const = 0;

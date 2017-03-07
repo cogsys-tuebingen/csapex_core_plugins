@@ -11,7 +11,6 @@
 namespace csapex_sample_consensus {
 struct RansacParameters : public Parameters {
     double      inlier_start_probability = 0.99;
-    int         random_seed = -1;
     std::size_t maximum_sampling_retries = 100;
 
     RansacParameters() = default;
@@ -26,31 +25,13 @@ public:
     using Model = typename Base::Model;
 
     Ransac(const std::vector<int> &indices,
-           const RansacParameters &parameters) :
+           const RansacParameters &parameters,
+           const std::default_random_engine rng) :
         Base(indices),
         parameters_(parameters),
+        rng_(rng),
         distribution_(0, Base::indices_.size() - 1)
     {
-        if(parameters_.random_seed >= 0) {
-            rng_ = std::default_random_engine(parameters_.random_seed);
-        } else {
-            std::random_device rd;
-            rng_ = std::default_random_engine(rd());
-        }
-    }
-
-    Ransac(const std::size_t cloud_size,
-           const RansacParameters &parameters) :
-        Base(cloud_size),
-        parameters_(parameters),
-        distribution_(0, Base::indices_.size() - 1)
-    {
-        if(parameters_.random_seed >= 0) {
-            rng_ = std::default_random_engine(parameters_.random_seed);
-        } else {
-            std::random_device rd;
-            rng_ = std::default_random_engine(rd());
-        }
     }
 
     virtual void setIndices(const std::vector<int> &indices) override
@@ -85,12 +66,6 @@ public:
             if(!selectSamples(model, model_dimension, model_samples)) {
                 break;
             }
-
-            for(const int i : model_samples) {
-                std::cout << i << " ";
-            }
-            std::cout << std::endl;
-
 
             if(!model->computeModelCoefficients(model_samples)) {
                 ++skipped;
@@ -145,6 +120,23 @@ protected:
         } while(!model->validateSamples(indices));
         return true;
     }
+
+//    std::set<int> selection;
+//    std::size_t iteration = 0;
+//    bool valid = false;
+//    while(!valid && iteration < parameters_.maximum_sampling_retries) {
+//        selection.clear();
+//        while(selection.size() < samples) {
+//            int next = distribution_(rng_);
+//            selection.insert(next);
+//        }
+//        valid = model->validateSamples(selection);
+//    }
+
+//    for(const int i : selection) {
+//        indices.emplace_back(i);
+//    }
+//    return valid;
 };
 }
 

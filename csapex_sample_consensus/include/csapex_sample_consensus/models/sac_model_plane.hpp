@@ -32,6 +32,23 @@ public:
         return Base::model_coefficients_.size() == 4;
     }
 
+    virtual bool validateSamples(const std::set<int> &indices) const override
+    {
+        if(indices.size() != 3)
+            return false;
+
+        auto it = indices.begin();
+        Eigen::Vector4f p0 = convert(Base::pointcloud_->at(*(it)));
+        ++it;
+        Eigen::Vector4f p1 = convert(Base::pointcloud_->at(*(it)));
+        ++it;
+        Eigen::Vector4f p2 = convert(Base::pointcloud_->at(*(it)));
+        Eigen::Vector4f dy1dy2 = (p1-p0).cwiseQuotient(p2-p0);
+
+        return ( (dy1dy2[0] != dy1dy2[1]) || (dy1dy2[2] != dy1dy2[1]) );
+    }
+
+
     virtual bool validateSamples(const std::vector<int> &indices) const override
     {
         if(indices.size() != 3)
@@ -40,14 +57,6 @@ public:
         Eigen::Vector4f p0 = convert(Base::pointcloud_->at(indices[0]));
         Eigen::Vector4f p1 = convert(Base::pointcloud_->at(indices[1]));
         Eigen::Vector4f p2 = convert(Base::pointcloud_->at(indices[2]));
-
-        if(isNan(p0) ||
-                isNan(p1) ||
-                    isNan(p2)) {
-            return false;
-        }
-
-
         Eigen::Vector4f dy1dy2 = (p1-p0).cwiseQuotient(p2-p0);
 
         return ( (dy1dy2[0] != dy1dy2[1]) || (dy1dy2[2] != dy1dy2[1]) );
@@ -116,10 +125,6 @@ protected:
         return Eigen::Vector4f(pt.x, pt.y, pt.z, w);
     }
 
-    inline bool isNan(const Eigen::Vector4f &v) const
-    {
-        return std::isnan(v[0]) || std::isnan(v[1]) || std::isnan(v[2]) || std::isnan(v[3]);
-    }
 };
 }
 

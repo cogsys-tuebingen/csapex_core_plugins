@@ -16,7 +16,7 @@ public:
         parameters.addParameter(param::ParameterFactory::declareRange("inlier start probability", 0.01, 1.0, 0.9, 0.01),
                                 inlier_start_probability_);
         parameters.addParameter(param::ParameterFactory::declareValue("random seed", -1),
-                                random_seed_);
+                                std::bind(&Ransac::setupRandomGenerator, this));
         parameters.addParameter(param::ParameterFactory::declareRange("maximum sampling retries", 1, 1000, 100, 1),
                                 maximum_sampling_retries_);
     }
@@ -41,9 +41,11 @@ public:
         typename csapex_sample_consensus::Ransac<PointT>::Ptr sac;
         if(msg::hasMessage(in_indices_)) {
             PointIndecesMessage::ConstPtr in_indices = msg::getMessage<PointIndecesMessage>(in_indices_);
-            sac.reset(new csapex_sample_consensus::Ransac<PointT>(in_indices->value->indices, params));
+            sac.reset(new csapex_sample_consensus::Ransac<PointT>(in_indices->value->indices, params, rng_));
         } else {
-            sac.reset(new csapex_sample_consensus::Ransac<PointT>(cloud->size(), params));
+            std::vector<int> indices;
+            getIndices<PointT>(cloud, indices);
+            sac.reset(new csapex_sample_consensus::Ransac<PointT>(indices, params, rng_));
         }
 
         pcl::PointIndices outliers;
@@ -78,11 +80,11 @@ public:
             if(model) {
                 model->getInliersAndOutliers(model_search_distance_, inliers.indices, outliers.indices);
 
-                if(inliers.indices.size() > minimum_model_cloud_size_)
+                if(inliers.indices.size() > minimum_model_cloud_size_) {
                     out_inliers->emplace_back(inliers);
-                else
+                } else {
                     out_outliers->emplace_back(inliers);
-
+                }
                 out_outliers->emplace_back(outliers);
             }
         }
@@ -94,14 +96,25 @@ public:
 
 protected:
     double inlier_start_probability_;
-    int    random_seed_;
     int    maximum_sampling_retries_;
+
+    std::default_random_engine rng_;    /// keep the random engine alive for better number generation
+
+    inline void setupRandomGenerator()
+    {
+        int seed = readParameter<int>("random seed");
+        if(seed >= 0) {
+            rng_ = std::default_random_engine(seed);
+        } else {
+            std::random_device rd;
+            rng_ = std::default_random_engine(rd());
+        }
+    }
 
     inline void fillParamterObject(csapex_sample_consensus::RansacParameters &params)
     {
         SampleConsensus::fillParamterObject(params);
         params.inlier_start_probability = inlier_start_probability_;
-        params.random_seed = random_seed_;
         params.maximum_sampling_retries = maximum_sampling_retries_;
     }
 };

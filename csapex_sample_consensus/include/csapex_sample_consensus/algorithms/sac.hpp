@@ -22,15 +22,6 @@ public:
     {
     }
 
-    SampleConsensus(const std::size_t cloud_size)
-    {
-        indices_.resize(cloud_size);
-        int index = -1;
-        for(int &i : indices_) {
-            i = ++index;
-        }
-    }
-
     virtual bool computeModel(typename Model::Ptr &model) = 0;
 
     virtual void setIndices(const std::vector<int> &indices)
@@ -45,7 +36,6 @@ public:
 
 protected:
     std::vector<int> indices_;
-    std::vector<int> indices_shuffled_;
 
 };
 }
