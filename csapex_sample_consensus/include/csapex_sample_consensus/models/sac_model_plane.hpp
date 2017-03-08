@@ -6,6 +6,8 @@
 
 /// SYSTEM
 #include <pcl/point_types.h>
+#include <pcl/common/centroid.h>
+#include <pcl/common/eigen.h>
 
 namespace csapex_sample_consensus {
 template<typename PointT>
@@ -32,14 +34,61 @@ public:
         return Base::model_coefficients_.size() == 4;
     }
 
+    virtual bool optimizeModelCoefficients(const float maximum_distance) override
+    {
+        std::vector<int> indices;
+        Base::getInliers(maximum_distance, indices);
+
+        if(indices.size() == 0)
+            return false;
+
+        Eigen::Matrix3d cov;
+        Eigen::Vector4d centroid;
+        pcl::computeMeanAndCovarianceMatrix(*Base::pointcloud_, indices, cov, centroid);
+        Eigen::Vector3d eigen_vector;
+        double          eigen_value;
+        pcl::eigen33(cov, eigen_value, eigen_vector);
+
+        Base::model_coefficients_[0] = eigen_vector[0];
+        Base::model_coefficients_[1] = eigen_vector[1];
+        Base::model_coefficients_[2] = eigen_vector[2];
+        Base::model_coefficients_[3] = 0;
+        Base::model_coefficients_[3] = -1 * Base::model_coefficients_.dot (centroid.cast<float>());
+        return true;
+    }
+
+    virtual bool optimizeModelCoefficients(const std::vector<int> &src_indices,
+                                           const float maximum_distance)
+    {
+        std::vector<int> indices;
+        Base::getInliers(src_indices, maximum_distance, indices);
+
+        if(indices.size() == 0)
+            return false;
+
+        Eigen::Matrix3d cov;
+        Eigen::Vector4d centroid;
+        pcl::computeMeanAndCovarianceMatrix(*Base::pointcloud_, indices, cov, centroid);
+        Eigen::Vector3d eigen_vector;
+        double          eigen_value;
+        pcl::eigen33(cov, eigen_value, eigen_vector);
+
+        Base::model_coefficients_[0] = eigen_vector[0];
+        Base::model_coefficients_[1] = eigen_vector[1];
+        Base::model_coefficients_[2] = eigen_vector[2];
+        Base::model_coefficients_[3] = 0;
+        Base::model_coefficients_[3] = -1 * Base::model_coefficients_.dot (centroid.cast<float>());
+        return true;
+    }
+
     virtual bool validateSamples(const std::vector<int> &indices) const override
     {
         if(indices.size() != 3)
             return false;
 
-        Eigen::Vector4f p0 = convert(Base::pointcloud_->at(indices[0]));
-        Eigen::Vector4f p1 = convert(Base::pointcloud_->at(indices[1]));
-        Eigen::Vector4f p2 = convert(Base::pointcloud_->at(indices[2]));
+        Eigen::Vector4f p0 = convertHomogene(Base::pointcloud_->at(indices[0]));
+        Eigen::Vector4f p1 = convertHomogene(Base::pointcloud_->at(indices[1]));
+        Eigen::Vector4f p2 = convertHomogene(Base::pointcloud_->at(indices[2]));
 
         if(isNan(p0) ||
                 isNan(p1) ||
@@ -59,11 +108,11 @@ public:
             return false;
 
         auto it = indices.begin();
-        Eigen::Vector4f p0 = convert(Base::pointcloud_->at(*(it)));
+        Eigen::Vector4f p0 = convertHomogene(Base::pointcloud_->at(*(it)));
         ++it;
-        Eigen::Vector4f p1 = convert(Base::pointcloud_->at(*(it)));
+        Eigen::Vector4f p1 = convertHomogene(Base::pointcloud_->at(*(it)));
         ++it;
-        Eigen::Vector4f p2 = convert(Base::pointcloud_->at(*(it)));
+        Eigen::Vector4f p2 = convertHomogene(Base::pointcloud_->at(*(it)));
 
         if(isNan(p0) ||
                 isNan(p1) ||
@@ -86,7 +135,7 @@ public:
     {
         if(!isModelValid())
             return std::numeric_limits<float>::lowest();
-        Eigen::Vector4f pt = convert(Base::pointcloud_->at(index), 1.f);
+        Eigen::Vector4f pt = convertHomogene(Base::pointcloud_->at(index), 1.f);
         return std::abs(Base::model_coefficients_.dot(pt));
     }
 
@@ -99,7 +148,7 @@ public:
         const std::size_t size = indices.size();
         distances.resize(size, std::numeric_limits<float>::lowest());
         for(std::size_t i = 0 ; i < size ; ++i) {
-            distances[i] = std::abs(Base::model_coefficients_.dot(convert(Base::pointcloud_->at(indices[i]), 1.f)));
+            distances[i] = std::abs(Base::model_coefficients_.dot(convertHomogene(Base::pointcloud_->at(indices[i]), 1.f)));
         }
     }
 
@@ -110,9 +159,9 @@ protected:
             return false;
         }
 
-        Eigen::Vector4f p0 = convert(Base::pointcloud_->at(indices[0]));
-        Eigen::Vector4f p1 = convert(Base::pointcloud_->at(indices[1]));
-        Eigen::Vector4f p2 = convert(Base::pointcloud_->at(indices[2]));
+        Eigen::Vector4f p0 = convertHomogene(Base::pointcloud_->at(indices[0]));
+        Eigen::Vector4f p1 = convertHomogene(Base::pointcloud_->at(indices[1]));
+        Eigen::Vector4f p2 = convertHomogene(Base::pointcloud_->at(indices[2]));
         Eigen::Vector4f p1p0 = p1 - p0;
         Eigen::Vector4f p2p0 = p2 - p0;
 
@@ -135,7 +184,12 @@ protected:
         return true;
     }
 
-    inline Eigen::Vector4f convert(const PointT &pt, const float w = 0.f) const
+    inline Eigen::Vector3d convert(const PointT &pt)
+    {
+        return Eigen::Vector3d(pt.x, pt.y, pt.z);
+    }
+
+    inline Eigen::Vector4f convertHomogene(const PointT &pt, const float w = 0.f) const
     {
         return Eigen::Vector4f(pt.x, pt.y, pt.z, w);
     }
