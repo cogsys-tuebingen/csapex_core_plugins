@@ -16,9 +16,7 @@ struct Parameters {
         maximum_mean_model_distance = params.maximum_mean_model_distance;
         maximum_iterations = params.maximum_iterations;
     }
-
-    bool checkForTermination() = 0 const;
-};
+ };
 
 template<typename PointT>
 class SampleConsensus  {

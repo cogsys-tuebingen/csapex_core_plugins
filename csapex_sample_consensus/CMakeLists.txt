@@ -32,6 +32,7 @@ add_library(${PROJECT_NAME}_plugin_node
     include/csapex_sample_consensus/algorithms/sac.hpp
     include/csapex_sample_consensus/algorithms/antsac.hpp
     include/csapex_sample_consensus/algorithms/ransac.hpp
+    include/csapex_sample_consensus/algorithms/delegate.hpp
 
     include/csapex_sample_consensus/models/sac_model.hpp
     include/csapex_sample_consensus/models/sac_model_from_normals.hpp
