@@ -71,16 +71,6 @@ protected:
     double alpha_;
     double theta_;
 
-    inline void fillParamterObject(csapex_sample_consensus::AntsacParameters &params)
-    {
-        SampleConsensus::fillParamterObject(params);
-        params.inlier_start_probability = inlier_start_probability_;
-        params.random_seed = random_seed_;
-        params.maximum_sampling_retries = maximum_sampling_retries_;
-        params.rho = rho_;
-        params.alpha = alpha_;
-        params.theta = theta_;
-    }
 };
 }
 

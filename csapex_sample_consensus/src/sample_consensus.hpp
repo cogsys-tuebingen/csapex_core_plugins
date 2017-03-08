@@ -33,11 +33,11 @@ public:
     virtual void setupParameters(Parameterizable &parameters) override
     {
         parameters.addParameter(param::ParameterFactory::declareRange("model search distance", 0.0, 10.0, 0.1, 0.001),
-                                model_search_distance_);
+                                sac_parameters_.model_search_distance);
         parameters.addParameter(param::ParameterFactory::declareRange("maximum mean model distance", 0.0, 10.0, 0.05, 0.01),
-                                maximum_mean_model_distance_);
+                                sac_parameters_.maximum_mean_model_distance);
         parameters.addParameter(param::ParameterFactory::declareRange("maximum iterations", 1, 100000, 100, 1),
-                                maximum_iterations_);
+                                sac_parameters_.maximum_iterations);
 
         parameters.addParameter(param::ParameterFactory::declareRange("minimum model cloud size", 1, 100000, 1000, 1),
                                 minimum_model_cloud_size_);
@@ -64,10 +64,9 @@ public:
     }
 
 protected:
+    csapex_sample_consensus::Parameters sac_parameters_;
+
     int         termination_criteria_;
-    double      model_search_distance_;
-    double      maximum_mean_model_distance_;
-    int         maximum_iterations_;
     int         minimum_fit_size_;
     int         minimum_model_cloud_size_;
 
@@ -101,13 +100,6 @@ protected:
         }
 
     }
-
-    void fillParamterObject(csapex_sample_consensus::Parameters &params)
-    {
-        params.maximum_mean_model_distance = maximum_mean_model_distance_;
-        params.maximum_iterations          = maximum_iterations_;
-    }
-
 };
 }
 

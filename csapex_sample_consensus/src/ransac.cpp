@@ -13,12 +13,17 @@ public:
     {
         SampleConsensus::setupParameters(parameters);
 
-        parameters.addParameter(param::ParameterFactory::declareRange("inlier start probability", 0.01, 1.0, 0.9, 0.01),
-                                inlier_start_probability_);
+        parameters.addParameter(param::ParameterFactory::declareBool("use outlier probability", false),
+                                ransac_parameters_.use_outlier_probability);
+        parameters.addConditionalParameter(param::ParameterFactory::declareRange("outlier probability", 0.01, 1.0, 0.9, 0.01),
+                                           [this](){return ransac_parameters_.use_outlier_probability;},
+                                           ransac_parameters_.outlier_probability);
+
         parameters.addParameter(param::ParameterFactory::declareValue("random seed", -1),
                                 std::bind(&Ransac::setupRandomGenerator, this));
+
         parameters.addParameter(param::ParameterFactory::declareRange("maximum sampling retries", 1, 1000, 100, 1),
-                                maximum_sampling_retries_);
+                                ransac_parameters_.maximum_sampling_retries);
     }
 
     virtual void process() override
@@ -35,17 +40,16 @@ public:
         std::shared_ptr<std::vector<ModelMessage> >      out_models(new std::vector<ModelMessage>);
 
         auto model = getModel<PointT>(cloud);
-        csapex_sample_consensus::RansacParameters params;
-        fillParamterObject(params);
+        ransac_parameters_.assign(sac_parameters_);
 
         typename csapex_sample_consensus::Ransac<PointT>::Ptr sac;
         if(msg::hasMessage(in_indices_)) {
             PointIndecesMessage::ConstPtr in_indices = msg::getMessage<PointIndecesMessage>(in_indices_);
-            sac.reset(new csapex_sample_consensus::Ransac<PointT>(in_indices->value->indices, params, rng_));
+            sac.reset(new csapex_sample_consensus::Ransac<PointT>(in_indices->value->indices, ransac_parameters_, rng_));
         } else {
             std::vector<int> indices;
             getIndices<PointT>(cloud, indices);
-            sac.reset(new csapex_sample_consensus::Ransac<PointT>(indices, params, rng_));
+            sac.reset(new csapex_sample_consensus::Ransac<PointT>(indices, ransac_parameters_, rng_));
         }
 
         pcl::PointIndices outliers;
@@ -61,7 +65,7 @@ public:
                 if(working_model) {
                     inliers.indices.clear();
                     outliers.indices.clear();
-                    working_model->getInliersAndOutliers(model_search_distance_, inliers.indices, outliers.indices);
+                    working_model->getInliersAndOutliers(ransac_parameters_.model_search_distance, inliers.indices, outliers.indices);
 
                     if(inliers.indices.size() > minimum_model_cloud_size_)
                         out_inliers->emplace_back(inliers);
@@ -78,7 +82,7 @@ public:
         } else {
             sac->computeModel(model);
             if(model) {
-                model->getInliersAndOutliers(model_search_distance_, inliers.indices, outliers.indices);
+                model->getInliersAndOutliers(ransac_parameters_.model_search_distance, inliers.indices, outliers.indices);
 
                 if(inliers.indices.size() > minimum_model_cloud_size_) {
                     out_inliers->emplace_back(inliers);
@@ -95,8 +99,7 @@ public:
     }
 
 protected:
-    double inlier_start_probability_;
-    int    maximum_sampling_retries_;
+    csapex_sample_consensus::RansacParameters ransac_parameters_;
 
     std::default_random_engine rng_;    /// keep the random engine alive for better number generation
 
@@ -111,12 +114,7 @@ protected:
         }
     }
 
-    inline void fillParamterObject(csapex_sample_consensus::RansacParameters &params)
-    {
-        SampleConsensus::fillParamterObject(params);
-        params.inlier_start_probability = inlier_start_probability_;
-        params.maximum_sampling_retries = maximum_sampling_retries_;
-    }
+
 };
 }
 

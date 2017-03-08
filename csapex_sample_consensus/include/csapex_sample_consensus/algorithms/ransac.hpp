@@ -10,8 +10,9 @@
 
 namespace csapex_sample_consensus {
 struct RansacParameters : public Parameters {
-    double      inlier_start_probability = 0.99;
-    std::size_t maximum_sampling_retries = 100;
+    double      outlier_probability = 0.99;
+    int         maximum_sampling_retries = 100;
+    bool        use_outlier_probability = false;
 
     RansacParameters() = default;
 };
@@ -42,7 +43,7 @@ public:
 
     virtual bool computeModel(typename Model::Ptr &model) override
     {
-        const double log_probability = std::log(1.0 - parameters_.inlier_start_probability);
+        const double log_probability = std::log(1.0 - parameters_.outlier_probability);
         const double one_over_indices = 1.0 / static_cast<double>(Base::indices_.size());
         const std::size_t model_dimension = model->getModelDimension();
         const std::size_t maximum_skipped = parameters_.maximum_iterations * 10;
@@ -58,6 +59,7 @@ public:
 
         std::vector<int> model_samples;
         std::size_t iteration = 0;
+
         while(static_cast<double>(iteration) < k && skipped < maximum_skipped) {
             if(iteration > parameters_.maximum_iterations)
                 break;

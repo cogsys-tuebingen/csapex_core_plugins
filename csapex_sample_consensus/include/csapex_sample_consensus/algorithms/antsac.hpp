@@ -18,6 +18,11 @@ struct AntsacParameters : public Parameters {
     double      alpha = 0.1;
     double      theta = 0.025;
 
+    AntsacParameters & operator = (const Parameters &params)
+    {
+        (AntsacParameters&)(*this) = params;
+    }
+
     AntsacParameters() = default;
 };
 
