@@ -12,8 +12,8 @@
 namespace csapex_sample_consensus {
 struct RansacParameters : public Parameters {
     double      outlier_probability      = 0.99;
-    int         maximum_sampling_retries = 100;
     bool        use_outlier_probability  = false;
+    int         maximum_sampling_retries = 100;
 
     RansacParameters() = default;
 };
@@ -53,8 +53,7 @@ public:
             return false;
 
 
-        InternalParameters internal_params(parameters_);
-        internal_params.model_dimension = model_dimension;
+        InternalParameters internal_params(parameters_, model_dimension);
 
         /// SETUP THE TERMINATION CRITERIA
         delegate<bool()> termination  = [&internal_params, this](){
@@ -80,8 +79,7 @@ public:
 
         /// ITERATE AND FIND A MODEL
         while(!termination()) {
-
-            if(!selectSamples(model, model_dimension, internal_params.model_samples)) {
+            if(!selectSamples(model, internal_params.model_dimension, internal_params.model_samples)) {
                 break;
             }
 
@@ -106,20 +104,15 @@ public:
     }
 
 protected:
-    RansacParameters                           parameters_;
-    std::default_random_engine                 &rng_;
-    std::uniform_int_distribution<std::size_t> distribution_;
-    double                                     one_over_indices_;
-
     struct InternalParameters {
-        const double log_outlier_probability;
-        const std::size_t maximum_skipped;
+        const double        log_outlier_probability;
+        const std::size_t   maximum_skipped;
+        const std::size_t   model_dimension;
 
-        double      k_outlier = 1.0;
-        std::size_t skipped   = 0;
-        std::size_t iteration = 0;
+        double              k_outlier = 1.0;
+        std::size_t         skipped   = 0;
+        std::size_t         iteration = 0;
 
-        std::size_t         model_dimension = 0;
         std::size_t         maximum_inliers = 0;
         typename Model::Ptr best_model;
 
@@ -127,12 +120,19 @@ protected:
 
         double              mean_model_distance = std::numeric_limits<double>::max();
 
-        InternalParameters(const RansacParameters &params) :
+        InternalParameters(const RansacParameters &params,
+                           const std::size_t model_dimension) :
             log_outlier_probability(std::log(1.0 - params.outlier_probability)),
-            maximum_skipped(params.maximum_iterations * 10)
+            maximum_skipped(params.maximum_iterations * 10),
+            model_dimension(model_dimension)
         {
         }
     };
+
+    RansacParameters                           parameters_;
+    std::default_random_engine                 &rng_;
+    std::uniform_int_distribution<std::size_t> distribution_;
+    double                                     one_over_indices_;
 
     inline bool selectSamples(const typename Model::Ptr &model,
                               const std::size_t          samples,
