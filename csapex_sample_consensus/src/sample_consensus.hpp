@@ -101,7 +101,6 @@ protected:
                 indices.emplace_back(i);
             }
         }
-
     }
 };
 }

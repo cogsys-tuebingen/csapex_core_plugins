@@ -3,17 +3,19 @@
 
 /// PROJECT
 #include "sac.hpp"
+#include "delegate.hpp"
 
 /// SYSTEM
 #include <random>
 #include <set>
-#include "delegate.hpp"
+#include <vector>
+#include <limits>
 
 namespace csapex_sample_consensus {
 struct AntsacParameters : public Parameters {
     double      outlier_probability      = 0.99;
     bool        use_outlier_probability  = false;
-    std::size_t maximum_sampling_retries = 100;
+    int         maximum_sampling_retries = 100;
 
     double      rho = 0.9;
     double      alpha = 0.1;
@@ -40,9 +42,8 @@ public:
         mean_inliers_(0.0),
         one_over_indices_(1.0 / static_cast<double>(Base::indices_.size())),
         tau_(Base::indices_.size(), one_over_indices_),
-        distances_(Base::indices_.size(), std::numeric_limits<double>::max()),
-        U_(Base::indices_.size())
-
+        tau_sum_(1.0),
+        distances_(Base::indices_.size(), std::numeric_limits<double>::max())
     {
     }
 
@@ -53,8 +54,8 @@ public:
         const std::size_t indices_size = Base::indices_.size();
         one_over_indices_ = 1.0 / static_cast<double>(indices_size);
         tau_.resize(indices_size, one_over_indices_);
+        tau_sum_ = 1.0;
         distances_.resize(indices_size, std::numeric_limits<double>::max());
-        U_.resize(indices_size);
     }
 
     virtual bool computeModel(typename SampleConsensusModel<PointT>::Ptr &model) override
@@ -70,9 +71,9 @@ public:
             bool terminate_max_skipped          = internal_params.skipped >= internal_params.maximum_skipped;
             bool terminate_max_iteration        = internal_params.iteration >= parameters_.maximum_iterations;
             bool terminate_outlier_probability  = parameters_.use_outlier_probability &&
-                                                  internal_params.iteration >= internal_params.k_outlier;
+                    internal_params.iteration >= internal_params.k_outlier;
             bool terminate_mean_model_distance  = parameters_.use_mean_model_distance &&
-                                                  internal_params.mean_model_distance < parameters_.mean_model_distance;
+                    internal_params.mean_model_distance < parameters_.mean_model_distance;
             return terminate_max_skipped || terminate_max_iteration || terminate_outlier_probability || terminate_mean_model_distance;
         };
 
@@ -105,9 +106,9 @@ public:
                 internal_params.best_model = model->clone();
                 internal_params.mean_model_distance = stat.mean_distance;
                 update_internal_paramters();
+                updateTau(stat.count);
             }
 
-            updateTau(stat.count);
 
             ++internal_params.iteration;
         }
@@ -161,73 +162,67 @@ protected:
     double              mean_inliers_;
     double              one_over_indices_;
     std::vector<double> tau_;
+    double              tau_sum_;
     std::vector<double> distances_;
-    std::vector<double> U_;
-
-    inline void updateU()
-    {
-        const std::size_t indices_size = Base::indices_.size();
-        U_.back() = one_over_indices_;
-        for(int k = (int) indices_size - 2 ; k >= 0 ; --k) {
-            double u_ = std::pow(distribution_(rng_), one_over_indices_);
-            U_[k] = U_[k+1] * u_;
-        }
-    }
 
     inline void updateTau(const std::size_t inliers_size)
     {
         const std::size_t indices_size = Base::indices_.size();
         double delta_tau = inliers_size / (indices_size + mean_inliers_);
-        double sum_tau = 0.0;
+        tau_sum_ = 0.0;
         for(std::size_t i = 0 ; i < indices_size ; ++i) {
             tau_[i] = parameters_.rho * tau_[i] + delta_tau * std::exp(-0.5 * (distances_[i] / parameters_.theta));
-            sum_tau += tau_[i];
-        }
-        for(double &t : tau_) {
-            t /= sum_tau;
+            tau_sum_ += tau_[i];
         }
     }
 
     inline bool selectSamples(const typename Model::Ptr &model,
-                              const std::size_t          samples,
+                              const std::size_t         samples,
                               std::vector<int>          &indices)
     {
         indices.clear();
+        std::set<int> triple;
+        auto drawTriple = [&triple, samples, this] () {
+            const std::size_t size = tau_.size();
 
-        auto drawTuple = [&indices, samples, this]() {
-            std::set<int> tuple;
-
-            double cumsum_last = 0.0;
-            double cumsum      = tau_.front();
-            auto in_range = [&cumsum, &cumsum_last](double u) {
-                return u >= cumsum_last && u < cumsum;
-            };
-
-            std::size_t index = 0;
-            for(auto u : U_) {
-                while(!in_range(u)) {
-                    ++index;
-                    cumsum_last = cumsum;
-                    cumsum += tau_[index];
+//            int rouletteSelect(double[] weight) {
+//                // calculate the total weight
+//                double weight_sum = 0;
+//                for(int i=0; i<weight.length; i++) {
+//                    weight_sum += weight[i];
+//                }
+//                // get a random value
+//                double value = randUniformPositive() * weight_sum;
+//                // locate the random value based on the weights
+//                for(int i=0; i<weight.length; i++) {
+//                    value -= weight[i];
+//                    if(value <= 0) return i;
+//                }
+//                // when rounding errors occur, we return the last item's index
+//                return weight.length - 1;
+//            }
+            while(triple.size() < samples) {
+                std::size_t index = 0;
+                double beta = tau_sum_ * distribution_(rng_);
+                while (beta > 0.0) {
+                    beta -= tau_[index];
+                    index = (index + 1) % size;
                 }
-                tuple.insert(Base::getIndices()[index]);
-                if(tuple.size() >= samples)
-                    break;
+                triple.insert(index);
             }
-
-            indices.assign(tuple.begin(), tuple.end());
         };
 
+
         for(std::size_t i = 0 ; i < parameters_.maximum_sampling_retries ; ++i) {
-            updateU();
-            drawTuple();
-            if(model->validateSamples(indices))
+            drawTriple();
+            if(model->validateSamples(triple)) {
+                for(int i : triple)
+                    indices.emplace_back(i);
                 return true;
+            }
         }
         return false;
     }
-
-
 };
 
 }
