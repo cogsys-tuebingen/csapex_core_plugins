@@ -53,61 +53,55 @@ public:
             return false;
 
 
-        InternalParameters interal_params(parameters_);
-
-        std::size_t         maximum_inliers = 0;
-        typename Model::Ptr best_model;
-        std::vector<int>    model_samples;
+        InternalParameters internal_params(parameters_);
+        internal_params.model_dimension = model_dimension;
 
         /// SETUP THE TERMINATION CRITERIA
-        delegate<void()> update_internal_paramters;
-        delegate<bool()> termination;
-        if(parameters_.use_outlier_probability) {
-            termination = [&interal_params, this](){
-                bool max_skipped = interal_params.skipped >= interal_params.maximum_skipped;
-                bool max_iteration = interal_params.iteration >= parameters_.maximum_iterations;
-                bool necessary_iterations = interal_params.iteration >= interal_params.k_outlier;
-                return max_skipped || max_iteration || necessary_iterations;
-            };
-            update_internal_paramters = [&interal_params, model_dimension, &maximum_inliers, this]() {
-                double maximum_inlier_ratio = maximum_inliers * one_over_indices_;
-                double p_no_outliers = 1.0 - std::pow(maximum_inlier_ratio, static_cast<double>(model_dimension));
+        delegate<bool()> termination  = [&internal_params, this](){
+            bool terminate_max_skipped          = internal_params.skipped >= internal_params.maximum_skipped;
+            bool terminate_max_iteration        = internal_params.iteration >= parameters_.maximum_iterations;
+            bool terminate_outlier_probability  = parameters_.use_outlier_probability &&
+                                                  internal_params.iteration >= internal_params.k_outlier;
+            bool terminate_mean_model_distance  = parameters_.use_mean_model_distance &&
+                                                  internal_params.mean_model_distance < parameters_.mean_model_distance;
+            return terminate_max_skipped || terminate_max_iteration || terminate_outlier_probability || terminate_mean_model_distance;
+        };
+
+        delegate<void()> update_internal_paramters = [&internal_params, this]() {
+            if(parameters_.use_outlier_probability) {
+                double maximum_inlier_ratio = internal_params.maximum_inliers * one_over_indices_;
+                double p_no_outliers = 1.0 - std::pow(maximum_inlier_ratio, static_cast<double>(internal_params.model_dimension));
                 p_no_outliers = std::max(std::numeric_limits<double>::epsilon (), p_no_outliers);
                 p_no_outliers = std::min(1.0 - std::numeric_limits<double>::epsilon (), p_no_outliers);
-                interal_params.k_outlier = interal_params.log_outlier_probability / std::log(p_no_outliers);
-            };
-        } else {
-            termination = [&interal_params, this](){
-                bool max_skipped = interal_params.skipped >= interal_params.maximum_skipped;
-                bool max_iteration = interal_params.iteration >= parameters_.maximum_iterations;
-                return max_skipped || max_iteration;
-            };
-            update_internal_paramters = [](){return;};
-        }
+                internal_params.k_outlier = internal_params.log_outlier_probability / std::log(p_no_outliers);
+            }
+        };
+
 
         /// ITERATE AND FIND A MODEL
         while(!termination()) {
 
-            if(!selectSamples(model, model_dimension, model_samples)) {
+            if(!selectSamples(model, model_dimension, internal_params.model_samples)) {
                 break;
             }
 
-            if(!model->computeModelCoefficients(model_samples)) {
-                ++interal_params.skipped;
+            if(!model->computeModelCoefficients(internal_params.model_samples)) {
+                ++internal_params.skipped;
                 continue;
             }
 
             typename SampleConsensusModel<PointT>::InlierStatistic stat;
             model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
-            if(stat.count > maximum_inliers) {
-                maximum_inliers = stat.count;
-                best_model = model->clone();
+            if(stat.count > internal_params.maximum_inliers) {
+                internal_params.maximum_inliers = stat.count;
+                internal_params.best_model = model->clone();
+                internal_params.mean_model_distance = stat.mean_distance;
                 update_internal_paramters();
             }
-            ++interal_params.iteration;
+            ++internal_params.iteration;
         }
 
-        std::swap(model, best_model);
+        std::swap(model, internal_params.best_model);
         return model.get() != nullptr;
     }
 
@@ -124,6 +118,14 @@ protected:
         double      k_outlier = 1.0;
         std::size_t skipped   = 0;
         std::size_t iteration = 0;
+
+        std::size_t         model_dimension = 0;
+        std::size_t         maximum_inliers = 0;
+        typename Model::Ptr best_model;
+
+        std::vector<int>    model_samples;
+
+        double              mean_model_distance = std::numeric_limits<double>::max();
 
         InternalParameters(const RansacParameters &params) :
             log_outlier_probability(std::log(1.0 - params.outlier_probability)),

@@ -7,10 +7,10 @@
 /// SYSTEM
 #include <random>
 #include <set>
+#include "delegate.hpp"
 
 namespace csapex_sample_consensus {
 struct AntsacParameters : public Parameters {
-    double      inlier_start_probability = 0.99;
     int         random_seed = -1;
     std::size_t maximum_sampling_retries = 100;
 
@@ -35,7 +35,8 @@ public:
     using Model = typename Base::Model;
 
     Antsac(const std::vector<int> &indices,
-           const AntsacParameters &parameters) :
+           const AntsacParameters &parameters,
+           std::default_random_engine &rng) :
         Base(indices),
         parameters_(parameters),
         distribution_(0.0, 1.0),
@@ -44,12 +45,8 @@ public:
         tau_(Base::indices_.size(), one_over_indices_),
         distances_(Base::indices_.size(), std::numeric_limits<double>::max()),
         U_(Base::indices_.size())
+
     {
-        if(parameters_.random_seed >= 0) {
-            rng_ = std::default_random_engine(parameters_.random_seed);
-        } else {
-            rng_ = std::default_random_engine(std::random_device());
-        }
     }
 
     virtual void setIndices(const std::vector<int> &indices) override
@@ -66,7 +63,6 @@ public:
     virtual bool computeModel(typename SampleConsensusModel<PointT>::Ptr &model) override
     {
 
-        const double log_probability = std::log(1.0 - parameters_.inlier_start_probability);
         const std::size_t model_dimension = model->getModelDimension();
         const std::size_t maximum_skipped = parameters_.maximum_iterations * 10;
 
@@ -101,12 +97,6 @@ public:
                 maximum_inliers = stat.count;
                 mean_distance = stat.mean_distance;
                 best_model = model->clone();
-
-                double w = maximum_inliers * one_over_indices_;
-                double p_no_outliers = std::min(std::max(1.0 - std::pow(w, static_cast<double>(model_dimension)),
-                                                         std::numeric_limits<double>::epsilon()),
-                                                1.0 - std::numeric_limits<double>::epsilon());
-                k = log_probability / std::log(p_no_outliers);
             } else {
                 ++retries;
             }
@@ -120,8 +110,29 @@ public:
 
 protected:
     AntsacParameters                           parameters_;
-    std::default_random_engine                 rng_;
     std::uniform_real_distribution<double>     distribution_;
+    std::default_random_engine                &rng_;
+
+    struct InternalParameters {
+        const std::size_t maximum_skipped;
+        std::size_t skipped = 0;
+        std::size_t iteration = 0;
+
+        std::size_t model_dimension = 0;
+        std::size_t maximum_inliers = 0;
+        typename Model::Ptr best_model;
+
+        std::vector<int> model_samples;
+
+        double mean_model_distance = std::numeric_limits<double>::max();
+
+        InternalParameters(const AntsacParameters &params) :
+            maximum_skipped(params.maximum_iterations * 10)
+        {
+        }
+
+    };
+
 
     double              mean_inliers_;
     double              one_over_indices_;

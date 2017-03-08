@@ -7,14 +7,16 @@
 namespace csapex_sample_consensus {
 struct Parameters {
     double           model_search_distance        = 0.1;    /// samples in this distance are considered for fitting
-    double           maximum_mean_model_distance  = 0.05;   /// the maximum allowed mean distance
+    double           mean_model_distance          = 0.05;   /// the maximum allowed mean distance
+    bool             use_mean_model_distance      = false;
     int              maximum_iterations           = 5000;   /// mean distance to the model
 
     void assign(const Parameters &params)
     {
         model_search_distance = params.model_search_distance;
-        maximum_mean_model_distance = params.maximum_mean_model_distance;
+        mean_model_distance = params.mean_model_distance;
         maximum_iterations = params.maximum_iterations;
+        use_mean_model_distance = params.use_mean_model_distance;
     }
  };
 
