@@ -26,7 +26,7 @@ public:
 
     Ransac(const std::vector<int> &indices,
            const RansacParameters &parameters,
-           const std::default_random_engine rng) :
+           std::default_random_engine &rng) :
         Base(indices),
         parameters_(parameters),
         rng_(rng),
@@ -58,8 +58,7 @@ public:
 
         std::vector<int> model_samples;
         std::size_t iteration = 0;
-        double mean_distance = std::numeric_limits<double>::max();
-        while(iteration < k && skipped < maximum_skipped) {
+        while(static_cast<double>(iteration) < k && skipped < maximum_skipped) {
             if(iteration > parameters_.maximum_iterations)
                 break;
 
@@ -76,7 +75,6 @@ public:
             model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
             if(stat.count > maximum_inliers) {
                 maximum_inliers = stat.count;
-                mean_distance = stat.mean_distance;
                 best_model = model->clone();
 
                 double w = maximum_inliers * one_over_indices;
@@ -94,7 +92,7 @@ public:
 
 protected:
     RansacParameters                           parameters_;
-    std::default_random_engine                 rng_;
+    std::default_random_engine                 &rng_;
     std::uniform_int_distribution<std::size_t> distribution_;
 
     inline bool selectSamples(const typename Model::Ptr &model,
@@ -103,40 +101,24 @@ protected:
     {
         std::set<int> selection;
         std::size_t iteration = 0;
-        do {
-            if(iteration >= parameters_.maximum_sampling_retries)
-                return model->validateSamples(indices);
+        bool valid = false;
 
+        while(!valid && iteration < parameters_.maximum_sampling_retries) {
             selection.clear();
-            indices.clear();
-            do {
+            while(selection.size() < samples) {
                 int next = distribution_(rng_);
                 selection.insert(next);
-            } while(selection.size() < samples);
-            for(const int i : selection) {
-                indices.emplace_back(i);
             }
-            ++iteration;
-        } while(!model->validateSamples(indices));
-        return true;
+            valid = model->validateSamples(selection);
+        }
+
+        indices.clear();
+        for(const int i : selection) {
+            indices.emplace_back(i);
+        }
+        return valid;
     }
 
-//    std::set<int> selection;
-//    std::size_t iteration = 0;
-//    bool valid = false;
-//    while(!valid && iteration < parameters_.maximum_sampling_retries) {
-//        selection.clear();
-//        while(selection.size() < samples) {
-//            int next = distribution_(rng_);
-//            selection.insert(next);
-//        }
-//        valid = model->validateSamples(selection);
-//    }
-
-//    for(const int i : selection) {
-//        indices.emplace_back(i);
-//    }
-//    return valid;
 };
 }
 
