@@ -82,6 +82,33 @@ public:
             statistic.mean_distance /= static_cast<double>(statistic.count);
     }
 
+    inline void getInlierStatistic(const std::vector<int> &indices,
+                                   const float maximum_distance,
+                                   InlierStatistic &statistic,
+                                   std::vector<double> &distances) const
+    {
+        if(!isModelValid())
+            return;
+
+        statistic.count = 0;
+        statistic.mean_distance = 0;
+
+        distances.clear();
+
+        double distance = 0.0;
+        for(const int i : indices) {
+            distance = getDistanceToModel(i);
+            distances.emplace_back(distance);
+            if(distance <= maximum_distance) {
+                statistic.mean_distance += distance;
+                ++statistic.count;
+            }
+        }
+        if(statistic.count != 0)
+            statistic.mean_distance /= static_cast<double>(statistic.count);
+    }
+
+
     inline void getInliers(const float maximum_distance,
                            std::vector<int> &dst_indices) const
     {

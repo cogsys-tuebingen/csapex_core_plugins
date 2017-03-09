@@ -28,8 +28,6 @@ public:
                                 antsac_parameters_.rho);
         parameters.addParameter(param::ParameterFactory::declareRange("alpha", 0.01, 10.0, 0.1, 0.01),
                                 antsac_parameters_.alpha);
-        parameters.addParameter(param::ParameterFactory::declareRange("theta", 0.01, 10.0, 0.025, 0.001),
-                                antsac_parameters_.theta);
     }
 
     virtual void process() override

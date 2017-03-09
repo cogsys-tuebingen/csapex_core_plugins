@@ -19,7 +19,7 @@ struct AntsacParameters : public Parameters {
 
     double      rho = 0.9;
     double      alpha = 0.1;
-    double      theta = 0.025;
+    /// theta = model search distance
 
     AntsacParameters() = default;
 };
@@ -98,7 +98,7 @@ public:
             }
 
             typename SampleConsensusModel<PointT>::InlierStatistic stat;
-            model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
+            model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat, distances_);
             internal_params.updateMeanInliers(stat.count);
 
             if(stat.count > internal_params.maximum_inliers) {
@@ -106,9 +106,9 @@ public:
                 internal_params.best_model = model->clone();
                 internal_params.mean_model_distance = stat.mean_distance;
                 update_internal_paramters();
-                updateTau(stat.count);
             }
 
+            updateTau(stat.count);
 
             ++internal_params.iteration;
         }
@@ -171,7 +171,7 @@ protected:
         double delta_tau = inliers_size / (indices_size + mean_inliers_);
         tau_sum_ = 0.0;
         for(std::size_t i = 0 ; i < indices_size ; ++i) {
-            tau_[i] = parameters_.rho * tau_[i] + delta_tau * std::exp(-0.5 * (distances_[i] / parameters_.theta));
+            tau_[i] = parameters_.rho * tau_[i] + delta_tau * std::exp(-0.5 * (distances_[i] / parameters_.model_search_distance));
             tau_sum_ += tau_[i];
         }
     }
@@ -184,23 +184,6 @@ protected:
         std::set<int> triple;
         auto drawTriple = [&triple, samples, this] () {
             const std::size_t size = tau_.size();
-
-//            int rouletteSelect(double[] weight) {
-//                // calculate the total weight
-//                double weight_sum = 0;
-//                for(int i=0; i<weight.length; i++) {
-//                    weight_sum += weight[i];
-//                }
-//                // get a random value
-//                double value = randUniformPositive() * weight_sum;
-//                // locate the random value based on the weights
-//                for(int i=0; i<weight.length; i++) {
-//                    value -= weight[i];
-//                    if(value <= 0) return i;
-//                }
-//                // when rounding errors occur, we return the last item's index
-//                return weight.length - 1;
-//            }
             while(triple.size() < samples) {
                 std::size_t index = 0;
                 double beta = tau_sum_ * distribution_(rng_);
