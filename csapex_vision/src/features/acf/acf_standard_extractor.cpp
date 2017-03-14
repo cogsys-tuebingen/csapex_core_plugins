@@ -24,37 +24,46 @@ ACFStandardExtractor::ACFStandardExtractor() :
 
 void ACFStandardExtractor::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("/window/width",
+    // window setting
+    parameters.addParameter(param::ParameterFactory::declareRange("window/width",
                                                                   10, 1024, 64, 1),
                             std::bind(&ACFStandardExtractor::updateWindow, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("/window/height",
+    parameters.addParameter(param::ParameterFactory::declareRange("window/height",
                                                                   10, 1024, 128, 1),
                             std::bind(&ACFStandardExtractor::updateWindow, this));
-    parameters.addParameter(param::ParameterFactory::declareBool("/window/mirror",
+    parameters.addParameter(param::ParameterFactory::declareBool("window/mirror",
                                                                  false),
                             mirror_);
-    parameters.addParameter(param::ParameterFactory::declareBool("/window/keep_ratio",
+    parameters.addParameter(param::ParameterFactory::declareBool("window/keep_ratio",
                                                                  false),
                             keep_ratio_);
-    parameters.addParameter(param::ParameterFactory::declareRange("/acf/hog/bin_size",
-                                                                  5.0, 90.0, 30.0, 0.1),
-                            acf_params_.hog_bin_size);
-    parameters.addParameter(param::ParameterFactory::declareBool("/acf/hog/directed", false),
-                            acf_params_.hog_directed);
-    parameters.addParameter(param::ParameterFactory::declareBool("/acf/normalize_magnitude", true),
-                            acf_params_.normalize_magnitude);
-    parameters.addParameter(param::ParameterFactory::declareBool("/acf/normalize_luv", true),
-                            acf_params_.normalize_luv);
 
-    std::map<std::string, int> kernel_types =
-    {{"1D", cslibs_vision::ACF::Parameters::KERNEL_1D},
-     {"2D", cslibs_vision::ACF::Parameters::KERNEL_2D},
-     {"NONE", cslibs_vision::ACF::Parameters::NONE}};
-
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("/acf/kernel_type",
+    // kernel
+    static const std::map<std::string, int> kernel_types = {
+            {"1D", cslibs_vision::ACF::Parameters::KERNEL_1D},
+            {"2D", cslibs_vision::ACF::Parameters::KERNEL_2D},
+            {"NONE", cslibs_vision::ACF::Parameters::NONE}
+    };
+    parameters.addParameter(param::ParameterFactory::declareParameterSet("kernel_type",
                                                                          kernel_types,
                                                                          (int) cslibs_vision::ACF::Parameters::KERNEL_2D),
                             (int &) acf_params_.kernel_type);
+
+    // HOG channel parameter
+    parameters.addParameter(param::ParameterFactory::declareRange("hog/bin_size",
+                                                                  5.0, 90.0, 30.0, 0.1),
+                            acf_params_.hog_bin_size);
+    parameters.addParameter(param::ParameterFactory::declareBool("hog/directed", false),
+                            acf_params_.hog_directed);
+
+    // HOG/magnitude channel parameter
+    parameters.addParameter(param::ParameterFactory::declareBool("magnitude/normalize", true),
+                            acf_params_.normalize_magnitude);
+
+    // LUV channel parameter
+    parameters.addParameter(param::ParameterFactory::declareBool("luv/normalize", true),
+                            acf_params_.normalize_luv);
+
 }
 
 void ACFStandardExtractor::setup(NodeModifier &node_modifier)
@@ -106,8 +115,8 @@ void ACFStandardExtractor::process()
 
 void ACFStandardExtractor::updateWindow()
 {
-    window_size_.width  = readParameter<int>("/window/width");
-    window_size_.height = readParameter<int>("/window/height");
+    window_size_.width  = readParameter<int>("window/width");
+    window_size_.height = readParameter<int>("window/height");
     if(ratio_w_h_ == 0.0) {
         ratio_w_h_ = window_size_.height / (double) window_size_.width;
     }
@@ -115,14 +124,14 @@ void ACFStandardExtractor::updateWindow()
     if(keep_ratio_) {
         if(window_size_.height != window_size_before_.height) {
             window_size_.width = window_size_.height / ratio_w_h_;
-            setParameter<int>("/window/width", window_size_.width);
+            setParameter<int>("window/width", window_size_.width);
         } else {
             window_size_.height = window_size_.width * ratio_w_h_;
-            setParameter<int>("/window/height", window_size_.height);
+            setParameter<int>("window/height", window_size_.height);
         }
     } else {
-        window_size_.width  = readParameter<int>("/window/width");
-        window_size_.height = readParameter<int>("/window/height");
+        window_size_.width  = readParameter<int>("window/width");
+        window_size_.height = readParameter<int>("window/height");
     }
 
     if(window_size_before_ == cv::Size()) {
