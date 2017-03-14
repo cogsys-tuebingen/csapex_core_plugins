@@ -1,10 +1,10 @@
-#ifndef COLOR_DIFFERENCES_HPP
-#define COLOR_DIFFERENCES_HPP
+#pragma once
 
 #include <eigen3/Eigen/Core>
 
-namespace csapex {
-namespace color_differences {
+namespace csapex { namespace color_differences
+{
+
 inline double CIE76 (const Eigen::Vector3d &a,
                      const Eigen::Vector3d &b,
                      const std::array<double, 3> &weights)
@@ -57,6 +57,5 @@ inline double CIE94Textiles (const Eigen::Vector3d &color_1,
     return sqrt(weights[0] * s1*s1 + weights[1] * s2*s2 + weights[2] * s3);
 
 }
-}
-}
-#endif // COLOR_DIFFERENCES_HPP
+
+}}

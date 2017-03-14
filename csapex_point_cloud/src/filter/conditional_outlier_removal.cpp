@@ -109,7 +109,8 @@ void ConditionalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Con
                                           new pcl::FieldComparison<PointT> ("z", pcl::ComparisonOps::LT, z_range_.y())));
         }
         cloud_filtered.reset(new pcl::PointCloud<PointT>);
-        pcl::ConditionalRemoval<PointT> cr (condition);
+        pcl::ConditionalRemoval<PointT> cr;
+        cr.setCondition(condition);
         cr.setInputCloud(cloud);
         cr.setKeepOrganized(keep_organized_);
         cr.filter(*cloud_filtered);

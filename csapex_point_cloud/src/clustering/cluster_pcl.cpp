@@ -1,5 +1,4 @@
 #include "cluster_pcl.h"
-
 #include "polar_clustering.hpp"
 
 /// PROJECT
@@ -41,18 +40,18 @@
 #endif //__clang__
 
 
-CSAPEX_REGISTER_CLASS(csapex::ClusterPointcloud, csapex::Node)
+CSAPEX_REGISTER_CLASS(csapex::clustering::ClusterPointCloudPCL, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace std;
+using namespace csapex::clustering;
 
 
-ClusterPointcloud::ClusterPointcloud()
+ClusterPointCloudPCL::ClusterPointCloudPCL()
 {
 }
 
-void ClusterPointcloud::setupParameters(Parameterizable &parameters)
+void ClusterPointCloudPCL::setupParameters(Parameterizable& parameters)
 {
 
     std::map<std::string, int> methods = {
@@ -71,14 +70,14 @@ void ClusterPointcloud::setupParameters(Parameterizable &parameters)
     polar_opening_angle_);
 }
 
-void ClusterPointcloud::process()
+void ClusterPointCloudPCL::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_cloud_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointcloud>(this, msg), msg->value);
+    boost::apply_visitor (PointCloudMessage::Dispatch<ClusterPointCloudPCL>(this, msg), msg->value);
 }
 
-void ClusterPointcloud::setup(NodeModifier& node_modifier)
+void ClusterPointCloudPCL::setup(NodeModifier& node_modifier)
 {
     in_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
     in_indices_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
@@ -88,7 +87,7 @@ void ClusterPointcloud::setup(NodeModifier& node_modifier)
 }
 
 template <class PointT>
-void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
+void ClusterPointCloudPCL::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
 
     std::shared_ptr<std::vector<pcl::PointIndices> > cluster_indices;
@@ -149,7 +148,7 @@ void ClusterPointcloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
 
 template <class PointT>
 std::shared_ptr<std::vector<pcl::PointIndices> >
-ClusterPointcloud::pclEuclidean(typename pcl::PointCloud<PointT>::ConstPtr cloud, pcl::IndicesConstPtr indices)
+ClusterPointCloudPCL::pclEuclidean(typename pcl::PointCloud<PointT>::ConstPtr cloud, pcl::IndicesConstPtr indices)
 {
 
     typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
@@ -185,7 +184,7 @@ ClusterPointcloud::pclEuclidean(typename pcl::PointCloud<PointT>::ConstPtr cloud
 
 template <class PointT>
 std::shared_ptr<std::vector<pcl::PointIndices> >
-ClusterPointcloud::pclPolar(typename pcl::PointCloud<PointT>::ConstPtr cloud, pcl::IndicesConstPtr indices)
+ClusterPointCloudPCL::pclPolar(typename pcl::PointCloud<PointT>::ConstPtr cloud, pcl::IndicesConstPtr indices)
 {
     typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
     tree->setInputCloud (cloud, indices);

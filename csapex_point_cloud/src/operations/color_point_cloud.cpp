@@ -45,9 +45,9 @@ public:
             throw std::runtime_error("Clouds have to be organized!");
 
         CvMatMessage::ConstPtr input_image = msg::getMessage<CvMatMessage>(input_image_);
-        if(cloud->height != input_image->value.rows)
+        if(cloud->height != static_cast<std::size_t>(input_image->value.rows))
             throw std::runtime_error("Cloud and image have to match in height!");
-        if(cloud->width != input_image->value.cols)
+        if(cloud->width != static_cast<std::size_t>(input_image->value.cols))
             throw std::runtime_error("Cloud and image have to match in width!");
         if(!input_image->getEncoding().matches(enc::bgr))
             throw std::runtime_error("Input image must be of encoding bgr!");
