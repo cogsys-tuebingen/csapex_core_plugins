@@ -16,6 +16,18 @@ enum class VoxelState
     INVALID,
 };
 
+/**
+ * Represents a voxel. Stores:
+ * - storage index
+ * - contained point cloud points/indices
+ * - voxel state
+ * - additional features
+ *
+ * Features need to provide:
+ * - default constructible
+ * - <template PointT> void create(const PointT&); for voxel creation
+ * - void merge(const Feature&); for voxel merge
+ */
 template<typename... Features>
 struct VoxelData
 {

@@ -11,6 +11,7 @@ namespace csapex { namespace clustering
 class StorageOperation
 {
 public:
+    // dynamic sized case -> simply add every point to the storage
     template<typename PointT, typename Storage>
     static void init(const pcl::PointCloud<PointT>& cloud,
                      const pcl::PointIndices::ConstPtr& indices,
@@ -38,6 +39,11 @@ public:
         }
     }
 
+    // fixed size case
+    // - create each point in the data_storage
+    // - calculate size
+    // - initialize storage to size
+    // - add non_owning references to storage
     template<typename PointT, typename Storage>
     static void init(const pcl::PointCloud<PointT>& cloud,
                      const pcl::PointIndices::ConstPtr& indices,

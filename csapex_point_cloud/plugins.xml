@@ -211,11 +211,15 @@
 </class>
 <class type="csapex::clustering::ClusterPointCloudPCL" base_class_type="csapex::Node">
   <description>Cluster implementation from pcl</description>
-  <tags>PointCloud</tags>
+  <tags>PointCloud, Clustering</tags>
 </class>
 <class type="csapex::clustering::ClusterPointCloud" base_class_type="csapex::Node">
-  <description>Cluster</description>
-  <tags>PointCloud</tags>
+  <description>
+    Cluster pointcloud using our own implementation.
+    Allows to add additional filters for cluster validation.
+    Based on cslibs_indexed_storage for space discretization.
+  </description>
+  <tags>PointCloud, Clustering</tags>
 </class>
 <class type="csapex::LabeledCloudToIndices" base_class_type="csapex::Node">
   <description>Converts a labled pointcloud to indices</description>

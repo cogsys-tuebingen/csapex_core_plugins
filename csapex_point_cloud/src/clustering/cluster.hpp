@@ -29,29 +29,35 @@ private:
     void clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
+    // I/O ports
     Input*  in_pointcloud_;
     Input*  in_indices_;
     Output* out_clusters_accepted_;
     Output* out_clusters_rejected_;
     Output* out_voxels_;
 
+    // backend config
     BackendType backend_;
 
-    std::array<double, 3> voxel_size_;
-    std::pair<int, int> cluster_point_count_;
+    // general clustering config
+    std::array<double, 3>   voxel_size_;
+    std::pair<int, int>     cluster_point_count_;
 
-    bool voxel_validation_enabled_;
-    int voxel_validation_min_count_;
-    double voxel_validation_scale_;
+    // voxel pre-clustering validation
+    bool    voxel_validation_enabled_;
+    int     voxel_validation_min_count_;
+    double  voxel_validation_scale_;
 
-    bool distribution_enabled_;
-    DistributionAnalysisType distribution_type_;
-    std::array<std::pair<double, double>, 3> distribution_std_dev_;
+    // cluster distribution validation
+    bool                                        distribution_enabled_;
+    DistributionAnalysisType                    distribution_type_;
+    std::array<std::pair<double, double>, 3>    distribution_std_dev_;
 
-    bool color_enabled_;
-    ColorDifferenceType color_type_;
-    std::array<double, 3> color_weights_;
-    double color_threshold_;
+    // cluster color validation
+    bool                    color_enabled_;
+    ColorDifferenceType     color_type_;
+    std::array<double, 3>   color_weights_;
+    double                  color_threshold_;
 };
 
 }}
