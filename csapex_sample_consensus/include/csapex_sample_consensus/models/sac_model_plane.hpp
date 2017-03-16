@@ -86,9 +86,9 @@ public:
         if(indices.size() != 3)
             return false;
 
-        Eigen::Vector4f p0 = convertHomogene(Base::pointcloud_->at(indices[0]));
-        Eigen::Vector4f p1 = convertHomogene(Base::pointcloud_->at(indices[1]));
-        Eigen::Vector4f p2 = convertHomogene(Base::pointcloud_->at(indices[2]));
+        const PointT p0 = Base::pointcloud_->at(indices[0]);
+        const PointT p1 = Base::pointcloud_->at(indices[1]);
+        const PointT p2 = Base::pointcloud_->at(indices[2]);
 
         if(isNan(p0) ||
                 isNan(p1) ||
@@ -97,7 +97,9 @@ public:
         }
 
 
-        Eigen::Vector4f dy1dy2 = (p1-p0).cwiseQuotient(p2-p0);
+        const Eigen::Vector3f dy1dy2 = {(p1.x - p0.x) / (p2.x - p0.x),
+                                        (p1.y - p0.y) / (p2.y - p0.y),
+                                        (p1.z - p0.z) / (p2.z - p0.z)};
 
         return ( (dy1dy2[0] != dy1dy2[1]) || (dy1dy2[2] != dy1dy2[1]) );
     }
@@ -108,11 +110,11 @@ public:
             return false;
 
         auto it = indices.begin();
-        Eigen::Vector4f p0 = convertHomogene(Base::pointcloud_->at(*(it)));
+        const PointT p0 = Base::pointcloud_->at(*(it));
         ++it;
-        Eigen::Vector4f p1 = convertHomogene(Base::pointcloud_->at(*(it)));
+        const PointT p1 = Base::pointcloud_->at(*(it));
         ++it;
-        Eigen::Vector4f p2 = convertHomogene(Base::pointcloud_->at(*(it)));
+        const PointT p2 = Base::pointcloud_->at(*(it));
 
         if(isNan(p0) ||
                 isNan(p1) ||
@@ -120,7 +122,10 @@ public:
             return false;
         }
 
-        Eigen::Vector4f dy1dy2 = (p1-p0).cwiseQuotient(p2-p0);
+        const Eigen::Vector3f dy1dy2 = {(p1.x - p0.x) / (p2.x - p0.x),
+                                        (p1.y - p0.y) / (p2.y - p0.y),
+                                        (p1.z - p0.z) / (p2.z - p0.z)};
+
         return ( (dy1dy2[0] != dy1dy2[1]) || (dy1dy2[2] != dy1dy2[1]) );
     }
 
@@ -135,8 +140,8 @@ public:
     {
         if(!isModelValid())
             return std::numeric_limits<float>::lowest();
-        Eigen::Vector4f pt = convertHomogene(Base::pointcloud_->at(index), 1.f);
-        return std::abs(Base::model_coefficients_.dot(pt));
+
+        return dot(Base::pointcloud_->at(index));
     }
 
     virtual void getDistancesToModel(const std::vector<int> &indices,
@@ -148,7 +153,7 @@ public:
         const std::size_t size = indices.size();
         distances.resize(size, std::numeric_limits<float>::lowest());
         for(std::size_t i = 0 ; i < size ; ++i) {
-            distances[i] = std::abs(Base::model_coefficients_.dot(convertHomogene(Base::pointcloud_->at(indices[i]), 1.f)));
+            distances[i] = dot(Base::pointcloud_->at(indices[i]));
         }
     }
 
@@ -159,14 +164,14 @@ protected:
             return false;
         }
 
-        Eigen::Vector4f p0 = convertHomogene(Base::pointcloud_->at(indices[0]));
-        Eigen::Vector4f p1 = convertHomogene(Base::pointcloud_->at(indices[1]));
-        Eigen::Vector4f p2 = convertHomogene(Base::pointcloud_->at(indices[2]));
-        Eigen::Vector4f p1p0 = p1 - p0;
-        Eigen::Vector4f p2p0 = p2 - p0;
+        const PointT &p0 = Base::pointcloud_->at(indices[0]);
+        const PointT &p1 = Base::pointcloud_->at(indices[1]);
+        const PointT &p2 = Base::pointcloud_->at(indices[2]);
+        const Eigen::Vector4f p1p0 = {p1.x - p0.x, p1.y - p0.y, p1.z - p0.z, 0.f};
+        const Eigen::Vector4f p2p0 = {p2.x - p0.x, p2.y - p0.y, p2.z - p0.z, 0.f};
 
         /// Check for collinearity
-        Eigen::Vector4f dy1dy2 = p1p0.cwiseQuotient(p2p0);
+        const Eigen::Vector4f dy1dy2 = p1p0.cwiseQuotient(p2p0);
         if ( (dy1dy2[0] == dy1dy2[1]) && (dy1dy2[2] == dy1dy2[1]) ) {
             return false;
         }
@@ -177,27 +182,35 @@ protected:
         Base::model_coefficients_[2] = p1p0[0] * p2p0[1] - p1p0[1] * p2p0[0];
         Base::model_coefficients_[3] = 0;
 
+        auto dot = [](const PointT &p,
+                      const typename Base::Coefficients &c)
+        {
+            return std::abs(p.x * c[0] +
+                            p.y * c[1] +
+                            p.z * c[2] +
+                            c[3]);
+        };
+
         Base::model_coefficients_.normalize ();
-        float d = -1 * Base::model_coefficients_.dot(p0);
+        float d = -1 * dot(p0, Base::model_coefficients_);
         Base::model_coefficients_[3] = d;
 
         return true;
     }
 
-    inline Eigen::Vector3d convert(const PointT &pt)
+    inline float dot(const PointT &p) const
     {
-        return Eigen::Vector3d(pt.x, pt.y, pt.z);
+        return std::abs(p.x * Base::model_coefficients_[0] +
+                        p.y * Base::model_coefficients_[1] +
+                        p.z * Base::model_coefficients_[2] +
+                        Base::model_coefficients_[3]);
     }
 
-    inline Eigen::Vector4f convertHomogene(const PointT &pt, const float w = 0.f) const
+    inline bool isNan(const PointT &p) const
     {
-        return Eigen::Vector4f(pt.x, pt.y, pt.z, w);
+        return std::isnan(p.x) || std::isnan(p.y) || std::isnan(p.z);
     }
 
-    inline bool isNan(const Eigen::Vector4f &v) const
-    {
-        return std::isnan(v[0]) || std::isnan(v[1]) || std::isnan(v[2]) || std::isnan(v[3]);
-    }
 };
 }
 

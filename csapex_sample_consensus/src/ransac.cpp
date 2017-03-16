@@ -15,6 +15,7 @@ public:
 
         parameters.addParameter(param::ParameterFactory::declareBool("use outlier probability", false),
                                 ransac_parameters_.use_outlier_probability);
+
         parameters.addConditionalParameter(param::ParameterFactory::declareRange("outlier probability", 0.01, 1.0, 0.9, 0.01),
                                            [this](){return ransac_parameters_.use_outlier_probability;},
                                            ransac_parameters_.outlier_probability);
@@ -45,7 +46,19 @@ public:
         typename csapex_sample_consensus::Ransac<PointT>::Ptr sac;
         if(msg::hasMessage(in_indices_)) {
             PointIndecesMessage::ConstPtr in_indices = msg::getMessage<PointIndecesMessage>(in_indices_);
-            sac.reset(new csapex_sample_consensus::Ransac<PointT>(in_indices->value->indices, ransac_parameters_, rng_));
+            if(point_skip_ > 0) {
+                const std::size_t step = 1 + point_skip_;
+                const std::size_t size = in_indices->value->indices.size();
+                const std::vector<int> &indices_src = in_indices->value->indices;
+                std::vector<int> indices_dst;
+                indices_dst.reserve(size);
+                for(std::size_t i = 0 ; i < size ; i+= step) {
+                    indices_dst.emplace_back(indices_src[i]);
+                }
+                sac.reset(new csapex_sample_consensus::Ransac<PointT>(indices_dst, ransac_parameters_, rng_));
+            } else {
+                sac.reset(new csapex_sample_consensus::Ransac<PointT>(in_indices->value->indices, ransac_parameters_, rng_));
+            }
         } else {
             std::vector<int> indices;
             getIndices<PointT>(cloud, indices);

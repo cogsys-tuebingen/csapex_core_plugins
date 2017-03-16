@@ -14,6 +14,7 @@ struct RansacParameters : public Parameters {
     double      outlier_probability      = 0.99;
     bool        use_outlier_probability  = false;
     int         maximum_sampling_retries = 100;
+    bool        optimize_model_coefficients = false;
 
     RansacParameters() = default;
 };

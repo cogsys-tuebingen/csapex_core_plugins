@@ -38,7 +38,11 @@ public:
                                 sac_parameters_.use_mean_model_distance);
         parameters.addConditionalParameter(param::ParameterFactory::declareRange("maximum mean model distance", 0.0, 10.0, 0.05, 0.01),
                                            [this](){return sac_parameters_.use_mean_model_distance;},
-                                           sac_parameters_.mean_model_distance);
+        sac_parameters_.mean_model_distance);
+        //        parameters.addParameter(param::ParameterFactory::declareBool("optimize model coefficients", false),
+        //                                ransac_parameters_.optimize_model_coefficients);
+        parameters.addParameter(param::ParameterFactory::declareRange("point skip", 0, 10, 0, 1),
+                                point_skip_);
         parameters.addParameter(param::ParameterFactory::declareRange("maximum iterations", 1, 100000, 100, 1),
                                 sac_parameters_.maximum_iterations);
 
@@ -49,10 +53,10 @@ public:
                                 fit_multiple_models_);
         parameters.addConditionalParameter(param::ParameterFactory::declareRange("minimum residual cloud size", 0, 1000, 100, 1),
                                            [this](){return fit_multiple_models_;},
-                                minimum_residual_cloud_size_);
+        minimum_residual_cloud_size_);
         parameters.addConditionalParameter(param::ParameterFactory::declareRange("maximum model count", -1, 100, 5, 1),
                                            [this](){return fit_multiple_models_;},
-                                maximum_model_count_);
+        maximum_model_count_);
 
     }
 
@@ -69,6 +73,7 @@ public:
 protected:
     csapex_sample_consensus::Parameters sac_parameters_;
 
+    int         point_skip_;
     int         termination_criteria_;
     int         minimum_fit_size_;
     int         minimum_model_cloud_size_;
@@ -96,14 +101,32 @@ protected:
         const static pcl::DefaultPointRepresentation<PointT> pr;
         const std::size_t size = cloud->size();
         indices.reserve(size);
-        for(std::size_t i = 0 ; i < size; ++i) {
+
+        const std::size_t step = 1 + point_skip_;
+        for(std::size_t i = 0 ; i < size; i+=step) {
             if(pr.isValid(cloud->at(i))) {
                 indices.emplace_back(i);
             }
         }
     }
 
-
+    void getInidicesFromInput(std::vector<int> &indices)
+    {
+        if(msg::hasMessage(in_indices_)) {
+            PointIndecesMessage::ConstPtr in_indices_msg = msg::getMessage<PointIndecesMessage>(in_indices_);
+            const std::vector<int> &in_indices = in_indices_msg->value->indices;
+            if(point_skip_ > 0) {
+                const std::size_t step = 1 + point_skip_;
+                const std::size_t size = in_indices.size();
+                indices.reserve(size);
+                for(std::size_t i = 0 ; i < size ; i+= step) {
+                    indices.emplace_back(in_indices[i]);
+                }
+            } else {
+                indices = in_indices;
+            }
+        }
+    }
 };
 }
 
