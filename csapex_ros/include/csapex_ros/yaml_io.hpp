@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/msg/generic_pointer_message.hpp>
 #include <csapex/utility/yaml_io.hpp>
-#include <csapex/serialization/serialization.h>
+#include <csapex/serialization/node_serializer.h>
 
 /// SYSTEM
 #include <yaml-cpp/stlemitter.h>

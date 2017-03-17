@@ -7,7 +7,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/assert.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/serialization/serialization.h>
+#include <csapex/serialization/node_serializer.h>
 
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
