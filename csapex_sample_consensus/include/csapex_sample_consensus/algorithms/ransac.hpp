@@ -14,7 +14,6 @@ struct RansacParameters : public Parameters {
     double      outlier_probability      = 0.99;
     bool        use_outlier_probability  = false;
     int         maximum_sampling_retries = 100;
-    bool        optimize_model_coefficients = false;
 
     RansacParameters() = default;
 };
@@ -89,7 +88,7 @@ public:
                 continue;
             }
 
-            typename SampleConsensusModel<PointT>::InlierStatistic stat;
+            typename Model::InlierStatistic stat;
             model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
             if(stat.count > internal_params.maximum_inliers) {
                 internal_params.maximum_inliers = stat.count;

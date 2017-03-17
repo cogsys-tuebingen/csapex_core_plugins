@@ -29,6 +29,7 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}_plugin_node
+    # make headers visual in the IDE
     include/csapex_sample_consensus/algorithms/sac.hpp
     include/csapex_sample_consensus/algorithms/antsac.hpp
     include/csapex_sample_consensus/algorithms/ransac.hpp
@@ -40,9 +41,19 @@ add_library(${PROJECT_NAME}_plugin_node
     include/csapex_sample_consensus/models/sac_model_normal_plane.hpp
     include/csapex_sample_consensus/models/sac_model_parallel_normal_plane.hpp
 
-    src/sample_consensus.hpp
-    src/antsac.cpp
-    src/ransac.cpp
+    include/csapex_sample_consensus/models/sac_model.h
+    include/csapex_sample_consensus/models/sac_model_from_normals.h
+    include/csapex_sample_consensus/models/sac_model_plane.h
+    include/csapex_sample_consensus/models/sac_model_normal_plane.h
+    include/csapex_sample_consensus/models/sac_model_parallel_normal_plane.h
+
+    src/models/sac_model_plane.cpp
+    src/models/sac_model_normal_plane.cpp
+    src/models/sac_model_parallel_normal_plane.cpp
+
+    src/nodes/sample_consensus.hpp
+    src/nodes/antsac.cpp
+    src/nodes/ransac.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_plugin_node

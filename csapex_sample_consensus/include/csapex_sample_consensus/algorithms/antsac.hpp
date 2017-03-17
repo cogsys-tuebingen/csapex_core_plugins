@@ -58,7 +58,7 @@ public:
         distances_.resize(indices_size, std::numeric_limits<double>::max());
     }
 
-    virtual bool computeModel(typename SampleConsensusModel<PointT>::Ptr &model) override
+    virtual bool computeModel(typename Model::Ptr &model) override
     {
 
         const std::size_t model_dimension = model->getModelDimension();
@@ -97,7 +97,7 @@ public:
                 continue;
             }
 
-            typename SampleConsensusModel<PointT>::InlierStatistic stat;
+            typename Model::InlierStatistic stat;
             model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat, distances_);
             internal_params.updateMeanInliers(stat.count);
 

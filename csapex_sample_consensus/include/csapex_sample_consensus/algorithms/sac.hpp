@@ -10,6 +10,7 @@ struct Parameters {
     double           mean_model_distance          = 0.05;   /// the maximum allowed mean distance
     bool             use_mean_model_distance      = false;
     int              maximum_iterations           = 5000;   /// mean distance to the model
+    bool             optimize_model_coefficients = false;
 
     void assign(const Parameters &params)
     {
@@ -17,6 +18,7 @@ struct Parameters {
         mean_model_distance = params.mean_model_distance;
         maximum_iterations = params.maximum_iterations;
         use_mean_model_distance = params.use_mean_model_distance;
+        optimize_model_coefficients = params.optimize_model_coefficients;
     }
  };
 
@@ -24,7 +26,7 @@ template<typename PointT>
 class SampleConsensus  {
 public:
     using Ptr = std::shared_ptr<SampleConsensus>;
-    using Model = SampleConsensusModel<PointT>;
+    using Model = models::Model<PointT>;
 
     SampleConsensus(const std::vector<int> &indices) :
         indices_(indices)

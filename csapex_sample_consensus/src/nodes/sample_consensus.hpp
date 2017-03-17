@@ -89,9 +89,9 @@ protected:
     Output* out_outlier_indices_;
 
     template<typename PointT>
-    typename csapex_sample_consensus::SampleConsensusModel<PointT>::Ptr getModel(typename pcl::PointCloud<PointT>::ConstPtr &cloud)
+    typename csapex_sample_consensus::models::Model<PointT>::Ptr getModel(typename pcl::PointCloud<PointT>::ConstPtr &cloud)
     {
-        return typename csapex_sample_consensus::ModelPlane<PointT>::Ptr(new csapex_sample_consensus::ModelPlane<PointT>(cloud));
+        return typename csapex_sample_consensus::models::Plane<PointT>::Ptr(new csapex_sample_consensus::models::Plane<PointT>(cloud));
     }
 
     template<typename PointT>
