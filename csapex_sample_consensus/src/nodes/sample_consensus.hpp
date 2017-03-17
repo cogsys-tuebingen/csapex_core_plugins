@@ -20,6 +20,8 @@
 
 #include <boost/mpl/for_each.hpp>
 
+#include <Eigen/Core>
+
 #include <csapex_sample_consensus/csapex_sample_consensus.hpp>
 
 namespace csapex {
@@ -58,6 +60,39 @@ public:
                                            [this](){return fit_multiple_models_;},
         maximum_model_count_);
 
+        std::map<std::string, int> model_types =
+        {{"PLANE", PLANE},
+         {"NORMAL_PLANE", NORMAL_PLANE},
+         {"PARALLEL_NORMAL_PLANE", PARALLEL_NORMAL_PLANE}};
+
+        parameters.addParameter(param::ParameterFactory::declareParameterSet("model type", model_types, (int) PLANE),
+                                model_type_);
+
+        /// actually, this can be done better ! - temporary
+        auto uses_axis = [this] () {
+            return model_type_ == PARALLEL_NORMAL_PLANE;
+        };
+
+        auto uses_normal = [this]() {
+            return model_type_ == PARALLEL_NORMAL_PLANE || NORMAL_PLANE;
+        };
+
+        parameters.addConditionalParameter(param::ParameterFactory::declareValue("normal weight", 0.0),
+                                           uses_normal,
+                                           normal_weight_);
+        parameters.addConditionalParameter(param::ParameterFactory::declareBool("use OMP normal processing", false),
+                                           uses_normal,
+                                           use_omp_normal_processing_);
+
+        parameters.addConditionalParameter(param::ParameterFactory::declareValue("axis x", 0.0),
+                                           uses_axis,
+                                           axis_(0));
+        parameters.addConditionalParameter(param::ParameterFactory::declareValue("axis y", 0.0),
+                                           uses_axis,
+                                           axis_(1));
+        parameters.addConditionalParameter(param::ParameterFactory::declareValue("axis z", 1.0),
+                                           uses_axis,
+                                           axis_(2));
     }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
@@ -71,16 +106,25 @@ public:
     }
 
 protected:
+    enum ModelType {PLANE, NORMAL_PLANE, PARALLEL_NORMAL_PLANE};
+
+    ModelType model_type_;
+
     csapex_sample_consensus::Parameters sac_parameters_;
 
-    int         point_skip_;
-    int         termination_criteria_;
-    int         minimum_fit_size_;
-    int         minimum_model_cloud_size_;
+    int             point_skip_;
+    int             termination_criteria_;
+    int             minimum_fit_size_;
+    int             minimum_model_cloud_size_;
 
-    bool        fit_multiple_models_;
-    int         minimum_residual_cloud_size_;
-    int         maximum_model_count_;
+    bool            fit_multiple_models_;
+    int             minimum_residual_cloud_size_;
+    int             maximum_model_count_;
+
+    bool            use_omp_normal_processing_;
+    double          normal_weight_;
+    Eigen::Vector3d axis_;
+
 
     Input*  in_cloud_;
     Input*  in_indices_;
@@ -91,7 +135,30 @@ protected:
     template<typename PointT>
     typename csapex_sample_consensus::models::Model<PointT>::Ptr getModel(typename pcl::PointCloud<PointT>::ConstPtr &cloud)
     {
+        switch(model_type_) {
+        case PLANE:
+            break;
+        case NORMAL_PLANE:
+            break;
+        case PARALLEL_NORMAL_PLANE:
+            break;
+        default:
+            throw std::runtime_error("[SampleConsensus]: Unknown model type!");
+        }
+
         return typename csapex_sample_consensus::models::Plane<PointT>::Ptr(new csapex_sample_consensus::models::Plane<PointT>(cloud));
+    }
+
+    template<typename PointT>
+    pcl::PointCloud<pcl::Normal>::Ptr getNormals(typename pcl::PointCloud<PointT>::ConstPtr &cloud)
+    {
+        pcl::PointCloud<pcl::Normal>::Ptr normals;
+        if(use_omp_normal_processing_) {
+
+        } else {
+
+        }
+        return normals;
     }
 
     template<typename PointT>
