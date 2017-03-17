@@ -175,6 +175,11 @@ add_library(${PROJECT_NAME}_plugin_node
     src/features/lsd.cpp
     src/features/magnitude.cpp
 
+    src/features/acf/acf_standard_extractor.cpp
+    src/features/acf/acf_dynamic_extractor.cpp
+    src/features/acf/acf_depth_channel.cpp
+    src/features/acf/acf_depth_channel.hpp
+
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
     src/visualize/image_text_label.cpp
@@ -206,8 +211,6 @@ add_library(${PROJECT_NAME}_plugin_node
     src/label/cluster_grid.cpp
     src/label/assign_cluster_class.cpp
 
-    src/recognition/acf_standard_extractor.cpp
-    src/recognition/acf_dynamic_extractor.cpp
     src/recognition/hog_detector.cpp
     src/recognition/hog_extractor.cpp
     src/recognition/hog.cpp
