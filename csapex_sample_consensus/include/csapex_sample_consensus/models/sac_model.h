@@ -68,7 +68,7 @@ public:
 
     /// Methods to be implemented by the different model types
     virtual Model::Ptr clone() const = 0;
-    virtual bool                      isModelValid() const = 0;
+    virtual bool                      isValid() const = 0;
     virtual bool                      optimizeModelCoefficients(const float inlier_distance) = 0;
     virtual bool                      optimizeModelCoefficients(const std::vector<int> &src_indices, const float inlier_distance) = 0;
     virtual bool                      validateSamples(const std::set<int> &indices) const = 0;

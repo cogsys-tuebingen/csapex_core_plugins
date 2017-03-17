@@ -3,11 +3,6 @@
 /// PROJECT
 #include "sac_model.hpp"
 
-/// SYSTEM
-#include <pcl/point_types.h>
-#include <pcl/common/centroid.h>
-#include <pcl/common/eigen.h>
-
 namespace csapex_sample_consensus {
 namespace models {
 template<typename PointT>
@@ -19,7 +14,7 @@ public:
     Plane(const typename PointCloud::ConstPtr &pointcloud);
 
     virtual typename Base::Ptr clone() const override;
-    virtual bool isModelValid() const override;
+    virtual bool isValid() const override;
 
     virtual bool optimizeModelCoefficients(const float maximum_distance) override;
 

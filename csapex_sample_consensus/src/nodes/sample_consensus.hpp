@@ -77,9 +77,9 @@ public:
             return model_type_ == PARALLEL_NORMAL_PLANE || NORMAL_PLANE;
         };
 
-        parameters.addConditionalParameter(param::ParameterFactory::declareValue("normal weight", 0.0),
+        parameters.addConditionalParameter(param::ParameterFactory::declareValue("normal distance weight", 0.0),
                                            uses_normal,
-                                           normal_weight_);
+                                           normal_distance_weight_);
         parameters.addConditionalParameter(param::ParameterFactory::declareBool("use OMP normal processing", false),
                                            uses_normal,
                                            use_omp_normal_processing_);
@@ -93,6 +93,10 @@ public:
         parameters.addConditionalParameter(param::ParameterFactory::declareValue("axis z", 1.0),
                                            uses_axis,
                                            axis_(2));
+        parameters.addConditionalParameter(param::ParameterFactory::declareAngle("normal angle distance",
+                                                                                  0.0),
+                                           uses_axis,
+                                           angle_eps_);
     }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
@@ -122,8 +126,9 @@ protected:
     int             maximum_model_count_;
 
     bool            use_omp_normal_processing_;
-    double          normal_weight_;
+    double          normal_distance_weight_;
     Eigen::Vector3d axis_;
+    double          angle_eps_;
 
 
     Input*  in_cloud_;
@@ -135,18 +140,39 @@ protected:
     template<typename PointT>
     typename csapex_sample_consensus::models::Model<PointT>::Ptr getModel(typename pcl::PointCloud<PointT>::ConstPtr &cloud)
     {
-        switch(model_type_) {
+        typename csapex_sample_consensus::models::Model<PointT>::Ptr model;
+
+        switch((ModelType) model_type_) {
         case PLANE:
+            model.reset(new csapex_sample_consensus::models::Plane<PointT>(cloud));
             break;
         case NORMAL_PLANE:
+        {
+            pcl::PointCloud<pcl::Normal>::Ptr normals = getNormals<PointT>(cloud);
+            model.reset(new csapex_sample_consensus::models::NormalPlane<PointT, pcl::Normal>(cloud,
+                                                                                              normals,
+                                                                                              normal_distance_weight_));
+
+        }
             break;
         case PARALLEL_NORMAL_PLANE:
+        {
+            pcl::PointCloud<pcl::Normal>::Ptr normals = getNormals<PointT>(cloud);
+            auto *pnp_model = new csapex_sample_consensus::models::ParallelNormalPlane<PointT, pcl::Normal>(cloud,
+                                                                                                            normals,
+                                                                                                            normal_distance_weight_);
+
+            pnp_model->setAxis(pcl::Normal(axis_(0), axis_(1), axis_(2)),
+                               angle_eps_);
+
+            model.reset(pnp_model);
+        }
             break;
         default:
             throw std::runtime_error("[SampleConsensus]: Unknown model type!");
         }
 
-        return typename csapex_sample_consensus::models::Plane<PointT>::Ptr(new csapex_sample_consensus::models::Plane<PointT>(cloud));
+        return model;
     }
 
     template<typename PointT>

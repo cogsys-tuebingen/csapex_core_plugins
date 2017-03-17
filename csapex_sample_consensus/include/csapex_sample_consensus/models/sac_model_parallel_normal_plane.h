@@ -14,12 +14,12 @@ public:
     using NormalCloud = typename Base::NormalCloud;
 
     ParallelNormalPlane(const typename PointCloud::ConstPtr &pointcloud,
-                             const typename NormalCloud::ConstPtr &normalcloud,
-                             const float normal_distance_weight = 0.f);
+                        const typename NormalCloud::ConstPtr &normalcloud,
+                        const float normal_distance_weight = 0.f);
 
     virtual typename Base::Base::Ptr clone() const override;
 
-    virtual bool isModelValid() const override;
+    virtual bool isValid() const override;
 
     void setAxis(const NormalT &axis,
                  const float angle_eps);

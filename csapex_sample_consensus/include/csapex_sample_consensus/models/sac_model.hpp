@@ -26,14 +26,14 @@ template<typename PointT>
 inline bool Model<PointT>::getModelCoefficients(Coefficients &coefficients) const
 {
     coefficients = model_coefficients_;
-    return isModelValid();
+    return isValid();
 }
 
 template<typename PointT>
 inline bool Model<PointT>::getModelIndices(std::vector<int> &indices) const
 {
     indices = model_indices_;
-    return isModelValid();
+    return isValid();
 }
 
 
@@ -42,7 +42,7 @@ template<typename PointT>
 inline std::size_t Model<PointT>::countInliers(const std::vector<int> &indices,
                                                               const float maximum_distance) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return 0;
 
     std::size_t count = 0;
@@ -61,7 +61,7 @@ inline void Model<PointT>::getInlierStatistic(const std::vector<int> &indices,
                                                              const float maximum_distance,
                                                              InlierStatistic &statistic) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return;
 
     statistic.count = 0;
@@ -85,7 +85,7 @@ inline void Model<PointT>::getInlierStatistic(const std::vector<int> &indices,
                                                              InlierStatistic &statistic,
                                                              std::vector<double> &distances) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return;
 
     statistic.count = 0;
@@ -111,7 +111,7 @@ template<typename PointT>
 inline void Model<PointT>::getInliers(const float maximum_distance,
                                                      std::vector<int> &dst_indices) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return;
 
     const std::size_t size = pointcloud_->size();
@@ -128,7 +128,7 @@ inline void Model<PointT>::getInliers(const std::vector<int> &src_indices,
                                                      const float maximum_distance,
                                                      std::vector<int> &dst_indices) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return;
 
     dst_indices.reserve(src_indices.size());
@@ -143,7 +143,7 @@ template<typename PointT>
 inline void Model<PointT>::getOutliers(const float maximum_distance,
                                                       std::vector<int> &dst_indices) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return;
 
     const std::size_t size = pointcloud_->size();
@@ -160,7 +160,7 @@ inline void Model<PointT>::getOutliers(const std::vector<int> &src_indices,
                                                       const float maximum_distance,
                                                       std::vector<int> &dst_indices) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return;
 
     dst_indices.reserve(src_indices.size());
@@ -177,7 +177,7 @@ inline void Model<PointT>::getInliersAndOutliers(const std::vector<int> &src_ind
                                                                 std::vector<int> &dst_inliers,
                                                                 std::vector<int> &dst_outliers) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return;
 
     dst_inliers.reserve(src_indices.size());
@@ -197,7 +197,7 @@ inline void Model<PointT>::getInliersAndOutliers(const float maximum_distance,
                                                                 std::vector<int> &dst_inliers,
                                                                 std::vector<int> &dst_outliers) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return;
 
     const std::size_t size = pointcloud_->size();

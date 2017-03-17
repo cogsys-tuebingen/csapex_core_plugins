@@ -3,6 +3,10 @@
 
 /// PROJECT
 #include "sac_model_parallel_normal_plane.h"
+/// SYSTEM
+#include <pcl/point_types.h>
+#include <pcl/common/centroid.h>
+#include <pcl/common/eigen.h>
 
 namespace csapex_sample_consensus {
 namespace models {
@@ -30,7 +34,7 @@ inline typename ParallelNormalPlane<PointT, NormalT>::Base::Base::Ptr ParallelNo
 }
 
 template<typename PointT, typename NormalT>
-inline bool ParallelNormalPlane<PointT, NormalT>::isModelValid() const
+inline bool ParallelNormalPlane<PointT, NormalT>::isValid() const
 {
     if(Base::model_coefficients_.size() != 4)
         return false;
@@ -55,9 +59,9 @@ inline void ParallelNormalPlane<PointT, NormalT>::setAxis(const NormalT &axis,
 template<typename PointT, typename NormalT>
 inline float ParallelNormalPlane<PointT, NormalT>::dotAxis() const
 {
-    return std::abs(Base::model_coefficients_[0] * axis_.x +
-                    Base::model_coefficients_[1] * axis_.y +
-                    Base::model_coefficients_[2] * axis_.z);
+    return std::abs(Base::model_coefficients_[0] * axis_.normal_x +
+                    Base::model_coefficients_[1] * axis_.normal_y +
+                    Base::model_coefficients_[2] * axis_.normal_z);
 }
 }
 }

@@ -3,6 +3,10 @@
 
 /// PROJECT
 #include "sac_model_plane.h"
+/// SYSTEM
+#include <pcl/point_types.h>
+#include <pcl/common/centroid.h>
+#include <pcl/common/eigen.h>
 
 namespace csapex_sample_consensus {
 namespace models {
@@ -24,7 +28,7 @@ inline typename Plane<PointT>::Base::Ptr Plane<PointT>::clone() const
 
 
 template<typename PointT>
-inline bool Plane<PointT>::isModelValid() const
+inline bool Plane<PointT>::isValid() const
 {
     return Base::model_coefficients_.size() == 4;
 }
@@ -137,7 +141,7 @@ inline std::size_t Plane<PointT>::getModelDimension() const
 template<typename PointT>
 inline double Plane<PointT>::getDistanceToModel(const int &index) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return std::numeric_limits<float>::lowest();
 
     return dot(Base::pointcloud_->at(index));
@@ -147,7 +151,7 @@ template<typename PointT>
 inline void Plane<PointT>::getDistancesToModel(const std::vector<int> &indices,
                                                     std::vector<float> &distances) const
 {
-    if(!isModelValid())
+    if(!isValid())
         return;
 
     const std::size_t size = indices.size();
