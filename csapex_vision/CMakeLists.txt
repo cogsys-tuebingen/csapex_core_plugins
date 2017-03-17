@@ -180,6 +180,11 @@ add_library(${PROJECT_NAME}_plugin_node
     src/features/acf/acf_depth_channel.cpp
     src/features/acf/acf_depth_channel.hpp
 
+    src/features/hog/hog.cpp
+    src/features/hog/hog_detector.cpp
+    src/features/hog/hog_extractor.cpp
+    src/features/hog/hog_classifier.cpp
+
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
     src/visualize/image_text_label.cpp
@@ -211,10 +216,6 @@ add_library(${PROJECT_NAME}_plugin_node
     src/label/cluster_grid.cpp
     src/label/assign_cluster_class.cpp
 
-    src/recognition/hog_detector.cpp
-    src/recognition/hog_extractor.cpp
-    src/recognition/hog.cpp
-    src/recognition/hog_classifier.cpp
     src/recognition/local_patterns.cpp
     src/recognition/local_patterns_histogram.cpp
 
