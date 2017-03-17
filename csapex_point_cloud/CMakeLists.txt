@@ -21,7 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
         csapex_ros
         csapex_transform
         csapex_opencv
-        cslibs_kdtree
+        cslibs_indexed_storage
 )
 
 find_package(pcl_ros REQUIRED)
@@ -127,26 +127,27 @@ add_library(${PROJECT_NAME}_plugin_node
     src/filter/filter_indices_by_roi_classifciation.cpp
 
     src/segmentation/label_pointcloud.cpp
-    src/segmentation/cluster_pcl.cpp
     src/segmentation/split_clustered_cloud.cpp
     src/segmentation/merge_clusters.cpp
-    src/segmentation/cluster_kdtree.cpp
-    src/segmentation/cluster_kdtree_filtered.cpp
-    src/segmentation/regular_structures/entry.hpp
-    src/segmentation/regular_structures/validator.hpp
-    src/segmentation/regular_structures/indexation.hpp
-    src/segmentation/regular_structures/cluster_params.hpp
-    src/segmentation/regular_structures/clustering.hpp
-    src/segmentation/regular_structures/filtered_clustering.hpp
-    src/segmentation/regular_structures/filtered_clustering_color.hpp
-    src/segmentation/regular_structures/filtered_clustering_mono.hpp
-    src/segmentation/cluster_regular.cpp
-    src/segmentation/cluster_regular_filtered.cpp
-    src/segmentation/cluster_regular_filtered_color.cpp
-    src/segmentation/cluster_regular_filtered_mono.cpp
     src/segmentation/extract_clusters.cpp
-    src/segmentation/polar_clustering.hpp
     src/segmentation/sac_fit.cpp
+
+    src/clustering/cluster.cpp
+    src/clustering/cluster.hpp
+    src/clustering/cluster_pcl.cpp
+    src/clustering/cluster_pcl.h
+    src/clustering/polar_clustering.hpp
+    src/clustering/data/voxel_data.hpp
+    src/clustering/data/voxel_index.hpp
+    src/clustering/data/feature_color.hpp
+    src/clustering/data/feature_distribution.hpp
+    src/clustering/data/feature_helpers.hpp
+    src/clustering/storage/cluster_op.hpp
+    src/clustering/storage/storage_ops.hpp
+    src/clustering/validator/noop_validator.hpp
+    src/clustering/validator/distribution_validator.hpp
+    src/clustering/validator/color_validator.hpp
+    src/clustering/validator/color_differences.hpp
 
     src/provider/pcd_provider.cpp
 

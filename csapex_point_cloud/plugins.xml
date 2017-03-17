@@ -209,49 +209,17 @@
   <description>Takes a model message and creates a marker for rviz</description>
   <tags>PointCloud</tags>
 </class>
-<class type="csapex::ClusterPointcloud" base_class_type="csapex::Node">
+<class type="csapex::clustering::ClusterPointCloudPCL" base_class_type="csapex::Node">
   <description>Cluster implementation from pcl</description>
-  <tags>PointCloud</tags>
+  <tags>PointCloud, Clustering</tags>
 </class>
-<class type="csapex::ClusterPointCloudArray" base_class_type="csapex::Node">
-  <description>Cluster based on a voxel grid like structure.</description>
-  <tags>PointCloud</tags>
-</class>
-<class type="csapex::ClusterPointCloudArrayFiltered" base_class_type="csapex::Node">
-  <description>Cluster based on a voxel grid like structure with additional filter options.</description>
-  <tags>PointCloud</tags>
-</class>
-<class type="csapex::ClusterPointCloudArrayFilteredColor" base_class_type="csapex::Node">
-  <description>Cluster based on a voxel grid like structure with additional filter options.</description>
-  <tags>PointCloud</tags>
-</class>
-<class type="csapex::ClusterPointCloudArrayFilteredMono" base_class_type="csapex::Node">
-  <description>Cluster based on a voxel grid like structure with additional filter options.</description>
-  <tags>PointCloud</tags>
-</class>
-<class type="csapex::ClusterPointCloudPaging" base_class_type="csapex::Node">
-  <description>Cluster point cloud on a grid like structure using paging for memory allocation.</description>
-  <tags>PointCloud</tags>
-</class>
-<class type="csapex::ClusterPointCloudPagingFiltered" base_class_type="csapex::Node">
-  <description>Cluster point cloud on a grid like structure using paging for memory allocation with additional filter options.</description>
-  <tags>PointCloud</tags>
-</class>
-<class type="csapex::ClusterPointCloudPagingFilteredColor" base_class_type="csapex::Node">
-  <description>Cluster point cloud on a grid like structure using paging for memory allocation with additional filter options.</description>
-  <tags>PointCloud</tags>
-</class>
-<class type="csapex::ClusterPointCloudPagingFilteredMono" base_class_type="csapex::Node">
-  <description>Cluster point cloud on a grid like structure using paging for memory allocation with additional filter options.</description>
-  <tags>PointCloud</tags>
-</class>
-<class type="csapex::ClusterPointcloudKDTree" base_class_type="csapex::Node">
-  <description>Cluster implementation using buffered kdtree template library.</description>
-  <tags>PointCloud</tags>
-</class>
-<class type="csapex::ClusterPointcloudKDTreeFiltered" base_class_type="csapex::Node">
-  <description>Cluster implementation using buffered kdtree template library with additional filter options.</description>
-  <tags>PointCloud</tags>
+<class type="csapex::clustering::ClusterPointCloud" base_class_type="csapex::Node">
+  <description>
+    Cluster pointcloud using our own implementation.
+    Allows to add additional filters for cluster validation.
+    Based on cslibs_indexed_storage for space discretization.
+  </description>
+  <tags>PointCloud, Clustering</tags>
 </class>
 <class type="csapex::LabeledCloudToIndices" base_class_type="csapex::Node">
   <description>Converts a labled pointcloud to indices</description>

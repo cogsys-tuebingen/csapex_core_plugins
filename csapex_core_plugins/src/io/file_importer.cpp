@@ -259,10 +259,12 @@ void FileImporter::sendToken()
     apex_assert(provider_);
     apex_assert(provider_->hasNext());
 
+    apex_assert_hard(provider_->slotCount() <= outputs_.size());
+
     for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
         INTERLUDE_STREAM("slot " << slot);
 
-        Output* output = outputs_[slot];
+        Output* output = outputs_.at(slot);
 
         if(msg::isConnected(output)) {
             Message::Ptr msg = provider_->next(slot);
@@ -434,6 +436,11 @@ bool FileImporter::createMessageProvider(const QString& file_path)
         }
 
         provider_->restart();
+
+        if(outputs_.size() != provider_->slotCount()) {
+            // signal was not called, so force manual output update
+            updateOutputs();
+        }
 
         return provider_.get();
 
