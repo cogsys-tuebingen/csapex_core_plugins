@@ -43,18 +43,20 @@ public:
         std::shared_ptr<std::vector<pcl::PointIndices> > out_outliers(new std::vector<pcl::PointIndices>);
         std::shared_ptr<std::vector<ModelMessage> >      out_models(new std::vector<ModelMessage>);
 
+        /// retrieve the model to use
         auto model = getModel<PointT>(cloud);
-        antsac_parameters_.assign(sac_parameters_);
 
-        typename csapex_sample_consensus::Antsac<PointT>::Ptr sac;
-        if(msg::hasMessage(in_indices_)) {
-            PointIndecesMessage::ConstPtr in_indices = msg::getMessage<PointIndecesMessage>(in_indices_);
-            sac.reset(new csapex_sample_consensus::Antsac<PointT>(in_indices->value->indices, antsac_parameters_, rng_));
-        } else {
-            std::vector<int> indices;
+        /// get indices of points to use
+        std::vector<int> indices;
+        getInidicesFromInput(indices);
+        if(indices.empty()) {
             getIndices<PointT>(cloud, indices);
-            sac.reset(new csapex_sample_consensus::Antsac<PointT>(indices, antsac_parameters_, rng_));
         }
+
+        /// prepare algorithm
+        antsac_parameters_.assign(sac_parameters_);
+        typename csapex_sample_consensus::Antsac<PointT>::Ptr sac
+                (new csapex_sample_consensus::Antsac<PointT>(indices, antsac_parameters_, rng_));
 
         pcl::PointIndices outliers;
         pcl::PointIndices inliers;

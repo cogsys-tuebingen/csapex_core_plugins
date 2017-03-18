@@ -107,6 +107,9 @@ public:
             ne->compute (*msg);
 
         }  else {
+            if(!cloud->isOrganized())
+                throw std::runtime_error("Cannot use the chosen method to estimate normals - cloud must be organized!");
+
             typedef pcl::IntegralImageNormalEstimation<PointT, pcl::Normal> N;
             N ne;
             ne.setNormalEstimationMethod (static_cast<typename N::NormalEstimationMethod>(method_));

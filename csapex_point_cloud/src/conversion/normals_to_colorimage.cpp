@@ -41,6 +41,9 @@ public:
 
         unsigned n = cloud->points.size();
 
+        if(n == 0)
+            return;
+
         if(cloud->width * cloud->height != n) {
             throw std::logic_error("the input cloud is not correctly formated, width * height != count");
         }

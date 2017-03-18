@@ -12,14 +12,12 @@
 #include <csapex_point_cloud/point_cloud_message.h>
 #include <csapex_point_cloud/model_message.h>
 #include <csapex_point_cloud/indeces_message.h>
+#include <csapex_point_cloud/normals_message.h>
 
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 #include <pcl/point_representation.h>
-#include <pcl/features/normal_3d.h>
-#include <pcl/features/normal_3d_omp.h>
-#include <pcl/features/integral_image_normal.h>
 
 #include <boost/mpl/for_each.hpp>
 
@@ -99,34 +97,13 @@ public:
                                                                                  0.0),
                                            uses_axis,
                                            angle_eps_);
-
-        std::map<std::string, int> normal_est_types =
-        {{"DEFAULT",DEFAULT},
-         {"OMP",OMP},
-         {"INT_COVARIANCE_MATRIX",INT_COVARIANCE_MATRIX},
-         {"INT_AVERAGE_3D_GRADIENT",INT_AVERAGE_3D_GRADIENT},
-         {"INT_AVERAGE_DEPTH_CHANGE",INT_AVERAGE_DEPTH_CHANGE}};
-        parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("normal/estimation_type",
-                                                                                        normal_est_types,
-                                                                                        (int) DEFAULT),
-                                           uses_normals,
-                                           normal_est_type_);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal/search_readius", 0.0, 10.0, 0.02, 0.001),
-                                           uses_normals,
-                                           normal_est_search_radius_);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal/max_change_factor", 0.0, 10.0, 0.02, 0.001),
-                                           uses_normals,
-                                           normal_est_max_depth_change_factor_);
-
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal/smoothing_size", 0.0, 50.0, 10.0, 0.001),
-                                           uses_normals,
-                                           normal_est_max_depth_change_factor_);
     }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
         in_cloud_           = node_modifier.addInput<PointCloudMessage>("PointCloud");
         in_indices_         = node_modifier.addOptionalInput<PointIndecesMessage>("Indices"); // optional input
+        in_normals_         = node_modifier.addOptionalInput<NormalsMessage>("Normals");      // optional input
 
         out_models_         = node_modifier.addOutput<GenericVectorMessage, ModelMessage >("Models");
         out_inlier_indices_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Model Points");
@@ -135,35 +112,31 @@ public:
 
 protected:
     enum ModelType {PLANE, NORMAL_PLANE, PARALLEL_NORMAL_PLANE};
-    enum NormalEstimationType {DEFAULT, OMP, INT_COVARIANCE_MATRIX, INT_AVERAGE_3D_GRADIENT, INT_AVERAGE_DEPTH_CHANGE};
 
     int                  model_type_;
-    int                  normal_est_type_;
-    double               normal_est_max_depth_change_factor_;
-    double               normal_est_smoothing_factor_;
-    double               normal_est_search_radius_;
 
     csapex_sample_consensus::Parameters sac_parameters_;
 
-    int             point_skip_;
-    int             termination_criteria_;
-    int             minimum_fit_size_;
-    int             minimum_model_cloud_size_;
+    int                  point_skip_;
+    int                  termination_criteria_;
+    int                  minimum_fit_size_;
+    int                  minimum_model_cloud_size_;
 
-    bool            fit_multiple_models_;
-    int             minimum_residual_cloud_size_;
-    int             maximum_model_count_;
+    bool                 fit_multiple_models_;
+    int                  minimum_residual_cloud_size_;
+    int                  maximum_model_count_;
 
-    double          normal_distance_weight_;
-    Eigen::Vector3d axis_;
-    double          angle_eps_;
+    double               normal_distance_weight_;
+    Eigen::Vector3d      axis_;
+    double               angle_eps_;
 
 
-    Input*  in_cloud_;
-    Input*  in_indices_;
-    Output* out_models_;
-    Output* out_inlier_indices_;
-    Output* out_outlier_indices_;
+    Input*               in_cloud_;
+    Input*               in_indices_;
+    Input*               in_normals_;
+    Output*              out_models_;
+    Output*              out_inlier_indices_;
+    Output*              out_outlier_indices_;
 
     template<typename PointT>
     typename csapex_sample_consensus::models::Model<PointT>::Ptr getModel(typename pcl::PointCloud<PointT>::ConstPtr &cloud)
@@ -176,7 +149,11 @@ protected:
             break;
         case NORMAL_PLANE:
         {
-            pcl::PointCloud<pcl::Normal>::Ptr normals = getNormals<PointT>(cloud);
+            pcl::PointCloud<pcl::Normal>::ConstPtr normals;
+            getNormals(normals);
+            if(!normals)
+                throw std::runtime_error("The selected setting requires normals!");
+
             model.reset(new csapex_sample_consensus::models::NormalPlane<PointT, pcl::Normal>(cloud,
                                                                                               normals,
                                                                                               normal_distance_weight_));
@@ -185,14 +162,16 @@ protected:
             break;
         case PARALLEL_NORMAL_PLANE:
         {
-            pcl::PointCloud<pcl::Normal>::Ptr normals = getNormals<PointT>(cloud);
+            pcl::PointCloud<pcl::Normal>::ConstPtr normals;
+            getNormals(normals);
+            if(!normals)
+                throw std::runtime_error("The selected setting requires normals!");
+
             auto *pnp_model = new csapex_sample_consensus::models::ParallelNormalPlane<PointT, pcl::Normal>(cloud,
                                                                                                             normals,
                                                                                                             normal_distance_weight_);
-
             pnp_model->setAxis(pcl::Normal(axis_(0), axis_(1), axis_(2)),
                                angle_eps_);
-
             model.reset(pnp_model);
         }
             break;
@@ -203,70 +182,12 @@ protected:
         return model;
     }
 
-    template<typename PointT>
-    pcl::PointCloud<pcl::Normal>::Ptr getNormals(typename pcl::PointCloud<PointT>::ConstPtr &cloud)
+    void getNormals(pcl::PointCloud<pcl::Normal>::ConstPtr &normals)
     {
-        pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
-        switch((NormalEstimationType) normal_est_type_) {
-        case OMP:
-        {
-            typename pcl::NormalEstimationOMP<PointT, pcl::Normal> ne;
-            ne.setInputCloud (cloud);
-
-            typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT> ());
-            ne.setSearchMethod (tree);
-            ne.setRadiusSearch(normal_est_search_radius_);
-
-            ne.compute(*normals);
+        if(msg::hasMessage(in_normals_)) {
+            NormalsMessage::ConstPtr in_normals = msg::getMessage<NormalsMessage>(in_normals_);
+            normals = in_normals->value;
         }
-            break;
-        case INT_COVARIANCE_MATRIX:
-        {
-            using Nest = pcl::IntegralImageNormalEstimation<PointT, pcl::Normal>;
-            Nest ne;
-            ne.setNormalEstimationMethod(Nest::COVARIANCE_MATRIX);
-            ne.setMaxDepthChangeFactor(normal_est_max_depth_change_factor_);
-            ne.setNormalSmoothingSize(normal_est_smoothing_factor_);
-            ne.setInputCloud(cloud);
-            ne.compute(*normals);
-        }
-            break;
-        case INT_AVERAGE_3D_GRADIENT:
-        {
-            using Nest = pcl::IntegralImageNormalEstimation<PointT, pcl::Normal>;
-            Nest ne;
-            ne.setNormalEstimationMethod(Nest::AVERAGE_3D_GRADIENT);
-            ne.setMaxDepthChangeFactor(normal_est_max_depth_change_factor_);
-            ne.setNormalSmoothingSize(normal_est_smoothing_factor_);
-            ne.setInputCloud(cloud);
-            ne.compute(*normals);
-        }
-            break;
-        case INT_AVERAGE_DEPTH_CHANGE:
-        {
-            using Nest = pcl::IntegralImageNormalEstimation<PointT, pcl::Normal>;
-            Nest ne;
-            ne.setNormalEstimationMethod(Nest::AVERAGE_DEPTH_CHANGE);
-            ne.setMaxDepthChangeFactor(normal_est_max_depth_change_factor_);
-            ne.setNormalSmoothingSize(normal_est_smoothing_factor_);
-            ne.setInputCloud(cloud);
-            ne.compute(*normals);
-        }
-            break;
-        default:
-        {
-            typename pcl::NormalEstimation<PointT, pcl::Normal> ne;
-            ne.setInputCloud (cloud);
-
-            typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT> ());
-            ne.setSearchMethod (tree);
-            ne.setRadiusSearch(normal_est_search_radius_);
-
-            ne.compute(*normals);
-        }
-            break;
-        }
-        return normals;
     }
 
     template<typename PointT>

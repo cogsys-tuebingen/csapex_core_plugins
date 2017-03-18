@@ -157,11 +157,6 @@ protected:
         }
         return valid;
     }
-
-
-
-
-
 };
 }
 
