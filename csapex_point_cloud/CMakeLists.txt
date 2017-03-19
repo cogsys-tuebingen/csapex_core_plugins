@@ -148,6 +148,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/clustering/validator/distribution_validator.hpp
     src/clustering/validator/color_validator.hpp
     src/clustering/validator/color_differences.hpp
+    src/clustering/validator/normal_validator.hpp
 
     src/provider/pcd_provider.cpp
 

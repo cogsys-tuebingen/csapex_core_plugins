@@ -150,6 +150,33 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                        distribution_std_dev_[2]);
 
 
+    /// cluster by normal
+    parameters.addParameter(param::ParameterFactory::declareBool("filter/normal",
+                                                                 param::ParameterDescription("Only cluster voxels which have a normal vector parallel to the given one."),
+                                                                 false),
+                            validate_normal_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/x",
+                                                                             param::ParameterDescription("x coordinate of the normal vector."),
+                                                                             0.0),
+                                       [this]{return validate_normal_;},
+                                       normal_(0));
+    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/y",
+                                                                             param::ParameterDescription("y coordinate of the normal vector."),
+                                                                             0.0),
+                                       [this]{return validate_normal_;},
+                                       normal_(1));
+    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/z",
+                                                                             param::ParameterDescription("z coordinate of the normal vector."),
+                                                                             1.0),
+                                       [this]{return validate_normal_;},
+                                       normal_(2));
+    parameters.addConditionalParameter(param::ParameterFactory::declareAngle("filter/normal/maximum_angle_difference",
+                                                                             param::ParameterDescription("Maximum angle difference to normal."),
+                                                                             0.0),
+                                       [this]{return validate_normal_;},
+                                       normal_maximum_angle_distance_);
+
+
     // cluster color validation
     param::ParameterPtr param_color
             = param::ParameterFactory::declareBool("filter/color",
@@ -235,7 +262,7 @@ void ClusterPointCloud::selectData(typename pcl::PointCloud<PointT>::ConstPtr cl
         using Data = VoxelData<DistributionFeature, ColorFeature>;
         selectStorage<Data, PointT>(cloud);
     }
-    else if (distribution_enabled_)
+    else if (distribution_enabled_ || validate_normal_)
     {
         using Data = VoxelData<DistributionFeature>;
         selectStorage<Data, PointT>(cloud);
@@ -336,6 +363,13 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
                                  data.state = VoxelState::INVALID;
                          });
     }
+    if(validate_normal_) {
+        NAMED_INTERLUDE(validate_normals);
+
+        /// put in distribution here, consult pcl for nomal estimation with pca
+
+    }
+
 
     // register feature validators
     // - validators default to no-op (aka. always true) if feature is not selected

@@ -53,6 +53,11 @@ private:
     DistributionAnalysisType                    distribution_type_;
     std::array<std::pair<double, double>, 3>    distribution_std_dev_;
 
+    /// normal filter
+    Eigen::Vector3d                             normal_;
+    bool                                        validate_normal_;
+    double                                      normal_maximum_angle_distance_;
+
     // cluster color validation
     bool                    color_enabled_;
     ColorDifferenceType     color_type_;
