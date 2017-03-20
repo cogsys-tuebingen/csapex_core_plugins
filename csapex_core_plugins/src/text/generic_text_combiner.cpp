@@ -46,8 +46,6 @@ void GenericTextCombiner::process()
 
             } else {
                 // is a real number
-                ainfo << format << ": " << i << ", " << num << " -> " << (param_num - 1) << " of " << getVariadicInputCount() << std::endl;
-
                 InputPtr input = getVariadicInput(param_num-1);
                 if(msg::isValue<std::string>(input.get())) {
                     ss << msg::getValue<std::string>(input.get());

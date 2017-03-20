@@ -10,7 +10,7 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_core_plugins/map_message.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/serialization/serialization.h>
+#include <csapex/serialization/node_serializer.h>
 
 namespace csapex
 {

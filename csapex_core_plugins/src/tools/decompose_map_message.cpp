@@ -7,7 +7,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex_core_plugins/composite_message.h>
 #include <csapex/msg/output.h>
-#include <csapex/serialization/serialization.h>
+#include <csapex/serialization/node_serializer.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/utility/yaml_io.hpp>
 #include <csapex_core_plugins/map_message.h>
