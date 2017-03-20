@@ -48,7 +48,7 @@ void convertImage(const connection_types::CvMatMessage::ConstPtr& in, cv_bridge:
 
     out.header.frame_id = in->frame_id;
     if(in->stamp_micro_seconds != 0) {
-        out.header.stamp = out.header.stamp.fromNSec(in->stamp_micro_seconds);
+        out.header.stamp = out.header.stamp.fromNSec(in->stamp_micro_seconds * 1e3);
     } else {
         out.header.stamp = ros::Time::now();
     }
