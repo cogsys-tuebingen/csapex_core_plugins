@@ -5,6 +5,7 @@
 
 #include "validator/distribution_validator.hpp"
 #include "validator/color_validator.hpp"
+#include "validator/normal_validator.hpp"
 
 namespace csapex { namespace clustering {
 

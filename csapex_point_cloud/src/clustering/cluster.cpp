@@ -366,6 +366,15 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     if(validate_normal_) {
         NAMED_INTERLUDE(validate_normals);
 
+        storage.traverse([this](const VoxelIndex::Type&, DataType& data)
+                         {
+
+
+//                            auto& feature = data.template getFeature<DistributionFeature>();
+
+//                            data.state = VoxelState::INVALID;
+                         });
+
         /// put in distribution here, consult pcl for nomal estimation with pca
 
     }
