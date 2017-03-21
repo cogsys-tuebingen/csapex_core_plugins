@@ -98,7 +98,7 @@ std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) con
 {
     cv::Mat aggregated_depth_map;
     cv::resize(depth_map, aggregated_depth_map, cv::Size(depth_map.cols / block_size_, depth_map.rows / block_size_));
-    const cv::Mat valid_pixel_mask = aggregated_depth_map != 0;
+    const cv::Mat valid_pixel_mask = aggregated_depth_map > 0;
 
     double min_value;
     double max_value;
@@ -109,7 +109,7 @@ std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) con
     {
         case Method::HISTOGRAM:
         {
-            const const float BIN_SIZE = 0.25f;
+            const static float BIN_SIZE = 0.25f;
             static const int channels[] = { 0 };
             const int bins[] = { int((max_value - min_value) / BIN_SIZE) };
             const float value_range[] = { float(min_value), float(max_value) + std::numeric_limits<float>::epsilon() };
@@ -127,14 +127,15 @@ std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) con
         case Method::MEDIAN:
         {
             cv::Mat values = aggregated_depth_map.reshape(0, 1).clone();
+            const int invalid_pixel_count = values.cols - cv::countNonZero(valid_pixel_mask);
 
-            const auto middle = values.cols / 2;
+            const auto middle = invalid_pixel_count + (values.cols - invalid_pixel_count) / 2;
             std::nth_element(values.begin<float>(), values.begin<float>() + middle, values.end<float>());
             center = values.at<float>(0, middle);
             break;
         }
         case Method::MEAN:
-            center = cv::mean(aggregated_depth_map)[0];
+            center = cv::mean(aggregated_depth_map, valid_pixel_mask)[0];
             break;
     }
 
