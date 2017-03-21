@@ -10,7 +10,7 @@ class ACFDepthChannel : public csapex::Node
 {
 public:
     enum class Type { BINARY, TERNARY };
-    enum class Method { MEDIAN, MEAN };
+    enum class Method { MEDIAN, MEAN, HISTOGRAM };
 
     void setupParameters(csapex::Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;

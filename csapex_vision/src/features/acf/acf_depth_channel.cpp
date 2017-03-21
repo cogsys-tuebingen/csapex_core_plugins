@@ -55,6 +55,7 @@ void ACFDepthChannel::setupParameters(csapex::Parameterizable& parameters)
     static const std::map<std::string, int> available_methods = {
             { "median", static_cast<int>(Method::MEDIAN) },
             { "mean", static_cast<int>(Method::MEAN) },
+            { "histogram", static_cast<int>(Method::HISTOGRAM) },
     };
     parameters.addParameter(param::ParameterFactory::declareParameterSet("channel/method",
                                                                         available_methods,
@@ -97,10 +98,32 @@ std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) con
 {
     cv::Mat aggregated_depth_map;
     cv::resize(depth_map, aggregated_depth_map, cv::Size(depth_map.cols / block_size_, depth_map.rows / block_size_));
+    const cv::Mat valid_pixel_mask = aggregated_depth_map != 0;
+
+    double min_value;
+    double max_value;
+    cv::minMaxLoc(aggregated_depth_map, &min_value, &max_value);
 
     float center = 0.0f;
     switch (method_)
     {
+        case Method::HISTOGRAM:
+        {
+            const const float BIN_SIZE = 0.25f;
+            static const int channels[] = { 0 };
+            const int bins[] = { int((max_value - min_value) / BIN_SIZE) };
+            const float value_range[] = { float(min_value), float(max_value) + std::numeric_limits<float>::epsilon() };
+            const float* ranges[] = { value_range };
+
+            cv::Mat hist;
+            cv::calcHist(&aggregated_depth_map, 1, channels, valid_pixel_mask, hist, 1, bins, ranges, true);
+
+            cv::Point max;
+            cv::minMaxLoc(hist, nullptr, nullptr, nullptr, &max);
+
+            center = min_value + (max.y + 0.5f) * BIN_SIZE;
+            break;
+        }
         case Method::MEDIAN:
         {
             cv::Mat values = aggregated_depth_map.reshape(0, 1).clone();
@@ -117,10 +140,6 @@ std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) con
 
     std::vector<float> feature;
     feature.reserve(aggregated_depth_map.rows * aggregated_depth_map.cols);
-
-    double min_value;
-    double max_value;
-    cv::minMaxLoc(aggregated_depth_map, &min_value, &max_value);
 
     switch (type_)
     {
