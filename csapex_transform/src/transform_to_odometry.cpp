@@ -43,7 +43,7 @@ void TransformToOdometry::process()
 
     nav_msgs::Odometry::Ptr msg(new nav_msgs::Odometry);
     msg->header.frame_id = a->frame_id;
-    msg->header.stamp = msg->header.stamp.fromNSec(a->stamp_micro_seconds);
+    msg->header.stamp = msg->header.stamp.fromNSec(a->stamp_micro_seconds * 1e3);
     tf::poseTFToMsg(a->value, msg->pose.pose);
 
     msg::publish<nav_msgs::Odometry>(out_, msg);

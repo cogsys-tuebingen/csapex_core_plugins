@@ -5,7 +5,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/assert.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/serialization/serialization.h>
+#include <csapex/serialization/node_serializer.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 #include <csapex/msg/io.h>
