@@ -70,12 +70,19 @@ public:
 
         for (auto& input_set : input_features)
         {
+            int ref_class = !input_set.empty() ? input_set[0].classification : 0;
+
             FeaturesMessage feature;
-            feature.classification = 0;
+            feature.classification = ref_class;
             feature.confidence = 0;
 
             for (auto& part : input_set)
+            {
+                if (feature.classification != ref_class)
+                    throw std::runtime_error("Feature classification mismatch");
+
                 feature.value.insert(feature.value.end(), part.value.begin(), part.value.end());
+            }
 
             output_features->emplace_back(std::move(feature));
         }

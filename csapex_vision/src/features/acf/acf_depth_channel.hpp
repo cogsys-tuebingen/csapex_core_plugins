@@ -10,20 +10,21 @@ class ACFDepthChannel : public csapex::Node
 {
 public:
     enum class Type { BINARY, TERNARY };
-    enum class Method { MEDIAN, MEAN };
+    enum class Method { MEDIAN, MEAN, HISTOGRAM };
 
     void setupParameters(csapex::Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
     void process() override;
 
 private:
-    void extractChannel(const cv::Mat& depth, cv::Mat& channel);
+    std::vector<float> extractChannel(const cv::Mat& depth) const;
     void updateWindow();
 
 private:
     Input*  in_image_;
     Input*  in_rois_;
     Output* out_channels_;
+    Output* out_visualize_;
 
     int window_width_;
     int window_height_;
@@ -34,6 +35,7 @@ private:
     Type type_;
     Method method_;
     double threshold_;
+    bool normalize_;
 };
 
 }}
