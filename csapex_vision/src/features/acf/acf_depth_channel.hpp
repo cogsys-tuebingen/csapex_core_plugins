@@ -35,6 +35,7 @@ private:
     Type type_;
     Method method_;
     double threshold_;
+    bool normalize_;
 };
 
 }}

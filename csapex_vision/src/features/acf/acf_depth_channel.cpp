@@ -64,6 +64,10 @@ void ACFDepthChannel::setupParameters(csapex::Parameterizable& parameters)
     parameters.addParameter(param::ParameterFactory::declareRange("channel/threshold",
                                                                  0.0, 1000.0, 0.1, 0.01),
                            threshold_);
+
+   parameters.addParameter(param::ParameterFactory::declareBool("channel/normalize",
+                                                                false),
+                           normalize_);
 }
 
 void ACFDepthChannel::updateWindow()
@@ -94,7 +98,7 @@ std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) con
     cv::Mat aggregated_depth_map;
     cv::resize(depth_map, aggregated_depth_map, cv::Size(depth_map.cols / block_size_, depth_map.rows / block_size_));
 
-    double center = 0.0;
+    float center = 0.0f;
     switch (method_)
     {
         case Method::MEDIAN:
@@ -114,30 +118,60 @@ std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) con
     std::vector<float> feature;
     feature.reserve(aggregated_depth_map.rows * aggregated_depth_map.cols);
 
+    double min_value;
+    double max_value;
+    cv::minMaxLoc(aggregated_depth_map, &min_value, &max_value);
+
     switch (type_)
     {
         case Type::TERNARY:
             std::transform(aggregated_depth_map.begin<float>(), aggregated_depth_map.end<float>(),
                            std::back_inserter(feature),
-                           [center, this](float value)
+                           [&](float value)
                            {
-                               if (value > center + threshold_)
-                                   return 1;
-                               else if (value < center - threshold_)
-                                   return -1;
+                               if (normalize_)
+                               {
+                                   const float delta = value - center;
+                                   if (delta > threshold_)
+                                       return delta / float(max_value - (center + threshold_));
+                                   else if (delta < -threshold_)
+                                       return delta / float(center - threshold_ - min_value);
+                                   else
+                                       return 0.f;
+                               }
                                else
-                                   return 0;
+                               {
+                                   if (value > center + threshold_)
+                                       return 1.f;
+                                   else if (value < center - threshold_)
+                                       return -1.f;
+                                   else
+                                       return 0.f;
+                               }
                            });
             break;
         case Type::BINARY:
             std::transform(aggregated_depth_map.begin<float>(), aggregated_depth_map.end<float>(),
                            std::back_inserter(feature),
-                           [center, this](float value)
+                           [&](float value)
                            {
-                               if (std::abs(value - center) > threshold_)
-                                   return 1;
+                               if (normalize_)
+                               {
+                                   const float delta = value - center;
+                                   if (delta > threshold_)
+                                       return delta / float(max_value - (center + threshold_));
+                                   else if (delta < -threshold_)
+                                       return -delta / float(center - threshold_ - min_value);
+                                   else
+                                       return 0.f;
+                               }
                                else
-                                   return 0;
+                               {
+                                   if (std::abs(value - center) > threshold_)
+                                       return 1.f;
+                                   else
+                                       return 0.f;
+                               }
                            });
             break;
     }
@@ -193,7 +227,6 @@ void ACFDepthChannel::process()
                     const int ldx = dx * scale_x;
                     const int ldy = dy * scale_y;
                     const int step = window_width_ / block_size_;
-                    const int idx = ldx + step * ldy;
 
                     const float value = feature.value[ldx + step * ldy];
                     cv::Vec3b& dst = out_visualize->value.at<cv::Vec3b>(roi_region.y + dy, roi_region.x + dx);
@@ -201,9 +234,9 @@ void ACFDepthChannel::process()
                     if (value == 0)
                          dst = cv::Vec3b(0, 255, 0);
                     else if (value < 0)
-                        dst = cv::Vec3b(0, 0, 255);
+                        dst = cv::Vec3b(0, 0, 255) * std::abs(value);
                     else if (value > 0)
-                        dst = cv::Vec3b(255, 0, 0);
+                        dst = cv::Vec3b(255, 0, 0) * std::abs(value);
                 }
         }
 
