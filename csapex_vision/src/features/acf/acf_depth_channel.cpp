@@ -18,9 +18,10 @@ using namespace csapex::connection_types;
 
 void ACFDepthChannel::setup(csapex::NodeModifier& node_modifier)
 {
-    in_image_     = node_modifier.addInput<CvMatMessage>("Depth Map");
-    in_rois_      = node_modifier.addOptionalInput<GenericVectorMessage, RoiMessage>("ROIs");
-    out_channels_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Channel Features");
+    in_image_      = node_modifier.addInput<CvMatMessage>("Depth Map");
+    in_rois_       = node_modifier.addOptionalInput<GenericVectorMessage, RoiMessage>("ROIs");
+    out_channels_  = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Channel Features");
+    out_visualize_ = node_modifier.addOutput<CvMatMessage>("Visualize");
 }
 
 void ACFDepthChannel::setupParameters(csapex::Parameterizable& parameters)
@@ -88,23 +89,17 @@ void ACFDepthChannel::updateWindow()
     }
 }
 
-void ACFDepthChannel::extractChannel(const cv::Mat& depth, cv::Mat& channel)
+std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) const
 {
+    cv::Mat aggregated_depth_map;
+    cv::resize(depth_map, aggregated_depth_map, cv::Size(depth_map.cols / block_size_, depth_map.rows / block_size_));
+
     double center = 0.0;
     switch (method_)
     {
         case Method::MEDIAN:
         {
-            cv::Mat continuous;
-            cv::Mat values;
-
-            if (depth.isContinuous())
-                values = depth.reshape(0, 1).clone();
-            else
-            {
-                continuous = depth.clone();
-                values = continuous.reshape(0, 1);
-            }
+            cv::Mat values = aggregated_depth_map.reshape(0, 1).clone();
 
             const auto middle = values.cols / 2;
             std::nth_element(values.begin<float>(), values.begin<float>() + middle, values.end<float>());
@@ -112,16 +107,18 @@ void ACFDepthChannel::extractChannel(const cv::Mat& depth, cv::Mat& channel)
             break;
         }
         case Method::MEAN:
-            center = cv::mean(depth)[0];
+            center = cv::mean(aggregated_depth_map)[0];
             break;
     }
 
-    channel.create(depth.rows, depth.cols, CV_8SC1);
+    std::vector<float> feature;
+    feature.reserve(aggregated_depth_map.rows * aggregated_depth_map.cols);
 
     switch (type_)
     {
         case Type::TERNARY:
-            std::transform(depth.begin<float>(), depth.end<float>(), channel.begin<int8_t>(),
+            std::transform(aggregated_depth_map.begin<float>(), aggregated_depth_map.end<float>(),
+                           std::back_inserter(feature),
                            [center, this](float value)
                            {
                                if (value > center + threshold_)
@@ -129,61 +126,93 @@ void ACFDepthChannel::extractChannel(const cv::Mat& depth, cv::Mat& channel)
                                else if (value < center - threshold_)
                                    return -1;
                                else
-                                   return 1;
+                                   return 0;
                            });
             break;
         case Type::BINARY:
-            std::transform(depth.begin<float>(), depth.end<float>(), channel.begin<int8_t>(),
+            std::transform(aggregated_depth_map.begin<float>(), aggregated_depth_map.end<float>(),
+                           std::back_inserter(feature),
                            [center, this](float value)
                            {
-                               if (value > center + threshold_)
+                               if (std::abs(value - center) > threshold_)
                                    return 1;
                                else
-                                   return -1;
+                                   return 0;
                            });
             break;
     }
+
+    return std::move(feature);
 }
 
 void ACFDepthChannel::process()
 {
     CvMatMessage::ConstPtr in_image = msg::getMessage<CvMatMessage>(in_image_);
-    cv::Mat image = in_image->value;
+    const cv::Mat& image = in_image->value;
 
     std::shared_ptr<std::vector<RoiMessage> const> in_rois;
     if (msg::hasMessage(in_rois_))
         in_rois = msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
 
     if (image.channels() != 1 || image.type() != CV_32F)
-        throw std::runtime_error("Only 1 channel float depth images are supported");
+        throw std::runtime_error("Only 1 channel float images (depth maps) are supported");
 
-    // 1) resize image to window
-    // 2) aggregate values through resize (controlled by block_size)
-    cv::resize(image, image, cv::Size(window_width_ / block_size_, window_height_ / block_size_));
+
+    CvMatMessage::Ptr out_visualize;
+    if (msg::isConnected(out_visualize_))
+    {
+        out_visualize = std::make_shared<CvMatMessage>(enc::bgr, in_image->stamp_micro_seconds);
+        out_visualize->frame_id = in_image->frame_id;
+        out_visualize->value = cv::Mat(image.rows, image.cols, CV_8UC3, cv::Scalar(0, 0, 0));
+    }
+
 
     auto out_features = std::make_shared<std::vector<FeaturesMessage>>();
-    auto process_roi = [&](const Roi& roi)
+
+    const auto process_roi = [&](const Roi& roi)
     {
-        auto extract_feature = [&](const cv::Mat& region)
+        const cv::Rect roi_region = roi.rect() & cv::Rect(0, 0, image.cols, image.rows);
+
+        FeaturesMessage feature(in_image->stamp_micro_seconds);
+        feature.classification = roi.classification();
+
+        cv::Mat image_region;
+        cv::resize(cv::Mat(image, roi_region), image_region, cv::Size(window_width_, window_height_));
+
+        feature.value = extractChannel(image_region);
+        out_features->push_back(feature);
+
+        if (out_visualize)
         {
-            FeaturesMessage feature(in_image->stamp_micro_seconds);
+            const float scale_x = float(image_region.cols / block_size_) / roi_region.width;
+            const float scale_y = float(image_region.rows / block_size_) / roi_region.height;
 
-            cv::Mat channel;
-            extractChannel(region, channel);
+            for (int dy = 0; dy < roi_region.height; ++dy)
+                for (int dx = 0; dx < roi_region.width; ++dx)
+                {
+                    const int ldx = dx * scale_x;
+                    const int ldy = dy * scale_y;
+                    const int step = window_width_ / block_size_;
+                    const int idx = ldx + step * ldy;
 
-            feature.classification = roi.classification();
-            feature.value.reserve(channel.rows * channel.cols);
-            channel.copyTo(feature.value);
-            return feature;
-        };
+                    const float value = feature.value[ldx + step * ldy];
+                    cv::Vec3b& dst = out_visualize->value.at<cv::Vec3b>(roi_region.y + dy, roi_region.x + dx);
 
-        cv::Mat image_region(image, roi.rect());
-        out_features->push_back(extract_feature(image_region));
+                    if (value == 0)
+                         dst = cv::Vec3b(0, 255, 0);
+                    else if (value < 0)
+                        dst = cv::Vec3b(0, 0, 255);
+                    else if (value > 0)
+                        dst = cv::Vec3b(255, 0, 0);
+                }
+        }
 
         if (mirror_)
         {
             cv::flip(image_region, image_region, 1);
-            out_features->push_back(extract_feature(image_region));
+
+            feature.value = extractChannel(image_region);
+            out_features->push_back(std::move(feature));
         }
     };
 
@@ -195,5 +224,8 @@ void ACFDepthChannel::process()
     else
         process_roi(csapex::Roi(0, 0, image.cols, image.rows));
 
+
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_channels_, out_features);
+    if (out_visualize)
+        msg::publish(out_visualize_, out_visualize);
 }

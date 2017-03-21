@@ -17,13 +17,14 @@ public:
     void process() override;
 
 private:
-    void extractChannel(const cv::Mat& depth, cv::Mat& channel);
+    std::vector<float> extractChannel(const cv::Mat& depth) const;
     void updateWindow();
 
 private:
     Input*  in_image_;
     Input*  in_rois_;
     Output* out_channels_;
+    Output* out_visualize_;
 
     int window_width_;
     int window_height_;
