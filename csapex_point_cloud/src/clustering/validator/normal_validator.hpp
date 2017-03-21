@@ -26,6 +26,8 @@ public:
     {
         auto& distribution    = data.template getFeature<DistributionFeature>();
         auto& normal          = data.template getFeature<NormalFeature>();
+        current_mean_normal_.reset();
+
         current_distribution_ = distribution.distribution;
         normal.updateNormal(current_distribution_);
         current_mean_normal_.add(normal.normal);
@@ -46,8 +48,14 @@ public:
 
     bool finish() const
     {
-        const double angle = std::abs(preferred_normal_.dot(current_mean_normal_.getMean().normalized()));
-        return angle <= preferred_normal_cos_angle_eps_;
+        const  Eigen::Vector3d mean = current_mean_normal_.getMean();
+        if(std::isnan(mean(0)) ||
+                std::isnan(mean(1)) ||
+                    std::isnan(mean(2)))
+            return false;
+
+        const double angle = std::abs(preferred_normal_.dot(current_mean_normal_.getMean()));
+        return angle >= preferred_normal_cos_angle_eps_;
     }
 
     const Eigen::Vector3d preferred_normal_;

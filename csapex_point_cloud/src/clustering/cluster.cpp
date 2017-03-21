@@ -373,9 +373,6 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
             if(!validator.finish())
                 data.state = VoxelState::INVALID;
         });
-
-        /// put in distribution here, consult pcl for nomal estimation with pca
-
     }
 
 

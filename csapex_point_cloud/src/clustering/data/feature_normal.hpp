@@ -27,6 +27,7 @@ struct NormalFeature {
             valid = math::Plane::fit(distribution,
                                      origin,
                                      normal);
+            normal.normalize();
             dirty = false;
         }
         return valid;
