@@ -57,7 +57,7 @@ private:
     /// normal filter
     Eigen::Vector3d                             normal_;
     bool                                        validate_normal_;
-    double                                      normal_maximum_angle_distance_;
+    double                                      normal_angle_eps_;
 
     // cluster color validation
     bool                    color_enabled_;

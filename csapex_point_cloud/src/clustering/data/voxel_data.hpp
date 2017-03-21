@@ -40,6 +40,8 @@ struct VoxelData
     FeatureList         features;
     math::Mean<1>       depth;
 
+    Eigen::Vector3d     normal;
+
     VoxelData() = default;
 
     template<typename PointT>
@@ -47,6 +49,7 @@ struct VoxelData
             index(std::move(index))
     {
         indices.push_back(id);
+        normal = Eigen::Vector3d::Zero();
         depth.add(std::sqrt(point.x * point.x + point.y * point.y + point.z * point.z));
         detail::FeatureOp<FeatureList>::create(features, point);
     }
@@ -54,6 +57,7 @@ struct VoxelData
     inline void merge(const VoxelData& other)
     {
         indices.insert(indices.end(), other.indices.begin(), other.indices.end());
+        normal = Eigen::Vector3d::Zero();
         depth += other.depth;
         detail::FeatureOp<FeatureList>::merge(features, other.features);
     }

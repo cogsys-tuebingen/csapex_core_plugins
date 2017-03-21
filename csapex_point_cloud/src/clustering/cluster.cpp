@@ -29,7 +29,7 @@ namespace
 struct Color
 {
     Color(uint8_t r, uint8_t g, uint8_t b) :
-            r(r), g(g), b(b)
+        r(r), g(g), b(b)
     {}
 
     uint8_t r;
@@ -42,9 +42,9 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 {
     // backend config
     static const std::map<std::string, int> backend_types{
-            { "page", static_cast<int>(BackendType::PAGED) },
-            { "k-d tree", static_cast<int>(BackendType::KDTREE) },
-            { "array", static_cast<int>(BackendType::ARRAY) },
+        { "page", static_cast<int>(BackendType::PAGED) },
+        { "k-d tree", static_cast<int>(BackendType::KDTREE) },
+        { "array", static_cast<int>(BackendType::ARRAY) },
     };
     parameters.addParameter(param::ParameterFactory::declareParameterSet("backend",
                                                                          param::ParameterDescription("Backend used for clustering. Available methods:"
@@ -77,7 +77,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                                                      param::ParameterDescription("Filter by points within final clusters,"
                                                                                                  " e.g. to reject small noisy clustering or extremly large ones."),
                                                                      1, 10000000, 1, 10000000, 1),
-                           cluster_point_count_);
+                            cluster_point_count_);
 
 
     // voxel pre-clustering validation
@@ -112,9 +112,9 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                                    false);
     std::function<bool()> enable_distribution = [param_distribution]() -> bool  { return param_distribution->as<bool>(); };
     static const std::map<std::string, int> distribution_types{
-            { "DEFAULT", static_cast<int>(DistributionAnalysisType::DEFAULT) },
-            { "PCA2D", static_cast<int>(DistributionAnalysisType::PCA2D) },
-            { "PCA3D", static_cast<int>(DistributionAnalysisType::PCA3D) },
+        { "DEFAULT", static_cast<int>(DistributionAnalysisType::DEFAULT) },
+        { "PCA2D", static_cast<int>(DistributionAnalysisType::PCA2D) },
+        { "PCA3D", static_cast<int>(DistributionAnalysisType::PCA3D) },
     };
 
     parameters.addParameter(param_distribution,
@@ -159,22 +159,22 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                                                              param::ParameterDescription("x coordinate of the normal vector."),
                                                                              0.0),
                                        [this]{return validate_normal_;},
-                                       normal_(0));
+    normal_(0));
     parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/y",
                                                                              param::ParameterDescription("y coordinate of the normal vector."),
                                                                              0.0),
                                        [this]{return validate_normal_;},
-                                       normal_(1));
+    normal_(1));
     parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/z",
                                                                              param::ParameterDescription("z coordinate of the normal vector."),
                                                                              1.0),
                                        [this]{return validate_normal_;},
-                                       normal_(2));
+    normal_(2));
     parameters.addConditionalParameter(param::ParameterFactory::declareAngle("filter/normal/maximum_angle_difference",
                                                                              param::ParameterDescription("Maximum angle difference to normal."),
                                                                              0.0),
                                        [this]{return validate_normal_;},
-                                       normal_maximum_angle_distance_);
+    normal_angle_eps_);
 
 
     // cluster color validation
@@ -188,9 +188,9 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                                    false);
     std::function<bool()> enable_color = [param_color]() -> bool { return param_color->as<bool>(); };
     static const std::map<std::string, int> color_types{
-            { "CIE76", static_cast<int>(ColorDifferenceType::CIE76) },
-            { "CIE94Grahpics", static_cast<int>(ColorDifferenceType::CIE94Grahpics) },
-            { "CIE94Textiles", static_cast<int>(ColorDifferenceType::CIE94Textiles) },
+        { "CIE76", static_cast<int>(ColorDifferenceType::CIE76) },
+        { "CIE94Grahpics", static_cast<int>(ColorDifferenceType::CIE94Grahpics) },
+        { "CIE94Textiles", static_cast<int>(ColorDifferenceType::CIE94Textiles) },
     };
 
     parameters.addParameter(param_color,
@@ -264,7 +264,7 @@ void ClusterPointCloud::selectData(typename pcl::PointCloud<PointT>::ConstPtr cl
     }
     else if (distribution_enabled_ || validate_normal_)
     {
-        using Data = VoxelData<DistributionFeature>;
+        using Data = VoxelData<DistributionFeature, NormalFeature>;
         selectStorage<Data, PointT>(cloud);
     }
     else if (color_enabled_)
@@ -290,22 +290,22 @@ void ClusterPointCloud::selectStorage(typename pcl::PointCloud<PointT>::ConstPtr
      */
     switch (backend_)
     {
-        default:
-        case BackendType::PAGED:
-        {
-            using Storage = cis::AutoIndexStorage<DataType, cis::backend::simple::UnorderedComponentMap>;
-            return clusterCloud<Storage, PointT>(cloud);
-        }
-        case BackendType::KDTREE:
-        {
-            using Storage = cis::AutoIndexStorage<DataType, cis::backend::kdtree::KDTreeBuffered>;
-            return clusterCloud<Storage, PointT>(cloud);
-        }
-        case BackendType::ARRAY:
-        {
-            using Storage = cis::AutoIndexStorage<cis::interface::non_owning<DataType>, cis::backend::array::Array>;
-            return clusterCloud<Storage, PointT>(cloud);
-        }
+    default:
+    case BackendType::PAGED:
+    {
+        using Storage = cis::AutoIndexStorage<DataType, cis::backend::simple::UnorderedComponentMap>;
+        return clusterCloud<Storage, PointT>(cloud);
+    }
+    case BackendType::KDTREE:
+    {
+        using Storage = cis::AutoIndexStorage<DataType, cis::backend::kdtree::KDTreeBuffered>;
+        return clusterCloud<Storage, PointT>(cloud);
+    }
+    case BackendType::ARRAY:
+    {
+        using Storage = cis::AutoIndexStorage<cis::interface::non_owning<DataType>, cis::backend::array::Array>;
+        return clusterCloud<Storage, PointT>(cloud);
+    }
     }
 }
 
@@ -350,30 +350,29 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
         NAMED_INTERLUDE(validate_voxels);
 
         storage.traverse([this](const VoxelIndex::Type&, DataType& data)
-                         {
-                             std::size_t min_count = static_cast<std::size_t>(voxel_validation_min_count_);
-                             if (voxel_validation_scale_ > 0.0) {
-                                 const double depth = data.depth.getMean();
-                                 min_count = static_cast<std::size_t>(voxel_validation_min_count_
-                                                                      * std::floor(1.0
-                                                                                   / (voxel_validation_scale_ * depth * depth)
-                                                                                   + 0.5));
-                             }
-                             if (data.indices.size() < min_count)
-                                 data.state = VoxelState::INVALID;
-                         });
+        {
+            std::size_t min_count = static_cast<std::size_t>(voxel_validation_min_count_);
+            if (voxel_validation_scale_ > 0.0) {
+                const double depth = data.depth.getMean();
+                min_count = static_cast<std::size_t>(voxel_validation_min_count_
+                                                     * std::floor(1.0
+                                                                  / (voxel_validation_scale_ * depth * depth)
+                                                                  + 0.5));
+            }
+            if (data.indices.size() < min_count)
+                data.state = VoxelState::INVALID;
+        });
     }
     if(validate_normal_) {
         NAMED_INTERLUDE(validate_normals);
 
-        storage.traverse([this](const VoxelIndex::Type&, DataType& data)
-                         {
-
-
-//                            auto& feature = data.template getFeature<DistributionFeature>();
-
-//                            data.state = VoxelState::INVALID;
-                         });
+        NormalValidator<DataType> validator(normal_, normal_angle_eps_);
+        storage.traverse([this, &validator](const VoxelIndex::Type&, DataType& data)
+        {
+            validator.start(data);
+            if(!validator.finish())
+                data.state = VoxelState::INVALID;
+        });
 
         /// put in distribution here, consult pcl for nomal estimation with pca
 
@@ -406,9 +405,9 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
         // extract point cloud indices for each cluster
         StorageOperation::extract(storage,
-                            cluster_op,
-                            *clusters_accepted_message_,
-                            *clusters_rejected_message_);
+                                  cluster_op,
+                                  *clusters_accepted_message_,
+                                  *clusters_rejected_message_);
     }
 
     {
@@ -420,11 +419,11 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
         {
             indices.erase(std::remove_if(indices.begin(), indices.end(),
                                          [this](const pcl::PointIndices& list)
-                                         {
-                                             const int size = static_cast<int>(list.indices.size());
-                                             return !(size >= cluster_point_count_.first
-                                                      && size <= cluster_point_count_.second);
-                                         }),
+            {
+                const int size = static_cast<int>(list.indices.size());
+                return !(size >= cluster_point_count_.first
+                         && size <= cluster_point_count_.second);
+            }),
                           indices.end());
         };
 
@@ -449,10 +448,10 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
         min_index.fill(std::numeric_limits<int>::max());
 
         storage.traverse([&min_index](const VoxelIndex::Type& index, const DataType&)
-                         {
-                             for (std::size_t i = 0; i < 3; ++i)
-                                 min_index[i] = std::min(min_index[i], index[i]);
-                         });
+        {
+            for (std::size_t i = 0; i < 3; ++i)
+                min_index[i] = std::min(min_index[i], index[i]);
+        });
 
         // projects index to 3D position
         auto create_point = [min_index, this](const VoxelIndex::Type& index)
@@ -466,24 +465,24 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
         // visualize each (valid) voxel, invalid voxels are grey
         storage.traverse([&voxel_cloud, &colors, default_color, create_point](const VoxelIndex::Type& index, const DataType& data)
-                         {
-                             auto point = create_point(index);
-                             const auto cluster = data.cluster;
+        {
+            auto point = create_point(index);
+            const auto cluster = data.cluster;
 
-                             if (colors.find(cluster) == colors.end())
-                             {
-                                 double r = default_color.r, g = default_color.g, b = default_color.b;
-                                 if (data.state == VoxelState::ACCEPTED)
-                                     color::fromCount(cluster + 1, r, g, b);
-                                 colors.emplace(cluster, Color(r, g, b));
-                             }
+            if (colors.find(cluster) == colors.end())
+            {
+                double r = default_color.r, g = default_color.g, b = default_color.b;
+                if (data.state == VoxelState::ACCEPTED)
+                    color::fromCount(cluster + 1, r, g, b);
+                colors.emplace(cluster, Color(r, g, b));
+            }
 
-                             const auto& color = colors.at(cluster);
-                             point.r = color.r;
-                             point.g = color.g;
-                             point.b = color.b;
-                             voxel_cloud->push_back(point);
-                         });
+            const auto& color = colors.at(cluster);
+            point.r = color.r;
+            point.g = color.g;
+            point.b = color.b;
+            voxel_cloud->push_back(point);
+        });
 
         auto voxel_message = std::make_shared<PointCloudMessage>(cloud->header.frame_id, cloud->header.stamp);
         voxel_message->value = std::move(voxel_cloud);

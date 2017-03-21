@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../math/mean.hpp"
+#include "../data/feature_normal.hpp"
 #include "../data/feature_distribution.hpp"
 #include "../data/feature_helpers.hpp"
 #include "noop_validator.hpp"
@@ -13,99 +15,66 @@ template<typename Data>
 struct NormalValidatorImpl
 {
 public:
-    NormalValidatorImpl(bool track_cluster_normal = false)
+    NormalValidatorImpl(const Eigen::Vector3d &preferred_normal,
+                        const double angle_eps) :
+        preferred_normal_(preferred_normal.normalized()),
+        preferred_normal_cos_angle_eps_(std::abs(std::cos(angle_eps)))
     {
     }
 
     bool start(const Data& data)
     {
-        auto& feature = data.template getFeature<DistributionFeature>();
+        auto& distribution    = data.template getFeature<DistributionFeature>();
+        auto& normal          = data.template getFeature<NormalFeature>();
+        current_distribution_ = distribution.distribution;
+        normal.updateNormal(current_distribution_);
+        current_mean_normal_.add(normal.normal);
 
-        if(track_cluster_normal_) {
-            current_distribution_.reset();
-            current_distribution_ += feature.distribution;
-        }
         return true;
     }
 
     bool extend(const Data&, const Data& data)
     {
-        auto& feature = data.template getFeature<DistributionFeature>();
-
-        /// get normal
-
-        if(track_cluster_normal_) {
-
-        }
-        //        current_distribution_ += feature.distribution;
+        auto& distribution = data.template getFeature<DistributionFeature>();
+        auto& normal       = data.template getFeature<NormalFeature>();
+        current_distribution_ += distribution.distribution;
+        normal.updateNormal(current_distribution_);
+        current_mean_normal_.add(normal.normal);
 
         return true;
     }
 
     bool finish() const
     {
-        if(track_cluster_normal_) {
-
-        }
-
-        /// @todo if check normal then return the final check
-        return true;
+        const double angle = std::abs(preferred_normal_.dot(current_mean_normal_.getMean().normalized()));
+        return angle <= preferred_normal_cos_angle_eps_;
     }
 
+    const Eigen::Vector3d preferred_normal_;
+    const double          preferred_normal_cos_angle_eps_;
 
-
-private:
-    inline bool validateCovPCA3D() const
-    {
-        //        bool valid = true;
-        //        math::Distribution<3>::EigenValueSetType eigen_values;
-        //        current_distribution_.getEigenValues(eigen_values, true);
-        //        /// first sort the eigen values by descending so first paramter always corresponds to
-        //        /// the highest value
-        //        std::vector<double> eigen_values_vec(eigen_values.data(), eigen_values.data() + 3);
-        //        std::sort(eigen_values_vec.begin(), eigen_values_vec.end());
-
-        //        for(std::size_t i = 0 ; i < 3 ; ++i) {
-        //            const auto &interval = std_dev_[i];
-        //            valid &= eigen_values_vec[i] >= interval.first;
-        //            valid &= (interval.second == 0.0 || eigen_values_vec[i] <= interval.second);
-        //        }
-        //        return valid;
-        return true;
-    }
-
-private:
-    bool                  track_cluster_normal_;
     math::Distribution<3> current_distribution_;
+    math::Mean<3>         current_mean_normal_;
+
 
 };
 
 template<typename Data>
 struct NormalValidator :
         std::conditional<
-        detail::tuple_contains<typename Data::FeatureList, DistributionFeature>::value,
+        detail::tuple_contains<typename Data::FeatureList, DistributionFeature>::value &&
+        detail::tuple_contains<typename Data::FeatureList, NormalFeature>::value,
         NormalValidatorImpl<Data>,
         NoOpValidator<Data>
         >::type
 {
     using BaseType = typename std::conditional<
-    detail::tuple_contains<typename Data::FeatureList, DistributionFeature>::value,
+    detail::tuple_contains<typename Data::FeatureList, DistributionFeature>::value &&
+    detail::tuple_contains<typename Data::FeatureList, NormalFeature>::value,
     NormalValidatorImpl<Data>,
     NoOpValidator<Data>
     >::type;
 
     using BaseType::BaseType;
 };
-
-
-template<typename Data, typename Enable = void>
-class Normal {}; // primary template
-
-template<class Data>
-class Normal<Data, typename std::enable_if<detail::tuple_contains<typename Data::FeatureList, DistributionFeature>::value>::type>
-{
-}; // specialization for floating point types
-
-
-
 }}

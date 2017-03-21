@@ -141,6 +141,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/clustering/data/voxel_index.hpp
     src/clustering/data/feature_color.hpp
     src/clustering/data/feature_distribution.hpp
+    src/clustering/data/feature_normal.hpp
     src/clustering/data/feature_helpers.hpp
     src/clustering/storage/cluster_op.hpp
     src/clustering/storage/storage_ops.hpp
@@ -154,6 +155,7 @@ add_library(${PROJECT_NAME}_plugin_node
 
     src/math/distribution.hpp
     src/math/mean.hpp
+    src/math/plane.hpp
 
     src/project_z.cpp
     src/cloud_test.cpp
