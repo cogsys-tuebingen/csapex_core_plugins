@@ -129,6 +129,7 @@ std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) con
             cv::Mat values = aggregated_depth_map.reshape(0, 1).clone();
             const int invalid_pixel_count = values.cols - cv::countNonZero(valid_pixel_mask);
 
+            // invalid points are <0 and thus will be at the beginning of the (partial) sort, so we have to skip them
             const auto middle = invalid_pixel_count + (values.cols - invalid_pixel_count) / 2;
             std::nth_element(values.begin<float>(), values.begin<float>() + middle, values.end<float>());
             center = values.at<float>(0, middle);
