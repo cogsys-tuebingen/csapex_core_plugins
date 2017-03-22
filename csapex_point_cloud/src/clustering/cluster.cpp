@@ -80,9 +80,10 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                             cluster_point_count_);
 
 
-    // voxel pre-clustering validation
+    /// voxel pre-clustering validation
+    /// by point count
     param::ParameterPtr param_voxel_validation
-            = param::ParameterFactory::declareBool("filter/voxel_validation",
+            = param::ParameterFactory::declareBool("filter/voxel_validation/points",
                                                    param::ParameterDescription("Pre-filter voxels by point count, optionally scaled by distance."
                                                                                " Allows to remove voxels which are likely sensor noise."),
                                                    false);
@@ -90,18 +91,45 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 
     parameters.addParameter(param_voxel_validation,
                             voxel_validation_enabled_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/voxel_validation/min_count",
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/voxel_validation/points/min_count",
                                                                              param::ParameterDescription("Minimal point count in a valid voxel"),
                                                                              1, 1000, 1, 1),
                                        enable_voxel_validation,
                                        voxel_validation_min_count_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/voxel_validation/scale",
+    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/voxel_validation/points/decrease",
                                                                              param::ParameterDescription("Scale min count with the voxel distance."
                                                                                                          " Allows to adjust non-linear relationship between point denstity and distance."
                                                                                                          "<br>Scale factor: 1 / (scale * depth^2)"),
                                                                              0.0, 1.0, 0.0, 0.001),
                                        enable_voxel_validation,
                                        voxel_validation_scale_);
+
+    /// by normal
+    parameters.addParameter(param::ParameterFactory::declareBool("filter/voxel_validation/normal",
+                                                                 param::ParameterDescription("Only cluster voxels which have a normal vector parallel to the given one."),
+                                                                 false),
+                            validate_normal_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/voxel_validation/normal/x",
+                                                                             param::ParameterDescription("x coordinate of the normal vector."),
+                                                                             0.0),
+                                       [this]{return validate_normal_;},
+    validation_normal_(0));
+    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/voxel_validation/normal/y",
+                                                                             param::ParameterDescription("y coordinate of the normal vector."),
+                                                                             0.0),
+                                       [this]{return validate_normal_;},
+    validation_normal_(1));
+    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/voxel_validation/normal/z",
+                                                                             param::ParameterDescription("z coordinate of the normal vector."),
+                                                                             1.0),
+                                       [this]{return validate_normal_;},
+    validation_normal_(2));
+    parameters.addConditionalParameter(param::ParameterFactory::declareAngle("filter/voxel_validation/normal/angle_eps",
+                                                                             param::ParameterDescription("Maximum angle difference to normal."),
+                                                                             0.0),
+                                       [this]{return validate_normal_;},
+    validation_normal_angle_eps_);
+
 
 
     // cluster distribution validation
@@ -150,34 +178,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                        distribution_std_dev_[2]);
 
 
-    /// cluster by normal
-    parameters.addParameter(param::ParameterFactory::declareBool("filter/normal",
-                                                                 param::ParameterDescription("Only cluster voxels which have a normal vector parallel to the given one."),
-                                                                 false),
-                            validate_normal_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/x",
-                                                                             param::ParameterDescription("x coordinate of the normal vector."),
-                                                                             0.0),
-                                       [this]{return validate_normal_;},
-    normal_(0));
-    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/y",
-                                                                             param::ParameterDescription("y coordinate of the normal vector."),
-                                                                             0.0),
-                                       [this]{return validate_normal_;},
-    normal_(1));
-    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/z",
-                                                                             param::ParameterDescription("z coordinate of the normal vector."),
-                                                                             1.0),
-                                       [this]{return validate_normal_;},
-    normal_(2));
-    parameters.addConditionalParameter(param::ParameterFactory::declareAngle("filter/normal/maximum_angle_difference",
-                                                                             param::ParameterDescription("Maximum angle difference to normal."),
-                                                                             0.0),
-                                       [this]{return validate_normal_;},
-    normal_angle_eps_);
-
-
-    // cluster color validation
+    /// neighour color validation
     param::ParameterPtr param_color
             = param::ParameterFactory::declareBool("filter/color",
                                                    param::ParameterDescription("Filter considered neighboring voxels by their color."
@@ -222,6 +223,17 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                                                              0.0, 1.0, 1.0, 0.01),
                                        enable_color,
                                        color_weights_[2]);
+    /// neighbour normal validation
+    parameters.addParameter(param::ParameterFactory::declareBool("filter/normal",
+                                                                 param::ParameterDescription("Only cluster voxels togehter which have similar normals."),
+                                                                 false),
+                                                                 normal_enabled_);
+
+    parameters.addConditionalParameter(param::ParameterFactory::declareAngle("filter/normal/angle_eps",
+                                                                             param::ParameterDescription("Maximum angle between normals."),
+                                                                             0.0),
+                                       [this](){return normal_enabled_;},
+                                       normal_angle_eps_);
 }
 
 void ClusterPointCloud::setup(NodeModifier& node_modifier)
@@ -366,7 +378,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     if(validate_normal_) {
         NAMED_INTERLUDE(validate_normals);
 
-        NormalValidator<DataType> validator(normal_, normal_angle_eps_);
+        NormalValidator<DataType> validator(validation_normal_, validation_normal_angle_eps_);
         storage.traverse([this, &validator](const VoxelIndex::Type&, DataType& data)
         {
             validator.start(data);
@@ -409,7 +421,6 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
     {
         NAMED_INTERLUDE(count_filter);
-
         // filter clusters by size
         // we consider invalid sizes as "not-a-cluster" and not as "rejected/invalid"
         const auto filter = [this](std::vector<pcl::PointIndices>& indices)

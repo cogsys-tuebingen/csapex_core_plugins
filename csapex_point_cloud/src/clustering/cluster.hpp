@@ -55,15 +55,20 @@ private:
     std::array<std::pair<double, double>, 3>    distribution_std_dev_;
 
     /// normal filter
-    Eigen::Vector3d                             normal_;
+    Eigen::Vector3d                             validation_normal_;
     bool                                        validate_normal_;
-    double                                      normal_angle_eps_;
+    double                                      validation_normal_angle_eps_;
 
     // cluster color validation
-    bool                    color_enabled_;
-    ColorDifferenceType     color_type_;
-    std::array<double, 3>   color_weights_;
-    double                  color_threshold_;
+    bool                                        color_enabled_;
+    ColorDifferenceType                         color_type_;
+    std::array<double, 3>                       color_weights_;
+    double                                      color_threshold_;
+
+    /// neighbour normal validation
+    bool                                        normal_enabled_;
+    double                                      normal_angle_eps_;
+
 };
 
 }}
