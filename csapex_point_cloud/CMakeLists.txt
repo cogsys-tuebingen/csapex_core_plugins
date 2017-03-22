@@ -61,10 +61,10 @@ add_library(${PROJECT_NAME}
     src/msg/indeces_message.cpp
 
     # qtcretor visibility
-    include/csapex_point_cloud/msgs/point_cloud_message.h
-    include/csapex_point_cloud/msgs/model_message.h
-    include/csapex_point_cloud/msgs/normals_message.h
-    include/csapex_point_cloud/msgs/indeces_message.h
+    include/csapex_point_cloud/msg/point_cloud_message.h
+    include/csapex_point_cloud/msg/model_message.h
+    include/csapex_point_cloud/msg/normals_message.h
+    include/csapex_point_cloud/msg/indeces_message.h
 
 )
 target_link_libraries(${PROJECT_NAME}
