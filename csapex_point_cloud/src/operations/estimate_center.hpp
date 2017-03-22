@@ -2,7 +2,7 @@
 
 #include <csapex/model/node.h>
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>

@@ -5,10 +5,10 @@
 #include <csapex_opencv/cv_mat_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_point_cloud/indeces_message.h>
+#include <csapex_point_cloud/msg/indeces_message.h>
 
 /// PCL
 #include <pcl/point_types.h>

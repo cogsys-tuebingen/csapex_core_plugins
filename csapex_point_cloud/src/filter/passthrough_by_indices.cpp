@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex_point_cloud/point_cloud_message.h>
-#include <csapex_point_cloud/indeces_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
+#include <csapex_point_cloud/msg/indeces_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/interval_parameter.h>
 #include <csapex/model/node_modifier.h>

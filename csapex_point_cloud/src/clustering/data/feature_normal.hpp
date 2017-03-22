@@ -1,7 +1,7 @@
 #pragma once
 
 #include "feature_distribution.hpp"
-#include "../../math/plane.hpp"
+#include  <csapex_point_cloud/math/plane.hpp>
 
 namespace csapex { namespace clustering {
 struct NormalFeature {

@@ -59,6 +59,13 @@ add_library(${PROJECT_NAME}
     src/msg/model_message.cpp
     src/msg/normals_message.cpp
     src/msg/indeces_message.cpp
+
+    # qtcretor visibility
+    include/csapex_point_cloud/msgs/point_cloud_message.h
+    include/csapex_point_cloud/msgs/model_message.h
+    include/csapex_point_cloud/msgs/normals_message.h
+    include/csapex_point_cloud/msgs/indeces_message.h
+
 )
 target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${catkin_LIBRARIES})
@@ -153,16 +160,16 @@ add_library(${PROJECT_NAME}_plugin_node
 
     src/provider/pcd_provider.cpp
 
-    src/math/distribution.hpp
-    src/math/mean.hpp
-    src/math/plane.hpp
-
     src/project_z.cpp
     src/cloud_test.cpp
 
     src/transform_from_models.cpp
 
-    ${clustering_kd_tree_SRCS}
+
+    # qt creator header visibility
+    include/csapex_point_cloud/math/distribution.hpp
+    include/csapex_point_cloud/math/mean.hpp
+    include/csapex_point_cloud/math/plane.hpp
 )
 
 target_link_libraries(${PROJECT_NAME}_plugin_node

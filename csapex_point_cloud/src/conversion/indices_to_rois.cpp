@@ -8,8 +8,8 @@
 #include <csapex/msg/generic_pointer_message.hpp>
 #include <csapex_ros/yaml_io.hpp>
 #include <csapex_ros/ros_message_conversion.h>
-#include <csapex_point_cloud/point_cloud_message.h>
-#include <csapex_point_cloud/indeces_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
+#include <csapex_point_cloud/msg/indeces_message.h>
 #include <csapex_opencv/roi_message.h>
 
 using namespace csapex::connection_types;

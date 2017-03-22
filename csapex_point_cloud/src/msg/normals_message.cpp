@@ -1,5 +1,5 @@
 /// HEADER
-#include <csapex_point_cloud/normals_message.h>
+#include <csapex_point_cloud/msg/normals_message.h>
 
 /// PROJECT
 #include <csapex/utility/assert.h>

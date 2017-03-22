@@ -12,8 +12,8 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/view/utility/color.hpp>
 
-#include <csapex_point_cloud/point_cloud_message.h>
-#include <csapex_point_cloud/indeces_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
+#include <csapex_point_cloud/msg/indeces_message.h>
 #include <cslibs_indexed_storage/backends.hpp>
 
 #include <boost/make_shared.hpp>

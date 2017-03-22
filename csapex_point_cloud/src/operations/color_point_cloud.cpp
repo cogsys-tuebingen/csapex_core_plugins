@@ -1,5 +1,5 @@
 /// PROJECT
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex_opencv/cv_mat_message.h>
 #include <csapex/msg/io.h>
 #include <csapex_core_plugins/timestamp_message.h>

@@ -1,8 +1,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/msg/io.h>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/signal/event.h>
 #include <csapex/model/node_modifier.h>

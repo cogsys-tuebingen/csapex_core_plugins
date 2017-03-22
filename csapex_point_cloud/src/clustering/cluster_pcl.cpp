@@ -8,7 +8,7 @@
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_point_cloud/indeces_message.h>
+#include <csapex_point_cloud/msg/indeces_message.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/profiling/timer.h>

@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/view/utility/register_node_adapter.h>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/set_parameter.h>
 

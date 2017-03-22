@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 namespace csapex {
 class ThresholdOutlierRemoval : public Node

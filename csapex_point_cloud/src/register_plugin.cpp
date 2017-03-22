@@ -2,7 +2,7 @@
 #include "register_plugin.h"
 
 /// COMPONENT
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// PROJECT
 #include <csapex/factory/message_factory.h>

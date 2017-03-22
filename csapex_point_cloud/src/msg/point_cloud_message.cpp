@@ -1,5 +1,5 @@
 /// HEADER
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// PROJECT
 #include <csapex/utility/assert.h>

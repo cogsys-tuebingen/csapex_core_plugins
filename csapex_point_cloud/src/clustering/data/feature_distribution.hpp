@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../math/distribution.hpp"
+#include <csapex_point_cloud/math/distribution.hpp>
 
 namespace csapex { namespace clustering
 {

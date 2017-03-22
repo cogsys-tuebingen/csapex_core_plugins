@@ -7,7 +7,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node.h>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;

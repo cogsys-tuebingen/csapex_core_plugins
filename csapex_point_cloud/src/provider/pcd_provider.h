@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/model/memento.h>
 #include <csapex/msg/message_provider.h>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
 #include <functional>

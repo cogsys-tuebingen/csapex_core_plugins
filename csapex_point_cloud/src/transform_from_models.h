@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex_point_cloud/model_message.h>
+#include <csapex_point_cloud/msg/model_message.h>
 
 
 namespace csapex {

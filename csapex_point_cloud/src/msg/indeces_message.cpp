@@ -1,5 +1,5 @@
 /// HEADER
-#include <csapex_point_cloud/indeces_message.h>
+#include <csapex_point_cloud/msg/indeces_message.h>
 
 /// PROJECT
 #include <csapex/utility/register_msg.h>

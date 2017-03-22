@@ -1,5 +1,5 @@
 /// HEADER
-#include <csapex_point_cloud/model_message.h>
+#include <csapex_point_cloud/msg/model_message.h>
 
 using namespace csapex;
 

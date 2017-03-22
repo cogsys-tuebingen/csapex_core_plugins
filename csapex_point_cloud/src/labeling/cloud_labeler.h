@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex_core_plugins/interactive_node.h>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex_opencv/cv_mat_message.h>
 
 namespace csapex {

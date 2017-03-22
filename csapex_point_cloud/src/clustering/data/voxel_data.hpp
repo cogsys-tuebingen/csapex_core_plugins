@@ -2,7 +2,7 @@
 
 #include "voxel_index.hpp"
 #include "feature_helpers.hpp"
-#include "../../math/mean.hpp"
+#include  <csapex_point_cloud/math/mean.hpp>
 #include <cslibs_indexed_storage/storage/auto_index_storage.hpp>
 #include <vector>
 

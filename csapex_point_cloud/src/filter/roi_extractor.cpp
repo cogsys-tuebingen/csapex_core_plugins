@@ -8,7 +8,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_opencv/roi_message.h>
-#include <csapex_point_cloud/indeces_message.h>
+#include <csapex_point_cloud/msg/indeces_message.h>
 
 #include <pcl/filters/crop_box.h>
 

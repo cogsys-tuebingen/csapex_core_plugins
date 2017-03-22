@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../math/mean.hpp"
+#include <csapex_point_cloud/math/mean.hpp>
 #include <pcl/point_types.h>
 #include <boost/variant.hpp>
 
