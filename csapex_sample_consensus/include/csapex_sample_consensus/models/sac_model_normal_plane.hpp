@@ -3,11 +3,11 @@
 
 /// PROJECT
 #include "sac_model_normal_plane.h"
+#include <csapex_point_cloud/math/plane.hpp>
+
 /// SYSTEM
-#include <pcl/common/common.h>
 #include <pcl/point_types.h>
-#include <pcl/common/centroid.h>
-#include <pcl/common/eigen.h>
+#include <pcl/common/common.h>
 
 namespace csapex_sample_consensus {
 namespace models {
@@ -46,18 +46,21 @@ inline bool NormalPlane<PointT, NormalT>::optimizeModelCoefficients(const float 
     if(indices.size() == 0)
         return false;
 
-    Eigen::Matrix3d cov;
-    Eigen::Vector4d centroid;
-    pcl::computeMeanAndCovarianceMatrix(*Base::pointcloud_, indices, cov, centroid);
-    Eigen::Vector3d eigen_vector;
-    double          eigen_value;
-    pcl::eigen33(cov, eigen_value, eigen_vector);
+    csapex::math::Distribution<3> distribution;
+    for(const int i : indices) {
+        const auto &p = Base::pointcloud_->at(i);
+        distribution.add({p.x, p.y, p.z});
+    }
 
-    Base::model_coefficients_[0] = eigen_vector[0];
-    Base::model_coefficients_[1] = eigen_vector[1];
-    Base::model_coefficients_[2] = eigen_vector[2];
+    Eigen::Vector3d x_0, normal;
+    if(!csapex::math::Plane::fit(distribution, x_0, normal))
+        return false;
+
+    Base::model_coefficients_[0] = normal(0);
+    Base::model_coefficients_[1] = normal(1);
+    Base::model_coefficients_[2] = normal(2);
     Base::model_coefficients_[3] = 0;
-    Base::model_coefficients_[3] = -1 * Base::model_coefficients_.dot (centroid.cast<float>());
+    Base::model_coefficients_[3] = -1 * normal.dot (x_0);
     return true;
 }
 
@@ -68,21 +71,25 @@ inline bool NormalPlane<PointT, NormalT>::optimizeModelCoefficients(const std::v
     std::vector<int> indices;
     Base::getInliers(src_indices, maximum_distance, indices);
 
+
     if(indices.size() == 0)
         return false;
 
-    Eigen::Matrix3d cov;
-    Eigen::Vector4d centroid;
-    pcl::computeMeanAndCovarianceMatrix(*Base::pointcloud_, indices, cov, centroid);
-    Eigen::Vector3d eigen_vector;
-    double          eigen_value;
-    pcl::eigen33(cov, eigen_value, eigen_vector);
+    csapex::math::Distribution<3> distribution;
+    for(const int i : indices) {
+        const auto &p = Base::pointcloud_->at(i);
+        distribution.add({p.x, p.y, p.z});
+    }
 
-    Base::model_coefficients_[0] = eigen_vector[0];
-    Base::model_coefficients_[1] = eigen_vector[1];
-    Base::model_coefficients_[2] = eigen_vector[2];
+    Eigen::Vector3d x_0, normal;
+    if(!csapex::math::Plane::fit(distribution, x_0, normal))
+        return false;
+
+    Base::model_coefficients_[0] = normal(0);
+    Base::model_coefficients_[1] = normal(1);
+    Base::model_coefficients_[2] = normal(2);
     Base::model_coefficients_[3] = 0;
-    Base::model_coefficients_[3] = -1 * Base::model_coefficients_.dot (centroid.cast<float>());
+    Base::model_coefficients_[3] = -1 * normal.dot (x_0);
     return true;
 }
 
@@ -99,7 +106,7 @@ inline bool NormalPlane<PointT, NormalT>::validateSamples(const std::vector<int>
 
     if(Base::isNan(p0) ||
             Base::isNan(p1) ||
-            Base::isNan(p2)) {
+                Base::isNan(p2)) {
         return false;
     }
 
