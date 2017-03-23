@@ -16,16 +16,15 @@ struct NormalValidatorImpl
 {
 public:
     NormalValidatorImpl(const Eigen::Vector3d &normal_final,
-                        const double normal_angle_eps) :
+                        const double normal_angle_eps,
+                        const double normal_final_angle_eps) :
         normal_expected_final_(normal_final.normalized()),
         normal_cos_angle_eps_(std::abs(std::cos(normal_angle_eps))),
-        normal_track_cluster_normal_(true)
-    {
-    }
-
-    NormalValidatorImpl(const double normal_angle_eps) :
-        normal_cos_angle_eps_(std::abs(std::cos(normal_angle_eps))),
-        normal_track_cluster_normal_(false)
+        normal_cos_angle_eps_final_(std::abs(std::cos(normal_final_angle_eps))),
+        normal_track_cluster_normal_(normal_final_angle_eps != 0.0 &&
+                                     normal_final_angle_eps != M_PI),
+        normal_neighbour_to_neighbour_(normal_angle_eps != 0.0 &&
+                                       normal_angle_eps != M_PI)
     {
     }
 
@@ -46,7 +45,8 @@ public:
        auto &current_normal        = c.template getFeature<NormalFeature>();
        auto &neighbor_normal       = n.template getFeature<NormalFeature>();
 
-       neighbor_normal.update(neighbor_distribution);
+       math::Distribution<3> d = neighbor_distribution.distribution;
+       neighbor_normal.updateNormal(d);
 
        if(normal_track_cluster_normal_) {
             if(compare(cluster_normal_distribution_.getMean(),
@@ -58,15 +58,16 @@ public:
             }
        }
 
-       return compare(current_normal.normal,
-                      neighbor_normal.normal);
+       if(normal_neighbour_to_neighbour_)
+           return compare(current_normal.normal,
+                          neighbor_normal.normal);
+        return true;
     }
 
     bool finish() const
     {
         if(normal_track_cluster_normal_) {
-            return compare(cluster_normal_distribution_.getMean(),
-                           normal_expected_final_);
+            return compare(cluster_normal_distribution_.getMean());
         }
         return true;
     }
@@ -81,9 +82,21 @@ public:
         return angle >= normal_cos_angle_eps_;
     }
 
+    inline bool compare(const Eigen::Vector3d &normal) const
+    {
+        const double angle = std::abs(normal_expected_final_.dot(normal));
+        if(std::isnan(angle))
+            return false;
+
+        return angle >= normal_cos_angle_eps_final_;
+    }
+
+
     const Eigen::Vector3d normal_expected_final_;
     const double          normal_cos_angle_eps_;
-    const bool            normal_track_cluster_normal_;
+    const double          normal_cos_angle_eps_final_;
+    bool                  normal_track_cluster_normal_;
+    bool                  normal_neighbour_to_neighbour_;
 
     math::Distribution<3> cluster_normal_distribution_;
 
@@ -108,5 +121,7 @@ struct NormalValidator :
     >::type;
 
     using BaseType::BaseType;
+
+
 };
 }}
