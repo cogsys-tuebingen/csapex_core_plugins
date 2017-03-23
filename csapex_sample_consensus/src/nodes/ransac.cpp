@@ -85,7 +85,10 @@ public:
         } else {
             sac->computeModel(model);
             if(model) {
-                model->getInliersAndOutliers(ransac_parameters_.model_search_distance, inliers.indices, outliers.indices);
+                model->getInliersAndOutliers(indices,
+                                             ransac_parameters_.model_search_distance,
+                                             inliers.indices,
+                                             outliers.indices);
 
                 if(inliers.indices.size() > minimum_model_cloud_size_) {
                     out_inliers->emplace_back(inliers);

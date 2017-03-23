@@ -277,6 +277,10 @@
   <description>Calculates center positions from point clouds</description>
   <tags>PointCloud</tags>
 </class>
+<class type="csapex::MergeIndices" base_class_type="csapex::Node">
+  <description>Merge the indices of several indices messages.</description>
+  <tags>PointCloud</tags>
+</class>
 </library>
 
 <library path="libcsapex_point_cloud_plugin_qt">

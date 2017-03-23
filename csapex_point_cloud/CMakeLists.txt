@@ -92,6 +92,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/operations/ray_angles.cpp
     src/operations/estimate_normals.cpp
     src/operations/estimate_center.cpp
+    src/operations/merge_indices.cpp
 
     src/visualization/point_count.cpp
     src/visualization/cloud_renderer.cpp
