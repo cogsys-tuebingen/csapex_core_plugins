@@ -67,6 +67,7 @@ private:
 
     /// neighbour normal validation
     bool                                        normal_enabled_;
+    bool                                        normal_mean_;
     double                                      normal_angle_eps_;
 
 };

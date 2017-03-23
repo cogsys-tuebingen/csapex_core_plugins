@@ -15,10 +15,17 @@ template<typename Data>
 struct NormalValidatorImpl
 {
 public:
-    NormalValidatorImpl(const Eigen::Vector3d &preferred_normal,
-                        const double angle_eps) :
-        preferred_normal_(preferred_normal.normalized()),
-        preferred_normal_cos_angle_eps_(std::abs(std::cos(angle_eps)))
+    NormalValidatorImpl(const Eigen::Vector3d &normal_final,
+                        const double normal_angle_eps) :
+        normal_expected_final_(normal_final.normalized()),
+        normal_cos_angle_eps_(std::abs(std::cos(normal_angle_eps))),
+        normal_track_cluster_normal_(true)
+    {
+    }
+
+    NormalValidatorImpl(const double normal_angle_eps) :
+        normal_cos_angle_eps_(std::abs(std::cos(normal_angle_eps))),
+        normal_track_cluster_normal_(false)
     {
     }
 
@@ -26,43 +33,60 @@ public:
     {
         auto& distribution    = data.template getFeature<DistributionFeature>();
         auto& normal          = data.template getFeature<NormalFeature>();
-        current_mean_normal_.reset();
-
-        current_distribution_ = distribution.distribution;
-        normal.updateNormal(current_distribution_);
-        current_mean_normal_.add(normal.normal);
-
+        math::Distribution<3> d = distribution.distribution;
+        normal.updateNormal(d);
+        cluster_normal_distribution_.reset();
+        cluster_normal_distribution_.add(normal.normal);
         return true;
     }
 
-    bool extend(const Data&, const Data& data)
+    bool extend(const Data &c, const Data& n)
     {
-        auto& distribution = data.template getFeature<DistributionFeature>();
-        auto& normal       = data.template getFeature<NormalFeature>();
-        current_distribution_ += distribution.distribution;
-        normal.updateNormal(current_distribution_);
-        current_mean_normal_.add(normal.normal);
+       auto &neighbor_distribution = n.template getFeature<DistributionFeature>();
+       auto &current_normal        = c.template getFeature<NormalFeature>();
+       auto &neighbor_normal       = n.template getFeature<NormalFeature>();
 
-        return true;
+       neighbor_normal.update(neighbor_distribution);
+
+       if(normal_track_cluster_normal_) {
+            if(compare(cluster_normal_distribution_.getMean(),
+                       neighbor_normal.normal)) {
+                cluster_normal_distribution_.add(neighbor_normal.normal);
+                return true;
+            } else {
+                return false;
+            }
+       }
+
+       return compare(current_normal.normal,
+                      neighbor_normal.normal);
     }
 
     bool finish() const
     {
-        const  Eigen::Vector3d mean = current_mean_normal_.getMean();
-        if(std::isnan(mean(0)) ||
-                std::isnan(mean(1)) ||
-                    std::isnan(mean(2)))
-            return false;
-
-        const double angle = std::abs(preferred_normal_.dot(current_mean_normal_.getMean()));
-        return angle >= preferred_normal_cos_angle_eps_;
+        if(normal_track_cluster_normal_) {
+            return compare(cluster_normal_distribution_.getMean(),
+                           normal_expected_final_);
+        }
+        return true;
     }
 
-    const Eigen::Vector3d preferred_normal_;
-    const double          preferred_normal_cos_angle_eps_;
+    inline bool compare(const Eigen::Vector3d &normal_a,
+                        const Eigen::Vector3d &normal_b) const
+    {
+        const double angle = std::abs(normal_a.dot(normal_b));
+        if(std::isnan(angle))
+            return false;
 
-    math::Distribution<3> current_distribution_;
-    math::Mean<3>         current_mean_normal_;
+        return angle >= normal_cos_angle_eps_;
+    }
+
+    const Eigen::Vector3d normal_expected_final_;
+    const double          normal_cos_angle_eps_;
+    const bool            normal_track_cluster_normal_;
+
+    math::Distribution<3> cluster_normal_distribution_;
+
 
 
 };

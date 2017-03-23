@@ -228,6 +228,11 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                                                  param::ParameterDescription("Only cluster voxels togehter which have similar normals."),
                                                                  false),
                                                                  normal_enabled_);
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("filter/normal/compute_cluster_mean",
+                                                                            param::ParameterDescription("Calculate the mean normal for a cluster."),
+                                                                            false),
+                                       [this](){return normal_enabled_;},
+                                       normal_mean_);
 
     parameters.addConditionalParameter(param::ParameterFactory::declareAngle("filter/normal/angle_eps",
                                                                              param::ParameterDescription("Maximum angle between normals."),
