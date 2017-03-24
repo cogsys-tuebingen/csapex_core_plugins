@@ -5,7 +5,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex_opencv/cv_mat_message.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 
@@ -33,7 +33,7 @@ void PointCloudValidity::setup(NodeModifier& node_modifier)
 {
     input_  = node_modifier.addInput<PointCloudMessage>("PointCloud");
     mask_   = node_modifier.addOutput<CvMatMessage>("Mask");
-    index_  = node_modifier.addOutput<PointIndecesMessage>("Indeces");
+    index_  = node_modifier.addOutput<PointIndicesMessage>("indices");
 }
 
 namespace {
@@ -86,14 +86,14 @@ inline static bool invalid(const PointT &p,
 template<typename PointT>
 struct Vadility {
     inline static void inceces(const typename pcl::PointCloud<PointT>::ConstPtr &src,
-                               std::vector<int> &indeces)
+                               std::vector<int> &indices)
     {
 
         const PointT  *src_ptr = src->points.data();
         unsigned int size = src->size();
         for(unsigned int i(0) ; i < size ; ++i) {
             if(invalid(src_ptr[i]))
-                indeces.push_back(i);
+                indices.push_back(i);
         }
     }
 
@@ -128,7 +128,7 @@ void PointCloudValidity::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr c
         msg::publish(mask_, out);
     }
     if(msg::isConnected(index_)) {
-        PointIndecesMessage::Ptr out(new PointIndecesMessage);
+        PointIndicesMessage::Ptr out(new PointIndicesMessage);
         out->value->header = cloud->header;
         Vadility<PointT>::inceces(cloud, out->value->indices);
         msg::publish(index_, out);

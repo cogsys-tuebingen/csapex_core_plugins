@@ -11,7 +11,7 @@
 
 #include <csapex_opencv/roi_message.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 
 #include <set>
 #include <boost/algorithm/string.hpp>

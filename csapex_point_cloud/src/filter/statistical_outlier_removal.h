@@ -20,9 +20,9 @@ public:
 
 protected:
     Input*  input_cloud_;
-    Input*  input_indeces_;
+    Input*  input_indices_;
     Output* output_cloud_;
-    Output* output_indeces_;
+    Output* output_indices_;
 
 };
 }

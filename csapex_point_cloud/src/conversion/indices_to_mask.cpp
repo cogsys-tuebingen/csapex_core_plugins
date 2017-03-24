@@ -4,7 +4,7 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex/model/node.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
@@ -19,7 +19,7 @@ public:
     void setup(NodeModifier &node_modifier) override
     {
         input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
-        input_indices_ = node_modifier.addInput<PointIndecesMessage>("PointIndices");
+        input_indices_ = node_modifier.addInput<PointIndicesMessage>("PointIndices");
 
         output_mask_ = node_modifier.addOutput<CvMatMessage>("Mask");
     }
@@ -35,7 +35,7 @@ public:
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     {
-        PointIndecesMessage::ConstPtr indices(msg::getMessage<PointIndecesMessage>(input_indices_));
+        PointIndicesMessage::ConstPtr indices(msg::getMessage<PointIndicesMessage>(input_indices_));
         CvMatMessage::Ptr mask(new CvMatMessage(enc::mono, cloud->header.stamp));
         mask->value = cv::Mat(cloud->height, cloud->width, CV_8UC1, cv::Scalar());
         for(int index : indices->value->indices) {

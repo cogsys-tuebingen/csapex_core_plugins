@@ -11,7 +11,7 @@
 
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex_point_cloud/msg/model_message.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex_point_cloud/msg/normals_message.h>
 
 #include <csapex/param/parameter_factory.h>
@@ -102,7 +102,7 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
         in_cloud_           = node_modifier.addInput<PointCloudMessage>("PointCloud");
-        in_indices_         = node_modifier.addOptionalInput<PointIndecesMessage>("Indices"); // optional input
+        in_indices_         = node_modifier.addOptionalInput<PointIndicesMessage>("Indices"); // optional input
         in_normals_         = node_modifier.addOptionalInput<NormalsMessage>("Normals");      // optional input
 
         out_models_         = node_modifier.addOutput<GenericVectorMessage, ModelMessage >("Models");
@@ -209,7 +209,7 @@ protected:
     void getInidicesFromInput(std::vector<int> &indices)
     {
         if(msg::hasMessage(in_indices_)) {
-            PointIndecesMessage::ConstPtr in_indices_msg = msg::getMessage<PointIndecesMessage>(in_indices_);
+            PointIndicesMessage::ConstPtr in_indices_msg = msg::getMessage<PointIndicesMessage>(in_indices_);
             const std::vector<int> &in_indices = in_indices_msg->value->indices;
             if(point_skip_ > 0) {
                 const std::size_t step = 1 + point_skip_;

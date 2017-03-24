@@ -1,6 +1,6 @@
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex/msg/io.h>
 #include <pcl/PointIndices.h>
 #include <csapex/msg/generic_vector_message.hpp>
@@ -20,7 +20,7 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
         input_indices_ = node_modifier.addInput<GenericVectorMessage, pcl::PointIndices>("Vector of Indices");
-        output_indices_ = node_modifier.addOutput<PointIndecesMessage>("Indices");
+        output_indices_ = node_modifier.addOutput<PointIndicesMessage>("Indices");
     }
 
     virtual void setupParameters(Parameterizable &parameters) override
@@ -31,7 +31,7 @@ public:
     {
 
         std::shared_ptr<std::vector<pcl::PointIndices> const> in_indices_msg = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(input_indices_);
-        PointIndecesMessage::Ptr out_indices_msg(new PointIndecesMessage);
+        PointIndicesMessage::Ptr out_indices_msg(new PointIndicesMessage);
 
         out_indices_msg->value.reset(new pcl::PointIndices);
         std::vector<int> &indices = out_indices_msg->value->indices;

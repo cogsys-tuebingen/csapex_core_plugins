@@ -251,13 +251,13 @@
 </class>
 <class type="csapex::IndexedPointCloud" base_class_type="csapex::Node">
   <description>
-    Produce a indexed pointcloud with depth value on z and indeces on x and y.
+    Produce a indexed pointcloud with depth value on z and indices on x and y.
   </description>
   <tags>PointCloud</tags>
 </class>
 <class type="csapex::IndexFilter" base_class_type="csapex::Node">
   <description>
-    Filter PointCloud by given indeces.
+    Filter PointCloud by given indices.
   </description>
   <tags>PointCloud</tags>
 </class>

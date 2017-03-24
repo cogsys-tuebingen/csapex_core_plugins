@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/msg/io.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/interval_parameter.h>
 #include <csapex/model/node_modifier.h>
@@ -33,7 +33,7 @@ void PassThroughByIndices::setupParameters(Parameterizable &parameters)
 void PassThroughByIndices::setup(NodeModifier& node_modifier)
 {
     input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
-    input_indices_ = node_modifier.addMultiInput<PointIndecesMessage, GenericVectorMessage>("Indices");
+    input_indices_ = node_modifier.addMultiInput<PointIndicesMessage, GenericVectorMessage>("Indices");
 
     output_pos_ = node_modifier.addOutput<PointCloudMessage>("filtered PointCloud (+)");
     output_neg_ = node_modifier.addOutput<PointCloudMessage>("filtered PointCloud (-)");
@@ -50,9 +50,9 @@ template <class PointT>
 void PassThroughByIndices::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     pcl::PointIndicesPtr index(new pcl::PointIndices);
-    if(msg::isMessage<PointIndecesMessage>(input_indices_))
+    if(msg::isMessage<PointIndicesMessage>(input_indices_))
     {
-        PointIndecesMessage::ConstPtr indices = msg::getMessage<PointIndecesMessage>(input_indices_);
+        PointIndicesMessage::ConstPtr indices = msg::getMessage<PointIndicesMessage>(input_indices_);
         index = indices->value;
 
     }

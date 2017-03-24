@@ -4,7 +4,7 @@
 /// PROJECT
 #include <csapex/msg/io.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/interval_parameter.h>

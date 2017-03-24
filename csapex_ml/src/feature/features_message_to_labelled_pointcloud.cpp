@@ -3,7 +3,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex_ml/features_message.h>
-#include <csapex_point_cloud/point_cloud_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 

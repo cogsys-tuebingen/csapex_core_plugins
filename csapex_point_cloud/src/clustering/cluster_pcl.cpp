@@ -8,7 +8,7 @@
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/profiling/timer.h>
@@ -80,7 +80,7 @@ void ClusterPointCloudPCL::process()
 void ClusterPointCloudPCL::setup(NodeModifier& node_modifier)
 {
     in_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
-    in_indices_ = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
+    in_indices_ = node_modifier.addOptionalInput<PointIndicesMessage>("Indices");
 
     out_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices >("Clusters");
     out_debug_ = node_modifier.addOutput<std::string>("Debug Info");
@@ -102,7 +102,7 @@ void ClusterPointCloudPCL::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
     /// step 1 : determine valid indices for clustering
     if(msg::isConnected(in_indices_)) {
         /// filter the given indices
-        auto indices_msg = msg::getMessage<PointIndecesMessage>(in_indices_);
+        auto indices_msg = msg::getMessage<PointIndicesMessage>(in_indices_);
         indices.reset(new std::vector<int>(indices_msg->value->indices));
 
         for(auto it = indices->begin() ;

@@ -2,7 +2,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -22,7 +22,7 @@ IndexFilter::IndexFilter()
 void IndexFilter::setup(NodeModifier& node_modifier)
 {
     input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
-    indeces_input_ = node_modifier.addInput<PointIndecesMessage>("Indeces");
+    indices_input_ = node_modifier.addInput<PointIndicesMessage>("indices");
     output_cloud_ = node_modifier.addOutput<PointCloudMessage>("Pointcloud");
 }
 
@@ -35,8 +35,8 @@ void IndexFilter::process()
 template <class PointT>
 void IndexFilter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    PointIndecesMessage::ConstPtr indeces(msg::getMessage<PointIndecesMessage>(indeces_input_));
-    typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>(*cloud, indeces->value->indices));
+    PointIndicesMessage::ConstPtr indices(msg::getMessage<PointIndicesMessage>(indices_input_));
+    typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>(*cloud, indices->value->indices));
 
     PointCloudMessage::Ptr out(new PointCloudMessage(cloud->header.frame_id, cloud->header.stamp));
     out->value = cloud_filtered;

@@ -13,7 +13,7 @@
 #include <csapex/view/utility/color.hpp>
 
 #include <csapex_point_cloud/msg/point_cloud_message.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <cslibs_indexed_storage/backends.hpp>
 
 #include <boost/make_shared.hpp>
@@ -238,7 +238,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 void ClusterPointCloud::setup(NodeModifier& node_modifier)
 {
     in_pointcloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
-    in_indices_    = node_modifier.addOptionalInput<PointIndecesMessage>("Indices");
+    in_indices_    = node_modifier.addOptionalInput<PointIndicesMessage>("Indices");
 
     out_clusters_accepted_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Clusters (accepted)");
     out_clusters_rejected_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Clusters (rejected)");
@@ -331,7 +331,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     pcl::PointIndices::ConstPtr input_indices;
     if (msg::isConnected(in_indices_))
     {
-        auto indices_message = msg::getMessage<PointIndecesMessage>(in_indices_);
+        auto indices_message = msg::getMessage<PointIndicesMessage>(in_indices_);
         input_indices = indices_message->value;
     }
 

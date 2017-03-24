@@ -9,7 +9,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_opencv/roi_message.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_ros/yaml_io.hpp>
 #include <pcl/common/common.h>

@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex_point_cloud/msg/indeces_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -40,9 +40,9 @@ void StatisticalOutlierRemoval::setupParameters(Parameterizable &parameters)
 void StatisticalOutlierRemoval::setup(NodeModifier& node_modifier)
 {
     input_cloud_    = node_modifier.addInput<PointCloudMessage>   ("PointCloud");
-    input_indeces_  = node_modifier.addOptionalInput<PointIndecesMessage> ("Indeces");
+    input_indices_  = node_modifier.addOptionalInput<PointIndicesMessage> ("indices");
     output_cloud_   = node_modifier.addOutput<PointCloudMessage>  ("Pointcloud");
-    output_indeces_ = node_modifier.addOutput<PointIndecesMessage>("Indeces");
+    output_indices_ = node_modifier.addOutput<PointIndicesMessage>("indices");
 }
 
 void StatisticalOutlierRemoval::process()
@@ -54,10 +54,10 @@ void StatisticalOutlierRemoval::process()
 template <class PointT>
 void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    bool indeces_out = msg::isConnected(output_indeces_);
+    bool indices_out = msg::isConnected(output_indices_);
     bool cloud_out   = msg::isConnected(output_cloud_);
 
-    if(!indeces_out && !cloud_out)
+    if(!indices_out && !cloud_out)
         return;
 
     int    mean_k             = readParameter<int>("mean k");
@@ -71,9 +71,9 @@ void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Con
     sor.setMeanK(mean_k);
     sor.setNegative(negative);
     sor.setStddevMulThresh(std_dev_mul_thresh);
-    if(msg::hasMessage(input_indeces_)) {
-        PointIndecesMessage::ConstPtr indeces(msg::getMessage<PointIndecesMessage>(input_indeces_));
-        sor.setIndices(indeces->value);
+    if(msg::hasMessage(input_indices_)) {
+        PointIndicesMessage::ConstPtr indices(msg::getMessage<PointIndicesMessage>(input_indices_));
+        sor.setIndices(indices->value);
     }
     if(cloud_out) {
         typename pcl::PointCloud<PointT>::Ptr cloud_filtered(new pcl::PointCloud<PointT>);
@@ -82,10 +82,10 @@ void StatisticalOutlierRemoval::inputCloud(typename pcl::PointCloud<PointT>::Con
         out->value = cloud_filtered;
         msg::publish(output_cloud_, out);
     }
-    if(indeces_out) {
-        PointIndecesMessage::Ptr indeces_filtered(new PointIndecesMessage);
-        indeces_filtered->value->header = cloud->header;
-        sor.filter(indeces_filtered->value->indices);
-        msg::publish(output_indeces_, indeces_filtered);
+    if(indices_out) {
+        PointIndicesMessage::Ptr indices_filtered(new PointIndicesMessage);
+        indices_filtered->value->header = cloud->header;
+        sor.filter(indices_filtered->value->indices);
+        msg::publish(output_indices_, indices_filtered);
     }
 }

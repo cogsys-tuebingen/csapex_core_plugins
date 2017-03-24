@@ -19,7 +19,7 @@ public:
 
 protected:
     Input*  input_cloud_;
-    Input*  indeces_input_;
+    Input*  indices_input_;
     Output* output_cloud_;
 
 };
