@@ -110,13 +110,14 @@ void ImportRos::refresh()
         }
     }
 
-    if(doSetTopic()) {
-        yield();
-    }
+    update();
 }
 
 void ImportRos::update()
 {
+    if(doSetTopic()) {
+        yield();
+    }
 }
 
 void ImportRos::updateSubscriber()
@@ -288,7 +289,7 @@ void ImportRos::processSource()
     INTERLUDE("tick");
 
     if(current_topic_.name.empty()) {
-        doSetTopic();
+        update();
     }
 
     if(current_topic_.name.empty()) {
