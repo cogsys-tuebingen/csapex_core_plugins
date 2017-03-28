@@ -22,7 +22,7 @@ namespace csapex
 
 class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
 {
-    virtual bool handleEnter(GraphView* view, CommandDispatcher* dispatcher, QDragEnterEvent* e) {
+    virtual bool handleEnter(GraphView* view, CommandExecutor* dispatcher, QDragEnterEvent* e) {
         if(e->mimeData()->hasUrls()) {
             e->acceptProposedAction();
             return true;
@@ -31,7 +31,7 @@ class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
             return false;
         }
     }
-    virtual bool handleMove(GraphView* view, CommandDispatcher* dispatcher, QDragMoveEvent* e){
+    virtual bool handleMove(GraphView* view, CommandExecutor* dispatcher, QDragMoveEvent* e){
         if(e->mimeData()->hasUrls()) {
             e->acceptProposedAction();
             return true;
@@ -40,7 +40,7 @@ class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
             return false;
         }
     }
-    virtual bool handleDrop(GraphView* view, CommandDispatcher* dispatcher, QDropEvent* e, const QPointF& scene_pos) {
+    virtual bool handleDrop(GraphView* view, CommandExecutor* dispatcher, QDropEvent* e, const QPointF& scene_pos) {
         if(e->mimeData()->hasUrls()) {
             QList<QUrl> files = e->mimeData()->urls();
 

@@ -32,6 +32,7 @@ void ExportCout::process()
 
 //    ainfo << "writing to cout: ";
 
+    apex_assert_hard(msg);
     YAML::Node node = MessageSerializer::serializeMessage(*msg);
 //    ainfo << node;
 //    ainfo << std::endl;
