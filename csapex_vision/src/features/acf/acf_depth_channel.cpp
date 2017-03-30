@@ -216,7 +216,7 @@ void ACFDepthChannel::process()
     CvMatMessage::Ptr out_visualize;
     if (msg::isConnected(out_visualize_))
     {
-        out_visualize = std::make_shared<CvMatMessage>(enc::bgr, in_image->stamp_micro_seconds);
+        out_visualize = std::make_shared<CvMatMessage>(enc::bgr, in_image->frame_id, in_image->stamp_micro_seconds);
         out_visualize->frame_id = in_image->frame_id;
         out_visualize->value = cv::Mat(image.rows, image.cols, CV_8UC3, cv::Scalar(0, 0, 0));
     }

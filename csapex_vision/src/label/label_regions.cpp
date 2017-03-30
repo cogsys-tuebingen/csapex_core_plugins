@@ -27,7 +27,7 @@ void LabelRegions::process()
         throw std::runtime_error("Edges should be mask with type of CV_8UC1!");
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, in->frame_id, in->stamp_micro_seconds));
 
     unsigned int threshold = readParameter<int>("area thresh");
 

@@ -69,7 +69,7 @@ void MaskRefinement::beginProcess(csapex::NodeModifier& node_modifier, Parameter
     auto in = msg::getMessage<connection_types::CvMatMessage>(in_mask_);
     mask_ = in->value;
 
-    result_ = std::make_shared<connection_types::CvMatMessage>(in->getEncoding(), in->stamp_micro_seconds);
+    result_ = std::make_shared<connection_types::CvMatMessage>(in->getEncoding(), in->frame_id, in->stamp_micro_seconds);
 
     QImage qmask = QtCvImageConverter::Converter<QImage>::mat2QImage(mask_);
 

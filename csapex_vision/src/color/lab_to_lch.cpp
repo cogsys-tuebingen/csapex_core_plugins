@@ -36,7 +36,7 @@ public:
     virtual void process() override
     {
         CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-        CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::LCh, in->stamp_micro_seconds));
+        CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::LCh, in->frame_id, in->stamp_micro_seconds));
 
         const Encoding &encoding = in->getEncoding();
 

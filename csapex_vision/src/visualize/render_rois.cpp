@@ -42,7 +42,7 @@ void RenderROIs::process()
 {
     CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_img_);
 
-    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->frame_id, img->stamp_micro_seconds));
 
     int thickness = readParameter<int>("thickness");
     bool force_color = readParameter<bool>("force color");

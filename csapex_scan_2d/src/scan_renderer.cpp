@@ -51,7 +51,7 @@ void ScanRenderer::process()
 template <typename ScanType>
 void ScanRenderer::doProcess(const ScanType& scan)
 {
-    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, 0));
+    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, "unknown", 0));
 
     renderer.render(scan, output->value);
 

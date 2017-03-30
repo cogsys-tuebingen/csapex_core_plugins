@@ -40,7 +40,7 @@ public:
     void process()
     {
         CvMatMessage::ConstPtr src = msg::getMessage<CvMatMessage>(in_);
-        CvMatMessage::Ptr dst(new CvMatMessage(src->getEncoding(), src->stamp_micro_seconds));
+        CvMatMessage::Ptr dst(new CvMatMessage(src->getEncoding(), src->frame_id, src->stamp_micro_seconds));
 
         double angle = readParameter<double>("angle");
         int mode = readParameter<int>("mode");

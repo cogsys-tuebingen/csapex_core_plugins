@@ -253,7 +253,7 @@ void TimePlot::renderAndSend()
     scale_value.draw(&painter, x_map, y_map, r);
 
 
-    CvMatMessage::Ptr out_msg = std::make_shared<CvMatMessage>(enc::bgr, 0);
+    CvMatMessage::Ptr out_msg = std::make_shared<CvMatMessage>(enc::bgr, "plot", 0);
     out_msg->value = QtCvImageConverter::Converter<QImage>::QImage2Mat(image);
 
     msg::publish(out_, out_msg);

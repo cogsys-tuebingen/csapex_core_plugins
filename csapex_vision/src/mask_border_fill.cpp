@@ -99,7 +99,7 @@ public:
 
         }
 
-        auto result = std::make_shared<connection_types::CvMatMessage>(image->getEncoding(), image->stamp_micro_seconds);
+        auto result = std::make_shared<connection_types::CvMatMessage>(image->getEncoding(), image->frame_id, image->stamp_micro_seconds);
         result->value = mask;
         msg::publish(out_, result);
     }

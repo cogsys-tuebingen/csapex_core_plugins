@@ -22,7 +22,7 @@ Sobel::Sobel() :
 void Sobel::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->frame_id, in->stamp_micro_seconds));
     int depth = in->value.type() & 7;
     cv::Sobel(in->value, out->value, depth, dx_, dy_, ksize_, scale_,delta_);
     msg::publish(output_, out);

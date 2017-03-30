@@ -22,7 +22,7 @@ ClusterGrid::ClusterGrid()
 void ClusterGrid::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, in->frame_id, in->stamp_micro_seconds));
 
     out->value = cv::Mat(in->value.rows,
                          in->value.cols,

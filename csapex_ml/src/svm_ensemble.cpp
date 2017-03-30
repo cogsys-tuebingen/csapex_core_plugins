@@ -120,7 +120,7 @@ void SVMEnsemble::process()
     for(std::size_t i = 0 ; i < size ; ++i)
     {
         cv::Mat sample(input->at(i).value);
-        CvMatMessage::Ptr result_msg(new CvMatMessage(enc::unknown, 0));
+        CvMatMessage::Ptr result_msg(new CvMatMessage(enc::unknown, "unknown", 0));
         cv::Mat &result_value = result_msg->value;
         result_value = svm_responses_.clone();
 

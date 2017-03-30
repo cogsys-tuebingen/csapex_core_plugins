@@ -90,10 +90,10 @@ void BlobDetector::process()
 
     const cv::Mat& gray = img->value;
 
-    CvMatMessage::Ptr debug(new CvMatMessage(enc::bgr, img->stamp_micro_seconds));
+    CvMatMessage::Ptr debug(new CvMatMessage(enc::bgr, img->frame_id, img->stamp_micro_seconds));
     cv::cvtColor(gray, debug->value, CV_GRAY2BGR);
 
-    CvMatMessage::Ptr reduced(new CvMatMessage(enc::mono, img->stamp_micro_seconds));
+    CvMatMessage::Ptr reduced(new CvMatMessage(enc::mono, img->frame_id, img->stamp_micro_seconds));
     reduced->value = cv::Mat::zeros(img->value.rows, img->value.cols, CV_8U);
 
     CvBlobs blobs;

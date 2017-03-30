@@ -27,7 +27,7 @@ Reshape::Reshape() :
 void Reshape::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
     if((unsigned int) in->value.rows != in_rows_ ||
        (unsigned int) in->value.cols != in_cols_) {
         in_rows_ = in->value.rows;

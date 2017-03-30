@@ -68,7 +68,7 @@ void MatrixStitcher::process()
 {
     CvMatMessage::ConstPtr mat_1  = msg::getMessage<CvMatMessage>(matrix_1_);
     CvMatMessage::ConstPtr mat_2  = msg::getMessage<CvMatMessage>(matrix_2_);
-    CvMatMessage::Ptr out(new CvMatMessage(mat_1->getEncoding(), mat_1->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(mat_1->getEncoding(), mat_1->frame_id, mat_1->stamp_micro_seconds));
 
     if(!mat_1->getEncoding().matches(mat_2->getEncoding()))
         throw std::runtime_error("Matrices need the same encoding!");

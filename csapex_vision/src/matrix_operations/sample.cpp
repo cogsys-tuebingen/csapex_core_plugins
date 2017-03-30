@@ -19,7 +19,7 @@ namespace csapex
         virtual void process() override
         {
             CvMatMessage::ConstPtr in  = msg::getMessage<connection_types::CvMatMessage>(in_);
-            CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
+            CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
 
             switch(in->value.type() & 7) {
             case CV_8U:

@@ -82,7 +82,7 @@ void FindHomography::process()
     cv::Mat mask;
     cv::Mat H = cv::findHomography(points1, points2, mask, method_, ransac_threshold_);
 
-    CvMatMessage::Ptr out(new CvMatMessage(image1->getEncoding(), image1->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(image1->getEncoding(), image1->frame_id, image1->stamp_micro_seconds));
 
     cv::drawMatches(image1->value, keypoints1->value,
                     image2->value, keypoints2->value,

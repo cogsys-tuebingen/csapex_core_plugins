@@ -24,7 +24,7 @@ PreemptiveSLIC::PreemptiveSLIC()
 void PreemptiveSLIC::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::unknown, in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::unknown, in->frame_id, in->stamp_micro_seconds));
 
     if(in->value.type() != CV_8UC3)
         throw std::runtime_error("Need a 3 channel bgr image!");

@@ -47,7 +47,7 @@ void ImagePadding::process()
     int border = readParameter<int>("border");
 
     if(msg::isConnected(output_)) {
-        CvMatMessage::Ptr result(new CvMatMessage(img_msg->getEncoding(), img_msg->stamp_micro_seconds));
+        CvMatMessage::Ptr result(new CvMatMessage(img_msg->getEncoding(), img_msg->frame_id, img_msg->stamp_micro_seconds));
         const std::vector<int>& c = readParameter<std::vector<int> >("color");
         cv::Scalar color(c[2], c[1], c[0]);
         result->value = cv::Mat(rows + 2 * border, cols + 2 * border, img_msg->value.type(), color);
@@ -59,7 +59,7 @@ void ImagePadding::process()
     }
 
     if(msg::isConnected(output_mask_)) {
-        CvMatMessage::Ptr result(new CvMatMessage(enc::mono, img_msg->stamp_micro_seconds));
+        CvMatMessage::Ptr result(new CvMatMessage(enc::mono, img_msg->frame_id, img_msg->stamp_micro_seconds));
 
         result->value = cv::Mat(rows + 2 * border, cols + 2 * border, CV_8UC1, cv::Scalar::all(0));
 

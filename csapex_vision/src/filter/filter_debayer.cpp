@@ -53,7 +53,7 @@ void Debayer::process(csapex::Parameterizable& parameters)
         cv::cvtColor(img, raw, CV_RGB2GRAY);
     }
 
-    CvMatMessage::Ptr img_out(new CvMatMessage(enc::bgr, img_msg->stamp_micro_seconds));
+    CvMatMessage::Ptr img_out(new CvMatMessage(enc::bgr, img_msg->frame_id, img_msg->stamp_micro_seconds));
     if (mode == 667) {
         debayerAndResize(raw, img_out->value);
         cv::cvtColor(img_out->value, img_out->value, CV_BGR2RGB);

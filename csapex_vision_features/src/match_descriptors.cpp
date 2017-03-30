@@ -343,7 +343,7 @@ void MatchDescriptors::process()
         match(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(image1->getEncoding(), image1->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(image1->getEncoding(), image1->frame_id, image1->stamp_micro_seconds));
 
     std::vector<int> c;
     c = readParameter<std::vector<int> >("color/match");

@@ -21,7 +21,7 @@ FloatToUchar::FloatToUchar()
 void FloatToUchar::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->frame_id, in->stamp_micro_seconds));
 
     std::vector<cv::Mat> channels;
     cv::split(in->value, channels);

@@ -21,7 +21,7 @@ public:
     virtual void process() override
     {
         CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-        CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
+        CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
         out->value = in->value.clone();
         cv::Scalar beta(beta_, beta_, beta_);
         out->value = out->value * alpha_ + beta;

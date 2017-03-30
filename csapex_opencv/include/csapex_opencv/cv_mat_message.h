@@ -23,7 +23,7 @@ struct CSAPEX_OPENCV_EXPORT CvMatMessage : public MessageTemplate<cv::Mat, CvMat
     template <typename,typename,typename> friend class csapex::ConverterTemplate;
 
 public:
-    CvMatMessage(const Encoding& encoding, Stamp stamp_micro_seconds);
+    CvMatMessage(const Encoding& encoding, const std::string& frame_id, Stamp stamp_micro_seconds);
     ~CvMatMessage();
     virtual TokenData::Ptr clone() const override;
 
@@ -54,7 +54,7 @@ struct CSAPEX_OPENCV_EXPORT type<CvMatMessage> {
 template <>
 inline CSAPEX_OPENCV_EXPORT std::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage>()
 {
-    return std::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr, 0));
+    return std::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr, "camera", 0));
 }
 
 template <>

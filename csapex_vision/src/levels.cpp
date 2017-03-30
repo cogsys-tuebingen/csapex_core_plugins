@@ -163,7 +163,7 @@ public:
             calculateLut(img_);
         }
 
-        CvMatMessage::Ptr img_out(new CvMatMessage(img_in->getEncoding(), img_in->stamp_micro_seconds));
+        CvMatMessage::Ptr img_out(new CvMatMessage(img_in->getEncoding(), img_in->frame_id, img_in->stamp_micro_seconds));
 
         cv::LUT(img_, lut_, img_out->value);
 

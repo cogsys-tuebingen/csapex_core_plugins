@@ -56,7 +56,7 @@ void MeanStdDevNormalization::process()
     CvMatMessage::ConstPtr in_mat  = msg::getMessage<CvMatMessage>(in_mat_);
     VectorPtr              in_mean = msg::getMessage<GenericVectorMessage, double>(in_mean_);
     VectorPtr              in_dev  = msg::getMessage<GenericVectorMessage, double>(in_dev_);
-    CvMatMessage::Ptr      out(new CvMatMessage(in_mat->getEncoding(), in_mat->stamp_micro_seconds));
+    CvMatMessage::Ptr      out(new CvMatMessage(in_mat->getEncoding(), in_mat->frame_id, in_mat->stamp_micro_seconds));
 
     unsigned int c = in_mat->value.channels();
 

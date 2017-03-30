@@ -32,7 +32,7 @@ void Camera::setupParameters(Parameterizable &parameters)
 
 void Camera::process()
 {
-    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
+    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, "camera", 0));
     cap_ >> msg->value;
     if(msg->value.channels() == 1)
         msg->setEncoding(enc::mono);

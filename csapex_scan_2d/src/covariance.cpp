@@ -39,7 +39,7 @@ void ScanCovariance::process()
     std::shared_ptr<std::vector<Segment> const> segment_msg = msg::getMessage<GenericVectorMessage, Segment>(input_);
     const std::vector<Segment>& segments = *segment_msg;
 
-    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, 0));
+    CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, "unknown", 0));
     int w = readParameter<int>("width");
     int h = readParameter<int>("height");
 

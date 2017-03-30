@@ -28,7 +28,7 @@ public:
     virtual void process() override
     {
         CvMatMessage::ConstPtr input = msg::getMessage<CvMatMessage>(input_);
-        CvMatMessage::Ptr output(new CvMatMessage(enc::unknown, input->stamp_micro_seconds));
+        CvMatMessage::Ptr output(new CvMatMessage(enc::unknown, input->frame_id, input->stamp_micro_seconds));
 
         cv::Mat dx;
         cv::Mat dy;

@@ -175,9 +175,9 @@ struct Processor<pcl::PointNormal> {
 template <class PointT>
 void RayAngles::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    CvMatMessage::Ptr general(new CvMatMessage(enc::mono, cloud->header.stamp));
-    CvMatMessage::Ptr component_a(new CvMatMessage(enc::mono, cloud->header.stamp));
-    CvMatMessage::Ptr component_b(new CvMatMessage(enc::mono, cloud->header.stamp));
+    CvMatMessage::Ptr general(new CvMatMessage(enc::mono, cloud->header.frame_id, cloud->header.stamp));
+    CvMatMessage::Ptr component_a(new CvMatMessage(enc::mono, cloud->header.frame_id, cloud->header.stamp));
+    CvMatMessage::Ptr component_b(new CvMatMessage(enc::mono, cloud->header.frame_id, cloud->header.stamp));
 
     impl::Processor<PointT>::invokeProcess(this, cloud);
 

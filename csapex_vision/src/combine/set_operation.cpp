@@ -27,7 +27,7 @@ void SetOperation::process()
     }
 
 
-    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->frame_id, img1->stamp_micro_seconds));
 
     int op = readParameter<int>("operation");
     if(op == COMPLEMENT) {

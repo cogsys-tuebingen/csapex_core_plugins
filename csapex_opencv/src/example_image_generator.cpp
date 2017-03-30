@@ -36,7 +36,7 @@ public:
 
     virtual void process() override
     {
-        connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
+        connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, "camera", 0));
         msg->value = image.clone();
 
         if(msg->value.channels() == 1)

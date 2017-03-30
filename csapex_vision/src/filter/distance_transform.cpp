@@ -60,8 +60,8 @@ void DistanceTransform::process()
         throw std::runtime_error("image must be one channel grayscale.");
     }
 
-    CvMatMessage::Ptr out(new CvMatMessage(enc::mono, img->stamp_micro_seconds));
-    CvMatMessage::Ptr labels(new CvMatMessage(enc::unknown, img->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::mono, img->frame_id, img->stamp_micro_seconds));
+    CvMatMessage::Ptr labels(new CvMatMessage(enc::unknown, img->frame_id, img->stamp_micro_seconds));
 
     cv::distanceTransform(img->value, out->value, labels->value,
                           readParameter<int>("distanceType"),

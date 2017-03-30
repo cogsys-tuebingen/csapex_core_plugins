@@ -22,7 +22,7 @@ WaterShed::WaterShed()
 void WaterShed::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::unknown, in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::unknown, in->frame_id, in->stamp_micro_seconds));
 
     cv::Mat marker_mask;
     switch(in->value.type()) {

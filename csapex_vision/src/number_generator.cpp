@@ -22,7 +22,7 @@ NumberGenerator::NumberGenerator()
 
 void NumberGenerator::process()
 {
-    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, 0));
+    connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, "unknown", 0));
 
     msg->value = cv::Mat(400, 400, CV_8UC3);
 

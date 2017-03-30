@@ -12,12 +12,12 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::CvMatMessage)
 
 
 CvMatMessage::CvMatMessage()
-    : MessageTemplate<cv::Mat, CvMatMessage> ("/camera"), encoding(enc::bgr)
+    : MessageTemplate<cv::Mat, CvMatMessage> ("camera"), encoding(enc::bgr)
 {
 }
 
-CvMatMessage::CvMatMessage(const Encoding& encoding, Message::Stamp stamp)
-    : MessageTemplate<cv::Mat, CvMatMessage> ("/camera", stamp), encoding(encoding)
+CvMatMessage::CvMatMessage(const Encoding& encoding, const std::string &frame_id, Message::Stamp stamp)
+    : MessageTemplate<cv::Mat, CvMatMessage> (frame_id, stamp), encoding(encoding)
 {
 }
 
@@ -27,10 +27,8 @@ CvMatMessage::~CvMatMessage()
 
 TokenData::Ptr CvMatMessage::clone() const
 {
-    Ptr new_msg(new CvMatMessage(encoding, stamp_micro_seconds));
+    Ptr new_msg(new CvMatMessage(encoding, frame_id, stamp_micro_seconds));
     value.copyTo(new_msg->value);
-    new_msg->frame_id = frame_id;
-    new_msg->stamp_micro_seconds = stamp_micro_seconds;
     return new_msg;
 }
 

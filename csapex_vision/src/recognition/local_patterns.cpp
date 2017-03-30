@@ -30,7 +30,7 @@ LocalPatterns::LocalPatterns()
 void LocalPatterns::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(in_);
-    CvMatMessage::Ptr out(new CvMatMessage(enc::mono, in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::mono, in->frame_id, in->stamp_micro_seconds));
 
     if(in->value.channels() > 1)
         throw std::runtime_error("Matrix must be one channel!");

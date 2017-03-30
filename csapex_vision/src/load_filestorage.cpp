@@ -27,7 +27,7 @@ LoadFilestorage::~LoadFilestorage()
 
 void LoadFilestorage::process()
 {
-    connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::unknown, 0));
+    connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::unknown, "unknown", 0));
     bool resend  = readParameter<bool>("resend");
     bool iterate = readParameter<bool>("iterate");
 

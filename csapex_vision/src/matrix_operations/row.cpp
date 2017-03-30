@@ -22,7 +22,7 @@ Row::Row() :
 void Row::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
 
     if(in->value.empty()) {
         throw std::runtime_error("Cannot extract row of empty matrix!");

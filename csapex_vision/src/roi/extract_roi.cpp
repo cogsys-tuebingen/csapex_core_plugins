@@ -32,7 +32,7 @@ void ExtractROI::process()
     CvMatMessage::ConstPtr img = msg::getMessage<CvMatMessage>(input_img_);
     RoiMessage::ConstPtr roi = msg::getMessage<RoiMessage>(input_roi_);
 
-    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(img->getEncoding(), img->frame_id, img->stamp_micro_seconds));
 
     cv::Mat mat = img->value;
     cv::Rect rect = roi->value.rect();

@@ -36,6 +36,7 @@ public:
 private:
     Output *output_;
 
+    std::string frame_id_;
     uint64 stamp_;
     void collectMessage(std::vector<cv::Mat> &messages, Encoding &encoding);
 };

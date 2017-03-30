@@ -23,7 +23,7 @@ CopyMakeBorder::CopyMakeBorder()
 void CopyMakeBorder::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
 
     int type = readParameter<int>("type");
     int left = readParameter<int>("left");

@@ -36,7 +36,7 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     {
         PointIndicesMessage::ConstPtr indices(msg::getMessage<PointIndicesMessage>(input_indices_));
-        CvMatMessage::Ptr mask(new CvMatMessage(enc::mono, cloud->header.stamp));
+        CvMatMessage::Ptr mask(new CvMatMessage(enc::mono, cloud->header.frame_id, cloud->header.stamp));
         mask->value = cv::Mat(cloud->height, cloud->width, CV_8UC1, cv::Scalar());
         for(int index : indices->value->indices) {
             mask->value.at<uchar>(index) = 1;

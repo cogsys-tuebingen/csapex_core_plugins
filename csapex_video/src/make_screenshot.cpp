@@ -38,6 +38,7 @@ void MakeScreenshot::makeScreenshot()
 {
     std::string path = readParameter<std::string>("path");
     std::stringstream ss;
+    ss << "mkdir -p " << path << " && ";
     ss << "cd " << path << " && scrot ";
     ss << '\'' << readParameter<std::string>("format") << '\'';
     ss << " -q " << readParameter<int>("quality");

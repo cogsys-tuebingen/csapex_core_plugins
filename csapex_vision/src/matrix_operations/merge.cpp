@@ -46,7 +46,7 @@ void Merge::process()
     }
 
     cv::merge(msgs, out_img);
-    CvMatMessage::Ptr out_msg(new CvMatMessage(encoding, stamp_));
+    CvMatMessage::Ptr out_msg(new CvMatMessage(encoding, frame_id_, stamp_));
     out_msg->value = out_img;
     msg::publish(output_, out_msg);
 }
@@ -61,6 +61,7 @@ void Merge::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
             CvMatMessage::ConstPtr msg = msg::getMessage<CvMatMessage>(in);
             if(first) {
                 stamp_ = msg->stamp_micro_seconds;
+                frame_id_ = msg->frame_id;
                 first = false;
             }
             msg::setLabel(in, msg->getEncoding().toString());

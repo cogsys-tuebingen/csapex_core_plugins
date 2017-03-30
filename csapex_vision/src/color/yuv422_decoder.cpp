@@ -55,7 +55,7 @@ public:
         out_channels.push_back(v);
         out_channels.push_back(u);
 
-        CvMatMessage::Ptr img_out(new CvMatMessage(img_in->getEncoding(), img_in->stamp_micro_seconds));
+        CvMatMessage::Ptr img_out(new CvMatMessage(img_in->getEncoding(), img_in->frame_id, img_in->stamp_micro_seconds));
         cv::Mat& out = img_out->value;
 //        out = cv::Mat(img.rows, img.cols, CV_8UC3, cv::Scalar::all(128));
 

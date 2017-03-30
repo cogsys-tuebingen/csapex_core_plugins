@@ -57,7 +57,7 @@ void HoughCircle::process()
     std::vector<cv::Vec3f> circles;
     cv::HoughCircles(msg->value, circles, method, dp, minDist, param1, param2, minRadius, maxRadius);
 
-    CvMatMessage::Ptr out(new CvMatMessage(msg->getEncoding(), msg->stamp_micro_seconds));
+    CvMatMessage::Ptr out(new CvMatMessage(msg->getEncoding(), msg->frame_id, msg->stamp_micro_seconds));
     if(!msg->hasChannels(1, CV_8U)) {
         cv::cvtColor(msg->value, out->value, CV_GRAY2BGR);
     } else {

@@ -80,7 +80,7 @@ connection_types::CvMatMessage::Ptr Image2CvMat::ros2apex(const sensor_msgs::Ima
 
     csapex::Encoding target_encoding = impl::convertEncoding(ros_msg->encoding);
 
-    connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(target_encoding, stamp_micro_seconds));
+    connection_types::CvMatMessage::Ptr out(new connection_types::CvMatMessage(target_encoding, ros_msg->header.frame_id, stamp_micro_seconds));
 
     try {
         cv_bridge::toCvShare(ros_msg, ros_msg->encoding)->image.copyTo(out->value);
@@ -112,7 +112,7 @@ connection_types::CvMatMessage::Ptr CompressedImage2CvMat::ros2apex(const sensor
         cv_bridge::CvImagePtr img = cv_bridge::toCvCopy(ros_msg);
         csapex::Encoding target_encoding = impl::convertEncoding(img->encoding);
 
-        out.reset(new connection_types::CvMatMessage(target_encoding, stamp_micro_seconds));
+        out.reset(new connection_types::CvMatMessage(target_encoding, ros_msg->header.frame_id, stamp_micro_seconds));
         out->value = img->image;
         out->frame_id = ros_msg->header.frame_id;
 

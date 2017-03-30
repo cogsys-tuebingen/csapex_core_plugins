@@ -51,7 +51,7 @@ public:
         int cols = cloud->width;
         int rows = n / cols;
 
-        CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, cloud->header.stamp));
+        CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, cloud->header.frame_id, cloud->header.stamp));
         output->value.create(rows,cols, CV_8UC3);
 
         typename pcl::PointCloud<pcl::Normal>::const_iterator pt = cloud->points.begin();

@@ -98,8 +98,8 @@ void GrabCut::process()
         }
 
         if(!has_fg || !has_bg) {
-            CvMatMessage::Ptr bg_out(new CvMatMessage(enc::mono, img_msg->stamp_micro_seconds));
-            CvMatMessage::Ptr fg_out(new CvMatMessage(enc::mono, img_msg->stamp_micro_seconds));
+            CvMatMessage::Ptr bg_out(new CvMatMessage(enc::mono, img_msg->frame_id, img_msg->stamp_micro_seconds));
+            CvMatMessage::Ptr fg_out(new CvMatMessage(enc::mono, img_msg->frame_id, img_msg->stamp_micro_seconds));
             bg_out->value = cv::Mat(img.rows, img.cols, CV_8UC1, cv::Scalar::all(255));
             fg_out->value = cv::Mat(img.rows, img.cols, CV_8UC1, cv::Scalar::all(0));
             msg::publish(out_fg_, fg_out);
@@ -127,8 +127,8 @@ void GrabCut::process()
         cv::grabCut(img, mask, roi, bg, fg, iter, mode);
     }
 
-    CvMatMessage::Ptr bg_out(new CvMatMessage(enc::mono, img_msg->stamp_micro_seconds));
-    CvMatMessage::Ptr fg_out(new CvMatMessage(enc::mono, img_msg->stamp_micro_seconds));
+    CvMatMessage::Ptr bg_out(new CvMatMessage(enc::mono, img_msg->frame_id, img_msg->stamp_micro_seconds));
+    CvMatMessage::Ptr fg_out(new CvMatMessage(enc::mono, img_msg->frame_id, img_msg->stamp_micro_seconds));
 
     bg_out->value = 255 - (mask & 1);
     fg_out->value = mask & 1;

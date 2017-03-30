@@ -143,8 +143,8 @@ struct Impl<pcl::PointXYZRGB> {
 template <class PointT>
 void PointCloudToPointMatrix::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, cloud->header.stamp));
-    CvMatMessage::Ptr mask(new CvMatMessage(enc::mono, cloud->header.stamp));
+    CvMatMessage::Ptr out(new CvMatMessage(enc::unknown, cloud->header.frame_id, cloud->header.stamp));
+    CvMatMessage::Ptr mask(new CvMatMessage(enc::mono, cloud->header.frame_id, cloud->header.stamp));
     out->frame_id = cloud->header.frame_id;
     mask->frame_id = cloud->header.frame_id;
     implementation::Impl<PointT>::convert(cloud, out, mask);

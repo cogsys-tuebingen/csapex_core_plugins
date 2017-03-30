@@ -123,7 +123,7 @@ void RandomTrees::process()
     if(compute_class_weights_) {
         output_class_weights.reset(new std::vector<CvMatMessage::ConstPtr>());
         for(std::size_t i = 0; i < n; ++i) {
-            CvMatMessage::Ptr mat_message(new CvMatMessage(enc::unknown, 0));
+            CvMatMessage::Ptr mat_message(new CvMatMessage(enc::unknown, "unknown", 0));
             std::map<int, std::size_t> class_labels = class_labels_;
             impl::classify(random_trees_,
                            input_feature->at(i),
