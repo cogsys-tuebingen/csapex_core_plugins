@@ -37,7 +37,9 @@ public:
     {
         parameters.addParameter(param::ParameterFactory::declareRange("model search distance", 0.0, 10.0, 0.1, 0.001),
                                 sac_parameters_.model_search_distance);
-        parameters.addParameter(param::ParameterFactory::declareBool("terminate one mean model distance", false),
+        parameters.addParameter(param::ParameterFactory::declareRange("model validation ratio", 0.0, 1.0, 0.0, 0.01),
+                                sac_parameters_.model_validation_ratio);
+        parameters.addParameter(param::ParameterFactory::declareBool("terminate on mean model distance", false),
                                 sac_parameters_.use_mean_model_distance);
         parameters.addConditionalParameter(param::ParameterFactory::declareRange("maximum mean model distance", 0.0, 10.0, 0.05, 0.01),
                                            [this](){return sac_parameters_.use_mean_model_distance;},
