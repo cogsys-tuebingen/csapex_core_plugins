@@ -49,7 +49,9 @@ public:
     {
 
         const std::size_t model_dimension = model->getModelDimension();
-        if(Base::indices_.size() < model_dimension)
+        const std::size_t indices_size = Base::indices_.size();
+        const std::size_t validation_samples = indices_size * parameters_.model_validation_ratio;
+        if(indices_size < model_dimension)
             return false;
 
 
@@ -89,7 +91,15 @@ public:
             }
 
             typename Model::InlierStatistic stat;
-            model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
+            if(parameters_.model_validation_ratio == 0.0 ||
+                    parameters_.model_validation_ratio == 1.0) {
+                model->getInlierStatistic(Base::indices_, parameters_.model_search_distance, stat);
+            } else {
+                std::vector<int> indices;
+                drawSamples(validation_samples, indices);
+                model->getInlierStatistic(indices, parameters_.model_search_distance, stat);
+            }
+
             if(stat.count > internal_params.maximum_inliers) {
                 internal_params.maximum_inliers = stat.count;
                 internal_params.best_model = model->clone();
@@ -145,7 +155,7 @@ protected:
         while(!valid && iteration < parameters_.maximum_sampling_retries) {
             selection.clear();
             while(selection.size() < samples) {
-                int next = distribution_(rng_);
+                int next = Base::indices_[distribution_(rng_)];
                 selection.insert(next);
             }
             valid = model->validateSamples(selection);
@@ -156,6 +166,22 @@ protected:
             indices.emplace_back(i);
         }
         return valid;
+    }
+
+    inline void drawSamples(const std::size_t samples,
+                            std::vector<int> &indices)
+    {
+        std::size_t size = 0;
+        std::set<int> selection;
+        for(std::size_t i = 0 ; i < samples ; ++i) {
+            const int next = Base::indices_[distribution_(rng_)];
+            selection.insert(next);
+            const std::size_t selection_size = selection.size();
+            if(selection_size > size) {
+                indices.emplace_back(next);
+                size = selection_size;
+            }
+        }
     }
 };
 }
