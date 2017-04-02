@@ -94,8 +94,7 @@ void PlaneSegmentation::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
     const std::size_t last_col = width - 1;
     for(std::size_t i = 1 ; i < last_row; ++i) {
         const std::size_t row_begin = i * width;
-        const std::size_t row_end = row_begin + last_col;
-        for(std::size_t j = 1 ; j < row_end ; ++j) {
+        for(std::size_t j = 1 ; j < last_col ; ++j) {
             const std::size_t pos = row_begin + j;
             if(mask_ptr[pos]) {
                 /// d/dx
@@ -121,7 +120,7 @@ void PlaneSegmentation::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
                 } else if(y1) {
                     ys_ptr[pos] = points_ptr[pos] - points_ptr[pos + width];
                 } else {
-                    normals_mask_ptr[0] = 0;
+                    normals_mask_ptr[pos] = 0;
                 }
             }
         }
