@@ -22,7 +22,8 @@ using namespace connection_types;
 
 void PlaneSegmentation::setup(NodeModifier &node_modifier)
 {
-
+    input_cloud_ = node_modifier.addInput<PointCloudMessage>("input cloud");
+    output_normals_ = node_modifier.addOutput<NormalsMessage>("output normals");
 }
 
 void PlaneSegmentation::setupParameters(Parameterizable &parameters)
@@ -31,7 +32,8 @@ void PlaneSegmentation::setupParameters(Parameterizable &parameters)
 
 void PlaneSegmentation::process()
 {
-
+    PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
+    boost::apply_visitor (PointCloudMessage::Dispatch<PlaneSegmentation>(this, msg), msg->value);
 }
 
 template<class PointT>
@@ -154,7 +156,39 @@ void PlaneSegmentation::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cl
     }
 
     /// 3. we apply some smoothing here
-    /// we have to blur by hand ...
+    /// we have to blur by hand ... 3x3 box scheme should be sufficient
+    /// out of convienence, border entries are left as they are
+    cv::Mat xs_smoothed(height, width, CV_32FC3, cv::Scalar());
+    cv::Mat ys_smoothed(height, width, CV_32FC3, cv::Scalar());
+    for(std::size_t i = 1 ; i < last_row ; ++i) {
+        for(std::size_t j = 1 ; j < last_col ; ++j) {
+            const cv::Rect roi(j-1,i-1, 3, 3);
+            const cv::Mat kernel(normals_mask, roi);
+            const double sum_kernel = cv::sum(kernel)[0];
+            if(sum_kernel >= 2) {
+                const double delta = 1.0 / sum_kernel;
+                cv::filter2D(cv::Mat(xs, roi), cv::Mat(xs_smoothed, roi), CV_32F, kernel, cv::Point(-1,-1), delta);
+                cv::filter2D(cv::Mat(ys, roi), cv::Mat(ys_smoothed, roi), CV_32F, kernel, cv::Point(-1,-1), delta);
+            }
+        }
+    }
 
+    /// 4. if a normal output is connected, we publish some debug information
+    if(msg::isConnected(output_normals_)) {
+        NormalsMessage::Ptr normals_msg(new NormalsMessage(cloud->header.frame_id, cloud->header.stamp));
+        normals_msg->value.reset(new pcl::PointCloud<pcl::Normal>(width, height));
+        for(std::size_t i = 0 ; i < height ; ++i) {
+            for(std::size_t j = 0 ; j < width ; ++j) {
+                const std::size_t pos = i * width + j;
+                if(normals_mask_ptr[pos]) {
+                    const cv::Vec3f &x = xs_ptr[pos];
+                    const cv::Vec3f &y = ys_ptr[pos];
+                    const cv::Vec3f c = x.ddot(y);
+                    normals_msg->value->at(j, i) = {c[0], c[1], c[2]};
+                }
+            }
+        }
+        msg::publish(output_normals_, normals_msg);
+}
 }
 
