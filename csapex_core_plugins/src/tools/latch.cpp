@@ -6,6 +6,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/msg/marker_message.h>
 #include <csapex/model/token.h>
 
 using namespace csapex;
@@ -24,8 +25,11 @@ public:
     void setup(csapex::NodeModifier& modifier) override
     {
         modifier.addTypedSlot<AnyMessage>("Message", [this](const TokenPtr& token) {
-            data_ = token->getTokenData();
-            yield();
+            const std::shared_ptr<TokenData const>& data = token->getTokenData();
+            if(!std::dynamic_pointer_cast<MarkerMessage const>(data)) {
+                data_ = data;
+                yield();
+            }
         });
         modifier.addSlot("reset", [this](){
             data_.reset();
