@@ -10,6 +10,12 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
+namespace YAML
+{
+template<typename T, typename S>
+struct as_if;
+}
+
 namespace csapex {
 
 template <typename,typename,typename> class ConverterTemplate;
@@ -19,6 +25,7 @@ namespace connection_types {
 struct CSAPEX_OPENCV_EXPORT CvMatMessage : public MessageTemplate<cv::Mat, CvMatMessage>
 {
     friend class MessageTemplate<cv::Mat, CvMatMessage>;
+    friend class YAML::as_if<CvMatMessage, void>;
 
     template <typename,typename,typename> friend class csapex::ConverterTemplate;
 

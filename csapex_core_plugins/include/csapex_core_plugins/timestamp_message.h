@@ -19,7 +19,7 @@ public:
     typedef std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds> Tp;
 
 public:
-    TimestampMessage(Tp time = Tp(std::chrono::microseconds(0)), Message::Stamp stamp_micro_seconds = 0);
+    TimestampMessage(Tp time = Tp(std::chrono::microseconds(0)));
 };
 
 

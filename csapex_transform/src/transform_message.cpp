@@ -16,9 +16,7 @@ using namespace connection_types;
 TransformMessage::TransformMessage(const std::string& frame_id, const std::string& child_frame_id)
     : MessageTemplate<tf::Transform, TransformMessage> (frame_id), child_frame(child_frame_id)
 {
-    if(child_frame.size() > 0 && child_frame.at(0) == '/') {
-        child_frame = child_frame.substr(1);
-    }
+    sanitize();
 }
 
 TransformMessage::TransformMessage()
@@ -32,7 +30,15 @@ TokenData::Ptr TransformMessage::clone() const
     return new_msg;
 }
 
-
+void TransformMessage::sanitize()
+{
+    if(frame_id.size() > 0 && frame_id.at(0) == '/') {
+        frame_id = frame_id.substr(1);
+    }
+    if(child_frame.size() > 0 && child_frame.at(0) == '/') {
+        child_frame = child_frame.substr(1);
+    }
+}
 
 /// YAML
 namespace YAML {
@@ -74,6 +80,7 @@ bool convert<csapex::connection_types::TransformMessage>::decode(const Node& nod
     }
 
     rhs.value = tf::Transform(tf::Quaternion(o[0],o[1],o[2],o[3]), tf::Vector3(t[0], t[1], t[2]));
+    rhs.sanitize();
 
     return true;
 }

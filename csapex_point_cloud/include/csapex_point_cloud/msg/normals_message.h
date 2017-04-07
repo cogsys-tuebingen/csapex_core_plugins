@@ -9,11 +9,19 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
+namespace YAML
+{
+template<typename T, typename S>
+struct as_if;
+}
+
 namespace csapex {
 namespace connection_types {
 
 struct NormalsMessage : public Message
 {
+    friend class YAML::as_if<NormalsMessage, void>;
+
     typedef std::shared_ptr<NormalsMessage> Ptr;
     typedef std::shared_ptr<NormalsMessage const> ConstPtr;
 
