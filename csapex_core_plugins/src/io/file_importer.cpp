@@ -172,7 +172,9 @@ bool FileImporter::canProcess() const
             }
             return can_tick;
         }
-        return (readParameter<int>("directory/current") <= (int) dir_files_.size()) ||
+        int current = readParameter<int>("directory/current");
+        return (current < (int) dir_files_.size()) ||
+                ((current == dir_files_.size()) && !end_triggered_) ||
                 readParameter<bool>("directory/loop")  ||
                 readParameter<bool>("directory/latch");
     } else {
@@ -182,9 +184,14 @@ bool FileImporter::canProcess() const
             }
         }
 
+        if(InputPtr i = node_handle_->getParameterInput("path").lock()) {
+            return i->isConnected() && msg::hasMessage(i.get());
+        }
+
         if(provider_) {
             return provider_->hasNext();
         } else {
+
             return false;
         }
     }
