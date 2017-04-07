@@ -11,6 +11,12 @@
 #include <boost/variant.hpp>
 #include <boost/mpl/vector.hpp>
 
+namespace YAML
+{
+template<typename T, typename S>
+struct as_if;
+}
+
 namespace csapex {
 namespace connection_types {
 
@@ -45,6 +51,8 @@ struct add_point_cloud_ptr
 
 struct PointCloudMessage : public Message
 {
+    friend class YAML::as_if<PointCloudMessage, void>;
+
     template <typename T>
     struct Dispatch : public boost::static_visitor<void>
     {
