@@ -12,8 +12,8 @@ using namespace connection_types;
 
 using namespace std::chrono;
 
-TimestampMessage::TimestampMessage(TimestampMessage::Tp time, Message::Stamp stamp)
-    : MessageTemplate<Tp,TimestampMessage>("/", stamp)
+TimestampMessage::TimestampMessage(TimestampMessage::Tp time)
+    : MessageTemplate<Tp,TimestampMessage>("/", std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count())
 {
     value = time;
 }
