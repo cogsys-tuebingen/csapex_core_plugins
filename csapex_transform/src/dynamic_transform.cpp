@@ -202,6 +202,8 @@ void DynamicTransform::publishTransform(const ros::Time& time)
         msg->stamp_micro_seconds = t.stamp_.toNSec() / 1000;
         msg->frame_id = target;
         msg->child_frame = source;
+        msg->sanitize();
+
         msg::publish(output_, msg);
 
         last_transform = t;
