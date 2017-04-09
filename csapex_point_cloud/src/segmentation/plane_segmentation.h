@@ -23,7 +23,7 @@ public:
 protected:
     Input  *input_cloud_;
 
-    Output *ouput_normals_;
+    Output *output_normals_;
 
 };
 }

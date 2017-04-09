@@ -8,6 +8,15 @@
 </library>
 
 <library path="libcsapex_core_plugins_node">
+<class type="csapex::OverwriteFrame" base_class_type="csapex::Node">
+  <description>Changes the frame_id of a message</description>
+</class>
+<class type="csapex::ReplaceString" base_class_type="csapex::Node">
+  <description>Replaces a substring with another value</description>
+</class>
+<class type="csapex::OverwriteTimestamp" base_class_type="csapex::Node">
+  <description>Changes the time stamp of a message</description>
+</class>
 <class type="csapex::VectorSize" base_class_type="csapex::Node">
   <description>Count the elements in a vector</description>
 </class>

@@ -39,6 +39,9 @@ public:
         params.addParameter(param::ParameterFactory::declareValue("dz", 0.));
 
         params.addParameter(param::ParameterFactory::declareValue("norm", 0.));
+
+        params.addParameter(param::ParameterFactory::declareText("frame_id", ""));
+        params.addParameter(param::ParameterFactory::declareText("child_frame_id", ""));
     }
 
     void process()
@@ -65,6 +68,9 @@ public:
         setParameter("dz", delta.z());
 
         setParameter("norm", delta.length());
+
+        setParameter("frame_id", trafo->frame_id);
+        setParameter("child_frame_id", trafo->child_frame);
     }
 
     static double cap(double a)

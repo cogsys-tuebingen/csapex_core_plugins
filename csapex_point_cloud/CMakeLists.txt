@@ -139,6 +139,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/segmentation/merge_clusters.cpp
     src/segmentation/extract_clusters.cpp
     src/segmentation/sac_fit.cpp
+    src/segmentation/plane_segmentation.cpp
 
     src/clustering/cluster.cpp
     src/clustering/cluster.hpp
