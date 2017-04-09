@@ -21,7 +21,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayAdapter::OutputDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node)
+OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node)
     : ResizableNodeAdapter(worker, parent), wrapped_(node)
 {
 

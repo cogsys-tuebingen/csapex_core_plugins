@@ -12,7 +12,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(BFOptimizerAdapter, csapex::BFOptimizer)
 
 
-BFOptimizerAdapter::BFOptimizerAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node)
+BFOptimizerAdapter::BFOptimizerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node)
     : OptimizerAdapter(worker, parent, node), wrapped_(node)
 {
     auto n = wrapped_.lock();

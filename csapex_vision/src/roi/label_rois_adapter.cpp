@@ -103,7 +103,7 @@ namespace csapex {
 }
 
 
-LabelROIsAdapter::LabelROIsAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<LabelROIs> node)
+LabelROIsAdapter::LabelROIsAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<LabelROIs> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       active_class_(0),

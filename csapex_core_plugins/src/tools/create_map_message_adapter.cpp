@@ -34,7 +34,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(CreateMapMessageAdapter, csapex::CreateMapMessage)
 
-CreateMapMessageAdapter::CreateMapMessageAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node)
+CreateMapMessageAdapter::CreateMapMessageAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node)
     : DefaultNodeAdapter(worker, parent), wrapped_base_(node)
 {
     QObject::connect(&widget_picker_, SIGNAL(widgetPicked()), this, SLOT(widgetPicked()));

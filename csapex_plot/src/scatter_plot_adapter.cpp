@@ -12,7 +12,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(ScatterPlotAdapter, csapex::ScatterPlot)
 
 
-ScatterPlotAdapter::ScatterPlotAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ScatterPlot> node)
+ScatterPlotAdapter::ScatterPlotAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ScatterPlot> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

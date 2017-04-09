@@ -22,7 +22,7 @@ class LabelROIsAdapter : public QObject, public csapex::DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    LabelROIsAdapter(csapex::NodeHandleWeakPtr worker, csapex::NodeBox* parent,
+    LabelROIsAdapter(csapex::NodeFacadeWeakPtr worker, csapex::NodeBox* parent,
                               std::weak_ptr<LabelROIs> node);
 
     virtual csapex::Memento::Ptr getState() const;

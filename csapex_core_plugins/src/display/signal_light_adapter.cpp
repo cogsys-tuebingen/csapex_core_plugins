@@ -13,7 +13,7 @@ using namespace csapex;
 CSAPEX_REGISTER_NODE_ADAPTER(SignalLightAdapter, csapex::SignalLight)
 
 
-SignalLightAdapter::SignalLightAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node)
+SignalLightAdapter::SignalLightAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node)
     : ResizableNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

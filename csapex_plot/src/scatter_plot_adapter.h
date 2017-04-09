@@ -19,7 +19,7 @@ class ScatterPlotAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    ScatterPlotAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ScatterPlot> node);
+    ScatterPlotAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ScatterPlot> node);
 
     virtual void setupUi(QBoxLayout* layout);
 

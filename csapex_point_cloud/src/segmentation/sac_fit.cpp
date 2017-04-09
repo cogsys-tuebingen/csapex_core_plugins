@@ -160,7 +160,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
             pcl::PointIndices inliers;
             segmenter->segment(inliers, *model_coefficients);
-            if(inliers.indices.size() > min_inliers_) {
+            if((int) inliers.indices.size() > min_inliers_) {
                 out_indices->emplace_back(inliers);
 
                 ModelMessage model;
@@ -176,7 +176,7 @@ void SacFit::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
         pcl::ModelCoefficients::Ptr model_coefficients(new pcl::ModelCoefficients);
         pcl::PointIndices inliers;
         segmenter->segment(inliers, *model_coefficients);
-        if(inliers.indices.size() > min_inliers_) {
+        if((int) inliers.indices.size() > min_inliers_) {
             out_indices->emplace_back(inliers);
 
             ModelMessage model;
