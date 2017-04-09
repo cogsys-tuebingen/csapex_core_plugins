@@ -383,7 +383,7 @@ void CloudLabelerAdapter::labelPoint()
     if(!node_facade) {
         return;
     }
-    auto node = node_facade->getNodeHandle()->getNode().lock();
+    auto node = wrapped_.lock();
     if(!node) {
         return;
     }
@@ -410,7 +410,7 @@ void CloudLabelerAdapter::labelArea()
     if(!node_facade) {
         return;
     }
-    auto node = node_facade->getNodeHandle()->getNode().lock();
+    auto node = wrapped_.lock();
     if(!node) {
         return;
     }
@@ -685,7 +685,7 @@ void CloudLabelerAdapter::refresh()
     if(!node_facade) {
         return;
     }
-    auto node = node_facade->getNodeHandle()->getNode().lock();
+    auto node = wrapped_.lock();
     if(!node) {
         return;
     }
@@ -899,7 +899,7 @@ void CloudLabelerAdapter::updateLabel(int label)
 {
     NodeFacadePtr node_facade = node_.lock();
     if(node_facade) {
-        auto node = node_facade->getNodeHandle()->getNode().lock();
+        auto node = wrapped_.lock();
         if(node) {
             node->getParameter("label")->set(label);
         }

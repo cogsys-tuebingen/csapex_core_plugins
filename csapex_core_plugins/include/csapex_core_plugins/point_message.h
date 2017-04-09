@@ -6,18 +6,29 @@
 #include <csapex_core_plugins/csapex_core_lib_export.h>
 
 
+namespace YAML
+{
+template<typename T, typename S>
+struct as_if;
+}
+
 namespace csapex {
 namespace connection_types {
 
 struct CSAPEX_CORE_LIB_EXPORT PointMessage : public Message
 {
+    friend class YAML::as_if<PointMessage, void>;
+
 public:
     typedef std::shared_ptr<PointMessage> Ptr;
 
-    PointMessage(Message::Stamp stamp_micro_seconds = 0);
+    PointMessage(Message::Stamp stamp_micro_seconds);
 
     virtual TokenData::Ptr clone() const override;
     virtual TokenData::Ptr toType() const override;
+
+private:
+    PointMessage();
 
 public:
     float x;

@@ -69,8 +69,7 @@ void ScanLabelerAdapter::updateLabel(int label)
 {
     NodeFacadePtr node_facade = node_.lock();
     if(node_facade) {
-        auto node = node_facade->getNodeHandle()->getNode().lock();
-        if(node) {
+        if(auto node = wrapped_.lock()) {
             node->getParameter("label")->set(label);
         }
     }
@@ -281,19 +280,18 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 
     scene->update();
 
-    auto node = node_facade->getNodeHandle()->getNode().lock();
-    if(node && node->readParameter<bool>("automatic")) {
-        submit();
+    if(auto node = wrapped_.lock()) {
+        if(node->readParameter<bool>("automatic")) {
+            submit();
+        }
     }
 }
 
 void ScanLabelerAdapter::submit()
 {
-    auto node = wrapped_.lock();
-    if(!node) {
-        return;
+    if(auto node = wrapped_.lock()) {
+        node->setResult(result_);
     }
-    node->setResult(result_);
 }
 /// MOC
 #include "moc_scan_labeler_adapter.cpp"

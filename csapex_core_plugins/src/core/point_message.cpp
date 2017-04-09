@@ -13,6 +13,10 @@ PointMessage::PointMessage(Message::Stamp stamp)
     : Message(type<PointMessage>::name(), "/", stamp)
 {}
 
+PointMessage::PointMessage()
+    : Message(type<PointMessage>::name(), "/", 0)
+{}
+
 TokenData::Ptr PointMessage::clone() const
 {
     Ptr new_msg(new PointMessage(stamp_micro_seconds));
