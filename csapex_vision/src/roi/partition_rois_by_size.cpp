@@ -62,8 +62,6 @@ void PartitionROIsBySize::setupParameters(csapex::Parameterizable& parameters)
 
     static const std::map<std::string, int> available_methods = {
             { "none", static_cast<int>(Method::NONE) },
-            { "any dimension", static_cast<int>(Method::ANY_DIMENSION) },
-            { "all dimensions", static_cast<int>(Method::ALL_DIMENSIONS) },
             { "area", static_cast<int>(Method::AREA) },
             { "width", static_cast<int>(Method::WIDTH) },
             { "height", static_cast<int>(Method::HEIGHT) },
@@ -72,6 +70,16 @@ void PartitionROIsBySize::setupParameters(csapex::Parameterizable& parameters)
                                                                                         static_cast<int>(Method::AREA));
     parameters.addParameter(method_parameter,
                             reinterpret_cast<int&>(method_));
+
+    static const std::map<std::string, int> available_relative_to = {
+            { "lower", static_cast<int>(RelativeTo::LOWER), },
+            { "upper", static_cast<int>(RelativeTo::UPPER), },
+            { "center", static_cast<int>(RelativeTo::CENTER), },
+    };
+    parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("relative_to", available_relative_to,
+                                                                                    static_cast<int>(RelativeTo::LOWER)),
+                                       [this]() { return method_ != Method::NONE; },
+                                       reinterpret_cast<int&>(relative_to_));
 
     parameters.addConditionalParameter(param::ParameterFactory::declareRange("default_scale", 1, 64, 1, 1),
                                        [this]() { return method_ == Method::NONE; },
@@ -105,65 +113,64 @@ std::size_t PartitionROIsBySize::selectScale(const Roi& roi) const
     if (method_ == Method::NONE)
         return default_scale_ - 1;
 
-    using Size = std::pair<int, int>;
-    std::vector<Size> sizes;
-    std::transform(scales_.begin(), scales_.end(),
-                   std::back_inserter(sizes),
-                   [](const ScaleInfo& info) { return info.getSize(); });
-
-    std::sort(sizes.begin(), sizes.end(),
-              [this](const Size& a, const Size& b) -> bool
-              {
-                  switch (method_)
-                  {
-                      default:
-                      case Method::AREA:
-                      case Method::ANY_DIMENSION:
-                      case Method::ALL_DIMENSIONS:
-                          return a.first * a.second > b.first * b.second;
-                      case Method::WIDTH:
-                          return a.first > b.first;
-                      case Method::HEIGHT:
-                          return a.second > b.second;
-                  }
-              });
-
-    for (std::size_t i = 1; i < num_scales_; ++i)
+    const auto get_value = [this](int width, int height)
     {
-        const auto& upper = sizes[i - 1];
-        const auto& lower = sizes[i];
-
-        double width = (upper.first + lower.second) / 2.0;
-        double height = (upper.second + lower.second) / 2.0;
-
         switch (method_)
         {
-            case Method::ANY_DIMENSION:
-                if (roi.w() > width || roi.h() > height)
-                    return i - 1;
-                break;
-            case Method::ALL_DIMENSIONS:
-                if (roi.w() > width && roi.h() > height)
-                    return i - 1;
-                break;
             case Method::AREA:
-                if (roi.w() * roi.h() > width * height)
-                    return i - 1;
-                break;
+                return width * height;
             case Method::WIDTH:
-                if (roi.w() > width)
-                    return i - 1;
-                break;
+                return width;
             case Method::HEIGHT:
-                if (roi.h() > height)
-                    return i - 1;
-                break;
+                return height;
             default:
-                throw std::runtime_error("Unsupported method");
+                throw std::runtime_error("Unknown method");
         }
-    }
+    };
 
-    return num_scales_ - 1;
+    std::map<float, std::size_t> breaks;
+    std::transform(scales_.begin(), scales_.end(),
+                   std::inserter(breaks, breaks.begin()),
+                   [this, &get_value](const ScaleInfo& info)
+                   {
+                       auto size = info.getSize();
+                       float value = get_value(size.first, size.second);
+
+                       return std::make_pair(value, info.getIndex());
+                   });
+
+    float value = get_value(roi.w(), roi.h());
+
+    using Iter = std::map<float, std::size_t>::const_iterator;
+    Iter lower;
+    Iter upper;
+    std::tie(lower, upper) = breaks.equal_range(value);
+
+    if (lower == breaks.begin())    // first element is >= -> select smallest scale
+        return breaks.begin()->second;
+    if (upper == breaks.end())      // no element is > -> select biggest scale
+        return breaks.rbegin()->second;
+
+    lower = std::prev(lower);       // first element <
+    // upper                        // first element >
+
+    switch (relative_to_)
+    {
+        case RelativeTo::LOWER:
+            return lower->second;
+        case RelativeTo::UPPER:
+            return upper->second;
+        case RelativeTo::CENTER:
+        {
+            const float center = (lower->first + lower->second) / 2.f;
+            if (value >= center)
+                return upper->second;
+            else
+                return lower->second;
+        }
+        default:
+            throw std::runtime_error("Unknown relative_to");
+    }
 }
 
 void PartitionROIsBySize::updatedScales()

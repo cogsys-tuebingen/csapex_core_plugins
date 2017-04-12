@@ -15,6 +15,7 @@ private:
         void create(csapex::Node* node, csapex::NodeModifier& node_modifier, std::size_t index);
         void destroy(csapex::Node* node, csapex::NodeModifier& node_modifier);
 
+        std::size_t getIndex() const { return index_; }
         Output* getOutput() { return output_; }
         std::pair<int, int> getSize() const { return std::make_pair(param_width_->as<int>(), param_height_->as<int>()); };
 
@@ -25,7 +26,8 @@ private:
         param::ParameterPtr param_height_;
     };
 
-    enum class Method { NONE, ANY_DIMENSION, ALL_DIMENSIONS, AREA, WIDTH, HEIGHT };
+    enum class Method { NONE, AREA, WIDTH, HEIGHT };
+    enum class RelativeTo { LOWER, UPPER, CENTER };
 
 public:
 
@@ -46,6 +48,7 @@ private:
     std::size_t num_scales_;
     std::vector<ScaleInfo> scales_;
     Method method_;
+    RelativeTo relative_to_;
     int default_scale_;
 };
 
