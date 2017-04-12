@@ -301,6 +301,10 @@
     <description>Partition ROIs by their size.</description>
     <tags>Vision, ROI</tags>
   </class>
+  <class type="csapex::vision::ROISizeStatistics" base_class_type="csapex::Node">
+    <description>Collect statistics about ROI size</description>
+    <tags>Vision, ROI</tags>
+  </class>
   <class type="csapex::NumberGenerator" base_class_type="csapex::Node">
     <description>[DEBUG] Generates images containing numbers</description>
     <tags>Vision, Debug</tags>
