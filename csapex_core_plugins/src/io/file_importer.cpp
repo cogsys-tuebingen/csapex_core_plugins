@@ -174,7 +174,7 @@ bool FileImporter::canProcess() const
         }
         int current = readParameter<int>("directory/current");
         return (current < (int) dir_files_.size()) ||
-                ((current == dir_files_.size()) && !end_triggered_) ||
+                ((current == (int) dir_files_.size()) && !end_triggered_) ||
                 readParameter<bool>("directory/loop")  ||
                 readParameter<bool>("directory/latch");
     } else {
