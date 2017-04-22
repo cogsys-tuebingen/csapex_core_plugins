@@ -9,7 +9,7 @@
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
-#include <opencv2/core.hpp>
+#include <opencv2/opencv.hpp>
 #include <sstream>
 
 namespace csapex { namespace vision {
