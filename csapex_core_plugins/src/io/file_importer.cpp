@@ -185,7 +185,9 @@ bool FileImporter::canProcess() const
         }
 
         if(InputPtr i = node_handle_->getParameterInput("path").lock()) {
-            return i->isConnected() && msg::hasMessage(i.get());
+            if(i->isConnected()) {
+                return msg::hasMessage(i.get());
+            }
         }
 
         if(provider_) {
