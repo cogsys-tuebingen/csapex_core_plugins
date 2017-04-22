@@ -9,6 +9,7 @@
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
+#include <opencv2/core.hpp>
 #include <sstream>
 
 namespace csapex { namespace vision {
@@ -51,6 +52,7 @@ class ROISizeStatistics : public csapex::Node
     enum class BinType { HEIGHT, WIDTH, AREA };
 
 public:
+    ROISizeStatistics();
     void setupParameters(csapex::Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
     void process() override;
@@ -64,14 +66,17 @@ private:
 private:
     Input* in_rois_;
     Output* out_info_;
+    Output* out_histogram_;
 
     int max_width_;
     int max_height_;
+    int histogram_bin_size_;
     std::string output_path_;
     int bin_count_;
     BinType bin_type_;
 
     Statistics global_stats_;
+    cv::Mat global_histogram_;
     std::vector<Statistics> bin_stats_;
 };
 
