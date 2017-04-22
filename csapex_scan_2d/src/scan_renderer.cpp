@@ -22,9 +22,12 @@ CSAPEX_REGISTER_CLASS(csapex::ScanRenderer, csapex::Node)
 
 ScanRenderer::ScanRenderer()
 {
-    setTemporaryParameters(renderer.getParameters());
-
     renderer.useTimer(profiling_timer_);
+}
+
+void ScanRenderer::setupParameters(Parameterizable &params)
+{
+    setTemporaryParameters(renderer.getParameters());
 }
 
 void ScanRenderer::setup(NodeModifier& node_modifier)
