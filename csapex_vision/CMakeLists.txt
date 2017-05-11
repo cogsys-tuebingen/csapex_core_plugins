@@ -95,6 +95,8 @@ add_library(${PROJECT_NAME}_plugin_node
 
     src/grid_arranged_rois.cpp
 
+    src/depth_mask.cpp
+
     src/matrix_operations/row.cpp
     src/matrix_operations/col.cpp
     src/matrix_operations/minmax_loc.cpp

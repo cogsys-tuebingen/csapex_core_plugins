@@ -589,7 +589,10 @@
       <description></description>
       <tags>Vision</tags>
     </class>
-
+  <class type="csapex::vision::DepthMask" base_class_type="csapex::Node">
+    <description></description>
+    <tags>Vision</tags>
+  </class>
 </library>
 
 
