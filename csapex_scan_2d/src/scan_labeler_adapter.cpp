@@ -22,7 +22,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
 ScanLabelerAdapter::ScanLabelerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node)

@@ -17,7 +17,7 @@
 using namespace csapex;
 using namespace csapex::connection_types;
 
-CSAPEX_REGISTER_NODE_ADAPTER(CloudLabelerAdapter, csapex::CloudLabeler)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(CloudLabelerAdapter, csapex::CloudLabeler)
 
 CloudLabelerAdapter::CloudLabelerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<CloudLabeler> node)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, parent),

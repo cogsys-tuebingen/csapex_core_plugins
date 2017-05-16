@@ -20,7 +20,7 @@
 using namespace csapex;
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER_NS(csapex, LabelROIsAdapter, csapex::LabelROIs)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER_NS(csapex, LabelROIsAdapter, csapex::LabelROIs)
 
 namespace csapex {
     class QInteractiveRect : public QGraphicsRectItem {
