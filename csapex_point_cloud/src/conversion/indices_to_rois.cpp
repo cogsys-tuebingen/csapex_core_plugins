@@ -11,7 +11,7 @@
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex_point_cloud/msg/indices_message.h>
 #include <csapex_opencv/roi_message.h>
-
+#include <csapex/view/utility/color.hpp>
 using namespace csapex::connection_types;
 
 
@@ -29,6 +29,8 @@ public:
     {
         in_cloud_ = modifier.addInput<PointCloudMessage>("PointCloud");
         in_indices_ = modifier.addInput<GenericVectorMessage, pcl::PointIndices>("PointIndices");
+        in_classification_ = modifier.addOptionalInput<GenericVectorMessage, int>("Classification");
+        in_labels_ = modifier.addOptionalInput<GenericVectorMessage, std::string>("Labels");
 
         output_rois_ = modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
     }
@@ -49,9 +51,31 @@ public:
     {
         PointCloudMessage::ConstPtr cloud(msg::getMessage<PointCloudMessage>(in_cloud_));
 
+
         clusters_ = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(in_indices_);
 
+
+
+        if(msg::hasMessage(in_labels_)){
+            labels_ = msg::getMessage<GenericVectorMessage, std::string>(in_labels_);
+            apex_assert(labels_->size() == clusters_->size());
+        }
+
+        if(msg::hasMessage(in_classification_)){
+            classification_ = msg::getMessage<GenericVectorMessage, int>(in_classification_);
+            apex_assert(classification_->size() == clusters_->size());
+
+            for(auto val : *classification_){
+                if(colors_.find(val) == colors_.end()){
+                    double r = 0,g = 0,b = 0;
+                    color::fromCount(colors_.size(), r,g,b);
+                    colors_.insert(std::make_pair(val, cv::Scalar(b,g,r)));
+                }
+            }
+        }
+
         boost::apply_visitor (PointCloudMessage::Dispatch<PointIndicesToROIs>(this, cloud), cloud->value);
+
     }
 
 
@@ -75,10 +99,22 @@ public:
         const pcl::PointCloud<PointT>& cloud = *cloud_ptr;
         std::shared_ptr<std::vector<RoiMessage>> out(new std::vector<RoiMessage>);
 
+
         std::size_t w = cloud.width;
 //        std::size_t h = cloud.height;
 
         int cluster_id = 0;
+        std::vector<int>::const_iterator class_label;
+        std::vector<std::string>::const_iterator label;
+
+        if(classification_){
+            class_label = classification_->begin();
+        }
+
+        if(labels_){
+            label = labels_->begin();
+        }
+
         for (auto cluster = clusters_->begin(); cluster != clusters_->end (); ++cluster, ++cluster_id) {
             auto indices = cluster->indices;
 
@@ -116,13 +152,29 @@ public:
 
                 roi.value.setRect(rect);
                 roi.value.setColor(cv::Scalar::all(0));
-                roi.value.setClassification(0);
+                if(classification_){
+                    roi.value.setClassification(*class_label);
+                    roi.value.setColor(colors_[*class_label]);
+                    ++class_label;
+                }
+                else{
+                    roi.value.setClassification(0);
+                }
+                if(labels_){
+                    roi.value.setLabel(*label);
+                    ++label;
+                }
                 out->push_back(roi);
             }
 
         }
 
         msg::publish<GenericVectorMessage, RoiMessage>(output_rois_, out);
+
+
+        labels_.reset();
+        classification_.reset();
+
     }
 
     template <class PointT>
@@ -132,6 +184,15 @@ public:
         std::shared_ptr<std::vector<RoiMessage>> out(new std::vector<RoiMessage>);
 
         int cluster_id = 0;
+        std::vector<int>::const_iterator class_label;
+        std::vector<std::string>::const_iterator label;
+        if(classification_){
+            class_label = classification_->begin();
+        }
+
+        if(labels_){
+            label = labels_->begin();
+        }
         for (auto cluster = clusters_->begin(); cluster != clusters_->end (); ++cluster, ++cluster_id) {
             auto indices = cluster->indices;
             double min_x = std::numeric_limits<double>::infinity();
@@ -195,17 +256,34 @@ public:
 
             roi.value.setRect(rect);
             roi.value.setColor(cv::Scalar(0, 0, max_dist / 10.0 * 255));
-            roi.value.setClassification(0);
+            if(classification_){
+                roi.value.setClassification(*class_label);
+                roi.value.setColor(colors_[*class_label]);
+                ++class_label;
+            }
+            else{
+                roi.value.setClassification(0);
+            }
+            if(labels_){
+                roi.value.setLabel(*label);
+
+                ++label;
+            }
             out->push_back(roi);
         }
 
         msg::publish<GenericVectorMessage, RoiMessage>(output_rois_, out);
+
+        labels_.reset();
+        classification_.reset();
     }
 
 
 private:
     Input* in_cloud_;
     Input* in_indices_;
+    Input* in_labels_;
+    Input* in_classification_;
     Output* output_rois_;
 
     double fov_x_;
@@ -216,8 +294,14 @@ private:
     int h_;
 
     bool flip_rois_;
+//    bool use_labels_;
+//    bool use_classification_;
 
     std::shared_ptr<std::vector<pcl::PointIndices> const>  clusters_;
+    std::shared_ptr<std::vector<std::string> const> labels_;
+    std::shared_ptr<std::vector<int> const> classification_;
+    std::map<int, cv::Scalar> colors_;
+
 };
 
 }

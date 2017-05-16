@@ -95,6 +95,8 @@ add_library(${PROJECT_NAME}_plugin_node
 
     src/grid_arranged_rois.cpp
 
+    src/depth_mask.cpp
+
     src/matrix_operations/row.cpp
     src/matrix_operations/col.cpp
     src/matrix_operations/minmax_loc.cpp
@@ -147,6 +149,8 @@ add_library(${PROJECT_NAME}_plugin_node
     src/roi/filter_rois_by_classification.cpp
     src/roi/partition_rois_by_size.cpp
     src/roi/partition_rois_by_size.hpp
+    src/roi/roi_size_statistics.cpp
+    src/roi/roi_size_statistics.hpp
 
     src/combine/generic_image_combiner.cpp
     src/combine/set_operation.cpp
