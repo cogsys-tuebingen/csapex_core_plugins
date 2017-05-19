@@ -28,12 +28,17 @@ private:
 
     double          percentage_of_overlap_;
 
-    csapex::Input               *in_prediction_;
-    csapex::Input               *in_groundtruth_;
-    csapex::Output              *out_confusion_;
-    csapex::Slot                *slot_save_;
-    csapex::Slot                *slot_reset_;
-    csapex::ConfusionMatrix      confusion_;
+    Input*  in_prediction_;
+    Input*  in_groundtruth_;
+    Output* out_confusion_;
+    Output* out_tp_;
+    Output* out_fp_;
+    Output* out_tn_;
+    Output* out_fn_;
+
+    Slot                *slot_save_;
+    Slot                *slot_reset_;
+    ConfusionMatrix      confusion_;
     std::array<std::size_t, 2>   human_parts_found_;
     std::size_t                  frame_count_;
 

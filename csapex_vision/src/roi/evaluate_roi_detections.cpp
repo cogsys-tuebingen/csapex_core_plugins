@@ -25,6 +25,10 @@ void EvaluateROIDetections::setup(NodeModifier &node_modifier)
     in_prediction_  = node_modifier.addInput<GenericVectorMessage, RoiMessage>("prediction");
     in_groundtruth_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("groundtruth");
     out_confusion_ = node_modifier.addOutput<ConfusionMatrixMessage>("confusion");
+    out_tp_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("true positive");
+    out_fp_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("false positive");
+    out_tn_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("true negative");
+    out_fn_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("false negative");
 }
 
 void EvaluateROIDetections::setupParameters(Parameterizable &parameters)
@@ -67,6 +71,16 @@ using RoiMessagesConstPtr = std::shared_ptr<std::vector<RoiMessage> const>;
 
 namespace impl {
 
+struct DebugRois
+{
+    using RoiMessagesPtr = std::shared_ptr<std::vector<RoiMessage>>;
+
+    RoiMessagesPtr tp = std::make_shared<std::vector<RoiMessage>>();
+    RoiMessagesPtr fp = std::make_shared<std::vector<RoiMessage>>();
+    RoiMessagesPtr tn = std::make_shared<std::vector<RoiMessage>>();
+    RoiMessagesPtr fn = std::make_shared<std::vector<RoiMessage>>();
+};
+
 inline double overlap_max(const cv::Rect &prediction,
                           const cv::Rect &groundtruth)
 {
@@ -84,7 +98,8 @@ inline void evaluateIgnoringPartlyVisible(const RoiMessagesConstPtr &groundtruth
                                           const double min_overlap,
                                           ConfusionMatrix &confury,
                                           std::array<std::size_t, 2> &human_parts,
-                                          std::function<double(const cv::Rect&, const cv::Rect&)> overlap_fn)
+                                          std::function<double(const cv::Rect&, const cv::Rect&)> overlap_fn,
+                                          DebugRois& debug)
 {
     /// step 1 : remove all partly visible entries
     const std::size_t size_groundtruth = groundtruth->size();
@@ -154,11 +169,29 @@ inline void evaluateIgnoringPartlyVisible(const RoiMessagesConstPtr &groundtruth
         if(max_overlap > min_overlap) {
             const RoiMessage &roi_pred = predition->at(max_idx);
             confury.reportClassification(roi_gt.value.classification(), roi_pred.value.classification());
+            if (roi_gt.value.classification() == EvaluateROIDetections::BACKGROUND)
+            {
+                if (roi_pred.value.classification() == EvaluateROIDetections::BACKGROUND)
+                    debug.tn->push_back(roi_pred);
+                else
+                    debug.fp->push_back(roi_pred);
+            }
+            else
+            {
+                if (roi_pred.value.classification() == EvaluateROIDetections::BACKGROUND)
+                    debug.fn->push_back(roi_pred);
+                else
+                    debug.tp->push_back(roi_pred);
+            }
             /// roi has been assigned, so we have to erase it from the mask
             predictions_mask[max_idx] = 0;
         } else {
             /// roi was not found at all
             confury.reportClassification(roi_gt.value.classification(), EvaluateROIDetections::BACKGROUND);
+            if (roi_gt.value.classification() == EvaluateROIDetections::BACKGROUND)
+                debug.tn->push_back(roi_gt);
+            else
+                debug.fn->push_back(roi_gt);
         }
     }
 
@@ -171,6 +204,10 @@ inline void evaluateIgnoringPartlyVisible(const RoiMessagesConstPtr &groundtruth
         /// human or not
         const RoiMessage &roi_pred = predition->at(i);
         confury.reportClassification(EvaluateROIDetections::BACKGROUND, roi_pred.value.classification());
+        if (roi_pred.value.classification() == EvaluateROIDetections::BACKGROUND)
+            debug.tn->push_back(roi_pred);
+        else
+            debug.fp->push_back(roi_pred);
     }
 }
 
@@ -178,7 +215,8 @@ inline void evaluteIntegratingPartlyVisible(const RoiMessagesConstPtr &groundtru
                                             const RoiMessagesConstPtr &prediction,
                                             const double min_overlap,
                                             ConfusionMatrix &confury,
-                                            std::function<double(const cv::Rect&, const cv::Rect&)> overlap_fn)
+                                            std::function<double(const cv::Rect&, const cv::Rect&)> overlap_fn,
+                                            DebugRois& debug)
 {
     /// step 1 : find out which groundtruth rios were found
     const std::size_t size_groundtruth = groundtruth->size();
@@ -208,13 +246,16 @@ inline void evaluteIntegratingPartlyVisible(const RoiMessagesConstPtr &groundtru
                 /// we found a match, now the detection has to match
                 if(roi_pred.value.classification() == EvaluateROIDetections::HUMAN) {
                     confury.reportClassification(1,1);
+                    debug.tp->push_back(roi_pred);
                 } else {
                     confury.reportClassification(1,0);
+                    debug.fn->push_back(roi_pred);
                 }
             } else {
                 /// we can find a match but it has not to be valid, if so good, otherwise doesn't matter
                 if(roi_pred.value.classification() == EvaluateROIDetections::HUMAN) {
                     confury.reportClassification(1,1);
+                    debug.tp->push_back(roi_pred);
                 }
             }
             predictions_mask[max_idx] = 0;
@@ -222,6 +263,7 @@ inline void evaluteIntegratingPartlyVisible(const RoiMessagesConstPtr &groundtru
             /// we did not find a match, if it should be detected, this is bad
             if(roi_gt.value.classification() == EvaluateROIDetections::HUMAN) {
                 confury.reportClassification(1,0);
+                debug.fn->push_back(roi_gt);
             }
         }
     }
@@ -236,8 +278,10 @@ inline void evaluteIntegratingPartlyVisible(const RoiMessagesConstPtr &groundtru
         const RoiMessage &roi_pred = prediction->at(i);
         if(roi_pred.value.classification() == EvaluateROIDetections::BACKGROUND) {
             confury.reportClassification(0, 0);
+            debug.tn->push_back(roi_pred);
         } else {
             confury.reportClassification(0, 1);
+            debug.fp->push_back(roi_pred);
         }
     }
 }
@@ -250,6 +294,8 @@ void EvaluateROIDetections::process()
             msg::getMessage<GenericVectorMessage, RoiMessage>(in_prediction_);
     RoiMessagesConstPtr in_groundtruth =
             msg::getMessage<GenericVectorMessage, RoiMessage>(in_groundtruth_);
+
+    impl::DebugRois out_rois;
 
     /// every recieved message equals to one processed frame/image, so just increment the count
     frame_count_ += 1;
@@ -272,14 +318,16 @@ void EvaluateROIDetections::process()
                                             percentage_of_overlap_,
                                             confusion_,
                                             human_parts_found_,
-                                            overlap_fn);
+                                            overlap_fn,
+                                            out_rois);
         break;
     case INTEGRATE_PARTLY_VISIBLE:
         impl::evaluteIntegratingPartlyVisible(in_groundtruth,
                                               in_prediction,
                                               percentage_of_overlap_,
                                               confusion_,
-                                              overlap_fn);
+                                              overlap_fn,
+                                              out_rois);
         break;
     default:
         throw std::runtime_error("Unknown mode type!");
@@ -288,6 +336,11 @@ void EvaluateROIDetections::process()
     ConfusionMatrixMessage::Ptr confusion(new ConfusionMatrixMessage);
     confusion->confusion = confusion_;
     msg::publish(out_confusion_, confusion);
+
+    msg::publish(out_tp_, out_rois.tp);
+    msg::publish(out_fp_, out_rois.fp);
+    msg::publish(out_tn_, out_rois.tn);
+    msg::publish(out_fn_, out_rois.fn);
 }
 
 void EvaluateROIDetections::save() const
