@@ -9,7 +9,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ScatterPlotAdapter, csapex::ScatterPlot)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ScatterPlotAdapter, csapex::ScatterPlot)
 
 
 ScatterPlotAdapter::ScatterPlotAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ScatterPlot> node)

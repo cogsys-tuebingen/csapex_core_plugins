@@ -9,7 +9,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(TimePlotAdapter, csapex::TimePlot)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(TimePlotAdapter, csapex::TimePlot)
 
 
 TimePlotAdapter::TimePlotAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<TimePlot> node)

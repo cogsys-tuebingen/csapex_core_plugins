@@ -65,7 +65,7 @@ inline CSAPEX_OPENCV_EXPORT std::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage
 }
 
 template <>
-struct CSAPEX_OPENCV_EXPORT MessageContainer<cv::Mat>
+struct CSAPEX_OPENCV_EXPORT MessageContainer<cv::Mat, false>
 {
     typedef CvMatMessage type;
 

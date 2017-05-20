@@ -11,7 +11,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
 
 TextDisplayAdapter::TextDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node)

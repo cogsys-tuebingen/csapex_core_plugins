@@ -17,7 +17,7 @@
 using namespace csapex;
 using namespace csapex::connection_types;
 
-CSAPEX_REGISTER_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
 
 CloudRendererAdapter::CloudRendererAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<CloudRenderer> node)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, parent),
