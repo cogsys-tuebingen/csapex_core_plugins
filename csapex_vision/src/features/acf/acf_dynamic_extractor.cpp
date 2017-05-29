@@ -56,7 +56,8 @@ void ACFDynamicExtractor::setupParameters(Parameterizable &parameters)
             {"LBP", cslibs_vision::ACFDynamic::Parameters::LBP},
             {"LTP", cslibs_vision::ACFDynamic::Parameters::LTP},
             {"WLD", cslibs_vision::ACFDynamic::Parameters::WLD},
-            {"HOMOGENITY", cslibs_vision::ACFDynamic::Parameters::HOMOGENITY}
+            {"HOMOGENITY", cslibs_vision::ACFDynamic::Parameters::HOMOGENITY},
+            {"RAW", cslibs_vision::ACFDynamic::Parameters::RAW},
     };
     static const int channel_default = cslibs_vision::ACFDynamic::Parameters::MAGNITUDE
                                        | cslibs_vision::ACFDynamic::Parameters::HOG
