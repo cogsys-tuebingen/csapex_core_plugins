@@ -21,7 +21,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(PolygonScanFilterAdapter, csapex::PolygonScanFilter)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(PolygonScanFilterAdapter, csapex::PolygonScanFilter)
 
 
 PolygonScanFilterAdapter::PolygonScanFilterAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node)

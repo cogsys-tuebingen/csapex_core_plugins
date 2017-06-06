@@ -18,7 +18,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
 OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node)

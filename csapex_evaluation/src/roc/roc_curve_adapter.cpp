@@ -16,7 +16,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ROCCurveAdapter, csapex::ROCCurve)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ROCCurveAdapter, csapex::ROCCurve)
 
 
 ROCCurveAdapter::ROCCurveAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ROCCurve> node)
