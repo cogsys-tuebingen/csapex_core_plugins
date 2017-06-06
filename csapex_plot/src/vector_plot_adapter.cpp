@@ -9,7 +9,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(VectorPlotAdapter, csapex::VectorPlot)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(VectorPlotAdapter, csapex::VectorPlot)
 
 
 VectorPlotAdapter::VectorPlotAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<VectorPlot> node)

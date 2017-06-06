@@ -13,7 +13,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(EvaluateBinaryClassifierAdapter, csapex::EvaluateBinaryClassifier)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(EvaluateBinaryClassifierAdapter, csapex::EvaluateBinaryClassifier)
 
 EvaluateBinaryClassifierTableModel::EvaluateBinaryClassifierTableModel() :
     rows(0)

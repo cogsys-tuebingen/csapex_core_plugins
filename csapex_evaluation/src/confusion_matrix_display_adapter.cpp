@@ -15,7 +15,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ConfusionMatrixDisplayAdapter, csapex::ConfusionMatrixDisplay)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ConfusionMatrixDisplayAdapter, csapex::ConfusionMatrixDisplay)
 
 ConfusionMatrixTableModel::ConfusionMatrixTableModel()
     : dim(0)

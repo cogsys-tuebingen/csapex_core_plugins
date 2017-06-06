@@ -13,7 +13,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ConfidenceMatrixDisplayAdapter, csapex::ConfidenceMatrixDisplay)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ConfidenceMatrixDisplayAdapter, csapex::ConfidenceMatrixDisplay)
 
 ConfidenceMatrixTableModel::ConfidenceMatrixTableModel()
     : dim(0)
