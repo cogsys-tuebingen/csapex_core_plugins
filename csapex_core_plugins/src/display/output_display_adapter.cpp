@@ -7,6 +7,7 @@
 #include <csapex/utility/assert.h>
 #include <csapex/model/node.h>
 #include <csapex/model/node_state.h>
+#include <csapex/model/node_facade_remote.h>
 
 /// SYSTEM
 #include <QPainter>
@@ -33,7 +34,7 @@ OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeWeakPtr node, NodeBox* pare
 
         n->setAdapted();
 
-    } else {
+    } else if(auto remote = std::dynamic_pointer_cast<NodeFacadeRemote>(node.lock())) {
 //        TODO: remote!
     }
 
