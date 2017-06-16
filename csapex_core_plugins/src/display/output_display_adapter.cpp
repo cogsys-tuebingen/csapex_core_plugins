@@ -19,7 +19,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
+CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
 OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeWeakPtr node, NodeBox* parent)
@@ -34,8 +34,8 @@ OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeWeakPtr node, NodeBox* pare
 
         n->setAdapted();
 
-    } else if(auto remote = std::dynamic_pointer_cast<NodeFacadeRemote>(node.lock())) {
-//        TODO: remote!
+//    } else if(auto remote = std::dynamic_pointer_cast<NodeFacadeRemote>(node.lock())) {
+////        TODO: remote!
     }
 
 }
