@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package>
+  <name>csapex_windows</name>
+  <version>0.0.1</version>
+  <description>This package contains (experimental) windows support classes</description>
+
+  <maintainer email="sebastian.buck@uni-tuebingen.de">buck</maintainer>
+
+  <license>BSD</license>
+  <author email="sebastian.buck@uni-tuebingen.de">buck</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

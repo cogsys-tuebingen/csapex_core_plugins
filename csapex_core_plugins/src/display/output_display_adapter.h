@@ -21,7 +21,7 @@ class OutputDisplayAdapter : public QObject, public ResizableNodeAdapter
     Q_OBJECT
 
 public:
-    OutputDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node);
+    OutputDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent);
     ~OutputDisplayAdapter();
 
 
