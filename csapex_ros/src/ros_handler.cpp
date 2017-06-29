@@ -89,7 +89,12 @@ void ROSHandler::init()
         //if(!ros::isInitialized()) {
             std::vector<std::string> additional_args;
             if(settings_.knows("additional_args")) {
-                additional_args = settings_.get< std::vector<std::string> >("additional_args");
+                try {
+                    additional_args = settings_.get< std::vector<std::string> >("additional_args");
+                } catch(const std::exception& e) {
+                    // ignore loading invalid additional args
+                    // hack: without this, empty vectors are not correctly handled...
+                }
             }
             additional_args.insert(additional_args.begin(), settings_.get< std::string >("path_to_bin"));
 

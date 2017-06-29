@@ -10,6 +10,7 @@
 #include <csapex/msg/input.h>
 #include <csapex/msg/message.h>
 #include <csapex_ros/ros_message_conversion.h>
+#include <csapex/model/node_handle.h>
 
 /// SYSTEM
 #include <rosbag/bag.h>
@@ -21,6 +22,7 @@ class CSAPEX_EXPORT_PLUGIN BagWriter : public Node, public VariadicInputs, publi
 {
 public:
     BagWriter()
+        : is_open_(false)
     {}
 
     ~BagWriter()
@@ -31,10 +33,6 @@ public:
     void setup(csapex::NodeModifier& node_modifier)
     {
         setupVariadic(node_modifier);
-
-        node_modifier.addSlot("save", [this](){
-            bag.close();
-        });
     }
 
     void setupVariadicParameters(Parameterizable &parameters)
@@ -49,19 +47,28 @@ public:
 
         parameters.addParameter(param::ParameterFactory::declareFileOutputPath("file", "/tmp/bag.bag", "*.bag"), [this](param::Parameter* p) {
             bag.open(p->as<std::string>(), rosbag::bagmode::Write);
+            is_open_ = true;
         });
 
         parameters.addParameter(param::ParameterFactory::declareTrigger("reset"), [this](param::Parameter* p) {
-            bag.close();
+            stop();
             bag.open(readParameter<std::string>("file"), rosbag::bagmode::Write);
+            is_open_ = true;
         });
 
-        parameters.addParameter(param::ParameterFactory::declareTrigger("close"), [this](param::Parameter* p) {
+        parameters.addParameter(param::ParameterFactory::declareTrigger("save and close"), [this](param::Parameter* p) {
             stop();
         });
     }
     void process()
     {
+        if(!is_open_) {
+            node_handle_->setWarning("bag file is closed, cannot write");
+            return;
+        } else {
+            node_handle_->setNoError();
+        }
+
         std::vector<InputPtr> inputs = node_modifier_->getMessageInputs();
         for(std::size_t i = 0 ; i < inputs.size() ; i++) {
             Input *in = inputs[i].get();
@@ -76,6 +83,7 @@ public:
     void stop()
     {
         bag.close();
+        is_open_ = false;
     }
 
     virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override
@@ -125,6 +133,7 @@ private:
     Output* output;
 
     rosbag::Bag bag;
+    bool is_open_;
 };
 
 }

@@ -91,11 +91,13 @@ void RosMessageConversion::write(rosbag::Bag& bag, const connection_types::Messa
 {
     auto gen_ros = std::dynamic_pointer_cast<connection_types::GenericRosMessage const>(message);
     if(gen_ros) {
+        ros::Time time;
         if(message->stamp_micro_seconds > 0) {
-            ros::Time time;
             time.fromNSec(message->stamp_micro_seconds * 1e3);
-            bag.write(topic, time, *gen_ros->value);
+        } else {
+            time = ros::Time::now();
         }
+        bag.write(topic, time, *gen_ros->value);
     } else {
         auto it = converters_inv_.find(message->descriptiveName());
         if(it == converters_inv_.end()) {
