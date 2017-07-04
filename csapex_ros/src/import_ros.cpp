@@ -298,14 +298,6 @@ void ImportRos::processSource()
 
     apex_assert(!msg::isConnected(input_time_));
 
-    // NO INPUT CONNECTED -> ONLY KEEP CURRENT MESSAGE
-    {
-        INTERLUDE("pop");
-        while(msgs_.size() > 1) {
-            msgs_.pop_front();
-        }
-    }
-
     apex_assert(!msgs_.empty());
     publishLatestMessage();
 
@@ -347,10 +339,10 @@ void ImportRos::publishLatestMessage()
         }
     }
 
-    msg::publish(connector_, msgs_.back());
+    msg::publish(connector_, msgs_.front());
 
-    if(!readParameter<bool>("latch")) {
-        msgs_.clear();
+    if(msgs_.size() > 1 || !readParameter<bool>("latch")) {
+        msgs_.pop_front();
     }
 }
 
@@ -365,16 +357,11 @@ void ImportRos::callback(TokenDataConstPtr message)
             msgs_.clear();
         }
 
-        if(!msg::isConnected(input_time_)) {
-            msgs_.clear();
-        }
-
         msgs_.push_back(msg);
 
         while((int) msgs_.size() > buffer_size_) {
             msgs_.pop_front();
         }
-
         yield();
     }
 }
