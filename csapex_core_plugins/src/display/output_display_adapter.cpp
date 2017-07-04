@@ -7,6 +7,7 @@
 #include <csapex/utility/assert.h>
 #include <csapex/model/node.h>
 #include <csapex/model/node_state.h>
+#include <csapex/model/node_facade_remote.h>
 
 /// SYSTEM
 #include <QPainter>
@@ -18,19 +19,25 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
+CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> node)
-    : ResizableNodeAdapter(worker, parent), wrapped_(node)
+OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeWeakPtr node, NodeBox* parent)
+    : ResizableNodeAdapter(node, parent)
 {
+    if(auto local = std::dynamic_pointer_cast<NodeFacadeLocal>(node.lock())) {
+        wrapped_ = std::dynamic_pointer_cast<OutputDisplay>(local->getNode());
 
-    auto n = wrapped_.lock();
+        auto n = wrapped_.lock();
+        // translate to UI thread via Qt signal
+        trackConnection(n->display_request.connect(std::bind(&OutputDisplayAdapter::displayRequest, this, std::placeholders::_1)));
 
-    // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&OutputDisplayAdapter::displayRequest, this, std::placeholders::_1)));
+        n->setAdapted();
 
-    n->setAdapted();
+//    } else if(auto remote = std::dynamic_pointer_cast<NodeFacadeRemote>(node.lock())) {
+////        TODO: remote!
+    }
+
 }
 
 OutputDisplayAdapter::~OutputDisplayAdapter()

@@ -94,16 +94,24 @@ void FileImporter::setupParameters(Parameterizable& parameters)
         }
     });
 
-    parameters.addHiddenParameter(param::ParameterFactory::declareValue("output_count", 0));
+    parameters.addHiddenParameter(param::ParameterFactory::declareValue("output_count", 0),
+                                  [this](param::Parameter* p) {
+        createDummyOutputs(*node_modifier_);
+    });
 
     changeMode();
 }
 
-void FileImporter::setup(NodeModifier& node_modifier)
+void FileImporter::createDummyOutputs(NodeModifier& node_modifier)
 {
     for(int i = 0, n = readParameter<int>("output_count"); i < n; ++i) {
         outputs_.push_back(node_modifier.addOutput<connection_types::AnyMessage>("Unknown"));
     }
+}
+
+void FileImporter::setup(NodeModifier& node_modifier)
+{
+    createDummyOutputs(node_modifier);
 
     begin_ = node_modifier.addEvent("begin");
     end_ = node_modifier.addEvent("end");

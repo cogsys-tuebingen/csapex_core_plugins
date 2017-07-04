@@ -52,6 +52,8 @@ private:
     void advanceDirectory();
     void createProviderForNextFile();
 
+    void createDummyOutputs(NodeModifier& node_modifier);
+
 private:
     MessageProvider::Ptr provider_;
 
