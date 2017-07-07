@@ -17,9 +17,9 @@
 using namespace csapex;
 using namespace csapex::connection_types;
 
-CSAPEX_REGISTER_NODE_ADAPTER(CloudLabelerAdapter, csapex::CloudLabeler)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(CloudLabelerAdapter, csapex::CloudLabeler)
 
-CloudLabelerAdapter::CloudLabelerAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<CloudLabeler> node)
+CloudLabelerAdapter::CloudLabelerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<CloudLabeler> node)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, parent),
       wrapped_(node), view_(nullptr), pixmap_(nullptr), fbo_(nullptr), drag_(false), repaint_(true),
       fov_v_(45.0f), near_(0.01f), far_(300.0f),
@@ -379,11 +379,11 @@ void CloudLabelerAdapter::drawSphere(double radius, int lats, int longs) {
 
 void CloudLabelerAdapter::labelPoint()
 {
-    NodeHandlePtr node_handle = node_.lock();
-    if(!node_handle) {
+    NodeFacadePtr node_facade = node_.lock();
+    if(!node_facade) {
         return;
     }
-    auto node = node_handle->getNode().lock();
+    auto node = wrapped_.lock();
     if(!node) {
         return;
     }
@@ -406,12 +406,11 @@ void CloudLabelerAdapter::labelPoint()
 
 void CloudLabelerAdapter::labelArea()
 {
-
-    NodeHandlePtr node_handle = node_.lock();
-    if(!node_handle) {
+    NodeFacadePtr node_facade = node_.lock();
+    if(!node_facade) {
         return;
     }
-    auto node = node_handle->getNode().lock();
+    auto node = wrapped_.lock();
     if(!node) {
         return;
     }
@@ -682,11 +681,11 @@ void CloudLabelerAdapter::display()
 
 void CloudLabelerAdapter::refresh()
 {
-    NodeHandlePtr node_handle = node_.lock();
-    if(!node_handle) {
+    NodeFacadePtr node_facade = node_.lock();
+    if(!node_facade) {
         return;
     }
-    auto node = node_handle->getNode().lock();
+    auto node = wrapped_.lock();
     if(!node) {
         return;
     }
@@ -898,9 +897,9 @@ void CloudLabelerAdapter::setPhi(double angle)
 }
 void CloudLabelerAdapter::updateLabel(int label)
 {
-    NodeHandlePtr node_handle = node_.lock();
-    if(node_handle) {
-        auto node = node_handle->getNode().lock();
+    NodeFacadePtr node_facade = node_.lock();
+    if(node_facade) {
+        auto node = wrapped_.lock();
         if(node) {
             node->getParameter("label")->set(label);
         }

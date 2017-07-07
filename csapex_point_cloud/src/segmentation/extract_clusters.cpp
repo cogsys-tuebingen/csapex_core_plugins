@@ -13,7 +13,6 @@
 #include <csapex/view/utility/color.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
-#include <csapex/view/utility/color.hpp>
 
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>

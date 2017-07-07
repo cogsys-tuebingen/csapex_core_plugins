@@ -19,9 +19,9 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
-ImageRoiAdapter::ImageRoiAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node)
+ImageRoiAdapter::ImageRoiAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       pixmap_(nullptr),

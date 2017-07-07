@@ -7,6 +7,7 @@
 #include <csapex/view/utility/QtCvImageConverter.h>
 #include <csapex/view/utility/color.hpp>
 #include <csapex/utility/assert.h>
+#include <csapex/model/node_facade.h>
 
 /// SYSTEM
 #include <QPainter>
@@ -21,10 +22,10 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
-ScanLabelerAdapter::ScanLabelerAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node)
+ScanLabelerAdapter::ScanLabelerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
@@ -66,10 +67,9 @@ void ScanLabelerAdapter::labelSelected(int label)
 
 void ScanLabelerAdapter::updateLabel(int label)
 {
-    NodeHandlePtr node_handle = node_.lock();
-    if(node_handle) {
-        auto node = node_handle->getNode().lock();
-        if(node) {
+    NodeFacadePtr node_facade = node_.lock();
+    if(node_facade) {
+        if(auto node = wrapped_.lock()) {
             node->getParameter("label")->set(label);
         }
     }
@@ -244,8 +244,8 @@ void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
 
 void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 {
-    NodeHandlePtr node_worker = node_.lock();
-    if(!node_worker) {
+    NodeFacadePtr node_facade = node_.lock();
+    if(!node_facade) {
         return;
     }
 
@@ -280,19 +280,18 @@ void ScanLabelerAdapter::display(const lib_laser_processing::Scan *scan)
 
     scene->update();
 
-    auto node = node_worker->getNode().lock();
-    if(node && node->readParameter<bool>("automatic")) {
-        submit();
+    if(auto node = wrapped_.lock()) {
+        if(node->readParameter<bool>("automatic")) {
+            submit();
+        }
     }
 }
 
 void ScanLabelerAdapter::submit()
 {
-    auto node = wrapped_.lock();
-    if(!node) {
-        return;
+    if(auto node = wrapped_.lock()) {
+        node->setResult(result_);
     }
-    node->setResult(result_);
 }
 /// MOC
 #include "moc_scan_labeler_adapter.cpp"

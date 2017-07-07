@@ -68,7 +68,7 @@ class RosIoHandler : public DragIOHandler
                     QPoint pos = e->pos();
 
                     GraphFacade* gf = view->getGraphFacade();
-                    Graph* graph = gf->getGraph();
+                    GraphPtr graph = gf->getGraph();
                     std::string type("csapex::ImportRos");
                     UUID uuid = graph->generateUUID(type);
 

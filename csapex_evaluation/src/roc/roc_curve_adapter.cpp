@@ -16,10 +16,10 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ROCCurveAdapter, csapex::ROCCurve)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ROCCurveAdapter, csapex::ROCCurve)
 
 
-ROCCurveAdapter::ROCCurveAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ROCCurve> node)
+ROCCurveAdapter::ROCCurveAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ROCCurve> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node), plot_widget_(nullptr)
 {
     auto n = wrapped_.lock();

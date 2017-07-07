@@ -14,6 +14,7 @@ class ScanRenderer : public csapex::Node
 public:
     ScanRenderer();
 
+    virtual void setupParameters(Parameterizable& params);
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
 

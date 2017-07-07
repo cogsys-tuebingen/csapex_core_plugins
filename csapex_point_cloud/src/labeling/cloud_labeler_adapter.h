@@ -22,7 +22,7 @@ class CloudLabelerAdapter : public QGLWidget, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    CloudLabelerAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<CloudLabeler> node);
+    CloudLabelerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<CloudLabeler> node);
     ~CloudLabelerAdapter();
 
     void stop();

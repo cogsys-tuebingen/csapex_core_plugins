@@ -11,10 +11,10 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
 
-TextDisplayAdapter::TextDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node)
+TextDisplayAdapter::TextDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node)
     : ResizableNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

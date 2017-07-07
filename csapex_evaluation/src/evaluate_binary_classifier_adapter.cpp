@@ -13,7 +13,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(EvaluateBinaryClassifierAdapter, csapex::EvaluateBinaryClassifier)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(EvaluateBinaryClassifierAdapter, csapex::EvaluateBinaryClassifier)
 
 EvaluateBinaryClassifierTableModel::EvaluateBinaryClassifierTableModel() :
     rows(0)
@@ -135,7 +135,7 @@ QVariant EvaluateBinaryClassifierTableModel::headerData(int section, Qt::Orienta
 
 
 
-EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node)
+EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

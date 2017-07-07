@@ -51,7 +51,7 @@ struct Dispatch {
                 m = cv::Mat(bins * channels.size(), 1, CV_32SC1, cv::Scalar::all(0));
             }
 
-            for(int i = 0 ; i < channels.size() ; ++i) {
+            for(std::size_t i = 0 ; i < channels.size() ; ++i) {
                 std::vector<cv::Mat> tmp;
                 cslibs_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
                                                         range.first,  range.second, bins,
@@ -65,7 +65,7 @@ struct Dispatch {
             }
         } else {
             msg.value.ranges.resize(channels.size(), range);
-            for(int i = 0 ; i < channels.size() ; ++i) {
+            for(std::size_t i = 0 ; i < channels.size() ; ++i) {
                 std::vector<cv::Mat> tmp;
                 cslibs_vision::histogram::histogram<_Tp>(channels.at(i), mask, clusters,
                                                         range.first,  range.second, bins,

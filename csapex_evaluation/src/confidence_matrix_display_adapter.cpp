@@ -13,7 +13,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ConfidenceMatrixDisplayAdapter, csapex::ConfidenceMatrixDisplay)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ConfidenceMatrixDisplayAdapter, csapex::ConfidenceMatrixDisplay)
 
 ConfidenceMatrixTableModel::ConfidenceMatrixTableModel()
     : dim(0)
@@ -85,7 +85,7 @@ QVariant ConfidenceMatrixTableModel::headerData(int section, Qt::Orientation ori
 
 
 
-ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ConfidenceMatrixDisplay> node)
+ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ConfidenceMatrixDisplay> node)
     : NodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

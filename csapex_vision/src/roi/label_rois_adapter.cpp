@@ -20,7 +20,7 @@
 using namespace csapex;
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER_NS(csapex, LabelROIsAdapter, csapex::LabelROIs)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER_NS(csapex, LabelROIsAdapter, csapex::LabelROIs)
 
 namespace csapex {
     class QInteractiveRect : public QGraphicsRectItem {
@@ -103,7 +103,7 @@ namespace csapex {
 }
 
 
-LabelROIsAdapter::LabelROIsAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<LabelROIs> node)
+LabelROIsAdapter::LabelROIsAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<LabelROIs> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       active_class_(0),

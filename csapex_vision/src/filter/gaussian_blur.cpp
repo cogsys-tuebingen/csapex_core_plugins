@@ -33,16 +33,47 @@ void GaussianBlur::setupParameters(Parameterizable &parameters)
 
 void GaussianBlur::process()
 {
-    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
+    CvMatMessage::ConstPtr in_msg = msg::getMessage<connection_types::CvMatMessage>(input_mat_);
+    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in_msg->getEncoding(), in_msg->frame_id, in_msg->stamp_micro_seconds));
 
-    cv::GaussianBlur(in->value, out->value, cv::Size(kernel_, kernel_), sigma_x_, sigma_y_);
+    CvMatMessage::ConstPtr mask_msg;
+    if (msg::hasMessage(input_mask_))
+        mask_msg = msg::getMessage<CvMatMessage>(input_mask_);
+
+    if (!mask_msg)
+        cv::GaussianBlur(in_msg->value, out->value, cv::Size(kernel_, kernel_), sigma_x_, sigma_y_);
+    else
+    {
+        cv::Mat im;
+        cv::Mat mask;
+        in_msg->value.convertTo(im, CV_32FC(in_msg->value.channels()), 1.0 / 255.0);
+        if (in_msg->value.channels() == 3)
+        {
+            cv::cvtColor(mask_msg->value, mask, cv::COLOR_GRAY2BGR);
+            mask.convertTo(mask, CV_32FC3, 1.0 / 255.0);
+        }
+        else
+            mask_msg->value.convertTo(mask, CV_32FC1, 1.0 / 255.0);
+
+        cv::Mat blurred;
+        cv::GaussianBlur(im, blurred, cv::Size(kernel_, kernel_), sigma_x_, sigma_y_);
+        cv::GaussianBlur(mask, mask, cv::Size(kernel_, kernel_), sigma_x_, sigma_y_);
+
+        cv::Mat tmp, tmp2;
+        cv::subtract(cv::Scalar::all(1.0), mask, tmp);
+        cv::multiply(tmp, im, tmp);
+        cv::multiply(mask, blurred, tmp2);
+        cv::add(tmp, tmp2, out->value);
+
+        out->value.convertTo(out->value, CV_8UC1, 255.0);
+    }
     msg::publish(output_, out);
 }
 
 void GaussianBlur::setup(NodeModifier& node_modifier)
 {
-    input_ = node_modifier.addInput<CvMatMessage>("Unblurred");
+    input_mat_ = node_modifier.addInput<CvMatMessage>("Unblurred");
+    input_mask_ = node_modifier.addOptionalInput<CvMatMessage>("Mask");
     output_ = node_modifier.addOutput<CvMatMessage>("Blurred");
 
     update();

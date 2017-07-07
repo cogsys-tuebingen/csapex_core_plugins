@@ -19,8 +19,9 @@ public:
 private:
     void update();
 
-    Input  *input_;
-    Output *output_;
+    Input* input_mat_;
+    Input* input_mask_;
+    Output* output_;
 
     int           kernel_;
     double        sigma_x_;

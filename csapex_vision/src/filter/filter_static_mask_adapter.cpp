@@ -17,10 +17,10 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(FilterStaticMaskAdapter, csapex::FilterStaticMask)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(FilterStaticMaskAdapter, csapex::FilterStaticMask)
 
 
-FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<FilterStaticMask> node)
+FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<FilterStaticMask> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     qRegisterMetaType < cv::Mat > ("cv::Mat");

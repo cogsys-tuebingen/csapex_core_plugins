@@ -15,7 +15,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(ConfusionMatrixDisplayAdapter, csapex::ConfusionMatrixDisplay)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ConfusionMatrixDisplayAdapter, csapex::ConfusionMatrixDisplay)
 
 ConfusionMatrixTableModel::ConfusionMatrixTableModel()
     : dim(0)
@@ -118,7 +118,7 @@ QVariant ConfusionMatrixTableModel::headerData(int section, Qt::Orientation orie
 
 
 
-ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<ConfusionMatrixDisplay> node)
+ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ConfusionMatrixDisplay> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

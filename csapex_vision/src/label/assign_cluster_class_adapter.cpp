@@ -20,9 +20,9 @@
 using namespace csapex;
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER_NS(csapex, AssignClusterClassAdapter, csapex::AssignClusterClass)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER_NS(csapex, AssignClusterClassAdapter, csapex::AssignClusterClass)
 
-AssignClusterClassAdapter::AssignClusterClassAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<AssignClusterClass> node)
+AssignClusterClassAdapter::AssignClusterClassAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<AssignClusterClass> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       active_class_(0),

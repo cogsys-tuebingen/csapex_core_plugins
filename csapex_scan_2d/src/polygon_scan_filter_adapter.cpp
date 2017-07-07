@@ -21,10 +21,10 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(PolygonScanFilterAdapter, csapex::PolygonScanFilter)
+CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(PolygonScanFilterAdapter, csapex::PolygonScanFilter)
 
 
-PolygonScanFilterAdapter::PolygonScanFilterAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node)
+PolygonScanFilterAdapter::PolygonScanFilterAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
@@ -176,11 +176,6 @@ void PolygonScanFilterAdapter::setParameterState(Memento::Ptr memento)
 
 void PolygonScanFilterAdapter::display(const lib_laser_processing::Scan *scan, const bool invert)
 {
-    NodeHandlePtr node_worker = node_.lock();
-    if(!node_worker) {
-        return;
-    }
-
     result_.reset(new connection_types::LabeledScanMessage);
 
     QGraphicsScene* scene = view_->scene();
@@ -232,10 +227,7 @@ void PolygonScanFilterAdapter::display(const lib_laser_processing::Scan *scan, c
 
     scene->update();
 
-    auto node = node_worker->getNode().lock();
-    if(node) {
-        submit();
-    }
+    submit();
 }
 
 void PolygonScanFilterAdapter::submit()

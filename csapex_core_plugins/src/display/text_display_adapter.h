@@ -18,7 +18,7 @@ class TextDisplayAdapter : public QObject, public ResizableNodeAdapter
     Q_OBJECT
 
 public:
-    TextDisplayAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node);
+    TextDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node);
 
     bool eventFilter(QObject* o, QEvent* e);
 

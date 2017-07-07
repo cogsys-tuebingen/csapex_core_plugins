@@ -59,7 +59,7 @@ class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
 
             if(file.exists()) {
                 GraphFacade* gf = view->getGraphFacade();
-                Graph* graph = gf->getGraph();
+                GraphPtr graph = gf->getGraph();
                 UUID uuid = graph->generateUUID("csapex::FileImporter");
 
                 NodeState::Ptr state(new NodeState(nullptr));

@@ -20,6 +20,7 @@
 #include <csapex/msg/any_message.h>
 #include <csapex/param/trigger_parameter.h>
 #include <csapex_core_plugins/timestamp_message.h>
+#include <csapex/model/graph.h>
 
 /// SYSTEM
 #include <console_bridge/console.h>
@@ -170,14 +171,14 @@ void APEXRosInterface::init(CsApexCore &core)
 
 void APEXRosInterface::setupGraph(SubgraphNode *graph)
 {
-    clock_reset_event_ = graph->createInternalEvent(connection_types::makeEmpty<connection_types::AnyMessage>(), graph->makeUUID("event_ros_time_reset"), "ros time reset");
+    clock_reset_event_ = graph->createInternalEvent(connection_types::makeEmpty<connection_types::AnyMessage>(), graph->getGraph()->makeUUID("event_ros_time_reset"), "ros time reset");
 }
 
 void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::string& parameter_name, const XmlRpc::XmlRpcValue& parameter_value)
 {
     std::string apex_name = parameter_name.substr(prefix.size());
 
-    Graph* graph = core_->getRoot()->getGraph();
+    GraphPtr graph = core_->getRoot()->getGraph();
 
     std::vector<std::string> levels;
 
@@ -223,7 +224,7 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
                 break;
         }
         if(i < n - 2) {
-            graph = dynamic_cast<Graph*>(nh->getNode().lock().get());
+            graph = std::dynamic_pointer_cast<Graph>(nh->getNode().lock());
             if(!graph) {
                 std::cerr << "no parameter for " << parameter_name << ", child " << subname << " is not a graph" << std::endl;
                 return;
@@ -335,7 +336,7 @@ void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd, bool global_
             disabled_ = false;
             core_->setPause(false);
         } else if(command == "trigger") {
-            Graph* graph = core_->getRoot()->getGraph();
+            GraphPtr graph = core_->getRoot()->getGraph();
 
             std::size_t index = parameter_values.find_first_of("/");
             if (index != std::string::npos) {

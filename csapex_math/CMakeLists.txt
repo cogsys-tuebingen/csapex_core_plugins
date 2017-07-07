@@ -18,6 +18,7 @@ set(CMAKE_AUTOMOC ON)
 qt5_add_resources(QT_RESOURCES res/csapex_math_resources.qrc)
 
 add_library(${PROJECT_NAME}_node SHARED
+    src/negate_number.cpp
     src/sum.cpp
 
     ${QT_RESOURCES}

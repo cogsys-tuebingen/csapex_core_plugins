@@ -44,6 +44,7 @@
 #include <cstdio>
 #include <iterator>
 #include <limits>
+#include <stdexcept>
 
 /****************************************************************************************\
       The code below is implementation of HOG (Histogram-of-Oriented Gradients)

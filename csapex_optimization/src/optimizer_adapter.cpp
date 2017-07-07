@@ -30,7 +30,7 @@
 using namespace csapex;
 
 
-OptimizerAdapter::OptimizerAdapter(NodeHandleWeakPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node)
+OptimizerAdapter::OptimizerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node)
     : DefaultNodeAdapter(worker, parent), wrapped_base_(node)
 {
     QObject::connect(&widget_picker_, SIGNAL(widgetPicked()), this, SLOT(widgetPicked()));

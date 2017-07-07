@@ -94,23 +94,31 @@ void FileImporter::setupParameters(Parameterizable& parameters)
         }
     });
 
-    parameters.addHiddenParameter(param::ParameterFactory::declareValue("output_count", 0));
+    parameters.addHiddenParameter(param::ParameterFactory::declareValue("output_count", 0),
+                                  [this](param::Parameter* p) {
+        createDummyOutputs(*node_modifier_);
+    });
 
     changeMode();
 }
 
-void FileImporter::setup(NodeModifier& node_modifier)
+void FileImporter::createDummyOutputs(NodeModifier& node_modifier)
 {
     for(int i = 0, n = readParameter<int>("output_count"); i < n; ++i) {
         outputs_.push_back(node_modifier.addOutput<connection_types::AnyMessage>("Unknown"));
     }
+}
+
+void FileImporter::setup(NodeModifier& node_modifier)
+{
+    createDummyOutputs(node_modifier);
 
     begin_ = node_modifier.addEvent("begin");
     end_ = node_modifier.addEvent("end");
 
     new_provider_ = node_modifier.addEvent("new provider");
 
-    node_modifier.addSlot("restart", [this](){
+    restart_ = node_modifier.addSlot("restart", [this](){
         //DEBUGainfo << "restart" << std::endl;
         playing_ = true;
         if(directory_import_) {
@@ -164,26 +172,19 @@ bool FileImporter::canProcess() const
         return false;
     }
 
-    if(directory_import_) {
-        if(play_->isConnected()) {
-            bool can_tick = playing_ && readParameter<int>("directory/current") < (int) dir_files_.size();
-            if(!can_tick) {
-                ainfo << "cannot tick: " << playing_ << ", " << readParameter<int>("directory/current") << " <= " <<  (int) dir_files_.size()<< std::endl;
-            }
-            return can_tick;
+    if(play_->isConnected()) {
+        if(!playing_) {
+            return false;
         }
+    }
+
+    if(directory_import_) {
         int current = readParameter<int>("directory/current");
         return (current < (int) dir_files_.size()) ||
-                ((current == dir_files_.size()) && !end_triggered_) ||
+                ((current == (int) dir_files_.size()) && !end_triggered_) ||
                 readParameter<bool>("directory/loop")  ||
                 readParameter<bool>("directory/latch");
     } else {
-        if(play_->isConnected()) {
-            if(!playing_) {
-                return false;
-            }
-        }
-
         if(InputPtr i = node_handle_->getParameterInput("path").lock()) {
             if(i->isConnected()) {
                 return msg::hasMessage(i.get());
@@ -606,7 +607,8 @@ void FileImporter::createProviderForNextFile()
             return;
         }
 
-        if((play_->isConnected() && playing_)) {
+        if((restart_->isConnected() && playing_)) {
+            // if the restart slot is connected, do not loop or latch
             return;
         }
 
