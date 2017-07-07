@@ -21,6 +21,8 @@ private:
     bool read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs);
     void update();
 
+
+
     csapex::Output* output_;
     csapex::Input* input_;
 };

@@ -35,7 +35,7 @@ void Undistort::process()
 
 void Undistort::setup(NodeModifier& node_modifier)
 {
-    input_ = node_modifier.addInput<CvMatMessage>("original");
+    input_  = node_modifier.addInput<CvMatMessage>("original");
     output_ = node_modifier.addOutput<CvMatMessage>("undistorted");
 
     update();
@@ -43,8 +43,60 @@ void Undistort::setup(NodeModifier& node_modifier)
 
 void Undistort::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("file", ""), std::bind(&Undistort::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("margin", 0, 1000, 0, 1), std::bind(&Undistort::update, this));
+
+    parameters.addParameter(csapex::param::ParameterFactory::declareBool("load from file",
+                                                                         param::ParameterDescription("Load a calibration from a .yaml file."),
+                                                                         true),
+                            std::bind(&Undistort::update, this));
+
+    auto load_from_file = [this](){return readParameter<bool>("load from file");};
+    auto do_not_load_from_file = [this](){return !readParameter<bool>("load from file");};
+
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareFileInputPath("file",
+                                                                                             param::ParameterDescription("Path to .yaml calibration file."),
+                                                                                             "", "*.yaml"),
+                                       load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("fx", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("fy", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("cx", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("cy", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k1", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k2", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k3", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k4", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k5", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k6", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("p1", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("p2", 0.0),
+                                       do_not_load_from_file,
+                                       std::bind(&Undistort::update, this));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("margin",
+                                                                          param::ParameterDescription("Add a margin to the undistorted image."),
+                                                                          0, 1000, 0, 1),
+                            std::bind(&Undistort::update, this));
 
     std::map<std::string, int> modes;
     modes["nearest"] = (int) CV_INTER_NN;
@@ -77,14 +129,30 @@ bool Undistort::read_matrices(const std::string &path, cv::Mat &intrinsics, cv::
 
 void Undistort::update()
 {
-
-    std::string path = readParameter<std::string>("file");
     cv::Mat intr;
     cv::Mat coef;
-    int mode = readParameter<int>("mode");
-
-    if(read_matrices(path, intr, coef)) {
-        undist_ = cslibs_vision::Undistortion::Ptr(new cslibs_vision::Undistortion(intr, coef, mode));
+    if(readParameter<bool>("load from file")) {
+        std::string path = readParameter<std::string>("file");
+        if(!read_matrices(path, intr, coef)) {
+            throw std::runtime_error("Could not read intrisic matrices!");
+        }
+    } else {
+        intr = cv::Mat::eye(3,3,CV_64FC1);
+        coef = cv::Mat::zeros(8,1, CV_64FC1);
+        intr.at<double>(0,0) = readParameter<double>("fx");
+        intr.at<double>(1,1) = readParameter<double>("fy");
+        intr.at<double>(0,2) = readParameter<double>("cx");
+        intr.at<double>(1,2) = readParameter<double>("cy");
+        coef.at<double>(0)   = readParameter<double>("k1");
+        coef.at<double>(1)   = readParameter<double>("k2");
+        coef.at<double>(2)   = readParameter<double>("p1");
+        coef.at<double>(3)   = readParameter<double>("p2");
+        coef.at<double>(4)   = readParameter<double>("k3");
+        coef.at<double>(5)   = readParameter<double>("k4");
+        coef.at<double>(6)   = readParameter<double>("k5");
+        coef.at<double>(7)   = readParameter<double>("k6");
     }
 
+    int mode = readParameter<int>("mode");
+    undist_ = cslibs_vision::Undistortion::Ptr(new cslibs_vision::Undistortion(intr, coef, mode));
 }

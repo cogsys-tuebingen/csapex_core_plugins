@@ -29,12 +29,12 @@ find_package(OpenCV REQUIRED)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
-find_package(OpenMP QUIET)
-if(${OpenMP_FOUND})
-  list(APPEND CMAKE_C_FLAGS ${OpenMP_C_FLAGS})
-  list(APPEND CMAKE_CXX_FLAGS ${OpenMP_CXX_FLAGS})
-  list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
-endif()
+#find_package(OpenMP QUIET)
+#if(${OpenMP_FOUND})
+#  list(APPEND CMAKE_C_FLAGS ${OpenMP_C_FLAGS})
+#  list(APPEND CMAKE_CXX_FLAGS ${OpenMP_CXX_FLAGS})
+#  list(APPEND CMAKE_EXE_LINKER_FLAGS ${OpenMP_EXE_LINKER_FLAGS})
+#endif()
 
 set(CMAKE_AUTOMOC ON)
 
