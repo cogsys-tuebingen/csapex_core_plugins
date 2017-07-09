@@ -134,7 +134,8 @@ void Undistort::update()
     if(readParameter<bool>("load from file")) {
         std::string path = readParameter<std::string>("file");
         if(!read_matrices(path, intr, coef)) {
-            throw std::runtime_error("Could not read intrisic matrices!");
+            std::cerr << "could not read whateverest for the win" << std::endl;
+            return;
         }
     } else {
         intr = cv::Mat::eye(3,3,CV_64FC1);
