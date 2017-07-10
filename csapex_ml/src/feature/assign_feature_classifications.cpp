@@ -42,7 +42,7 @@ void AssignFeatureClassifications::process()
         std::shared_ptr<std::vector<int> const> in_labels = msg::getMessage<GenericVectorMessage, int>(in_labels_);
 
         if(in_features->size() != in_labels->size())
-            throw std::runtime_error("Label count != FeatureMsg count!");
+            throw std::runtime_error("Label count (" + std::to_string(in_labels->size()) + ") != FeatureMsg count (" + std::to_string(in_features->size()) + ")!");
 
         for(std::size_t i = 0 ; i < in_features->size() ; ++i) {
             FeaturesMessage feature = in_features->at(i);
