@@ -37,12 +37,15 @@ void EvaluateBinaryClassifier::process()
 
     const ConfusionMatrix& cm = msg->confusion;
 
-    if(cm.classes.size() != 2) {
-        node_modifier_->setWarning("needs a confusion matrix with exactly 2 classes");
+    if (cm.classes.size() < 2)
+    {
+        node_modifier_->setWarning("The confusion matrix must have at least 2 classes");
         return;
     }
-
-    node_modifier_->setNoError();
+    else if (cm.classes.size() > 2)
+        node_modifier_->setWarning("The confusion matrix should only have 2 classes. Results may be inaccurate.");
+    else
+        node_modifier_->setNoError();
 
     {
         std::unique_lock<std::recursive_mutex> lock(mutex_);
