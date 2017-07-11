@@ -16,13 +16,14 @@ using namespace csapex;
 AmbigousRosConversion::AmbigousRosConversion(const std::string& from)
     : from(from)
 {
+    std::stringstream ss;
+    ss << "ambiguous conversion from " << from;
+    error_msg = ss.str();
 }
 
 const char *AmbigousRosConversion::what() const noexcept
 {
-    std::stringstream ss;
-    ss << "ambiguous conversion from " << from;
-    return ss.str().c_str();
+    return error_msg.c_str();
 }
 
 RosMessageConversion::RosMessageConversion()

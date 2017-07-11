@@ -159,11 +159,14 @@ public:
             throw std::runtime_error("cannot convert apex message to ros message");
         }
 
+        ros::Time time;
         if(message->stamp_micro_seconds > 0) {
-            ros::Time time;
             time.fromNSec(message->stamp_micro_seconds * 1e3);
-            bag.write(topic, time, *ros_msg);
         }
+        else{
+            time = ros::Time::now();
+        }
+        bag.write(topic, time, *ros_msg);
     }
 
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback callback) {
@@ -218,6 +221,7 @@ public:
     const char* what() const noexcept override;
 
     const std::string from;
+    std::string error_msg;
 };
 
 
