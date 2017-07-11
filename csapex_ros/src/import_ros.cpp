@@ -65,6 +65,12 @@ void ImportRos::setupParameters(Parameterizable& parameters)
                             std::bind(&ImportRos::updateSubscriber, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareBool("latch", false));
 
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange("buffer_size",1,1024,1024,1),
+                            [this](param::Parameter* p)
+    {
+        buffer_size_ = p->as<int>();
+    });
+
     std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
     csapex::param::Parameter::Ptr buffer_p = csapex::param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
     parameters.addConditionalParameter(buffer_p, connected_condition);
