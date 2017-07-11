@@ -46,14 +46,17 @@ public:
         setupVariadicParameters(parameters);
 
         parameters.addParameter(param::ParameterFactory::declareFileOutputPath("file", "/tmp/bag.bag", "*.bag"), [this](param::Parameter* p) {
-            bag.open(p->as<std::string>(), rosbag::bagmode::Write);
-            is_open_ = true;
+            std::string file_name = p->as<std::string>();
+            if(file_name == file_name_){
+                return;
+            }
+            file_name_ = file_name;
+            start();
         });
 
         parameters.addParameter(param::ParameterFactory::declareTrigger("reset"), [this](param::Parameter* p) {
-            stop();
-            bag.open(readParameter<std::string>("file"), rosbag::bagmode::Write);
-            is_open_ = true;
+            start();
+
         });
 
         parameters.addParameter(param::ParameterFactory::declareTrigger("save and close"), [this](param::Parameter* p) {
@@ -82,8 +85,25 @@ public:
 
     void stop()
     {
-        bag.close();
-        is_open_ = false;
+        if(is_open_){
+            bag.close();
+            is_open_ = false;
+        }
+    }
+
+    void start()
+    {
+        try{
+            if(is_open_){
+                stop();
+            }
+            bag.open(file_name_, rosbag::bagmode::Write);
+            is_open_ = true;
+        }
+        catch(const rosbag::BagException& e){
+            is_open_ = false;
+            node_handle_->setError(e.what());
+        }
     }
 
     virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override
@@ -134,6 +154,7 @@ private:
 
     rosbag::Bag bag;
     bool is_open_;
+    std::string file_name_;
 };
 
 }
