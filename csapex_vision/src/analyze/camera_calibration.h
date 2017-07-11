@@ -1,9 +1,11 @@
 #ifndef CAMERA_CALIBRATION_PLUGIN_H
 #define CAMERA_CALIBRATION_PLUGIN_H
 
+/// PROJECT
+#include <csapex/model/node.h>
+
 /// COMPONENT
 #include <cslibs_vision/utils/camera_calibration.h>
-#include <csapex/model/node.h>
 
 namespace csapex {
 class CameraCalibration : public csapex::Node
