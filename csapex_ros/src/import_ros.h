@@ -55,8 +55,9 @@ private:
 
     int buffer_size_;
     bool running_;
-};
+    int mode_;
 
+};
 }
 
 

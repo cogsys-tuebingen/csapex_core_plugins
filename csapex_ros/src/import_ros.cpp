@@ -20,6 +20,8 @@
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/model/node_handle.h>
 
+#include <functional>
+
 CSAPEX_REGISTER_CLASS(csapex::ImportRos, csapex::Node)
 
 using namespace csapex;
@@ -34,8 +36,13 @@ ros::Time rosTime(u_int64_t stamp_micro_seconds) {
 }
 }
 
+enum ImportMode{
+    BackAndLatch = 0,
+    FrontAndPop = 1
+};
+
 ImportRos::ImportRos()
-    : connector_(nullptr), buffer_size_(1024), running_(true)
+    : connector_(nullptr), buffer_size_(1024), running_(true), mode_( (int) BackAndLatch)
 {
 }
 
@@ -65,11 +72,35 @@ void ImportRos::setupParameters(Parameterizable& parameters)
                             std::bind(&ImportRos::updateSubscriber, this));
     parameters.addParameter(csapex::param::ParameterFactory::declareBool("latch", false));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("buffer_size",1,1024,1024,1),
-                            [this](param::Parameter* p)
-    {
-        buffer_size_ = p->as<int>();
-    });
+
+
+
+
+    std::function<bool()> buffer_condition = [this](){
+        mode_ = readParameter<int>("import_mode");
+        return mode_ == (int) FrontAndPop;};
+
+    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("buffer_size",1,1024,1024,1),
+                                       buffer_condition,
+                                       buffer_size_);
+
+    std::function<bool()> connected_condition_mode = [this]() { return !msg::isConnected(input_time_); };
+    std::map<std::string, int> map = {
+        {"BackAndLatch", (int) BackAndLatch},
+        {"FrontAndPop",  (int) FrontAndPop}
+    };
+
+
+    csapex::param::Parameter::Ptr mode_p  = param::ParameterFactory::declareParameterSet
+                                                   ("import_mode",
+                                                    csapex::param::ParameterDescription
+                                                    ("Select a import mode. BackAndLatch publishes the most recent message. FrontAndPop collects the messages in a queue."),
+                                                    map,
+                                                    (int) BackAndLatch);
+
+    parameters.addConditionalParameter(mode_p, connected_condition_mode);
+
+
 
     std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
     csapex::param::Parameter::Ptr buffer_p = csapex::param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
@@ -197,7 +228,7 @@ void ImportRos::processROS()
 void ImportRos::processNotSource()
 {
     connection_types::TimestampMessage::ConstPtr time = msg::getMessage<connection_types::TimestampMessage>(input_time_);
-
+    mode_ = (int) FrontAndPop;
     if(msgs_.empty()) {
         return;
     }
@@ -324,6 +355,8 @@ void ImportRos::publishLatestMessage()
 {
     std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
 
+    mode_ = readParameter<int>("import_mode");
+
     INTERLUDE("publish");
 
     if(!ROSHandler::instance().isConnected()) {
@@ -345,7 +378,14 @@ void ImportRos::publishLatestMessage()
         }
     }
 
-    msg::publish(connector_, msgs_.front());
+    if(mode_ == FrontAndPop){
+//        buffer_condition_ = false;
+        msg::publish(connector_, msgs_.front());
+    }
+    else {
+//        buffer_condition_ = true;
+        msg::publish(connector_, msgs_.back());
+    }
 
     if(msgs_.size() > 1 || !readParameter<bool>("latch")) {
         msgs_.pop_front();
