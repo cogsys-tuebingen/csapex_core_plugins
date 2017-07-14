@@ -27,7 +27,7 @@ void csapex::CameraCalibration::process()
     if(in->value.empty()) {
         throw std::runtime_error("Cannot run UndistortRectify on empty left image!");
     }
-    if(!in->getEncoding().matches(enc::mono) ||
+    if(!in->getEncoding().matches(enc::mono) &&
             !in->getEncoding().matches(enc::bgr)) {
         throw std::runtime_error("Encoding must be 'mono' or 'bgr'!");
     }
