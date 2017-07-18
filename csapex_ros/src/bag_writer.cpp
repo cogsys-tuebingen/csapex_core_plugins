@@ -78,9 +78,58 @@ public:
             if(msg::hasMessage(in)) {
                 connection_types::MessageConstPtr message = msg::getMessage<connection_types::Message>(in);
 
-                RosMessageConversion::instance().write(bag, message, in->getLabel());
+                writeMessage(message, in->getLabel());
             }
         }
+    }
+
+    void writeMessage(const connection_types::MessageConstPtr& message, const std::string& topic)
+    {
+        auto pos = topic_to_type_.find(topic);
+
+        connection_types::GenericVectorMessage::ConstPtr vector = std::dynamic_pointer_cast<connection_types::GenericVectorMessage const>(message);
+
+        TokenData::ConstPtr type;
+        if(vector) {
+            type = vector->nestedType();
+        } else {
+            type = message;
+        }
+
+        int selected_target_type = -1;
+
+        if(pos != topic_to_type_.end()) {
+            selected_target_type = pos->second;
+
+        } else {
+            RosMessageConversion& ros_conv = RosMessageConversion::instance();
+
+            std::map<std::string, int> possible_conversions = ros_conv.getAvailableRosConversions(type);
+            if(possible_conversions.size() == 1) {
+                RosMessageConversion::instance().write(bag, message, topic);
+
+            } else {
+                if(!hasParameter(topic + "_target_type")) {
+                    addTemporaryParameter(param::ParameterFactory::declareParameterSet(topic + "_target_type", possible_conversions, 0),
+                                          [this, topic](param::Parameter* p) {
+                        topic_to_type_[topic] = p->as<int>();
+                    });
+                }
+            }
+
+        }
+
+        if(vector) {
+            for(std::size_t i = 0, n = vector->nestedValueCount(); i < n; ++i) {
+                connection_types::MessageConstPtr msg = std::dynamic_pointer_cast<connection_types::Message const>(vector->nestedValue(i));
+                if(msg) {
+                    RosMessageConversion::instance().write(bag, msg, topic, selected_target_type);
+                }
+            }
+        } else {
+            RosMessageConversion::instance().write(bag, message, topic, selected_target_type);
+        }
+
     }
 
     void stop()
@@ -108,14 +157,16 @@ public:
 
     virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override
     {
-        return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+        Input* result = VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+
+        return result;
     }
 
     virtual csapex::Slot* createVariadicSlot(TokenDataConstPtr type, const std::string& label, std::function<void (const TokenPtr&)> callback, bool active, bool asynchronous) override
     {
         auto cb = [this](Slot* slot, const TokenPtr& token) {
             auto message = std::dynamic_pointer_cast<connection_types::Message const>(token->getTokenData());
-            RosMessageConversion::instance().write(bag, message, slot->getLabel());
+            writeMessage(message, slot->getLabel());
         };
 
         return VariadicSlots::createVariadicSlot(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, cb, active, asynchronous);
@@ -155,6 +206,8 @@ private:
     rosbag::Bag bag;
     bool is_open_;
     std::string file_name_;
+
+    std::map<std::string, int> topic_to_type_;
 };
 
 }

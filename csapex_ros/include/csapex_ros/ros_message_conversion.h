@@ -253,7 +253,7 @@ public:
     std::map<std::string, int> getAvailableRosConversions(const TokenDataConstPtr& source) const;
     ros::Publisher advertise(TokenData::ConstPtr, const std::string& topic,  int queue, bool latch = false, int target_type = -1);
     void publish(ros::Publisher& pub, TokenData::ConstPtr msg, int target_type = -1);
-    void write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &source, const std::string& topic);
+    void write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &source, const std::string& topic, int target_type = -1);
 
     // inward
     ros::Subscriber subscribe(const ros::master::TopicInfo &topic, int queue, Callback output, int target_type = -1);

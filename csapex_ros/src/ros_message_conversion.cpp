@@ -88,7 +88,7 @@ ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo &to
     }
 }
 
-void RosMessageConversion::write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &message, const std::string& topic)
+void RosMessageConversion::write(rosbag::Bag& bag, const connection_types::Message::ConstPtr &message, const std::string& topic, int target_type)
 {
     auto gen_ros = std::dynamic_pointer_cast<connection_types::GenericRosMessage const>(message);
     if(gen_ros) {
@@ -99,6 +99,7 @@ void RosMessageConversion::write(rosbag::Bag& bag, const connection_types::Messa
             time = ros::Time::now();
         }
         bag.write(topic, time, *gen_ros->value);
+
     } else {
         auto it = converters_inv_.find(message->descriptiveName());
         if(it == converters_inv_.end()) {
@@ -106,12 +107,17 @@ void RosMessageConversion::write(rosbag::Bag& bag, const connection_types::Messa
         }        
 
         const auto& converters = it->second;
+        Convertor::Ptr converter;
         if(converters.size() == 1) {
-            Convertor::Ptr converter = converters.front();
-            converter->write(bag, message, topic);
+            converter = converters.front();
         } else {
-            throw AmbigousRosConversion(message->descriptiveName());
+            if(target_type < 0 || target_type >= (int) converters.size()) {
+                throw AmbigousRosConversion(message->descriptiveName());
+            } else {
+                converter = it->second.at(target_type);
+            }
         }
+        return converter->write(bag, message, topic);
     }
 }
 
@@ -149,16 +155,19 @@ ros::Publisher RosMessageConversion::advertise(TokenData::ConstPtr type, const s
         if(it == converters_inv_.end()) {
             throw std::runtime_error(std::string("cannot advertise type ") + type->descriptiveName() + " on topic " + topic);
         }
+
         const auto& converters = it->second;
+        Convertor::Ptr converter;
         if(converters.size() == 1) {
-            return it->second.front()->advertise(topic, queue, latch);
+            converter = it->second.front();
         } else {
             if(target_type < 0 || target_type >= (int) converters.size()) {
                 throw AmbigousRosConversion(type->descriptiveName());
             } else {
-                return it->second.at(target_type)->advertise(topic, queue, latch);
+                converter = it->second.at(target_type);
             }
         }
+        return converter->advertise(topic, queue, latch);
     }
 }
 

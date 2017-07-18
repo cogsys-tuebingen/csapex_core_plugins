@@ -18,19 +18,31 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 private:
-    cslibs_vision::CameraCalibration::Ptr calibration_;
+    Input  *input_;
+    Output *output_corners_;
+    Output *output_rejected_;
+    Output *output_accepted_;
 
-    csapex::Output*            output_;
-    csapex::Input*             input_;
 
-    cv::Mat                    buffer_frame_;
+    std::vector<std::vector<cv::Point2f>> image_points_;
+    std::vector<std::vector<cv::Point3f>> object_points_;
 
-    bool                       update_request_;
+    std::string path_calibration_;
+    cv::Size    image_size_;
+    int         kernel_size_;
+    cv::Size    pattern_size_;
+    double      pattern_scale_;
+    int         pattern_type_;
+    int         corner_flags_;
+    int         calibration_flags_;
+    int         accepted_;
+    int         rejected_;
 
-    void add();
+    enum Mode {CHESSBOARD, CIRCLES_GRID, ASYMMETRIC_CIRCLES_GRID};
+
     void calibrate();
-    void updateCalibration();
-    void requestUpdateCalibration();
+    void updateParameters();
+    void resetPoints();
 };
 }
 #endif // CAMERA_CALIBRATION_PLUGIN_H
