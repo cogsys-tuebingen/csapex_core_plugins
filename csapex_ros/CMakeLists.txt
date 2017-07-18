@@ -68,6 +68,8 @@ add_library(${PROJECT_NAME}_plugin_node
     src/ros_test.cpp
     src/ros_trigger.cpp
     src/bag_writer.cpp
+    src/ros_message_bool_2_event.cpp
+    src/ros_message_int_2_event.cpp
 )
 
 ## Specify libraries to link a library or executable target against
