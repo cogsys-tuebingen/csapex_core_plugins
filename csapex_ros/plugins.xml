@@ -34,6 +34,14 @@
   <description>Write streams into a ROS bag file</description>
   <tags>RosIO, General</tags>
 </class>
+<class type="csapex::RosMessageBool2Event" base_class_type="csapex::Node">
+    <description>Triggers Events depending on input.</description>
+    <tags>ROS std_msgs Bool, event </tags>
+</class>
+<class type="csapex::RosMessageInt2Event" base_class_type="csapex::Node">
+    <description>Triggers Events if value changed.</description>
+    <tags>ROS std_msgs Int, event </tags>
+</class>
 </library>
 
 
