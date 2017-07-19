@@ -49,7 +49,7 @@ public:
             throw std::runtime_error("Cloud and image have to match in height!");
         if(cloud->width != static_cast<std::size_t>(input_image->value.cols))
             throw std::runtime_error("Cloud and image have to match in width!");
-        if(!input_image->getEncoding().matches(enc::bgr))
+        if(!input_image->getEncoding().matches(enc::bgr) && !input_image->getEncoding().matches(enc::mono))
             throw std::runtime_error("Input image must be of encoding bgr!");
 
         typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr out(new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -60,8 +60,15 @@ public:
         const std::size_t size = cloud->height * cloud->width;
         out->resize(size);
 
+        cv::Mat color_data;
+        if(input_image->getEncoding().matches(enc::mono)) {
+            cv::cvtColor(input_image->value, color_data, CV_GRAY2BGR);
+        } else {
+            color_data = input_image->value.clone();
+        }
+
         const PointT     *cloud_ptr = cloud->points.data();
-        const cv::Vec3b  *image_ptr = input_image->value.ptr<cv::Vec3b>();
+        const cv::Vec3b  *image_ptr = color_data.ptr<cv::Vec3b>();
         pcl::PointXYZRGB *out_ptr = out->points.data();
         for(std::size_t i = 0 ; i < size ; ++i, ++out_ptr, ++image_ptr, ++cloud_ptr) {
             const cv::Vec3b &color       = *image_ptr;
