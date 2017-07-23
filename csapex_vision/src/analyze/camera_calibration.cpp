@@ -175,10 +175,12 @@ void CameraCalibration::calibrate()
     cv::Mat intrinsics;
     cv::Mat distortions;
     std::vector<cv::Mat> rvecs, tvecs;
+    ainfo << "started calibration" << std::endl;
     cv::calibrateCamera(object_points_, image_points_, image_size_,
                         intrinsics, distortions,
                         rvecs, tvecs,
                         calibration_flags_);
+    ainfo << "finished calibration" << std::endl;
 
     if(path_calibration_ == "") {
         throw std::runtime_error("Path may not be empty to save the calibration!");
