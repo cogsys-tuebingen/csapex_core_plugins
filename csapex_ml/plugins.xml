@@ -1,4 +1,7 @@
 <library path="libcsapex_ml_plugin">
+<class type="csapex::FeatureMessageGetClassification" base_class_type="csapex::Node">
+  <description>Extracts the classification of a FeatureMessage.</description>
+</class>
 <class type="csapex::FeaturesMessageFilter" base_class_type="csapex::Node">
   <description>Filters messages by their classification.</description>
 </class>

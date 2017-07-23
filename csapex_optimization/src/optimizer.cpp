@@ -13,6 +13,7 @@
 #include <csapex/msg/end_of_sequence_message.h>
 #include <csapex/model/token.h>
 #include <csapex/model/node_handle.h>
+#include <csapex/profiling/interlude.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -144,6 +145,8 @@ void Optimizer::start()
 
 void Optimizer::stop()
 {
+
+    INTERLUDE("stop");
     stop_->trigger();
 
     connection_types::GenericValueMessage<double>::Ptr msg = std::make_shared<connection_types::GenericValueMessage<double>>();
@@ -169,6 +172,7 @@ void Optimizer::doStop()
 
 void Optimizer::finish()
 {
+    INTERLUDE("finish");
     if(validation_running_) {
         validation_running_ = false;
         return;
@@ -186,6 +190,8 @@ void Optimizer::finish()
     }
 
     if(best_fitness_ > fitness_) {
+
+        INTERLUDE("update fitness");
         ainfo << "got better fitness: " << fitness_ << ", best was " << best_fitness_ << std::endl;
         best_fitness_ = fitness_;
 
@@ -195,7 +201,9 @@ void Optimizer::finish()
         }
     }
 
+    INTERLUDE("generate and trigger");
     if(generateNextParameterSet()) {
+        INTERLUDE("trigger");
         msg::trigger(trigger_start_evaluation_);
         can_send_next_parameters_ = true;
         yield();
