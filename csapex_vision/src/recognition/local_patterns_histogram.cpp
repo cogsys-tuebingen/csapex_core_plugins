@@ -114,7 +114,7 @@ void LocalPatternsHistogram::process()
 
     if(!msg::hasMessage(in_rois_)) {
         FeaturesMessage feature_msg;
-
+        feature_msg.type = FeaturesMessage::Type::CLASSIFICATION;
         feature_msg.classification = 0;
 
         if(t == LBP) {
@@ -134,6 +134,7 @@ void LocalPatternsHistogram::process()
             ++it) {
 
             FeaturesMessage feature_msg;
+            feature_msg.type = FeaturesMessage::Type::CLASSIFICATION;
             cv::Rect const &rect = it->value.rect();
 
             cv::Mat roi_mat = cv::Mat(value, rect);

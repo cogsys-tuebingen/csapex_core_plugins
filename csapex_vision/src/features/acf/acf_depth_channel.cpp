@@ -229,6 +229,7 @@ void ACFDepthChannel::process()
         const cv::Rect roi_region = roi.rect() & cv::Rect(0, 0, image.cols, image.rows);
 
         FeaturesMessage feature(in_image->stamp_micro_seconds);
+        feature.type = FeaturesMessage::Type::CLASSIFICATION;
         feature.classification = roi.classification();
 
         cv::Mat image_region;

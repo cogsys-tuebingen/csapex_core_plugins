@@ -42,6 +42,7 @@ public:
         std::size_t size = input_rois->size();
         for(std::size_t i = 0 ; i < size ; ++i) {
             FeaturesMessage fm = input_features->at(i);
+            apex_assert(fm.type == FeaturesMessage::Type::CLASSIFICATION);
             RoiMessage roi = input_rois->at(i);
             roi.value.setClassification(fm.classification);
             if (roi.value.classification() > 0)

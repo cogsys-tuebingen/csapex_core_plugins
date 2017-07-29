@@ -70,7 +70,15 @@ public:
 
         for (auto& input_set : input_features)
         {
-            int ref_class = !input_set.empty() ? input_set[0].classification : 0;
+            int ref_class;
+            if(input_set.empty()){
+                ref_class = 0;
+            }
+            else{
+                apex_assert(input_set[0].type == FeaturesMessage::Type::CLASSIFICATION);
+                ref_class = input_set[0].classification;
+            }
+
 
             FeaturesMessage feature;
             feature.classification = ref_class;
@@ -78,6 +86,7 @@ public:
 
             for (auto& part : input_set)
             {
+                apex_assert(part.type == FeaturesMessage::Type::CLASSIFICATION);
                 if (feature.classification != ref_class)
                     throw std::runtime_error("Feature classification mismatch");
 

@@ -38,8 +38,9 @@ public:
         std::shared_ptr<std::vector<FeaturesMessage>> output_features(new std::vector<FeaturesMessage>);
 
         for(const FeaturesMessage &fm : *input_features) {
-            output_features->emplace_back(fm);
+            apex_assert(fm.type == FeaturesMessage::Type::CLASSIFICATION);
             if(fm.classification == exchange_) {
+                output_features->emplace_back(fm);
                 output_features->back().classification = by_;
             }
         }

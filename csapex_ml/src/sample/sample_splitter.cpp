@@ -35,6 +35,7 @@ public:
     void process() override
     {
         FeaturesMessage::ConstPtr features = msg::getMessage<FeaturesMessage>(in_);
+        apex_assert(features->type == FeaturesMessage::Type::CLASSIFICATION);
 
         {
             std::size_t param_count = getPersistentParameters().size();

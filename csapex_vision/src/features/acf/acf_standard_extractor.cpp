@@ -94,6 +94,7 @@ void ACFStandardExtractor::process()
         cv::Mat feature;
         cslibs_vision::ACFStandard::compute(roi_mat, params, feature);
         FeaturesMessage features_msg;
+        features_msg.type = FeaturesMessage::Type::CLASSIFICATION;
         feature.copyTo(features_msg.value);
         features_msg.classification = roi.value.classification();
         out_features->emplace_back(features_msg);
@@ -104,6 +105,7 @@ void ACFStandardExtractor::process()
             cv::Mat feature;
             cslibs_vision::ACFStandard::compute(roi_mat, params, feature);
             FeaturesMessage features_msg;
+            features_msg.type = FeaturesMessage::Type::CLASSIFICATION;
             feature.copyTo(features_msg.value);
             features_msg.classification = roi.value.classification();
             out_features->emplace_back(features_msg);

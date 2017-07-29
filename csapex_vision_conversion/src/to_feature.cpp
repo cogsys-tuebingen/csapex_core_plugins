@@ -59,6 +59,7 @@ inline void doProcessSingle(const typename HistogramMessage::ConstPtr &src,
         it != src->value.histograms.end() ;
         ++it) {
         FeaturesMessage msg;
+        msg.type = FeaturesMessage::Type::CLASSIFICATION;
         msg.classification = label;
         it->copyTo(msg.value);
         dst->push_back(msg);
@@ -78,6 +79,7 @@ inline void doProcessSingle(const typename CvMatMessage::ConstPtr &src,
     tmp.copyTo(features.value);
 
     features.classification = label;
+    features.type = FeaturesMessage::Type::CLASSIFICATION;
     dst->push_back(features);
 }
 
@@ -88,6 +90,7 @@ inline void doProcessSingle(const typename DescriptorMessage::ConstPtr &src,
 {
     for(int i = 0 ; i < src->value.rows ; ++i) {
         FeaturesMessage features;
+        features.type = FeaturesMessage::Type::CLASSIFICATION;
         src->value.row(i).copyTo(features.value);
         features.classification = label;
         dst->push_back(features);

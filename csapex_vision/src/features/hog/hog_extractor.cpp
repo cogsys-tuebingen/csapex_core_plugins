@@ -127,6 +127,7 @@ void HOGExtractor::process()
         assert(data.cols == hog_.winSize.width);
 
         FeaturesMessage feature;
+        feature.type = FeaturesMessage::Type::CLASSIFICATION;
         feature.classification = roi.value.classification();
         hog_.computeSingle(data, feature.value);
         out->push_back(feature);

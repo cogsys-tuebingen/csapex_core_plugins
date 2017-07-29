@@ -22,14 +22,14 @@ RandomTreesTrainer::RandomTreesTrainer()
 {
 }
 
-void RandomTreesTrainer::setup(NodeModifier& node_modifier)
-{
-    CollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
-}
+//void RandomTreesTrainer::setup(NodeModifier& node_modifier)
+//{
+//    CollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
+//}
 
 void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
 {
-    CollectionNode<FeaturesMessage>::setupParameters(parameters);
+   MachineLearningNode::setupParameters(parameters);
 
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("classes",
@@ -37,9 +37,9 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
                   0, 100, 2, 1),
                  std::bind(&RandomTreesTrainer::updatePriors, this));;
 
-    addParameter(csapex::param::ParameterFactory::declareFileOutputPath
-                 ("path", "rforest.yaml"),
-                 path_);
+//    addParameter(csapex::param::ParameterFactory::declareFileOutputPath
+//                 ("path", "rforest.yaml"),
+//                 path_);
 
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max depth",
@@ -239,7 +239,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
 
     std::cout << "[RandomTrees]: Started training with " << train_data.rows << " samples!" << std::endl;
     if(rtrees->train(train_data_struct)) {
-        cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+        cv::FileStorage fs(file_name_, cv::FileStorage::WRITE);
         rtrees->write(fs);
         std::cout << "[RandomTrees]: Finished training!" << std::endl;
     } else {

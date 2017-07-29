@@ -33,6 +33,7 @@ public:
     {
         if(msg::isMessage<FeaturesMessage>(in_features_)) {
             FeaturesMessage::ConstPtr in_features = msg::getMessage<FeaturesMessage>(in_features_);
+            apex_assert(in_features->type == FeaturesMessage::Type::CLASSIFICATION);
             if(in_features->classification == exp_classification_) {
                 msg::publish(out_features_, in_features);
             }
@@ -43,8 +44,10 @@ public:
             std::shared_ptr< std::vector<FeaturesMessage> > out_features(new std::vector<FeaturesMessage>);
             const std::size_t size = in_features->size();
             for(std::size_t i = 0 ; i < size ; ++i) {
-                if(in_features->at(i).classification == exp_classification_) {
-                    out_features->emplace_back(in_features->at(i));
+                const FeaturesMessage& fm = in_features->at(i);
+                apex_assert(fm.type == FeaturesMessage::Type::CLASSIFICATION);
+                if(fm.classification == exp_classification_) {
+                    out_features->emplace_back(fm);
                 }
             }
             msg::publish<GenericVectorMessage, FeaturesMessage>(out_features_, out_features);

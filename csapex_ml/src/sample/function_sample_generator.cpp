@@ -49,6 +49,7 @@ public:
         double y = y_t;
 
         FeaturesMessage::Ptr feature = std::make_shared<FeaturesMessage>();
+        feature->type = FeaturesMessage::Type::CLASSIFICATION;
 
         double error_p = randnum() < outlier_prob_;
         if(error_p) {

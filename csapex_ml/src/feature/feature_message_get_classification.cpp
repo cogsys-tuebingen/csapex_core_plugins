@@ -38,6 +38,7 @@ public:
 
         std::shared_ptr<std::vector<int>> out(new std::vector<int>);
         for(const FeaturesMessage& f : *input){
+            apex_assert(f.type == FeaturesMessage::Type::CLASSIFICATION);
             int classification = f.classification;
             out->emplace_back(classification);
         }

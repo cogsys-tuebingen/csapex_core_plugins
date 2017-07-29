@@ -4,16 +4,16 @@
 /// PROJECT
 #include <csapex_core_plugins/collection_node.h>
 #include <csapex_ml/features_message.h>
-
+#include "machine_learning_node.h"
 namespace csapex {
 
 
-class CSAPEX_EXPORT_PLUGIN RandomTreesTrainer : public CollectionNode<connection_types::FeaturesMessage>
+class CSAPEX_EXPORT_PLUGIN RandomTreesTrainer : public MachineLearningNode
 {
 public:
     RandomTreesTrainer();
 
-    void setup(csapex::NodeModifier& node_modifier) override;
+//    void setup(csapex::NodeModifier& node_modifier) override;
     void setupParameters(Parameterizable& parameters) override;
 
 private:
@@ -26,7 +26,7 @@ private:
     int categories_;
     std::vector<csapex::param::ParameterPtr> priors_params_;
     std::vector<float> priors_;
-    std::string        path_;
+//    std::string        path_;
 };
 
 

@@ -38,6 +38,7 @@ void EmptyLabeledFeaturesMessage::setupParameters(Parameterizable& parameters)
 void EmptyLabeledFeaturesMessage::process()
 {
     FeaturesMessage::Ptr static_feature(new FeaturesMessage);
+    static_feature->type = FeaturesMessage::Type::CLASSIFICATION;
     static_feature->classification = readParameter<int>("class id");
     msg::publish(output_, static_feature);
 

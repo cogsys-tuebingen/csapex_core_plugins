@@ -14,18 +14,29 @@ namespace connection_types {
 
 struct CSAPEX_ML_EXPORT FeaturesMessage : public Message
 {
+    enum class Type {
+        CLASSIFICATION = 0,
+        REGRESSION = 1
+    };
+
     static const int INVALID_LABEL = -1;
 
     typedef std::shared_ptr<FeaturesMessage> Ptr;
     typedef std::shared_ptr<FeaturesMessage const> ConstPtr;
 
+    FeaturesMessage(Type type, Message::Stamp stamp_micro_seconds = 0);
     FeaturesMessage(Message::Stamp stamp_micro_seconds = 0);
 
     virtual TokenData::Ptr clone() const override;
     virtual TokenData::Ptr toType() const override;
 
     std::vector<float> value;
+
+    Type type;
+
     int   classification;
+    std::vector<float> regression_result;
+
     float confidence;
 };
 

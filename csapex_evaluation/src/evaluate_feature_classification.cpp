@@ -64,6 +64,9 @@ void EvaluateFeatureClassification::process()
         const FeaturesMessage& truth = truth_msg->at(i);
         const FeaturesMessage& classified = classified_msg->at(i);
 
+        apex_assert(truth.type == FeaturesMessage::Type::CLASSIFICATION);
+        apex_assert(classified.type == FeaturesMessage::Type::CLASSIFICATION);
+
         apex_assert(truth.value.size() == classified.value.size());
 
         const float& t = truth.classification;

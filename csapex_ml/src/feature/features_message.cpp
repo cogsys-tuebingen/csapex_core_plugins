@@ -10,14 +10,20 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::FeaturesMessage)
 using namespace csapex;
 using namespace connection_types;
 
+FeaturesMessage::FeaturesMessage(Type type, Message::Stamp stamp)
+    : Message("FeaturesMessage", "/", stamp),
+      type(type),
+      classification(0)
+{}
 FeaturesMessage::FeaturesMessage(Message::Stamp stamp)
-    : Message("FeaturesMessage", "/", stamp), classification(0)
+    : FeaturesMessage(Type::CLASSIFICATION, stamp)
 {}
 
 TokenData::Ptr FeaturesMessage::clone() const
 {
     Ptr new_msg(new FeaturesMessage);
     new_msg->value = value;
+    new_msg->type = type;
     new_msg->classification = classification;
     new_msg->confidence = confidence;
     return new_msg;
@@ -26,6 +32,7 @@ TokenData::Ptr FeaturesMessage::clone() const
 TokenData::Ptr FeaturesMessage::toType() const
 {
     Ptr new_msg(new FeaturesMessage);
+    new_msg->type = type;
     return new_msg;
 }
 
@@ -37,7 +44,17 @@ Node convert<csapex::connection_types::FeaturesMessage>::encode(const csapex::co
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
     node["features"] = rhs.value;
-    node["classification"] = rhs.classification;
+    node["type"] = (int) rhs.type;
+    switch (rhs.type) {
+    case  FeaturesMessage::Type::CLASSIFICATION:
+        node["classification"] = rhs.classification;
+        break;
+    case FeaturesMessage::Type::REGRESSION:
+        node["regression_result"] = rhs.regression_result;
+        break;
+    default:
+        break;
+    }
     node["confidence"] = rhs.confidence;
     return node;
 }
@@ -49,7 +66,23 @@ bool convert<csapex::connection_types::FeaturesMessage>::decode(const Node& node
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
     rhs.value = node["features"].as<std::vector<float> >();
-    rhs.classification = node["classification"].as<int>();
+
+    // For backward compatibility
+    rhs.type = FeaturesMessage::Type::CLASSIFICATION;
+    if(node["type"].IsDefined()){
+        rhs.type = (FeaturesMessage::Type) node["type"].as<int>();
+    }
+    switch (rhs.type) {
+    case  FeaturesMessage::Type::CLASSIFICATION:
+        rhs.classification = node["classification"].as<int>();
+        break;
+    case FeaturesMessage::Type::REGRESSION:
+        rhs.regression_result = node["regression_result"].as<std::vector<float> >();
+        break;
+    default:
+        throw std::logic_error("Unkown FeatureMessage type.");
+    }
+
     if(node["confidence"].IsDefined())
         rhs.confidence = node["confidence"].as<float>();
     else

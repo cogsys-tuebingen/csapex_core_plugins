@@ -46,13 +46,16 @@ void AssignFeatureClassifications::process()
 
         for(std::size_t i = 0 ; i < in_features->size() ; ++i) {
             FeaturesMessage feature = in_features->at(i);
+            apex_assert(feature.type == FeaturesMessage::Type::CLASSIFICATION);
             int label = (int) in_labels->at(i);
             feature.classification = label;
+            feature.type = FeaturesMessage::Type::CLASSIFICATION;
             out_features->emplace_back(feature);
         }
     } else {
         for(FeaturesMessage feature : *in_features) {
             feature.classification = label_;
+            feature.type = FeaturesMessage::Type::CLASSIFICATION;
             out_features->emplace_back(feature);
         }
     }
