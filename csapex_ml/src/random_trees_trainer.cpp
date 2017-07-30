@@ -200,7 +200,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     cv::RandomTrees rtrees;
     std::cout << "[RandomTrees]: Started training with " << n << " samples!" << std::endl;
     if(rtrees.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, cv::Mat(), params)) {
-        cv::FileStorage fs(path_, cv::FileStorage::WRITE);
+        cv::FileStorage fs(file_name_, cv::FileStorage::WRITE);
         rtrees.write(fs.fs, "random_forest");
         fs << "classes" << "[";
         for(int i : classifications) {
