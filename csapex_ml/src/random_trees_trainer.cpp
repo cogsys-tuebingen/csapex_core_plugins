@@ -22,24 +22,16 @@ RandomTreesTrainer::RandomTreesTrainer()
 {
 }
 
-//void RandomTreesTrainer::setup(NodeModifier& node_modifier)
-//{
-//    CollectionNode<connection_types::FeaturesMessage>::setup(node_modifier);
-//}
 
 void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
 {
-   MachineLearningNode::setupParameters(parameters);
+    MachineLearningNode::setupParameters(parameters);
 
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("classes",
                   csapex::param::ParameterDescription("Number of classes to learn."),
                   0, 100, 2, 1),
                  std::bind(&RandomTreesTrainer::updatePriors, this));;
-
-//    addParameter(csapex::param::ParameterFactory::declareFileOutputPath
-//                 ("path", "rforest.yaml"),
-//                 path_);
 
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max depth",
@@ -152,11 +144,21 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
 {
     FeaturesMessage& first_feature = collection[0];
     std::size_t feature_length = first_feature.value.size();
+    std::size_t responses_length = first_feature.regression_result.size();
+    std::size_t collection_size = collection.size();
 
-    cv::Mat train_data(collection.size(), feature_length, CV_32FC1, cv::Scalar());
-    cv::Mat missing(collection.size(), feature_length, CV_8UC1, cv::Scalar(0));
+    cv::Mat train_data(collection_size, feature_length, CV_32FC1, cv::Scalar());
+    cv::Mat missing(collection_size, feature_length, CV_8UC1, cv::Scalar(0));
 
-    cv::Mat responses(collection.size(), 1, CV_32SC1, cv::Scalar());
+    cv::Mat responses;
+    if(is_classification_){
+         // classification problem
+        responses = cv::Mat(collection_size, 1, CV_32SC1, cv::Scalar());
+    }
+    else{
+        // regression problem
+        responses = cv::Mat(collection_size, responses_length, CV_32FC1, cv::Scalar());
+    }
 
 #if CV_MAJOR_VERSION == 2
     int tflag = CV_ROW_SAMPLE;
@@ -165,8 +167,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
 #endif
 
     std::set<int> classifications;
-    std::size_t n = collection.size();
-    for(std::size_t i = 0; i < n; ++i) {
+    for(std::size_t i = 0; i < collection_size; ++i) {
         FeaturesMessage& feature = collection[i];
         for(std::size_t j = 0; j < feature_length; ++j) {
             const float& val = feature.value[j];
@@ -177,9 +178,19 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
                 train_data.at<float>(i,j) = val;
             }
         }
+        if(is_classification_){ // classification problem
+            responses.at<int>(i,0) = feature.classification;
+            classifications.insert(feature.classification);
+        }
+        else{ // regression problem
+            for(std::size_t j = 0; j < responses_length; ++j){
+                const float& val = feature.regression_result[j];
 
-        responses.at<int>(i,0) = feature.classification;
-        classifications.insert(feature.classification);
+                if(std::abs(val) < FLT_MAX*0.5f) {
+                    responses.at<float>(i,j) = val;
+                }
+            }
+        }
     }
 
 #if CV_MAJOR_VERSION == 2
