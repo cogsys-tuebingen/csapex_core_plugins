@@ -209,7 +209,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     cv::Mat var_type( train_data.cols + 1, 1, CV_8U, CV_VAR_NUMERICAL);
 
     cv::RandomTrees rtrees;
-    std::cout << "[RandomTrees]: Started training with " << n << " samples!" << std::endl;
+    std::cout << "[RandomTrees]: Started training with " << collection_size << " samples!" << std::endl;
     if(rtrees.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, cv::Mat(), params)) {
         cv::FileStorage fs(file_name_, cv::FileStorage::WRITE);
         rtrees.write(fs.fs, "random_forest");
