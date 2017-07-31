@@ -47,9 +47,18 @@ inline void classify(const RandomTree             &random_trees,
 #elif CV_MAJOR_VERSION == 3
     std::vector<float> results;
     float prediction_value = random_trees->predict(sample, results, cv::ml::StatModel::Flags::RAW_OUTPUT);
-    int class_id = std::round(prediction_value);
-    out_feature.confidence     = 0; // @todo: fix this confidence, somehow prediction is wierd in cv3
-    out_feature.classification = class_id;
+    if(in_feature.type == FeaturesMessage::Type::REGRESSION){
+        out_feature.type = FeaturesMessage::Type::REGRESSION;
+        out_feature.regression_result.push_back(prediction_value);
+    }
+    else{
+        int class_id = std::round(prediction_value);
+        out_feature.type = FeaturesMessage::Type::CLASSIFICATION;
+        out_feature.confidence     = 0; // @todo: fix this confidence, somehow prediction is wierd in cv3
+        out_feature.classification = class_id;
+    }
+
+
 #endif
 }
 
