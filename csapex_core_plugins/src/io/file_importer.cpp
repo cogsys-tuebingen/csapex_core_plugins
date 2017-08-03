@@ -425,7 +425,6 @@ bool FileImporter::createMessageProvider(const QString& file_path)
             provider_ = pos->second;
             provider_->begin.disconnectAll();
             provider_->slot_count_changed.disconnectAll();
-            provider_->no_more_messages.disconnectAll();
 
         } else {
             INTERLUDE("createMessageProvider");
@@ -439,7 +438,6 @@ bool FileImporter::createMessageProvider(const QString& file_path)
 
         if(!directory_import_) {
             provider_->begin.connect(std::bind(&FileImporter::triggerSignalBegin, this));
-            provider_->no_more_messages.connect(std::bind(&FileImporter::triggerSignalEnd, this));
         }
 
         {

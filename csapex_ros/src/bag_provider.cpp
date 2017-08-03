@@ -111,7 +111,6 @@ void BagProvider::setTopic()
     for(rosbag::View::iterator it = temp.begin(); it != temp.end(); ++it) {
         frames_++;
     }
-    frames_--;
 
     int current_frame = state.getParameter("bag/frame")->as<int>();
 

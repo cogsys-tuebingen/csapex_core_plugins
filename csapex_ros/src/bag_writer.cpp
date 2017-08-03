@@ -106,10 +106,8 @@ public:
             RosMessageConversion& ros_conv = RosMessageConversion::instance();
 
             std::map<std::string, int> possible_conversions = ros_conv.getAvailableRosConversions(type);
-            if(possible_conversions.size() == 1) {
-                RosMessageConversion::instance().write(bag, message, topic);
+            if(possible_conversions.size() != 1) {
 
-            } else {
                 if(!hasParameter(topic + "_target_type")) {
                     param::ParameterPtr p = param::ParameterFactory::declareParameterSet(topic + "_target_type", possible_conversions, 0);
                     addPersistentParameter(p);
