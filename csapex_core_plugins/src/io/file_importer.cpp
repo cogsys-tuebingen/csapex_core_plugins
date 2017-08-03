@@ -271,6 +271,8 @@ void FileImporter::sendToken()
 
     apex_assert_hard(provider_->slotCount() <= outputs_.size());
 
+    provider_->prepareNext();
+
     for(std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
         INTERLUDE_STREAM("slot " << slot);
 
@@ -292,6 +294,10 @@ void FileImporter::sendToken()
                 msg::publish(output, msg);
             }
         }
+    }
+
+    if(!provider_->hasNext()) {
+        triggerSignalEnd();
     }
 }
 

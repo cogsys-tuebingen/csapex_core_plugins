@@ -63,6 +63,7 @@ public:
             stop();
         });
     }
+
     void process()
     {
         if(!is_open_) {
@@ -110,10 +111,13 @@ public:
 
             } else {
                 if(!hasParameter(topic + "_target_type")) {
-                    addTemporaryParameter(param::ParameterFactory::declareParameterSet(topic + "_target_type", possible_conversions, 0),
-                                          [this, topic](param::Parameter* p) {
+                    param::ParameterPtr p = param::ParameterFactory::declareParameterSet(topic + "_target_type", possible_conversions, 0);
+                    addPersistentParameter(p);
+                    addParameterCallback(p, [this, topic](param::Parameter* p) {
                         topic_to_type_[topic] = p->as<int>();
                     });
+                    topic_to_type_[topic] = p->as<int>();
+                    selected_target_type = topic_to_type_[topic];
                 }
             }
 
@@ -129,7 +133,6 @@ public:
         } else {
             RosMessageConversion::instance().write(bag, message, topic, selected_target_type);
         }
-
     }
 
     void stop()

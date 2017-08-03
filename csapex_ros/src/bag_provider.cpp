@@ -152,8 +152,8 @@ bool BagProvider::hasNext()
     // check if we are at the end
     else if(frame_ == frames_) {
         //if(!end_signaled_) {
-            no_more_messages();
-            end_signaled_ = true;
+//            no_more_messages();
+//            end_signaled_ = true;
         //}
 
         if(!state.readParameter<bool>("bag/loop")) {
@@ -172,9 +172,6 @@ bool BagProvider::hasNext()
         has_next = initiated;
     }
 
-    if(has_next) {
-        advanceIterators();
-    }
     return has_next;
 }
 
@@ -211,6 +208,10 @@ connection_types::Message::Ptr BagProvider::next(std::size_t slot)
     return r;
 }
 
+void BagProvider::prepareNext()
+{
+    advanceIterators();
+}
 
 void BagProvider::advanceIterators()
 {

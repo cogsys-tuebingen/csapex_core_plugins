@@ -35,6 +35,8 @@ public:
     virtual Memento::Ptr getState() const;
     virtual void setParameterState(Memento::Ptr memento);
 
+    virtual void prepareNext() override;
+
     void parameterChanged();
 
 private:
