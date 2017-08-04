@@ -225,7 +225,7 @@ bool SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
             auto rho = svm->getDecisionFunction(0, alpha, idx);
 
             std::vector<float> coeffs(svm->getVarCount(), 0.f);
-            for(int i = 0 ; i < alpha.size(); ++i) {
+            for(int i = 0 ; i < (int) alpha.size(); ++i) {
                 std::vector<float> sv = supvec.row(idx.at(i));
                 for(int j = 0 ; j < svm->getVarCount() ; ++j) {
                     coeffs[j] += alpha[i] * sv[j] * -1;
@@ -234,7 +234,7 @@ bool SVMTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 
             fs << "svm_coeffs" << coeffs;
             fs << "svm_alpha" << "[";
-            for(int i = 0 ; i < alpha.size(); ++i)
+            for(int i = 0 ; i < (int) alpha.size(); ++i)
                 fs << alpha.at(i);
             fs << "]";
             fs << "svm_rho" << rho;
