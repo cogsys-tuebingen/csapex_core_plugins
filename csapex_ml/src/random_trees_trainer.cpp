@@ -49,11 +49,18 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
                                                       "If all absolute differences between an estimated value in a node and values of train samples in this node \n"
                                                       "are less than this parameter then the node will not be split."),
                   0.0, 255.0, 0.0, 0.01));;
+
+#if CV_MAJOR_VERSION == 2
+    bool use_surrogates = true;
+#elif CV_MAJOR_VERSION == 3
+    bool use_surrogates = false; // not yet supported
+#endif
+
     addParameter(csapex::param::ParameterFactory::declareBool
                  ("use surrogates",
                   csapex::param::ParameterDescription("If true then surrogate splits will be built. \n"
                                                       "These splits allow to work with missing data and compute variable importance correctly."),
-                  true));;
+                  use_surrogates));;
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max categories",
                   csapex::param::ParameterDescription("Cluster possible values of a categorical variable into K <= max_categories clusters to find a suboptimal split.\n"
@@ -146,18 +153,20 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     std::size_t feature_length = first_feature.value.size();
     std::size_t responses_length = first_feature.regression_result.size();
     std::size_t collection_size = collection.size();
+    std::size_t var_type_size = 0;
 
     cv::Mat train_data(collection_size, feature_length, CV_32FC1, cv::Scalar());
     cv::Mat missing(collection_size, feature_length, CV_8UC1, cv::Scalar(0));
-
     cv::Mat responses;
     if(is_classification_){
-         // classification problem
-        responses = cv::Mat(collection_size, 1, CV_32SC1, cv::Scalar());
+        // classification problem
+        var_type_size = 1;
+        responses = cv::Mat(collection_size, var_type_size, CV_32SC1, cv::Scalar());
     }
     else{
         // regression problem
-        responses = cv::Mat(collection_size, responses_length, CV_32FC1, cv::Scalar());
+        var_type_size = responses_length;
+        responses = cv::Mat(collection_size, var_type_size, CV_32FC1, cv::Scalar());
     }
 
 #if CV_MAJOR_VERSION == 2
@@ -240,7 +249,9 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     cv::Mat priors(priors_);
     rtrees->setPriors(priors);
 
-    cv::Mat var_type( train_data.cols + 1, 1, CV_8U, cv::ml::VAR_NUMERICAL);
+    cv::Mat var_type;
+
+    var_type = cv::Mat( train_data.cols + var_type_size, 1, CV_8U, cv::ml::VAR_NUMERICAL);
 
     cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(train_data,
                                                                              tflag,
