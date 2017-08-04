@@ -13,7 +13,7 @@
 /// SYSTEM
 namespace csapex {
 
-template <typename MessageType>
+template <typename MessageType, typename Allocator = std::allocator<MessageType>>
 class CollectionNode : public Node
 {
 public:
@@ -21,8 +21,8 @@ public:
     {}
 
     virtual void setupParameters(Parameterizable &parameters) {
-        parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType>::doProcessCollection, this, std::ref(buffer_)));
-        parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType>::clearCollection, this));
+        parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType, Allocator>::doProcessCollection, this, std::ref(buffer_)));
+        parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType, Allocator>::clearCollection, this));
     }
 
     virtual void setup(NodeModifier& modifier) override
@@ -49,7 +49,7 @@ public:
     }
 
 protected:
-    void doProcessCollection(std::vector<MessageType>& collection)
+    void doProcessCollection(std::vector<MessageType, Allocator>& collection)
     {
         if(collection.empty()) {
             node_modifier_->setError("Collection is empty!");
@@ -65,7 +65,7 @@ protected:
         }
     }
 
-    virtual bool processCollection(std::vector<MessageType>& collection) = 0;
+    virtual bool processCollection(std::vector<MessageType, Allocator>& collection) = 0;
 
     void clearCollection()
     {
@@ -79,7 +79,7 @@ protected:
     Event* event_processed;
 
 private:
-    std::vector<MessageType> buffer_;
+    std::vector<MessageType, Allocator> buffer_;
 };
 
 }
