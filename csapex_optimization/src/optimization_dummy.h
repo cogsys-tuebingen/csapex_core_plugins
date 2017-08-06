@@ -25,6 +25,7 @@ public:
 private:
     Input* in_;
     Output* out_;
+    Output* out_grad_;
 };
 
 
