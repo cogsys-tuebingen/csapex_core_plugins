@@ -110,13 +110,12 @@ void TimePlot::process()
     else {
         GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in_);
         apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
-        if(initialize_){
-            num_plots_ = message->nestedValueCount();
-            deque_v_.resize(num_plots_);
-            color_line_.resize(num_plots_);
-            calculateLineColors();
-            initialize_ = false;
-        }
+        num_plots_ = message->nestedValueCount();
+
+        deque_v_.resize(num_plots_);
+        color_line_.resize(num_plots_);
+        calculateLineColors();
+
         for(std::size_t num_plot = 0; num_plot < num_plots_; ++num_plot){
             auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(num_plot));
             if(pval){
