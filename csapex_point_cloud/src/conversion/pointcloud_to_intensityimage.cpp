@@ -18,6 +18,13 @@ PointCloudToIntensityImage::PointCloudToIntensityImage()
 {
 }
 
+void PointCloudToIntensityImage::setupParameters(Parameterizable& parameters)
+{
+    parameters.addParameter(
+            param::ParameterFactory::declareBool("skip_invalid", true),
+            skip_invalid_);
+}
+
 void PointCloudToIntensityImage::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
@@ -75,7 +82,7 @@ void PointCloudToIntensityImage::inputCloudImpl(typename pcl::PointCloud<pcl::Po
     for(unsigned idx = 0; idx < n; ++idx) {
         const pcl::PointXYZI& p = *pt;
         double dist = std::sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
-        if(dist == dist) {
+        if (!skip_invalid_ || dist == dist) {
             *data = p.intensity;
         }
 

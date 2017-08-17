@@ -108,15 +108,20 @@ public:
             std::map<std::string, int> possible_conversions = ros_conv.getAvailableRosConversions(type);
             if(possible_conversions.size() != 1) {
 
-                if(!hasParameter(topic + "_target_type")) {
-                    param::ParameterPtr p = param::ParameterFactory::declareParameterSet(topic + "_target_type", possible_conversions, 0);
-                    addPersistentParameter(p);
+                param::ParameterPtr p;
+                std::string param_name = topic + "_target_type";
+                if(!hasParameter(param_name)) {
+                    p = param::ParameterFactory::declareParameterSet(param_name, possible_conversions, 0);
+                    addTemporaryParameter(p);
                     addParameterCallback(p, [this, topic](param::Parameter* p) {
                         topic_to_type_[topic] = p->as<int>();
                     });
-                    topic_to_type_[topic] = p->as<int>();
-                    selected_target_type = topic_to_type_[topic];
+                } else {
+                    p = getParameter(param_name);
                 }
+
+                topic_to_type_[topic] = p->as<int>();
+                selected_target_type = topic_to_type_[topic];
             }
 
         }
