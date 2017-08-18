@@ -21,6 +21,7 @@
 #include <csapex/param/trigger_parameter.h>
 #include <csapex_core_plugins/timestamp_message.h>
 #include <csapex/model/graph.h>
+#include <csapex/model/subgraph_node.h>
 
 /// SYSTEM
 #include <console_bridge/console.h>
@@ -224,10 +225,12 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
                 break;
         }
         if(i < n - 2) {
-            graph = std::dynamic_pointer_cast<Graph>(nh->getNode().lock());
-            if(!graph) {
-                std::cerr << "no parameter for " << parameter_name << ", child " << subname << " is not a graph" << std::endl;
+            auto subgraph = std::dynamic_pointer_cast<SubgraphNode>(nh->getNode().lock());
+            if(!subgraph) {
+                std::cerr << "no parameter for " << parameter_name << ", child " << subname << " is not a graph, but " << nh->getType() << std::endl;
                 return;
+            } else {
+                graph = subgraph->getGraph();
             }
         }
 
@@ -371,7 +374,7 @@ void APEXRosInterface::clock(const rosgraph_msgs::ClockConstPtr &clock)
 {
     ros::Time now = clock->clock;
     if(now < last_clock_ && clock_reset_event_) {
-//        std::cerr << "time reset" << std::endl;
+        //        std::cerr << "time reset" << std::endl;
 
         TokenDataConstPtr data(new connection_types::AnyMessage);
         TokenPtr token = std::make_shared<Token>(data);
