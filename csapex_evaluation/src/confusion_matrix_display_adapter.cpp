@@ -80,12 +80,18 @@ QVariant ConfusionMatrixTableModel::data(const QModelIndex &index, int role) con
 
     auto actual = confusion_.classes.at(index.column());
     auto prediction = confusion_.classes.at(index.row());
-    int entry = confusion_.histogram.at(std::make_pair(actual, prediction));
+    auto key = std::make_pair(actual, prediction);
+    int entry = 0;
+    if(confusion_.histogram.find(key) != confusion_.histogram.end()){
+        entry = confusion_.histogram.at(key);
+    }
     if(role == Qt::DisplayRole) {
         return entry;
     }
-
-    double f = entry / double(sum[actual]);
+    auto it = std::find(confusion_.classes.begin(), confusion_.classes.end(),actual);
+    std::size_t id = it - confusion_.classes.begin();
+    double f = entry / double(sum[id]);
+//    double f = entry / double(sum[actual]);
 
     static QColor min_color = QColor::fromRgb(255, 255, 255);
     static QColor max_color = QColor::fromRgb(0, 0, 0);
