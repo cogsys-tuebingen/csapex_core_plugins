@@ -75,8 +75,11 @@ void RandomTrees::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("path", "rforest.yaml"),
                             [this](param::Parameter* p) {
-        path_ = p->as<std::string>();
-        reloadTree();
+        auto path = p->as<std::string>();
+        if(path != path_){
+            path_ = path;
+            reloadTree();
+        }
     });
     parameters.addParameter(param::ParameterFactory::declareBool("compute_class_weights", false),
                             compute_class_weights_);
@@ -159,6 +162,9 @@ void RandomTrees::process()
             output_class_weights->push_back(mat_message);
         }
     } else {
+//        apex_assert_equal(input_feature->at(0).value.size() , random_trees_.get_tree(0)->get_var_count());
+        ainfo << "using forest of width " << random_trees_.get_tree(0)->get_var_count()
+              << " with samples of width " << input_feature->at(0).value.size() << std::endl;
         for(std::size_t i = 0; i < n; ++i) {
             std::map<int, std::size_t> class_labels = class_labels_;
             impl::classify(random_trees_,
