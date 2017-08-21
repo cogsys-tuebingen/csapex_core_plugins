@@ -162,9 +162,14 @@ void RandomTrees::process()
             output_class_weights->push_back(mat_message);
         }
     } else {
-//        apex_assert_equal(input_feature->at(0).value.size() , random_trees_.get_tree(0)->get_var_count());
+#if CV_MAJOR_VERSION == 2
+        apex_assert_equal(input_feature->at(0).value.size() , random_trees_.get_tree(0)->get_var_count());
         ainfo << "using forest of width " << random_trees_.get_tree(0)->get_var_count()
               << " with samples of width " << input_feature->at(0).value.size() << std::endl;
+#elif CV_MAJOR_VERSION == 3
+        ainfo << "using forest of width " << random_trees_.get()->getVarCount()
+              << " with samples of width " << input_feature->at(0).value.size() << std::endl;
+#endif
         for(std::size_t i = 0; i < n; ++i) {
             std::map<int, std::size_t> class_labels = class_labels_;
             impl::classify(random_trees_,
