@@ -43,11 +43,12 @@ void MLPCv::loadMLP()
 {
 #if CV_MAJOR_VERSION == 2
     mlp_.load(path_.c_str());
-    loaded_ = mlp_.get_layer_count() > 0;
+    loaded_ = mlp_.get_layer_count() > 0; // oddly opencv does not check if file is valid
 #elif CV_MAJOR_VERSION == 3
-    mlp_->load(path_);
-    node_modifier_->setWarning("cannot classfiy, IMPLEMENT!!!" );
-    loaded_ = false;
+    mlp_ = cv::ml::ANN_MLP::load(path_);
+    cv::Mat sizes = mlp_->getLayerSizes();
+    loaded_ = sizes.rows > 0 || sizes.cols > 0;
+
 #endif
 
 }
