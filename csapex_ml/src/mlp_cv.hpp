@@ -20,6 +20,7 @@ public:
 private:
     void classify(const connection_types::FeaturesMessage &input, connection_types::FeaturesMessage &output);
     void loadMLP();
+    void reloadMLP();
 
 private:
     Input* input_;

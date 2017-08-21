@@ -7,7 +7,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/signal/slot.h>
-
+#include <QFile>
 CSAPEX_REGISTER_CLASS(csapex::MLPCv, csapex::Node)
 
 using namespace csapex;
@@ -24,27 +24,32 @@ void MLPCv::setup(NodeModifier &node_modifier)
     input_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Unclassified feature");
     output_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Classified features");
 
-    reload_ = node_modifier.addSlot("Reload", std::bind(&MLPCv::loadMLP, this));
+    reload_ = node_modifier.addSlot("Reload", std::bind(&MLPCv::reloadMLP, this));
 }
 
 void MLPCv::setupParameters(Parameterizable &parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("file", "mlp.yaml"),
-                            std::bind(&MLPCv::loadMLP, this));
+                            [this](param::Parameter* p) {
+        auto path = p->as<std::string>();
+        if(path != path_){
+            path_ = path;
+            reloadMLP();
+        }
+    });
 }
 
 void MLPCv::loadMLP()
 {
-    auto path = readParameter<std::string>("file");
-    if(path != path_){
-        path_ = path;
 #if CV_MAJOR_VERSION == 2
-        mlp_.load(path_.c_str());
+    mlp_.load(path_.c_str());
+    loaded_ = mlp_.get_layer_count() > 0;
 #elif CV_MAJOR_VERSION == 3
-        mlp_->load(path_);
+    mlp_->load(path_);
+    node_modifier_->setWarning("cannot classfiy, IMPLEMENT!!!" );
+    loaded_ = false;
 #endif
-    }
-    loaded_ = true;
+
 }
 
 void MLPCv::process()
@@ -53,8 +58,14 @@ void MLPCv::process()
             msg::getMessage<GenericVectorMessage, FeaturesMessage>(input_);
 
     std::shared_ptr<std::vector<FeaturesMessage>> output(new std::vector<FeaturesMessage>);
+    if(!loaded_) {
+        if(QFile(QString::fromStdString(path_)).exists()) {
+            loadMLP();
+        }
+    }
 
     if(loaded_) {
+
         std::size_t n = input->size();
         output->resize(n);
         for(std::size_t i = 0; i < n; ++i) {
@@ -63,7 +74,7 @@ void MLPCv::process()
 
     } else {
         *output = *input;
-        node_modifier_->setWarning("cannot classfiy, no forest loaded");
+        node_modifier_->setWarning("cannot classfiy, no MLP loaded");
     }
 
     msg::publish<GenericVectorMessage, FeaturesMessage>(output_, output);
@@ -91,4 +102,9 @@ void MLPCv::classify(const FeaturesMessage &input,
     cv::minMaxLoc(response, nullptr, nullptr, nullptr, &max);
 
     output.classification = max.x;
+}
+
+void MLPCv::reloadMLP()
+{
+    loaded_ = false;
 }
