@@ -132,6 +132,12 @@ void RandomTrees::process()
     std::size_t n = input_feature->size();
     output_feature->resize(n);
 
+#if CV_MAJOR_VERSION == 2
+            apex_assert_equal((int) input_feature->at(0).value.size() , random_trees_.get_tree(0)->get_var_count());
+#elif CV_MAJOR_VERSION == 3
+            apex_assert_equal((int) input_feature->at(0).value.size() , random_trees_.get()->getVarCount());
+#endif
+
     if(compute_class_weights_) {
         output_class_weights.reset(new std::vector<CvMatMessage::ConstPtr>());
         for(std::size_t i = 0; i < n; ++i) {
