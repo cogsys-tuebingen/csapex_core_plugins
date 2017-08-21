@@ -35,11 +35,15 @@ void MLPCv::setupParameters(Parameterizable &parameters)
 
 void MLPCv::loadMLP()
 {
+    auto path = readParameter<std::string>("file");
+    if(path != path_){
+        path_ = path;
 #if CV_MAJOR_VERSION == 2
-    mlp_.load(readParameter<std::string>("file").c_str());
+        mlp_.load(path_.c_str());
 #elif CV_MAJOR_VERSION == 3
-    mlp_->load(readParameter<std::string>("file"));
+        mlp_->load(path_);
 #endif
+    }
     loaded_ = true;
 }
 
@@ -54,7 +58,7 @@ void MLPCv::process()
         std::size_t n = input->size();
         output->resize(n);
         for(std::size_t i = 0; i < n; ++i) {
-           classify(input->at(i),output->at(i));
+            classify(input->at(i),output->at(i));
         }
 
     } else {

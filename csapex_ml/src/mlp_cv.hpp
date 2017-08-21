@@ -32,6 +32,7 @@ private:
     cv::Ptr<cv::ml::ANN_MLP> mlp_;
 #endif
     bool loaded_;
+    std::string path_;
 };
 
 }
