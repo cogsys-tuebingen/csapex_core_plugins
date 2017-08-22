@@ -1,4 +1,10 @@
 <library path="libcsapex_ml_plugin">
+<class type="csapex::DecodeFeatureClassification" base_class_type="csapex::Node">
+  <description>Uses a mapping to decode feature classification.</description>
+</class>
+<class type="csapex::AssignFeatureClassificationRunningLabels" base_class_type="csapex::Node">
+  <description>Map the feature classification to running labels, as needed for some algorithms e.g. ANNs</description>
+</class>
 <class type="csapex::FeatureMessageGetClassification" base_class_type="csapex::Node">
   <description>Extracts the classification of a FeatureMessage.</description>
 </class>
