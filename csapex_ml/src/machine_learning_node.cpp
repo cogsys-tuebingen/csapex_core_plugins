@@ -2,7 +2,8 @@
 using namespace csapex;
 using namespace connection_types;
 
-MachineLearningNode::MachineLearningNode()
+MachineLearningNode::MachineLearningNode(std::string default_file_name):
+    default_file_name_(default_file_name)
 {
 
 }
@@ -25,6 +26,6 @@ void MachineLearningNode::setupParameters(Parameterizable& parameters)
 
 
     parameters.addParameter(csapex::param::ParameterFactory::declareFileOutputPath
-                            ("file_name", "ml_config.yaml"),
+                            ("file_name", default_file_name_),
                             file_name_);
 }

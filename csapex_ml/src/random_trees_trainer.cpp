@@ -18,7 +18,7 @@ using namespace csapex::connection_types;
 
 
 RandomTreesTrainer::RandomTreesTrainer()
-    : categories_(0)
+    : MachineLearningNode("rforest.yaml"), categories_(0)
 {
 }
 
