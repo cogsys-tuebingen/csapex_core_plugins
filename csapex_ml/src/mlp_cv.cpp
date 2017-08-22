@@ -7,7 +7,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/signal/slot.h>
-#include <QFile>
+
 CSAPEX_REGISTER_CLASS(csapex::MLPCv, csapex::Node)
 
 using namespace csapex;
@@ -60,7 +60,7 @@ void MLPCv::process()
 
     std::shared_ptr<std::vector<FeaturesMessage>> output(new std::vector<FeaturesMessage>);
     if(!loaded_) {
-        if(QFile(QString::fromStdString(path_)).exists()) {
+        if(path_ != "") {
             loadMLP();
         }
     }
