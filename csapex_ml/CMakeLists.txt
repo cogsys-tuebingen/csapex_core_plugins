@@ -50,6 +50,7 @@ set(${PROJECT_NAME}_additional_libs "")
 #endif()
 
 add_library(${PROJECT_NAME}_plugin SHARED
+    src/feature/encode_feature_classification.cpp
     src/feature/decode_feature_classification.cpp
     src/feature/assign_feature_classification_running_labels.cpp
     src/machine_learning_node.cpp
