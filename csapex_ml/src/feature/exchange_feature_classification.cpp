@@ -39,8 +39,8 @@ public:
 
         for(const FeaturesMessage &fm : *input_features) {
             apex_assert(fm.type == FeaturesMessage::Type::CLASSIFICATION);
+            output_features->emplace_back(fm);
             if(fm.classification == exchange_) {
-                output_features->emplace_back(fm);
                 output_features->back().classification = by_;
             }
         }
