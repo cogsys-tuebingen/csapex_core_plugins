@@ -149,6 +149,7 @@ void MLPCvTrainer::updateLayers()
 
 bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
+    ainfo << CV_VERSION << "." << CV_VERSION_MAJOR << "." << CV_VERSION_MINOR << "." << CV_SUBMINOR_VERSION << std::endl;
     const int classes = readParameter<int>("classes");
 
     FeaturesMessage& first_feature = collection[0];
@@ -230,6 +231,9 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
                                readParameter<double>("activation beta"));
 
     mlp->setLayerSizes(layers);
+    mlp->setTrainMethod(readParameter<int>("trainig method"),
+                        readParameter<double>("training param 1"),
+                        readParameter<double>("training param 2"));
 
     std::cout << "[ANN]: Started training with " << trainig_data.rows << " samples!" << std::endl;
 
