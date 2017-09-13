@@ -203,8 +203,9 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
                           responses,
                           cv::Mat(),
                           cv::Mat(),
-                          params,
-                          0);
+                          params);//,
+                          //0);
+    ainfo << "iterations: " << iters << std::endl;
     if(iters > 0) {
         mlp.save(readParameter<std::string>("file").c_str());
         std::cout << "[MLP_ANN]: Finished training after " << iters << " iterations!" << std::endl;
