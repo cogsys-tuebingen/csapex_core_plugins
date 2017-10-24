@@ -110,6 +110,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/conversion/pointcloud_to_colorimage.cpp
     src/conversion/pointcloud_to_intensityimage.cpp
     src/conversion/pointcloud_to_pointmatrix.cpp
+    src/conversion/pointcloud_to_image.cpp
     src/conversion/pointmatrix_to_pointcloud.cpp
     src/conversion/image_to_point_cloud.cpp
     src/conversion/pointcloud_to_xyz.cpp
