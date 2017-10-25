@@ -102,7 +102,7 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
 void VectorPlot::process()
 {
     std::size_t num_inputs = VariadicInputs::getVariadicInputCount();
-    num_plots_ = num_inputs;;
+    num_plots_ = num_inputs;
 
     for(std::size_t i_inputs = 0; i_inputs < num_plots_; ++ i_inputs){
         InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
