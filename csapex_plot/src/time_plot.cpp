@@ -31,6 +31,8 @@ void TimePlot::setup(NodeModifier &node_modifier)
 
 void TimePlot::setupParameters(Parameterizable &parameters)
 {
+    Plot::setupParameters(parameters);
+
     parameters.addParameter(param::ParameterFactory::declareRange
                             ("~plot/width",
                              128, 4096, 640, 1),
@@ -46,21 +48,6 @@ void TimePlot::setupParameters(Parameterizable &parameters)
         update();
     });
 
-    std::function<void(param::Parameter* p)> setLineColors= [this](param::Parameter* p){
-        std::vector<int> c = p->as<std::vector<int>>();
-        basic_line_color_.setRed(c[0]);
-        basic_line_color_.setGreen(c[1]);
-        basic_line_color_.setBlue(c[2]);
-        calculateLineColors();
-        basic_line_color_changed_ = true;
-        update();
-    };
-
-    Plot::setupParameters(parameters);
-
-    parameters.addParameter(param::ParameterFactory::declareColorParameter(
-                                "~plot/color/line", 100, 100, 255),
-                            setLineColors);
     parameters.addParameter(param::ParameterFactory::declareRange(
                                 "~plot/line/width", 0.0, 10.0, 0.0, 0.01),
                             line_width_);
@@ -95,6 +82,7 @@ void TimePlot::process()
     timepoint time = std::chrono::system_clock::now();
     double value;
     if(msg::isValue<double>(in_)) {
+        std::unique_lock<std::recursive_mutex> lock(mutex_);
         value = msg::getValue<double>(in_);
         if(initialize_){
             deque_v_.resize(1);
@@ -102,19 +90,20 @@ void TimePlot::process()
             num_plots_ = 1;
             initialize_ = false;
             color_line_.resize(1);
-            calculateLineColors();
+            updateLineColors();
         }
         deque_v_.at(0).push_back(value);
 
     }
     else {
+        std::unique_lock<std::recursive_mutex> lock(mutex_);
         GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in_);
         apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
         num_plots_ = message->nestedValueCount();
 
         deque_v_.resize(num_plots_);
         color_line_.resize(num_plots_);
-        calculateLineColors();
+        updateLineColors();
 
         for(std::size_t num_plot = 0; num_plot < num_plots_; ++num_plot){
             auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(num_plot));
@@ -220,7 +209,7 @@ void TimePlot::renderAndSend()
     y_map.setPaintInterval( r.bottom(), r.top() );
 
     if(basic_line_color_changed_) {
-        calculateLineColors();
+        updateLineColors();
     }
 
     QwtPlotCurve curve[data_v_.size()];
@@ -263,11 +252,6 @@ double TimePlot::getLineWidth() const
     return line_width_;
 }
 
-QColor TimePlot::getLineColor(std::size_t idx) const
-{
-    return color_line_[idx];
-}
-
 const double* TimePlot::getTData() const
 {
     return data_t_.data();
@@ -283,35 +267,4 @@ std::size_t TimePlot::getVDataCountNumCurves() const
 std::size_t TimePlot::getCount() const
 {
     return data_t_.size();
-}
-
-void TimePlot::calculateLineColors()
-{
-    int r,g,b,a;
-    basic_line_color_.getRgb(&r,&g,&b,&a);
-    QColor color;
-    color.setRed(r);
-    color.setGreen(g);
-    color.setBlue(b);
-    int h,s,v;
-    color.getHsv(&h,&s,&v);
-
-    for(std::size_t i = 0; i < num_plots_; ++i) {
-
-        double hnew =  h + i * 360/num_plots_;
-        while (hnew > 359 || hnew < 0) {
-            if(hnew > 359) {
-                hnew -= 360;
-            }
-            else if(hnew < 0) {
-                hnew += 360;
-            }
-
-        }
-        color.setHsv(hnew,s,v);
-        color_line_[i] = color;
-    }
-
-    basic_line_color_changed_ = false;
-    update();
 }
