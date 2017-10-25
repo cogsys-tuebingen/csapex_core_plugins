@@ -30,6 +30,10 @@ public:
 
     QColor getBackgroundColor() const;
     QColor getFillColor() const;
+    QColor getLineColor(std::size_t idx) const;
+
+    std::size_t getNumberOfPlots() const;
+    void updateLineColors();
 
 protected:
     Plot();
@@ -43,14 +47,20 @@ public:
 
 
 protected:
+    mutable std::recursive_mutex mutex_;
     QwtScaleMap x_map;
     QwtScaleMap y_map;
 
+    bool basic_line_color_changed_;
     int width_;
     int height_;
+    std::size_t num_plots_;
+    std::size_t last_num_plots_;
 
     QColor color_bg_;
     QColor color_fill_;
+    QColor basic_line_color_;
+    std::vector<QColor> color_line_;
 };
 
 }
