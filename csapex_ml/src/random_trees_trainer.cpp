@@ -251,7 +251,6 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     rtrees->setPriors(priors);
 
     cv::Mat var_type;
-
     var_type = cv::Mat( train_data.cols + var_type_size, 1, CV_8U, cv::ml::VAR_NUMERICAL);
 
     cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(train_data,

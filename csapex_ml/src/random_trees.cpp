@@ -49,7 +49,9 @@ inline void classify(const RandomTree             &random_trees,
     float prediction_value = random_trees->predict(sample, results, cv::ml::StatModel::Flags::RAW_OUTPUT);
     if(in_feature.type == FeaturesMessage::Type::REGRESSION){
         out_feature.type = FeaturesMessage::Type::REGRESSION;
-        out_feature.regression_result.push_back(prediction_value);
+        out_feature.regression_result.clear();
+        out_feature.regression_result.insert(out_feature.regression_result.end(), results.begin(), results.end());
+//        out_feature.regression_result.push_back(prediction_value);
     }
     else{
         int class_id = std::round(prediction_value);
