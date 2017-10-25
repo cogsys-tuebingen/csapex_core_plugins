@@ -8,6 +8,9 @@
 </library>
 
 <library path="libcsapex_core_plugins_node">
+<class type="csapex::AccumulateMessages" base_class_type="csapex::Node">
+  <description>Collects n messages of a type and publishes a vector of n messages</description>
+</class>
 <class type="csapex::OverwriteFrame" base_class_type="csapex::Node">
   <description>Changes the frame_id of a message</description>
 </class>

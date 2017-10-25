@@ -74,6 +74,7 @@ target_link_libraries(${PROJECT_NAME}_core csapex_core_lib
 
 
 add_library(${PROJECT_NAME}_node SHARED
+    src/tools/accumulate_messages.cpp
     src/tools/overwrite_frame.cpp
     src/text/replace_string.cpp
     src/tools/overwrite_timestamp.cpp
