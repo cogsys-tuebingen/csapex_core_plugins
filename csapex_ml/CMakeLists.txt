@@ -50,6 +50,8 @@ set(${PROJECT_NAME}_additional_libs "")
 #endif()
 
 add_library(${PROJECT_NAME}_plugin SHARED
+    src/regression_trees.cpp
+    src/regression_trees_trainer.cpp
     src/feature/encode_feature_classification.cpp
     src/feature/decode_feature_classification.cpp
     src/feature/assign_feature_classification_running_labels.cpp

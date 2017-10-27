@@ -1,4 +1,10 @@
 <library path="libcsapex_ml_plugin">
+<class type="csapex::RegressionTrees" base_class_type="csapex::Node">
+  <description>Evaluate multi dimensional regression problem with random forests</description>
+</class>
+<class type="csapex::RegressionTreesTrainer" base_class_type="csapex::Node">
+  <description>Train multi dimensional regression problems with random forests</description>
+</class>
 <class type="csapex::EncodeFeatureClassification" base_class_type="csapex::Node">
   <description>Encodes the classification of a FeatureMessage using rules stored in a mapping, e.g. to running labels.</description>
 </class>
