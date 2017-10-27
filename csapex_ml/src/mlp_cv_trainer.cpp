@@ -149,14 +149,21 @@ void MLPCvTrainer::updateLayers()
 
 bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 {
-    ainfo << CV_VERSION << "." << CV_VERSION_MAJOR << "." << CV_VERSION_MINOR << "." << CV_SUBMINOR_VERSION << std::endl;
     const int classes = readParameter<int>("classes");
 
     FeaturesMessage& first_feature = collection[0];
     std::size_t feature_length = first_feature.value.size();
 
     cv::Mat trainig_data(collection.size(), feature_length, CV_32FC1);
-    cv::Mat responses(collection.size(), classes, CV_32FC1);
+
+    std::size_t responses_cols = 0;
+    if(first_feature.type == FeaturesMessage::Type::CLASSIFICATION){
+        responses_cols = classes;
+    }
+    else if(first_feature.type == FeaturesMessage::Type::REGRESSION){
+        responses_cols = first_feature.regression_result.size();
+    }
+    cv::Mat responses(collection.size(), responses_cols, CV_32FC1);
 
     for (std::size_t i = 0; i < collection.size(); ++i)
     {
@@ -167,12 +174,21 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 
             trainig_data.at<float>(i, j) = value;
         }
-        for (int j = 0; j < classes; ++j)
-        {
-            if (j == feature.classification)
-                responses.at<float>(i, j) = 1;
-            else
-                responses.at<float>(i, j) = 0;
+        if(first_feature.type == FeaturesMessage::Type::CLASSIFICATION) {
+            for (int j = 0; j < classes; ++j)
+            {
+                if (j == feature.classification)
+                    responses.at<float>(i, j) = 1;
+                else
+                    responses.at<float>(i, j) = 0;
+            }
+        }
+         else if(first_feature.type == FeaturesMessage::Type::REGRESSION){
+            apex_assert_eq(feature.regression_result.size(), responses_cols);
+            auto it = feature.regression_result.begin();
+            for(std::size_t j = 0; j < responses_cols; ++j, ++it){
+                responses.at<float>(i, j) = *it;
+            }
         }
     }
 
@@ -204,7 +220,7 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
                           cv::Mat(),
                           cv::Mat(),
                           params);//,
-                          //0);
+    //0);
     ainfo << "iterations: " << iters << std::endl;
     if(iters > 0) {
         mlp.save(readParameter<std::string>("file").c_str());
