@@ -248,7 +248,12 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     rtrees->setTermCriteria(term);
 
     cv::Mat priors(priors_);
-    rtrees->setPriors(priors);
+    if(is_classification_){
+        rtrees->setPriors(priors);
+    }
+    else{
+        rtrees->setPriors(cv::Mat());
+    }
 
     cv::Mat var_type;
     var_type = cv::Mat( train_data.cols + var_type_size, 1, CV_8U, cv::ml::VAR_NUMERICAL);
