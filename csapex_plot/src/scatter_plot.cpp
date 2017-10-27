@@ -46,7 +46,9 @@ void ScatterPlot::reset()
     std::unique_lock<std::recursive_mutex> lock(mutex_);
     x.clear();
     y.clear();
-    var_y_.clear();
+    for(std::vector<double>& var : var_y_){
+        var.clear();
+    }
 
     max_x_ = max_y_ = -std::numeric_limits<double>::infinity();
     min_x_ = min_y_ = std::numeric_limits<double>::infinity();
@@ -55,24 +57,26 @@ void ScatterPlot::reset()
 void ScatterPlot::process()
 {
     apex_assert(msg::isValue<double>(in_x_) == msg::isValue<double>(in_y_));
+    std::size_t num_inputs = 0;
+    {
+        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        num_inputs = VariadicInputs::getVariadicInputCount();
+        num_plots_ = num_inputs + 1;
 
-    std::size_t num_inputs = VariadicInputs::getVariadicInputCount();
-    num_plots_ = num_inputs + 1;
+        for(std::size_t i_inputs = 0; i_inputs < num_inputs; ++ i_inputs){
+            InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
+            if(!msg::isConnected(in.get())){
+                --num_plots_;
+            } else{
+                //            apex_assert(msg::isValue<double>(in.get()) == msg::isValue<double>(in_y_));
+            }
 
-    for(std::size_t i_inputs = 0; i_inputs < num_inputs; ++ i_inputs){
-        InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
-        if(!msg::isConnected(in.get())){
-            --num_plots_;
-        } else{
-//            apex_assert(msg::isValue<double>(in.get()) == msg::isValue<double>(in_y_));
         }
 
+        updateLineColors();
+        var_y_.resize(num_plots_ - 1);
+
     }
-
-    updateLineColors();
-    var_y_.resize(num_plots_ - 1);
-
-
     if(msg::isValue<double>(in_x_)) {
         apex_assert(msg::isValue<double>(in_y_));
         std::unique_lock<std::recursive_mutex> lock(mutex_);
@@ -132,7 +136,7 @@ void ScatterPlot::process()
 
                 apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message_i->nestedType()));
                 apex_assert(message_x->nestedValueCount() == message_i->nestedValueCount());
-//                var_y_[data_counter].resize(message_i->nestedValueCount());
+                //                var_y_[data_counter].resize(message_i->nestedValueCount());
 
                 for(std::size_t n_point = 0; n_point <message_i->nestedValueCount(); ++n_point){
                     auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message_i->nestedValue(n_point));
