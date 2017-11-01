@@ -2,7 +2,10 @@
 #include "blob_detector.h"
 
 /// COMPONENT
-#include <csapex_opencv/cvblob.h>
+///
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <csapex_opencv/cvblob.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 /// PROJECT
 #include <csapex/msg/generic_vector_message.hpp>

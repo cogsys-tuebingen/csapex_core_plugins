@@ -2,6 +2,7 @@
 #include "evaluate_binary_classifier_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -13,7 +14,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(EvaluateBinaryClassifierAdapter, csapex::EvaluateBinaryClassifier)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(EvaluateBinaryClassifierAdapter, csapex::EvaluateBinaryClassifier)
 
 EvaluateBinaryClassifierTableModel::EvaluateBinaryClassifierTableModel() :
     rows(0)
@@ -135,13 +136,13 @@ QVariant EvaluateBinaryClassifierTableModel::headerData(int section, Qt::Orienta
 
 
 
-EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node)
+EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&EvaluateBinaryClassifierAdapter::displayRequest, this)));
+    observe(n->display_request, this, &EvaluateBinaryClassifierAdapter::displayRequest);
 }
 
 void EvaluateBinaryClassifierAdapter::setupUi(QBoxLayout* layout)

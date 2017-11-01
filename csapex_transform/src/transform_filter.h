@@ -3,7 +3,10 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <tf/tf.h>
+
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 namespace csapex {
 

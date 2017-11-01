@@ -2,6 +2,7 @@
 #include "signal_light_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -10,16 +11,16 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(SignalLightAdapter, csapex::SignalLight)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(SignalLightAdapter, csapex::SignalLight)
 
 
-SignalLightAdapter::SignalLightAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node)
+SignalLightAdapter::SignalLightAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node)
     : ResizableNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&SignalLightAdapter::displayRequest, this, std::placeholders::_1)));
+    observe(n->display_request, this, &SignalLightAdapter::displayRequest);
 }
 
 
@@ -73,5 +74,5 @@ void SignalLightAdapter::setManualResize(bool manual)
 }
 
 /// MOC
-#include "../moc_signal_light_adapter.cpp"
+#include "moc_signal_light_adapter.cpp"
 

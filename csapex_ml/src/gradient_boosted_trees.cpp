@@ -68,5 +68,5 @@ void GradientBoostedTrees::classify(const FeaturesMessage &input, FeaturesMessag
 }
 
 #else
-#warning Gradient boosted trees are not supported in OpenCV 3.
+#pragma message "Gradient boosted trees are not supported in OpenCV 3."
 #endif

@@ -167,7 +167,7 @@ bool DecisionTreeForestTrainer::processCollection(std::vector<connection_types::
 #if CV_MAJOR_VERSION == 2
     int tflag = CV_ROW_SAMPLE;
 #elif CV_MAJOR_VERSION == 3
-    int tflag = cv::ml::ROW_SAMPLE;
+//    int tflag = cv::ml::ROW_SAMPLE;
 #endif
 
 

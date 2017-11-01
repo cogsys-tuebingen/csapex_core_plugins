@@ -18,7 +18,7 @@ class MaskRefinementAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    MaskRefinementAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<MaskRefinement> node);
+    MaskRefinementAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<MaskRefinement> node);
     ~MaskRefinementAdapter();
 
     virtual Memento::Ptr getState() const;

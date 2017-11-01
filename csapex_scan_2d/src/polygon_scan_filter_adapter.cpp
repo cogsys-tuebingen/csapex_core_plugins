@@ -2,6 +2,7 @@
 #include "polygon_scan_filter_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
@@ -21,17 +22,17 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(PolygonScanFilterAdapter, csapex::PolygonScanFilter)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(PolygonScanFilterAdapter, csapex::PolygonScanFilter)
 
 
-PolygonScanFilterAdapter::PolygonScanFilterAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node)
+PolygonScanFilterAdapter::PolygonScanFilterAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&PolygonScanFilterAdapter::displayRequest, this, std::placeholders::_1, std::placeholders::_2)));
+    observe(n->display_request, this, &PolygonScanFilterAdapter::displayRequest);
 }
 
 void PolygonScanFilterAdapter::updatePolygon()

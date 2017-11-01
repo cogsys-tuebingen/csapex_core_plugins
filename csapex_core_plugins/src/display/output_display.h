@@ -26,16 +26,12 @@ public:
     void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
 
-    void setAdapted();
-
 protected:
     Input* input_;
 
 public:
     slim_signal::Signal<void(QImage)> display_request;
     MessageRendererPtr renderer_;
-
-    bool adapted_;
 };
 
 }

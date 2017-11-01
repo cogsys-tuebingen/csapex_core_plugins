@@ -2,8 +2,10 @@
 #define POLAR_CLUSTERING_HPP
 
 /// SYSTEM
-#include <pcl/pcl_base.h>
-#include <pcl/search/pcl_search.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <pcl/pcl_base.h>
+    #include <pcl/search/pcl_search.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

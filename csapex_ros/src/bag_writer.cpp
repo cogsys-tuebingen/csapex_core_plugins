@@ -168,14 +168,19 @@ public:
         return result;
     }
 
-    virtual csapex::Slot* createVariadicSlot(TokenDataConstPtr type, const std::string& label, std::function<void (const TokenPtr&)> callback, bool active, bool asynchronous) override
+    virtual csapex::Slot* createVariadicSlot(TokenDataConstPtr type, const std::string& label, std::function<void (const TokenPtr&)> callback, bool active, bool blocking) override
     {
         auto cb = [this](Slot* slot, const TokenPtr& token) {
             auto message = std::dynamic_pointer_cast<connection_types::Message const>(token->getTokenData());
             writeMessage(message, slot->getLabel());
         };
 
-        return VariadicSlots::createVariadicSlot(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, cb, active, asynchronous);
+        return VariadicSlots::createVariadicSlot(connection_types::makeEmpty<connection_types::AnyMessage>(),
+                                                 label.empty() ? "Value" :
+                                                                 label,
+                                                 cb,
+                                                 active,
+                                                 blocking);
     }
 
     void write(const std::string& label, long stamp, std::shared_ptr<topic_tools::ShapeShifter const> instance)
@@ -200,7 +205,7 @@ public:
         case ConnectorType::INPUT:
             return createVariadicInput(type, label, optional);
         case ConnectorType::SLOT_T:
-            return createVariadicSlot(type, label, [](const TokenPtr&){}, false, false);
+            return createVariadicSlot(type, label, [](const TokenPtr&){}, false, true);
         default:
             throw std::logic_error(std::string("Variadic port of type ") + port_type::name(port_type) + " is not supported.");
         }

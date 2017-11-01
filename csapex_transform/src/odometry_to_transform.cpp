@@ -12,7 +12,9 @@
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>
 #include <nav_msgs/Odometry.h>
-#include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 using namespace csapex::connection_types;
 

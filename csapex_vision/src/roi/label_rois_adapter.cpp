@@ -2,6 +2,7 @@
 #include "label_rois_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
@@ -20,7 +21,7 @@
 using namespace csapex;
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER_NS(csapex, LabelROIsAdapter, csapex::LabelROIs)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER_NS(csapex, LabelROIsAdapter, csapex::LabelROIs)
 
 namespace csapex {
     class QInteractiveRect : public QGraphicsRectItem {
@@ -103,7 +104,7 @@ namespace csapex {
 }
 
 
-LabelROIsAdapter::LabelROIsAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<LabelROIs> node)
+LabelROIsAdapter::LabelROIsAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<LabelROIs> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       active_class_(0),
@@ -122,14 +123,12 @@ LabelROIsAdapter::LabelROIsAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, st
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&LabelROIsAdapter::displayRequest, this,
-                                            std::placeholders::_1)));
-    trackConnection(n->set_class.connect(std::bind(&LabelROIsAdapter::setClassRequest, this, std::placeholders::_1)));
-    trackConnection(n->set_color.connect(std::bind(&LabelROIsAdapter::setColorRequest, this,
-                                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    trackConnection(n->submit_request.connect(std::bind(&LabelROIsAdapter::submitRequest, this)));
-    trackConnection(n->drop_request.connect(std::bind(&LabelROIsAdapter::dropRequest, this)));
-    trackConnection(n->clear_request.connect(std::bind(&LabelROIsAdapter::clearRequest, this)));
+    observe(n->display_request, this, &LabelROIsAdapter::displayRequest);
+    observe(n->set_class, this, &LabelROIsAdapter::setClassRequest);
+    observe(n->set_color, this, &LabelROIsAdapter::setColorRequest);
+    observe(n->submit_request, this, &LabelROIsAdapter::submitRequest);
+    observe(n->drop_request, this, &LabelROIsAdapter::dropRequest);
+    observe(n->clear_request, this, &LabelROIsAdapter::clearRequest);
 }
 
 bool LabelROIsAdapter::eventFilter(QObject *o, QEvent *e)
@@ -389,4 +388,4 @@ void LabelROIsAdapter::setClass(int c)
 }
 
 /// MOC
-#include "../../moc_label_rois_adapter.cpp"
+#include "moc_label_rois_adapter.cpp"

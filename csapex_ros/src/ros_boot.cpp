@@ -23,7 +23,7 @@ namespace bf3 = boost::filesystem3;
 using namespace csapex;
 using namespace pluginlib;
 
-CSAPEX_REGISTER_BOOT(RosBoot);
+CSAPEX_REGISTER_BOOT(RosBoot)
 
 namespace {
 std::vector<std::string> getValidPluginXMLFiles()

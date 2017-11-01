@@ -2,6 +2,7 @@
 #include "output_display_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/utility/assert.h>
@@ -10,34 +11,20 @@
 #include <csapex/model/node_facade_remote.h>
 
 /// SYSTEM
-#include <QPainter>
-#include <QGraphicsSceneEvent>
-#include <QGraphicsPixmapItem>
+#include <QEvent>
 #include <QPushButton>
-#include <QBoxLayout>
-#include <QResizeEvent>
 
 using namespace csapex;
 
-CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeWeakPtr node, NodeBox* parent)
+OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeLocalPtr node, NodeBox* parent, std::weak_ptr<OutputDisplay> instance)
     : ResizableNodeAdapter(node, parent)
 {
-    if(auto local = std::dynamic_pointer_cast<NodeFacadeLocal>(node.lock())) {
-        wrapped_ = std::dynamic_pointer_cast<OutputDisplay>(local->getNode());
-
-        auto n = wrapped_.lock();
-        // translate to UI thread via Qt signal
-        trackConnection(n->display_request.connect(std::bind(&OutputDisplayAdapter::displayRequest, this, std::placeholders::_1)));
-
-        n->setAdapted();
-
-//    } else if(auto remote = std::dynamic_pointer_cast<NodeFacadeRemote>(node.lock())) {
-////        TODO: remote!
-    }
-
+    auto n = instance.lock();
+    // translate to UI thread via Qt signal
+    observe(n->display_request, this, &OutputDisplayAdapter::displayRequest);
 }
 
 OutputDisplayAdapter::~OutputDisplayAdapter()
@@ -104,90 +91,3 @@ void OutputDisplayAdapter::display(const QImage& img)
     label_view_->setPixmap(QPixmap::fromImage(img));
     label_view_->repaint();
 }
-
-
-
-
-
-
-
-ImageWidget::ImageWidget(QWidget *parent) :
-    QWidget(parent), size(100,100), manual_resize_(false)
-{
-}
-
-void ImageWidget::paintEvent(QPaintEvent *event)
-{
-    QWidget::paintEvent(event);
-
-    if (pix.isNull())
-        return;
-
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    QSize pixSize = pix.size();
-    pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
-
-    QPixmap scaledPix = pix.scaled(pixSize,
-                                   Qt::KeepAspectRatio,
-                                   Qt::SmoothTransformation
-                                   );
-
-    int x = (width() - scaledPix.width()) / 2;
-    int y = (height() - scaledPix.height()) / 2;
-
-    painter.drawPixmap(QPoint(x,y), scaledPix);
-
-}
-
-void ImageWidget::resizeEvent(QResizeEvent * re)
-{
-    if(manual_resize_) {
-        setSize(re->size());
-    }
-}
-
-const QPixmap* ImageWidget::pixmap() const
-{
-    return &pix;
-}
-
-void ImageWidget::setPixmap (const QPixmap &pixmap)
-{
-    pix = pixmap;
-}
-
-void ImageWidget::setManualResize(bool manual)
-{
-    manual_resize_ = manual;
-    updateGeometry();
-}
-
-void ImageWidget::setSize(const QSize &s)
-{
-    size = s;
-    updateGeometry();
-}
-void ImageWidget::setSize(int w, int h)
-{
-    setSize(QSize(w,h));
-}
-
-QSize ImageWidget::sizeHint() const
-{
-    return size;
-}
-QSize ImageWidget::minimumSizeHint() const
-{
-    if(manual_resize_) {
-        return QSize(10, 10);
-    } else {
-        return size;
-    }
-}
-
-
-/// MOC
-#include "../moc_output_display_adapter.cpp"
-

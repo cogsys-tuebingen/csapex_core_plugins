@@ -233,3 +233,9 @@
   <description></description>
 </class>
 </library>
+
+<library path="libcsapex_core_plugins_remote_qt">
+<class type="csapex::OutputDisplayAdapterRemoteBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+</library>

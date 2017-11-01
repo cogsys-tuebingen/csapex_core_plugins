@@ -40,7 +40,7 @@ class EvaluateBinaryClassifierAdapter : public QObject, public DefaultNodeAdapte
     Q_OBJECT
 
 public:
-    EvaluateBinaryClassifierAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node);
+    EvaluateBinaryClassifierAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node);
 
     virtual void setupUi(QBoxLayout* layout);
 

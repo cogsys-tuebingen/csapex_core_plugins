@@ -6,7 +6,9 @@
 #include <csapex/utility/register_msg.h>
 
 /// SYSTEM
-#include <tf/transform_datatypes.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/transform_datatypes.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::TransformMessage)
 

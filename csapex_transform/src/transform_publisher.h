@@ -5,8 +5,9 @@
 #include <csapex_ros/ros_node.h>
 
 /// SYSTEM
-#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#include <tf/transform_broadcaster.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/transform_broadcaster.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 namespace csapex {
 

@@ -9,19 +9,10 @@
 #include <csapex/utility/register_apex_plugin.h>
 
 /// SYSTEM
-#if __clang__
-#include <boost/mpl/for_each.hpp>
-#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#endif //__clang__
-#include <pcl_ros/transforms.h>
-#if __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Woverloaded-virtual"
-#endif //__clang__
-#include <pcl/filters/crop_box.h>
-#if __clang__
-#pragma clang diagnostic pop
-#endif //__clang__
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <pcl_ros/transforms.h>
+    #include <pcl/filters/crop_box.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 CSAPEX_REGISTER_CLASS(csapex::CropBox, csapex::Node)
 

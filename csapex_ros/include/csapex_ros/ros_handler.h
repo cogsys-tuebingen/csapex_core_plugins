@@ -5,7 +5,10 @@
 #include <csapex/core/settings.h>
 
 /// SYSTEM
-#include <ros/ros.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <ros/ros.h>
+#include <csapex/utility/suppress_warnings_end.h>
+
 #include <future>
 #include <mutex>
 

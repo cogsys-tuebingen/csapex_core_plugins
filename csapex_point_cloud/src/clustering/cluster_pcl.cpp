@@ -14,30 +14,24 @@
 #include <csapex/profiling/timer.h>
 
 /// SYSTEM
-#include <boost/mpl/for_each.hpp>
-#include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <boost/mpl/for_each.hpp>
+    #include <tf/tf.h>
 
-/// PCL
-#if __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Woverloaded-virtual"
-#pragma clang diagnostic ignored "-Wsign-compare"
-#endif //__clang__
-#include <pcl/ModelCoefficients.h>
-#include <pcl/point_types.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/filters/extract_indices.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/features/normal_3d.h>
-#include <pcl/features/normal_3d_omp.h>
-#include <pcl/kdtree/kdtree.h>
-#include <pcl/search/impl/kdtree.hpp>
-#include <pcl/segmentation/extract_clusters.h>
-#include <pcl/segmentation/conditional_euclidean_clustering.h>
-#include <pcl/segmentation/region_growing.h>
-#if __clang__
-#pragma clang diagnostic pop
-#endif //__clang__
+    /// PCL
+    #include <pcl/ModelCoefficients.h>
+    #include <pcl/point_types.h>
+    #include <pcl/io/pcd_io.h>
+    #include <pcl/filters/extract_indices.h>
+    #include <pcl/filters/voxel_grid.h>
+    #include <pcl/features/normal_3d.h>
+    #include <pcl/features/normal_3d_omp.h>
+    #include <pcl/kdtree/kdtree.h>
+    #include <pcl/search/impl/kdtree.hpp>
+    #include <pcl/segmentation/extract_clusters.h>
+    #include <pcl/segmentation/conditional_euclidean_clustering.h>
+    #include <pcl/segmentation/region_growing.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 
 CSAPEX_REGISTER_CLASS(csapex::clustering::ClusterPointCloudPCL, csapex::Node)

@@ -2,19 +2,20 @@
 #include "point_count_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(PointCountAdapter, csapex::PointCount)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(PointCountAdapter, csapex::PointCount)
 
-PointCountAdapter::PointCountAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<PointCount> node)
+PointCountAdapter::PointCountAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<PointCount> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
-    trackConnection(n->display_request.connect(std::bind(&PointCountAdapter::display, this, std::placeholders::_1)));
+    observe(n->display_request, this, &PointCountAdapter::display);
 }
 
 void PointCountAdapter::setupUi(QBoxLayout* layout)

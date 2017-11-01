@@ -12,7 +12,10 @@
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
-#include <tf/tf.h>
+
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 using namespace csapex::connection_types;
 

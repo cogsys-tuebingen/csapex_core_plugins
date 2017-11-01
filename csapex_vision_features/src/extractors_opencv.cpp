@@ -83,7 +83,7 @@ struct Orb : public ExtractorManager::ExtractorInitializer {
 #endif
     }
 };
-REGISTER_FEATURE_DETECTOR(Orb, ORB);
+REGISTER_FEATURE_DETECTOR(Orb, ORB)
 BOOST_STATIC_ASSERT(DetectorTraits<Orb>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Orb>::HasDescriptor);
 
@@ -138,7 +138,7 @@ struct Brisk : public ExtractorManager::ExtractorInitializer {
     }
 
 };
-REGISTER_FEATURE_DETECTOR(Brisk, BRISK);
+REGISTER_FEATURE_DETECTOR(Brisk, BRISK)
 BOOST_STATIC_ASSERT(DetectorTraits<Brisk>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Brisk>::HasDescriptor);
 
@@ -275,7 +275,7 @@ struct Fast : public ExtractorManager::ExtractorInitializer {
 #endif
     }
 };
-REGISTER_FEATURE_DETECTOR(Fast, FAST);
+REGISTER_FEATURE_DETECTOR(Fast, FAST)
 BOOST_STATIC_ASSERT(DetectorTraits<Fast>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<Fast>::HasDescriptor);
 
@@ -326,7 +326,7 @@ struct Mser : public ExtractorManager::ExtractorInitializer {
 #endif
     }
 };
-REGISTER_FEATURE_DETECTOR(Mser, MSER);
+REGISTER_FEATURE_DETECTOR(Mser, MSER)
 BOOST_STATIC_ASSERT(DetectorTraits<Mser>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<Mser>::HasDescriptor);
 
@@ -393,7 +393,7 @@ struct Gftt : public ExtractorManager::ExtractorInitializer {
 #endif
     }
 };
-REGISTER_FEATURE_DETECTOR(Gftt, GFTT);
+REGISTER_FEATURE_DETECTOR(Gftt, GFTT)
 BOOST_STATIC_ASSERT(DetectorTraits<Gftt>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<Gftt>::HasDescriptor);
 
@@ -427,7 +427,7 @@ struct GfttHarris : public ExtractorManager::ExtractorInitializer {
 #endif
     }
 };
-REGISTER_FEATURE_DETECTOR(GfttHarris, GFTT_HARRIS);
+REGISTER_FEATURE_DETECTOR(GfttHarris, GFTT_HARRIS)
 BOOST_STATIC_ASSERT(DetectorTraits<GfttHarris>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<GfttHarris>::HasDescriptor);
 

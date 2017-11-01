@@ -28,7 +28,7 @@ ExternalProject_add(QWT
   SVN_REVISION -r "2365"
   PATCH_COMMAND ""
   UPDATE_COMMAND ""
-  BUILD_COMMAND make -j3
+  BUILD_COMMAND make
   SOURCE_DIR QWT
   BINARY_DIR lib
   INSTALL_COMMAND make install

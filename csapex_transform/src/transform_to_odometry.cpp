@@ -15,7 +15,10 @@
 
 /// SYSTEM
 #include <nav_msgs/Odometry.h>
-#include <tf/tf.h>
+
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TransformToOdometry, csapex::Node)
 

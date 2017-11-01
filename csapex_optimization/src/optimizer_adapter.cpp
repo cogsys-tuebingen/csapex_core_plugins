@@ -5,19 +5,22 @@
 #include <csapex_core_plugins/parameter_dialog.h>
 
 /// PROJECT
-#include <csapex/view/utility/register_node_adapter.h>
-#include <csapex/param/range_parameter.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/utility/uuid_provider.h>
-#include <csapex/view/designer/graph_view.h>
-#include <csapex/model/graph_facade.h>
-#include <csapex/view/node/box.h>
 #include <csapex/command/add_connection.h>
-#include <csapex/view/designer/graph_view.h>
-#include <csapex/model/graph_facade.h>
-#include <csapex/model/node_handle.h>
 #include <csapex/command/command_factory.h>
 #include <csapex/command/meta.h>
+#include <csapex/model/graph_facade.h>
+#include <csapex/model/graph_facade.h>
+#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/param/range_parameter.h>
+#include <csapex/utility/uuid_provider.h>
+#include <csapex/view/designer/graph_view.h>
+#include <csapex/view/designer/graph_view.h>
+#include <csapex/view/node/box.h>
+#include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
 #include <QPushButton>
@@ -30,7 +33,7 @@
 using namespace csapex;
 
 
-OptimizerAdapter::OptimizerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node)
+OptimizerAdapter::OptimizerAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node)
     : DefaultNodeAdapter(worker, parent), wrapped_base_(node)
 {
     QObject::connect(&widget_picker_, SIGNAL(widgetPicked()), this, SLOT(widgetPicked()));
@@ -96,7 +99,7 @@ void OptimizerAdapter::widgetPicked()
 
                 GraphFacade* facade = parent_->getGraphView()->getGraphFacade();
 
-                if(!facade->getGraph()->getConnection(from, to)) {
+                if(!facade->isConnected(from, to)) {
                     AUUID parent_uuid = facade->getAbsoluteUUID();
 
                     command::AddConnection::Ptr cmd(new command::AddConnection(parent_uuid, from, to, false));
@@ -220,10 +223,10 @@ void OptimizerAdapter::removeParameters()
 
     for(param::ParameterPtr p : node->getPersistentParameters()) {
         if(OutputPtr out = nh->getParameterOutput(p->name()).lock()) {
-            cmd->add(factory.removeAllConnectionsCmd(out.get()));
+            cmd->add(factory.removeAllConnectionsCmd(out));
         }
         if(InputPtr in = nh->getParameterInput(p->name()).lock()) {
-            cmd->add(factory.removeAllConnectionsCmd(in.get()));
+            cmd->add(factory.removeAllConnectionsCmd(in));
         }
     }
 

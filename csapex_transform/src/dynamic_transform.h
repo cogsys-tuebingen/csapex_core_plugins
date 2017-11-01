@@ -7,7 +7,9 @@
 
 /// SYSTEM
 #include <ros/time.h>
-#include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_end.h>
 #include <boost/optional.hpp>
 
 namespace csapex {

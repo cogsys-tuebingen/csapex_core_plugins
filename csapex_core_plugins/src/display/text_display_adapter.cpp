@@ -2,6 +2,7 @@
 #include "text_display_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -11,16 +12,16 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
 
-TextDisplayAdapter::TextDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node)
+TextDisplayAdapter::TextDisplayAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node)
     : ResizableNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&TextDisplayAdapter::displayRequest, this, std::placeholders::_1)));
+    observe(n->display_request, this, &TextDisplayAdapter::displayRequest);
 }
 
 namespace {
@@ -87,5 +88,5 @@ void TextDisplayAdapter::display(const std::string& txt)
 }
 
 /// MOC
-#include "../moc_text_display_adapter.cpp"
+#include "moc_text_display_adapter.cpp"
 

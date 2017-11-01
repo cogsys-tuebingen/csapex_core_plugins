@@ -21,6 +21,8 @@ include (GenerateExportHeader)
 
 find_package(OpenCV REQUIRED)
 
+add_definitions(-w)
+
 set(cvBlob_CVBLOB cvblob.cpp
                    cvlabel.cpp
 		   cvaux.cpp

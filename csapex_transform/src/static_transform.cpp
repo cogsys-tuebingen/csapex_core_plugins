@@ -12,7 +12,9 @@
 #include <csapex/msg/io.h>
 
 /// SYSTEM
-#include <tf/transform_datatypes.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/transform_datatypes.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 CSAPEX_REGISTER_CLASS(csapex::StaticTransform, csapex::Node)
 

@@ -9,7 +9,9 @@
 #include <csapex/model/model_fwd.h>
 
 /// SYSTEM
-#include <pluginlib/class_loader.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <pluginlib/class_loader.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 namespace csapex
 {

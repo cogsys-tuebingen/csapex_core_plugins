@@ -11,7 +11,7 @@
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex_ros/yaml_io.hpp>
-#include <csapex/model/graph_facade.h>
+#include <csapex/model/graph_facade_local.h>
 #include <csapex/model/node_handle.h>
 #include <csapex/model/node.h>
 #include <csapex/signal/event.h>
@@ -20,7 +20,7 @@
 #include <csapex/msg/any_message.h>
 #include <csapex/param/trigger_parameter.h>
 #include <csapex_core_plugins/timestamp_message.h>
-#include <csapex/model/graph.h>
+#include <csapex/model/graph/graph_local.h>
 
 /// SYSTEM
 #include <console_bridge/console.h>
@@ -178,7 +178,7 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
 {
     std::string apex_name = parameter_name.substr(prefix.size());
 
-    GraphPtr graph = core_->getRoot()->getGraph();
+    GraphLocalPtr graph = core_->getRoot()->getLocalGraph();
 
     std::vector<std::string> levels;
 
@@ -224,8 +224,8 @@ void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::
                 break;
         }
         if(i < n - 2) {
-            graph = std::dynamic_pointer_cast<Graph>(nh->getNode().lock());
-            if(!graph) {
+            auto subgraph = std::dynamic_pointer_cast<SubgraphNode>(nh->getNode().lock());
+            if(!subgraph) {
                 std::cerr << "no parameter for " << parameter_name << ", child " << subname << " is not a graph" << std::endl;
                 return;
             }
@@ -336,7 +336,7 @@ void APEXRosInterface::command(const std_msgs::StringConstPtr& cmd, bool global_
             disabled_ = false;
             core_->setPause(false);
         } else if(command == "trigger") {
-            GraphPtr graph = core_->getRoot()->getGraph();
+            GraphLocalPtr graph = core_->getRoot()->getLocalGraph();
 
             std::size_t index = parameter_values.find_first_of("/");
             if (index != std::string::npos) {

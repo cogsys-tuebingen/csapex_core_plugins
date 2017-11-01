@@ -17,7 +17,7 @@ class CreateMapMessageAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    CreateMapMessageAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node);
+    CreateMapMessageAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node);
     ~CreateMapMessageAdapter();
 
     virtual void setupUi(QBoxLayout* layout);

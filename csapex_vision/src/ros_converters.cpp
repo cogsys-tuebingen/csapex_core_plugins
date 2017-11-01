@@ -13,7 +13,10 @@
 #include <sensor_msgs/image_encodings.h>
 #include <sensor_msgs/CompressedImage.h>
 #include <sensor_msgs/RegionOfInterest.h>
-#include <compressed_image_transport/compressed_subscriber.h>
+
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <compressed_image_transport/compressed_subscriber.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 using namespace csapex;
 

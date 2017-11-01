@@ -110,7 +110,7 @@ class SignalLightAdapter : public QObject, public ResizableNodeAdapter
     Q_OBJECT
 
 public:
-    SignalLightAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node);
+    SignalLightAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node);
 
     virtual void setupUi(QBoxLayout* layout);
 

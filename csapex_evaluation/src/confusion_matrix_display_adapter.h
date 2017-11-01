@@ -41,7 +41,7 @@ class ConfusionMatrixDisplayAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    ConfusionMatrixDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ConfusionMatrixDisplay> node);
+    ConfusionMatrixDisplayAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<ConfusionMatrixDisplay> node);
 
     virtual void setupUi(QBoxLayout* layout);
 

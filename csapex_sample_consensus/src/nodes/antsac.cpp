@@ -65,7 +65,7 @@ public:
         if(fit_multiple_models_) {
             outliers.indices = sac->getIndices();
             int model_searches = 0;
-            while(outliers.indices.size() >= minimum_residual_cloud_size_) {
+            while((int) outliers.indices.size() >= minimum_residual_cloud_size_) {
                 auto working_model = model->clone();
                 sac->computeModel(working_model);
                 if(working_model) {
@@ -73,7 +73,7 @@ public:
                     outliers.indices.clear();
                     working_model->getInliersAndOutliers(antsac_parameters_.model_search_distance, inliers.indices, outliers.indices);
 
-                    if(inliers.indices.size() > minimum_model_cloud_size_)
+                    if((int) inliers.indices.size() > minimum_model_cloud_size_)
                         out_inliers->emplace_back(inliers);
                     else
                         out_outliers->emplace_back(inliers);
@@ -90,7 +90,7 @@ public:
             if(model) {
                 model->getInliersAndOutliers(antsac_parameters_.model_search_distance, inliers.indices, outliers.indices);
 
-                if(inliers.indices.size() > minimum_model_cloud_size_) {
+                if((int) inliers.indices.size() > minimum_model_cloud_size_) {
                     out_inliers->emplace_back(inliers);
                 } else {
                     out_outliers->emplace_back(inliers);

@@ -2,6 +2,7 @@
 #include "roc_curve_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -16,15 +17,15 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ROCCurveAdapter, csapex::ROCCurve)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ROCCurveAdapter, csapex::ROCCurve)
 
 
-ROCCurveAdapter::ROCCurveAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ROCCurve> node)
+ROCCurveAdapter::ROCCurveAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<ROCCurve> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node), plot_widget_(nullptr)
 {
     auto n = wrapped_.lock();
     // translate to UI thread via Qt signal
-    trackConnection(n ->display_request.connect(std::bind(&ROCCurveAdapter::displayRequest, this)));
+    observe(n ->display_request, this, &ROCCurveAdapter::displayRequest);
 }
 
 ROCCurveAdapter::~ROCCurveAdapter()
