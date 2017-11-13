@@ -28,7 +28,7 @@ struct Converter<pcl::PointXYZI>
 {
     static CvMatMessage::Ptr convert(const pcl::PointCloud<pcl::PointXYZI>::ConstPtr& cloud)
     {
-        CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, cloud->header.frame_id, cloud->header.stamp));
+        CvMatMessage::Ptr output(new CvMatMessage(enc::mono, cloud->header.frame_id, cloud->header.stamp));
         output->value.create(cloud->height, cloud->width, CV_16UC1);
 
         std::transform(cloud->points.begin(), cloud->points.end(), output->value.begin<ushort>(),
