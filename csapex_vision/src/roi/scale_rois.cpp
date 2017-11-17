@@ -91,15 +91,10 @@ private:
         int height = rect.height * scales_[1] / 100.0;
         int width  = rect.width  * scales_[0] / 100.0;
 
-        rect.height = height;
-        rect.width = width;
-
-        int off_x  = std::floor((rect.width - width) / 2.0);
-        int off_y  = std::floor((rect.height - height) / 2.0);
         switch (mode_) {
         case CENTERED:
-            rect.x += off_x;
-            rect.y += off_y;
+            rect.x += (rect.width - width) / 2;
+            rect.y += (rect.height - height) / 2;
             break;
         case LINEAR:
             rect.x *= scales_[0] / 100.0;
@@ -108,6 +103,9 @@ private:
         default:
             break;
         }
+
+        rect.height = height;
+        rect.width = width;
     }
 
 private:
