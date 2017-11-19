@@ -48,6 +48,7 @@ void VectorPlotAdapter::display()
     //these getters are blocking. Collect data first then render.
     std::size_t num_curves = n->getVDataCountNumCurves();
     std::size_t num_points = n->getCount();
+    n->updateLineColors();
     std::vector<QwtPlotCurve*> curve(num_curves)/*= new QwtPlotCurve[n->getVDataCountNumCurves()];*/;
     std::vector<QColor> colors(num_curves);
     std::vector<QColor> line_colors(num_curves);

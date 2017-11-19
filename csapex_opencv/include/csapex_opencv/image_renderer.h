@@ -2,7 +2,7 @@
 #define IMAGE_RENDERER_H
 
 /// PROJECT
-#include <csapex/view/message_renderer.h>
+#include <csapex/msg/message_renderer.h>
 
 /// COMPONENT
 #include <csapex_opencv/cv_mat_message.h>

@@ -155,7 +155,15 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
     std::size_t feature_length = first_feature.value.size();
 
     cv::Mat trainig_data(collection.size(), feature_length, CV_32FC1);
-    cv::Mat responses(collection.size(), classes, CV_32FC1);
+
+    std::size_t responses_cols = 0;
+    if(first_feature.type == FeaturesMessage::Type::CLASSIFICATION){
+        responses_cols = classes;
+    }
+    else if(first_feature.type == FeaturesMessage::Type::REGRESSION){
+        responses_cols = first_feature.regression_result.size();
+    }
+    cv::Mat responses(collection.size(), responses_cols, CV_32FC1);
 
     for (std::size_t i = 0; i < collection.size(); ++i)
     {
@@ -166,12 +174,21 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
 
             trainig_data.at<float>(i, j) = value;
         }
-        for (int j = 0; j < classes; ++j)
-        {
-            if (j == feature.classification)
-                responses.at<float>(i, j) = 1;
-            else
-                responses.at<float>(i, j) = 0;
+        if(first_feature.type == FeaturesMessage::Type::CLASSIFICATION) {
+            for (int j = 0; j < classes; ++j)
+            {
+                if (j == feature.classification)
+                    responses.at<float>(i, j) = 1;
+                else
+                    responses.at<float>(i, j) = 0;
+            }
+        }
+         else if(first_feature.type == FeaturesMessage::Type::REGRESSION){
+            apex_assert_eq(feature.regression_result.size(), responses_cols);
+            auto it = feature.regression_result.begin();
+            for(std::size_t j = 0; j < responses_cols; ++j, ++it){
+                responses.at<float>(i, j) = *it;
+            }
         }
     }
 
@@ -202,8 +219,9 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
                           responses,
                           cv::Mat(),
                           cv::Mat(),
-                          params,
-                          0);
+                          params);//,
+    //0);
+    ainfo << "iterations: " << iters << std::endl;
     if(iters > 0) {
         mlp.save(readParameter<std::string>("file").c_str());
         std::cout << "[MLP_ANN]: Finished training after " << iters << " iterations!" << std::endl;
@@ -230,6 +248,9 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage> &collection)
                                readParameter<double>("activation beta"));
 
     mlp->setLayerSizes(layers);
+    mlp->setTrainMethod(readParameter<int>("trainig method"),
+                        readParameter<double>("training param 1"),
+                        readParameter<double>("training param 2"));
 
     std::cout << "[ANN]: Started training with " << trainig_data.rows << " samples!" << std::endl;
 

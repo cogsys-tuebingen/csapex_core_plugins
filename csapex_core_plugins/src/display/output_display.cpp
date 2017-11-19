@@ -5,9 +5,10 @@
 #include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/view/utility/message_renderer_manager.h>
+#include <csapex/manager/message_renderer_manager.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/model/node_handle.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/io/raw_message.h>
 
 /// SYSTEM
@@ -21,6 +22,7 @@ using namespace csapex;
 using namespace connection_types;
 
 OutputDisplay::OutputDisplay()
+    : jpg_quality_(70)
 {
 }
 
@@ -30,6 +32,12 @@ OutputDisplay::~OutputDisplay()
 void OutputDisplay::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<AnyMessage>("Message");
+}
+
+void OutputDisplay::setupParameters(Parameterizable &params)
+{
+    params.addHiddenParameter(param::ParameterFactory::declareRange("jpg/quality", 0, 100, 70, 1),
+                              jpg_quality_);
 }
 
 void OutputDisplay::process()
@@ -62,6 +70,7 @@ void OutputDisplay::process()
         if(has_adapter) {
             QBuffer buffer;
             QImageWriter writer(&buffer, "JPG");
+            writer.setQuality(jpg_quality_);
             writer.write(img);
 
             std::shared_ptr<RawMessage> msg = std::make_shared<RawMessage>(buffer.data().data(), buffer.size(),

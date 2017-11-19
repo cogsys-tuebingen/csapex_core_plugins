@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple>
+#include <limits>
 #include <type_traits>
 
 namespace csapex { namespace clustering { namespace detail
@@ -10,13 +11,13 @@ template<std::size_t I, std::size_t N, typename FeatureList>
 struct FeatureOpImpl
 {
     template<typename PointT>
-    static constexpr void create(FeatureList& self, const PointT& point)
+    static void create(FeatureList& self, const PointT& point)
     {
         std::get<I>(self).create(point);
         FeatureOpImpl<I + 1, N, FeatureList>::create(self, point);
     }
 
-    static constexpr void merge(FeatureList& self, const FeatureList& other)
+    static void merge(FeatureList& self, const FeatureList& other)
     {
         std::get<I>(self).merge(std::get<I>(other));
         FeatureOpImpl<I + 1, N, FeatureList>::merge(self, other);
@@ -27,10 +28,10 @@ template<std::size_t N, typename FeatureList>
 struct FeatureOpImpl<N, N, FeatureList>
 {
     template<typename PointT>
-    static constexpr void create(FeatureList&, const PointT&)
+    static void create(FeatureList&, const PointT&)
     {}
 
-    static constexpr void merge(FeatureList&, const FeatureList&)
+    static void merge(FeatureList&, const FeatureList&)
     {}
 };
 
@@ -48,7 +49,7 @@ struct tuple_index_impl<I, T, std::tuple<First, Rest...>> :
 };
 
 template<std::size_t I, typename T>
-struct tuple_index_impl<I, T, std::tuple<>> : std::integral_constant<std::size_t, -1>
+struct tuple_index_impl<I, T, std::tuple<>> : std::integral_constant<std::size_t, std::numeric_limits<std::size_t>::max()>
 {
 };
 
@@ -61,7 +62,7 @@ template<typename Tuple, typename T>
 struct tuple_contains :
         std::integral_constant<
                 bool,
-                tuple_index<Tuple, T>::value != std::size_t(-1)
+                tuple_index<Tuple, T>::value != std::size_t(std::numeric_limits<std::size_t>::max())
         >
 {
 };
@@ -76,12 +77,12 @@ struct FeatureOp<std::tuple<Features...>>
     static constexpr auto Size = sizeof...(Features);
 
     template<typename PointT>
-    static constexpr void create(FeatureList& self, const PointT& point)
+    static void create(FeatureList& self, const PointT& point)
     {
         FeatureOpImpl<0, Size, FeatureList>::create(self, point);
     }
 
-    static constexpr void merge(FeatureList& self, const FeatureList& other)
+    static void merge(FeatureList& self, const FeatureList& other)
     {
         FeatureOpImpl<0, Size, FeatureList>::merge(self, other);
     }

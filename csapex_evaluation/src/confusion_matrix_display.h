@@ -21,10 +21,11 @@ public:
     virtual void setupParameters(csapex::Parameterizable& params) override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
 
-    const ConfusionMatrix& getConfusionMatrix() const;
+    ConfusionMatrix getConfusionMatrix() const;
     void save();
 
     void exportCsv(const std::string& file);
+
 
 public:
     slim_signal::Signal<void()> display_request;

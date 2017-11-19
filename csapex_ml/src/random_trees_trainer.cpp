@@ -18,7 +18,7 @@ using namespace csapex::connection_types;
 
 
 RandomTreesTrainer::RandomTreesTrainer()
-    : categories_(0)
+    : MachineLearningNode("rforest.yaml"), categories_(0)
 {
 }
 
@@ -218,7 +218,8 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     cv::Mat var_type( train_data.cols + 1, 1, CV_8U, CV_VAR_NUMERICAL);
 
     cv::RandomTrees rtrees;
-    std::cout << "[RandomTrees]: Started training with " << collection_size << " samples!" << std::endl;
+    ainfo << "Started training of tree with feature width "
+         << collection.front().value.size() << " and " << collection_size << " samples!" << std::endl;
     if(rtrees.train(train_data, tflag, responses, cv::Mat(), cv::Mat(), var_type, cv::Mat(), params)) {
         cv::FileStorage fs(file_name_, cv::FileStorage::WRITE);
         rtrees.write(fs.fs, "random_forest");
@@ -247,10 +248,14 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     rtrees->setTermCriteria(term);
 
     cv::Mat priors(priors_);
-    rtrees->setPriors(priors);
+    if(is_classification_){
+        rtrees->setPriors(priors);
+    }
+    else{
+        rtrees->setPriors(cv::Mat());
+    }
 
     cv::Mat var_type;
-
     var_type = cv::Mat( train_data.cols + var_type_size, 1, CV_8U, cv::ml::VAR_NUMERICAL);
 
     cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(train_data,

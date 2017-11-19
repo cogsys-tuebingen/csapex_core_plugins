@@ -23,7 +23,11 @@ public:
     typedef Eigen::Matrix<double, Dim, 1>                        ComplexVectorType;
     typedef Eigen::Matrix<std::complex<double>, Dim, Dim>        ComplexMatrixType;
 
+#if defined(__clang__)
+    static constexpr double sqrt_2_M_PI = 2. * M_SQRT2 / M_2_SQRTPI;
+#else
     static constexpr double sqrt_2_M_PI = std::sqrt(2 * M_PI);
+#endif
     static constexpr double lambda_ratio = 1e-2;
 
     Distribution() :

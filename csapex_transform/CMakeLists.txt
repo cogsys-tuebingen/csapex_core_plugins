@@ -20,7 +20,7 @@ find_package(catkin REQUIRED COMPONENTS csapex csapex_core_plugins csapex_ros tf
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-#  CATKIN_DEPENDS csapex csapex_core_plugins
+  CATKIN_DEPENDS csapex csapex_core_plugins
 #  DEPENDS system_lib
 )
 
@@ -34,7 +34,11 @@ add_library(${PROJECT_NAME}
     src/transform_message.cpp
 )
 target_link_libraries(${PROJECT_NAME}
-    yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+    ${QT_LIBRARIES}
+)
 
 
 add_library(${PROJECT_NAME}_plugin_core

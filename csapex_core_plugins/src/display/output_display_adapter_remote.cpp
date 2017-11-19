@@ -93,7 +93,15 @@ void OutputDisplayAdapterRemote::setupUi(QBoxLayout* layout)
 
     connect(this, &OutputDisplayAdapterRemote::displayRequest, this, &OutputDisplayAdapterRemote::display);
 
+    if(NodeFacadePtr nf = node_.lock()) {
+        if(param::ParameterPtr p = nf->getParameter("jpg/quality")) {
+            p->setHidden(false);
+        }
+    }
+
     ResizableNodeAdapter::setupUi(layout);
+
+
 }
 
 void OutputDisplayAdapterRemote::setManualResize(bool manual)

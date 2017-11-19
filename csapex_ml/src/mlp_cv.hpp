@@ -20,6 +20,7 @@ public:
 private:
     void classify(const connection_types::FeaturesMessage &input, connection_types::FeaturesMessage &output);
     void loadMLP();
+    void reloadMLP();
 
 private:
     Input* input_;
@@ -32,6 +33,7 @@ private:
     cv::Ptr<cv::ml::ANN_MLP> mlp_;
 #endif
     bool loaded_;
+    std::string path_;
 };
 
 }

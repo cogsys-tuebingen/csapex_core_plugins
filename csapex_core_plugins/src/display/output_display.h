@@ -24,6 +24,7 @@ public:
     virtual ~OutputDisplay();
 
     void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& params) override;
     virtual void process() override;
 
 protected:
@@ -32,6 +33,8 @@ protected:
 public:
     slim_signal::Signal<void(QImage)> display_request;
     MessageRendererPtr renderer_;
+
+    int jpg_quality_;
 };
 
 }

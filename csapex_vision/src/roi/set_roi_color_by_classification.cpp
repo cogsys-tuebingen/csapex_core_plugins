@@ -21,8 +21,8 @@ public:
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
-        node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
-        node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
+        input_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
+        output_rois_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
     }
     virtual void setupParameters(Parameterizable &parameters) override
     {
@@ -40,7 +40,7 @@ public:
         for(const RoiMessage &r : *input_rois) {
             RoiMessage ro = r;
             if(ro.value.classification() == classification_) {
-                ro.value.setColor(cv::Scalar(color[0], color[1], color[2]));
+                ro.value.setColor(cv::Scalar(color[2], color[1], color[0]));
             }
             output_rois->emplace_back(ro);
         }
@@ -49,12 +49,11 @@ public:
 
 private:
     Input* input_rois_;
-    Input* input_features_;
 
     Output* output_rois_;
 
     int                classification_;
-    std::array<int, 3> color;
+    std::vector<int>   color;
 };
 
 }

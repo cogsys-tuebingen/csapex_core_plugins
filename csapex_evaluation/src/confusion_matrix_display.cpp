@@ -82,7 +82,7 @@ void ConfusionMatrixDisplay::process()
     display_request();
 }
 
-const ConfusionMatrix& ConfusionMatrixDisplay::getConfusionMatrix() const
+ConfusionMatrix ConfusionMatrixDisplay::getConfusionMatrix() const
 {
     std::unique_lock<std::recursive_mutex> lock(mutex_);
     return confusion_;

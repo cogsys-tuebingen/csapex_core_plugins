@@ -49,7 +49,9 @@ inline void classify(const RandomTree             &random_trees,
     float prediction_value = random_trees->predict(sample, results, cv::ml::StatModel::Flags::RAW_OUTPUT);
     if(in_feature.type == FeaturesMessage::Type::REGRESSION){
         out_feature.type = FeaturesMessage::Type::REGRESSION;
-        out_feature.regression_result.push_back(prediction_value);
+        out_feature.regression_result.clear();
+        out_feature.regression_result.insert(out_feature.regression_result.end(), results.begin(), results.end());
+//        out_feature.regression_result.push_back(prediction_value);
     }
     else{
         int class_id = std::round(prediction_value);
@@ -75,8 +77,11 @@ void RandomTrees::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("path", "rforest.yaml"),
                             [this](param::Parameter* p) {
-        path_ = p->as<std::string>();
-        reloadTree();
+        auto path = p->as<std::string>();
+        if(path != path_){
+            path_ = path;
+            reloadTree();
+        }
     });
     parameters.addParameter(param::ParameterFactory::declareBool("compute_class_weights", false),
                             compute_class_weights_);
@@ -128,6 +133,12 @@ void RandomTrees::process()
     }
     std::size_t n = input_feature->size();
     output_feature->resize(n);
+
+#if CV_MAJOR_VERSION == 2
+            apex_assert_equal((int) input_feature->at(0).value.size() , random_trees_.get_tree(0)->get_var_count());
+#elif CV_MAJOR_VERSION == 3
+            apex_assert_equal((int) input_feature->at(0).value.size() , random_trees_.get()->getVarCount());
+#endif
 
     if(compute_class_weights_) {
         output_class_weights.reset(new std::vector<CvMatMessage::ConstPtr>());

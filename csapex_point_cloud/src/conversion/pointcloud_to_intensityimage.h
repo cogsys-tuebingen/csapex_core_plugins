@@ -13,6 +13,7 @@ class PointCloudToIntensityImage : public Node
 public:
     PointCloudToIntensityImage();
 
+    void setupParameters(Parameterizable& parameters) override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void process() override;
 
@@ -24,6 +25,7 @@ public:
 private:
     Input* input_;
     Output* output_;
+    bool skip_invalid_;
 };
 
 }

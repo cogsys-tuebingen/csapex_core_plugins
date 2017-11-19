@@ -1,4 +1,16 @@
 <library path="libcsapex_math_node">
+<class type="csapex::InvertValues" base_class_type="csapex::Node">
+  <description>Inverts values</description>
+</class>
+<class type="csapex::MultiplyValues" base_class_type="csapex::Node">
+  <description>Multiplies inputs</description>
+</class>
+<class type="csapex::GenericVectorMessageGetExtremum" base_class_type="csapex::Node">
+  <description>Returns the maximum or the minimum of a generic vector message</description>
+</class>
+<class type="csapex::ScaleGenericVectorMessage" base_class_type="csapex::Node">
+  <description>Scales each element of a GenericVectorMessage</description>
+</class>
 <class type="csapex::NegateNumber" base_class_type="csapex::Node">
   <description>Multiply a number by -1</description>
 </class>

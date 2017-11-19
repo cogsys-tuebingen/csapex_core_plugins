@@ -296,7 +296,7 @@ void FileImporter::sendToken()
         }
     }
 
-    if(!provider_->hasNext()) {
+    if(!provider_->hasNext() && !directory_import_) {
         triggerSignalEnd();
     }
 }

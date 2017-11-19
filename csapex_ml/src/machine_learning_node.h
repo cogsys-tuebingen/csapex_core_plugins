@@ -10,7 +10,7 @@ namespace csapex {
 class MachineLearningNode : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
-    MachineLearningNode();
+    MachineLearningNode(std::string default_file_name = "ml_config.yaml");
     void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters) override;
 
@@ -20,6 +20,8 @@ protected:
 protected:
     bool is_classification_;
     std::string file_name_;
+private:
+    std::string default_file_name_;
 };
 }
 

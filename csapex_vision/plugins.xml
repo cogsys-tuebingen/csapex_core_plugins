@@ -6,6 +6,9 @@
 
 
 <library path="libcsapex_vision_plugin_node">
+<class type="csapex::ExportCvMatMessageAsCsv" base_class_type="csapex::Node">
+  <description>Save a CvMatMassage as .csv file.</description>
+</class>
 <class type="csapex::MaskBorderFill" base_class_type="csapex::Node">
   <description>Fills a mask from all borders</description>
 </class>

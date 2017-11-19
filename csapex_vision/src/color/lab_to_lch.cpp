@@ -86,7 +86,7 @@ protected:
 
     static constexpr float NORM_L_UC = 1.f / 255.f;
     static constexpr float NORM_L_FC = 1.f / 100.f;
-    static constexpr float NORM_C = 1.f / (127.0 * sqrt(2.0));
+    static constexpr float NORM_C = 1.f / (127.0 * M_SQRT2);
     static constexpr float NORM_H = 1.f / (2 * M_PI);
     cv::Mat LUT_sqrt_;
     cv::Mat LUT_atan2_;
