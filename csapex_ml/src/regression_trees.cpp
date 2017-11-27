@@ -103,7 +103,7 @@ void RegressionTrees::load()
 
 #if CV_MAJOR_VERSION == 2
         RandomTreePtr tree(new cv::RandomTrees);
-        tree.read(fs.fs, (CvFileNode*) fs[label].node);
+        tree->read(fs.fs, (CvFileNode*) fs[label].node);
 #elif CV_MAJOR_VERSION == 3
         RandomTreePtr tree = cv::ml::RTrees::create();
         cv::FileNode node = trees_node[label];

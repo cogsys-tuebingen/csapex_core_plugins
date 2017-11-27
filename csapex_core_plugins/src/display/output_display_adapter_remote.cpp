@@ -28,7 +28,7 @@ CSAPEX_REGISTER_REMOTE_NODE_ADAPTER(OutputDisplayAdapterRemote, csapex::OutputDi
 OutputDisplayAdapterRemote::OutputDisplayAdapterRemote(NodeFacadeRemotePtr node, NodeBox* parent)
     : ResizableNodeAdapter(node, parent)
 {
-    node->remote_data_connection.connect([this](StreamableConstPtr msg) {
+    observe(node->remote_data_connection, [this](StreamableConstPtr msg) {
         if(std::shared_ptr<RawMessage const> raw = std::dynamic_pointer_cast<RawMessage const>(msg)) {
             std::vector<uint8_t> data = raw->getData();
             QByteArray array(reinterpret_cast<const char*>(data.data()),
@@ -52,7 +52,6 @@ OutputDisplayAdapterRemote::OutputDisplayAdapterRemote(NodeFacadeRemotePtr node,
 
 OutputDisplayAdapterRemote::~OutputDisplayAdapterRemote()
 {
-
 }
 
 bool OutputDisplayAdapterRemote::eventFilter(QObject *o, QEvent *e)
