@@ -158,8 +158,7 @@ target_link_libraries(csapex_core_lib_qt
 
 
 add_library(${PROJECT_NAME}_qt SHARED
-    src/tools/create_map_message_adapter.cpp
-    src/display/output_display_adapter.cpp
+    src/display/output_display_adapter_remote.cpp
     src/display/text_display_adapter.cpp
     src/display/signal_light_adapter.cpp
 )
@@ -176,13 +175,14 @@ target_link_libraries(${PROJECT_NAME}_qt
 
 
 
-add_library(${PROJECT_NAME}_remote_qt SHARED
-    src/display/output_display_adapter_remote.cpp
+add_library(${PROJECT_NAME}_direct_qt SHARED
+    src/tools/create_map_message_adapter.cpp
+    src/display/output_display_adapter.cpp
 )
 
 
-target_link_libraries(${PROJECT_NAME}_remote_qt
-    #${PROJECT_NAME}_node
+target_link_libraries(${PROJECT_NAME}_direct_qt
+    ${PROJECT_NAME}_node
     csapex_core_lib_qt
     csapex_core_lib
     ${catkin_LIBRARIES}

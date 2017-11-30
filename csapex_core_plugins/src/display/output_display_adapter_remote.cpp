@@ -22,13 +22,13 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_REMOTE_NODE_ADAPTER(OutputDisplayAdapterRemote, csapex::OutputDisplay)
+CSAPEX_REGISTER_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayAdapterRemote::OutputDisplayAdapterRemote(NodeFacadeRemotePtr node, NodeBox* parent)
+OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadePtr node, NodeBox* parent)
     : ResizableNodeAdapter(node, parent)
 {
-    observe(node->remote_data_connection, [this](StreamableConstPtr msg) {
+    observe(node->raw_data_connection, [this](StreamableConstPtr msg) {
         if(std::shared_ptr<RawMessage const> raw = std::dynamic_pointer_cast<RawMessage const>(msg)) {
             std::vector<uint8_t> data = raw->getData();
             QByteArray array(reinterpret_cast<const char*>(data.data()),
@@ -50,11 +50,12 @@ OutputDisplayAdapterRemote::OutputDisplayAdapterRemote(NodeFacadeRemotePtr node,
     });
 }
 
-OutputDisplayAdapterRemote::~OutputDisplayAdapterRemote()
+OutputDisplayAdapter::~OutputDisplayAdapter()
 {
+    stopObserving();
 }
 
-bool OutputDisplayAdapterRemote::eventFilter(QObject *o, QEvent *e)
+bool OutputDisplayAdapter::eventFilter(QObject *o, QEvent *e)
 {
     (void) o;
     if (e->type() == QEvent::Resize){
@@ -65,13 +66,13 @@ bool OutputDisplayAdapterRemote::eventFilter(QObject *o, QEvent *e)
     return false;
 }
 
-void OutputDisplayAdapterRemote::resize(const QSize& size)
+void OutputDisplayAdapter::resize(const QSize& size)
 {
     label_view_->setSize(size);
 }
 
 
-void OutputDisplayAdapterRemote::setupUi(QBoxLayout* layout)
+void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 {
     label_view_ = new ImageWidget;
     label_view_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -90,7 +91,7 @@ void OutputDisplayAdapterRemote::setupUi(QBoxLayout* layout)
 
     layout->addLayout(sub);
 
-    connect(this, &OutputDisplayAdapterRemote::displayRequest, this, &OutputDisplayAdapterRemote::display);
+    connect(this, &OutputDisplayAdapter::displayRequest, this, &OutputDisplayAdapter::display);
 
     if(NodeFacadePtr nf = node_.lock()) {
         if(param::ParameterPtr p = nf->getParameter("jpg/quality")) {
@@ -103,20 +104,20 @@ void OutputDisplayAdapterRemote::setupUi(QBoxLayout* layout)
 
 }
 
-void OutputDisplayAdapterRemote::setManualResize(bool manual)
+void OutputDisplayAdapter::setManualResize(bool manual)
 {
     label_view_->setManualResize(manual);
 }
 
 
-void OutputDisplayAdapterRemote::fitInView()
+void OutputDisplayAdapter::fitInView()
 {
     setSize(last_image_size_.width(), last_image_size_.height());
 
     doResize();
 }
 
-void OutputDisplayAdapterRemote::display(const QImage& img)
+void OutputDisplayAdapter::display(const QImage& img)
 {
     last_image_size_ = img.size();
     label_view_->setPixmap(QPixmap::fromImage(img));

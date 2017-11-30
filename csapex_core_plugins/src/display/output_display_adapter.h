@@ -15,13 +15,13 @@ namespace csapex {
 
 class ImageWidget;
 
-class OutputDisplayAdapter : public QObject, public ResizableNodeAdapter
+class OutputDisplayDirectAdapter : public QObject, public ResizableNodeAdapter
 {
     Q_OBJECT
 
 public:
-    OutputDisplayAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> instance);
-    ~OutputDisplayAdapter();
+    OutputDisplayDirectAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> instance);
+    ~OutputDisplayDirectAdapter();
 
 
     virtual void setupUi(QBoxLayout* layout) override;

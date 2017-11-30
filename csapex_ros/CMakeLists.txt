@@ -28,7 +28,6 @@ add_library(${PROJECT_NAME}_boot
 )
 target_link_libraries(${PROJECT_NAME}_boot
   ${catkin_LIBRARIES}
-  csapex_qt
 )
 
 add_custom_command(TARGET ${PROJECT_NAME}_boot POST_BUILD

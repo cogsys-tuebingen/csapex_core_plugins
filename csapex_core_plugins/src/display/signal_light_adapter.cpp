@@ -5,25 +5,32 @@
 #include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
+#include <csapex/model/node_facade.h>
+#include <csapex/io/raw_message.h>
 
 /// SYSTEM
 #include <QBoxLayout>
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(SignalLightAdapter, csapex::SignalLight)
+CSAPEX_REGISTER_NODE_ADAPTER(SignalLightAdapter, csapex::SignalLight)
 
 
-SignalLightAdapter::SignalLightAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node)
-    : ResizableNodeAdapter(worker, parent), wrapped_(node)
+SignalLightAdapter::SignalLightAdapter(NodeFacadePtr node, NodeBox* parent)
+    : ResizableNodeAdapter(node, parent)
 {
-    auto n = wrapped_.lock();
-
-    // translate to UI thread via Qt signal
-    observe(n->display_request, this, &SignalLightAdapter::displayRequest);
+    observe(node->raw_data_connection, [this](StreamableConstPtr msg) {
+        if(std::shared_ptr<RawMessage const> raw = std::dynamic_pointer_cast<RawMessage const>(msg)) {
+            displayRequest(raw->getData().at(0));
+        }
+    });
 }
 
 
+SignalLightAdapter::~SignalLightAdapter()
+{
+    stopObserving();
+}
 
 void SignalLightAdapter::resize(const QSize& size)
 {

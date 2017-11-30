@@ -43,7 +43,7 @@ void OutputDisplay::setupParameters(Parameterizable &params)
 void OutputDisplay::process()
 {
     bool has_direct_adapter = display_request.isConnected();
-    bool has_adapter = node_handle_->remote_data_connection.isConnected();
+    bool has_adapter = node_handle_->raw_data_connection.isConnected();
 
     bool has_any_adapter = has_direct_adapter || has_adapter;
 
@@ -75,7 +75,7 @@ void OutputDisplay::process()
 
             std::shared_ptr<RawMessage> msg = std::make_shared<RawMessage>(buffer.data().data(), buffer.size(),
                                                                            getUUID().getAbsoluteUUID());
-            node_handle_->remote_data_connection(msg);
+            node_handle_->raw_data_connection(msg);
 
         }
 

@@ -5,6 +5,9 @@
 #include <csapex/model/node_facade_local.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
+#include <csapex/model/node_facade.h>
+#include <csapex/io/raw_message.h>
+#include <csapex/serialization/serialization_buffer.h>
 
 /// SYSTEM
 #include <QBoxLayout>
@@ -12,16 +15,20 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
+CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
 
-TextDisplayAdapter::TextDisplayAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node)
-    : ResizableNodeAdapter(worker, parent), wrapped_(node)
+TextDisplayAdapter::TextDisplayAdapter(NodeFacadePtr node, NodeBox* parent)
+    : ResizableNodeAdapter(node, parent)
 {
-    auto n = wrapped_.lock();
-
-    // translate to UI thread via Qt signal
-    observe(n->display_request, this, &TextDisplayAdapter::displayRequest);
+    observe(node->raw_data_connection, [this](StreamableConstPtr msg) {
+        if(std::shared_ptr<RawMessage const> raw = std::dynamic_pointer_cast<RawMessage const>(msg)) {
+            SerializationBuffer buffer(raw->getData());
+            std::string text;
+            buffer >> text;
+            displayRequest(text);
+        }
+    });;
 }
 
 namespace {

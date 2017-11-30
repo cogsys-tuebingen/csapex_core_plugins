@@ -16,23 +16,23 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(OutputDisplayAdapter, csapex::OutputDisplay)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(OutputDisplayDirectAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayAdapter::OutputDisplayAdapter(NodeFacadeLocalPtr node, NodeBox* parent, std::weak_ptr<OutputDisplay> instance)
+OutputDisplayDirectAdapter::OutputDisplayDirectAdapter(NodeFacadeLocalPtr node, NodeBox* parent, std::weak_ptr<OutputDisplay> instance)
     : ResizableNodeAdapter(node, parent)
 {
     auto n = instance.lock();
     // translate to UI thread via Qt signal
-    observe(n->display_request, this, &OutputDisplayAdapter::displayRequest);
+    observe(n->display_request, this, &OutputDisplayDirectAdapter::displayRequest);
 }
 
-OutputDisplayAdapter::~OutputDisplayAdapter()
+OutputDisplayDirectAdapter::~OutputDisplayDirectAdapter()
 {
 
 }
 
-bool OutputDisplayAdapter::eventFilter(QObject *o, QEvent *e)
+bool OutputDisplayDirectAdapter::eventFilter(QObject *o, QEvent *e)
 {
     if (e->type() == QEvent::Resize){
         QSize s = label_view_->sizeHint();
@@ -42,13 +42,13 @@ bool OutputDisplayAdapter::eventFilter(QObject *o, QEvent *e)
     return false;
 }
 
-void OutputDisplayAdapter::resize(const QSize& size)
+void OutputDisplayDirectAdapter::resize(const QSize& size)
 {
     label_view_->setSize(size);
 }
 
 
-void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
+void OutputDisplayDirectAdapter::setupUi(QBoxLayout* layout)
 {
     label_view_ = new ImageWidget;
     label_view_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -67,25 +67,25 @@ void OutputDisplayAdapter::setupUi(QBoxLayout* layout)
 
     layout->addLayout(sub);
 
-    connect(this, &OutputDisplayAdapter::displayRequest, this, &OutputDisplayAdapter::display);
+    connect(this, &OutputDisplayDirectAdapter::displayRequest, this, &OutputDisplayDirectAdapter::display);
 
     ResizableNodeAdapter::setupUi(layout);
 }
 
-void OutputDisplayAdapter::setManualResize(bool manual)
+void OutputDisplayDirectAdapter::setManualResize(bool manual)
 {
     label_view_->setManualResize(manual);
 }
 
 
-void OutputDisplayAdapter::fitInView()
+void OutputDisplayDirectAdapter::fitInView()
 {
     setSize(last_image_size_.width(), last_image_size_.height());
 
     doResize();
 }
 
-void OutputDisplayAdapter::display(const QImage& img)
+void OutputDisplayDirectAdapter::display(const QImage& img)
 {
     last_image_size_ = img.size();
     label_view_->setPixmap(QPixmap::fromImage(img));
