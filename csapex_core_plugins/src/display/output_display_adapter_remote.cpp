@@ -2,13 +2,13 @@
 #include "output_display_adapter_remote.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/utility/assert.h>
 #include <csapex/model/node.h>
 #include <csapex/model/node_state.h>
-#include <csapex/model/node_facade_remote.h>
+#include <csapex/model/node_facade_proxy.h>
 #include <csapex/io/raw_message.h>
 
 /// COMPONENT

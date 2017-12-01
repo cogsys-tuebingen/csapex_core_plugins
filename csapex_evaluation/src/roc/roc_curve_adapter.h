@@ -22,7 +22,7 @@ class ROCCurveAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    ROCCurveAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<ROCCurve> node);
+    ROCCurveAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ROCCurve> node);
     ~ROCCurveAdapter();
 
     virtual void setupUi(QBoxLayout* layout);

@@ -2,7 +2,7 @@
 #include "point_count_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -10,7 +10,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(PointCountAdapter, csapex::PointCount)
 
-PointCountAdapter::PointCountAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<PointCount> node)
+PointCountAdapter::PointCountAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<PointCount> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

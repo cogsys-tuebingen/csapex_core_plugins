@@ -19,7 +19,7 @@ class VectorPlotAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
 public:
-    VectorPlotAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<VectorPlot> node);
+    VectorPlotAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<VectorPlot> node);
 
     virtual void setupUi(QBoxLayout* layout);
 

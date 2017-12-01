@@ -2,7 +2,7 @@
 #include "assign_cluster_class_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
@@ -23,7 +23,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER_NS(csapex, AssignClusterClassAdapter, csapex::AssignClusterClass)
 
-AssignClusterClassAdapter::AssignClusterClassAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<AssignClusterClass> node)
+AssignClusterClassAdapter::AssignClusterClassAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<AssignClusterClass> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       active_class_(0),

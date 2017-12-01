@@ -2,7 +2,7 @@
 #include "evaluate_binary_classifier_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -136,7 +136,7 @@ QVariant EvaluateBinaryClassifierTableModel::headerData(int section, Qt::Orienta
 
 
 
-EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node)
+EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

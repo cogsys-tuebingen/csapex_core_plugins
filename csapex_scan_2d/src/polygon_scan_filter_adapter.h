@@ -19,7 +19,7 @@ class PolygonScanFilterAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    PolygonScanFilterAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node);
+    PolygonScanFilterAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node);
 
     virtual Memento::Ptr getState() const;
     virtual void setParameterState(Memento::Ptr memento);

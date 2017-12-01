@@ -5,7 +5,7 @@
 #include "filter_static_mask_painter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -21,7 +21,7 @@ using namespace csapex;
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(FilterStaticMaskAdapter, csapex::FilterStaticMask)
 
 
-FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<FilterStaticMask> node)
+FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<FilterStaticMask> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     qRegisterMetaType < cv::Mat > ("cv::Mat");

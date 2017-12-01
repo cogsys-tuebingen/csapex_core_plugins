@@ -2,7 +2,7 @@
 #include "label_rois_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
@@ -104,7 +104,7 @@ namespace csapex {
 }
 
 
-LabelROIsAdapter::LabelROIsAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<LabelROIs> node)
+LabelROIsAdapter::LabelROIsAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<LabelROIs> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       active_class_(0),

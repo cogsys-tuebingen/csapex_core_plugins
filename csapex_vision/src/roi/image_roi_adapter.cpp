@@ -2,7 +2,7 @@
 #include "image_roi_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
@@ -22,7 +22,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
-ImageRoiAdapter::ImageRoiAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node)
+ImageRoiAdapter::ImageRoiAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       pixmap_(nullptr),

@@ -2,7 +2,7 @@
 #include "time_plot_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 
 /// SYSTEM
 #include <qwt_plot.h>
@@ -15,7 +15,7 @@ using namespace csapex;
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(TimePlotAdapter, csapex::TimePlot)
 
 
-TimePlotAdapter::TimePlotAdapter(NodeFacadeLocalPtr node_facade, NodeBox* parent, std::weak_ptr<TimePlot> node)
+TimePlotAdapter::TimePlotAdapter(NodeFacadeImplementationPtr node_facade, NodeBox* parent, std::weak_ptr<TimePlot> node)
     : DefaultNodeAdapter(node_facade, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

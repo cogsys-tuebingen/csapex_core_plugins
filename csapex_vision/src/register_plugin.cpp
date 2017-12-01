@@ -12,7 +12,7 @@
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_ros/ros_handler.h>
 #include <csapex/factory/generic_node_factory.hpp>
-#include <csapex/factory/node_factory_local.h>
+#include <csapex/factory/node_factory_impl.h>
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>

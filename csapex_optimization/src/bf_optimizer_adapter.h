@@ -17,7 +17,7 @@ class BFOptimizerAdapter : public OptimizerAdapter
     Q_OBJECT
 
 public:
-    BFOptimizerAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node);
+    BFOptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node);
     ~BFOptimizerAdapter();
 
     virtual void setupUi(QBoxLayout* layout);

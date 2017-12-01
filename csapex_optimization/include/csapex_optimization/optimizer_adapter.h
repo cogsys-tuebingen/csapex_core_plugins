@@ -18,7 +18,7 @@ class OptimizerAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    OptimizerAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node);
+    OptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node);
     ~OptimizerAdapter();
 
     virtual void setupUi(QBoxLayout* layout);

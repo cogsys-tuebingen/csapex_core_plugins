@@ -1,5 +1,5 @@
-#ifndef OUTPUT_DISPLAY_ADAPTER_REMOTE_H
-#define OUTPUT_DISPLAY_ADAPTER_REMOTE_H
+#ifndef OUTPUT_DISPLAY_ADAPTER_PROXY_H
+#define OUTPUT_DISPLAY_ADAPTER_PROXY_H
 
 /// PROJECT
 #include <csapex/view/node/resizable_node_adapter.h>
@@ -47,4 +47,4 @@ private:
 
 }
 
-#endif // OUTPUT_DISPLAY_ADAPTER_REMOTE_H
+#endif // OUTPUT_DISPLAY_ADAPTER_PROXY_H

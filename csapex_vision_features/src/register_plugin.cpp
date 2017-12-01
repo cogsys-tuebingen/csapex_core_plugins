@@ -6,7 +6,7 @@
 #include <csapex_vision_features/descriptor_message.h>
 #include <csapex/factory/generic_node_factory.hpp>
 #include <csapex/msg/generic_value_message.hpp>
-#include <csapex/factory/node_factory_local.h>
+#include <csapex/factory/node_factory_impl.h>
 
 /// PROJECT
 #include <csapex/factory/message_factory.h>

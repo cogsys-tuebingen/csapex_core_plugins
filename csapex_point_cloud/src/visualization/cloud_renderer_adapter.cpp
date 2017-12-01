@@ -2,7 +2,7 @@
 #include "cloud_renderer_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/msg/io.h>
@@ -20,7 +20,7 @@ using namespace csapex::connection_types;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
 
-CloudRendererAdapter::CloudRendererAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<CloudRenderer> node)
+CloudRendererAdapter::CloudRendererAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CloudRenderer> node)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, parent),
       wrapped_(node), view_(nullptr), pixmap_(nullptr), fbo_(nullptr), drag_(false), repaint_(true),
       w_view_(10), h_view_(10), point_size_(1),

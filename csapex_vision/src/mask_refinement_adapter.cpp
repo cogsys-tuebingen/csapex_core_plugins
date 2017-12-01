@@ -2,7 +2,7 @@
 #include "mask_refinement_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -20,7 +20,7 @@ using namespace csapex;
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(MaskRefinementAdapter, csapex::MaskRefinement)
 
 
-MaskRefinementAdapter::MaskRefinementAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<MaskRefinement> node)
+MaskRefinementAdapter::MaskRefinementAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<MaskRefinement> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node),
       view_(new QGraphicsView),
       refresh_(false),

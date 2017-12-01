@@ -2,7 +2,7 @@
 #include "text_display_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/model/node_facade.h>
@@ -29,6 +29,11 @@ TextDisplayAdapter::TextDisplayAdapter(NodeFacadePtr node, NodeBox* parent)
             displayRequest(text);
         }
     });;
+}
+
+TextDisplayAdapter::~TextDisplayAdapter()
+{
+    stopObserving();
 }
 
 namespace {

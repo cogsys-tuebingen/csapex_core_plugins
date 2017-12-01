@@ -10,7 +10,7 @@
 #include <csapex/command/meta.h>
 #include <csapex/model/graph_facade.h>
 #include <csapex/model/graph_facade.h>
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/model/node_handle.h>
 #include <csapex/msg/input.h>
 #include <csapex/msg/output.h>
@@ -33,7 +33,7 @@
 using namespace csapex;
 
 
-OptimizerAdapter::OptimizerAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node)
+OptimizerAdapter::OptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node)
     : DefaultNodeAdapter(worker, parent), wrapped_base_(node)
 {
     QObject::connect(&widget_picker_, SIGNAL(widgetPicked()), this, SLOT(widgetPicked()));

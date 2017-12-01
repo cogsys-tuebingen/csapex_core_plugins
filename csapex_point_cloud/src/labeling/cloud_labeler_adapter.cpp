@@ -2,7 +2,7 @@
 #include "cloud_labeler_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/msg/io.h>
@@ -20,7 +20,7 @@ using namespace csapex::connection_types;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(CloudLabelerAdapter, csapex::CloudLabeler)
 
-CloudLabelerAdapter::CloudLabelerAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<CloudLabeler> node)
+CloudLabelerAdapter::CloudLabelerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CloudLabeler> node)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, parent),
       wrapped_(node), view_(nullptr), pixmap_(nullptr), fbo_(nullptr), drag_(false), repaint_(true),
       fov_v_(45.0f), near_(0.01f), far_(300.0f),

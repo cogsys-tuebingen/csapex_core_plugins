@@ -182,7 +182,7 @@ void LocalPatterns::process()
 
 void LocalPatterns::setup(NodeModifier &node_modifier)
 {
-    out_ = node_modifier.addOutput<CvMatMessage>("Local Patterns");
+    out_ = node_modifier.addOutput<CvMatMessage>("Implementation Patterns");
     in_  = node_modifier.addInput<CvMatMessage>("Mono");
 }
 

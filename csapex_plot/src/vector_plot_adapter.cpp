@@ -2,7 +2,7 @@
 #include "vector_plot_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 
 /// SYSTEM
 #include <qwt_plot.h>
@@ -15,7 +15,7 @@ using namespace csapex;
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(VectorPlotAdapter, csapex::VectorPlot)
 
 
-VectorPlotAdapter::VectorPlotAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<VectorPlot> node)
+VectorPlotAdapter::VectorPlotAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<VectorPlot> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

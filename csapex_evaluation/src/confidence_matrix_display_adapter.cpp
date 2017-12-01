@@ -2,7 +2,7 @@
 #include "confidence_matrix_display_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -86,7 +86,7 @@ QVariant ConfidenceMatrixTableModel::headerData(int section, Qt::Orientation ori
 
 
 
-ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<ConfidenceMatrixDisplay> node)
+ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ConfidenceMatrixDisplay> node)
     : NodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

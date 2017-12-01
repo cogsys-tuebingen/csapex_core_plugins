@@ -2,13 +2,13 @@
 #include "output_display_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/utility/assert.h>
 #include <csapex/model/node.h>
 #include <csapex/model/node_state.h>
-#include <csapex/model/node_facade_remote.h>
+#include <csapex/model/node_facade_proxy.h>
 
 /// SYSTEM
 #include <QEvent>
@@ -19,7 +19,7 @@ using namespace csapex;
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(OutputDisplayDirectAdapter, csapex::OutputDisplay)
 
 
-OutputDisplayDirectAdapter::OutputDisplayDirectAdapter(NodeFacadeLocalPtr node, NodeBox* parent, std::weak_ptr<OutputDisplay> instance)
+OutputDisplayDirectAdapter::OutputDisplayDirectAdapter(NodeFacadeImplementationPtr node, NodeBox* parent, std::weak_ptr<OutputDisplay> instance)
     : ResizableNodeAdapter(node, parent)
 {
     auto n = instance.lock();

@@ -18,7 +18,7 @@ class ImageRoiAdapter : public QObject, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    ImageRoiAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node);
+    ImageRoiAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node);
 
     virtual Memento::Ptr getState() const;
     virtual void         setParameterState(Memento::Ptr memento);

@@ -19,6 +19,7 @@ class TextDisplayAdapter : public QObject, public ResizableNodeAdapter
 
 public:
     TextDisplayAdapter(NodeFacadePtr worker, NodeBox* parent);
+    ~TextDisplayAdapter();
 
     bool eventFilter(QObject* o, QEvent* e);
 

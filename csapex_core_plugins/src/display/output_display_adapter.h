@@ -20,7 +20,7 @@ class OutputDisplayDirectAdapter : public QObject, public ResizableNodeAdapter
     Q_OBJECT
 
 public:
-    OutputDisplayDirectAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> instance);
+    OutputDisplayDirectAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> instance);
     ~OutputDisplayDirectAdapter();
 
 

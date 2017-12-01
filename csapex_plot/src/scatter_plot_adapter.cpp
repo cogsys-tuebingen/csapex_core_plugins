@@ -2,7 +2,7 @@
 #include "scatter_plot_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 
 /// SYSTEM
 #include <qwt_plot.h>
@@ -15,7 +15,7 @@ using namespace csapex;
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ScatterPlotAdapter, csapex::ScatterPlot)
 
 
-ScatterPlotAdapter::ScatterPlotAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<ScatterPlot> node)
+ScatterPlotAdapter::ScatterPlotAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ScatterPlot> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();

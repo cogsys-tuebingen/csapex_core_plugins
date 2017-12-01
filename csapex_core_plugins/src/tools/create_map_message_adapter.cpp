@@ -3,7 +3,7 @@
 #include "create_map_message_adapter.h"
 
 /// PROJECT
-#include <csapex/model/node_facade_local.h>
+#include <csapex/model/node_facade_impl.h>
 #include <csapex_core_plugins/parameter_dialog.h>
 
 
@@ -36,7 +36,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(CreateMapMessageAdapter, csapex::CreateMapMessage)
 
-CreateMapMessageAdapter::CreateMapMessageAdapter(NodeFacadeLocalPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node)
+CreateMapMessageAdapter::CreateMapMessageAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node)
     : DefaultNodeAdapter(worker, parent), wrapped_base_(node)
 {
     QObject::connect(&widget_picker_, SIGNAL(widgetPicked()), this, SLOT(widgetPicked()));
