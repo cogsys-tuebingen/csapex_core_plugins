@@ -227,7 +227,7 @@ void VectorPlot::renderAndSend()
 
     updateLineColors();
 
-    QwtPlotCurve curve[data_v_.size()];
+    std::vector<QwtPlotCurve> curve(data_v_.size());
     for(std::size_t  num_plot= 0; num_plot < data_v_.size(); ++num_plot) {
 
         painter.setRenderHint( QPainter::Antialiasing,

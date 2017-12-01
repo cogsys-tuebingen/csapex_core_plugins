@@ -9,7 +9,9 @@
 
 /// SYSTEM
 #include <ros/message_traits.h>
-#include <topic_tools/shape_shifter.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <topic_tools/shape_shifter.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 namespace csapex {
 

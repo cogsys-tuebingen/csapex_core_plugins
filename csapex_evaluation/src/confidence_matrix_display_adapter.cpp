@@ -2,6 +2,7 @@
 #include "confidence_matrix_display_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -13,7 +14,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ConfidenceMatrixDisplayAdapter, csapex::ConfidenceMatrixDisplay)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ConfidenceMatrixDisplayAdapter, csapex::ConfidenceMatrixDisplay)
 
 ConfidenceMatrixTableModel::ConfidenceMatrixTableModel()
     : dim(0)
@@ -85,13 +86,13 @@ QVariant ConfidenceMatrixTableModel::headerData(int section, Qt::Orientation ori
 
 
 
-ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ConfidenceMatrixDisplay> node)
+ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ConfidenceMatrixDisplay> node)
     : NodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&ConfidenceMatrixDisplayAdapter::displayRequest, this)));
+    observe(n->display_request, this, &ConfidenceMatrixDisplayAdapter::displayRequest);
 }
 
 void ConfidenceMatrixDisplayAdapter::setupUi(QBoxLayout* layout)

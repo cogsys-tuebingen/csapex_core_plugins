@@ -17,6 +17,7 @@ find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(Boost REQUIRED COMPONENTS iostreams)
 
 set(CMAKE_AUTOMOC ON)
+
 qt5_add_resources(QT_RESOURCES
     res/csapex_core_resources.qrc
 )
@@ -45,8 +46,8 @@ add_library(csapex_core_lib SHARED
     src/core/vector_process_node.cpp
     src/core/key_value_message.cpp
     src/core/map_message.cpp
-	
-	${core_HEADERS}
+
+    ${core_HEADERS}
 
     ${QT_RESOURCES}
 )
@@ -141,7 +142,10 @@ generate_export_header(${PROJECT_NAME}_node)
 
 add_library(csapex_core_lib_qt
     src/tools/parameter_dialog.cpp
+    src/display/image_widget.cpp
+
     include/${PROJECT_NAME}/parameter_dialog.h
+    include/${PROJECT_NAME}/image_widget.h
 )
 
 target_link_libraries(csapex_core_lib_qt
@@ -154,8 +158,7 @@ target_link_libraries(csapex_core_lib_qt
 
 
 add_library(${PROJECT_NAME}_qt SHARED
-    src/tools/create_map_message_adapter.cpp
-    src/display/output_display_adapter.cpp
+    src/display/output_display_adapter_remote.cpp
     src/display/text_display_adapter.cpp
     src/display/signal_light_adapter.cpp
 )
@@ -163,6 +166,23 @@ add_library(${PROJECT_NAME}_qt SHARED
 
 target_link_libraries(${PROJECT_NAME}_qt
     #${PROJECT_NAME}_node
+    csapex_core_lib_qt
+    csapex_core_lib
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+    Qt5::Core Qt5::Gui Qt5::Widgets
+)
+
+
+
+add_library(${PROJECT_NAME}_direct_qt SHARED
+    src/tools/create_map_message_adapter.cpp
+    src/display/output_display_adapter.cpp
+)
+
+
+target_link_libraries(${PROJECT_NAME}_direct_qt
+    ${PROJECT_NAME}_node
     csapex_core_lib_qt
     csapex_core_lib
     ${catkin_LIBRARIES}

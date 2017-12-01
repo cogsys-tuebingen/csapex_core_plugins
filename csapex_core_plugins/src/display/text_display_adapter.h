@@ -18,7 +18,8 @@ class TextDisplayAdapter : public QObject, public ResizableNodeAdapter
     Q_OBJECT
 
 public:
-    TextDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node);
+    TextDisplayAdapter(NodeFacadePtr worker, NodeBox* parent);
+    ~TextDisplayAdapter();
 
     bool eventFilter(QObject* o, QEvent* e);
 
@@ -32,9 +33,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void displayRequest(const std::string& txt);
-
-protected:
-    std::weak_ptr<TextDisplay> wrapped_;
 
 private:
     QLabel* txt_;

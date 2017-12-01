@@ -2,6 +2,7 @@
 #include "scan_labeler_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
@@ -22,18 +23,18 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ScanLabelerAdapter, csapex::ScanLabeler)
 
 
-ScanLabelerAdapter::ScanLabelerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node)
+ScanLabelerAdapter::ScanLabelerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node), view_(new QGraphicsView),
       resize_down_(false), move_down_(false)
 {
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&ScanLabelerAdapter::displayRequest, this, std::placeholders::_1)));
-    trackConnection(n->submit_request.connect(std::bind(&ScanLabelerAdapter::submitRequest, this)));
+    observe(n->display_request, this, &ScanLabelerAdapter::displayRequest);
+    observe(n->submit_request, this, &ScanLabelerAdapter::submitRequest);
 }
 
 void ScanLabelerAdapter::labelSelected()

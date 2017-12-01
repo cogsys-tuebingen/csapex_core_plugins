@@ -6,7 +6,7 @@
 #include <csapex/core/core_plugin.h>
 #include <csapex/model/node.h>
 #include <csapex/msg/message_provider.h>
-#include <csapex/view/message_renderer.h>
+#include <csapex/msg/message_renderer.h>
 #include <csapex/view/node/node_adapter_builder.h>
 #include <csapex/view/designer/drag_io_handler.h>
 
@@ -23,7 +23,7 @@ namespace bf3 = boost::filesystem3;
 using namespace csapex;
 using namespace pluginlib;
 
-CSAPEX_REGISTER_BOOT(RosBoot);
+CSAPEX_REGISTER_BOOT(RosBoot)
 
 namespace {
 std::vector<std::string> getValidPluginXMLFiles()

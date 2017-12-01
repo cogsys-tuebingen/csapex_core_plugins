@@ -2,6 +2,7 @@
 #include "mask_refinement_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -16,10 +17,10 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(MaskRefinementAdapter, csapex::MaskRefinement)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(MaskRefinementAdapter, csapex::MaskRefinement)
 
 
-MaskRefinementAdapter::MaskRefinementAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<MaskRefinement> node)
+MaskRefinementAdapter::MaskRefinementAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<MaskRefinement> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node),
       view_(new QGraphicsView),
       refresh_(false),
@@ -28,9 +29,9 @@ MaskRefinementAdapter::MaskRefinementAdapter(NodeFacadeWeakPtr worker, NodeBox* 
     auto n = wrapped_.lock();
 
     // translate to UI thread via Qt signal
-    trackConnection(n->next_image.connect(std::bind(&MaskRefinementAdapter::nextRequest, this)));
-    trackConnection(n->update_brush.connect(std::bind(&MaskRefinementAdapter::updateBrushRequest, this)));
-    trackConnection(n->input.connect(std::bind(&MaskRefinementAdapter::inputRequest, this, std::placeholders::_1, std::placeholders::_2)));
+    observe(n->next_image, this, &MaskRefinementAdapter::nextRequest);
+    observe(n->update_brush, this, &MaskRefinementAdapter::updateBrushRequest);
+    observe(n->input, std::bind(&MaskRefinementAdapter::inputRequest, this, std::placeholders::_1, std::placeholders::_2));
 
     QObject::connect(this, SIGNAL(nextRequest()), this, SLOT(next()));
     QObject::connect(this, SIGNAL(inputRequest(QImage, QImage)), this, SLOT(setMask(QImage, QImage)));

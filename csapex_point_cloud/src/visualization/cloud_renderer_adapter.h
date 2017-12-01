@@ -21,7 +21,7 @@ class CloudRendererAdapter : public QGLWidget, public DefaultNodeAdapter
     Q_OBJECT
 
 public:
-    CloudRendererAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<CloudRenderer> node);
+    CloudRendererAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CloudRenderer> node);
     ~CloudRendererAdapter();
 
     void stop();

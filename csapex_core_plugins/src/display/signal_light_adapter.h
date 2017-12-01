@@ -110,7 +110,8 @@ class SignalLightAdapter : public QObject, public ResizableNodeAdapter
     Q_OBJECT
 
 public:
-    SignalLightAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<SignalLight> node);
+    SignalLightAdapter(NodeFacadePtr node, NodeBox* parent);
+    ~SignalLightAdapter();
 
     virtual void setupUi(QBoxLayout* layout);
 
@@ -123,9 +124,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void displayRequest(int state);
-
-protected:
-    std::weak_ptr<SignalLight> wrapped_;
 
 private:
     SignalLightWidget* light_;

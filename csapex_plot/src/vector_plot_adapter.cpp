@@ -1,6 +1,9 @@
 /// HEADER
 #include "vector_plot_adapter.h"
 
+/// PROJECT
+#include <csapex/model/node_facade_impl.h>
+
 /// SYSTEM
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
@@ -9,15 +12,15 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(VectorPlotAdapter, csapex::VectorPlot)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(VectorPlotAdapter, csapex::VectorPlot)
 
 
-VectorPlotAdapter::VectorPlotAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<VectorPlot> node)
+VectorPlotAdapter::VectorPlotAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<VectorPlot> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
-    trackConnection(n ->display_request.connect(std::bind(&VectorPlotAdapter::displayRequest, this)));
-    trackConnection(n ->update.connect(std::bind(&VectorPlotAdapter::displayRequest, this)));
+    observe(n ->display_request, this, &VectorPlotAdapter::displayRequest);
+    observe(n ->update, this, &VectorPlotAdapter::displayRequest);
 }
 
 void VectorPlotAdapter::setupUi(QBoxLayout* layout)
@@ -46,7 +49,7 @@ void VectorPlotAdapter::display()
     std::size_t num_curves = n->getVDataCountNumCurves();
     std::size_t num_points = n->getCount();
     n->updateLineColors();
-    QwtPlotCurve* curve[num_curves]/*= new QwtPlotCurve[n->getVDataCountNumCurves()];*/;
+    std::vector<QwtPlotCurve*> curve(num_curves)/*= new QwtPlotCurve[n->getVDataCountNumCurves()];*/;
     std::vector<QColor> colors(num_curves);
     std::vector<QColor> line_colors(num_curves);
     std::vector<const double*> data(num_curves);

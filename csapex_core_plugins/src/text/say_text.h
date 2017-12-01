@@ -5,7 +5,7 @@
 #include <csapex/model/node.h>
 
 /// SYSTEM
-#include <QLabel>
+#include <future>
 
 namespace csapex {
 
@@ -22,7 +22,16 @@ private:
     Input* connector_;
 
     bool repeat_;
+    bool async_;
     std::string last_;
+
+    bool speaking_;
+
+    std::string language_;
+    int pitch_;
+    int speed_;
+
+    std::future<void> future_;
 };
 
 }

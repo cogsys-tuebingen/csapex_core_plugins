@@ -13,8 +13,9 @@
 /// #include "sac_segmentation.hpp"
 
 /// SYSTEM
-#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_end.h>
 #include <boost/mpl/for_each.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::SacFit, csapex::Node)

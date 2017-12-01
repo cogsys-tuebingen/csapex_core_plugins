@@ -2,7 +2,8 @@
 /// HEADER
 #include "create_map_message_adapter.h"
 
-/// COMPONENT
+/// PROJECT
+#include <csapex/model/node_facade_impl.h>
 #include <csapex_core_plugins/parameter_dialog.h>
 
 
@@ -21,6 +22,7 @@
 #include <csapex/command/command_factory.h>
 #include <csapex/command/meta.h>
 #include <csapex/msg/input.h>
+#include <csapex/msg/output.h>
 
 /// SYSTEM
 #include <QPushButton>
@@ -32,9 +34,9 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(CreateMapMessageAdapter, csapex::CreateMapMessage)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(CreateMapMessageAdapter, csapex::CreateMapMessage)
 
-CreateMapMessageAdapter::CreateMapMessageAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node)
+CreateMapMessageAdapter::CreateMapMessageAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node)
     : DefaultNodeAdapter(worker, parent), wrapped_base_(node)
 {
     QObject::connect(&widget_picker_, SIGNAL(widgetPicked()), this, SLOT(widgetPicked()));
@@ -104,7 +106,7 @@ void CreateMapMessageAdapter::widgetPicked()
 
                 GraphFacade* facade = parent_->getGraphView()->getGraphFacade();
 
-                if(!facade->getGraph()->getConnection(input, output)) {
+                if(!facade->isConnected(input, output)) {
                     AUUID parent_uuid = facade->getAbsoluteUUID();
                     executeCommand(std::make_shared<command::AddConnection>(parent_uuid, output, input, false));
 
@@ -209,10 +211,10 @@ void CreateMapMessageAdapter::removeParameters()
 
     for(param::ParameterPtr p : node->getPersistentParameters()) {
         if(OutputPtr out = nh->getParameterOutput(p->name()).lock()) {
-            cmd->add(factory.removeAllConnectionsCmd(out.get()));
+            cmd->add(factory.removeAllConnectionsCmd(out));
         }
         if(InputPtr in = nh->getParameterInput(p->name()).lock()) {
-            cmd->add(factory.removeAllConnectionsCmd(in.get()));
+            cmd->add(factory.removeAllConnectionsCmd(in));
         }
     }
 

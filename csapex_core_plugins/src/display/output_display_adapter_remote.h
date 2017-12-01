@@ -1,12 +1,9 @@
-#ifndef OUTPUT_DISPLAY_ADAPTER_H
-#define OUTPUT_DISPLAY_ADAPTER_H
+#ifndef OUTPUT_DISPLAY_ADAPTER_PROXY_H
+#define OUTPUT_DISPLAY_ADAPTER_PROXY_H
 
 /// PROJECT
 #include <csapex/view/node/resizable_node_adapter.h>
 #include <csapex_core_plugins/image_widget.h>
-
-/// COMPONENT
-#include "output_display.h"
 
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
@@ -15,13 +12,13 @@ namespace csapex {
 
 class ImageWidget;
 
-class OutputDisplayDirectAdapter : public QObject, public ResizableNodeAdapter
+class OutputDisplayAdapter : public QObject, public ResizableNodeAdapter
 {
     Q_OBJECT
 
 public:
-    OutputDisplayDirectAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<OutputDisplay> instance);
-    ~OutputDisplayDirectAdapter();
+    OutputDisplayAdapter(NodeFacadePtr node, NodeBox* parent);
+    ~OutputDisplayAdapter();
 
 
     virtual void setupUi(QBoxLayout* layout) override;
@@ -45,6 +42,9 @@ private:
 
     ImageWidget* label_view_;
 };
+
+
+
 }
 
-#endif // OUTPUT_DISPLAY_ADAPTER_H
+#endif // OUTPUT_DISPLAY_ADAPTER_PROXY_H

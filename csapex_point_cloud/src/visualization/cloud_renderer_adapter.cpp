@@ -2,6 +2,7 @@
 #include "cloud_renderer_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/msg/io.h>
@@ -17,9 +18,9 @@
 using namespace csapex;
 using namespace csapex::connection_types;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
 
-CloudRendererAdapter::CloudRendererAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<CloudRenderer> node)
+CloudRendererAdapter::CloudRendererAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CloudRenderer> node)
     : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, parent),
       wrapped_(node), view_(nullptr), pixmap_(nullptr), fbo_(nullptr), drag_(false), repaint_(true),
       w_view_(10), h_view_(10), point_size_(1),
@@ -29,8 +30,8 @@ CloudRendererAdapter::CloudRendererAdapter(NodeFacadeWeakPtr worker, NodeBox* pa
 {
     auto node_ptr = wrapped_.lock();
 
-    trackConnection(node_ptr->display_request.connect(std::bind(&CloudRendererAdapter::display, this)));
-    trackConnection(node_ptr->refresh_request.connect(std::bind(&CloudRendererAdapter::refresh, this)));
+    observe(node_ptr->display_request, this, &CloudRendererAdapter::display);
+    observe(node_ptr->refresh_request, this, &CloudRendererAdapter::refresh);
 
     QObject::connect(this, SIGNAL(repaintRequest()), this, SLOT(paintGLImpl()), Qt::QueuedConnection);
     QObject::connect(this, SIGNAL(resizeRequest()), this, SLOT(resize()), Qt::QueuedConnection);

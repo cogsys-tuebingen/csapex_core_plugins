@@ -2,6 +2,7 @@
 #include "assign_cluster_class_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
@@ -20,9 +21,9 @@
 using namespace csapex;
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER_NS(csapex, AssignClusterClassAdapter, csapex::AssignClusterClass)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER_NS(csapex, AssignClusterClassAdapter, csapex::AssignClusterClass)
 
-AssignClusterClassAdapter::AssignClusterClassAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<AssignClusterClass> node)
+AssignClusterClassAdapter::AssignClusterClassAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<AssignClusterClass> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       active_class_(0),
@@ -44,14 +45,12 @@ AssignClusterClassAdapter::AssignClusterClassAdapter(NodeFacadeWeakPtr worker, N
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&AssignClusterClassAdapter::displayRequest, this,
-                                            std::placeholders::_1, std::placeholders::_2)));
-    trackConnection(n->set_class.connect(std::bind(&AssignClusterClassAdapter::setClassRequest, this, std::placeholders::_1)));
-    trackConnection(n->set_color.connect(std::bind(&AssignClusterClassAdapter::setColorRequest, this,
-                                      std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-    trackConnection(n->submit_request.connect(std::bind(&AssignClusterClassAdapter::submitRequest, this)));
-    trackConnection(n->drop_request.connect(std::bind(&AssignClusterClassAdapter::dropRequest, this)));
-    trackConnection(n->clear_request.connect(std::bind(&AssignClusterClassAdapter::clearRequest, this)));
+    observe(n->display_request, this, &AssignClusterClassAdapter::displayRequest);
+    observe(n->set_class, this, &AssignClusterClassAdapter::setClassRequest);
+    observe(n->set_color, this, &AssignClusterClassAdapter::setColorRequest);
+    observe(n->submit_request, this, &AssignClusterClassAdapter::submitRequest);
+    observe(n->drop_request, this, &AssignClusterClassAdapter::dropRequest);
+    observe(n->clear_request, this, &AssignClusterClassAdapter::clearRequest);
 }
 
 bool AssignClusterClassAdapter::eventFilter(QObject *o, QEvent *e)
@@ -328,4 +327,4 @@ void AssignClusterClassAdapter::setClass(int c)
 }
 
 /// MOC
-#include "../../moc_assign_cluster_class_adapter.cpp"
+#include "moc_assign_cluster_class_adapter.cpp"

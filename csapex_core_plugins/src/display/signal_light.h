@@ -16,9 +16,6 @@ public:
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
 
-public:
-    slim_signal::Signal<void(int)> display_request;
-
 protected:
     void display(int state);
 

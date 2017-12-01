@@ -7,8 +7,9 @@
 #include <csapex/utility/singleton.hpp>
 
 /// SYSTEM
-#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#include <tf/transform_listener.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/transform_listener.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 namespace csapex
 {

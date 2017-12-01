@@ -32,7 +32,7 @@ if(${ZBAR_FOUND})
     )
 	
     target_link_libraries(${PROJECT_NAME}_plugin
-		${csapex_LIBRARIES}
+                ${csapex_LIBRARIES}
 		${csapex_opencv_LIBRARIES}
 		${catkin_LIBRARIES}
 		${ZBAR_LIBRARIES}

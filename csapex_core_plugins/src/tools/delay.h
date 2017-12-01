@@ -25,6 +25,8 @@ public:
 
     virtual bool isAsynchronous() const;
 
+    virtual void reset() override;
+
 private:
     void doSleep();
 

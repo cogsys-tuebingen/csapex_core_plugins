@@ -17,7 +17,14 @@ namespace csapex
 class CSAPEX_EXPORT_PLUGIN ExampleImageGenerator : public Node
 {
 public:
+    enum class Images
+    {
+        LENA,
+        NUMBER
+    };
+
     ExampleImageGenerator()
+        : seq_(0)
     {
 
     }
@@ -26,21 +33,45 @@ public:
     {
         output_ = node_modifier.addOutput<connection_types::CvMatMessage>("Image");
 
-        image = QtCvImageConverter::Converter<QImage>::QImage2Mat(QImage(":/lena.png"));
+        lena_ = QtCvImageConverter::Converter<QImage>::QImage2Mat(QImage(":/lena.png"));
     }
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-
+        std::map<std::string, int> set {
+            {"LENA", (int) Images::LENA},
+            {"NUMBER", (int) Images::NUMBER}
+        };
+        parameters.addParameter(param::ParameterFactory::declareParameterSet("image", set, (int) Images::LENA),
+                                image_type_);
     }
 
     virtual void process() override
     {
         connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, "camera", 0));
-        msg->value = image.clone();
+
+        switch(image_type_) {
+        case Images::LENA:
+            msg->value = lena_.clone();
+            break;
+        case Images::NUMBER:
+
+            msg->value = cv::Mat(400, 400, CV_8UC3);
+
+            std::stringstream txt;
+            txt << seq_;
+            cv::rectangle(msg->value, cv::Rect(0,0, msg->value.cols, msg->value.rows), cv::Scalar::all(0), CV_FILLED);
+            cv::putText(msg->value, txt.str(), cv::Point(20, 200), CV_FONT_HERSHEY_PLAIN, 5.0, cv::Scalar::all(255), 2, CV_AA);
+
+            msg::publish(output_, msg);
+            break;
+        }
+
 
         if(msg->value.channels() == 1)
             msg->setEncoding(enc::mono);
+
+        ++seq_;
 
         msg::publish(output_, msg);
     }
@@ -48,7 +79,11 @@ public:
 private:
     Output* output_;
 
-    cv::Mat image;
+    cv::Mat lena_;
+
+    Images image_type_;
+
+    int seq_;
 };
 
 }

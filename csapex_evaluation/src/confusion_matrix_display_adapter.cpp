@@ -2,6 +2,7 @@
 #include "confusion_matrix_display_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
@@ -15,7 +16,7 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ConfusionMatrixDisplayAdapter, csapex::ConfusionMatrixDisplay)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ConfusionMatrixDisplayAdapter, csapex::ConfusionMatrixDisplay)
 
 ConfusionMatrixTableModel::ConfusionMatrixTableModel()
     : dim(0)
@@ -124,13 +125,13 @@ QVariant ConfusionMatrixTableModel::headerData(int section, Qt::Orientation orie
 
 
 
-ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ConfusionMatrixDisplay> node)
+ConfusionMatrixDisplayAdapter::ConfusionMatrixDisplayAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ConfusionMatrixDisplay> node)
     : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
     // translate to UI thread via Qt signal
-    trackConnection(n ->display_request.connect(std::bind(&ConfusionMatrixDisplayAdapter::displayRequest, this)));
-    trackConnection(n ->export_request.connect(std::bind(&ConfusionMatrixDisplayAdapter::exportRequest, this)));
+    observe(n ->display_request, this, &ConfusionMatrixDisplayAdapter::displayRequest);
+    observe(n ->export_request, this, &ConfusionMatrixDisplayAdapter::exportRequest);
 }
 
 void ConfusionMatrixDisplayAdapter::setupUi(QBoxLayout* layout)

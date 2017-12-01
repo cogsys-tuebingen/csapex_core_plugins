@@ -10,9 +10,10 @@
 
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
-#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#include <pcl_ros/transforms.h>
-#include <pcl/filters/voxel_grid.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <pcl_ros/transforms.h>
+    #include <pcl/filters/voxel_grid.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 CSAPEX_REGISTER_CLASS(csapex::VoxelGrid, csapex::Node)
 
