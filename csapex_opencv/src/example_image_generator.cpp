@@ -20,7 +20,8 @@ public:
     enum class Images
     {
         LENA,
-        NUMBER
+        NUMBER,
+        CAT
     };
 
     ExampleImageGenerator()
@@ -34,13 +35,15 @@ public:
         output_ = node_modifier.addOutput<connection_types::CvMatMessage>("Image");
 
         lena_ = QtCvImageConverter::Converter<QImage>::QImage2Mat(QImage(":/lena.png"));
+        cat_ = QtCvImageConverter::Converter<QImage>::QImage2Mat(QImage(":/cat.jpg"));
     }
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
         std::map<std::string, int> set {
             {"LENA", (int) Images::LENA},
-            {"NUMBER", (int) Images::NUMBER}
+            {"NUMBER", (int) Images::NUMBER},
+            {"CAT", (int) Images::CAT}
         };
         parameters.addParameter(param::ParameterFactory::declareParameterSet("image", set, (int) Images::LENA),
                                 image_type_);
@@ -53,6 +56,9 @@ public:
         switch(image_type_) {
         case Images::LENA:
             msg->value = lena_.clone();
+            break;
+        case Images::CAT:
+            msg->value = cat_.clone();
             break;
         case Images::NUMBER:
 
@@ -80,6 +86,7 @@ private:
     Output* output_;
 
     cv::Mat lena_;
+    cv::Mat cat_;
 
     Images image_type_;
 
