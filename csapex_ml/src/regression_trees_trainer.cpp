@@ -47,7 +47,6 @@ void RegressionTreesTrainer::setupParameters(csapex::Parameterizable& params)
                          0.0, 255.0, 0.0, 0.01));;
 
 #if CV_MAJOR_VERSION == 2
-    bool use_surrogates = true;
 #elif CV_MAJOR_VERSION == 3
     bool use_surrogates = false; // not yet supported
 #endif
@@ -133,7 +132,6 @@ bool RegressionTreesTrainer::processCollection(std::vector<connection_types::Fea
     fs << "regression" << "{";
 
 #if CV_MAJOR_VERSION == 2
-    int tflag = CV_ROW_SAMPLE;
 #elif CV_MAJOR_VERSION == 3
     int tflag = cv::ml::ROW_SAMPLE;
 #endif
@@ -160,34 +158,7 @@ bool RegressionTreesTrainer::processCollection(std::vector<connection_types::Fea
     for(std::size_t i = 0; i < responses_length; ++i){
 
 #if CV_MAJOR_VERSION == 2
-        CvRTParams params( readParameter<int>("max depth"),
-                           readParameter<int>("min sample count"),
-                           readParameter<double>("regression accuracy"),
-                           readParameter<bool>("use surrogates"),
-                           readParameter<int>("max categories"),
-                           priors_.data(),
-                           readParameter<bool>("calc_var_importance"),
-                           readParameter<int>("nactive_vars"),
-                           readParameter<int>("max_num_of_trees_in_the_forest"),
-                           readParameter<double>("forest_accuracy"),
-                           readParameter<int>("termcrit_type"));
-
-        cv::Mat var_type( train_data.cols + 1, 1, CV_8U, CV_VAR_NUMERICAL);
-
-        cv::RandomTrees rtrees;
-        ainfo << "[RandomTrees]: Started training for tree # "<< i
-              << " with " << train_data.rows << " samples!" << std::endl;
-        if(rtrees.train(train_data, tflag, responses.at(i), cv::Mat(), cv::Mat(), var_type, cv::Mat(), params)) {
-            std::string label = prefix + std::to_string(i);
-            fs << label << "{";
-            rtrees.write(fs.fs, label.c_str());
-            fs << "}";
-            ainfo << "[RandomTrees]: Finished training for tree # "
-                  << i <<"!" << std::endl;
-        } else {
-            return false;
-        }
-
+        #pragma message "Regression Trees are currently not implemented for OpenCV 2."
 #elif CV_MAJOR_VERSION == 3
         cv::Ptr<cv::ml::RTrees> rtrees = cv::ml::RTrees::create();
         rtrees->setMaxDepth(readParameter<int>("max depth"));
