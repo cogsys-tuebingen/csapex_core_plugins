@@ -24,6 +24,7 @@
 
 
   <export>
-    <csapex plugin="${prefix}/plugins.xml" />
+    <csapex plugin="${prefix}/plugins.xml"
+            tutorials="${prefix}/tutorials" />
   </export>
 </package>
