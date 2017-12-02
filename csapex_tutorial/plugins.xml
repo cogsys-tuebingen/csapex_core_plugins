@@ -1,0 +1,12 @@
+<library path="libcsapex_tutorial_node">
+  <class type="csapex::tutorial::UserSwitch" base_class_type="csapex::Node">
+    <description>Lets the user select one of two input images.</description>
+    <tags>Tutorial</tags>
+  </class>
+</library>
+
+<library path="libcsapex_tutorial_core">
+   <class type="csapex::tutorial::RegisterPlugin" base_class_type="csapex::CorePlugin">
+      <description>Sets up the Tutorial module</description>
+   </class>
+</library>
