@@ -47,6 +47,7 @@ void RegressionTreesTrainer::setupParameters(csapex::Parameterizable& params)
                          0.0, 255.0, 0.0, 0.01));;
 
 #if CV_MAJOR_VERSION == 2
+    bool use_surrogates = false; // not yet supported
 #elif CV_MAJOR_VERSION == 3
     bool use_surrogates = false; // not yet supported
 #endif
