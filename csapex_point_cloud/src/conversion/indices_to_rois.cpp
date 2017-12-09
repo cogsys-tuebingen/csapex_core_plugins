@@ -21,7 +21,9 @@ namespace csapex
 class PointIndicesToROIs : public Node
 {
 public:
-    PointIndicesToROIs()
+    PointIndicesToROIs():
+        dense_(false),
+        use_projection_(false)
     {
     }
 
@@ -45,6 +47,8 @@ public:
         params.addParameter(param::ParameterFactory::declareValue("height", 480), h_);
 
         params.addParameter(param::ParameterFactory::declareBool("flip rois", false), flip_rois_);
+        params.addConditionalParameter(param::ParameterFactory::declareBool("use_projection",false),
+                                       dense_, use_projection_);
     }
 
     void process()
@@ -84,9 +88,9 @@ public:
     {
         const pcl::PointCloud<PointT>& cloud = *cloud_ptr;
 
-        bool dense = cloud.width > 1 && cloud.height > 1;
+        dense_ = cloud.width > 1 && cloud.height > 1;
 
-        if(dense) {
+        if(dense_) {
             inputDenseCloud<PointT>(cloud_ptr);
         } else  {
             inputSparseCloud<PointT>(cloud_ptr);
@@ -101,7 +105,7 @@ public:
 
 
         std::size_t w = cloud.width;
-//        std::size_t h = cloud.height;
+        //        std::size_t h = cloud.height;
 
         int cluster_id = 0;
         std::vector<int>::const_iterator class_label;
@@ -125,17 +129,54 @@ public:
                 double max_col = -std::numeric_limits<double>::infinity();
                 double min_row = std::numeric_limits<double>::infinity();
                 double max_row = -std::numeric_limits<double>::infinity();
+                double max_dist = -std::numeric_limits<double>::infinity();
 
                 for(auto index = indices.begin(); index != indices.end(); ++index) {
                     int i = *index;
                     int row = i / w;
                     int col = i % w;
+                    if(use_projection_){
+                        const PointT& pt = cloud.points[*index];
 
+                        /*  general:
+                             *
+                             *            / z
+                             *           /
+                             *          /
+                             *         +-------
+                             *         |      x
+                             *         |
+                             *         | y
+                             *
+                             *  for us:
+                             *
+                             *       z |  / x
+                             *         | /
+                             *         |/
+                             *  -------+
+                             *   y
+                             *
+                             */
+
+                        //                double xx = pt.x;
+                        //                double yy = pt.y;
+                        //                double zz = pt.z;
+                        double xx = -pt.y;
+                        double yy = -pt.z;
+                        double zz = pt.x;
+
+                        col = c_x_ + fov_x_ * xx / zz;
+                        row = c_y_ + fov_y_ * yy / zz;
+
+                        if(pt.x > max_dist) max_dist = pt.x;
+                    }
                     if(row < min_row) min_row = row;
                     if(row > max_row) max_row = row;
                     if(col < min_col) min_col = col;
                     if(col > max_col) max_col = col;
                 }
+
+
 
                 RoiMessage roi;
 
@@ -144,7 +185,6 @@ public:
                 rect.y = min_row;
                 rect.width  = max_col - min_col;
                 rect.height = max_row - min_row;
-
 
                 if(flip_rois_) {
                     rect.y = h_ - rect.y - rect.height;
@@ -225,9 +265,9 @@ public:
                  *
                  */
 
-//                double xx = pt.x;
-//                double yy = pt.y;
-//                double zz = pt.z;
+                //                double xx = pt.x;
+                //                double yy = pt.y;
+                //                double zz = pt.z;
                 double xx = -pt.y;
                 double yy = -pt.z;
                 double zz = pt.x;
@@ -294,8 +334,10 @@ private:
     int h_;
 
     bool flip_rois_;
-//    bool use_labels_;
-//    bool use_classification_;
+    bool dense_;
+    bool use_projection_;
+    //    bool use_labels_;
+    //    bool use_classification_;
 
     std::shared_ptr<std::vector<pcl::PointIndices> const>  clusters_;
     std::shared_ptr<std::vector<std::string> const> labels_;

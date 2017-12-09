@@ -8,9 +8,11 @@
 #include <csapex/param/set_parameter.h>
 
 /// SYSTEM
-#include <rosbag/bag.h>
-#include <rosbag/view.h>
-#include <ros/publisher.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <rosbag/bag.h>
+    #include <rosbag/view.h>
+    #include <ros/publisher.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 namespace csapex
 {

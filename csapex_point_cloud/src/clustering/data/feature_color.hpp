@@ -46,13 +46,13 @@ private:
     struct UpdateMean : boost::static_visitor<void>
     {
         template<std::size_t N>
-        constexpr void operator()(math::Mean<N>& self, const math::Mean<N>& other) const
+        void operator()(math::Mean<N>& self, const math::Mean<N>& other) const
         {
             self += other;
         }
 
         template<std::size_t N1, std::size_t N2, typename = typename std::enable_if<N1 != N2>::type>
-        constexpr void operator()(math::Mean<N1>& self, const math::Mean<N2>& other) const
+        void operator()(math::Mean<N1>& self, const math::Mean<N2>& other) const
         {}
     };
 

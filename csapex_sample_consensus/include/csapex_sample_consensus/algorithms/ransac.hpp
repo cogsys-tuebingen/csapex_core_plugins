@@ -60,7 +60,7 @@ public:
         /// SETUP THE TERMINATION CRITERIA
         delegate<bool()> termination  = [&internal_params, this](){
             bool terminate_max_skipped          = internal_params.skipped >= internal_params.maximum_skipped;
-            bool terminate_max_iteration        = internal_params.iteration >= parameters_.maximum_iterations;
+            bool terminate_max_iteration        = (int) internal_params.iteration >= parameters_.maximum_iterations;
             bool terminate_outlier_probability  = parameters_.use_outlier_probability &&
                                                   internal_params.iteration >= internal_params.k_outlier;
             bool terminate_mean_model_distance  = parameters_.use_mean_model_distance &&
@@ -149,7 +149,7 @@ protected:
                               std::vector<int>          &indices)
     {
         std::set<int> selection;
-        std::size_t iteration = 0;
+        int iteration = 0;
         bool valid = false;
 
         while(!valid && iteration < parameters_.maximum_sampling_retries) {
@@ -159,6 +159,7 @@ protected:
                 selection.insert(next);
             }
             valid = model->validateSamples(selection);
+            ++iteration;
         }
 
         indices.clear();

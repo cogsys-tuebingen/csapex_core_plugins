@@ -10,6 +10,12 @@
 #include <csapex/msg/any_message.h>
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/model/token.h>
+#include <csapex/io/raw_message.h>
+#include <csapex/serialization/serialization_buffer.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/serialization/serialization_buffer.h>
+
+/// SYSTEM
 #include <cmath>
 
 CSAPEX_REGISTER_CLASS(csapex::TextDisplay, csapex::Node)
@@ -51,7 +57,11 @@ void TextDisplay::display(TokenDataConstPtr msg)
         convert(ss, node, "");
     }
 
-    display_request(ss.str());
+    SerializationBuffer buffer;
+    buffer << ss.str();
+
+    std::shared_ptr<RawMessage> raw_msg = std::make_shared<RawMessage>(buffer, getUUID().getAbsoluteUUID());
+    node_handle_->raw_data_connection(raw_msg);
 }
 void TextDisplay::convert(std::stringstream &ss, const YAML::Node &node, const std::string& prefix)
 {

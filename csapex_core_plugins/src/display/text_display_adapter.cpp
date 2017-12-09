@@ -2,8 +2,12 @@
 #include "text_display_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
+#include <csapex/model/node_facade.h>
+#include <csapex/io/raw_message.h>
+#include <csapex/serialization/serialization_buffer.h>
 
 /// SYSTEM
 #include <QBoxLayout>
@@ -11,16 +15,25 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
+CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
 
-TextDisplayAdapter::TextDisplayAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<TextDisplay> node)
-    : ResizableNodeAdapter(worker, parent), wrapped_(node)
+TextDisplayAdapter::TextDisplayAdapter(NodeFacadePtr node, NodeBox* parent)
+    : ResizableNodeAdapter(node, parent)
 {
-    auto n = wrapped_.lock();
+    observe(node->raw_data_connection, [this](StreamableConstPtr msg) {
+        if(std::shared_ptr<RawMessage const> raw = std::dynamic_pointer_cast<RawMessage const>(msg)) {
+            SerializationBuffer buffer(raw->getData());
+            std::string text;
+            buffer >> text;
+            displayRequest(text);
+        }
+    });;
+}
 
-    // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&TextDisplayAdapter::displayRequest, this, std::placeholders::_1)));
+TextDisplayAdapter::~TextDisplayAdapter()
+{
+    stopObserving();
 }
 
 namespace {
@@ -87,5 +100,5 @@ void TextDisplayAdapter::display(const std::string& txt)
 }
 
 /// MOC
-#include "../moc_text_display_adapter.cpp"
+#include "moc_text_display_adapter.cpp"
 

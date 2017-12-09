@@ -6,7 +6,9 @@
 #include <csapex/signal/signal_fwd.h>
 
 /// SYSTEM
-#include <ros/ros.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <ros/ros.h>
+#include <csapex/utility/suppress_warnings_end.h>
 #include <std_msgs/String.h>
 #include <rosgraph_msgs/Clock.h>
 

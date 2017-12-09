@@ -9,14 +9,14 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(BFOptimizerAdapter, csapex::BFOptimizer)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(BFOptimizerAdapter, csapex::BFOptimizer)
 
 
-BFOptimizerAdapter::BFOptimizerAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node)
+BFOptimizerAdapter::BFOptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node)
     : OptimizerAdapter(worker, parent, node), wrapped_(node)
 {
     auto n = wrapped_.lock();
-    trackConnection(n->step.connect(std::bind(&BFOptimizerAdapter::triggerStep, this, std::placeholders::_1)));
+    observe(n->step, this, &BFOptimizerAdapter::triggerStep);
 }
 
 BFOptimizerAdapter::~BFOptimizerAdapter()

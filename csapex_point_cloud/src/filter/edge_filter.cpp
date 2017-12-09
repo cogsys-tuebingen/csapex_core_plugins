@@ -10,7 +10,9 @@
 #include <csapex/param/parameter_factory.h>
 
 /// SYSTEM
-#include <pcl/filters/radius_outlier_removal.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <pcl/filters/radius_outlier_removal.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 using namespace csapex::connection_types;
 

@@ -7,7 +7,9 @@
 #include <csapex/profiling/interlude.hpp>
 
 /// SYSTEM
-#include <actionlib/client/simple_action_client.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <actionlib/client/simple_action_client.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 namespace csapex
 {
@@ -44,7 +46,7 @@ protected:
 template <class ActionSpec>
 class ActionlibNode : public ActionlibNodeBase
 {
-    ACTION_DEFINITION(ActionSpec);
+    ACTION_DEFINITION(ActionSpec)
 
 protected:
     virtual void abortAction() override
@@ -150,7 +152,7 @@ protected:
 template <class ActionSpec>
 class ChanneledActionlibNode : public ActionlibNode<ActionSpec>
 {
-    ACTION_DEFINITION(ActionSpec);
+    ACTION_DEFINITION(ActionSpec)
 
     using Parent = ActionlibNode<ActionSpec>;
     using Parent::sendGoal;

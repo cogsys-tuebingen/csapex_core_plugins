@@ -10,6 +10,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/view/designer/graph_view.h>
 #include <csapex/model/graph_facade.h>
+#include <csapex/utility/export_plugin.h>
 
 /// SYSTEM
 #include <QMimeData>
@@ -59,8 +60,7 @@ class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
 
             if(file.exists()) {
                 GraphFacade* gf = view->getGraphFacade();
-                GraphPtr graph = gf->getGraph();
-                UUID uuid = graph->generateUUID("csapex::FileImporter");
+                UUID uuid = gf->generateUUID("csapex::FileImporter");
 
                 NodeState::Ptr state(new NodeState(nullptr));
                 GenericState::Ptr child_state(new GenericState);

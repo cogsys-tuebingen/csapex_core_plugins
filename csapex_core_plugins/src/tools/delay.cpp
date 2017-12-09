@@ -87,8 +87,18 @@ void Delay::setup(NodeModifier& node_modifier)
 
 void Delay::tearDown()
 {
+    if(future.valid()) {
+        future.wait();
+    }
     delayed_forward_ = nullptr;
     output_ = nullptr;
+}
+
+void Delay::reset()
+{
+    if(future.valid()) {
+        future.wait();
+    }
 }
 
 bool Delay::isAsynchronous() const
@@ -132,7 +142,7 @@ void Delay::delayInput(Continuation continuation)
 {
     TokenData::ConstPtr msg = msg::getMessage<TokenData>(input_);
     doSleep();
-    if(output_) {
+    if(output_ && node_handle_) {
         msg::publish(output_, msg);
         continuation([](csapex::NodeModifier& node_modifier, Parameterizable &parameters){});
     }

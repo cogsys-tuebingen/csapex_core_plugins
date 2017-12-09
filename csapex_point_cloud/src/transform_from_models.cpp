@@ -12,8 +12,9 @@
 #include <csapex/msg/generic_value_message.hpp>
 
 /// SYSTEM
-#define BOOST_SIGNALS_NO_DEPRECATION_WARNING
-#include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 //#define RAD_TO_DEG(x) ((x) * 57.29578)
 #define RAD_TO_DEG(x) ((x))

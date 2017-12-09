@@ -379,17 +379,18 @@ void ImportRos::publishLatestMessage()
     }
 
     if(mode_ == FrontAndPop){
-//        buffer_condition_ = false;
         msg::publish(connector_, msgs_.front());
     }
     else {
-//        buffer_condition_ = true;
+        buffer_size_ = 1;
         msg::publish(connector_, msgs_.back());
     }
 
     if(msgs_.size() > 1 || !readParameter<bool>("latch")) {
         msgs_.pop_front();
     }
+
+//    ainfo << "deque size: " << msgs_.size() << std::endl;
 }
 
 void ImportRos::callback(TokenDataConstPtr message)

@@ -13,7 +13,6 @@ class CSAPEX_EXPORT_PLUGIN RandomTreesTrainer : public MachineLearningNode
 public:
     RandomTreesTrainer();
 
-//    void setup(csapex::NodeModifier& node_modifier) override;
     void setupParameters(Parameterizable& parameters) override;
 
 private:

@@ -17,7 +17,9 @@
 
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>
-#include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_end.h>
 #include <pcl/common/pca.h>
 #include <pcl/common/io.h>
 

@@ -98,11 +98,22 @@ void MLPCv::classify(const FeaturesMessage &input,
 #elif CV_MAJOR_VERSION == 3
     mlp_->predict(feature, response);
 #endif
+    if(input.type == FeaturesMessage::Type::REGRESSION) {
+        std::size_t rows = response.rows;
+        std::size_t cols = response.cols;
+        output.regression_result.clear();
+        output.regression_result.resize(rows * cols);
+        for(std::size_t i = 0; i < rows; ++ i) {
+            for(std::size_t j = 0; j < cols; ++j) {
+                output.regression_result.at(i*cols + j) = response.at<float>(i,j);
+            }
+        }
+    } else {
+        cv::Point max;
+        cv::minMaxLoc(response, nullptr, nullptr, nullptr, &max);
 
-    cv::Point max;
-    cv::minMaxLoc(response, nullptr, nullptr, nullptr, &max);
-
-    output.classification = max.x;
+        output.classification = max.x;
+    }
 }
 
 void MLPCv::reloadMLP()

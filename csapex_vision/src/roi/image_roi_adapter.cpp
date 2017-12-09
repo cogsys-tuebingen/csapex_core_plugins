@@ -2,6 +2,7 @@
 #include "image_roi_adapter.h"
 
 /// PROJECT
+#include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
@@ -19,9 +20,9 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ImageRoiAdapter, csapex::ImageRoi)
 
-ImageRoiAdapter::ImageRoiAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node)
+ImageRoiAdapter::ImageRoiAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node)
     : DefaultNodeAdapter(worker, parent),
       wrapped_(node),
       pixmap_(nullptr),
@@ -38,9 +39,9 @@ ImageRoiAdapter::ImageRoiAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std:
     painter.drawRect(QRect(0, 0, empty.width()-1, empty.height()-1));
 
     // translate to UI thread via Qt signal
-    trackConnection(n->display_request.connect(std::bind(&ImageRoiAdapter::displayRequest, this, std::placeholders::_1)));
-    trackConnection(n->submit_request.connect(std::bind(&ImageRoiAdapter::submitRequest, this)));
-    trackConnection(n->drop_request.connect(std::bind(&ImageRoiAdapter::dropRequest, this)));
+    observe(n->display_request, this, &ImageRoiAdapter::displayRequest);
+    observe(n->submit_request, this, &ImageRoiAdapter::submitRequest);
+    observe(n->drop_request, this, &ImageRoiAdapter::dropRequest);
 }
 
 bool ImageRoiAdapter::eventFilter(QObject *o, QEvent *e)

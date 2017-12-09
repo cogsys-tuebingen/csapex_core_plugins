@@ -5,8 +5,11 @@
 #include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/model/node_handle.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/io/raw_message.h>
+#include <csapex/serialization/serialization_buffer.h>
 
 CSAPEX_REGISTER_CLASS(csapex::SignalLight, csapex::Node)
 
@@ -48,5 +51,7 @@ void SignalLight::process()
 
 void SignalLight::display(int state)
 {
-    display_request(state);
+    std::shared_ptr<RawMessage> msg = std::make_shared<RawMessage>(std::vector<uint8_t>{static_cast<uint8_t>(state)},
+                                                                   getUUID().getAbsoluteUUID());
+    node_handle_->raw_data_connection(msg);
 }

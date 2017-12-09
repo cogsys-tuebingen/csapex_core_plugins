@@ -27,7 +27,7 @@ public:
 
     double getLineWidth() const;
 
-    QColor getLineColor(std::size_t idx) const;
+//    QColor getLineColor(std::size_t idx) const;
 
     const double *getTData() const;
     const double* getVData(std::size_t idx) const;
@@ -49,11 +49,7 @@ private:
     bool initialize_;
     bool basic_line_color_changed_;
     bool has_time_in_;
-    std::size_t num_plots_;
     Input* in_;
-
-    QColor basic_line_color_;
-    std::vector<QColor> color_line_;
 
     double line_width_;
 
@@ -67,8 +63,6 @@ private:
     std::vector<double> data_t_;
     std::vector<std::vector<double>> data_v_;
 
-private:
-    void calculateLineColors();
 };
 
 }

@@ -1,6 +1,9 @@
 /// HEADER
 #include "time_plot_adapter.h"
 
+/// PROJECT
+#include <csapex/model/node_facade_impl.h>
+
 /// SYSTEM
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
@@ -9,15 +12,15 @@
 
 using namespace csapex;
 
-CSAPEX_REGISTER_LEGACY_NODE_ADAPTER(TimePlotAdapter, csapex::TimePlot)
+CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(TimePlotAdapter, csapex::TimePlot)
 
 
-TimePlotAdapter::TimePlotAdapter(NodeFacadeWeakPtr worker, NodeBox* parent, std::weak_ptr<TimePlot> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_(node)
+TimePlotAdapter::TimePlotAdapter(NodeFacadeImplementationPtr node_facade, NodeBox* parent, std::weak_ptr<TimePlot> node)
+    : DefaultNodeAdapter(node_facade, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
-    trackConnection(n ->display_request.connect(std::bind(&TimePlotAdapter::displayRequest, this)));
-    trackConnection(n ->update.connect(std::bind(&TimePlotAdapter::displayRequest, this)));
+    observe(n ->display_request, this, &TimePlotAdapter::displayRequest);
+    observe(n ->update, this, &TimePlotAdapter::displayRequest);
 }
 
 void TimePlotAdapter::setupUi(QBoxLayout* layout)
@@ -42,7 +45,7 @@ void TimePlotAdapter::display()
     plot_widget_->detachItems();
 
 
-    QwtPlotCurve* curve[n->getVDataCountNumCurves()] /*= new QwtPlotCurve[n->getVDataCountNumCurves()];*/;
+    std::vector<QwtPlotCurve*> curve(n->getVDataCountNumCurves()) /*= new QwtPlotCurve[n->getVDataCountNumCurves()];*/;
     for(std::size_t i = 0; i < n->getVDataCountNumCurves(); ++i){
         curve[i] = new QwtPlotCurve;
         curve[i]->setBaseline(0.0);

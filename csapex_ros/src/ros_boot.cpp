@@ -6,7 +6,7 @@
 #include <csapex/core/core_plugin.h>
 #include <csapex/model/node.h>
 #include <csapex/msg/message_provider.h>
-#include <csapex/view/message_renderer.h>
+#include <csapex/msg/message_renderer.h>
 #include <csapex/view/node/node_adapter_builder.h>
 #include <csapex/view/designer/drag_io_handler.h>
 
@@ -23,7 +23,7 @@ namespace bf3 = boost::filesystem3;
 using namespace csapex;
 using namespace pluginlib;
 
-CSAPEX_REGISTER_BOOT(RosBoot);
+CSAPEX_REGISTER_BOOT(RosBoot)
 
 namespace {
 std::vector<std::string> getValidPluginXMLFiles()
@@ -83,8 +83,11 @@ void RosBoot::boot(csapex::PluginLocator* locator)
                                                 &get_plugin_xml_paths<DragIOHandler>,
                                                 &loader_drag_io_, std::placeholders::_1));
 
-    std::vector<std::string> exports;
-    ros::package::getPlugins("csapex", "snippets", exports);
+    std::vector<std::string> snippets;
+    ros::package::getPlugins("csapex", "snippets", snippets);
+    locator->setPluginPaths("snippets", snippets);
 
-    locator->setPluginPaths("snippets", exports);
+    std::vector<std::string> tutorials;
+    ros::package::getPlugins("csapex", "tutorials", tutorials);
+    locator->setPluginPaths("tutorials", tutorials);
 }

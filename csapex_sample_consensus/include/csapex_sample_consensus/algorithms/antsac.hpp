@@ -69,7 +69,7 @@ public:
         InternalParameters internal_params(parameters_, model_dimension);
         delegate<bool()> termination  = [&internal_params, this](){
             bool terminate_max_skipped          = internal_params.skipped >= internal_params.maximum_skipped;
-            bool terminate_max_iteration        = internal_params.iteration >= parameters_.maximum_iterations;
+            bool terminate_max_iteration        = (int) internal_params.iteration >= parameters_.maximum_iterations;
             bool terminate_outlier_probability  = parameters_.use_outlier_probability &&
                     internal_params.iteration >= internal_params.k_outlier;
             bool terminate_mean_model_distance  = parameters_.use_mean_model_distance &&
@@ -196,11 +196,11 @@ protected:
         };
 
 
-        for(std::size_t i = 0 ; i < parameters_.maximum_sampling_retries ; ++i) {
+        for(int i = 0 ; i < parameters_.maximum_sampling_retries ; ++i) {
             drawTriple();
             if(model->validateSamples(triple)) {
-                for(int i : triple)
-                    indices.emplace_back(i);
+                for(int j : triple)
+                    indices.emplace_back(j);
                 return true;
             }
         }

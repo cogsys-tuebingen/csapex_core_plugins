@@ -22,9 +22,7 @@ CSAPEX_REGISTER_CLASS(csapex::VectorPlot, csapex::Node)
 
 VectorPlot::VectorPlot():
     initialize_(true),
-    basic_line_color_changed_(true),
-    has_time_in_(false),
-    num_plots_(1)
+    has_time_in_(false)
 {
 
 }
@@ -44,6 +42,8 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
 
     setupVariadicParameters(parameters);
 
+    Plot::setupParameters(parameters);
+
     parameters.addParameter(param::ParameterFactory::declareRange
                             ("~plot/width",
                              128, 4096, 640, 1),
@@ -59,22 +59,6 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
         update();
     });
 
-    std::function<void(param::Parameter* p)> setLineColors= [this](param::Parameter* p){
-        std::vector<int> c = p->as<std::vector<int>>();
-        basic_line_color_.setRed(c[0]);
-        basic_line_color_.setGreen(c[1]);
-        basic_line_color_.setBlue(c[2]);
-        calculateLineColors();
-        basic_line_color_changed_ = true;
-        update();
-    };
-
-
-    Plot::setupParameters(parameters);
-
-    parameters.addParameter(param::ParameterFactory::declareColorParameter(
-                                "~plot/color/line", 100, 100, 255),
-                            setLineColors);
     parameters.addParameter(param::ParameterFactory::declareRange(
                                 "~plot/line/width", 0.0, 10.0, 0.0, 0.01),
                             line_width_);
@@ -101,59 +85,63 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
 
 void VectorPlot::process()
 {
-    std::size_t num_inputs = VariadicInputs::getVariadicInputCount();
-    num_plots_ = num_inputs;;
+    {
+        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        std::size_t num_inputs = VariadicInputs::getVariadicInputCount();
+        num_plots_ = num_inputs;
 
-    for(std::size_t i_inputs = 0; i_inputs < num_plots_; ++ i_inputs){
-        InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
-        if(!msg::isConnected(in.get())){
-            --num_plots_;
-        }
-
-    }
-
-    data_v_.resize(num_plots_);
-    calculateLineColors();
-
-    std::size_t data_counter = 0;
-
-    for(std::size_t i_inputs = 0; i_inputs < num_inputs; ++i_inputs){
-
-        InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
-        if(msg::isConnected(in.get())){
-            GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in.get());
-
-            apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
-
-            data_v_[data_counter].resize(message->nestedValueCount());
-
-            for(std::size_t n_point = 0; n_point <message->nestedValueCount(); ++n_point){
-                auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(n_point));
-                data_v_[data_counter][n_point] = pval->value;
+        for(std::size_t i_inputs = 0; i_inputs < num_plots_; ++i_inputs){
+            InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
+            if(!msg::isConnected(in.get())){
+                --num_plots_;
             }
-//            if(data_counter > 0){
-//                apex_assert(data_v_[data_counter].size() == data_v_[data_counter -1].size());
-//            }
-            ++data_counter;
-        }
-    }
 
-    data_t_raw_.clear();
-    if(msg::hasMessage(in_time_)){
-        has_time_in_ = true;
-        std::shared_ptr<std::vector<double> const> time = msg::getMessage<GenericVectorMessage, double>(in_time_);
-        data_t_raw_.resize(time->size());
-        for(std::size_t n = 0; n < time->size(); ++n){
-            data_t_raw_[n] = time->at(n);
         }
 
-        apex_assert(data_t_raw_.size() == data_v_.front().size());
-    }
-    else{
-        has_time_in_ = false;
-        data_t_.resize(data_v_.front().size());
-        for(std::size_t i = 0; i < data_t_.size();++i){
-            data_t_[i] = i;
+        data_v_.resize(num_plots_);
+        updateLineColors();
+
+        std::size_t data_counter = 0;
+
+        for(std::size_t i_inputs = 0; i_inputs < num_inputs; ++i_inputs){
+
+            InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
+            if(msg::isConnected(in.get())){
+                GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in.get());
+
+                apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
+
+                data_v_[data_counter].resize(message->nestedValueCount());
+
+                for(std::size_t n_point = 0; n_point <message->nestedValueCount(); ++n_point){
+                    auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(message->nestedValue(n_point));
+                    data_v_[data_counter][n_point] = pval->value;
+                }
+                //            if(data_counter > 0){
+                //                apex_assert(data_v_[data_counter].size() == data_v_[data_counter -1].size());
+                //            }
+                ++data_counter;
+            }
+        }
+
+        data_t_raw_.clear();
+        if(msg::hasMessage(in_time_)){
+            has_time_in_ = true;
+            std::shared_ptr<std::vector<double> const> time = msg::getMessage<GenericVectorMessage, double>(in_time_);
+            data_t_raw_.resize(time->size());
+            for(std::size_t n = 0; n < time->size(); ++n){
+                data_t_raw_[n] = time->at(n);
+            }
+
+            apex_assert(!data_v_.empty());
+            apex_assert(data_t_raw_.size() == data_v_.front().size());
+        }
+        else{
+            has_time_in_ = false;
+            data_t_.resize(data_v_.front().size());
+            for(std::size_t i = 0; i < data_t_.size();++i){
+                data_t_[i] = i;
+            }
         }
     }
 
@@ -236,13 +224,10 @@ void VectorPlot::renderAndSend()
     x_map.setPaintInterval( r.left(), r.right() );
     y_map.setPaintInterval( r.bottom(), r.top() );
 
-    if(basic_line_color_changed_) {
-        calculateLineColors();
-    }
 
-    std::vector<double> x_data;
+    updateLineColors();
 
-    QwtPlotCurve curve[data_v_.size()];
+    std::vector<QwtPlotCurve> curve(data_v_.size());
     for(std::size_t  num_plot= 0; num_plot < data_v_.size(); ++num_plot) {
 
         painter.setRenderHint( QPainter::Antialiasing,
@@ -281,13 +266,8 @@ void VectorPlot::renderAndSend()
 }
 double VectorPlot::getLineWidth() const
 {
-    return line_width_;
-}
-
-QColor VectorPlot::getLineColor(std::size_t idx) const
-{
     std::unique_lock<std::recursive_mutex> lock(mutex_);
-    return color_line_[idx];
+    return line_width_;
 }
 
 const double* VectorPlot::getTData() const
@@ -321,35 +301,4 @@ std::size_t VectorPlot::getCount() const
 Input* VectorPlot::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)
 {
     return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::GenericVectorMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
-}
-
-void VectorPlot::calculateLineColors()
-{
-    int r,g,b,a;
-    basic_line_color_.getRgb(&r,&g,&b,&a);
-    QColor color;
-    color.setRed(r);
-    color.setGreen(g);
-    color.setBlue(b);
-    int h,s,v;
-    color.getHsv(&h,&s,&v);
-
-    for(std::size_t i = 0; i < num_plots_; ++i) {
-
-        double hnew =  h + i * 360/num_plots_;
-        while (hnew > 359 || hnew < 0) {
-            if(hnew > 359) {
-                hnew -= 360;
-            }
-            else if(hnew < 0) {
-                hnew += 360;
-            }
-
-        }
-        color.setHsv(hnew,s,v);
-        color_line_[i] = color;
-    }
-
-    basic_line_color_changed_ = false;
-    update();
 }
