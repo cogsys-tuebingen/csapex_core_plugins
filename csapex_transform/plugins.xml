@@ -5,6 +5,12 @@
 </library>
 
 <library path="libcsapex_transform_plugin_node">
+<class type="csapex::VectorDoubleToTransform" base_class_type="csapex::Node">
+  <description>Convert a GernericVectorMessage double to TransformMessage.</description>
+</class>
+<class type="csapex::TransformToVectorDouble" base_class_type="csapex::Node">
+  <description>Convert a TransformMessage to a GenericVectorMessage double.</description>
+</class>
 <class type="csapex::GenerateRelativeTransform" base_class_type="csapex::Node">
   <description>Constructs a transformation relative to a start pose</description>
 </class>

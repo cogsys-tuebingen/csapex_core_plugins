@@ -47,6 +47,8 @@ target_link_libraries(${PROJECT_NAME}_plugin_core ${PROJECT_NAME}
 
 
 add_library(${PROJECT_NAME}_plugin_node
+    src/vector_double_to_transform.cpp
+    src/transform_to_vector_double.cpp
     src/generate_relative_transform.cpp
     src/change_transform_frames.cpp
     src/extract_frames.cpp
