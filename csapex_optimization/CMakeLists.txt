@@ -23,9 +23,13 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
+    src/vector_optimizer.cpp
     src/optimizer.cpp
+    src/optimization_params.cpp
 
+    include/${PROJECT_NAME}/vector_optimizer.h
     include/${PROJECT_NAME}/optimizer.h
+    include/${PROJECT_NAME}/optimization_params.h
 )
 target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES}
