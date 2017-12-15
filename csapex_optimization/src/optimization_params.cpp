@@ -132,18 +132,18 @@ void  OptimizationParams::boundParams()
                                                              -10.0,
                                                              10.0,
                                                              0.01);
-//            std::function<void(param::Parameter* p)> cb = [this, i](param::Parameter* p){
-//                if(p->is<std::pair<double,double>>()){
-//                    p->as
-//                    std::pair<double, double> bound = p->as<std::pair<double,double>>();
-//                    std::cout <<"intervall: "<< i << " " << bound.first << " " << bound.second << std::endl;
-//                    lower_bounds_[i] = bound.first;
-//                    upper_bounds_[i] = bound.second;
+            //            std::function<void(param::Parameter* p)> cb = [this, i](param::Parameter* p){
+            //                if(p->is<std::pair<double,double>>()){
+            //                    p->as
+            //                    std::pair<double, double> bound = p->as<std::pair<double,double>>();
+            //                    std::cout <<"intervall: "<< i << " " << bound.first << " " << bound.second << std::endl;
+            //                    lower_bounds_[i] = bound.first;
+            //                    upper_bounds_[i] = bound.second;
 
-//                }
-//            };
+            //                }
+            //            };
             params_->addTemporaryParameter(intervall);
-//            params_->addParameterCallback(intervall, cb);
+            //            params_->addParameterCallback(intervall, cb);
         }
     }
     else{
@@ -225,11 +225,13 @@ std::vector<double> OptimizationParams::getRandomStart() const
     for(std::size_t i = 0; i < problem_dim_; ++i){
         std::uniform_real_distribution<double> unif;
         if(set_bounds_){
+            std::pair<double, double> b;
             if(one_bound_for_all_){
-                unif = std::uniform_real_distribution<double>(lower_bounds_.front(), upper_bounds_.front());
+                b = params_->readParameter<std::pair<double, double>>("~bounds/interval_0");
             } else{
-                unif = std::uniform_real_distribution<double>(lower_bounds_[i], upper_bounds_[i]);
+                b  = params_->readParameter<std::pair<double, double>>("~bounds/interval_" + std::to_string(i));
             }
+            unif = std::uniform_real_distribution<double>(b.first, b.second);
         }
         else{
             unif = std::uniform_real_distribution<double>(std::numeric_limits<double>::min(), std::numeric_limits<double>::max());

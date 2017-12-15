@@ -1,4 +1,7 @@
 <library path="libcsapex_optimization_plugin_node">
+<class type="csapex::OptimizationDummyVector" base_class_type="csapex::Node">
+  <description>Dummy for vector optimization</description>
+</class>
 <class type="csapex::OptimizationDummy" base_class_type="csapex::Node">
   <description>Dummy to test optimization on</description>
 </class>

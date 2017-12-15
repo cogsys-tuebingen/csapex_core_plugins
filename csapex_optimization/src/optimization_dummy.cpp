@@ -20,16 +20,16 @@ OptimizationDummy::OptimizationDummy()
 
 void OptimizationDummy::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("a", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("b", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("c", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("d", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("e", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("f", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("g", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("h", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("i", -10.0, 10.0, 0.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("j", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("a", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("b", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("c", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("d", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("e", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("f", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("g", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("h", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("i", -10.0, 10.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("j", -10.0, 10.0, 0.0, 0.1));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareBool("~calculate_grad/a", false));
     parameters.addParameter(csapex::param::ParameterFactory::declareBool("~calculate_grad/b", false));

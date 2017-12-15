@@ -49,6 +49,7 @@ target_link_libraries(${PROJECT_NAME}_qt
 
 
 add_library(${PROJECT_NAME}_plugin_node
+    src/optimization_dummy_vector.cpp
     src/optimization_dummy.cpp
     src/bf_optimizer.cpp
 )
