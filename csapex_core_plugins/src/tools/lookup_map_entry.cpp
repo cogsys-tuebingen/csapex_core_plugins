@@ -7,6 +7,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/msg/output.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/utility/yaml_io.hpp>
 #include <csapex/signal/event.h>
 #include <csapex_core_plugins/map_message.h>
