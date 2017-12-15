@@ -40,6 +40,8 @@ protected:
 public:
     slim_signal::Signal<void(const lib_laser_processing::Scan* )> display_request;
     slim_signal::Signal<void()> submit_request;
+
+    connection_types::MessageConstPtr last_message_;
 };
 
 }

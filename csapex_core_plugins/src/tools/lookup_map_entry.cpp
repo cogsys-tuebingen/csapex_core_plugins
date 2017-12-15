@@ -12,6 +12,7 @@
 #include <csapex/signal/event.h>
 #include <csapex_core_plugins/map_message.h>
 #include <csapex/model/token.h>
+#include <csapex/msg/generic_value_message.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;

@@ -6,6 +6,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/token.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/signal/event.h>
 
 using namespace csapex::connection_types;

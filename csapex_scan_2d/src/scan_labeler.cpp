@@ -55,10 +55,12 @@ void ScanLabeler::beginProcess()
     if(msg::isMessage<LabeledScanMessage>(input_)) {
         LabeledScanMessage::ConstPtr scan_msg = msg::getMessage<LabeledScanMessage>(input_);
         display_request(&scan_msg->value);
+        last_message_ = scan_msg;
 
     } else if(msg::isMessage<ScanMessage>(input_)) {
         ScanMessage::ConstPtr scan_msg = msg::getMessage<ScanMessage>(input_);
         display_request(&scan_msg->value);
+        last_message_ = scan_msg;
 
     } else {
         throw std::runtime_error("invalid input type");
@@ -73,5 +75,7 @@ void ScanLabeler::finishProcess()
 void ScanLabeler::setResult(connection_types::LabeledScanMessage::Ptr result)
 {
     result_ = result;
+    dynamic_cast<Message&>(*result_) = *last_message_;
+    last_message_.reset();
     done();
 }

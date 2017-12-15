@@ -49,7 +49,7 @@ namespace msg
 {
 
 template <typename R, typename S>
-struct MessageCaster<connection_types::GenericPointerMessage<R>, S, void>
+struct MessageCaster<connection_types::GenericPointerMessage<R>, S>
 {
     static std::shared_ptr<connection_types::GenericPointerMessage<R> const> constcast(const std::shared_ptr<S const>& msg)
     {
