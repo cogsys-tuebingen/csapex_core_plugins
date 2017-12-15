@@ -64,7 +64,7 @@ struct MessageCaster<connection_types::GenericPointerMessage<R>, S, void>
                 // no success...
             }
         }
-        return DefaultMessageCaster<connection_types::GenericPointerMessage<R>, S, void>::constcast(msg);
+        return MessageCaster<connection_types::GenericPointerMessage<R>, S, void>::constcast(msg);
     }
     static std::shared_ptr<connection_types::GenericPointerMessage<R>> cast(const std::shared_ptr<S>& msg)
     {
@@ -79,7 +79,7 @@ struct MessageCaster<connection_types::GenericPointerMessage<R>, S, void>
                 // no success...
             }
         }
-        return DefaultMessageCaster<connection_types::GenericPointerMessage<R>, S, void>::cast(msg);
+        return MessageCaster<connection_types::GenericPointerMessage<R>, S, void>::cast(msg);
     }
 };
 
