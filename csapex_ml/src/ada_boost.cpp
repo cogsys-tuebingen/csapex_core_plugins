@@ -50,7 +50,7 @@ void AdaBoost::process()
 #if CV_MAJOR_VERSION == 2
             boost_.load(path_.c_str(), "adaboost");
 #elif CV_MAJOR_VERSION == 3
-            boost_ = cv::ml::Boost::load<cv::ml::Boost>(path_.c_str());
+            boost_ = cv::ml::Boost::load<cv::ml::Boost>(path_);
 #endif
             loaded_ = true;
         } else {
