@@ -21,7 +21,7 @@ public:
     // setter
     inline void setStartParams(const std::vector<double>& vals){start_values_ = vals;}
     inline void setDimension(std::size_t dim) { problem_dim_ = dim;}
-private:
+protected:
     void boundParams();
     void startParams();
     void removeStart(std::size_t i);
@@ -29,7 +29,7 @@ private:
     void checkBounds();
     static void setFormExp(double& tar, param::Parameter *p);
 
-private:
+protected:
     csapex::Parameterizable* params_;
     bool set_bounds_;
     bool relative_bounds_;
