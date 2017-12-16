@@ -23,53 +23,15 @@ VectorOptimizer::VectorOptimizer():
 void VectorOptimizer::setup(csapex::NodeModifier& modifier)
 {
     in_ = modifier.addTypedSlot<GenericValueMessage<double>>("residual", [this](const TokenPtr& residual){
-        if(auto val = std::dynamic_pointer_cast<GenericValueMessage<double> const>(residual->getTokenData())){
-            residualCb(val->value);
-            if(trigger_immediately_){
-                has_residual_ = true;
-                nextParams();
-            }
-        }
-        else if(std::dynamic_pointer_cast<EndOfSequenceMessage const>(residual->getTokenData())){
-            if(!trigger_immediately_){
-                has_residual_ = true;
-                nextParams();
-            }
-        }
-        else{
-            throw std::runtime_error("unkown message recieved: " + residual->getTokenData()->typeName());
-        }
+        residualCb(residual);
     });
 
     in_grad_ = modifier.addTypedSlot<GenericVectorMessage>("gradient", [this](const TokenPtr& grad){
-        if(auto val = std::dynamic_pointer_cast<GenericVectorMessage const>(grad->getTokenData())){
-            gradCb(val);
-            if(trigger_immediately_){
-                has_grad_ = true;
-                nextParams();
-            }
-        }
-        else if(std::dynamic_pointer_cast<EndOfSequenceMessage const>(grad->getTokenData())){
-            if(!trigger_immediately_){
-                has_grad_ = true;
-                nextParams();
-            }
-        }
-        else{
-            throw std::runtime_error("unkown message recieved: " + grad->getTokenData()->typeName());
-        }
+        gradCb(grad);
     });
 
-    in_start_ = modifier.addTypedSlot<GenericVectorMessage>("start params", [this](const TokenPtr& grad){
-        if(auto val = std::dynamic_pointer_cast<GenericVectorMessage const>(grad->getTokenData())){
-            startParamCb(val);
-        }
-        else if(std::dynamic_pointer_cast<EndOfSequenceMessage const>(grad->getTokenData())){
-
-        }
-        else{
-            throw std::runtime_error("unkown message recieved: " + grad->getTokenData()->typeName());
-        }
+    in_start_ = modifier.addTypedSlot<GenericVectorMessage>("start params", [this](const TokenPtr& msg){
+        startParamCb(msg);
     });
 
     out_ = modifier.addOutput<GenericVectorMessage, double>("parameter");
@@ -102,27 +64,27 @@ void VectorOptimizer::setupParameters(csapex::Parameterizable& params)
 
 void VectorOptimizer::publishOptimalParameters()
 {
-        GenericVectorMessage::Ptr msg_para(GenericVectorMessage::make<double>());
-        std::shared_ptr<std::vector<double>> out_msg(new std::vector<double>);
-        out_msg->insert(out_msg->begin(),to_optimize_.begin(), to_optimize_.end());
-        msg_para->set<double>(out_msg);
-        solution_->triggerWith(std::make_shared<Token>(msg_para));
+    GenericVectorMessage::Ptr msg_para(GenericVectorMessage::make<double>());
+    std::shared_ptr<std::vector<double>> out_msg(new std::vector<double>);
+    out_msg->insert(out_msg->begin(),to_optimize_.begin(), to_optimize_.end());
+    msg_para->set<double>(out_msg);
+    solution_->triggerWith(std::make_shared<Token>(msg_para));
 }
 void VectorOptimizer::publishMinimumResidual()
 {
-        // publish minimum residual
-        GenericValueMessage<double>::Ptr msg_res(new GenericValueMessage<double>);
-        msg_res->value = minimum_residual_;
-        min_residual_->triggerWith(std::make_shared<Token>(msg_res));
-        ext_start_params_.clear();
+    // publish minimum residual
+    GenericValueMessage<double>::Ptr msg_res(new GenericValueMessage<double>);
+    msg_res->value = minimum_residual_;
+    min_residual_->triggerWith(std::make_shared<Token>(msg_res));
+    ext_start_params_.clear();
 }
 
 void VectorOptimizer::setDone()
 {
-        is_running_ = false;
-        has_residual_ = false;
-        has_grad_ = false;
-        ext_start_params_.clear();
+    is_running_ = false;
+    has_residual_ = false;
+    has_grad_ = false;
+    ext_start_params_.clear();
 }
 
 void VectorOptimizer::createStart()
@@ -170,37 +132,79 @@ void VectorOptimizer::process()
     has_new_parameter_ = false;
 }
 
-void VectorOptimizer::residualCb(double value)
+void VectorOptimizer::residualCb(const TokenPtr &value)
 {
-    std::unique_lock<std::mutex> lock(data_available_mutex_);
-    residual_ = value;
-}
-
-void VectorOptimizer::gradCb(GenericVectorMessage::ConstPtr msg)
-{
-    std::unique_lock<std::mutex> lock(data_available_mutex_);
-    std::size_t size = msg->nestedValueCount();
-    gradient_.resize(size);
-    auto it = gradient_.begin();
-    for(std::size_t i = 0; i < size; ++i){
-        auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(msg->nestedValue(i));
-        *it = pval->value;
-        ++it;
+    if(auto val = std::dynamic_pointer_cast<GenericValueMessage<double> const>(value->getTokenData())){
+        std::unique_lock<std::mutex> lock(data_available_mutex_);
+        residual_ = val->value;
+        lock.unlock();
+        if(trigger_immediately_){
+            has_residual_ = true;
+            nextParams();
+        }
+    }
+    else if(std::dynamic_pointer_cast<EndOfSequenceMessage const>(value->getTokenData())){
+        if(!trigger_immediately_){
+            has_residual_ = true;
+            nextParams();
+        }
+    }
+    else{
+        throw std::runtime_error("unkown message recieved: " + value->getTokenData()->typeName());
     }
 }
 
-void VectorOptimizer::startParamCb(GenericVectorMessage::ConstPtr msg)
+void VectorOptimizer::gradCb(const TokenPtr &grad)
 {
-    std::unique_lock<std::mutex> lock(data_available_mutex_);
-    std::size_t size = msg->nestedValueCount();
-    ext_start_params_.resize(size);
-    auto it = ext_start_params_.begin();
-    for(std::size_t i = 0; i < size; ++i){
-        auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(msg->nestedValue(i));
-        *it = pval->value;
-        ++it;
+    if(auto val = std::dynamic_pointer_cast<GenericVectorMessage const>(grad->getTokenData())){
+        std::unique_lock<std::mutex> lock(data_available_mutex_);
+        std::size_t size = val->nestedValueCount();
+        gradient_.resize(size);
+        auto it = gradient_.begin();
+        for(std::size_t i = 0; i < size; ++i){
+            auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(val->nestedValue(i));
+            *it = pval->value;
+            ++it;
+        }
+        lock.unlock();
+        if(trigger_immediately_){
+            has_grad_ = true;
+            nextParams();
+        }
     }
-    params_.setStartParams(ext_start_params_);
+    else if(std::dynamic_pointer_cast<EndOfSequenceMessage const>(grad->getTokenData())){
+        if(!trigger_immediately_){
+            has_grad_ = true;
+            nextParams();
+        }
+    }
+    else{
+        throw std::runtime_error("unkown message recieved: " + grad->getTokenData()->typeName());
+    }
+}
+
+void VectorOptimizer::startParamCb(const TokenPtr &msg)
+{
+    if(auto val = std::dynamic_pointer_cast<GenericVectorMessage const>(msg->getTokenData())){
+        std::unique_lock<std::mutex> lock(data_available_mutex_);
+        std::size_t size = val->nestedValueCount();
+        ext_start_params_.resize(size);
+        auto it = ext_start_params_.begin();
+        for(std::size_t i = 0; i < size; ++i){
+            auto pval = std::dynamic_pointer_cast<GenericValueMessage<double> const>(val->nestedValue(i));
+            *it = pval->value;
+            ++it;
+        }
+        params_.setStartParams(ext_start_params_);
+        lock.unlock();
+    }
+    else if(std::dynamic_pointer_cast<EndOfSequenceMessage const>(msg->getTokenData())){
+
+    }
+    else{
+        throw std::runtime_error("unkown message recieved: " + msg->getTokenData()->typeName());
+    }
+
 
 }
 
