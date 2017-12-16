@@ -1,5 +1,10 @@
 #ifndef OPTIMIZATION_PARAMS_H
 #define OPTIMIZATION_PARAMS_H
+
+#include <map>
+#include <iostream>
+#include <random>
+
 #include <csapex/model/parameterizable.h>
 namespace csapex {
 
