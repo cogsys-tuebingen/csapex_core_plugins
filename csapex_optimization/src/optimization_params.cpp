@@ -1,9 +1,8 @@
 #include <csapex_optimization/optimization_params.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/value_parameter.h>
-#include <map>
-#include <iostream>
-#include <random>
+
+
 using namespace csapex;
 
 OptimizationParams::OptimizationParams() :
@@ -221,7 +220,8 @@ void OptimizationParams::removeStart(std::size_t new_size)
 std::vector<double> OptimizationParams::getRandomStart() const
 {
     std::vector<double> res;
-    std::default_random_engine re;
+    std::random_device rd;
+    std::default_random_engine re(rd());
     for(std::size_t i = 0; i < problem_dim_; ++i){
         std::uniform_real_distribution<double> unif;
         if(set_bounds_){
