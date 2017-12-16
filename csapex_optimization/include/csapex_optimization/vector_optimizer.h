@@ -41,10 +41,10 @@ public:
 
     void process() override;
 
-    void residualCb(double value);
-    void gradCb(csapex::connection_types::GenericVectorMessage::ConstPtr msg);
+    void residualCb(const TokenPtr&  value);
+    void gradCb(const TokenPtr& grad);
 
-    void startParamCb(csapex::connection_types::GenericVectorMessage::ConstPtr msg);
+    void startParamCb(const TokenPtr& msg);
     void nextParams();
     bool canNotifiy();
 
