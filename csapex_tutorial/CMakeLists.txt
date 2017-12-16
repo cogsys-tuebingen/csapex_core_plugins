@@ -2,11 +2,12 @@ cmake_minimum_required(VERSION 2.8.3)
 project(csapex_tutorial)
 
 find_package(catkin REQUIRED COMPONENTS
-  csapex
   csapex_opencv
   csapex_ros
   message_generation
 )
+
+find_package(csapex REQUIRED)
 
 add_message_files(
   FILES
@@ -67,8 +68,8 @@ install(TARGETS csapex_tutorial_core
 add_library(csapex_tutorial
   src/tutorial_message.cpp
 )
-target_link_libraries(csapex_tutorial_node
-  csapex_tutorial
+target_link_libraries(csapex_tutorial
+  ${csapex_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 

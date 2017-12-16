@@ -30,7 +30,7 @@ add_library(${PROJECT_NAME}_plugin_node SHARED
 )
 target_link_libraries(${PROJECT_NAME}_plugin_node
 	${catkin_LIBRARIES}
-	${csapex_LIBRARIES}
+        ${csapex_LIBRARIES}
 	)
 
 #
