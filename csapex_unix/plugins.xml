@@ -1,0 +1,5 @@
+<library path="libcsapex_unix_node"> 
+<class type="csapex::SubprocessCall" base_class_type="csapex::Node">
+  <description>Calls a subprocess with given arguments</description>
+</class>
+ </library>
