@@ -2,4 +2,7 @@
 <class type="csapex::SubprocessCall" base_class_type="csapex::Node">
   <description>Calls a subprocess with given arguments</description>
 </class>
+<class type="csapex::BashExec" base_class_type="csapex::Node">
+  <description>Executes a command in /bin/bash</description>
+</class>
  </library>
