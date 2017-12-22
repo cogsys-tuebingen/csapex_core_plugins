@@ -144,7 +144,7 @@ void Delay::delayInput(Continuation continuation)
     doSleep();
     if(output_ && node_handle_) {
         msg::publish(output_, msg);
-        continuation([](csapex::NodeModifier& node_modifier, Parameterizable &parameters){});
+        continuation({});
     }
 }
 
