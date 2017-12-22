@@ -25,20 +25,18 @@ class VectorOptimizer : public Node
 {
 public:
     VectorOptimizer();
+    virtual ~VectorOptimizer() = default;
 
     void setup(csapex::NodeModifier& modifier) override;
-
     void setupParameters(csapex::Parameterizable& params) override;
 
     virtual void start() = 0;
+    virtual void stop() = 0;
+
 
     void createStart();
-
-    virtual void stop() = 0;
     void tearDown() override;
-
     bool canProcess() const override;
-
     void process() override;
 
     void residualCb(const TokenPtr&  value);
@@ -50,7 +48,6 @@ public:
 
     double realMinfunc(const std::vector<double> &x, std::vector<double> &grad);
 
-    static double minfunc(const std::vector<double>& x, std::vector<double>& grad, void* data);
 protected:
     void publishOptimalParameters();
     void publishMinimumResidual();
