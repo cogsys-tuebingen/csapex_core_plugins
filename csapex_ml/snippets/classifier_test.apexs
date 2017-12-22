@@ -409,9 +409,9 @@ yaml:
             min: 0
             max: 100
             step: 1
-          path:
+          file_name:
             type: path
-            name: path
+            name: file_name
             value: /tmp/rforest.yaml
           process:
             type: trigger

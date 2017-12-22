@@ -56,11 +56,19 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
     bool use_surrogates = false; // not yet supported
 #endif
 
-    addParameter(csapex::param::ParameterFactory::declareBool
-                 ("use surrogates",
-                  csapex::param::ParameterDescription("If true then surrogate splits will be built. \n"
-                                                      "These splits allow to work with missing data and compute variable importance correctly."),
-                  use_surrogates));;
+    auto surrogate_p = csapex::param::ParameterFactory::declareBool
+            ("use surrogates",
+             csapex::param::ParameterDescription("If true then surrogate splits will be built. \n"
+                                                 "These splits allow to work with missing data and compute variable importance correctly."),
+             use_surrogates).build();
+    addParameter(surrogate_p, use_surrogates);
+
+#if CV_MAJOR_VERSION == 3
+    surrogate_p->setHidden(true);
+#endif
+
+
+
     addParameter(csapex::param::ParameterFactory::declareRange<int>
                  ("max categories",
                   csapex::param::ParameterDescription("Cluster possible values of a categorical variable into K <= max_categories clusters to find a suboptimal split.\n"
@@ -239,7 +247,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
     rtrees->setMaxDepth(readParameter<int>("max depth"));
     rtrees->setMinSampleCount(readParameter<int>("min sample count"));
     rtrees->setRegressionAccuracy(readParameter<double>("regression accuracy"));
-    rtrees->setUseSurrogates(readParameter<bool>("use surrogates"));
+    rtrees->setUseSurrogates(false); // not calling readParameter<bool>("use surrogates") -> not implemented
     rtrees->setMaxCategories(readParameter<int>("max categories"));
     rtrees->setCalculateVarImportance(readParameter<bool>("calc_var_importance"));
     rtrees->setActiveVarCount(readParameter<int>("nactive_vars"));
@@ -264,11 +272,12 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
                                                                              cv::noArray(), cv::noArray(), cv::noArray(),
                                                                              var_type);
 
-    std::cout << "[RandomTrees]: Started training with " << train_data.rows << " samples!" << std::endl;
+    ainfo << "Started training with " << train_data.rows << " samples!" << std::endl;
     if(rtrees->train(train_data_struct)) {
         cv::FileStorage fs(file_name_, cv::FileStorage::WRITE);
         rtrees->write(fs);
-        std::cout << "[RandomTrees]: Finished training!" << std::endl;
+        ainfo << "Finished training!" << std::endl;
+        ainfo << "Random forest was written to " << file_name_ << std::endl;
     } else {
         return false;
     }
