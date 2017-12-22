@@ -1,4 +1,10 @@
 <library path="libcsapex_optimization_plugin_node">
+<class type="csapex::ParameterVectorAddNoise" base_class_type="csapex::Node">
+  <description>Adds gaussion noise of each component of a vector msg double. Can be use for Simulated Annealing.</description>
+</class>
+<class type="csapex::GetBestOptimizationResult" base_class_type="csapex::Node">
+  <description>Collects final cost and a objective msgs and returns the best result. Can be used for Monte Carlo approches.</description>
+</class>
 <class type="csapex::OptimizationDummyVector" base_class_type="csapex::Node">
   <description>Dummy for vector optimization</description>
 </class>

@@ -49,6 +49,8 @@ target_link_libraries(${PROJECT_NAME}_qt
 
 
 add_library(${PROJECT_NAME}_plugin_node
+    src/parameter_vector_add_noise.cpp
+    src/get_best_optimization_result.cpp
     src/optimization_dummy_vector.cpp
     src/optimization_dummy.cpp
     src/bf_optimizer.cpp
