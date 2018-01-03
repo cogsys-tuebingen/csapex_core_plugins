@@ -153,6 +153,7 @@ static const Encoding hsl = { channel::hue, channel::saturation, channel::l };
 static const Encoding yuv = { channel::y, channel::u, channel::v };
 static const Encoding depth = { channel::depth };
 static const Encoding lab = {channel::l, channel::a, channel::b };
+static const Encoding luv = {channel::l, channel::u, channel::v };
 static const Encoding LCh = {channel::L, channel::C, channel::H };
 static const Encoding pointXYZ = {channel::Float, channel::Float, channel::Float};
 static const Encoding pointXYZI = {channel::Float, channel::Float, channel::Float, channel::intensity};

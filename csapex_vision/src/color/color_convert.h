@@ -37,7 +37,7 @@ public:
 
 protected:
     /// internal typdefs
-    enum ColorSpace {YUV, RGB, BGR, HSL, HSV, MONO, LAB, LCh};
+    enum ColorSpace {YUV, RGB, BGR, HSL, HSV, MONO, LAB, LCh, LUV};
     typedef std::pair<ColorSpace, ColorSpace> csPair;
     typedef std::pair<csPair, int>     csiPair;
     typedef std::pair<int, ColorSpace> icsPair;
