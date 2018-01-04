@@ -8,8 +8,9 @@
 
 /// SYSTEM
 #include <yaml-cpp/stlemitter.h>
-#include <ros/serialization.h>
-
+#include <csapex/utility/suppress_warnings_start.h>
+    #include <ros/serialization.h>
+#include <csapex/utility/suppress_warnings_end.h>
 
 namespace YAML
 {

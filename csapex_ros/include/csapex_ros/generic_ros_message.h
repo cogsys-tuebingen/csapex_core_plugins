@@ -8,8 +8,8 @@
 #include <csapex/utility/type.h>
 
 /// SYSTEM
-#include <ros/message_traits.h>
 #include <csapex/utility/suppress_warnings_start.h>
+    #include <ros/message_traits.h>
     #include <topic_tools/shape_shifter.h>
 #include <csapex/utility/suppress_warnings_end.h>
 
