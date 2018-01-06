@@ -544,6 +544,12 @@
     </description>
     <tags>Vision, HOG</tags>
   </class>
+  <class type="csapex::HOGVisualizer" base_class_type="csapex::Node">
+    <description>
+        Render HOG features.
+    </description>
+    <tags>Vision, HOG</tags>
+  </class>
   <class type="csapex::ACFStandardExtractor" base_class_type="csapex::Node">
     <description>
         Extract ACF features from RGB or mono images.

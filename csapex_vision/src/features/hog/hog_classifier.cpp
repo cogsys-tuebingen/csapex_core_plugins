@@ -131,6 +131,10 @@ void HOGClassifier::setup(NodeModifier& node_modifier)
     in_img_     = node_modifier.addInput<CvMatMessage>("image");
     in_rois_    = node_modifier.addInput<GenericVectorMessage, RoiMessage>("rois");
     out_rois_   = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("filtered rois");
+
+    out_positive_svm_weights_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("positive svm weights");
+    out_negative_svm_weights_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("negative svm weights");
+    out_descriptors_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("features");
 }
 
 void HOGClassifier::process()
@@ -138,11 +142,12 @@ void HOGClassifier::process()
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_img_);
     std::shared_ptr<std::vector<RoiMessage> const> in_rois =
             msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
-    std::shared_ptr<std::vector<RoiMessage>> out(new std::vector<RoiMessage>);
+    std::shared_ptr<std::vector<RoiMessage>> out_rois(new std::vector<RoiMessage>);
 
     if(in->value.channels() != 1 && in->value.channels() != 3) {
         throw std::runtime_error("Only 1 or 3 channel matrices supported!");
     }
+
 
     /// update HOG parameters
     ratio_hog_ = hog_.winSize.width / (double) hog_.winSize.height;
@@ -174,62 +179,117 @@ void HOGClassifier::process()
     if(hog_.winSigma == 0.0)
         hog_.winSigma = -1.0;
 
-    for(auto &roi : *in_rois) {
-        cv::Mat data;
 
-        if (!getData(in->value, roi.value.rect(), data))
-            continue;
-
-        if(data.empty())
-            continue;
-
-        assert(data.rows == hog_.winSize.height);
-        assert(data.cols == hog_.winSize.width);
-
-        double weight = 0.0;
-        double weight_mirrored = 0.0;
-        bool accepted = false;
-        hog_.classify(data, svm_thresh_, weight);
-        if(mirror_) {
-            cv::Mat data_mirrored;
-            cv::flip(data, data_mirrored, 1);
-            hog_.classify(data_mirrored, svm_thresh_, weight_mirrored);
-
-        }
+    auto accepted = [this](const double w, const double w_m)
+    {
         switch(svm_thresh_type_) {
         case GREATER:
-            accepted |= weight > svm_thresh_ || (mirror_ && weight_mirrored > svm_thresh_);
+            return w > svm_thresh_ || (mirror_ && w_m > svm_thresh_);
             break;
         case LESS:
-            accepted |= weight < svm_thresh_ || (mirror_ && weight_mirrored < svm_thresh_);
+            return w < svm_thresh_ || (mirror_ && w_m < svm_thresh_);
             break;
         case GREATER_EQUAL:
-            accepted |= weight >= svm_thresh_ ||(mirror_ &&  weight_mirrored >= svm_thresh_);
+            return w >= svm_thresh_ ||(mirror_ &&  w_m >= svm_thresh_);
             break;
         case LESS_EQUAL:
-            accepted |= weight <= svm_thresh_ || (mirror_ && weight_mirrored <= svm_thresh_);
+            return w <= svm_thresh_ || (mirror_ && w_m <= svm_thresh_);
             break;
         default:
             throw std::runtime_error("Unknown threshold type!");
         }
+    };
 
-//        std::cout << roi.value.classification() <<
-//                     " " << weight <<
-//                     " " << weight_mirrored << std::endl;
+    if(msg::isConnected(out_positive_svm_weights_) || msg::isConnected(out_descriptors_)) {
+        std::shared_ptr<std::vector<FeaturesMessage>> out_descriptors(new std::vector<FeaturesMessage>);
+        std::shared_ptr<std::vector<FeaturesMessage>> out_positive_svm_weights(new std::vector<FeaturesMessage>);
+        std::shared_ptr<std::vector<FeaturesMessage>> out_negative_svm_weights(new std::vector<FeaturesMessage>);
 
 
-        RoiMessage roi_out;
-        roi_out.value = roi.value;
-        if(accepted) {
-            roi_out.value.setClassification(HUMAN);
-            roi_out.value.setColor(cv::Scalar(0,200,0));
-        } else {
-            roi_out.value.setClassification(BACKGROUND);
-            roi_out.value.setColor(cv::Scalar(0,0,200));
+        for(auto &roi : *in_rois) {
+            cv::Mat data;
+            if (!getData(in->value, roi.value.rect(), data))
+                continue;
+
+            if(data.empty())
+                continue;
+
+            assert(data.rows == hog_.winSize.height);
+            assert(data.cols == hog_.winSize.width);
+
+            double weight = 0.0;
+            double weight_mirrored = 0.0;
+
+            FeaturesMessage descriptor;
+            FeaturesMessage positive_weights;
+            FeaturesMessage negative_weights;
+            descriptor.type = FeaturesMessage::Type::CLASSIFICATION;
+            positive_weights.type = FeaturesMessage::Type::CLASSIFICATION;
+
+            hog_.classify(data, svm_thresh_, positive_weights.value, negative_weights.value, descriptor.value, weight);
+            if(mirror_) {
+                cv::Mat data_mirrored;
+                cv::flip(data, data_mirrored, 1);
+                hog_.classify(data_mirrored, svm_thresh_, weight_mirrored);
+
+            }
+
+            RoiMessage roi_out;
+            roi_out.value = roi.value;
+            if(accepted(weight, weight_mirrored)) {
+                roi_out.value.setClassification(HUMAN);
+                roi_out.value.setColor(cv::Scalar(0,200,0));
+                descriptor.classification = HUMAN;
+                positive_weights.classification = HUMAN;
+            } else {
+                roi_out.value.setClassification(BACKGROUND);
+                roi_out.value.setColor(cv::Scalar(0,0,200));
+                descriptor.classification = BACKGROUND;
+                positive_weights.classification = BACKGROUND;
+            }
+            out_rois->push_back(roi_out);
+            out_descriptors->emplace_back(descriptor);
+            out_negative_svm_weights->emplace_back(negative_weights);
+            out_positive_svm_weights->emplace_back(positive_weights);
         }
-        out->push_back(roi_out);
+        msg::publish<GenericVectorMessage, FeaturesMessage>(out_descriptors_, out_descriptors);
+        msg::publish<GenericVectorMessage, FeaturesMessage>(out_positive_svm_weights_, out_positive_svm_weights);
+        msg::publish<GenericVectorMessage, FeaturesMessage>(out_negative_svm_weights_, out_negative_svm_weights);
+    } else {
+        for(auto &roi : *in_rois) {
+            cv::Mat data;
+            if (!getData(in->value, roi.value.rect(), data))
+                continue;
+
+            if(data.empty())
+                continue;
+
+            assert(data.rows == hog_.winSize.height);
+            assert(data.cols == hog_.winSize.width);
+
+            double weight = 0.0;
+            double weight_mirrored = 0.0;
+            hog_.classify(data, svm_thresh_, weight);
+            if(mirror_) {
+                cv::Mat data_mirrored;
+                cv::flip(data, data_mirrored, 1);
+                hog_.classify(data_mirrored, svm_thresh_, weight_mirrored);
+
+            }
+
+            RoiMessage roi_out;
+            roi_out.value = roi.value;
+            if(accepted(weight, weight_mirrored)) {
+                roi_out.value.setClassification(HUMAN);
+                roi_out.value.setColor(cv::Scalar(0,200,0));
+            } else {
+                roi_out.value.setClassification(BACKGROUND);
+                roi_out.value.setColor(cv::Scalar(0,0,200));
+            }
+            out_rois->push_back(roi_out);
+        }
     }
-    msg::publish<GenericVectorMessage, RoiMessage>(out_rois_, out);
+    msg::publish<GenericVectorMessage, RoiMessage>(out_rois_, out_rois);
 }
 
 bool HOGClassifier::getData(const cv::Mat &src, const cv::Rect &roi, cv::Mat &dst)

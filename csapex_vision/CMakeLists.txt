@@ -191,6 +191,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/features/hog/hog_detector.cpp
     src/features/hog/hog_extractor.cpp
     src/features/hog/hog_classifier.cpp
+    src/features/hog/hog_visualizer.cpp
 
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
