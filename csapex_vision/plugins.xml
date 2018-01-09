@@ -429,6 +429,14 @@
     </description>
     <tags>Vision</tags>
   </class>
+
+    <class type="csapex::Times" base_class_type="csapex::Node">
+        <description>
+            Multiplies two matrices with cv::multiply and given scale, depth.
+        </description>
+    <tags>Vision</tags>
+    </class>
+
   <class type="csapex::FlipROIs" base_class_type="csapex::Node">
     <description>
         Flip rois horizontal, vertical or both.

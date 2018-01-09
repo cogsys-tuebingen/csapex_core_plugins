@@ -104,6 +104,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/matrix_operations/scale.cpp
     src/matrix_operations/resize.cpp
     src/matrix_operations/flip.cpp
+    src/matrix_operations/times.cpp
     src/matrix_operations/convert_type.cpp
     src/matrix_operations/reshape.cpp
     src/matrix_operations/image_padding.cpp
