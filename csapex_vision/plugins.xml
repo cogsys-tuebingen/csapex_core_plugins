@@ -552,6 +552,12 @@
     </description>
     <tags>Vision, HOG</tags>
   </class>
+  <class type="csapex::HOGChannels" base_class_type="csapex::Node">
+    <description>
+        Put out the single bin channels of a HOG histogram.
+    </description>
+    <tags>Vision, HOG</tags>
+  </class>
   <class type="csapex::HOGVisualizer" base_class_type="csapex::Node">
     <description>
         Render HOG features.

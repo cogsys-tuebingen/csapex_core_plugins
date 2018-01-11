@@ -1,5 +1,5 @@
-#ifndef HOG_HPP
-#define HOG_HPP
+#ifndef HOG_H
+#define HOG_H
 /*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -275,4 +275,4 @@ public:
                                 std::vector<int>* weights, std::vector<double>* levelWeights);
 };
 }
-#endif // HOG_HPP
+#endif // HOG_H
