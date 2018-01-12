@@ -6,8 +6,10 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/end_of_sequence_message.h>
 #include <csapex/signal/event.h>
 #include <csapex/model/token.h>
+#include <csapex/signal/slot.h>
 using namespace csapex;
 using namespace csapex::connection_types;
 
@@ -24,48 +26,83 @@ public:
 
     void setup(csapex::NodeModifier& modifier) override
     {
-        in_ = modifier.addInput<double>("function value");
-        in_params_ = modifier.addInput<AnyMessage>("parameter");
-        out_best_ = modifier.addEvent<AnyMessage>("best parameter");
-//        out_ = modifier.addOutput<AnyMessage>("Output");
+        out_best_ = modifier.addEvent<GenericVectorMessage, double>("best parameter");
+
+        in_ = modifier.addTypedSlot<GenericValueMessage<double>>("fitness", [this](const TokenPtr& data){
+            fitnessCb(data);
+        });
+
+        in_params_ = modifier.addTypedSlot<GenericVectorMessage, double>("parameter", [this](const TokenPtr& msg){
+            paramCb(msg);
+        });
+
+        //        out_ = modifier.addOutput<AnyMessage>("Output");
     }
 
     void setupParameters(csapex::Parameterizable& params) override
     {
         params.addParameter(param::ParameterFactory::declareTrigger("clear"),[this](param::Parameter*){
-            opt_results_.clear();
+            fitness_.clear();
+            params_.clear();
         });
         params.addParameter(param::ParameterFactory::declareTrigger("get_best"),[this](param::Parameter*){
+            std::stringstream str;
+            str << "It is expected to have the same number of fitness values and paramter messages."
+                << " Got " << fitness_.size() << " fitness values and "   << params_.size() << " parameter messages.";
+            apex_assert_msg(fitness_.size() == params_.size(),str.str());
 
-            auto it = std::min_element(opt_results_.begin(), opt_results_.end(),
-                                       [](std::pair<double, TokenData::ConstPtr>& l,
-                                          std::pair<double, TokenData::ConstPtr>& r) -> bool { return l.first < r.first; });
+            auto it = std::min_element(fitness_.begin(), fitness_.end());
+            std::size_t id = it - fitness_.begin();
 
 
-            TokenPtr token = std::make_shared<Token>(it->second);
+            TokenPtr token = std::make_shared<Token>(params_.at(id));
             out_best_->triggerWith(token);
         });
 
     }
 
+    void fitnessCb(const TokenPtr &data)
+    {
+        if(auto val = std::dynamic_pointer_cast<GenericValueMessage<double> const>(data->getTokenData())){
+//            std::unique_lock<std::mutex> lock(data_available_mutex_);
+            fitness_.push_back(val->value);
+
+        }
+        else if(std::dynamic_pointer_cast<EndOfSequenceMessage const>(data->getTokenData())){
+        }
+        else{
+            throw std::runtime_error("unkown message recieved: " + data->getTokenData()->typeName());
+        }
+    }
+
+    void paramCb(const TokenPtr &msg)
+    {
+        if(std::dynamic_pointer_cast<EndOfSequenceMessage const>(msg->getTokenData())){
+            return;
+        }
+        params_.push_back(msg->getTokenData());
+    }
+
     void process() override
     {
-        auto value = msg::getValue<double>(in_);
-        TokenData::ConstPtr m =  msg::getMessage(in_params_);
+//        auto value = msg::getValue<double>(in_);
+//        TokenData::ConstPtr m =  msg::getMessage(in_params_);
 
-        std::pair<double, TokenData::ConstPtr> p;
-        p.first = value;
+//        std::pair<double, TokenData::ConstPtr> p;
+//        p.first = value;
 
-        opt_results_.push_back(p);
-//        msg::publish(out_, value + "!");
+//        opt_results_.push_back(p);
+        //        msg::publish(out_, value + "!");
     }
 
 private:
-    Input* in_;
-    Input* in_params_;
+    Slot* in_;
+    Slot* in_params_;
     Output* out_;
     Event* out_best_;
-    std::vector<std::pair<double, TokenData::ConstPtr>> opt_results_;
+    std::vector<double> fitness_;
+    std::vector<TokenData::ConstPtr> params_;
+    std::mutex data_available_mutex_;
 
 };
 
