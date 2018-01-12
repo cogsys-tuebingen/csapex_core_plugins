@@ -8,6 +8,9 @@
 </library>
 
 <library path="libcsapex_core_plugins_node">
+<class type="csapex::TiggerIfIntEqual" base_class_type="csapex::Node">
+  <description>Triggers signal if input is equal to a parameter.</description>
+</class>
 <class type="csapex::AccumulateMessages" base_class_type="csapex::Node">
   <description>Collects n messages of a type and publishes a vector of n messages</description>
 </class>
