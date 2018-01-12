@@ -104,6 +104,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/matrix_operations/scale.cpp
     src/matrix_operations/resize.cpp
     src/matrix_operations/flip.cpp
+    src/matrix_operations/times.cpp
     src/matrix_operations/convert_type.cpp
     src/matrix_operations/reshape.cpp
     src/matrix_operations/image_padding.cpp
@@ -181,6 +182,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/features/scharr.cpp
     src/features/lsd.cpp
     src/features/magnitude.cpp
+    src/features/gradient_histogram.cpp
 
     src/features/acf/acf_standard_extractor.cpp
     src/features/acf/acf_dynamic_extractor.cpp
@@ -191,6 +193,8 @@ add_library(${PROJECT_NAME}_plugin_node
     src/features/hog/hog_detector.cpp
     src/features/hog/hog_extractor.cpp
     src/features/hog/hog_classifier.cpp
+    src/features/hog/hog_visualizer.cpp
+    src/features/hog/hog_channels.cpp
 
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
@@ -210,6 +214,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/filter/blur.cpp
     src/filter/gaussian_blur.cpp
     src/filter/bilateral.cpp
+    src/filter/gabor.cpp
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp

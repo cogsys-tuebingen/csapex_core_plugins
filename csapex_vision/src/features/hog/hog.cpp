@@ -45,6 +45,7 @@
 #include <iterator>
 #include <limits>
 #include <stdexcept>
+#include <iostream>
 
 /****************************************************************************************\
       The code below is implementation of HOG (Histogram-of-Oriented Gradients)
@@ -1497,7 +1498,8 @@ void HOGDescriptor::computeSingle(const cv::Mat &img,
     }
 }
 
-void HOGDescriptor::compute(const cv::Mat &_img, std::vector<float>& descriptors,
+void HOGDescriptor::compute(const cv::Mat &_img,
+                            std::vector<float>& descriptors,
                             cv::Size winStride, cv::Size padding, const std::vector<cv::Point>& locations) const
 {
     if( winStride == cv::Size() )
@@ -1602,6 +1604,90 @@ bool HOGDescriptor::classify(const cv::Mat &img,
     }
     weight = s;
 
+    if( s >= hitThreshold )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool HOGDescriptor::classify(const cv::Mat &img,
+                             const double hitThreshold,
+                             std::vector<float> &positive_svm_weights,
+                             std::vector<float> &negative_svm_weights,
+                             std::vector<float> &descriptor,
+                             double &weight)
+{
+    assert(img.rows == winSize.height);
+    assert(img.cols == winSize.width);
+
+    if( svmDetector.empty() )
+        return false;
+
+    cv::Size winStride = cellSize;
+    cv::Size cacheStride(gcd(winStride.width, blockStride.width),
+                         gcd(winStride.height, blockStride.height));
+    cv::Size padding;
+    padding.width  = (int)cv::alignSize(0, cacheStride.width);
+    padding.height = (int)cv::alignSize(0, cacheStride.height);
+    HOGCache cache(this, img, padding, padding, true, cacheStride);
+    const HOGCache::BlockData* blockData = &cache.blockData[0];
+
+    int nblocks = cache.nblocks.area();
+    int blockHistogramSize = cache.blockHistogramSize;
+    size_t dsize = getDescriptorSize();
+
+    double rho = svmDetector.size() > dsize ? svmDetector[dsize] : 0;
+    std::vector<float> blockHist(blockHistogramSize);
+
+    positive_svm_weights.resize(nblocks, 0.f);
+    negative_svm_weights.resize(nblocks, 0.f);
+    descriptor.resize(dsize);
+    float *descriptor_ptr = descriptor.data();
+
+    cv::Point pt0;
+    pt0 = cache.getWindow(img.size(), winStride, 0).tl() - cv::Point(padding);
+    double s = rho;
+    const float* svmVec = &svmDetector[0];
+    int j, k;
+    for( j = 0; j < nblocks; ++j, svmVec += blockHistogramSize)
+    {
+        const HOGCache::BlockData& bj = blockData[j];
+        cv::Point pt = pt0 + bj.imgOffset;
+        float svm_weight = 0.0;
+        float svm_weight_min_neg = std::numeric_limits<float>::max();
+        float svm_weight_max_pos = std::numeric_limits<float>::lowest();
+        const float* vec = cache.getBlock(pt, &blockHist[0]);
+        for( k = 0; k <= blockHistogramSize - 4; k += 4 ) {
+            const float v = vec[k]*svmVec[k] + vec[k+1]*svmVec[k+1] +
+                    vec[k+2]*svmVec[k+2] + vec[k+3]*svmVec[k+3];
+            svm_weight += v;
+            svm_weight_min_neg = std::min(svm_weight_min_neg, v);
+            svm_weight_max_pos = std::max(svm_weight_max_pos, v);
+        }
+        for( ; k < blockHistogramSize; k++ ) {
+            const float v = vec[k]*svmVec[k];
+            svm_weight += v;
+            svm_weight_min_neg = std::min(svm_weight_min_neg, v);
+            svm_weight_max_pos = std::max(svm_weight_max_pos, v);
+
+        }
+
+        if(svm_weight_max_pos > 0.0)
+            positive_svm_weights[j] = svm_weight_max_pos;
+        if(svm_weight_min_neg < 0.0)
+            negative_svm_weights[j] = svm_weight_min_neg;
+
+        float* dst = descriptor_ptr + bj.histOfs;
+        const float* src = cache.getBlock(pt, dst);
+        if( src != dst )
+            memcpy(dst, src, blockHistogramSize * sizeof(float));
+
+        s+=svm_weight;
+    }
+
+    weight = s;
     if( s >= hitThreshold )
     {
         return true;

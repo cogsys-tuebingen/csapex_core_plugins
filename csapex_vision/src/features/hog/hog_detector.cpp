@@ -11,6 +11,8 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <cslibs_vision/utils/color_functions.hpp>
 
+#include <csapex_ml/features_message.h>
+
 /// https://github.com/DaHoC/trainHOG/wiki/trainHOG-Tutorial
 /// TODO : L2HysThreshold - derivAperture
 

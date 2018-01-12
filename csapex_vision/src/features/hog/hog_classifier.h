@@ -28,6 +28,9 @@ private:
     csapex::Input  *in_img_;
     csapex::Input  *in_rois_;
     csapex::Output *out_rois_;
+    csapex::Output* out_descriptors_;
+    csapex::Output* out_positive_svm_weights_;
+    csapex::Output* out_negative_svm_weights_;
 
     HOGDescriptor   hog_;
     SVMType         prev_svm_type_;
@@ -55,6 +58,8 @@ private:
                        const int block_stride,
                        const int bins,
                        const bool signed_gradient);
+
+
 };
 }
 #endif // HOGCLASSIFIER_H
