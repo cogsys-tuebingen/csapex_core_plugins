@@ -182,6 +182,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/features/scharr.cpp
     src/features/lsd.cpp
     src/features/magnitude.cpp
+    src/features/gradient_histogram.cpp
 
     src/features/acf/acf_standard_extractor.cpp
     src/features/acf/acf_dynamic_extractor.cpp
@@ -213,6 +214,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/filter/blur.cpp
     src/filter/gaussian_blur.cpp
     src/filter/bilateral.cpp
+    src/filter/gabor.cpp
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp

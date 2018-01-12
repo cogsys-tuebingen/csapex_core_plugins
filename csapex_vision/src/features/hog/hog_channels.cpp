@@ -18,7 +18,6 @@ CSAPEX_REGISTER_CLASS(csapex::HOGChannels, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-using namespace csapex;
 
 HOGChannels::HOGChannels()
 {
@@ -28,6 +27,8 @@ void HOGChannels::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(param::ParameterFactory::declareRange("bins", 1, 18, 9, 1),
                             bins_);
+    parameters.addParameter(param::ParameterFactory::declareRange("ksize", 1, 21, 3, 2),
+                            ksize_);
     parameters.addParameter(param::ParameterFactory::declareBool("signed", false),
                             signed_);
 }
@@ -35,23 +36,28 @@ void HOGChannels::setupParameters(Parameterizable& parameters)
 void HOGChannels::setup(NodeModifier& node_modifier)
 {
     in_img_  = node_modifier.addInput<CvMatMessage>("image");
-    out_img_ = node_modifier.addOutput<CvMatMessage>("hog channels");
+    out_img_ = node_modifier.addOutput<GenericVectorMessage, CvMatMessage>("hog channels");
 }
 
 void HOGChannels::process()
 {
     CvMatMessage::ConstPtr  in = msg::getMessage<CvMatMessage>(in_img_);
-    std::shared_ptr<std::vector<FeaturesMessage>> out(new std::vector<CvMatMessage>);
+    std::shared_ptr<std::vector<CvMatMessage>> out(new std::vector<CvMatMessage>);
 
     const double bin_rad = M_PI / static_cast<double>(bins_);
 
     std::vector<cv::Mat> channels;
     if(signed_) {
-        cslibs_vision::HOG::directed(in_img_->value, bin_rad, channels);
+        cslibs_vision::HOG::directed(in->value, bin_rad, channels, ksize_);
     } else {
-        cslibs_vision::HOG::standard(in_img_->value, bin_rad, channels);
+        cslibs_vision::HOG::standard(in->value, bin_rad, channels, ksize_);
     }
 
+    for(const cv::Mat &c : channels) {
+        CvMatMessage m = CvMatMessage(enc::mono, in->frame_id, in->stamp_micro_seconds);
+        m.value = c.clone();
+        out->emplace_back(m);
+    }
 
-    msg::publish<GenericVectorMessage, FeaturesMessage>(out_img_, out);
+    msg::publish<GenericVectorMessage, CvMatMessage>(out_img_, out);
 }

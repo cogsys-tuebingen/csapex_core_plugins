@@ -104,6 +104,18 @@
   </description>
   <tags>Vision</tags>
 </class>
+<class type="csapex::GradientHistogram" base_class_type="csapex::Node">
+  <description>
+    Calculate an histogram for a gradient within a certain angular interval.
+  </description>
+  <tags>Vision</tags>
+</class>
+<class type="csapex::Gabor" base_class_type="csapex::Node">
+  <description>
+    Apply the Gabor kernel to an image.
+  </description>
+  <tags>Vision</tags>
+</class>
 <class type="csapex::GaussianBlur" base_class_type="csapex::Node">
   <description>
     Blur an image or a matrix applying a gaussian function.

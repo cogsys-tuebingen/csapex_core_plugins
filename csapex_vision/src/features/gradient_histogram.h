@@ -1,5 +1,5 @@
-#ifndef HOG_CHANNELS_H
-#define HOG_CHANNELS_H
+#ifndef GRADIENTHISTOGRAM_H
+#define GRADIENTHISTOGRAM_H
 
 /// PROJECT
 #include <csapex/model/node.h>
@@ -7,10 +7,10 @@
 /// EXTRACT HOG FEATURE
 
 namespace csapex {
-class HOGChannels : public csapex::Node
+class GradientHistogram : public csapex::Node
 {
 public:
-    HOGChannels();
+    GradientHistogram();
 
     void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
@@ -18,12 +18,14 @@ public:
 
 private:
     csapex::Input  *in_img_;
-    csapex::Output *out_img_;
+    csapex::Output *out_hist_;
+    csapex::Output *out_mag_;
 
-    int  bins_;
+    std::array<double, 2> interval_;
+
     bool signed_;
     int  ksize_;
 
 };
 }
-#endif // HOG_CHANNELS_H
+#endif // GRADIENTHISTOGRAM_H
