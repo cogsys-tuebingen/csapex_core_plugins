@@ -7,7 +7,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex_opencv/cv_mat_message.h>
 #include <csapex/model/node_modifier.h>
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
