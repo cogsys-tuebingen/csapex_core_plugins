@@ -25,7 +25,7 @@ ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 catkin_package(
   INCLUDE_DIRS  include
   LIBRARIES     ${PROJECT_NAME}_msgs
-#  CATKIN_DEPENDS other_catkin_pkg
+  CATKIN_DEPENDS csapex_opencv
 #  DEPENDS system_lib
 )
 
@@ -45,8 +45,6 @@ add_library(${PROJECT_NAME}_msgs
 )
 
 target_link_libraries(${PROJECT_NAME}_msgs
-    ${OpenCV_LIBS}
-    ${Boost_LIBRARIES}
     ${catkin_LIBRARIES}
 )
 
@@ -59,8 +57,7 @@ add_library(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   ${PROJECT_NAME}_msgs
-  yaml-cpp 
-  ${OpenCV_LIBS} ${Boost_LIBRARIES}
+  yaml-cpp
   ${catkin_LIBRARIES} 
 )
 

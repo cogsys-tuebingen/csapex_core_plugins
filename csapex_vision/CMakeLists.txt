@@ -18,14 +18,12 @@ find_package(catkin REQUIRED COMPONENTS cslibs_vision
                                         csapex
                                         csapex_ros
                                         csapex_core_plugins
-                                        cv_bridge
                                         csapex_ml
-                                        csapex_evaluation)
+                                        csapex_evaluation
+                                        cv_bridge)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
-
-find_package(OpenCV REQUIRED)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
@@ -70,7 +68,7 @@ add_library(${PROJECT_NAME}
     src/ros_converters.cpp
 )
 target_link_libraries(${PROJECT_NAME}
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 
 add_library(${PROJECT_NAME}_plugin_core
@@ -78,7 +76,7 @@ add_library(${PROJECT_NAME}_plugin_core
 )
 target_link_libraries(${PROJECT_NAME}_plugin_core
     ${PROJECT_NAME}
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
 
 
 add_library(${PROJECT_NAME}_plugin_node
@@ -234,8 +232,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/event_and.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_node
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
-
+    yaml-cpp ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 add_library(${PROJECT_NAME}_plugin_qt
     src/filter/filter_static_mask_painter.cpp
@@ -248,7 +245,7 @@ add_library(${PROJECT_NAME}_plugin_qt
     src/roi/image_roi_adapter.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_qt
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 #
 # INSTALL

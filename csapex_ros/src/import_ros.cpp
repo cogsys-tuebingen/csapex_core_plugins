@@ -415,7 +415,9 @@ void ImportRos::callback(TokenDataConstPtr message)
 
 void ImportRos::tearDown()
 {
+    running_ = false;
     reset();
+    current_subscriber.shutdown();
 }
 
 void ImportRos::setTopic(const ros::master::TopicInfo &topic)
@@ -441,6 +443,5 @@ void ImportRos::setTopic(const ros::master::TopicInfo &topic)
 
 void ImportRos::reset()
 {
-    current_subscriber.shutdown();
-    running_ = false;
+    msgs_.clear();
 }

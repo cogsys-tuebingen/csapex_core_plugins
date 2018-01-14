@@ -28,7 +28,7 @@ TextDisplayAdapter::TextDisplayAdapter(NodeFacadePtr node, NodeBox* parent)
             buffer >> text;
             displayRequest(text);
         }
-    });;
+    });
 }
 
 TextDisplayAdapter::~TextDisplayAdapter()
