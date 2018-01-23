@@ -203,8 +203,8 @@ void JANNLabMLP::load()
     mlp_input_size_  = layers_.front();
     mlp_output_size_ = layers_.back();
 
-    mlp_.reset(new mlp::MLP(layers_.size(),
-                            layers_.data(),
-                            weights_.size(),
-                            weights_.data()));
+//    mlp_.reset(new mlp::MLP(layers_.size(),
+//                            layers_.data(),
+//                            weights_.size(),
+//                            weights_.data()));
 }
