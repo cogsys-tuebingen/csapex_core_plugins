@@ -52,7 +52,7 @@ public:
         params.addParameter(types_);
     }
 
-    bool processMessageMarkers() const
+    bool processNothingMarkers() const
     {
         return true;
     }

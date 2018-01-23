@@ -104,6 +104,18 @@
   </description>
   <tags>Vision</tags>
 </class>
+<class type="csapex::GradientHistogram" base_class_type="csapex::Node">
+  <description>
+    Calculate an histogram for a gradient within a certain angular interval.
+  </description>
+  <tags>Vision</tags>
+</class>
+<class type="csapex::Gabor" base_class_type="csapex::Node">
+  <description>
+    Apply the Gabor kernel to an image.
+  </description>
+  <tags>Vision</tags>
+</class>
 <class type="csapex::GaussianBlur" base_class_type="csapex::Node">
   <description>
     Blur an image or a matrix applying a gaussian function.
@@ -429,6 +441,14 @@
     </description>
     <tags>Vision</tags>
   </class>
+
+    <class type="csapex::Times" base_class_type="csapex::Node">
+        <description>
+            Multiplies two matrices with cv::multiply and given scale, depth.
+        </description>
+    <tags>Vision</tags>
+    </class>
+
   <class type="csapex::FlipROIs" base_class_type="csapex::Node">
     <description>
         Flip rois horizontal, vertical or both.
@@ -541,6 +561,12 @@
   <class type="csapex::HOGClassifier" base_class_type="csapex::Node">
     <description>
         Uses HOG features to extract and classify objects with a given SVM.
+    </description>
+    <tags>Vision, HOG</tags>
+  </class>
+  <class type="csapex::HOGChannels" base_class_type="csapex::Node">
+    <description>
+        Put out the single bin channels of a HOG histogram.
     </description>
     <tags>Vision, HOG</tags>
   </class>

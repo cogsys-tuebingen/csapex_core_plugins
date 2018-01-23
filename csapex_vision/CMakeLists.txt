@@ -18,14 +18,12 @@ find_package(catkin REQUIRED COMPONENTS cslibs_vision
                                         csapex
                                         csapex_ros
                                         csapex_core_plugins
-                                        cv_bridge
                                         csapex_ml
-                                        csapex_evaluation)
+                                        csapex_evaluation
+                                        cv_bridge)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
-
-find_package(OpenCV REQUIRED)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
@@ -63,14 +61,14 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(include
   ${catkin_INCLUDE_DIRS}
-  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
+  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${OpenCV_INCLUED_DIRS}
 )
 
 add_library(${PROJECT_NAME}
     src/ros_converters.cpp
 )
 target_link_libraries(${PROJECT_NAME}
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 
 add_library(${PROJECT_NAME}_plugin_core
@@ -78,7 +76,7 @@ add_library(${PROJECT_NAME}_plugin_core
 )
 target_link_libraries(${PROJECT_NAME}_plugin_core
     ${PROJECT_NAME}
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
 
 
 add_library(${PROJECT_NAME}_plugin_node
@@ -104,6 +102,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/matrix_operations/scale.cpp
     src/matrix_operations/resize.cpp
     src/matrix_operations/flip.cpp
+    src/matrix_operations/times.cpp
     src/matrix_operations/convert_type.cpp
     src/matrix_operations/reshape.cpp
     src/matrix_operations/image_padding.cpp
@@ -181,6 +180,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/features/scharr.cpp
     src/features/lsd.cpp
     src/features/magnitude.cpp
+    src/features/gradient_histogram.cpp
 
     src/features/acf/acf_standard_extractor.cpp
     src/features/acf/acf_dynamic_extractor.cpp
@@ -192,6 +192,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/features/hog/hog_extractor.cpp
     src/features/hog/hog_classifier.cpp
     src/features/hog/hog_visualizer.cpp
+    src/features/hog/hog_channels.cpp
 
     src/visualize/matrix_to_heatmap.cpp
     src/visualize/render_labels.cpp
@@ -211,6 +212,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/filter/blur.cpp
     src/filter/gaussian_blur.cpp
     src/filter/bilateral.cpp
+    src/filter/gabor.cpp
 
     src/analyze/pyramid.cpp
     src/analyze/camera_calibration.cpp
@@ -230,8 +232,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/event_and.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_node
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
-
+    yaml-cpp ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 add_library(${PROJECT_NAME}_plugin_qt
     src/filter/filter_static_mask_painter.cpp
@@ -244,7 +245,7 @@ add_library(${PROJECT_NAME}_plugin_qt
     src/roi/image_roi_adapter.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_qt
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
 
 #
 # INSTALL

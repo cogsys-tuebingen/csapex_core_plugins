@@ -15,21 +15,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS csapex csapex_opencv cslibs_vision)
 
-# note to ubuntu 14 users: if opencv is installed at /usr/local and is not found:    sudo ldconfig /usr/local/lib
-set(USED_OpenCV_COMPONENTS core imgproc ml calib3d)
-find_package(OpenCV COMPONENTS nonfree ${USED_OpenCV_COMPONENTS} QUIET CONFIG)
-
-list(FIND OpenCV_LIB_COMPONENTS opencv_nonfree NONFREE_INDEX)
-set(NONFREE_FOUND NOT ${NONFREE_INDEX} EQUAL -1)
-
-if(${OpenCV_FOUND} AND ${NONFREE_FOUND})
-    add_definitions("-DCV_NON_FREE=1")
-else()
-    add_definitions("-DCV_NON_FREE=0")
-    message("OpenCV nonfree was not found, SIFT and SURF will not be available. If you need them, compile OpenCV from source and remove CMakeCache.txt!")
-    find_package(OpenCV REQUIRED COMPONENTS ${USED_OpenCV_COMPONENTS} CONFIG)
-endif()
-
 find_package(Boost COMPONENTS program_options REQUIRED)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
@@ -48,6 +33,7 @@ set(CMAKE_AUTOMOC ON)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES csapex_vision_features
+  CATKIN_DEPENDS csapex_opencv
 )
 
 ###########
@@ -72,13 +58,13 @@ add_library(${PROJECT_NAME}
     src/extractor_manager.cpp
 )
 target_link_libraries(${PROJECT_NAME}
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp ${QT_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
 add_library(${PROJECT_NAME}_plugin_core
     src/register_plugin.cpp
 )
 target_link_libraries(${PROJECT_NAME}_plugin_core ${PROJECT_NAME}
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp ${QT_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
 
 add_library(${PROJECT_NAME}_plugin_node
@@ -91,7 +77,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/lk_tracking.cpp
 )
 target_link_libraries(csapex_vision_features_plugin_node csapex_vision_features
-    yaml-cpp ${QT_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+    yaml-cpp ${QT_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
 
 #

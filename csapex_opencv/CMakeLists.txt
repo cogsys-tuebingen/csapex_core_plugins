@@ -18,6 +18,7 @@ if(${OpenCV_FOUND} AND ${NONFREE_FOUND})
     add_definitions("-DCV_NON_FREE=1")
 else()
     add_definitions("-DCV_NON_FREE=0")
+    message("OpenCV nonfree was not found, SIFT and SURF will not be available. If you need them, compile OpenCV from source and remove CMakeCache.txt!")
     find_package(OpenCV REQUIRED COMPONENTS ${USED_OpenCV_COMPONENTS} CONFIG)
 endif()
 
@@ -62,8 +63,8 @@ generate_export_header(${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
     ${OpenCV_LIBS}
-	${catkin_LIBRARIES}
-	${csapex_LIBRARIES}
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
     Qt5::Core
 )
 
@@ -78,9 +79,9 @@ add_library(${PROJECT_NAME}_core SHARED
 )
 target_link_libraries(${PROJECT_NAME}_core
     ${PROJECT_NAME}
-	${catkin_LIBRARIES} 
-	${csapex_LIBRARIES} 
-    ${OpenCV_LIBS} 
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+    ${OpenCV_LIBRARIES}
     Qt5::Core Qt5::Gui
 )
 
@@ -93,7 +94,7 @@ target_link_libraries(${PROJECT_NAME}_node
     ${PROJECT_NAME}
 	${catkin_LIBRARIES}
 	${csapex_LIBRARIES}
-	${OpenCV_LIBS}
+        ${OpenCV_LIBRARIES}
     cvblob  
     Qt5::Core Qt5::Gui)
 

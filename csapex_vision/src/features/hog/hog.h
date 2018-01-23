@@ -1,5 +1,5 @@
-#ifndef HOG_HPP
-#define HOG_HPP
+#ifndef HOG_H
+#define HOG_H
 /*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -41,7 +41,10 @@
 // the use of this software, even if advised of the possibility of such damage.
 //
 //M*/
-
+//HOG descriptor length = #Blocks * #CellsPerBlock * #BinsPerCell
+//                      = (64/8-1) * (128/8-1) * (2*2) * 9
+//                      = 7        * 15        *  4    * 9
+//                      = 3780
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -272,4 +275,4 @@ public:
                                 std::vector<int>* weights, std::vector<double>* levelWeights);
 };
 }
-#endif // HOG_HPP
+#endif // HOG_H

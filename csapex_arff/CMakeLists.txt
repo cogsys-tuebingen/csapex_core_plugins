@@ -22,7 +22,6 @@ include_directories(
     ${csapex_core_plugins_INCLUDE_DIRS}
     ${csapex_ml_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
-    ${OpenCV_INCLUED_DIRS}
     ${cslibs_arff_INCLUDE_DIRS}    
 )
 add_library(${PROJECT_NAME}_plugin SHARED

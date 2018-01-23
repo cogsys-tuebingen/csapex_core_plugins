@@ -24,7 +24,6 @@ include_directories(
     ${csapex_core_plugins_INCLUDE_DIRS}
     ${csapex_opencv_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
-    ${OpenCV_INCLUED_DIRS}
     )
 add_library(${PROJECT_NAME} SHARED
     src/feature/features_message.cpp
@@ -107,7 +106,6 @@ target_link_libraries(${PROJECT_NAME}_plugin
     ${csapex_core_plugins_LIBRARIES}
     ${csapex_opencv_LIBRARIES}
     ${catkin_LIBRARIES}
-    ${OpenCV_LIBRARIES}
     ${${PROJECT_NAME}_additional_libs}
     ${csapex_point_cloud_LIBRARIES}
     )
