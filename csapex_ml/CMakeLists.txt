@@ -110,6 +110,8 @@ target_link_libraries(${PROJECT_NAME}_plugin
     ${csapex_point_cloud_LIBRARIES}
     )
 
+#add_executable(test_mlp src/mlp/mlp.cpp src/mlp/test_mlp.cpp)
+
 #
 # INSTALL
 #
