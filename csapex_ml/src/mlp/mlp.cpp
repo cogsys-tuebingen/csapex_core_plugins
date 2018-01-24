@@ -4,6 +4,10 @@
 #include <iterator>
 #include <sstream>
 
+// TODOS:
+// use other activation functions than relu
+// implement softmax layer
+
 namespace mlp {
 
 double exp(const double& arg) {
@@ -109,8 +113,13 @@ bool MLPConfig::load(const std::string &path)
     //empty space
     std::getline(in, line);
 
+    while(line != "weights:"){
+        if(!std::getline(in,line)){
+            return false;
+        }
+    }
+
     // weights
-    std::getline(in, line);
     std::getline(in, line);
     std::istringstream weights_str(line);
 
@@ -129,7 +138,7 @@ MLP::MLP(const MLPConfig &config) :
     layer_sizes_(config.layer_sizes),
     layer_bias_(config.layer_bias),
     input_size_(config.input_size),
-    output_size_(layer_sizes_[layers_num_ - 1]),
+    output_size_(layer_sizes_.back()),
     weights_num_(config.weights_num),
     weights_(config.weights)
 {
@@ -148,7 +157,7 @@ MLP::MLP (const size_t input_size,
     layer_sizes_(layer_sizes),
     layer_bias_(layer_bias),
     input_size_(input_size),
-    output_size_(layer_sizes_[layers_num_ - 1]),
+    output_size_(layer_sizes_.back()),
     weights_num_(weights_num),
     weights_(weights)
 {

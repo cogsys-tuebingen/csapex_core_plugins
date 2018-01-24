@@ -31,13 +31,19 @@ void JANNLabMLP::setup(NodeModifier& node_modifier)
 
 void JANNLabMLP::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declarePath("MLP path",
+    addParameter(csapex::param::ParameterFactory::declarePath("MLP_path",
                                                       csapex::param::ParameterDescription("Path to a saved MLP."),
                                                       true,
-                                                      "",
-                                                      "*.yaml"),
+                                                      ""),
                  std::bind(&JANNLabMLP::load, this));
-    addParameter(csapex::param::ParameterFactory::declarePath("normalization path",
+
+    addParameter(csapex::param::ParameterFactory::declarePath("class_label_path",
+                                                      csapex::param::ParameterDescription("Path to a class label file."),
+                                                      true,
+                                                      ""),
+                 std::bind(&JANNLabMLP::load, this));
+
+    addParameter(csapex::param::ParameterFactory::declarePath("normalization_path",
                                                       csapex::param::ParameterDescription("Path to a normalization file."),
                                                       true,
                                                       "",
@@ -114,9 +120,22 @@ void JANNLabMLP::process()
             }
 
             std::vector<double> mlp_output(mlp_output_size_, 0.0);
+            if(!mlp_){
+                node_modifier_->setWarning("No MLP loaded!");
+                return;
+            }
 
             mlp_->compute(mlp_input.data(),mlp_output.data());
-            it_out->classification = mlp_class_labels_.at(maxIndex(mlp_output));
+
+            if(it_in->type == FeaturesMessage::Type::CLASSIFICATION ||
+                    config_.output_type == mlp::OutputType::SOFTMAX){
+                throw std::runtime_error("Work in progress, mlp classification has to be implemented.");
+                it_out->classification = mlp_class_labels_.at(maxIndex(mlp_output));
+            } else if(it_in->type == FeaturesMessage::Type::REGRESSION ||
+                      config_.output_type == mlp::OutputType::LINEAR){
+                it_out->regression_result.insert(it_out->regression_result.begin(), mlp_output.begin(), mlp_output.end());
+            }
+
         }
     }
     lock.unlock();
@@ -124,36 +143,14 @@ void JANNLabMLP::process()
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
 }
 
-void JANNLabMLP::load()
+void JANNLabMLP::loadNorm()
 {
-    auto mlp_p = readParameter<std::string>("MLP path");
-    auto norm_p = readParameter<std::string>("normalization path");
+    auto norm_p = readParameter<std::string>("normalization_path");
 
-    if(mlp_path_ == mlp_p && norm_path_ == norm_p) {
+    if( norm_path_ == norm_p){
         return;
     }
-
-    mlp_path_ = mlp_p;
     norm_path_ = norm_p;
-
-    if(mlp_path_.empty()) {
-        return;
-    }
-
-
-    try {
-        YAML::Node document = YAML::LoadFile(mlp_path_);
-        layers_.clear();
-        YAML::Node y_layers = document["layers"];
-        for(auto it = y_layers.begin() ; it != y_layers.end() ; ++it)
-            layers_.push_back((*it).as<size_t>());
-        weights_           = document["weights"].as<std::vector<double>>();
-        mlp_class_labels_ = document["classes"].as<std::vector<int>>();
-    } catch (const YAML::Exception &e) {
-        std::cerr << e.what() << std::endl;
-        node_modifier_->setWarning(e.what());
-        return;
-    }
 
     if(!norm_path_.empty()) {
         std::string line;
@@ -169,42 +166,85 @@ void JANNLabMLP::load()
         }
     }
 
+}
+
+void JANNLabMLP::loadClassLabels()
+{
+    auto class_label_p = readParameter<std::string>("class_label_path");
+    if(class_label_path_ == class_label_p){
+        return;
+    }
+    class_label_path_ = class_label_p;
+    throw std::runtime_error("Implement class label loading!");
+    if(!class_label_path_.empty()){
+        node_modifier_->setWarning("Class labels to be implemented!");
+        return;
+    }
+}
+
+
+void JANNLabMLP::load()
+{
+    auto mlp_p = readParameter<std::string>("MLP_path");
+
+    if(mlp_path_ == mlp_p) {
+        return;
+    }
+
+    mlp_path_ = mlp_p;
+
+    if(mlp_path_.empty()) {
+        return;
+    }
+
+    if(!config_.load(mlp_path_)){
+        node_modifier_->setWarning("Cannot load network config!");
+        return;
+    }
+
+
+//    try {
+//        YAML::Node document = YAML::LoadFile(mlp_path_);
+//        layers_.clear();
+//        YAML::Node y_layers = document["layers"];
+//        for(auto it = y_layers.begin() ; it != y_layers.end() ; ++it)
+//            layers_.push_back((*it).as<size_t>());
+//        weights_           = document["weights"].as<std::vector<double>>();
+//        mlp_class_labels_ = document["classes"].as<std::vector<int>>();
+//    } catch (const YAML::Exception &e) {
+//        std::cerr << e.what() << std::endl;
+//        node_modifier_->setWarning(e.what());
+//        return;
+//    }
 
     std::unique_lock<std::mutex> lock(m_);
     mlp_.reset();
-    mlp_input_size_  = 0;
-    mlp_output_size_ = 0;
+    mlp_input_size_  = config_.input_size;
+    mlp_output_size_ = config_.layer_sizes.back();
+//    weights_ = config.weights;
 
-    if(layers_.size() == 0 || weights_.size() == 0) {
+    if(config_.layer_sizes.size() == 0 || config_.weights_num == 0) {
         node_modifier_->setWarning("Couldn't load layers or weights!");
         return;
     }
-    if(layers_.size() < 3) {
-        node_modifier_->setWarning("MLP must have at least 3 layers!");
-        return;
-    }
-    if(mlp_class_labels_.size() != layers_.back()) {
-        mlp_class_labels_.clear();
+    if(config_.layer_sizes.size() < 2) {
+        node_modifier_->setWarning("MLP must have at least 2 layers (one hidden layer + output layer)!");
         return;
     }
 
-    int connections = 0;
-    for(std::size_t i = 0; i < layers_.size() - 1; ++i) {
-        int l = layers_[i];
-        int lnext = layers_[i+1];
-        connections += (l * lnext);
-    }
+    mlp_.reset(new mlp::MLP(config_));
+    ainfo << "bloedsinn" << std::endl;
+//    int connections = 0;
+//    for(std::size_t i = 0; i < config_.layer_sizes.size() - 1; ++i) {
+//        int l = layers_[i];
+//        int lnext = layers_[i+1];
+//        connections += (l * lnext);
+//    }
 
-    if(connections != (int) weights_.size()) {
-        node_modifier_->setWarning(std::string("Net has ") + std::to_string(connections) + " connections but " + std::to_string(weights_.size()) + " weights");
-        return;
-    }
+//    if(connections != (int) weights_.size()) {
+//        node_modifier_->setWarning(std::string("Net has ") + std::to_string(connections) + " connections but " + std::to_string(weights_.size()) + " weights");
+//        return;
+//    }
 
-    mlp_input_size_  = layers_.front();
-    mlp_output_size_ = layers_.back();
 
-//    mlp_.reset(new mlp::MLP(layers_.size(),
-//                            layers_.data(),
-//                            weights_.size(),
-//                            weights_.data()));
 }
