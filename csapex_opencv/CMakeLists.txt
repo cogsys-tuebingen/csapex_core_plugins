@@ -8,7 +8,7 @@ find_package(csapex REQUIRED)
 list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 
 # note to ubuntu 14 users: if opencv is installed at /usr/local and is not found:    sudo ldconfig /usr/local/lib
-set(USED_OpenCV_COMPONENTS core imgproc ml calib3d)
+set(USED_OpenCV_COMPONENTS core imgproc ml calib3d video videoio highgui)
 find_package(OpenCV COMPONENTS nonfree ${USED_OpenCV_COMPONENTS} QUIET CONFIG)
 
 list(FIND OpenCV_LIB_COMPONENTS opencv_nonfree NONFREE_INDEX)
