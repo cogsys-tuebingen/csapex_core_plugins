@@ -30,6 +30,9 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64.h>
+#include <geometry_msgs/PoseArray.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <visualization_msgs/Marker.h>
 #include <QMimeData>
 #include <chrono>
 
@@ -120,6 +123,10 @@ void APEXRosInterface::init(CsApexCore &core)
     } else {
         connection_ = ROSHandler::instance().connected.connect(init);
     }
+
+    connection_types::MessageConversionHook<connection_types::GenericPointerMessage, geometry_msgs::PoseArray>::registerConversion();
+    connection_types::MessageConversionHook<connection_types::GenericPointerMessage, visualization_msgs::MarkerArray>::registerConversion();
+    connection_types::MessageConversionHook<connection_types::GenericPointerMessage, visualization_msgs::Marker>::registerConversion();
 
     RosMessageConversion::registerConversion<rosgraph_msgs::Clock, connection_types::TimestampMessage, ConvertTimeStamp>();
 
