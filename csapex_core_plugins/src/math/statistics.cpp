@@ -31,6 +31,9 @@ public:
                                 [this](param::Parameter*) {
             reset();
         });
+
+        parameters.addParameter(param::ParameterFactory::declareOutputText("mean"));
+        parameters.addParameter(param::ParameterFactory::declareOutputText("std dev"));
     }
 
     void process()
@@ -53,6 +56,8 @@ public:
         S = ((n-1)*S + (x-m)*(x-prev_mean))/((double)n);
 
         double std = sqrt(S);
+        setParameter("mean", "mean : " + std::to_string(m));
+        setParameter("std dev", "std dev: " + std::to_string(S));
 
         msg::publish(out_mean_, m);
         msg::publish(out_std_dev_, std);
