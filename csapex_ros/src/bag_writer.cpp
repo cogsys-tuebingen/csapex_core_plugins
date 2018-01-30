@@ -11,6 +11,7 @@
 #include <csapex/msg/message.h>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex/model/node_handle.h>
+#include <csapex/msg/marker_message.h>
 
 /// SYSTEM
 #include <rosbag/bag.h>
@@ -35,13 +36,13 @@ public:
         setupVariadic(node_modifier);
     }
 
-    void setupVariadicParameters(Parameterizable &parameters)
+    void setupVariadicParameters(Parameterizable &parameters) override
     {
         VariadicInputs::setupVariadicParameters(parameters);
         VariadicSlots::setupVariadicParameters(parameters);
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         setupVariadicParameters(parameters);
 
@@ -64,7 +65,12 @@ public:
         });
     }
 
-    void process()
+    bool canProcess() const override
+    {
+        return !node_modifier_->getMessageInputs().empty();
+    }
+
+    void process() override
     {
         if(!is_open_) {
             node_handle_->setWarning("bag file is closed, cannot write");
@@ -172,7 +178,10 @@ public:
     {
         auto cb = [this](Slot* slot, const TokenPtr& token) {
             auto message = std::dynamic_pointer_cast<connection_types::Message const>(token->getTokenData());
-            writeMessage(message, slot->getLabel());
+            auto marker = std::dynamic_pointer_cast<connection_types::MarkerMessage const>(token->getTokenData());
+            if(marker == nullptr) {
+                writeMessage(message, slot->getLabel());
+            }
         };
 
         return VariadicSlots::createVariadicSlot(connection_types::makeEmpty<connection_types::AnyMessage>(),

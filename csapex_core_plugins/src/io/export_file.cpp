@@ -165,7 +165,7 @@ void ExportFile::exportSingle(const TokenData::ConstPtr& msg)
 
     QDir dir(path_.c_str());
     if(!dir.exists()) {
-        QDir().mkdir(path_.c_str());
+        QDir().mkpath(path_.c_str());
     }
 
     if(readParameter<bool>("yaml")) {
