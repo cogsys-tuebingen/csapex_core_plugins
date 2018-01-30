@@ -106,6 +106,7 @@ void JANNLabMLP::process()
             }
 
             *it_out = *it_in;
+            it_out->regression_result.clear();
             std::vector<double> mlp_input;
             convertNumeric(it_out->value, mlp_input);
 
