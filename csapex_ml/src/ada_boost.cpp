@@ -9,7 +9,7 @@
 #include <csapex/msg/generic_vector_message.hpp>
 
 /// SYSTEM
-#include <opencv2/ml.hpp>
+#include <opencv2/ml/ml.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::AdaBoost, csapex::Node)
 
