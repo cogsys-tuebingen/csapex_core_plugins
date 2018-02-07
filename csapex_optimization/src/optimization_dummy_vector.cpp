@@ -31,6 +31,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
+        params.addParameter(param::ParameterFactory::declareOutputText("function"));
     }
 
     void process() override
@@ -42,12 +43,19 @@ public:
         double i = 1;
         double res = 0;
 
+        std::stringstream sstream;
+        sstream << "f(x) = ";
         for(auto p : *params){
             res += (x-i + p) * (x-i + p);
+            if(i != 1){
+                sstream << " +" << std::endl;
+            }
+            sstream << "pow(" << x - i << " + " << "p_" << i << ",2)  ";
             grad->push_back( 2.0 * (x-i + p) );
             ++i;
         }
 
+        setParameter("function",sstream.str());
         msg::publish(out_, res);
         msg::publish<GenericVectorMessage, double>(out_grad_, grad);
     }
