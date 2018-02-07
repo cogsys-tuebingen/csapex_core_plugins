@@ -137,10 +137,16 @@ void VectorPlot::process()
             apex_assert(data_t_raw_.size() == data_v_.front().size());
         }
         else{
+            if(data_v_.empty()){
+                return;
+            }
             has_time_in_ = false;
-            data_t_.resize(data_v_.front().size());
-            for(std::size_t i = 0; i < data_t_.size();++i){
-                data_t_[i] = i;
+            std::size_t n_elments = data_v_.front().size();
+            data_t_.resize(n_elments);
+            std::size_t i = 0;
+            for(auto& v : data_t_){
+                v = i;
+                ++i;
             }
         }
     }
