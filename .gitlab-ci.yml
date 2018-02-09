@@ -38,7 +38,7 @@ stages:
 
 indigo:
   stage: build
-  image: ros:indigo
+  image: ros:indigo-perception
   script:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - ls -R
@@ -47,7 +47,7 @@ indigo:
 
 jade:
   stage: build
-  image: ros:jade
+  image: ros:jade-perception
   script:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - ls -R
@@ -56,7 +56,16 @@ jade:
 
 kinetic:
   stage: build
-  image: ros:kinetic
+  image: ros:kinetic-perception
+  script:
+    - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
+    - ls -R
+    - rosdep install -y -r -i --from-paths src
+    - catkin_make
+
+lunar:
+  stage: build
+  image: ros:lunar-perception
   script:
     - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
     - ls -R

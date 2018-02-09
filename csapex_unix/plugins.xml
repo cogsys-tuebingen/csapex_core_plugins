@@ -5,4 +5,7 @@
 <class type="csapex::BashExec" base_class_type="csapex::Node">
   <description>Executes a command in /bin/bash</description>
 </class>
- </library>
+<class type="csapex::DirectExec" base_class_type="csapex::Node">
+  <description>Directly executes a command.</description>
+</class>
+</library>

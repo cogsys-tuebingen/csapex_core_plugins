@@ -8,19 +8,15 @@ find_package(csapex REQUIRED)
 list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 
 # note to ubuntu 14 users: if opencv is installed at /usr/local and is not found:    sudo ldconfig /usr/local/lib
-set(USED_OpenCV_COMPONENTS core imgproc ml calib3d video videoio highgui)
-find_package(OpenCV COMPONENTS nonfree ${USED_OpenCV_COMPONENTS} QUIET CONFIG)
-
-list(FIND OpenCV_LIB_COMPONENTS opencv_nonfree NONFREE_INDEX)
-set(NONFREE_FOUND NOT ${NONFREE_INDEX} EQUAL -1)
-
-if(${OpenCV_FOUND} AND ${NONFREE_FOUND})
+find_package(OpenCV COMPONENTS nonfree QUIET CONFIG)
+if(${OpenCV_FOUND})
     add_definitions("-DCV_NON_FREE=1")
 else()
     add_definitions("-DCV_NON_FREE=0")
     message("OpenCV nonfree was not found, SIFT and SURF will not be available. If you need them, compile OpenCV from source and remove CMakeCache.txt!")
-    find_package(OpenCV REQUIRED COMPONENTS ${USED_OpenCV_COMPONENTS} CONFIG)
 endif()
+
+find_package(OpenCV REQUIRED CONFIG)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 

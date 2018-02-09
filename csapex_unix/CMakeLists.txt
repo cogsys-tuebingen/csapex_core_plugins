@@ -37,6 +37,7 @@ include_directories(
 add_library(${PROJECT_NAME}_node
     src/subprocess_call.cpp
     src/bash_exec.cpp
+    src/direct_exec.cpp
 )
 
 ## Specify libraries to link a library or executable target against
