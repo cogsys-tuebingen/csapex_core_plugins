@@ -2,78 +2,79 @@ cmake_minimum_required(VERSION 2.8.3)
 project(csapex_tutorial)
 
 find_package(catkin REQUIRED COMPONENTS
-  csapex_opencv
-  csapex_ros
-  message_generation
+    csapex_opencv
+    csapex_ros
+    message_generation
 )
 
 find_package(csapex REQUIRED)
 
+# Generate ROS messages
 add_message_files(
-  FILES
+    FILES
     TutorialMessage.msg
 )
 
-generate_messages(
-)
+generate_messages()
 
+# Declare ROS package
 catkin_package(
-   INCLUDE_DIRS include
-   LIBRARIES csapex_tutorial
-   CATKIN_DEPENDS message_runtime
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS message_runtime
 )
 
-
+# Define the includes
 include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
+    include
+    ${catkin_INCLUDE_DIRS}
 )
 
 
+# A core library that contains an apex wrapper for the ROS Message
+add_library(${PROJECT_NAME}
+    src/tutorial_message.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+    ${csapex_LIBRARIES}
+    ${catkin_LIBRARIES}
+)
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# A library to contain csapex::Node plugins
+add_library(${PROJECT_NAME}_node
+    src/user_switch.cpp
+)
+target_link_libraries(${PROJECT_NAME}_node
+    ${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+)
+
+# A library to contain csapex::CorePlugin plugins
+add_library(${PROJECT_NAME}_core
+    src/tutorial_core_plugin.cpp
+)
+target_link_libraries(${PROJECT_NAME}_core
+    ${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+)
+
+# Install the generated libraries and the plugins.xml file
+install(TARGETS ${PROJECT_NAME}
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS ${PROJECT_NAME}_core
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+install(TARGETS ${PROJECT_NAME}_node
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
 
 install(FILES plugins.xml
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 
 
-add_library(csapex_tutorial_node
-  src/user_switch.cpp
-)
-target_link_libraries(csapex_tutorial_node
-  ${catkin_LIBRARIES}
-)
-
-install(TARGETS csapex_tutorial_node
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-
-
-add_library(csapex_tutorial_core
-  src/tutorial_core_plugin.cpp
-)
-target_link_libraries(csapex_tutorial_core
-  ${catkin_LIBRARIES}
-)
-
-install(TARGETS csapex_tutorial_core
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
-
-
-
-
-add_library(csapex_tutorial
-  src/tutorial_message.cpp
-)
-target_link_libraries(csapex_tutorial
-  ${csapex_LIBRARIES}
-  ${catkin_LIBRARIES}
-)
-
-install(TARGETS csapex_tutorial
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
