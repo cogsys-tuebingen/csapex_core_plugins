@@ -4,6 +4,7 @@ project(csapex_core_plugins)
 include (GenerateExportHeader)
 
 find_package(csapex REQUIRED)
+find_package(csapex_testing REQUIRED)
 
 list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 
@@ -61,8 +62,6 @@ target_link_libraries(csapex_core_lib
 
 add_library(${PROJECT_NAME}_core SHARED
     src/core/register_core_plugins.cpp
-
-    src/core/file_drag_io.cpp
 )
 
 
@@ -135,7 +134,7 @@ target_link_libraries(${PROJECT_NAME}_node csapex_core_lib
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
     ${Boost_LIBRARIES}
-    Qt5::Core Qt5::Gui Qt5::Widgets
+    Qt5::Core
 )
 
 generate_export_header(${PROJECT_NAME}_node)
@@ -179,6 +178,8 @@ target_link_libraries(${PROJECT_NAME}_qt
 add_library(${PROJECT_NAME}_direct_qt SHARED
     src/tools/create_map_message_adapter.cpp
     src/display/output_display_adapter.cpp
+
+    src/core/file_drag_io.cpp
 )
 
 
@@ -191,6 +192,11 @@ target_link_libraries(${PROJECT_NAME}_direct_qt
     Qt5::Core Qt5::Gui Qt5::Widgets
 )
 
+#
+# TESTS
+#
+
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/tests)
 
 #
 # INSTALL

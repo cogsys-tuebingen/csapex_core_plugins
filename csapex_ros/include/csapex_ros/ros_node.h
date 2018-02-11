@@ -18,15 +18,16 @@ class RosNode : public Node
 protected:
     RosNode();
 
-    virtual bool canProcess() const override;
-    virtual void process() override;
-    virtual void setup(NodeModifier& node_modifier) override;
+    bool canProcess() const override;
+    void process() override;
+    void setup(NodeModifier& node_modifier) override;
 
     virtual void setupROS() = 0;
     virtual void processROS() = 0;
 
-    virtual void getProperties(std::vector<std::string>& properties) const override;
+    void getProperties(std::vector<std::string>& properties) const override;
 
+    bool canRunInSeparateProcess() const override;
 
     ROSHandler& getRosHandler() const;
 

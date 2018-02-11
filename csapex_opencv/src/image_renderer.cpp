@@ -30,37 +30,37 @@ void clean_mat(void* mat)
 
 }
 
-QImage ImageRenderer::doRender(const connection_types::CvMatMessage &msg)
+std::unique_ptr<QImage> ImageRenderer::doRender(const connection_types::CvMatMessage &msg)
 {
     Encoding encoding = msg.getEncoding();
 
-    if(msg.value.empty()) {
-        return QImage();
+    QImage result;
+
+    if(!msg.value.empty()) {
+        if(encoding.matches(enc::rgb)) {
+            cv::Mat mat = msg.value;
+            result = QImage((uchar*) mat.data,
+                          mat.cols, mat.rows, mat.step,
+                          QImage::Format_RGB888,
+                          clean_mat, new mat_lifetime_extender(mat));
+
+        } else if(encoding.matches(enc::bgr) || encoding.matches(enc::mono)) {
+            result = QtCvImageConverter::Converter::mat2QImage(msg.value);
+
+        } else if(encoding.matches(enc::depth)) {
+            result = QtCvImageConverter::Converter::mat2QImage(msg.value);
+
+        } else if(msg.value.channels() == 1 || msg.value.channels() == 3) {
+            result = QtCvImageConverter::Converter::mat2QImage(msg.value);
+
+        } else {
+            result = QImage(100, 20, QImage::Format_ARGB32);
+            QPainter painter(&result);
+            painter.fillRect(result.rect(), Qt::SolidPattern);
+            painter.setPen(QPen(Qt::white));
+            painter.drawText(result.rect(), "Cannot render image");
+        }
     }
 
-    if(encoding.matches(enc::rgb)) {
-        cv::Mat mat = msg.value;
-        return QImage((uchar*) mat.data,
-                      mat.cols, mat.rows, mat.step,
-                      QImage::Format_RGB888,
-                      clean_mat, new mat_lifetime_extender(mat));
-
-    } else if(encoding.matches(enc::bgr) || encoding.matches(enc::mono)) {
-        return QtCvImageConverter::Converter<QImage>::mat2QImage(msg.value);
-
-    } else if(encoding.matches(enc::depth)) {
-        return QtCvImageConverter::Converter<QImage>::mat2QImage(msg.value);
-
-    } else if(msg.value.channels() == 1 || msg.value.channels() == 3) {
-        return QtCvImageConverter::Converter<QImage>::mat2QImage(msg.value);
-
-    } else {
-        auto i = QImage(100, 20, QImage::Format_ARGB32);
-        QPainter painter(&i);
-        painter.fillRect(i.rect(), Qt::SolidPattern);
-        painter.setPen(QPen(Qt::white));
-        painter.drawText(i.rect(), "Cannot render image");
-        return i;
-    }
-
+    return std::unique_ptr<QImage>(new QImage(std::move(result)));
 }

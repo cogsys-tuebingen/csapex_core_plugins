@@ -104,6 +104,7 @@ void FileImporter::setupParameters(Parameterizable& parameters)
 
 void FileImporter::createDummyOutputs(NodeModifier& node_modifier)
 {
+//    problem: this is now called too late and connections in graphio cannot be restored on load...
     for(int i = 0, n = readParameter<int>("output_count"); i < n; ++i) {
         outputs_.push_back(node_modifier.addOutput<connection_types::AnyMessage>("Unknown"));
     }
@@ -555,7 +556,22 @@ void FileImporter::changeDirIndex()
 
 void FileImporter::requestImport()
 {
-    import_requested_ = true;
+    std::string directory = readParameter<std::string>("directory");
+    std::string path = readParameter<std::string>("path");
+
+    if(directory.empty() && path.empty()) {
+        // do nothing...
+        return;
+    }
+
+    if(readParameter<int>("output_count") == 0) {
+        // import already to make sure the amount of outputs is correct
+        import_requested_  = false;
+        import();
+
+    } else {
+        import_requested_ = true;
+    }
     yield();
 }
 
@@ -567,6 +583,7 @@ void FileImporter::import()
     if(directory_import_) {
         removeTemporaryParameters();
         doImportDir(QString::fromStdString(readParameter<std::string>("directory")));
+        createProviderForNextFile();
     } else {
         createMessageProvider(QString::fromStdString(readParameter<std::string>("path")));
     }

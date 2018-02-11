@@ -100,7 +100,7 @@ void LabelROIs::display()
     if(image_.empty())
         return;
 
-    QImage qimg = QtCvImageConverter::Converter<QImage>::mat2QImage(image_);
+    QImage qimg = QtCvImageConverter::Converter::mat2QImage(image_);
 
     display_request(qimg);
 }

@@ -260,7 +260,7 @@ void VectorPlot::renderAndSend()
 
 
     CvMatMessage::Ptr out_msg = std::make_shared<CvMatMessage>(enc::bgr, "plot", 0);
-    out_msg->value = QtCvImageConverter::Converter<QImage>::QImage2Mat(image);
+    out_msg->value = QtCvImageConverter::Converter::QImage2Mat(image);
 
     msg::publish(out_, out_msg);
 }

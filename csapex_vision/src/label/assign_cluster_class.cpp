@@ -108,7 +108,7 @@ void AssignClusterClass::display()
 
     image_.setTo(border_color, mask_);
 
-    QImage qimg = QtCvImageConverter::Converter<QImage>::mat2QImage(image_);
+    QImage qimg = QtCvImageConverter::Converter::mat2QImage(image_);
 
     display_request(qimg, clusters_);
 }

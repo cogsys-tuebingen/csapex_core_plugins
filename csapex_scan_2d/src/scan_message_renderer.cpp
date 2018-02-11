@@ -11,11 +11,11 @@ CSAPEX_REGISTER_CLASS(csapex::LabeledScanMessageRenderer, csapex::MessageRendere
 using namespace csapex;
 
 
-QImage ScanMessageRenderer::doRender(const connection_types::ScanMessage &msg)
+std::unique_ptr<QImage> ScanMessageRenderer::doRender(const connection_types::ScanMessage &msg)
 {
     cv::Mat mat;
     renderer.render(msg.value, mat);
-    return QtCvImageConverter::Converter<QImage>::mat2QImage(mat);
+    return std::unique_ptr<QImage>(new QImage(std::move(QtCvImageConverter::Converter::mat2QImage(mat))));
 }
 
 std::vector<csapex::param::ParameterPtr> ScanMessageRenderer::getParameters() const
@@ -23,11 +23,11 @@ std::vector<csapex::param::ParameterPtr> ScanMessageRenderer::getParameters() co
     return renderer.getParameters();
 }
 
-QImage LabeledScanMessageRenderer::doRender(const connection_types::LabeledScanMessage &msg)
+std::unique_ptr<QImage> LabeledScanMessageRenderer::doRender(const connection_types::LabeledScanMessage &msg)
 {
     cv::Mat mat;
     renderer.render(msg.value, mat);
-    return QtCvImageConverter::Converter<QImage>::mat2QImage(mat);
+    return std::unique_ptr<QImage>(new QImage(std::move(QtCvImageConverter::Converter::mat2QImage(mat))));
 }
 
 std::vector<csapex::param::ParameterPtr> LabeledScanMessageRenderer::getParameters() const
