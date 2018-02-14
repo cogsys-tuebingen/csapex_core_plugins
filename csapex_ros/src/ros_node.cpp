@@ -53,3 +53,8 @@ void RosNode::process()
     processROS();
 }
 
+bool RosNode::canRunInSeparateProcess() const
+{
+    // ROS nodes cannot run in subprocess, because then ros::init would have to be called for each node!
+    return false;
+}

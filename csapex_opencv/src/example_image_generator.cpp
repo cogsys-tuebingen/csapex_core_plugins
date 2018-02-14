@@ -34,8 +34,8 @@ public:
     {
         output_ = node_modifier.addOutput<connection_types::CvMatMessage>("Image");
 
-        lena_ = QtCvImageConverter::Converter<QImage>::QImage2Mat(QImage(":/lena.png"));
-        cat_ = QtCvImageConverter::Converter<QImage>::QImage2Mat(QImage(":/cat.jpg"));
+        lena_ = QtCvImageConverter::Converter::QImage2Mat(QImage(":/lena.png"));
+        cat_ = QtCvImageConverter::Converter::QImage2Mat(QImage(":/cat.jpg"));
     }
 
     virtual void setupParameters(Parameterizable &parameters) override

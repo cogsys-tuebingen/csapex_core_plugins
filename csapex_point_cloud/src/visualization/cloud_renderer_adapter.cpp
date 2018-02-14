@@ -279,7 +279,7 @@ void CloudRendererAdapter::paintGLImpl(bool request)
     //    view_->scene()->update();
 
     if(n->isOutputConnected() && request){
-        cv::Mat mat = QtCvImageConverter::Converter<QImage>::QImage2Mat(img);
+        cv::Mat mat = QtCvImageConverter::Converter::QImage2Mat(img);
         n->publishImage(mat);
     }
 }

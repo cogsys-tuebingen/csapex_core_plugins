@@ -14,7 +14,7 @@ namespace csapex
 class ScanMessageRenderer : public MessageRendererImplementation<connection_types::ScanMessage>
 {
 public:
-    virtual QImage doRender(const connection_types::ScanMessage& msg);
+    virtual std::unique_ptr<QImage> doRender(const connection_types::ScanMessage& msg);
     virtual std::vector<csapex::param::ParameterPtr> getParameters() const;
 
 private:
@@ -24,7 +24,7 @@ private:
 class LabeledScanMessageRenderer : public MessageRendererImplementation<connection_types::LabeledScanMessage>
 {
 public:
-    virtual QImage doRender(const connection_types::LabeledScanMessage& msg);
+    virtual std::unique_ptr<QImage> doRender(const connection_types::LabeledScanMessage& msg);
     virtual std::vector<csapex::param::ParameterPtr> getParameters() const;
 
 private:

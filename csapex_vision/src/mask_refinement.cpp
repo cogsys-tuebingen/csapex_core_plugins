@@ -57,7 +57,7 @@ void MaskRefinement::setMask(const QImage &mask)
 {
     node_modifier_->setNoError();
 
-    QtCvImageConverter::Converter<QImage>::QImage2Mat(mask).copyTo(mask_);
+    QtCvImageConverter::Converter::QImage2Mat(mask).copyTo(mask_);
     cv::cvtColor(mask_, result_->value, CV_BGR2GRAY);
 
     done();
@@ -71,13 +71,13 @@ void MaskRefinement::beginProcess(csapex::NodeModifier& node_modifier, Parameter
 
     result_ = std::make_shared<connection_types::CvMatMessage>(in->getEncoding(), in->frame_id, in->stamp_micro_seconds);
 
-    QImage qmask = QtCvImageConverter::Converter<QImage>::mat2QImage(mask_);
+    QImage qmask = QtCvImageConverter::Converter::mat2QImage(mask_);
 
     QImage qmasked;
     has_img_ = msg::isConnected(in_img_);
     if(has_img_) {
         img_ = msg::getMessage<connection_types::CvMatMessage>(in_img_)->value;
-        qmasked = QtCvImageConverter::Converter<QImage>::mat2QImage(img_);
+        qmasked = QtCvImageConverter::Converter::mat2QImage(img_);
     }
 
     input(qmask, qmasked);

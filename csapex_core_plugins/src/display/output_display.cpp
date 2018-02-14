@@ -64,14 +64,14 @@ void OutputDisplay::process()
         setTemporaryParameters(renderer_->getParameters());
     }
 
-    QImage img = renderer->render(msg);
+    std::unique_ptr<QImage> img = renderer->render(msg);
 
-    if(!img.isNull()) {
+    if(!img->isNull()) {
         if(has_adapter) {
             QBuffer buffer;
             QImageWriter writer(&buffer, "JPG");
             writer.setQuality(jpg_quality_);
-            writer.write(img);
+            writer.write(*img);
 
             std::shared_ptr<RawMessage> msg = std::make_shared<RawMessage>(buffer.data().data(), buffer.size(),
                                                                            getUUID().getAbsoluteUUID());
@@ -80,7 +80,7 @@ void OutputDisplay::process()
         }
 
         if(has_direct_adapter){
-            display_request(img);
+            display_request(*img);
         }
     }
 }

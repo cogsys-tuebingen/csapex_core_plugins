@@ -96,7 +96,7 @@ void ImageRoi::beginProcess()
         last_mat_size_.width  = in->value.cols;
     }
 
-    QImage img = QtCvImageConverter::Converter<QImage>::mat2QImage(in->value);
+    QImage img = QtCvImageConverter::Converter::mat2QImage(in->value);
 
     display_request(img);
 

@@ -1,5 +1,5 @@
 /// HEADER
-#include "register_core_plugins.h"
+#include <csapex_core_plugins/register_core_plugins.h>
 
 /// COMPONENT
 #include "../io/file_importer.h"
