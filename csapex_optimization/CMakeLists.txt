@@ -44,7 +44,7 @@ add_library(${PROJECT_NAME}_qt
 )
 set_target_properties(${PROJECT_NAME}_qt PROPERTIES AUTOMOC TRUE)
 target_link_libraries(${PROJECT_NAME}_qt
-    yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES}
+    yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${QT_LIBRARIES}
 )
 
 
@@ -66,7 +66,8 @@ add_library(${PROJECT_NAME}_plugin_qt
 set_target_properties(${PROJECT_NAME}_plugin_qt PROPERTIES AUTOMOC TRUE)
 
 target_link_libraries(${PROJECT_NAME}_plugin_qt
-    yaml-cpp ${PROJECT_NAME}_qt ${PROJECT_NAME} ${catkin_LIBRARIES})
+    yaml-cpp ${PROJECT_NAME}_qt ${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_LIBRARIES}
+)
 
 #
 # INSTALL
