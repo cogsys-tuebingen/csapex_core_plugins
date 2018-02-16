@@ -140,7 +140,9 @@ MLP::MLP(const MLPConfig &config) :
     input_size_(config.input_size),
     output_size_(layer_sizes_.back()),
     weights_num_(config.weights_num),
-    weights_(config.weights)
+    weights_(config.weights),
+    out_type_(config.output_type),
+    act_func_(config.function)
 {
     initialize();
 
@@ -177,6 +179,15 @@ void MLP::initialize()
 }
 
 
+void MLP::setOutputType(const OutputType &type)
+{
+    out_type_ = type;
+}
+
+void MLP::setActivationFunction(const ActivationFunction &func_type)
+{
+    act_func_ = func_type;
+}
 
 void MLP::compute(const double* input, double* output) {
     //
@@ -203,9 +214,10 @@ void MLP::compute(const double* input, double* output) {
     size_t prev_size = input_size_;
     double* prev_ptr  = buffer_.data();
     //
-    // for all hidden layer.
+    // for all hidden layer + output layer.
     //
     const size_t output_layer = layers_num_ - 1;
+    double softmax_sum = 0;
     //
     for (size_t h = 0;  h < (layers_num_); ++h) {
         //
@@ -237,9 +249,12 @@ void MLP::compute(const double* input, double* output) {
             //
             // activate
             //
-            //*ptr = tanh(*ptr);
             if (h < output_layer) {
-                *ptr = relu(*ptr);
+                *ptr = activationFunction(*ptr);
+            } else if (h == output_layer && out_type_ == OutputType::SOFTMAX){ // softmax layer
+                const double x = activationFunction(*ptr);
+                softmax_sum += x;
+                *ptr = x;
             }
             //
             ptr++;
@@ -248,6 +263,21 @@ void MLP::compute(const double* input, double* output) {
         prev_size = curr_size;
         prev_ptr = curr_ptr;
     }
+
+    //
+    // softmax activation and copy output.
+    //
+    if (out_type_ == OutputType::SOFTMAX){
+    const double inv_softmax_sum = 1.0 / softmax_sum;
+        ptr = curr_ptr;
+        for (size_t j = 0; j < curr_size; ++j) {
+            //
+            *ptr = *ptr * inv_softmax_sum;
+            ptr++;
+        }
+    }
+
+
     //
     // copy output.
     //
@@ -270,7 +300,25 @@ void MLP::compute(const double* input, double* output) {
 }
 
 
-
+double MLP::activationFunction(const double &arg)
+{
+    double res = 0;
+    switch (act_func_) {
+    case ActivationFunction::EXP:
+        res = exp(arg);
+        break;
+    case ActivationFunction::TANH:
+        res = tanh(arg);
+        break;
+    case ActivationFunction::SIGMOID:
+        res = sigmoid(arg);
+        break;
+    case ActivationFunction::RELU:
+        res = relu(arg);
+        break;
+    }
+    return res;
+}
 
 
 }

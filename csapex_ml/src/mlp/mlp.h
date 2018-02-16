@@ -59,12 +59,15 @@ public:
     MLP(const size_t input_size_, const size_t layers_num_, const std::vector<size_t>& layer_sizes_,
         const std::vector<bool>& layer_bias_, const size_t weights_num_, const std::vector<double>& weights_);
 
+    void setOutputType(const OutputType& type);
+    void setActivationFunction(const ActivationFunction& func_type);
+
 	void compute(const double* input, double* output);
 
 
 private:
     void initialize();
-
+    double activationFunction(const double& arg);
 private:
     const size_t  layers_num_;
     const std::vector<size_t> layer_sizes_;
@@ -78,6 +81,8 @@ private:
 
     std::vector<double> buffer_;
     size_t  buffer_size_;
+    OutputType out_type_;
+    ActivationFunction act_func_;
 
 
 };
