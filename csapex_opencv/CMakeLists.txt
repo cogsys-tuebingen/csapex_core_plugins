@@ -83,6 +83,7 @@ target_link_libraries(${PROJECT_NAME}_core
 
 
 add_library(${PROJECT_NAME}_node SHARED
+    src/image_information.cpp
     src/example_image_generator.cpp
     src/blob_detector.cpp
 )

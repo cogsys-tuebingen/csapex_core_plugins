@@ -15,6 +15,9 @@
 
 
 <library path="libcsapex_opencv_node">
+<class type="csapex::ImageInformation" base_class_type="csapex::Node">
+  <description>Display information about an image</description>
+</class>
 <class type="csapex::BlobDetector" base_class_type="csapex::Node">
   <description>Detects blobs in an image and publishes them as ROIs</description>
   <tags>Vision, ROI</tags>
