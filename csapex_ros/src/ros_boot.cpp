@@ -60,6 +60,13 @@ void get_plugin_xml_paths(ClassLoader<PluginType>* loader, std::vector<std::stri
     std::vector<std::string> files = loader->getPluginXmlPaths();
     paths.insert(paths.end(), files.begin(), files.end());
 }
+
+void loadAttributes(csapex::PluginLocator* locator, const std::string& attr_name)
+{
+    std::vector<std::string> attrs;
+    ros::package::getPlugins("csapex", attr_name, attrs);
+    locator->setPluginPaths(attr_name, attrs);
+}
 }
 
 void RosBoot::boot(csapex::PluginLocator* locator)
@@ -83,11 +90,7 @@ void RosBoot::boot(csapex::PluginLocator* locator)
                                                 &get_plugin_xml_paths<DragIOHandler>,
                                                 &loader_drag_io_, std::placeholders::_1));
 
-    std::vector<std::string> snippets;
-    ros::package::getPlugins("csapex", "snippets", snippets);
-    locator->setPluginPaths("snippets", snippets);
-
-    std::vector<std::string> tutorials;
-    ros::package::getPlugins("csapex", "tutorials", tutorials);
-    locator->setPluginPaths("tutorials", tutorials);
+    loadAttributes(locator, "snippets");
+    loadAttributes(locator, "tutorials");
+    loadAttributes(locator, "regression_tests");
 }
