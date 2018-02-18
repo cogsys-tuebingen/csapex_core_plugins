@@ -5,6 +5,15 @@
 </library>
 
 <library path="libcsapex_boolean_plugin_node">
+<class type="csapex::CompareInteger" base_class_type="csapex::Node">
+  <description>Compares two integers and outputs a Boolean</description>
+</class>
+<class type="csapex::BooleanTrigger" base_class_type="csapex::Node">
+  <description>Emits an event when a boolean condition is true</description>
+</class>
+<class type="csapex::BinaryBoolean" base_class_type="csapex::Node">
+  <description>Binary operations with booleans</description>
+</class>
 <class type="csapex::Threshold" base_class_type="csapex::Node">
   <description>Checks if a number is larger than a threshold, returns the predicate.</description>
 </class>

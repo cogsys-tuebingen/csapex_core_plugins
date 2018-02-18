@@ -20,6 +20,9 @@ target_link_libraries(${PROJECT_NAME}_plugin_core
 
 
 add_library(${PROJECT_NAME}_plugin_node SHARED
+    src/compare_integer.cpp
+    src/boolean_trigger.cpp
+    src/binary_boolean.cpp
     src/threshold.cpp
 
     src/nand.cpp
