@@ -98,7 +98,7 @@ void APEXRosInterface::init(CsApexCore &core)
 {
     core_ = &core;
 
-    if(core_->getSettings().get<bool>("debug")) {
+    if(core_->getSettings().get<bool>("debug", false)) {
         console_bridge::setLogLevel(console_bridge::CONSOLE_BRIDGE_LOG_DEBUG);
     }
 
