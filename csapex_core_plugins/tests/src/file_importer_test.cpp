@@ -161,7 +161,7 @@ TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
         ASSERT_NE(nullptr, input2);
         main_graph_facade.connect(importer, 0, sink2, 0);
 
-        GraphIO io(main_graph_facade, &factory);
+        GraphIO io(main_graph_facade, &factory, true);
         ASSERT_NO_THROW(io.saveGraphTo(store));
     }
 
@@ -170,7 +170,7 @@ TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
         auto graph = graph_node->getLocalGraph();
         GraphFacadeImplementation main_graph_facade(executor, graph, graph_node);
 
-        GraphIO io(main_graph_facade, &factory);
+        GraphIO io(main_graph_facade, &factory, true);
         ASSERT_NO_THROW(io.loadGraphFrom(store));
 
         NodeFacadeImplementationPtr node = std::dynamic_pointer_cast<NodeFacadeImplementation>(main_graph_facade.findNodeFacade(importer_id));
