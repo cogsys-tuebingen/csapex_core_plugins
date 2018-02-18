@@ -8,6 +8,9 @@
 </library>
 
 <library path="libcsapex_core_plugins_node">
+<class type="csapex::StringToInt" base_class_type="csapex::Node">
+  <description>Converts a string into an integer</description>
+</class>
 <class type="csapex::TiggerIfIntEqual" base_class_type="csapex::Node">
   <description>Triggers signal if input is equal to a parameter.</description>
 </class>
