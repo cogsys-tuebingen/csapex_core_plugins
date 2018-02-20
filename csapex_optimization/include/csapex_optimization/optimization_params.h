@@ -25,7 +25,8 @@ public:
     inline bool useStart() const {return set_start_;}
     // setter
     inline void setStartParams(const std::vector<double>& vals){start_values_ = vals;}
-    inline void setDimension(std::size_t dim) { problem_dim_ = dim;}
+    void setDimension(std::size_t dim);
+    void removeProbelmDimParam();
 protected:
     void boundParams();
     void startParams();

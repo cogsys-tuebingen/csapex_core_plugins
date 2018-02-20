@@ -73,6 +73,20 @@ void OptimizationParams::setupParameters(csapex::Parameterizable& params)
     });
 }
 
+void OptimizationParams::setDimension(std::size_t dim)
+{
+    if(dim < problem_dim_){
+        removeBounds(dim);
+        removeStart(dim);
+    }
+    problem_dim_ = dim;
+    lower_bounds_.resize(problem_dim_);
+    upper_bounds_.resize(problem_dim_);
+    start_values_.resize(problem_dim_);
+    boundParams();
+    startParams();
+}
+
 void OptimizationParams::getBounds(std::vector<double>& lower, std::vector<double>& upper) const
 {
     if(set_bounds_){
@@ -255,3 +269,12 @@ void OptimizationParams::checkBounds()
         ++it_l;
     }
 }
+
+void OptimizationParams::removeProbelmDimParam()
+{
+
+    auto param = param::ParameterFactory::declareRange("problem_dimension",1,100,1,1);
+    params_->removeTemporaryParameter(param);
+}
+
+
