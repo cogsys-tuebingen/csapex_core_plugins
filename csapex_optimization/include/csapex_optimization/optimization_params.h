@@ -25,6 +25,7 @@ public:
     inline bool useStart() const {return set_start_;}
     // setter
     inline void setStartParams(const std::vector<double>& vals){start_values_ = vals;}
+    inline void set(csapex::Parameterizable& params){params_ =  &params;}
     void setDimension(std::size_t dim);
     void removeProbelmDimParam();
 protected:
