@@ -7,6 +7,9 @@ using namespace csapex;
 
 OptimizationParams::OptimizationParams() :
     set_bounds_(true),
+    relative_bounds_(false),
+    one_bound_for_all_(false),
+    set_start_(false),
     problem_dim_(1)
 {
 
@@ -155,6 +158,7 @@ void  OptimizationParams::boundParams()
 
             //                }
             //            };
+            apex_assert(params_);
             params_->addTemporaryParameter(intervall);
             //            params_->addParameterCallback(intervall, cb);
         }
