@@ -186,6 +186,10 @@
   <icon>:/buffer.png</icon>
   <tags>General, Debug</tags>
 </class>
+<class type="csapex::UnixSignalEmitter" base_class_type="csapex::Node">
+  <description>[DEBUG] Raises a signal such as SIGINT or SIGKILL.</description>
+  <tags>General, Debug</tags>
+</class>
 <class type="csapex::HoldableBuffer" base_class_type="csapex::Node">
   <tags>General, Buffer</tags>
   <description>Buffer up to 50 message and hold state to publish one of the currently buffered.</description>

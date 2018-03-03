@@ -74,6 +74,7 @@ target_link_libraries(${PROJECT_NAME}_core csapex_core_lib
 
 
 add_library(${PROJECT_NAME}_node SHARED
+    src/tools/unix_signal_emitter.cpp
     src/tools/string_to_int.cpp
     src/tools/trigger_if_int_equal.cpp
     src/tools/accumulate_messages.cpp
