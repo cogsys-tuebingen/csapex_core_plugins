@@ -63,7 +63,7 @@ void Delay::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<connection_types::AnyMessage>("Delayed Input");
 
     delayed_forward_ = node_modifier.addEvent("delayed forwarded signal");
-    delayed_slot_ = node_modifier.addTypedSlot<connection_types::AnyMessage>("delayed slot", [this](const TokenPtr& token_orig) {
+    delayed_slot_ = node_modifier.addSlot<connection_types::AnyMessage>("delayed slot", [this](const TokenPtr& token_orig) {
         if(future.valid()) {
             future.wait();
         }

@@ -93,7 +93,7 @@ public:
 
     void setup(NodeModifier& modifier) override
     {
-        modifier.addTypedSlot<csapex::connection_types::AnyMessage>("set", [this](const TokenPtr& token)
+        modifier.addSlot<csapex::connection_types::AnyMessage>("set", [this](const TokenPtr& token)
         {
             if(!name_.empty()) {
                 auto message = std::dynamic_pointer_cast<connection_types::Message const>(token->getTokenData());

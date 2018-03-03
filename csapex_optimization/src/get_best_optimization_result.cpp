@@ -28,11 +28,11 @@ public:
     {
         out_best_ = modifier.addEvent<GenericVectorMessage, double>("best parameter");
 
-        in_ = modifier.addTypedSlot<GenericValueMessage<double>>("fitness", [this](const TokenPtr& data){
+        in_ = modifier.addSlot<GenericValueMessage<double>>("fitness", [this](const TokenPtr& data){
             fitnessCb(data);
         });
 
-        in_params_ = modifier.addTypedSlot<GenericVectorMessage, double>("parameter", [this](const TokenPtr& msg){
+        in_params_ = modifier.addSlot<GenericVectorMessage, double>("parameter", [this](const TokenPtr& msg){
             paramCb(msg);
         });
 

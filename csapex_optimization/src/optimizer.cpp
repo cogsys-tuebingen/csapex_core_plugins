@@ -64,7 +64,7 @@ void Optimizer::setupParameters(Parameterizable& parameters)
 
 void Optimizer::setup(NodeModifier& node_modifier)
 {
-    slot_fitness_  = node_modifier.addTypedSlot<GenericValueMessage<double>>("Fitness", [this](const TokenPtr& token) {
+    slot_fitness_  = node_modifier.addSlot<GenericValueMessage<double>>("Fitness", [this](const TokenPtr& token) {
         if(!optimization_running_) {
             return;
         }

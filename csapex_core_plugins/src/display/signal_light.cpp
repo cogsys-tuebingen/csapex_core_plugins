@@ -34,13 +34,13 @@ void SignalLight::setupParameters(Parameterizable &parameters)
 
 void SignalLight::setup(NodeModifier& node_modifier)
 {
-    slot_red_ = node_modifier.addTypedSlot<connection_types::AnyMessage>("Red", [this](const TokenConstPtr& token){
+    slot_red_ = node_modifier.addSlot<connection_types::AnyMessage>("Red", [this](const TokenConstPtr& token){
         setParameter("state", 2);
     });
-    slot_yellow_ = node_modifier.addTypedSlot<connection_types::AnyMessage>("Yellow", [this](const TokenConstPtr& token){
+    slot_yellow_ = node_modifier.addSlot<connection_types::AnyMessage>("Yellow", [this](const TokenConstPtr& token){
         setParameter("state", 1);
     });
-    slot_green_ = node_modifier.addTypedSlot<connection_types::AnyMessage>("Green", [this](const TokenConstPtr& token){
+    slot_green_ = node_modifier.addSlot<connection_types::AnyMessage>("Green", [this](const TokenConstPtr& token){
         setParameter("state", 0);
     });
 }
