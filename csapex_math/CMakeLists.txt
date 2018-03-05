@@ -18,6 +18,7 @@ set(CMAKE_AUTOMOC ON)
 qt5_add_resources(QT_RESOURCES res/csapex_math_resources.qrc)
 
 add_library(${PROJECT_NAME}_node SHARED
+    src/norm_of_generic_vector_message.cpp
     src/invert_values.cpp
     src/multiply_values.cpp
     src/generic_vector_message_get_extremum.cpp
