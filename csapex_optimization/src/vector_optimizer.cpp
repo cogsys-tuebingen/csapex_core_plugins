@@ -37,7 +37,7 @@ void VectorOptimizer::setup(csapex::NodeModifier& modifier)
     out_ = modifier.addOutput<GenericVectorMessage, double>("parameter");
     evaluate_ = modifier.addEvent("evaluate");
     solution_ = modifier.addEvent<GenericVectorMessage, double>("min parameters");
-    min_residual_ = modifier.addEvent<GenericValueMessage<double>>("min residual");
+    min_residual_ = modifier.addEvent<double>("min residual");
 }
 
 void VectorOptimizer::setupParameters(csapex::Parameterizable& params)

@@ -26,8 +26,8 @@ public:
     {
         in_a_ = modifier.addInput<std::string>("A");
         in_b_ = modifier.addInput<std::string>("B");
-        e_ = modifier.addEvent<GenericValueMessage<std::string>>("A=B");
-        ne_ = modifier.addEvent<GenericValueMessage<std::string>>("A!=B");
+        e_ = modifier.addEvent<std::string>("A=B");
+        ne_ = modifier.addEvent<std::string>("A!=B");
     }
 
     void setupParameters(csapex::Parameterizable& params) override

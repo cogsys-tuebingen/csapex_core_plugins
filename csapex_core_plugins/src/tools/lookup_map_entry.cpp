@@ -43,7 +43,7 @@ public:
             }
         });
 
-        event_access_error_ = modifier.addEvent<GenericValueMessage<std::string>>("Access Error");
+        event_access_error_ = modifier.addEvent<std::string>("Access Error");
     }
 
     void setupParameters(csapex::Parameterizable& params) override
