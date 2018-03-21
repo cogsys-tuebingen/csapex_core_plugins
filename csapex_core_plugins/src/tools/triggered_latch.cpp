@@ -25,7 +25,7 @@ public:
     }
     void setup(csapex::NodeModifier& modifier) override
     {
-        modifier.addTypedSlot<AnyMessage>("Message", [this](const TokenPtr& token) {
+        modifier.addSlot<AnyMessage>("Message", [this](const TokenPtr& token) {
             auto marker = std::dynamic_pointer_cast<MarkerMessage const>(token->getTokenData());
             if((marker != nullptr) ^ ignore_markers_) {
                 data_ = token->getTokenData();

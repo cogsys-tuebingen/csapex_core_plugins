@@ -37,13 +37,13 @@ public:
 
         out_value_ = modifier.addOutput<AnyMessage>("Entry");
 
-        modifier.addTypedSlot<MapMessage>("Map", [this](const TokenConstPtr& token) {
+        modifier.addSlot<MapMessage>("Map", [this](const TokenConstPtr& token) {
             if(auto map = std::dynamic_pointer_cast<MapMessage const>(token->getTokenData())) {
                 map_ = map;
             }
         });
 
-        event_access_error_ = modifier.addEvent<GenericValueMessage<std::string>>("Access Error");
+        event_access_error_ = modifier.addEvent<std::string>("Access Error");
     }
 
     void setupParameters(csapex::Parameterizable& params) override

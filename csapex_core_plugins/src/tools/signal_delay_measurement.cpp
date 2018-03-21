@@ -22,7 +22,7 @@ public:
     {
         start_ = std::chrono::system_clock::now();
 
-        time_out_ = modifier.addEvent<GenericValueMessage<double>>("time_delay_ms");
+        time_out_ = modifier.addEvent<double>("time_delay_ms");
 
         modifier.addSlot("start", [this]() {
             start_ = std::chrono::system_clock::now();

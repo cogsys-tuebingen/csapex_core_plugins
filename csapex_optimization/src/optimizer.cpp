@@ -64,7 +64,7 @@ void Optimizer::setupParameters(Parameterizable& parameters)
 
 void Optimizer::setup(NodeModifier& node_modifier)
 {
-    slot_fitness_  = node_modifier.addTypedSlot<GenericValueMessage<double>>("Fitness", [this](const TokenPtr& token) {
+    slot_fitness_  = node_modifier.addSlot<GenericValueMessage<double>>("Fitness", [this](const TokenPtr& token) {
         if(!optimization_running_) {
             return;
         }
@@ -92,7 +92,7 @@ void Optimizer::setup(NodeModifier& node_modifier)
     out_best_fitness_  = node_modifier.addOutput<double>("Best Fitness");
 
     trigger_start_evaluation_ = node_modifier.addEvent("Evaluate");
-    trigger_iteration_finished = node_modifier.addEvent<connection_types::GenericValueMessage<double>>("Iteration finished");
+    trigger_iteration_finished = node_modifier.addEvent<double>("Iteration finished");
 
     reset();
 }

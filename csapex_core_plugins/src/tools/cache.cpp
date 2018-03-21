@@ -26,7 +26,7 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier) override
     {
-        slot = node_modifier.addTypedSlot<connection_types::AnyMessage>("multidimensional message", [this](const TokenPtr& token) {
+        slot = node_modifier.addSlot<connection_types::AnyMessage>("multidimensional message", [this](const TokenPtr& token) {
             msgs.push_back(token->getTokenData());
             update();
         });

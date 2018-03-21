@@ -26,7 +26,7 @@ public:
 
     void setup(csapex::NodeModifier& modifier) override
     {
-        modifier.addTypedSlot<AnyMessage>("Message", [this](const TokenPtr& token) {
+        modifier.addSlot<AnyMessage>("Message", [this](const TokenPtr& token) {
             data_ = token->getTokenData();
             yield();
         });

@@ -22,22 +22,22 @@ VectorOptimizer::VectorOptimizer():
 
 void VectorOptimizer::setup(csapex::NodeModifier& modifier)
 {
-    in_ = modifier.addTypedSlot<GenericValueMessage<double>>("residual", [this](const TokenPtr& residual){
+    in_ = modifier.addSlot<GenericValueMessage<double>>("residual", [this](const TokenPtr& residual){
         residualCb(residual);
     });
 
-    in_grad_ = modifier.addTypedSlot<GenericVectorMessage>("gradient", [this](const TokenPtr& grad){
+    in_grad_ = modifier.addSlot<GenericVectorMessage>("gradient", [this](const TokenPtr& grad){
         gradCb(grad);
     });
 
-    in_start_ = modifier.addTypedSlot<GenericVectorMessage>("start params", [this](const TokenPtr& msg){
+    in_start_ = modifier.addSlot<GenericVectorMessage>("start params", [this](const TokenPtr& msg){
         startParamCb(msg);
     });
 
     out_ = modifier.addOutput<GenericVectorMessage, double>("parameter");
     evaluate_ = modifier.addEvent("evaluate");
     solution_ = modifier.addEvent<GenericVectorMessage, double>("min parameters");
-    min_residual_ = modifier.addEvent<GenericValueMessage<double>>("min residual");
+    min_residual_ = modifier.addEvent<double>("min residual");
 }
 
 void VectorOptimizer::setupParameters(csapex::Parameterizable& params)
