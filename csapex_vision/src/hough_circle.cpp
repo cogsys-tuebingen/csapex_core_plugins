@@ -26,6 +26,7 @@ void HoughCircle::setupParameters(Parameterizable &parameters)
     methods["CV_HOUGH_STANDARD"] = (int) CV_HOUGH_STANDARD;
     methods["CV_HOUGH_PROBABILISTIC"] = (int) CV_HOUGH_PROBABILISTIC;
     methods["CV_HOUGH_MULTI_SCALE"] = (int) CV_HOUGH_MULTI_SCALE;
+
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) CV_HOUGH_STANDARD));
 
     parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("dp", 0.01, 10.00, 1.0, 0.01));
@@ -55,10 +56,12 @@ void HoughCircle::process()
     int maxRadius = readParameter<int>("maxRadius");
 
     std::vector<cv::Vec3f> circles;
+    //    cv::Mat mat(msg->value.rows,)
+
     cv::HoughCircles(msg->value, circles, method, dp, minDist, param1, param2, minRadius, maxRadius);
 
     CvMatMessage::Ptr out(new CvMatMessage(msg->getEncoding(), msg->frame_id, msg->stamp_micro_seconds));
-    if(!msg->hasChannels(1, CV_8U)) {
+    if(msg->value.type() == CV_8UC1) {
         cv::cvtColor(msg->value, out->value, CV_GRAY2BGR);
     } else {
         msg->value.copyTo(out->value);
