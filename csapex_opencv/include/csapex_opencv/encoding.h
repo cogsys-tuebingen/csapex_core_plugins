@@ -159,6 +159,7 @@ static const Encoding pointXYZ = {channel::Float, channel::Float, channel::Float
 static const Encoding pointXYZI = {channel::Float, channel::Float, channel::Float, channel::intensity};
 static const Encoding pointXYZRGB = {channel::Float, channel::Float, channel::Float, channel::red, channel::green, channel::blue};
 static const Encoding disparity = {channel::Float};
+static const Encoding depth_f = {channel::Float};
 }
 }
 
