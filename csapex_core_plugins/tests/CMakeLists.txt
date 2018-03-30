@@ -50,7 +50,7 @@ target_compile_definitions(${PROJECT_NAME}
 )
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
-
+set_tests_properties(${PROJECT_NAME} PROPERTIES TIMEOUT 60)
 target_link_libraries(${PROJECT_NAME}
     csapex_core_plugins_core
     csapex_core_plugins_node

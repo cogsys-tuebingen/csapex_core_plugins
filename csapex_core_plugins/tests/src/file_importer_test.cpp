@@ -10,9 +10,13 @@
 #include <csapex/msg/io.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/model/token.h>
+#include <csapex/model/io.h>
 #include <csapex/msg/direct_connection.h>
 
 #include <csapex_core_plugins/register_core_plugins.h>
+
+using namespace csapex;
+using namespace connection_types;
 
 namespace csapex {
 
@@ -61,7 +65,7 @@ TEST_F(FileImporterTest, FileImporterConstruction)
     ASSERT_NE(nullptr, importer);
 }
 
-TEST_F(FileImporterTest, ImportDirectory)
+TEST_F(FileImporterTest, ImportDirectoryCanBeEnabled)
 {
     NodeFacadeImplementationPtr importer = factory.makeNode("csapex::FileImporter", graph->generateUUID("importer"), graph);
     ASSERT_NE(nullptr, importer);
@@ -78,45 +82,47 @@ TEST_F(FileImporterTest, ImportDirectory)
 
     NodePtr importer_node = importer->getNode();
     ASSERT_TRUE(importer_node->canProcess());
+}
 
-    InputPtr input = sink->getNodeHandle()->getInput(UUIDProvider::makeDerivedUUID_forced(sink->getUUID(), "in_0"));
-    ASSERT_NE(nullptr, input);
+TEST_F(FileImporterTest, ImportDirectory)
+{
+    NodeFacadeImplementationPtr importer = factory.makeNode("csapex::FileImporter", graph->generateUUID("importer"), graph);
+    ASSERT_NE(nullptr, importer);
 
-    OutputPtr output = importer->getNodeHandle()->getOutput(UUIDProvider::makeDerivedUUID_forced(importer->getUUID(), "out_0"));
-    ASSERT_NE(nullptr, output);
+    NodeFacadeImplementationPtr sink = factory.makeNode("AnySink", graph->generateUUID("sink"), graph);
+    ASSERT_NE(nullptr, sink);
 
-    ConnectionPtr c = DirectConnection::connect(output, input);
+    importer->setParameter("import directory", true);
+    importer->setParameter("directory", std::string(TEST_RES_DIR) + "/input_sequence");
+    importer->handleChangedParameters();
+    NodePtr importer_node = importer->getNode();
+
+    InputPtr input = csapex::testing::getInput(sink, "in_0");
+    EXPECT_NE(nullptr, input);
+
+    OutputPtr output = csapex::testing::getOutput(importer, "out_0");
+    EXPECT_NE(nullptr, output);
+
+    ConnectionPtr connection = DirectConnection::connect(output, input);
+    EXPECT_NE(nullptr, connection);
 
     importer_node->process(*importer->getNodeHandle(), *importer_node, [&](ProcessingFunction fn){
-        TokenPtr token = output->getAddedToken();
-        ASSERT_NE(nullptr, token);
-
-        auto value_msg = std::dynamic_pointer_cast<const connection_types::GenericValueMessage<std::string>>(token->getTokenData());
+        auto value_msg = testing::getAddedMessage<std::string>(output);
         ASSERT_NE(nullptr, value_msg);
-
         ASSERT_EQ("1", value_msg->value);
 
         importer_node->process(*importer->getNodeHandle(), *importer_node, [&](ProcessingFunction fn){
-            TokenPtr token = output->getAddedToken();
-            ASSERT_NE(nullptr, token);
-
-            auto value_msg = std::dynamic_pointer_cast<const connection_types::GenericValueMessage<std::string>>(token->getTokenData());
+            auto value_msg = testing::getAddedMessage<std::string>(output);
             ASSERT_NE(nullptr, value_msg);
-
             ASSERT_EQ("2", value_msg->value);
 
             importer_node->process(*importer->getNodeHandle(), *importer_node, [&](ProcessingFunction fn){
-                TokenPtr token = output->getAddedToken();
-                ASSERT_NE(nullptr, token);
-
-                auto value_msg = std::dynamic_pointer_cast<const connection_types::GenericValueMessage<std::string>>(token->getTokenData());
+                auto value_msg = testing::getAddedMessage<std::string>(output);
                 ASSERT_NE(nullptr, value_msg);
-
                 ASSERT_EQ("3", value_msg->value);
             });
         });
     });
-
 }
 
 TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
@@ -143,21 +149,21 @@ TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
         importer->handleChangedParameters();
         ASSERT_TRUE(importer->canProcess());
 
-        OutputPtr output = importer->getNodeHandle()->getOutput(UUIDProvider::makeDerivedUUID_forced(importer_id, "out_0"));
+        OutputPtr output = testing::getOutput(importer, "out_0");
         ASSERT_NE(nullptr, output);
 
         // sinks
         NodeFacadeImplementationPtr sink1 = factory.makeNode("AnySink", graph->generateUUID("sink"), graph);
         ASSERT_NE(nullptr, sink1);
         main_graph_facade.addNode(sink1);
-        InputPtr input1 = sink1->getNodeHandle()->getInput(UUIDProvider::makeDerivedUUID_forced(sink1->getUUID(), "in_0"));
+        InputPtr input1 = testing::getInput(sink1, "in_0");
         ASSERT_NE(nullptr, input1);
         main_graph_facade.connect(importer, 0, sink1, 0);
 
         NodeFacadeImplementationPtr sink2 = factory.makeNode("AnySink", graph->generateUUID("sink"), graph);
         ASSERT_NE(nullptr, sink2);
         main_graph_facade.addNode(sink2);
-        InputPtr input2 = sink2->getNodeHandle()->getInput(UUIDProvider::makeDerivedUUID_forced(sink2->getUUID(), "in_0"));
+        InputPtr input2 = testing::getInput(sink2, "in_0");
         ASSERT_NE(nullptr, input2);
         main_graph_facade.connect(importer, 0, sink2, 0);
 
@@ -173,10 +179,10 @@ TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
         GraphIO io(main_graph_facade, &factory, true);
         ASSERT_NO_THROW(io.loadGraphFrom(store));
 
-        NodeFacadeImplementationPtr node = std::dynamic_pointer_cast<NodeFacadeImplementation>(main_graph_facade.findNodeFacade(importer_id));
+        NodeFacadeImplementationPtr node = testing::getNodeFacade(main_graph_facade, importer_id);
         ASSERT_NE(nullptr, node);
 
-        OutputPtr out = node->getNodeHandle()->getOutput(UUIDProvider::makeDerivedUUID_forced(importer_id, "out_0"));
+        OutputPtr out = testing::getOutput(node, "out_0");
         ASSERT_NE(nullptr, out);
 
         ASSERT_EQ(2, out->getConnections().size());
