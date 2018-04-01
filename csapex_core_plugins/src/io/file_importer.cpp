@@ -105,7 +105,7 @@ void FileImporter::setupParameters(Parameterizable& parameters)
 void FileImporter::createDummyOutputs(NodeModifier& node_modifier)
 {
 //    problem: this is now called too late and connections in graphio cannot be restored on load...
-    for(int i = 0, n = readParameter<int>("output_count"); i < n; ++i) {
+    for(int i = node_modifier.getMessageOutputs().size(), n = readParameter<int>("output_count"); i < n; ++i) {
         outputs_.push_back(node_modifier.addOutput<connection_types::AnyMessage>("Unknown"));
     }
 }
