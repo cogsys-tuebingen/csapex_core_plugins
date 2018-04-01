@@ -39,7 +39,8 @@ class RosIoHandler : public DragIOHandler
         return v[Qt::UserRole].toString().toStdString();
     }
 
-    virtual bool handleEnter(GraphView* view, CommandExecutor* dispatcher, QDragEnterEvent* e) {
+    bool handleEnter(GraphView* view, CommandExecutor* dispatcher, QDragEnterEvent* e) override
+    {
         if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
             std::string cmd = getCmd(e);
 
@@ -54,10 +55,12 @@ class RosIoHandler : public DragIOHandler
         }
         return false;
     }
-    virtual bool handleMove(GraphView* view, CommandExecutor* dispatcher, QDragMoveEvent* e){
+    bool handleMove(GraphView* view, CommandExecutor* dispatcher, QDragMoveEvent* e) override
+    {
         return false;
     }
-    virtual bool handleDrop(GraphView* view, CommandExecutor* dispatcher, QDropEvent* e, const QPointF& scene_pos) {
+    bool handleDrop(GraphView* view, CommandExecutor* dispatcher, QDropEvent* e, const QPointF& scene_pos) override
+    {
         if(e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
             std::string cmd = getCmd(e);
 

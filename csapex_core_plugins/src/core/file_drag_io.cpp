@@ -23,7 +23,8 @@ namespace csapex
 
 class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
 {
-    virtual bool handleEnter(GraphView* view, CommandExecutor* dispatcher, QDragEnterEvent* e) {
+    bool handleEnter(GraphView* view, CommandExecutor* dispatcher, QDragEnterEvent* e) override
+    {
         if(e->mimeData()->hasUrls()) {
             e->acceptProposedAction();
             return true;
@@ -32,7 +33,8 @@ class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
             return false;
         }
     }
-    virtual bool handleMove(GraphView* view, CommandExecutor* dispatcher, QDragMoveEvent* e){
+    bool handleMove(GraphView* view, CommandExecutor* dispatcher, QDragMoveEvent* e) override
+    {
         if(e->mimeData()->hasUrls()) {
             e->acceptProposedAction();
             return true;
@@ -41,7 +43,8 @@ class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
             return false;
         }
     }
-    virtual bool handleDrop(GraphView* view, CommandExecutor* dispatcher, QDropEvent* e, const QPointF& scene_pos) {
+    bool handleDrop(GraphView* view, CommandExecutor* dispatcher, QDropEvent* e, const QPointF& scene_pos) override
+    {
         if(e->mimeData()->hasUrls()) {
             QList<QUrl> files = e->mimeData()->urls();
 
@@ -75,7 +78,7 @@ class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
                 state->setParameterState(child_state);
 
                 std::string type("csapex::FileImporter");
-                dispatcher->execute(Command::Ptr(new command::AddNode(gf->getAbsoluteUUID(), type, Point(scene_pos.x(), scene_pos.y()), uuid, state)));
+                dispatcher->executeLater(Command::Ptr(new command::AddNode(gf->getAbsoluteUUID(), type, Point(scene_pos.x(), scene_pos.y()), uuid, state)));
 
                 e->accept();
                 return true;

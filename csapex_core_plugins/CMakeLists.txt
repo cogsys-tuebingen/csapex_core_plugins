@@ -158,6 +158,17 @@ target_link_libraries(csapex_core_lib_qt
     Qt5::Core Qt5::Gui Qt5::Widgets
 )
 
+add_library(${PROJECT_NAME}_drag_io SHARED
+    src/core/file_drag_io.cpp
+)
+
+
+target_link_libraries(${PROJECT_NAME}_drag_io
+    csapex_core_lib
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+    Qt5::Core Qt5::Gui Qt5::Widgets
+)
 
 add_library(${PROJECT_NAME}_qt SHARED
     src/display/output_display_adapter_remote.cpp
@@ -180,13 +191,11 @@ target_link_libraries(${PROJECT_NAME}_qt
 add_library(${PROJECT_NAME}_direct_qt SHARED
     src/tools/create_map_message_adapter.cpp
     src/display/output_display_adapter.cpp
-
-    src/core/file_drag_io.cpp
 )
 
 
 target_link_libraries(${PROJECT_NAME}_direct_qt
-    ${PROJECT_NAME}_node
+    #${PROJECT_NAME}_node
     csapex_core_lib_qt
     csapex_core_lib
     ${catkin_LIBRARIES}

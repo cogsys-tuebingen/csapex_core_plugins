@@ -30,7 +30,7 @@ public:
 
     }
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         output_ = node_modifier.addOutput<connection_types::CvMatMessage>("Image");
 
@@ -38,7 +38,7 @@ public:
         cat_ = QtCvImageConverter::Converter::QImage2Mat(QImage(":/cat.jpg"));
     }
 
-    virtual void setupParameters(Parameterizable &parameters) override
+    void setupParameters(Parameterizable &parameters) override
     {
         std::map<std::string, int> set {
             {"LENA", (int) Images::LENA},
@@ -49,7 +49,7 @@ public:
                                 image_type_);
     }
 
-    virtual void process() override
+    void process() override
     {
         connection_types::CvMatMessage::Ptr msg(new connection_types::CvMatMessage(enc::bgr, "camera", 0));
 

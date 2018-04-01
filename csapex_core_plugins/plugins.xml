@@ -2,9 +2,6 @@
 <class type="csapex::RegisterCorePlugins" base_class_type="csapex::CorePlugin">
   <description></description>
 </class>
-<class type="csapex::FileHandler" base_class_type="csapex::DragIOHandler">
-  <description></description>
-</class>
 </library>
 
 <library path="libcsapex_core_plugins_node">
@@ -249,6 +246,12 @@
   <description></description>
 </class>
 <class type="csapex::CreateMapMessageAdapterBuilder" base_class_type="csapex::NodeAdapterBuilder">
+  <description></description>
+</class>
+</library>
+
+<library path="libcsapex_core_plugins_drag_io">
+<class type="csapex::FileHandler" base_class_type="csapex::DragIOHandler">
   <description></description>
 </class>
 </library>
