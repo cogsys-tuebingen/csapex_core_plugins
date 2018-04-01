@@ -564,14 +564,8 @@ void FileImporter::requestImport()
         return;
     }
 
-    if(readParameter<int>("output_count") == 0) {
-        // import already to make sure the amount of outputs is correct
-        import_requested_  = false;
-        import();
+    import_requested_ = true;
 
-    } else {
-        import_requested_ = true;
-    }
     yield();
 }
 
