@@ -40,6 +40,9 @@ void Flip::process()
         cv::flip(out->value, out->value, 1);
         break;
 
+    case 4: // none
+        out->value = in->value;
+        break;
     }
     msg::publish(output_, out);
 }
@@ -57,6 +60,7 @@ void Flip::setupParameters(Parameterizable& parameters)
         {"h", 1},
         {"+90", 2},
         {"-90", 3},
+        {"none", 4},
         {"v+h", -1}
     };
     parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("type", types, -1),
