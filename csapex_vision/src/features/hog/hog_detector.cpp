@@ -45,7 +45,9 @@ void HOGDetector::setupParameters(Parameterizable& parameters)
                             svm_thresh_);
 
     std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
-    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz"),
+    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz *.yaml.gz"),
+                                       custom_active, std::bind(&HOGDetector::load, this));
+    parameters.addConditionalParameter(param::ParameterFactory::declareBool("svm/load_threshold", true),
                                        custom_active, std::bind(&HOGDetector::load, this));
 
     /// scan mode
@@ -204,7 +206,9 @@ void HOGDetector::load()
     fs["svm_coeffs"] >> svm_;
     double rho;
     fs["svm_rho"] >> rho;
-    setParameter<double>("svm/thresh", rho);
+
+    if (readParameter<bool>("svm/load_threshold"))
+        setParameter<double>("svm/thresh", -rho);
 
     if(svm_.empty())
         throw std::runtime_error("Couldn't load svm!");
