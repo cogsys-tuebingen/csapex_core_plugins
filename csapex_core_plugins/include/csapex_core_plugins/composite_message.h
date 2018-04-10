@@ -43,12 +43,19 @@ struct CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
 
     static CompositeMessage::Ptr make();
 
-    virtual TokenData::Ptr clone() const override;
-    virtual TokenData::Ptr toType() const override;
+    TokenData::Ptr clone() const override;
+    TokenData::Ptr toType() const override;
 
-    virtual bool canConnectTo(const TokenData* other_side) const override;
-    virtual bool acceptsConnectionFrom(const TokenData *other_side) const override;
+    bool canConnectTo(const TokenData* other_side) const override;
+    bool acceptsConnectionFrom(const TokenData *other_side) const override;
 
+
+    std::shared_ptr<Clonable> makeEmptyClone() const override
+    {
+        return std::shared_ptr<Clonable>(new CompositeMessage);
+    }
+    void serialize(SerializationBuffer &data) const override;
+    void deserialize(const SerializationBuffer& data) override;
 private:
     CompositeMessage(TokenData::Ptr type, const std::string& frame_id, Stamp stamp_micro_seconds);
 

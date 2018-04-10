@@ -10,6 +10,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <cslibs_laser_processing/common/yaml-io.hpp>
+#include <csapex_scan_2d/binary_io.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;

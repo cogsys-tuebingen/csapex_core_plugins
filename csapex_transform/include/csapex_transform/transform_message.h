@@ -4,6 +4,9 @@
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
 
+/// COMPONENT
+#include <csapex_transform/binary_io.h>
+
 /// SYSTEM
 #include <tf/LinearMath/Transform.h>
 

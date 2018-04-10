@@ -31,6 +31,17 @@ TokenData::Ptr PointMessage::toType() const
 }
 
 
+void PointMessage::serialize(SerializationBuffer &data) const
+{
+    data << x;
+    data << y;
+}
+void PointMessage::deserialize(const SerializationBuffer& data)
+{
+    data >> x;
+    data >> y;
+}
+
 /// YAML
 namespace YAML {
 Node convert<csapex::connection_types::PointMessage>::encode(const csapex::connection_types::PointMessage& rhs)

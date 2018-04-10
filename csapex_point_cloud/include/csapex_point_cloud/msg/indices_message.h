@@ -3,6 +3,8 @@
 
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
+#include <csapex_point_cloud/msg/binary_io.h>
+#include <csapex/serialization/io/boost_io.h>
 
 /// SYSTEM
 #include <pcl/PointIndices.h>

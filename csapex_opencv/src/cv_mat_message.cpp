@@ -58,6 +58,8 @@ bool CvMatMessage::hasChannels(std::size_t count, int mat_type) const
 {
     return value.channels() == (int) count && encoding.channelCount() == count && value.type() == mat_type;
 }
+
+
 /// YAML
 namespace YAML {
 CSAPEX_EXPORT_PLUGIN Node convert<csapex::connection_types::CvMatMessage>::encode(const csapex::connection_types::CvMatMessage& rhs)

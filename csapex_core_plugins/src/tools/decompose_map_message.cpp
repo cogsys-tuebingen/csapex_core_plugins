@@ -11,6 +11,7 @@
 #include <csapex/msg/any_message.h>
 #include <csapex/utility/yaml_io.hpp>
 #include <csapex_core_plugins/map_message.h>
+#include <csapex/serialization/io/std_io.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;

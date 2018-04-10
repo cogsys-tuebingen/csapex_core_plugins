@@ -24,6 +24,11 @@ struct type<HistogramMaximaMessage> {
 };
 
 }
+
+
+SerializationBuffer& operator << (SerializationBuffer& data, const HistogramMaximaContainer& t);
+const SerializationBuffer& operator >> (const SerializationBuffer& data, HistogramMaximaContainer& t);
+
 }
 
 

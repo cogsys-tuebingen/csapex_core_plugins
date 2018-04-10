@@ -32,7 +32,11 @@ inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<KeyValueMessage> makeEmpty<KeyValu
     return std::shared_ptr<KeyValueMessage>(new KeyValueMessage);
 }
 
+//SerializationBuffer& operator << (SerializationBuffer& data, const KeyValueMessage& t);
+//const SerializationBuffer& operator >> (const SerializationBuffer& data, KeyValueMessage& t);
+
 }
+
 }
 
 /// YAML

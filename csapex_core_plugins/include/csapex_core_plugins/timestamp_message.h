@@ -38,6 +38,12 @@ inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<TimestampMessage> makeEmpty<Timest
 }
 
 }
+
+/// SERIALIZATION
+SerializationBuffer& operator << (SerializationBuffer& data,
+                                  const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>& t);
+const SerializationBuffer& operator >> (const SerializationBuffer& data,
+                                        std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>& t);
 }
 
 /// YAML

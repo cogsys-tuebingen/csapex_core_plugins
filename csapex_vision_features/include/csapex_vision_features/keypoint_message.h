@@ -3,6 +3,8 @@
 
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
+#include <csapex/serialization/io/std_io.h>
+#include <csapex_opencv/binary_io.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>

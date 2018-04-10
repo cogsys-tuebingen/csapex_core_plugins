@@ -11,9 +11,9 @@
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/model/token.h>
 #include <csapex/io/raw_message.h>
-#include <csapex/serialization/serialization_buffer.h>
+#include <csapex/serialization/io/std_io.h>
 #include <csapex/model/node_handle.h>
-#include <csapex/serialization/serialization_buffer.h>
+#include <csapex/serialization/io/std_io.h>
 
 /// SYSTEM
 #include <cmath>

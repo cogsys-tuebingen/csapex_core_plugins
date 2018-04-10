@@ -7,7 +7,7 @@
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/model/node_facade.h>
 #include <csapex/io/raw_message.h>
-#include <csapex/serialization/serialization_buffer.h>
+#include <csapex/serialization/io/std_io.h>
 
 /// SYSTEM
 #include <QBoxLayout>

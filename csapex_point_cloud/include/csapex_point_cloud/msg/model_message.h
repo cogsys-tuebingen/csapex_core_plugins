@@ -1,6 +1,9 @@
 #ifndef MODEL_MESSAGE_H
 #define MODEL_MESSAGE_H
 
+/// APEX
+#include <csapex/serialization/serialization_buffer.h>
+
 /// PCL
 #include <pcl/sample_consensus/model_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
@@ -20,6 +23,9 @@ public:
     std::string                 frame_id;
     double probability;
 };
+
+SerializationBuffer& operator << (SerializationBuffer& data, const ModelMessage& rhs);
+const SerializationBuffer& operator >> (const SerializationBuffer& data, ModelMessage& rhs);
 
 }
 

@@ -3,6 +3,7 @@
 
 /// COMPONENT
 #include <cslibs_laser_processing/data/scan.h>
+#include <csapex_scan_2d/binary_io.h>
 
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
@@ -25,6 +26,7 @@ struct type<ScanMessage> {
 };
 
 }
+
 }
 
 

@@ -34,6 +34,10 @@ inline std::shared_ptr<DurationMessage> makeEmpty<DurationMessage>()
 }
 
 }
+
+/// SERIALIZATION
+SerializationBuffer& operator << (SerializationBuffer& data, const std::chrono::microseconds& t);
+const SerializationBuffer& operator >> (const SerializationBuffer& data, std::chrono::microseconds& t);
 }
 
 /// YAML

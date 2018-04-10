@@ -1,11 +1,35 @@
 /// HEADER
 #include <csapex_point_cloud/msg/model_message.h>
 
+/// PROJECT
+#include <csapex/serialization/io/boost_io.h>
+#include <csapex/serialization/io/std_io.h>
+#include <csapex_point_cloud/msg/binary_io.h>
+
 using namespace csapex;
 
 ModelMessage::ModelMessage()
 {
 
+}
+
+SerializationBuffer& csapex::operator << (SerializationBuffer& data, const ModelMessage& rhs)
+{
+    data << rhs.model_type;
+    data << rhs.coefficients;
+    data << rhs.frame_id;
+    data << rhs.probability;
+
+    return data;
+}
+const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, ModelMessage& rhs)
+{
+    data >> rhs.model_type;
+    data >> rhs.coefficients;
+    data >> rhs.frame_id;
+    data >> rhs.probability;
+
+    return data;
 }
 
 /// YAML

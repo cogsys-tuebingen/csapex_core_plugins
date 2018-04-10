@@ -17,7 +17,6 @@ ScanMessage::ScanMessage()
 {}
 
 
-
 /// YAML
 namespace YAML {
 Node convert<csapex::connection_types::ScanMessage>::encode(const csapex::connection_types::ScanMessage& rhs)

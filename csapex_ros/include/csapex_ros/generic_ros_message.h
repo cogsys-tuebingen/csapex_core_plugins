@@ -45,6 +45,12 @@ struct type<GenericRosMessage> {
 
 }
 
+
+
+/// SERIALIZATION
+SerializationBuffer& operator << (SerializationBuffer& data, const topic_tools::ShapeShifter& shape);
+const SerializationBuffer& operator >> (const SerializationBuffer& data, topic_tools::ShapeShifter& shape);
+
 namespace msg
 {
 

@@ -26,6 +26,9 @@ struct CSAPEX_OPENCV_EXPORT type<RoiMessage> {
 };
 
 }
+
+SerializationBuffer& operator << (SerializationBuffer& data, const Roi& roi);
+const SerializationBuffer& operator >> (const SerializationBuffer& data, Roi& roi);
 }
 
 /// YAML

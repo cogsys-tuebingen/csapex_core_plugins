@@ -52,6 +52,7 @@ add_library(${PROJECT_NAME}
     src/scan_message.cpp
     src/labeled_scan_message.cpp
     src/renderer.cpp
+    src/binary_io.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES})

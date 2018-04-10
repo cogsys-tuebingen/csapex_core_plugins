@@ -16,6 +16,18 @@ HistogramMaximaMessage::HistogramMaximaMessage() :
 }
 
 
+SerializationBuffer& csapex::operator << (SerializationBuffer& data, const HistogramMaximaContainer& t)
+{
+    data << t.maxima;
+    data << t.bin_range;
+    return data;
+}
+const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, HistogramMaximaContainer& t)
+{
+    data >> t.maxima;
+    data >> t.bin_range;
+    return data;
+}
 
 
 /// YAML
