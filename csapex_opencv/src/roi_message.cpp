@@ -17,7 +17,7 @@ RoiMessage::RoiMessage()
 {}
 
 
-SerializationBuffer& operator << (SerializationBuffer& data, const Roi& roi)
+SerializationBuffer& csapex::operator << (SerializationBuffer& data, const Roi& roi)
 {
     data << roi.x();
     data << roi.y();
@@ -26,7 +26,7 @@ SerializationBuffer& operator << (SerializationBuffer& data, const Roi& roi)
 
     return data;
 }
-const SerializationBuffer& operator >> (const SerializationBuffer& data, Roi& roi)
+const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, Roi& roi)
 {
     int x,y,w,h;
 

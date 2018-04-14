@@ -7,14 +7,14 @@
 using namespace csapex;
 
 /// SERIALIZATION
-SerializationBuffer& operator << (SerializationBuffer& data, const pcl::PCLHeader& header)
+SerializationBuffer& csapex::operator << (SerializationBuffer& data, const pcl::PCLHeader& header)
 {
     data << header.frame_id;
     data << header.seq;
     data << header.stamp;
     return data;
 }
-const SerializationBuffer& operator >> (const SerializationBuffer& data, pcl::PCLHeader& header)
+const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, pcl::PCLHeader& header)
 {
     data >> header.frame_id;
     data >> header.seq;

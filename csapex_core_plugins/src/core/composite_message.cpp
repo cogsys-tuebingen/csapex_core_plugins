@@ -5,6 +5,8 @@
 #include <csapex/msg/token_traits.h>
 #include <csapex/utility/register_msg.h>
 #include <csapex/serialization/yaml.h>
+#include <csapex/serialization/io/std_io.h>
+#include <csapex/serialization/io/csapex_io.h>
 #include <csapex/msg/any_message.h>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::CompositeMessage)
