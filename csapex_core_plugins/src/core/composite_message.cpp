@@ -69,11 +69,13 @@ bool CompositeMessage::acceptsConnectionFrom(const TokenData *other_side) const
 
 void CompositeMessage::serialize(SerializationBuffer &data) const
 {
-    throw std::runtime_error("Serialization of CompositeMessage is not implemented yet");
+    TokenData::serialize(data);
+    data << value;
 }
 void CompositeMessage::deserialize(const SerializationBuffer& data)
 {
-    throw std::runtime_error("Serialization of CompositeMessage is not implemented yet");
+    TokenData::deserialize(data);
+    data >> value;
 }
 
 /// YAML

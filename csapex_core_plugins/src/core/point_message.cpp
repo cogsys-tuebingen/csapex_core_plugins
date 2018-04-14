@@ -33,11 +33,13 @@ TokenData::Ptr PointMessage::toType() const
 
 void PointMessage::serialize(SerializationBuffer &data) const
 {
+    TokenData::serialize(data);
     data << x;
     data << y;
 }
 void PointMessage::deserialize(const SerializationBuffer& data)
 {
+    TokenData::deserialize(data);
     data >> x;
     data >> y;
 }

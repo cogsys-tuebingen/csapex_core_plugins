@@ -221,7 +221,6 @@ void FileImporter::process()
 
     // check if we need to do the import
     if(import_requested_) {
-        import_requested_ = false;
         import();
     }
 
@@ -571,6 +570,8 @@ void FileImporter::requestImport()
 
 void FileImporter::import()
 {
+    import_requested_ = false;
+
     directory_import_ = readParameter<bool>("import directory");
     provider_.reset();
 
