@@ -27,12 +27,12 @@ struct type<DurationMessage> {
     }
 };
 
-template <>
-inline std::shared_ptr<DurationMessage> makeEmpty<DurationMessage>()
-{
-    return std::shared_ptr<DurationMessage>(new DurationMessage(std::chrono::microseconds(0)));
 }
 
+template <>
+inline std::shared_ptr<connection_types::DurationMessage> makeEmpty<connection_types::DurationMessage>()
+{
+    return std::shared_ptr<connection_types::DurationMessage>(new connection_types::DurationMessage(std::chrono::microseconds(0)));
 }
 
 /// SERIALIZATION

@@ -55,14 +55,14 @@ struct type<CvPyramidMessage> {
         return "std::vector<cv::Mat>";
     }
 };
+}
 
 template <>
-inline std::shared_ptr<CvPyramidMessage> makeEmpty<CvPyramidMessage>()
+inline std::shared_ptr<connection_types::CvPyramidMessage> makeEmpty<connection_types::CvPyramidMessage>()
 {
-    return std::shared_ptr<CvPyramidMessage>(new CvPyramidMessage(enc::bgr));
+    return std::shared_ptr<connection_types::CvPyramidMessage>(new connection_types::CvPyramidMessage(enc::bgr));
 }
 
-}
 }
 
 /// YAML

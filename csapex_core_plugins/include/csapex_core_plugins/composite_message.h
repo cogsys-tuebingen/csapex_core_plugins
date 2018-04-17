@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/msg/message.h>
 #include <csapex/msg/token_traits.h>
+#include <csapex/utility/data_traits.hpp>
 #include <csapex_core_plugins/csapex_core_lib_export.h>
 
 /// SYSTEM
@@ -33,7 +34,7 @@ struct CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
     template <typename T>
     static CompositeMessage::Ptr make()
     {
-        return CompositeMessage::Ptr (new CompositeMessage(connection_types::makeEmpty<T>(), "/", 0));
+        return CompositeMessage::Ptr (new CompositeMessage(csapex::makeEmpty<T>(), "/", 0));
     }
 
     static CompositeMessage::Ptr make(TokenData::Ptr type)

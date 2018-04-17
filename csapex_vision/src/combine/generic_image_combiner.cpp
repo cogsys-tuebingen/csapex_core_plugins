@@ -218,5 +218,5 @@ void GenericImageCombiner::setupParameters(Parameterizable& parameters)
 
 Input* GenericImageCombiner::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)
 {
-    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<CvMatMessage>(), label.empty() ? "Image" : label, getVariadicInputCount() == 0 ? false : true);
+    return VariadicInputs::createVariadicInput(makeEmpty<CvMatMessage>(), label.empty() ? "Image" : label, getVariadicInputCount() == 0 ? false : true);
 }

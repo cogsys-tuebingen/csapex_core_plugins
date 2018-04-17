@@ -306,5 +306,5 @@ std::size_t VectorPlot::getCount() const
 
 Input* VectorPlot::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)
 {
-    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::GenericVectorMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+    return VariadicInputs::createVariadicInput(makeEmpty<connection_types::GenericVectorMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
 }

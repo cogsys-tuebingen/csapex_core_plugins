@@ -63,7 +63,7 @@ struct MessageCaster<connection_types::GenericPointerMessage<R>, S>
         if(rosmsg) {
             try {
                 auto boost_ptr = rosmsg->value->template instantiate<R>();
-                auto msg = connection_types::makeEmpty<connection_types::GenericPointerMessage<R>>();
+                auto msg = makeEmpty<connection_types::GenericPointerMessage<R>>();
                 msg->value = shared_ptr_tools::to_std_shared(boost_ptr);
                 return msg;
             } catch(const ros::Exception& e) {
@@ -78,7 +78,7 @@ struct MessageCaster<connection_types::GenericPointerMessage<R>, S>
         if(rosmsg) {
             try {
                 auto boost_ptr = rosmsg->value->template instantiate<R>();
-                auto msg = connection_types::makeEmpty<connection_types::GenericPointerMessage<R>>();
+                auto msg = makeEmpty<connection_types::GenericPointerMessage<R>>();
                 msg->value = shared_ptr_tools::to_std_shared(boost_ptr);
                 return msg;
             } catch(const ros::Exception& e) {

@@ -58,13 +58,6 @@ struct CSAPEX_OPENCV_EXPORT type<CvMatMessage> {
         return "cv::Mat";
     }
 };
-
-template <>
-inline CSAPEX_OPENCV_EXPORT std::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage>()
-{
-    return std::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr, "camera", 0));
-}
-
 template <>
 struct CSAPEX_OPENCV_EXPORT MessageContainer<cv::Mat, false>
 {
@@ -80,6 +73,13 @@ struct CSAPEX_OPENCV_EXPORT MessageContainer<cv::Mat, false>
 
 
 }
+
+template <>
+inline CSAPEX_OPENCV_EXPORT std::shared_ptr<connection_types::CvMatMessage> makeEmpty<connection_types::CvMatMessage>()
+{
+    return std::shared_ptr<connection_types::CvMatMessage>(new connection_types::CvMatMessage(enc::bgr, "camera", 0));
+}
+
 
 }
 

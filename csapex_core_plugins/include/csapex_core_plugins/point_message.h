@@ -51,12 +51,12 @@ struct CSAPEX_CORE_LIB_EXPORT type<PointMessage> {
     }
 };
 
-template <>
-inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<PointMessage> makeEmpty<PointMessage>()
-{
-    return std::shared_ptr<PointMessage>(new PointMessage(0));
 }
 
+template <>
+inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<connection_types::PointMessage> makeEmpty<connection_types::PointMessage>()
+{
+    return std::shared_ptr<connection_types::PointMessage>(new connection_types::PointMessage(0));
 }
 }
 

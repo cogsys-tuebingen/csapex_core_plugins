@@ -31,14 +31,13 @@ struct CSAPEX_CORE_LIB_EXPORT type<TimestampMessage> {
     }
 };
 
+}
+
 template <>
-inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<TimestampMessage> makeEmpty<TimestampMessage>()
+inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<connection_types::TimestampMessage> makeEmpty<connection_types::TimestampMessage>()
 {
-    return std::shared_ptr<TimestampMessage>(new TimestampMessage());
+    return std::shared_ptr<connection_types::TimestampMessage>(new connection_types::TimestampMessage());
 }
-
-}
-
 /// SERIALIZATION
 SerializationBuffer& operator << (SerializationBuffer& data,
                                   const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>& t);

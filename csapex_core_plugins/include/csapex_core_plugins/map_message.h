@@ -28,13 +28,14 @@ struct CSAPEX_CORE_LIB_EXPORT type<MapMessage> {
     }
 };
 
-template <>
-inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<MapMessage> makeEmpty<MapMessage>()
-{
-    return std::shared_ptr<MapMessage>(new MapMessage());
 }
 
+template <>
+inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<connection_types::MapMessage> makeEmpty<connection_types::MapMessage>()
+{
+    return std::shared_ptr<connection_types::MapMessage>(new connection_types::MapMessage());
 }
+
 }
 
 /// YAML

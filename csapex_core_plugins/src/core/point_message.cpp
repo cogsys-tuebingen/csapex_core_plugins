@@ -29,7 +29,7 @@ TokenData::Ptr PointMessage::clone() const
 
 TokenData::Ptr PointMessage::toType() const
 {
-    return makeEmptyMessage<PointMessage>();
+    return csapex::makeEmpty<PointMessage>();
 }
 
 

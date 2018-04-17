@@ -18,7 +18,7 @@ using namespace connection_types;
 CompositeMessage::CompositeMessage(const std::string& frame_id, Message::Stamp stamp)
     : Message ("MessageComposite", frame_id, stamp)
 {
-    type_ = connection_types::makeEmpty<AnyMessage>();
+    type_ = csapex::makeEmpty<AnyMessage>();
 }
 CompositeMessage::CompositeMessage(TokenData::Ptr type, const std::string& frame_id, Message::Stamp stamp)
     : Message ("MessageComposite", frame_id, stamp)

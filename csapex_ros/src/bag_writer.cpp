@@ -169,7 +169,7 @@ public:
 
     virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override
     {
-        Input* result = VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+        Input* result = VariadicInputs::createVariadicInput(makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
 
         return result;
     }
@@ -184,7 +184,7 @@ public:
             }
         };
 
-        return VariadicSlots::createVariadicSlot(connection_types::makeEmpty<connection_types::AnyMessage>(),
+        return VariadicSlots::createVariadicSlot(makeEmpty<connection_types::AnyMessage>(),
                                                  label.empty() ? "Value" :
                                                                  label,
                                                  cb,

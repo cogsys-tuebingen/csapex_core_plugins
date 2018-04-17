@@ -77,7 +77,7 @@ std::map<std::string, PCDPointCloudMessageProvider::ProviderConstructor> PCDPoin
 PCDPointCloudMessageProvider::PCDPointCloudMessageProvider() :
     sent_(false)
 {
-    setType(connection_types::makeEmpty<PointCloudMessage>());
+    setType(makeEmpty<PointCloudMessage>());
 }
 
 void PCDPointCloudMessageProvider::load(const std::string &file)

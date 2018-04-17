@@ -20,7 +20,7 @@ MergeClouds::MergeClouds()
 
 Input* MergeClouds::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool optional)
 {
-    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::PointCloudMessage>(), label.empty() ? "Cloud" : label, getVariadicInputCount() == 0 ? false : true);
+    return VariadicInputs::createVariadicInput(makeEmpty<connection_types::PointCloudMessage>(), label.empty() ? "Cloud" : label, getVariadicInputCount() == 0 ? false : true);
 }
 
 void MergeClouds::setupParameters(Parameterizable& parameters)

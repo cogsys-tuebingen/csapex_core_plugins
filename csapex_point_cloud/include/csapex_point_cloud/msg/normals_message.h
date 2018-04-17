@@ -50,11 +50,12 @@ struct type<NormalsMessage> {
     }
 };
 
-template <>
-inline std::shared_ptr<NormalsMessage> makeEmpty<NormalsMessage>()
-{
-    return std::shared_ptr<NormalsMessage>(new NormalsMessage("/", 0));
 }
+
+template <>
+inline std::shared_ptr<connection_types::NormalsMessage> makeEmpty<connection_types::NormalsMessage>()
+{
+    return std::shared_ptr<connection_types::NormalsMessage>(new connection_types::NormalsMessage("/", 0));
 }
 }
 

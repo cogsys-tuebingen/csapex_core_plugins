@@ -501,9 +501,9 @@ void FileImporter::signalEnd()
         TokenDataConstPtr end;
 
         if(quit_on_end_) {
-            end = connection_types::makeEmpty<EndOfProgramMessage>();
+            end = makeEmpty<EndOfProgramMessage>();
         } else {
-            end = connection_types::makeEmpty<EndOfSequenceMessage>();
+            end = makeEmpty<EndOfSequenceMessage>();
         }
 
         for(auto& o : node_handle_->getExternalOutputs()) {

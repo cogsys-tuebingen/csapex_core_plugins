@@ -41,7 +41,7 @@ public:
 
     virtual csapex::Output* createVariadicOutput(csapex::TokenDataConstPtr type, const std::string& label) override
     {
-        return VariadicOutputs::createVariadicOutput(connection_types::makeEmpty<connection_types::AnyMessage>(), "message");
+        return VariadicOutputs::createVariadicOutput(makeEmpty<connection_types::AnyMessage>(), "message");
     }
 
 private:

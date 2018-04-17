@@ -107,11 +107,12 @@ struct type<PointCloudMessage> {
     }
 };
 
-template <>
-inline std::shared_ptr<PointCloudMessage> makeEmpty<PointCloudMessage>()
-{
-    return std::shared_ptr<PointCloudMessage>(new PointCloudMessage("/", 0));
 }
+
+template <>
+inline std::shared_ptr<connection_types::PointCloudMessage> makeEmpty<connection_types::PointCloudMessage>()
+{
+    return std::shared_ptr<connection_types::PointCloudMessage>(new connection_types::PointCloudMessage("/", 0));
 }
 }
 
