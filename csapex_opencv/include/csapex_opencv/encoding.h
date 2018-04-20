@@ -156,6 +156,7 @@ static const Encoding lab = {channel::l, channel::a, channel::b };
 static const Encoding luv = {channel::l, channel::u, channel::v };
 static const Encoding LCh = {channel::L, channel::C, channel::H };
 static const Encoding pointXYZ = {channel::Float, channel::Float, channel::Float};
+static const Encoding pointXYZNormal = {channel::Float, channel::Float, channel::Float,channel::Float, channel::Float, channel::Float};
 static const Encoding pointXYZI = {channel::Float, channel::Float, channel::Float, channel::intensity};
 static const Encoding pointXYZRGB = {channel::Float, channel::Float, channel::Float, channel::red, channel::green, channel::blue};
 static const Encoding disparity = {channel::Float};
