@@ -33,7 +33,6 @@ struct CSAPEX_OPENCV_EXPORT CvMatMessage : public MessageTemplate<cv::Mat, CvMat
 public:
     CvMatMessage(const Encoding& encoding, const std::string& frame_id, Stamp stamp_micro_seconds);
     ~CvMatMessage();
-    virtual TokenData::Ptr clone() const override;
 
     virtual void writeRaw(const std::string &file, const std::string &base, const std::string &suffix) const override;
 
@@ -42,6 +41,8 @@ public:
 
     bool hasChannels(std::size_t count) const;
     bool hasChannels(std::size_t count, int mat_type) const;
+
+    void cloneData(const CvMatMessage& other);
 
 private:
     Encoding encoding;

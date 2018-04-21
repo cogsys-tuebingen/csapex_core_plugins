@@ -29,20 +29,6 @@ NormalsMessage::NormalsMessage()
 {
 }
 
-
-TokenData::Ptr NormalsMessage::clone() const
-{
-    Ptr new_msg(new NormalsMessage(frame_id, stamp_micro_seconds));
-    new_msg->value = value;
-    return new_msg;
-}
-
-TokenData::Ptr NormalsMessage::toType() const
-{
-    Ptr new_msg(new NormalsMessage("/", 0));
-    return new_msg;
-}
-
 std::string NormalsMessage::descriptiveName() const
 {
     return Message::descriptiveName();

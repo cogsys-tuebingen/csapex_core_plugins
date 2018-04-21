@@ -19,8 +19,6 @@ struct TransformMessage : public MessageTemplate<tf::Transform, TransformMessage
     TransformMessage();
     TransformMessage(const std::string &frame_id, const std::string &child_frame_id);
 
-    virtual TokenData::Ptr clone() const override;
-
     void sanitize();
 
 public:

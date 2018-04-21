@@ -14,21 +14,6 @@ ConfidenceMatrixMessage::ConfidenceMatrixMessage(Message::Stamp stamp)
     : Message(type<ConfidenceMatrixMessage>::name(), "/", stamp)
 {}
 
-TokenData::Ptr ConfidenceMatrixMessage::clone() const
-{
-    Ptr new_msg(new ConfidenceMatrixMessage);
-    new_msg->confidence = confidence;
-    return new_msg;
-}
-
-TokenData::Ptr ConfidenceMatrixMessage::toType() const
-{
-    Ptr new_msg(new ConfidenceMatrixMessage);
-    return new_msg;
-}
-
-
-
 /// YAML
 namespace YAML {
 Node convert<csapex::connection_types::ConfidenceMatrixMessage>::encode(const csapex::connection_types::ConfidenceMatrixMessage& rhs)

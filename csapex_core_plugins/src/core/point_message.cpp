@@ -19,31 +19,15 @@ PointMessage::PointMessage()
     : Message(type<PointMessage>::name(), "/", 0)
 {}
 
-TokenData::Ptr PointMessage::clone() const
-{
-    Ptr new_msg(new PointMessage(stamp_micro_seconds));
-    new_msg->x = x;
-    new_msg->y = y;
-    return new_msg;
-}
-
-TokenData::Ptr PointMessage::toType() const
-{
-    return csapex::makeEmpty<PointMessage>();
-}
-
-
 void PointMessage::serialize(SerializationBuffer &data) const
 {
     TokenData::serialize(data);
-    data << x;
-    data << y;
+    data << x << y;
 }
 void PointMessage::deserialize(const SerializationBuffer& data)
 {
     TokenData::deserialize(data);
-    data >> x;
-    data >> y;
+    data >> x >> y;
 }
 
 /// YAML

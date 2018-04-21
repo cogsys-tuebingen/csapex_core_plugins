@@ -120,7 +120,7 @@ public:
             {
                 std::unique_lock<std::recursive_mutex> lock(value_mutex_);
                 value_ = changed_cell_;
-                token = std::make_shared<Token>(value_->clone());
+                token = std::make_shared<Token>(value_->cloneAs<TokenData>());
             }
             change_event_->triggerWith(token);
 

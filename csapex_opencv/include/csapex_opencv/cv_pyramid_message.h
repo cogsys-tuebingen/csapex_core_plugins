@@ -33,7 +33,6 @@ struct CSAPEX_OPENCV_EXPORT CvPyramidMessage : public MessageTemplate<std::vecto
 
 public:
     CvPyramidMessage(const Encoding& encoding);
-    virtual TokenData::Ptr clone() const override;
 
     virtual void writeRaw(const std::string &file, const std::string &base, const std::string &suffix) const;
 

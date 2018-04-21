@@ -25,13 +25,6 @@ TransformMessage::TransformMessage()
     : MessageTemplate<tf::Transform, TransformMessage> (""), child_frame("")
 {}
 
-TokenData::Ptr TransformMessage::clone() const
-{
-    Ptr new_msg = cloneInstance();
-    new_msg->child_frame = child_frame;
-    return new_msg;
-}
-
 void TransformMessage::sanitize()
 {
     if(frame_id.size() > 0 && frame_id.at(0) == '/') {

@@ -37,18 +37,6 @@ CompositeMessage::Ptr CompositeMessage::make(){
     return new_msg;
 }
 
-TokenData::Ptr CompositeMessage::clone() const
-{
-    Ptr new_msg(new CompositeMessage(frame_id));
-    new_msg->value = value;
-    return new_msg;
-}
-
-TokenData::Ptr CompositeMessage::toType() const
-{
-    return make();
-}
-
 bool CompositeMessage::canConnectTo(const TokenData *other_side) const
 {
     const CompositeMessage* vec = dynamic_cast<const CompositeMessage*> (other_side);

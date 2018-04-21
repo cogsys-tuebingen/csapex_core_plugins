@@ -27,20 +27,6 @@ PointCloudMessage::PointCloudMessage()
 {
 }
 
-
-TokenData::Ptr PointCloudMessage::clone() const
-{
-    Ptr new_msg(new PointCloudMessage(frame_id, stamp_micro_seconds));
-    new_msg->value = value;
-    return new_msg;
-}
-
-TokenData::Ptr PointCloudMessage::toType() const
-{
-    Ptr new_msg(new PointCloudMessage("/", 0));
-    return new_msg;
-}
-
 std::string PointCloudMessage::descriptiveName() const
 {
     return Message::descriptiveName();

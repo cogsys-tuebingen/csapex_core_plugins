@@ -15,8 +15,12 @@
 namespace csapex {
 namespace connection_types {
 
-struct CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
+class CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
 {
+protected:
+    CLONABLE_IMPLEMENTATION(CompositeMessage);
+
+public:
     typedef std::shared_ptr<CompositeMessage> Ptr;
     typedef std::shared_ptr<const CompositeMessage> ConstPtr;
 
@@ -44,17 +48,9 @@ struct CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
 
     static CompositeMessage::Ptr make();
 
-    TokenData::Ptr clone() const override;
-    TokenData::Ptr toType() const override;
-
     bool canConnectTo(const TokenData* other_side) const override;
     bool acceptsConnectionFrom(const TokenData *other_side) const override;
 
-
-    std::shared_ptr<Clonable> makeEmptyClone() const override
-    {
-        return std::shared_ptr<Clonable>(new CompositeMessage);
-    }
     void serialize(SerializationBuffer &data) const override;
     void deserialize(const SerializationBuffer& data) override;
 private:

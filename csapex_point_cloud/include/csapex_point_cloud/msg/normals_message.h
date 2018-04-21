@@ -20,16 +20,16 @@ namespace connection_types {
 
 struct NormalsMessage : public Message
 {
+protected:
+    CLONABLE_IMPLEMENTATION(NormalsMessage);
+
+public:
     friend class YAML::as_if<NormalsMessage, void>;
 
     typedef std::shared_ptr<NormalsMessage> Ptr;
     typedef std::shared_ptr<NormalsMessage const> ConstPtr;
 
     NormalsMessage(const std::string& frame_id, Stamp stamp_micro_seconds);
-
-    virtual TokenData::Ptr clone() const override;
-
-    virtual TokenData::Ptr toType() const override;
 
     virtual std::string descriptiveName() const override;
 

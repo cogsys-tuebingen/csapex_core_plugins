@@ -19,13 +19,6 @@ CvPyramidMessage::CvPyramidMessage(const Encoding& encoding)
     : encoding(encoding)
 {}
 
-TokenData::Ptr CvPyramidMessage::clone() const
-{
-    Ptr new_msg(new CvPyramidMessage(encoding));
-    new_msg->value.assign(value.begin(), value.end());
-    return new_msg;
-}
-
 void CvPyramidMessage::writeRaw(const std::string &path, const std::string &base, const std::string &suffix) const
 {
     for(unsigned int i = 0 ; i < value.size() ; ++i) {

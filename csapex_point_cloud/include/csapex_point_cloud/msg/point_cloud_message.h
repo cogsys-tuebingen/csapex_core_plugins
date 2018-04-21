@@ -51,6 +51,10 @@ struct add_point_cloud_ptr
 
 struct PointCloudMessage : public Message
 {
+protected:
+    CLONABLE_IMPLEMENTATION(PointCloudMessage);
+
+public:
     friend class YAML::as_if<PointCloudMessage, void>;
 
     template <typename T>
@@ -83,10 +87,6 @@ struct PointCloudMessage : public Message
     >::type variant;
 
     PointCloudMessage(const std::string& frame_id, Stamp stamp_micro_seconds);
-
-    virtual TokenData::Ptr clone() const override;
-
-    virtual TokenData::Ptr toType() const override;
 
     virtual std::string descriptiveName() const override;
 
