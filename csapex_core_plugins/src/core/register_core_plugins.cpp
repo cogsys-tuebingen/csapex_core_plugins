@@ -36,7 +36,7 @@ void registerMessage()
 }
 }
 
-void RegisterCorePlugins::init(CsApexCore& core)
+void RegisterCorePlugins::prepare(Settings&)
 {
     Tag::createIfNotExists("Buffer");
     Tag::createIfNotExists("General");
@@ -49,6 +49,10 @@ void RegisterCorePlugins::init(CsApexCore& core)
     registerMessage<int>();
     registerMessage<double>();
     registerMessage<std::string>();
+
+    //registerMessage<bool>();
+    MessageFactory::registerMessage<connection_types::GenericValueMessage<bool>>();
+    MessageSerializer::registerMessage<connection_types::GenericValueMessage<bool>>();
 }
 
 void RegisterCorePlugins::shutdown()

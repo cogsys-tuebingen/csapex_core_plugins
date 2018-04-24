@@ -33,7 +33,7 @@ public:
         : timer("Application Duration")
     {}
 
-    virtual void init(CsApexCore& core) override
+    virtual void prepare(Settings&) override
     {
         timer.restart();
 

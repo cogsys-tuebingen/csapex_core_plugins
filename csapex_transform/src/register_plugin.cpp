@@ -50,7 +50,7 @@ RegisterTransformPlugin::RegisterTransformPlugin()
 {
 }
 
-void RegisterTransformPlugin::init(CsApexCore& core)
+void RegisterTransformPlugin::prepare(Settings&)
 {
     Tag::createIfNotExists("Transform");
     Tag::createIfNotExists("Time");

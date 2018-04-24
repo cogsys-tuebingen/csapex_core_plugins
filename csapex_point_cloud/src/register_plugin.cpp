@@ -140,7 +140,7 @@ RegisterPointCloudPlugin::RegisterPointCloudPlugin()
 {
 }
 
-void RegisterPointCloudPlugin::init(CsApexCore& core)
+void RegisterPointCloudPlugin::prepare(Settings&)
 {
     Tag::createIfNotExists("PointCloud");
 

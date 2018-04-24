@@ -59,7 +59,7 @@ RegisterScan2DPlugin::RegisterScan2DPlugin()
 {
 }
 
-void RegisterScan2DPlugin::init(CsApexCore& core)
+void RegisterScan2DPlugin::prepare(Settings&)
 {
     qRegisterMetaType < lib_laser_processing::Scan::Ptr > ("lib_laser_processing::Scan::Ptr");
     qRegisterMetaType < lib_laser_processing::LabeledScan::Ptr > ("lib_laser_processing::LabeledScan::Ptr");

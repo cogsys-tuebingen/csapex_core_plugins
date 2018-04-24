@@ -215,6 +215,6 @@ void Optimizer::finish()
 void Optimizer::setBest()
 {
     for(param::ParameterPtr p : getPersistentParameters()) {
-        p->setValueFrom(*best_parameters_.at(p->getUUID()));;
+        p->cloneDataFrom(*best_parameters_.at(p->getUUID()));
     }
 }

@@ -13,7 +13,7 @@ class CSAPEX_EXPORT_PLUGIN RegisterPlugin : public CorePlugin
 public:
     RegisterPlugin();
 
-    void init(CsApexCore& core);
+    void prepare(Settings&) override;
 };
 
 }
