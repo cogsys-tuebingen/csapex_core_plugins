@@ -105,7 +105,7 @@ void ROSHandler::init()
 
             int argc = (int) cstrings.size();
             char** argv = (char**) cstrings.data();
-            ros::init(argc, argv, "csapex");
+            ros::init(argc, argv, "csapex", ros::init_options::AnonymousName);
        // }
         initialized_ = true;
 
