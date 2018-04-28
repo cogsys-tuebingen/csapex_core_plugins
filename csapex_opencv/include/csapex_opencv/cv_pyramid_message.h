@@ -34,7 +34,7 @@ struct CSAPEX_OPENCV_EXPORT CvPyramidMessage : public MessageTemplate<std::vecto
 public:
     CvPyramidMessage(const Encoding& encoding);
 
-    virtual void writeRaw(const std::string &file, const std::string &base, const std::string &suffix) const;
+    virtual void writeNative(const std::string &file, const std::string &base, const std::string &suffix) const;
 
     const Encoding &getEncoding() const;
     void setEncoding(const Encoding& e);

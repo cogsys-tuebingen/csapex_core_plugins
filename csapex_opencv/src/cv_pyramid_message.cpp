@@ -19,7 +19,7 @@ CvPyramidMessage::CvPyramidMessage(const Encoding& encoding)
     : encoding(encoding)
 {}
 
-void CvPyramidMessage::writeRaw(const std::string &path, const std::string &base, const std::string &suffix) const
+void CvPyramidMessage::writeNative(const std::string &path, const std::string &base, const std::string &suffix) const
 {
     for(unsigned int i = 0 ; i < value.size() ; ++i) {
         std::stringstream ss;

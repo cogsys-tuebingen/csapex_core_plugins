@@ -48,7 +48,7 @@ void TextDisplay::display(TokenDataConstPtr msg)
     YAML::Node node;
     {
         INTERLUDE("serialize");
-        node = MessageSerializer::serializeMessage(*msg);
+        node = MessageSerializer::serializeYamlMessage(*msg);
     }
 
     std::stringstream ss;

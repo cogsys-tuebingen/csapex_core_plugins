@@ -34,7 +34,7 @@ public:
     CvMatMessage(const Encoding& encoding, const std::string& frame_id, Stamp stamp_micro_seconds);
     ~CvMatMessage();
 
-    virtual void writeRaw(const std::string &file, const std::string &base, const std::string &suffix) const override;
+    virtual void writeNative(const std::string &file, const std::string &base, const std::string &suffix) const override;
 
     const Encoding &getEncoding() const;
     void setEncoding(const Encoding& e);

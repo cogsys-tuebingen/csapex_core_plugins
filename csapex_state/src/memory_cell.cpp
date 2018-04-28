@@ -126,7 +126,7 @@ public:
 
             if(show_content_) {
                 YAML::Node node;
-                node = MessageSerializer::serializeMessage(*changed_cell_);
+                node = MessageSerializer::serializeYamlMessage(*changed_cell_);
 
                 std::stringstream ss;
                 convert(ss, node, "");

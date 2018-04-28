@@ -33,7 +33,7 @@ void CvMatMessage::cloneData(const CvMatMessage& other)
     value = other.value.clone();
 }
 
-void CvMatMessage::writeRaw(const std::string &path, const std::string &base, const std::string &suffix) const
+void CvMatMessage::writeNative(const std::string &path, const std::string &base, const std::string &suffix) const
 {
     std::string file = path + "/" + base + "_" + suffix + ".png";
     cv::imwrite(file, value);
