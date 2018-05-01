@@ -68,9 +68,10 @@ struct MessageCaster<connection_types::GenericPointerMessage<R>, S>
                 return msg;
             } catch(const ros::Exception& e) {
                 // no success...
+                return nullptr;
             }
         }
-        return MessageCaster<connection_types::GenericPointerMessage<R>, S, void>::constcast(msg);
+        return DefaultMessageCaster<connection_types::GenericPointerMessage<R>, S>::constcast(msg);
     }
     static std::shared_ptr<connection_types::GenericPointerMessage<R>> cast(const std::shared_ptr<S>& msg)
     {
@@ -83,9 +84,10 @@ struct MessageCaster<connection_types::GenericPointerMessage<R>, S>
                 return msg;
             } catch(const ros::Exception& e) {
                 // no success...
+                return nullptr;
             }
         }
-        return MessageCaster<connection_types::GenericPointerMessage<R>, S, void>::cast(msg);
+        return DefaultMessageCaster<connection_types::GenericPointerMessage<R>, S>::cast(msg);
     }
 };
 
