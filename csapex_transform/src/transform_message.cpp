@@ -35,6 +35,15 @@ void TransformMessage::sanitize()
     }
 }
 
+
+void TransformMessage::cloneData(const TransformMessage& other)
+{
+    Message::cloneDataFrom(other);
+
+    child_frame = other.child_frame;
+    value = other.value;
+}
+
 /// YAML
 namespace YAML {
 Node convert<csapex::connection_types::TransformMessage>::encode(const csapex::connection_types::TransformMessage& rhs)

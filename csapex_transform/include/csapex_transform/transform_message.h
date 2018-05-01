@@ -21,6 +21,8 @@ struct TransformMessage : public MessageTemplate<tf::Transform, TransformMessage
 
     void sanitize();
 
+    void cloneData(const TransformMessage& other);
+
 public:
     std::string child_frame;
 };
