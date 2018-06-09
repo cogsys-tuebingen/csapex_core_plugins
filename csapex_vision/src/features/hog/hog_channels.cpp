@@ -31,6 +31,8 @@ void HOGChannels::setupParameters(Parameterizable& parameters)
                             ksize_);
     parameters.addParameter(param::ParameterFactory::declareBool("signed", false),
                             signed_);
+    parameters.addParameter(param::ParameterFactory::declareBool("invert order", true),
+                            invert_order_);
 }
 
 void HOGChannels::setup(NodeModifier& node_modifier)
@@ -48,9 +50,9 @@ void HOGChannels::process()
 
     std::vector<cv::Mat> channels;
     if(signed_) {
-        cslibs_vision::HOG::directed(in->value, bin_rad, channels, ksize_);
+        cslibs_vision::HOG::directed(in->value, bin_rad, channels, invert_order_, ksize_);
     } else {
-        cslibs_vision::HOG::standard(in->value, bin_rad, channels, ksize_);
+        cslibs_vision::HOG::standard(in->value, bin_rad, channels, invert_order_, ksize_);
     }
 
     for(const cv::Mat &c : channels) {

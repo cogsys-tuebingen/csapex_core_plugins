@@ -48,25 +48,24 @@ void Gabor::setupParameters(Parameterizable& parameters)
                                                                    0.01, 10.0, 0.5, 0.01),
                             sigma_);
 
-
-    parameters.addParameter(param::ParameterFactory::declareRange("theta",
+    parameters.addParameter(param::ParameterFactory::declareAngle("theta",
                                                                    param::ParameterDescription("Orientation of the normal to the parallel stripes of a Gabor function."),
-                                                                   1, 23, 3, 2),
+                                                                   0.0),
                             theta_);
 
     parameters.addParameter(param::ParameterFactory::declareRange("lambda",
                                                                    param::ParameterDescription("Wavelength of the sinusoidal factor."),
-                                                                   1, 23, 3, 2),
+                                                                   1.0, 100.0, 1.0, 0.01),
                             lambda_);
 
     parameters.addParameter(param::ParameterFactory::declareRange("gamma",
                                                                    param::ParameterDescription("Spatial aspect ratio."),
-                                                                   1, 23, 3, 2),
+                                                                   1.0, 100.0, 1.0, 0.01),
                             gamma_);
 
     parameters.addParameter(param::ParameterFactory::declareRange("psi",
                                                                    param::ParameterDescription("Phase offset."),
-                                                                   1, 23, 3, 2),
+                                                                   1.0, 100.0, 1.0, 0.01),
                             psi_);
 
 }

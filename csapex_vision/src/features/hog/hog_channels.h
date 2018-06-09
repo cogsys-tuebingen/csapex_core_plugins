@@ -23,7 +23,7 @@ private:
     int  bins_;
     bool signed_;
     int  ksize_;
-
+    bool invert_order_;
 };
 }
 #endif // HOG_CHANNELS_H
