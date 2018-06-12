@@ -44,16 +44,21 @@ public:
         auto model = getModel<PointT>(cloud);
 
         /// get indices of points to use
-        std::vector<int> indices;
-        getInidicesFromInput(indices);
-        if(indices.empty()) {
-            getIndices<PointT>(cloud, indices);
+        std::vector<int> prior_inlier;
+        std::vector<int> prior_outlier;
+
+        getInidicesFromInput(prior_inlier);
+        if(prior_inlier.empty()) {
+            if(keep_invalid_as_outlier_)
+                getIndices<PointT>(cloud, prior_inlier, prior_outlier);
+            else
+                getIndices<PointT>(cloud, prior_inlier);
         }
 
         /// prepare algorithm
         ransac_parameters_.assign(sac_parameters_);
         typename csapex_sample_consensus::Ransac<PointT>::Ptr sac
-                (new csapex_sample_consensus::Ransac<PointT>(indices, ransac_parameters_, rng_));
+                (new csapex_sample_consensus::Ransac<PointT>(prior_inlier, ransac_parameters_, rng_));
 
         pcl::PointIndices outliers;
         pcl::PointIndices inliers;
@@ -85,7 +90,7 @@ public:
         } else {
             sac->computeModel(model);
             if(model) {
-                model->getInliersAndOutliers(indices,
+                model->getInliersAndOutliers(prior_inlier,
                                              ransac_parameters_.model_search_distance,
                                              inliers.indices,
                                              outliers.indices);
@@ -95,7 +100,9 @@ public:
                 } else {
                     out_outliers->emplace_back(inliers);
                 }
+                outliers.indices.insert(outliers.indices.end(), prior_outlier.begin(), prior_outlier.end());
                 out_outliers->emplace_back(outliers);
+
             }
         }
 
