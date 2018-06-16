@@ -7,6 +7,9 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
 
+/// SYSTEM
+#include <random>
+
 using namespace csapex;
 using namespace csapex::connection_types;
 

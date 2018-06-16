@@ -201,7 +201,7 @@ TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
         OutputPtr out = testing::getOutput(node, "out_0");
         ASSERT_NE(nullptr, out);
 
-        ASSERT_EQ(2, out->getConnections().size());
+        ASSERT_EQ(2u, out->getConnections().size());
     }
 }
 

@@ -29,6 +29,7 @@
 #include <QComboBox>
 #include <QFormLayout>
 #include <QProgressBar>
+#include <iostream>
 
 using namespace csapex;
 

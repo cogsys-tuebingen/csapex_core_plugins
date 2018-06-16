@@ -4,6 +4,10 @@
 /// PROJECT
 #include <csapex/serialization/io/std_io.h>
 
+/// SYSTEM
+#include <pcl/PointIndices.h>
+#include <pcl/ModelCoefficients.h>
+
 using namespace csapex;
 
 /// SERIALIZATION

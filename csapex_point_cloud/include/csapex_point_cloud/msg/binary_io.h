@@ -3,9 +3,13 @@
 /// PROJECT
 #include <csapex/serialization/serialization_fwd.h>
 
-/// SYSTEM
-#include <pcl/PointIndices.h>
-#include <pcl/segmentation/sac_segmentation.h>
+/// FORWARD DECLARATION
+namespace pcl
+{
+class PCLHeader;
+class PointIndices;
+class ModelCoefficients;
+}
 
 namespace csapex
 {

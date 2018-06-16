@@ -4,6 +4,9 @@
 /// COMPONENT
 #include <csapex_ros/ros_node.h>
 
+/// SYSTEM
+#include <boost/optional.hpp>
+
 namespace csapex {
 
 class ExportRos : public RosNode
