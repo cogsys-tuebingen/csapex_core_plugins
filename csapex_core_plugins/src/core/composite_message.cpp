@@ -57,14 +57,14 @@ bool CompositeMessage::acceptsConnectionFrom(const TokenData *other_side) const
     }
 }
 
-void CompositeMessage::serialize(SerializationBuffer &data) const
+void CompositeMessage::serialize(SerializationBuffer &data, SemanticVersion& version) const
 {
-    TokenData::serialize(data);
+    Message::serialize(data, version);
     data << value;
 }
-void CompositeMessage::deserialize(const SerializationBuffer& data)
+void CompositeMessage::deserialize(const SerializationBuffer& data, const SemanticVersion& version)
 {
-    TokenData::deserialize(data);
+    Message::deserialize(data, version);
     data >> value;
 }
 

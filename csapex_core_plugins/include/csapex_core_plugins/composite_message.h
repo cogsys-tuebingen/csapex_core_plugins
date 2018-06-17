@@ -51,8 +51,8 @@ public:
     bool canConnectTo(const TokenData* other_side) const override;
     bool acceptsConnectionFrom(const TokenData *other_side) const override;
 
-    void serialize(SerializationBuffer &data) const override;
-    void deserialize(const SerializationBuffer& data) override;
+    void serialize(SerializationBuffer &data, SemanticVersion& version) const override;
+    void deserialize(const SerializationBuffer& data, const SemanticVersion& version) override;
 private:
     CompositeMessage(TokenData::Ptr type, const std::string& frame_id, Stamp stamp_micro_seconds);
 

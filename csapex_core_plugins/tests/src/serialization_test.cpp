@@ -70,12 +70,12 @@ TEST_F(CorePluginsSerializationTest, CompositeMessageSerialization)
         message->value.push_back(std::make_shared<TimestampMessage>(TimestampMessage::Tp(std::chrono::microseconds(23))));
         message->value.push_back(std::make_shared<DurationMessage>(std::chrono::microseconds(42)));
 
-        message->serialize(data);
+        message->serializeVersioned(data);
     }
 
     {
         CompositeMessage::Ptr message = std::make_shared<CompositeMessage>();
-        message->deserialize(data);
+        message->deserializeVersioned(data);
 
         ASSERT_EQ(2, message->value.size());
 

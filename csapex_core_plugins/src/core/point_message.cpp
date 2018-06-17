@@ -19,14 +19,14 @@ PointMessage::PointMessage()
     : Message(type<PointMessage>::name(), "/", 0)
 {}
 
-void PointMessage::serialize(SerializationBuffer &data) const
+void PointMessage::serialize(SerializationBuffer &data, SemanticVersion& version) const
 {
-    TokenData::serialize(data);
+    Message::serialize(data, version);
     data << x << y;
 }
-void PointMessage::deserialize(const SerializationBuffer& data)
+void PointMessage::deserialize(const SerializationBuffer& data, const SemanticVersion& version)
 {
-    TokenData::deserialize(data);
+    Message::deserialize(data, version);
     data >> x >> y;
 }
 
