@@ -22,6 +22,8 @@ before_script:
   - cd /build/ws
   - ln -s $CI_PROJECT_DIR src/$CI_PROJECT_NAME
   - cd src
+
+  # clone gitlab dependencies (not available via rosdep (yet))
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:csapex/csapex csapex
   - cd csapex
   - git checkout $CI_BUILD_REF_NAME || true # select same branch name, if it exists. Defaults to master
@@ -32,6 +34,10 @@ before_script:
   - git clone gitlab@gitlab.cs.uni-tuebingen.de:libs/cslibs_indexed_storage.git
   - cd ..
 
+  # clone rosdep depencies (this should ideally get ALL dependencies)
+  - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
+  - apt-get install -y $(rosdep install --from-paths -i -y -s src | grep 'apt-get install' | rev | cut -f1 -d' ' | rev | paste -s)
+
 
 stages:
   - build
@@ -40,34 +46,28 @@ indigo:
   stage: build
   image: ros:indigo-perception
   script:
-    - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
-    - ls -R
-    - rosdep install -y -r -i --from-paths src
-    - catkin_make
+    - catkin_make_isolated
 
 jade:
   stage: build
   image: ros:jade-perception
   script:
-    - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
-    - ls -R
-    - rosdep install -y -r -i --from-paths src
-    - catkin_make
+    - catkin_make_isolated
 
 kinetic:
   stage: build
   image: ros:kinetic-perception
   script:
-    - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
-    - ls -R
-    - rosdep install -y -r -i --from-paths src
-    - catkin_make
+    - catkin_make_isolated
 
 lunar:
   stage: build
   image: ros:lunar-perception
   script:
-    - source /opt/ros/$(ls /opt/ros/ | sort -r | head -n 1)/setup.bash
-    - ls -R
-    - rosdep install -y -r -i --from-paths src
-    - catkin_make
+    - catkin_make_isolated
+
+melodic:
+  stage: build
+  image: ros:melodic-perception
+  script:
+    - catkin_make_isolated
