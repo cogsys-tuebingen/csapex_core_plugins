@@ -53,12 +53,15 @@ private:
 
 
 /// TRAITS
+// stringification
 template <>
 struct CSAPEX_OPENCV_EXPORT type<CvMatMessage> {
     static std::string name() {
         return "cv::Mat";
     }
 };
+
+// accessor to raw data
 template <>
 struct CSAPEX_OPENCV_EXPORT MessageContainer<cv::Mat, false>
 {
@@ -75,12 +78,12 @@ struct CSAPEX_OPENCV_EXPORT MessageContainer<cv::Mat, false>
 
 }
 
+// constructor for empty image
 template <>
 inline CSAPEX_OPENCV_EXPORT std::shared_ptr<connection_types::CvMatMessage> makeEmpty<connection_types::CvMatMessage>()
 {
     return std::shared_ptr<connection_types::CvMatMessage>(new connection_types::CvMatMessage(enc::bgr, "camera", 0));
 }
-
 
 }
 
