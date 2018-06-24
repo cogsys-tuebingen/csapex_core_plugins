@@ -51,13 +51,13 @@ int ImageProvider::sleepTime()
 }
 
 
-Memento::Ptr ImageProvider::getState() const
+GenericStatePtr ImageProvider::getState() const
 {
     GenericState::Ptr r(new GenericState(state));
     return r;
 }
 
-void ImageProvider::setParameterState(Memento::Ptr memento)
+void ImageProvider::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<GenericState> m = std::dynamic_pointer_cast<GenericState> (memento);
     if(m) {

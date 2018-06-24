@@ -76,13 +76,13 @@ connection_types::Message::Ptr ARFFFeatureMessageProvider::next(std::size_t slot
     return msg;
 }
 
-Memento::Ptr ARFFFeatureMessageProvider::getState() const
+GenericStatePtr ARFFFeatureMessageProvider::getState() const
 {
     GenericState::Ptr r(new GenericState(state));
     return r;
 }
 
-void ARFFFeatureMessageProvider::setParameterState(Memento::Ptr memento)
+void ARFFFeatureMessageProvider::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<GenericState> m = std::dynamic_pointer_cast<GenericState> (memento);
     if(m) {

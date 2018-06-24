@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/view/node/default_node_adapter.h>
+#include <csapex/model/generic_state.h>
 
 /// COMPONENT
 #include "image_roi.h"
@@ -20,8 +21,8 @@ class ImageRoiAdapter : public QObject, public DefaultNodeAdapter
 public:
     ImageRoiAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node);
 
-    virtual Memento::Ptr getState() const;
-    virtual void         setParameterState(Memento::Ptr memento);
+    virtual GenericStatePtr getState() const;
+    virtual void         setParameterState(GenericStatePtr memento);
 
     virtual void         setupUi(QBoxLayout* layout);
 
@@ -39,7 +40,7 @@ Q_SIGNALS:
 protected:
     bool eventFilter(QObject* o, QEvent* e);
 
-    struct State : public Memento {
+    struct State : public GenericState {
         int     width;
         int     height;
         QSize   last_size;

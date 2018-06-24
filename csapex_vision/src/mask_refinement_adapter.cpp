@@ -42,12 +42,12 @@ MaskRefinementAdapter::~MaskRefinementAdapter()
 {
 }
 
-Memento::Ptr MaskRefinementAdapter::getState() const
+GenericStatePtr MaskRefinementAdapter::getState() const
 {
     return std::shared_ptr<State>(new State(state));
 }
 
-void MaskRefinementAdapter::setParameterState(Memento::Ptr memento)
+void MaskRefinementAdapter::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
     apex_assert(m.get());

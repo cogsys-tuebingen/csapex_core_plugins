@@ -125,13 +125,13 @@ connection_types::Message::Ptr PCDPointCloudMessageProvider::next(std::size_t sl
     return point_cloud_;
 }
 
-Memento::Ptr PCDPointCloudMessageProvider::getState() const
+GenericStatePtr PCDPointCloudMessageProvider::getState() const
 {
     GenericState::Ptr r(new GenericState(state));
     return r;
 }
 
-void PCDPointCloudMessageProvider::setParameterState(Memento::Ptr memento)
+void PCDPointCloudMessageProvider::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<GenericState> m = std::dynamic_pointer_cast<GenericState> (memento);
     if(m) {

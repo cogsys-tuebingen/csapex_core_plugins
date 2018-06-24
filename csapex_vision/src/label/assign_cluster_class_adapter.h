@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/view/node/default_node_adapter.h>
+#include <csapex/model/generic_state.h>
 
 /// COMPONENT
 #include "assign_cluster_class.h"
@@ -22,8 +23,8 @@ public:
     AssignClusterClassAdapter(csapex::NodeFacadeImplementationPtr worker, csapex::NodeBox* parent,
                               std::weak_ptr<AssignClusterClass> node);
 
-    virtual csapex::Memento::Ptr getState() const;
-    virtual void                 setParameterState(csapex::Memento::Ptr memento);
+    virtual csapex::GenericStatePtr getState() const;
+    virtual void                 setParameterState(csapex::GenericStatePtr memento);
 
     virtual void                 setupUi(QBoxLayout* layout);
 
@@ -49,7 +50,7 @@ protected:
     void updateClusterClass(const QPoint &pos);
 
 
-    struct State : public csapex::Memento {
+    struct State : public GenericState {
         int     width;
         int     height;
         QSize   last_size;
