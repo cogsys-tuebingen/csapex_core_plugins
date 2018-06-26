@@ -99,6 +99,9 @@ public:
                                                                                  0.0),
                                            uses_axis,
                                            angle_eps_);
+
+        parameters.addParameter(param::ParameterFactory::declareBool("keep invalid as outlier", true),
+                                keep_invalid_as_outlier_);
     }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
@@ -132,6 +135,7 @@ protected:
     Eigen::Vector3d      axis_;
     double               angle_eps_;
 
+    bool                keep_invalid_as_outlier_;
 
     Input*               in_cloud_;
     Input*               in_indices_;
@@ -204,6 +208,26 @@ protected:
         for(std::size_t i = 0 ; i < size; i+=step) {
             if(pr.isValid(cloud->at(i))) {
                 indices.emplace_back(i);
+            }
+        }
+    }
+
+    template<typename PointT>
+    void getIndices(typename pcl::PointCloud<PointT>::ConstPtr &cloud,
+                    std::vector<int> &valids,
+                    std::vector<int> &invalids)
+    {
+        const static pcl::DefaultPointRepresentation<PointT> pr;
+        const std::size_t size = cloud->size();
+        valids.reserve(size);
+        invalids.reserve(size);
+
+        const std::size_t step = 1 + point_skip_;
+        for(std::size_t i = 0 ; i < size; i+=step) {
+            if(pr.isValid(cloud->at(i))) {
+                valids.emplace_back(i);
+            } else {
+                invalids.emplace_back(i);
             }
         }
     }

@@ -157,8 +157,8 @@ inline void Model<PointT>::getOutliers(const float maximum_distance,
 
 template<typename PointT>
 inline void Model<PointT>::getOutliers(const std::vector<int> &src_indices,
-                                                      const float maximum_distance,
-                                                      std::vector<int> &dst_indices) const
+                                       const float maximum_distance,
+                                       std::vector<int> &dst_indices) const
 {
     if(!isValid())
         return;
@@ -173,9 +173,9 @@ inline void Model<PointT>::getOutliers(const std::vector<int> &src_indices,
 
 template<typename PointT>
 inline void Model<PointT>::getInliersAndOutliers(const std::vector<int> &src_indices,
-                                                                const float maximum_distance,
-                                                                std::vector<int> &dst_inliers,
-                                                                std::vector<int> &dst_outliers) const
+                                                 const float maximum_distance,
+                                                 std::vector<int> &dst_inliers,
+                                                 std::vector<int> &dst_outliers) const
 {
     if(!isValid())
         return;
@@ -194,8 +194,8 @@ inline void Model<PointT>::getInliersAndOutliers(const std::vector<int> &src_ind
 
 template<typename PointT>
 inline void Model<PointT>::getInliersAndOutliers(const float maximum_distance,
-                                                                std::vector<int> &dst_inliers,
-                                                                std::vector<int> &dst_outliers) const
+                                                 std::vector<int> &dst_inliers,
+                                                 std::vector<int> &dst_outliers) const
 {
     if(!isValid())
         return;

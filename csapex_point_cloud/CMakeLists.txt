@@ -117,6 +117,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/conversion/pointcloud_to_xyz.cpp
     src/conversion/indices_to_mask.cpp
     src/conversion/indices_to_rois.cpp
+    src/conversion/to_vector_of_indices.cpp
     src/conversion/normals_to_colorimage.cpp
 
     src/filter/conditional_outlier_removal.cpp
