@@ -78,6 +78,6 @@ private:
     double  angle_;
 
 };
-
 }
+CSAPEX_REGISTER_CLASS(csapex::RotateScan, csapex::Node)
 
