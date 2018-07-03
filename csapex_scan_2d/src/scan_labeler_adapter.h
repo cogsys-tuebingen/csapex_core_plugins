@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/view/node/default_node_adapter.h>
+#include <csapex/model/generic_state.h>
 
 /// COMPONENT
 #include "scan_labeler.h"
@@ -21,8 +22,8 @@ class ScanLabelerAdapter : public QObject, public DefaultNodeAdapter
 public:
     ScanLabelerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node);
 
-    virtual Memento::Ptr getState() const;
-    virtual void setParameterState(Memento::Ptr memento);
+    virtual GenericStatePtr getState() const;
+    virtual void setParameterState(GenericStatePtr memento);
 
     virtual void setupUi(QBoxLayout* layout);
 
@@ -45,7 +46,8 @@ protected:
 
     std::weak_ptr<ScanLabeler> wrapped_;
 
-    struct State : public Memento {
+    struct State : public GenericState
+    {
         int width;
         int height;
 

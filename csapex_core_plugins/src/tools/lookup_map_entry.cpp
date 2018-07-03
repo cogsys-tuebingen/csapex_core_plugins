@@ -12,6 +12,7 @@
 #include <csapex/signal/event.h>
 #include <csapex_core_plugins/map_message.h>
 #include <csapex/model/token.h>
+#include <csapex/model/node_handle.h>
 #include <csapex/msg/generic_value_message.hpp>
 
 using namespace csapex;
@@ -58,14 +59,18 @@ public:
 
         std::string key = msg::getValue<std::string>(in_key_);
 
-        for(KeyValueMessage part : map_->value) {
-            apex_assert_msg(!part.value.first.empty(), "invalid key (empty)");
-            apex_assert_msg(part.value.second, "invalid value (null)");
+        if(map_) {
+            for(KeyValueMessage part : map_->value) {
+                apex_assert_msg(!part.value.first.empty(), "invalid key (empty)");
+                apex_assert_msg(part.value.second, "invalid value (null)");
 
-            if(part.value.first == key) {
-                msg::publish(out_value_, part.value.second);
-                return;
+                if(part.value.first == key) {
+                    msg::publish(out_value_, part.value.second);
+                    return;
+                }
             }
+        } else {
+            node_handle_->setWarning(std::string("No map received! Cannot lookup key ") + key);
         }
 
         std::shared_ptr<GenericValueMessage<std::string>> msg = std::make_shared<GenericValueMessage<std::string>>();

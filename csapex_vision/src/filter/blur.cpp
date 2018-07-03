@@ -18,22 +18,24 @@ BoxBlur::BoxBlur()
 {
 }
 
+void BoxBlur::setup(NodeModifier& node_modifier)
+{
+    input_ = node_modifier.addInput<CvMatMessage>("Unblurred");
+    output_ = node_modifier.addOutput<CvMatMessage>("Blurred");
+}
+
 void BoxBlur::process()
 {
-    CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
-    CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
+    CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
+    //CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
+
+    CvMatMessage::Ptr out = msg::allocate<CvMatMessage>(output_, in->getEncoding(), in->frame_id, in->stamp_micro_seconds);
 
     int kernel = readParameter<int>("kernel");
 
     cv::blur(in->value,out->value, cv::Size(kernel, kernel));
 
     msg::publish(output_, out);
-}
-
-void BoxBlur::setup(NodeModifier& node_modifier)
-{
-    input_ = node_modifier.addInput<CvMatMessage>("Unblurred");
-    output_ = node_modifier.addOutput<CvMatMessage>("Blurred");
 }
 
 void BoxBlur::setupParameters(Parameterizable& parameters)

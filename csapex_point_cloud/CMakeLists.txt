@@ -59,6 +59,7 @@ add_library(${PROJECT_NAME}
     src/msg/model_message.cpp
     src/msg/normals_message.cpp
     src/msg/indices_message.cpp
+    src/msg/binary_io.cpp
 
     # qtcretor visibility
     include/csapex_point_cloud/msg/point_cloud_message.h

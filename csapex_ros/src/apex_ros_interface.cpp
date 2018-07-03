@@ -178,7 +178,7 @@ void APEXRosInterface::init(CsApexCore &core)
 
 void APEXRosInterface::setupGraph(SubgraphNode *graph)
 {
-    clock_reset_event_ = graph->createInternalEvent(connection_types::makeEmpty<connection_types::AnyMessage>(), graph->getGraph()->makeUUID("event_ros_time_reset"), "ros time reset");
+    clock_reset_event_ = graph->createInternalEvent(makeEmpty<connection_types::AnyMessage>(), graph->getGraph()->makeUUID("event_ros_time_reset"), "ros time reset");
 }
 
 void APEXRosInterface::loadParameterValue(const std::string& prefix, const std::string& parameter_name, const XmlRpc::XmlRpcValue& parameter_value)

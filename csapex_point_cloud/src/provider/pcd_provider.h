@@ -2,7 +2,7 @@
 #define PCD_PROVIDER_H
 
 /// PROJECT
-#include <csapex/model/memento.h>
+#include <csapex/serialization/serializable.h>
 #include <csapex/msg/message_provider.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
@@ -29,8 +29,8 @@ public:
 
     std::vector<std::string> getExtensions() const;
 
-    Memento::Ptr getState() const;
-    void setParameterState(Memento::Ptr memento);
+    GenericStatePtr getState() const;
+    void setParameterState(GenericStatePtr memento);
 
 private:
     connection_types::PointCloudMessage::Ptr point_cloud_;

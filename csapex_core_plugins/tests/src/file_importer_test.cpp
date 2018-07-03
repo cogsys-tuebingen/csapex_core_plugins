@@ -14,6 +14,7 @@
 #include <csapex/msg/direct_connection.h>
 
 #include <csapex_core_plugins/register_core_plugins.h>
+#include "../../src/io/file_importer.h"
 
 using namespace csapex;
 using namespace connection_types;
@@ -86,21 +87,28 @@ TEST_F(FileImporterTest, ImportDirectoryCanBeEnabled)
 
 TEST_F(FileImporterTest, ImportDirectory)
 {
-    NodeFacadeImplementationPtr importer = factory.makeNode("csapex::FileImporter", graph->generateUUID("importer"), graph);
+    NodeFacadeImplementationPtr importer_facade = factory.makeNode("csapex::FileImporter", graph->generateUUID("importer"), graph);
+    ASSERT_NE(nullptr, importer_facade);
+
+    NodePtr importer_node = importer_facade->getNode();
+    ASSERT_NE(nullptr, importer_node);
+
+    std::shared_ptr<FileImporter> importer = std::dynamic_pointer_cast<FileImporter>(importer_node);
     ASSERT_NE(nullptr, importer);
 
     NodeFacadeImplementationPtr sink = factory.makeNode("AnySink", graph->generateUUID("sink"), graph);
     ASSERT_NE(nullptr, sink);
 
-    importer->setParameter("import directory", true);
-    importer->setParameter("directory", std::string(TEST_RES_DIR) + "/input_sequence");
-    importer->handleChangedParameters();
-    NodePtr importer_node = importer->getNode();
+    importer_facade->setParameter("import directory", true);
+    importer_facade->setParameter("directory", std::string(TEST_RES_DIR) + "/input_sequence");
+    importer_facade->handleChangedParameters();
+
+    importer->import();
 
     InputPtr input = csapex::testing::getInput(sink, "in_0");
     EXPECT_NE(nullptr, input);
 
-    OutputPtr output = csapex::testing::getOutput(importer, "out_0");
+    OutputPtr output = csapex::testing::getOutput(importer_facade, "out_0");
     EXPECT_NE(nullptr, output);
 
     ConnectionPtr connection = DirectConnection::connect(output, input);
@@ -138,18 +146,26 @@ TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
 
         // importer
         importer_id = graph->generateUUID("importer");
-        NodeFacadeImplementationPtr importer = factory.makeNode("csapex::FileImporter", importer_id, graph);
+
+        NodeFacadeImplementationPtr importer_facade = factory.makeNode("csapex::FileImporter", importer_id, graph);
+        ASSERT_NE(nullptr, importer_facade);
+        main_graph_facade.addNode(importer_facade);
+
+        NodePtr importer_node = importer_facade->getNode();
+        ASSERT_NE(nullptr, importer_node);
+
+        std::shared_ptr<FileImporter> importer = std::dynamic_pointer_cast<FileImporter>(importer_node);
         ASSERT_NE(nullptr, importer);
-        main_graph_facade.addNode(importer);
 
-        importer->setParameter("import directory", true);
-        importer->setParameter("directory", std::string(TEST_RES_DIR) + "/input_sequence");
-
-        ASSERT_TRUE(importer->getNode()->hasChangedParameters());
-        importer->handleChangedParameters();
+        importer_facade->setParameter("import directory", true);
+        importer_facade->setParameter("directory", std::string(TEST_RES_DIR) + "/input_sequence");
+        ASSERT_TRUE(importer_node->hasChangedParameters());
+        importer_facade->handleChangedParameters();
         ASSERT_TRUE(importer->canProcess());
 
-        OutputPtr output = testing::getOutput(importer, "out_0");
+        importer->import();
+
+        OutputPtr output = testing::getOutput(importer_facade, "out_0");
         ASSERT_NE(nullptr, output);
 
         // sinks
@@ -158,14 +174,14 @@ TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
         main_graph_facade.addNode(sink1);
         InputPtr input1 = testing::getInput(sink1, "in_0");
         ASSERT_NE(nullptr, input1);
-        main_graph_facade.connect(importer, 0, sink1, 0);
+        main_graph_facade.connect(importer_facade, 0, sink1, 0);
 
         NodeFacadeImplementationPtr sink2 = factory.makeNode("AnySink", graph->generateUUID("sink"), graph);
         ASSERT_NE(nullptr, sink2);
         main_graph_facade.addNode(sink2);
         InputPtr input2 = testing::getInput(sink2, "in_0");
         ASSERT_NE(nullptr, input2);
-        main_graph_facade.connect(importer, 0, sink2, 0);
+        main_graph_facade.connect(importer_facade, 0, sink2, 0);
 
         GraphIO io(main_graph_facade, &factory, true);
         ASSERT_NO_THROW(io.saveGraphTo(store));
@@ -185,7 +201,7 @@ TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
         OutputPtr out = testing::getOutput(node, "out_0");
         ASSERT_NE(nullptr, out);
 
-        ASSERT_EQ(2, out->getConnections().size());
+        ASSERT_EQ(2u, out->getConnections().size());
     }
 }
 

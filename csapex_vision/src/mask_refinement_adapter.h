@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/view/node/default_node_adapter.h>
+#include <csapex/model/generic_state.h>
 
 /// COMPONENT
 #include "mask_refinement.h"
@@ -21,8 +22,8 @@ public:
     MaskRefinementAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<MaskRefinement> node);
     ~MaskRefinementAdapter();
 
-    virtual Memento::Ptr getState() const;
-    virtual void         setParameterState(Memento::Ptr memento);
+    virtual GenericStatePtr getState() const;
+    virtual void         setParameterState(GenericStatePtr memento);
 
     virtual void setupUi(QBoxLayout* layout);
 
@@ -39,7 +40,8 @@ public Q_SLOTS:
 protected:
     bool eventFilter(QObject* o, QEvent* e);
 
-    struct State : public Memento {
+    struct State : public GenericState
+    {
         int     width;
         int     height;
 
@@ -69,7 +71,7 @@ protected:
     std::weak_ptr<MaskRefinement> wrapped_;
 
 private:
-    State                state;
+    State state;
 
     QImage mask_;
     QPixmap mask_pm_;

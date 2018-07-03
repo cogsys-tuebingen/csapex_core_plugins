@@ -16,6 +16,9 @@ struct TutorialMessage : public MessageTemplate<bool, TutorialMessage>
     typedef std::shared_ptr<TutorialMessage const> ConstPtr;
 
     TutorialMessage();
+
+    void serialize(SerializationBuffer &data, SemanticVersion& version) const override;
+    void deserialize(const SerializationBuffer& data, const SemanticVersion& version) override;
 };
 
 /// TRAITS

@@ -6,6 +6,8 @@
 
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
+#include <csapex_opencv/binary_io.h>
+#include <csapex/serialization/io/std_io.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
@@ -31,9 +33,8 @@ struct CSAPEX_OPENCV_EXPORT CvPyramidMessage : public MessageTemplate<std::vecto
 
 public:
     CvPyramidMessage(const Encoding& encoding);
-    virtual TokenData::Ptr clone() const override;
 
-    virtual void writeRaw(const std::string &file, const std::string &base, const std::string &suffix) const;
+    virtual void writeNative(const std::string &file, const std::string &base, const std::string &suffix) const;
 
     const Encoding &getEncoding() const;
     void setEncoding(const Encoding& e);
@@ -53,14 +54,14 @@ struct type<CvPyramidMessage> {
         return "std::vector<cv::Mat>";
     }
 };
+}
 
 template <>
-inline std::shared_ptr<CvPyramidMessage> makeEmpty<CvPyramidMessage>()
+inline std::shared_ptr<connection_types::CvPyramidMessage> makeEmpty<connection_types::CvPyramidMessage>()
 {
-    return std::shared_ptr<CvPyramidMessage>(new CvPyramidMessage(enc::bgr));
+    return std::shared_ptr<connection_types::CvPyramidMessage>(new connection_types::CvPyramidMessage(enc::bgr));
 }
 
-}
 }
 
 /// YAML

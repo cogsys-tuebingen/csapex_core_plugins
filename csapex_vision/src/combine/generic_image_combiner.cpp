@@ -82,7 +82,7 @@ struct ExpressionParser : qi::grammar<Iterator, Expression(), ascii::space_type>
         primary_expr =
                   function_call                           [ _val = _1 ]
                 | ( '(' > expression > ')' )              [ _val = _1 ]
-                | ( '|' > expression > '|' )              [ _val = makefun("abs", _1) ]
+                | ( '|' > expression > '|' )              [ _val = makefun(std::string("abs"), _1) ]
                 | constant                                [ _val = _1 ]
                 | variable                                [ _val = _1 ]
                 ;
@@ -218,5 +218,5 @@ void GenericImageCombiner::setupParameters(Parameterizable& parameters)
 
 Input* GenericImageCombiner::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)
 {
-    return VariadicInputs::createVariadicInput(connection_types::makeEmpty<CvMatMessage>(), label.empty() ? "Image" : label, getVariadicInputCount() == 0 ? false : true);
+    return VariadicInputs::createVariadicInput(makeEmpty<CvMatMessage>(), label.empty() ? "Image" : label, getVariadicInputCount() == 0 ? false : true);
 }

@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/view/node/default_node_adapter.h>
+#include <csapex/model/generic_state.h>
 
 /// COMPONENT
 #include "polygon_scan_filter.h"
@@ -21,8 +22,8 @@ class PolygonScanFilterAdapter : public QObject, public DefaultNodeAdapter
 public:
     PolygonScanFilterAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node);
 
-    virtual Memento::Ptr getState() const;
-    virtual void setParameterState(Memento::Ptr memento);
+    virtual GenericStatePtr getState() const;
+    virtual void setParameterState(GenericStatePtr memento);
     virtual void setupUi(QBoxLayout* layout);
 
 public Q_SLOTS:
@@ -38,7 +39,7 @@ protected:
     std::weak_ptr<PolygonScanFilter> wrapped_;
     const PolygonScanFilter         *wrapped_ptr_;
 
-    struct State : public Memento {
+    struct State : public GenericState {
         int width;
         int height;
 

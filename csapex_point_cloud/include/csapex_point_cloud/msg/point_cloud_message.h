@@ -51,6 +51,10 @@ struct add_point_cloud_ptr
 
 struct PointCloudMessage : public Message
 {
+protected:
+    CLONABLE_IMPLEMENTATION(PointCloudMessage);
+
+public:
     friend class YAML::as_if<PointCloudMessage, void>;
 
     template <typename T>
@@ -84,10 +88,6 @@ struct PointCloudMessage : public Message
 
     PointCloudMessage(const std::string& frame_id, Stamp stamp_micro_seconds);
 
-    virtual TokenData::Ptr clone() const override;
-
-    virtual TokenData::Ptr toType() const override;
-
     virtual std::string descriptiveName() const override;
 
     bool acceptsConnectionFrom(const TokenData* other_side) const override;
@@ -107,11 +107,12 @@ struct type<PointCloudMessage> {
     }
 };
 
-template <>
-inline std::shared_ptr<PointCloudMessage> makeEmpty<PointCloudMessage>()
-{
-    return std::shared_ptr<PointCloudMessage>(new PointCloudMessage("/", 0));
 }
+
+template <>
+inline std::shared_ptr<connection_types::PointCloudMessage> makeEmpty<connection_types::PointCloudMessage>()
+{
+    return std::shared_ptr<connection_types::PointCloudMessage>(new connection_types::PointCloudMessage("/", 0));
 }
 }
 

@@ -45,6 +45,12 @@ struct type<GenericRosMessage> {
 
 }
 
+
+
+/// SERIALIZATION
+SerializationBuffer& operator << (SerializationBuffer& data, const topic_tools::ShapeShifter& shape);
+const SerializationBuffer& operator >> (const SerializationBuffer& data, topic_tools::ShapeShifter& shape);
+
 namespace msg
 {
 
@@ -57,14 +63,15 @@ struct MessageCaster<connection_types::GenericPointerMessage<R>, S>
         if(rosmsg) {
             try {
                 auto boost_ptr = rosmsg->value->template instantiate<R>();
-                auto msg = connection_types::makeEmpty<connection_types::GenericPointerMessage<R>>();
+                auto msg = makeEmpty<connection_types::GenericPointerMessage<R>>();
                 msg->value = shared_ptr_tools::to_std_shared(boost_ptr);
                 return msg;
             } catch(const ros::Exception& e) {
                 // no success...
+                return nullptr;
             }
         }
-        return MessageCaster<connection_types::GenericPointerMessage<R>, S, void>::constcast(msg);
+        return DefaultMessageCaster<connection_types::GenericPointerMessage<R>, S>::constcast(msg);
     }
     static std::shared_ptr<connection_types::GenericPointerMessage<R>> cast(const std::shared_ptr<S>& msg)
     {
@@ -72,14 +79,15 @@ struct MessageCaster<connection_types::GenericPointerMessage<R>, S>
         if(rosmsg) {
             try {
                 auto boost_ptr = rosmsg->value->template instantiate<R>();
-                auto msg = connection_types::makeEmpty<connection_types::GenericPointerMessage<R>>();
+                auto msg = makeEmpty<connection_types::GenericPointerMessage<R>>();
                 msg->value = shared_ptr_tools::to_std_shared(boost_ptr);
                 return msg;
             } catch(const ros::Exception& e) {
                 // no success...
+                return nullptr;
             }
         }
-        return MessageCaster<connection_types::GenericPointerMessage<R>, S, void>::cast(msg);
+        return DefaultMessageCaster<connection_types::GenericPointerMessage<R>, S>::cast(msg);
     }
 };
 

@@ -16,6 +16,7 @@
 #include <csapex/model/node_modifier.h>
 #include <cslibs_laser_processing/common/yaml-io.hpp>
 #include <csapex_ros/yaml_io.hpp>
+#include <csapex_scan_2d/binary_io.h>
 
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>

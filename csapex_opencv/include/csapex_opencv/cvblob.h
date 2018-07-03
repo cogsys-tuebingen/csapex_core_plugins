@@ -73,6 +73,10 @@ namespace cvb
 #define CV_CHAINCODE_LEFT	6 ///< Left.
 #define CV_CHAINCODE_UP_LEFT	7 ///< Up and left.
 
+#ifndef CV_RGB
+#define CV_RGB(r, g, b) cv::Scalar((b), (g), (r), 0)
+#endif
+
 /// \brief Move vectors of chain codes.
 /// \see CV_CHAINCODE_UP
 /// \see CV_CHAINCODE_UP_LEFT

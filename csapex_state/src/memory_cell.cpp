@@ -120,13 +120,13 @@ public:
             {
                 std::unique_lock<std::recursive_mutex> lock(value_mutex_);
                 value_ = changed_cell_;
-                token = std::make_shared<Token>(value_->clone());
+                token = std::make_shared<Token>(value_->cloneAs<TokenData>());
             }
             change_event_->triggerWith(token);
 
             if(show_content_) {
                 YAML::Node node;
-                node = MessageSerializer::serializeMessage(*changed_cell_);
+                node = MessageSerializer::serializeYamlMessage(*changed_cell_);
 
                 std::stringstream ss;
                 convert(ss, node, "");

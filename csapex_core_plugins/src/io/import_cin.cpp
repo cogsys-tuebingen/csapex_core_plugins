@@ -57,7 +57,7 @@ void ImportCin::publishNextMessage()
         msg::publish(connector_, last_message_);
 
     } else if(signal_end_) {
-        msg::publish(connector_, connection_types::makeEmpty<EndOfSequenceMessage>());
+        msg::publish(connector_, makeEmpty<EndOfSequenceMessage>());
     }
 }
 
@@ -82,7 +82,7 @@ void ImportCin::readMessages()
         if(import_yaml_) {
             readYAML(message);
         } else {
-            auto msg = connection_types::makeEmptyMessage<connection_types::GenericValueMessage<std::string>>();
+            auto msg = makeEmpty<connection_types::GenericValueMessage<std::string>>();
             msg->value = message;
             message_buffer_.push_back(msg);
         }

@@ -2,7 +2,7 @@
 #define IMAGE_PROVIDER_H
 
 /// PROJECT
-#include <csapex/model/memento.h>
+#include <csapex/serialization/serializable.h>
 #include <csapex/msg/message_provider.h>
 
 /// SYSTEM
@@ -43,8 +43,8 @@ public:
     virtual void next(cv::Mat&, cv::Mat&) = 0;
     virtual int sleepTime();
 
-    Memento::Ptr getState() const;
-    void setParameterState(Memento::Ptr memento);
+    GenericStatePtr getState() const;
+    void setParameterState(GenericStatePtr memento);
 
 private:
     static std::map<std::string, ProviderConstructor> plugins;

@@ -37,3 +37,20 @@ bool convert<csapex::connection_types::DurationMessage>::decode(const Node& node
 }
 }
 
+
+SerializationBuffer& csapex::operator << (SerializationBuffer& data, const std::chrono::microseconds& t)
+{
+    int64_t micro_seconds_since_epoch = duration_cast<microseconds>(t).count();
+    data << micro_seconds_since_epoch;
+
+    return data;
+}
+const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, std::chrono::microseconds& t)
+{
+    int64_t micro_seconds_since_epoch;
+    data >> micro_seconds_since_epoch;
+
+    t = microseconds(micro_seconds_since_epoch);
+
+    return data;
+}

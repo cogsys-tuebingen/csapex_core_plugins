@@ -150,12 +150,12 @@ void ImageRoiAdapter::setupUi(QBoxLayout* layout)
     DefaultNodeAdapter::setupUi(layout);
 }
 
-Memento::Ptr ImageRoiAdapter::getState() const
+GenericStatePtr ImageRoiAdapter::getState() const
 {
     return std::shared_ptr<State>(new State(state));
 }
 
-void ImageRoiAdapter::setParameterState(Memento::Ptr memento)
+void ImageRoiAdapter::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
     apex_assert(m.get());

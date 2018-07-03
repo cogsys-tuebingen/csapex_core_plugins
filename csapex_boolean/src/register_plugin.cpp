@@ -18,7 +18,7 @@ RegisterPlugin::RegisterPlugin()
 }
 
 
-void RegisterPlugin::init(CsApexCore& core)
+void RegisterPlugin::prepare(Settings&)
 {
     Tag::createIfNotExists("Boolean");
 }

@@ -11,7 +11,7 @@ class RegisterScan2DPlugin : public CorePlugin
 public:
     RegisterScan2DPlugin();
 
-    void init(CsApexCore& core);
+    void prepare(Settings&) override;
     void shutdown() override;
 };
 

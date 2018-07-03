@@ -228,12 +228,12 @@ void ScanLabelerAdapter::setupUi(QBoxLayout* layout)
     view_->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
-Memento::Ptr ScanLabelerAdapter::getState() const
+GenericStatePtr ScanLabelerAdapter::getState() const
 {
     return std::shared_ptr<State>(new State(state));
 }
 
-void ScanLabelerAdapter::setParameterState(Memento::Ptr memento)
+void ScanLabelerAdapter::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
     apex_assert(m.get());

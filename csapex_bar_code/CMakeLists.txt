@@ -18,7 +18,7 @@ csapex_package()
 if(${ZBAR_FOUND})
     include_directories(
       ${csapex_INCLUDE_DIRS}
-      #${csapex_opencv_INCLUDE_DIRS}
+      ${csapex_opencv_INCLUDE_DIRS}
       ${catkin_INCLUDE_DIRS}
       ${ZBAR_INCLUDE_DIR}
     )

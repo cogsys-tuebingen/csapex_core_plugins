@@ -3,6 +3,8 @@
 /// PROJECT
 #include <csapex/utility/assert.h>
 #include <csapex/utility/register_msg.h>
+#include <csapex/serialization/io/std_io.h>
+#include <csapex/serialization/io/csapex_io.h>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::PointMessage)
 
@@ -17,19 +19,16 @@ PointMessage::PointMessage()
     : Message(type<PointMessage>::name(), "/", 0)
 {}
 
-TokenData::Ptr PointMessage::clone() const
+void PointMessage::serialize(SerializationBuffer &data, SemanticVersion& version) const
 {
-    Ptr new_msg(new PointMessage(stamp_micro_seconds));
-    new_msg->x = x;
-    new_msg->y = y;
-    return new_msg;
+    Message::serialize(data, version);
+    data << x << y;
 }
-
-TokenData::Ptr PointMessage::toType() const
+void PointMessage::deserialize(const SerializationBuffer& data, const SemanticVersion& version)
 {
-    return makeEmptyMessage<PointMessage>();
+    Message::deserialize(data, version);
+    data >> x >> y;
 }
-
 
 /// YAML
 namespace YAML {

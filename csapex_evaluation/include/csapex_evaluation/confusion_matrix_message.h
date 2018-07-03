@@ -16,13 +16,14 @@ namespace connection_types {
 
 struct ConfusionMatrixMessage : public Message
 {
+protected:
+    CLONABLE_IMPLEMENTATION(ConfusionMatrixMessage);
+
+public:
     typedef std::shared_ptr<ConfusionMatrixMessage> Ptr;
     typedef std::shared_ptr<ConfusionMatrixMessage const> ConstPtr;
 
     ConfusionMatrixMessage(Message::Stamp stamp_micro_seconds = 0);
-
-    virtual TokenData::Ptr clone() const override;
-    virtual TokenData::Ptr toType() const override;
 
     ConfusionMatrix confusion;
 };

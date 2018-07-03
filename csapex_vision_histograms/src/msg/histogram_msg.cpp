@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/utility/register_msg.h>
+#include <csapex_opencv/binary_io.h>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::HistogramMessage)
 
@@ -13,6 +14,19 @@ HistogramMessage::HistogramMessage() :
     MessageTemplate<HistogramContainer,
                     HistogramMessage>()
 {
+}
+
+SerializationBuffer& csapex::operator << (SerializationBuffer& data, const HistogramContainer& t)
+{
+    data << t.ranges;
+    data << t.histograms;
+    return data;
+}
+const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, HistogramContainer& t)
+{
+    data >> t.ranges;
+    data >> t.histograms;
+    return data;
 }
 
 

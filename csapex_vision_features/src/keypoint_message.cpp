@@ -24,7 +24,7 @@ bool KeypointMessage::isContainer() const
 
 TokenData::Ptr KeypointMessage::nestedType() const
 {
-    return makeEmpty<GenericValueMessage<cv::KeyPoint>>();
+    return csapex::makeEmpty<GenericValueMessage<cv::KeyPoint>>();
 }
 
 TokenData::ConstPtr KeypointMessage::nestedValue(std::size_t i) const

@@ -18,6 +18,25 @@ TimestampMessage::TimestampMessage(TimestampMessage::Tp time)
     value = time;
 }
 
+SerializationBuffer& csapex::operator << (SerializationBuffer& data,
+                                  const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>& t)
+{
+    int64_t micro_seconds_since_epoch = duration_cast<microseconds>(t.time_since_epoch()).count();
+    data << micro_seconds_since_epoch;
+
+    return data;
+}
+const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data,
+                                        std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>& t)
+{
+    int64_t micro_seconds_since_epoch;
+    data >> micro_seconds_since_epoch;
+
+    t = TimestampMessage::Tp(microseconds(micro_seconds_since_epoch));
+
+    return data;
+}
+
 /// YAML
 namespace YAML {
 Node convert<csapex::connection_types::TimestampMessage>::encode(const csapex::connection_types::TimestampMessage& rhs)

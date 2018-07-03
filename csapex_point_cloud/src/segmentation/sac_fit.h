@@ -12,7 +12,7 @@
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
 #endif //__clang__
 #include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
+//#include <pcl/sample_consensus/model_types.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/sample_consensus/sac_model_normal_parallel_plane.h>
