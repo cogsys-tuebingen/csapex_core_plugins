@@ -13,7 +13,7 @@ using namespace csapex;
 using namespace connection_types;
 
 Merge::Merge()
-    : VariadicInputs(connection_types::makeEmpty<CvMatMessage>())
+    : VariadicInputs(makeEmpty<CvMatMessage>())
 {
 }
 

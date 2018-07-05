@@ -304,12 +304,12 @@ std::string BagProvider::getLabel(std::size_t slot) const
     return topics_[slot];
 }
 
-Memento::Ptr BagProvider::getState() const
+GenericStatePtr BagProvider::getState() const
 {
-    return Memento::Ptr();
+    return GenericStatePtr();
 }
 
-void BagProvider::setParameterState(Memento::Ptr memento)
+void BagProvider::setParameterState(GenericStatePtr memento)
 {
 
 }

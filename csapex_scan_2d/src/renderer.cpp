@@ -31,6 +31,7 @@ Renderer::Renderer()
 
     addParameter(csapex::param::ParameterFactory::declareColorParameter("color/hit", 0xFF, 0xCC, 0x00));
     addParameter(csapex::param::ParameterFactory::declareColorParameter("color/marked", 0xCC, 0xFF, 0x00));
+    addParameter(csapex::param::ParameterFactory::declareBool("random_mark_color", false));
     addParameter(csapex::param::ParameterFactory::declareColorParameter("color/ray", 0xFF, 0xEE, 0xDD));
     addParameter(csapex::param::ParameterFactory::declareColorParameter("color/bg", 0x00, 0x00, 0x00));
 }
@@ -79,6 +80,10 @@ void Renderer::drawHits(const LabeledScan& scan, cv::Mat& img, const cv::Point2f
             int label = *label_it;
 
             cv::Point2f pt(range.posX(), range.posY());
+
+            if(mark_random_color && label != 0) {
+                color::fromCount(label, marked[2], marked[1], marked[0]);
+            }
 
             cv::circle(img, origin + pt * scale, radius, label != 0 ? marked : color, CV_FILLED, CV_AA);
         }

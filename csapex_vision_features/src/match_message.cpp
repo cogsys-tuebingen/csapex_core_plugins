@@ -24,7 +24,7 @@ bool MatchMessage::isContainer() const
 
 TokenData::Ptr MatchMessage::nestedType() const
 {
-    return makeEmpty<GenericValueMessage<cv::DMatch>>();
+    return csapex::makeEmpty<GenericValueMessage<cv::DMatch>>();
 }
 
 TokenData::ConstPtr MatchMessage::nestedValue(std::size_t i) const

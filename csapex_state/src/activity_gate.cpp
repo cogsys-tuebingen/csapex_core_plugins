@@ -66,22 +66,22 @@ public:
 
     Input* createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/) override
     {
-        VariadicOutputs::createVariadicOutput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label);
-        return VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+        VariadicOutputs::createVariadicOutput(makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label);
+        return VariadicInputs::createVariadicInput(makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
     }
 
 
     Output* createVariadicOutput(TokenDataConstPtr type, const std::string& label) override
     {
-        VariadicInputs::createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
-        return VariadicOutputs::createVariadicOutput(connection_types::makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label);
+        VariadicInputs::createVariadicInput(makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
+        return VariadicOutputs::createVariadicOutput(makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label);
     }
 
     void finishSetup() override
     {
         apex_assert(variadic_outputs_.size() == variadic_inputs_.size());
         if(getVariadicInputCount() == 0) {
-            createVariadicInput(connection_types::makeEmpty<connection_types::AnyMessage>(), "", false);
+            createVariadicInput(makeEmpty<connection_types::AnyMessage>(), "", false);
         }
     }
 

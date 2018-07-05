@@ -160,12 +160,12 @@ void PolygonScanFilterAdapter::setupUi(QBoxLayout* layout)
     view_->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 }
 
-Memento::Ptr PolygonScanFilterAdapter::getState() const
+GenericStatePtr PolygonScanFilterAdapter::getState() const
 {
     return std::shared_ptr<State>(new State(state));
 }
 
-void PolygonScanFilterAdapter::setParameterState(Memento::Ptr memento)
+void PolygonScanFilterAdapter::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
     apex_assert(m.get());

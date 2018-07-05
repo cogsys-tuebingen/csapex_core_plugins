@@ -25,6 +25,17 @@ KeyValueMessage::KeyValueMessage(std::string name, TokenData::ConstPtr msg, cons
     value = std::pair<std::string, TokenData::ConstPtr>(name,msg);
 }
 
+//SerializationBuffer& operator << (SerializationBuffer& data, const KeyValueMessage& t)
+//{
+//    data << t.value;
+//    return data;
+//}
+//const SerializationBuffer& operator >> (const SerializationBuffer& data, KeyValueMessage& t)
+//{
+//    data >> t.value;
+//    return data;
+//}
+
 /// YAML
 namespace YAML {
 Node convert<csapex::connection_types::KeyValueMessage>::encode(const csapex::connection_types::KeyValueMessage& rhs)

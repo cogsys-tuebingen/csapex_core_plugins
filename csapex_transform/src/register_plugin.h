@@ -12,7 +12,7 @@ class RegisterTransformPlugin : public CorePlugin, public Observer
 public:
     RegisterTransformPlugin();
 
-    void init(CsApexCore& core);
+    void prepare(Settings&) override;
 };
 
 }

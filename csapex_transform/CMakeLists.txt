@@ -32,6 +32,7 @@ include_directories(
 
 add_library(${PROJECT_NAME}
     src/transform_message.cpp
+    src/binary_io.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     yaml-cpp

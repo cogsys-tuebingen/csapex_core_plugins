@@ -17,6 +17,29 @@ GenericRosMessage::GenericRosMessage()
 {}
 
 
+SerializationBuffer& csapex::operator << (SerializationBuffer& data, const topic_tools::ShapeShifter& rhs)
+{
+    auto serialized = ros::serialization::serializeMessage(rhs);
+
+    data << serialized.num_bytes;
+    data.writeRaw(serialized.message_start, serialized.num_bytes);
+
+    return data;
+}
+const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, topic_tools::ShapeShifter& shape)
+{
+    std::size_t num_bytes;
+    data >> num_bytes;
+
+    uint8_t* data_ptr = const_cast<uint8_t*>(data.data()) + data.getPos();
+    ros::serialization::IStream stream(data_ptr, num_bytes);
+    ros::serialization::Serializer<topic_tools::ShapeShifter>::read(stream, shape);
+
+    data.advance(num_bytes);
+
+    return data;
+}
+
 /// YAML
 namespace YAML {
 Node convert<csapex::connection_types::GenericRosMessage>::encode(const csapex::connection_types::GenericRosMessage& rhs)
@@ -35,7 +58,6 @@ Node convert<csapex::connection_types::GenericRosMessage>::encode(const csapex::
     for(std::size_t i = 0; i < serialized.num_bytes; ++i) {
         buf[i] = serialized.buf[i];
     }
-
 
     return node;
 }

@@ -209,12 +209,12 @@ void AssignClusterClassAdapter::setupUi(QBoxLayout* layout)
     DefaultNodeAdapter::setupUi(layout);
 }
 
-Memento::Ptr AssignClusterClassAdapter::getState() const
+GenericStatePtr AssignClusterClassAdapter::getState() const
 {
     return std::shared_ptr<State>(new State(state));
 }
 
-void AssignClusterClassAdapter::setParameterState(Memento::Ptr memento)
+void AssignClusterClassAdapter::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
     apex_assert_hard(m.get());

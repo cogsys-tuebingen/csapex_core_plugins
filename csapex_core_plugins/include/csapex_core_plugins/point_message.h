@@ -17,6 +17,9 @@ namespace connection_types {
 
 struct CSAPEX_CORE_LIB_EXPORT PointMessage : public Message
 {
+protected:
+    CLONABLE_IMPLEMENTATION(PointMessage);
+
     friend class YAML::as_if<PointMessage, void>;
 
 public:
@@ -24,8 +27,8 @@ public:
 
     PointMessage(Message::Stamp stamp_micro_seconds);
 
-    virtual TokenData::Ptr clone() const override;
-    virtual TokenData::Ptr toType() const override;
+    void serialize(SerializationBuffer &data, SemanticVersion& version) const override;
+    void deserialize(const SerializationBuffer& data, const SemanticVersion& version) override;
 
 private:
     PointMessage();
@@ -44,12 +47,12 @@ struct CSAPEX_CORE_LIB_EXPORT type<PointMessage> {
     }
 };
 
-template <>
-inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<PointMessage> makeEmpty<PointMessage>()
-{
-    return std::shared_ptr<PointMessage>(new PointMessage(0));
 }
 
+template <>
+inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<connection_types::PointMessage> makeEmpty<connection_types::PointMessage>()
+{
+    return std::shared_ptr<connection_types::PointMessage>(new connection_types::PointMessage(0));
 }
 }
 

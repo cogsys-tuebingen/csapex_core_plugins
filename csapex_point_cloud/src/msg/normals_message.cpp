@@ -4,6 +4,8 @@
 /// PROJECT
 #include <csapex/utility/assert.h>
 #include <csapex/utility/register_msg.h>
+#include <csapex/serialization/io/std_io.h>
+#include <csapex/serialization/io/csapex_io.h>
 
 /// SYSTEM
 #include <pcl/PCLPointField.h>
@@ -25,20 +27,6 @@ NormalsMessage::NormalsMessage(const std::string& frame_id, Message::Stamp stamp
 NormalsMessage::NormalsMessage()
     : Message (type<NormalsMessage>::name(), "/", 0)
 {
-}
-
-
-TokenData::Ptr NormalsMessage::clone() const
-{
-    Ptr new_msg(new NormalsMessage(frame_id, stamp_micro_seconds));
-    new_msg->value = value;
-    return new_msg;
-}
-
-TokenData::Ptr NormalsMessage::toType() const
-{
-    Ptr new_msg(new NormalsMessage("/", 0));
-    return new_msg;
 }
 
 std::string NormalsMessage::descriptiveName() const

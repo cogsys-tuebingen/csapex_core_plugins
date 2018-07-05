@@ -52,6 +52,7 @@ add_library(${PROJECT_NAME}
     src/scan_message.cpp
     src/labeled_scan_message.cpp
     src/renderer.cpp
+    src/binary_io.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES})
@@ -88,6 +89,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/scan_renderer.cpp
     src/scan_labeler.cpp
     src/polygon_scan_filter.cpp
+    src/rotate_scan.cpp
 
     src/covariance.cpp
     src/filter.cpp

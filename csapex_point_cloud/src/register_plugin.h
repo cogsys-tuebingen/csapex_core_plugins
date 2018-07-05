@@ -11,7 +11,7 @@ class RegisterPointCloudPlugin : public CorePlugin
 public:
     RegisterPointCloudPlugin();
 
-    void init(CsApexCore& core);
+    void prepare(Settings&) override;
 };
 
 }

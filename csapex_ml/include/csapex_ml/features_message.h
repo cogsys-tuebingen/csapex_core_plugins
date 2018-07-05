@@ -14,6 +14,10 @@ namespace connection_types {
 
 struct CSAPEX_ML_EXPORT FeaturesMessage : public Message
 {
+protected:
+    CLONABLE_IMPLEMENTATION(FeaturesMessage);
+
+public:
     enum class Type {
         CLASSIFICATION = 0,
         REGRESSION = 1
@@ -26,9 +30,6 @@ struct CSAPEX_ML_EXPORT FeaturesMessage : public Message
 
     FeaturesMessage(Type type, Message::Stamp stamp_micro_seconds = 0);
     FeaturesMessage(Message::Stamp stamp_micro_seconds = 0);
-
-    virtual TokenData::Ptr clone() const override;
-    virtual TokenData::Ptr toType() const override;
 
     std::vector<float> value;
 

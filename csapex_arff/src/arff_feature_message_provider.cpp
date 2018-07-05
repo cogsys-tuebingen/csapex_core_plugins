@@ -21,7 +21,7 @@ std::map<std::string, ARFFFeatureMessageProvider::ProviderConstructor> ARFFFeatu
 ARFFFeatureMessageProvider::ARFFFeatureMessageProvider() :
     sent_(false)
 {
-    setType(connection_types::makeEmpty<GenericVectorMessage>());
+    setType(makeEmpty<GenericVectorMessage>());
 }
 
 void ARFFFeatureMessageProvider::load(const std::string& arff_file)
@@ -43,7 +43,7 @@ bool ARFFFeatureMessageProvider::hasNext()
 connection_types::Message::Ptr ARFFFeatureMessageProvider::next(std::size_t slot)
 {
 
-    GenericVectorMessage::Ptr msg(connection_types::makeEmpty<GenericVectorMessage>());
+    GenericVectorMessage::Ptr msg(makeEmpty<GenericVectorMessage>());
     std::shared_ptr<std::vector<FeaturesMessage>> msgs(new std::vector<FeaturesMessage>);
     const std::size_t instances = arff_->num_instances();
     if(instances == 0) {
@@ -76,13 +76,13 @@ connection_types::Message::Ptr ARFFFeatureMessageProvider::next(std::size_t slot
     return msg;
 }
 
-Memento::Ptr ARFFFeatureMessageProvider::getState() const
+GenericStatePtr ARFFFeatureMessageProvider::getState() const
 {
     GenericState::Ptr r(new GenericState(state));
     return r;
 }
 
-void ARFFFeatureMessageProvider::setParameterState(Memento::Ptr memento)
+void ARFFFeatureMessageProvider::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<GenericState> m = std::dynamic_pointer_cast<GenericState> (memento);
     if(m) {

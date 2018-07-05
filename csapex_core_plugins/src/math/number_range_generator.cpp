@@ -60,7 +60,7 @@ public:
     void process() override
     {
         if(end_reached_) {
-            msg::publish(out_, connection_types::makeEmpty<connection_types::EndOfSequenceMessage>());
+            msg::publish(out_, makeEmpty<connection_types::EndOfSequenceMessage>());
             active_ = false;
             return;
         }

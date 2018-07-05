@@ -104,7 +104,6 @@ void FileImporter::setupParameters(Parameterizable& parameters)
 
 void FileImporter::createDummyOutputs(NodeModifier& node_modifier)
 {
-//    problem: this is now called too late and connections in graphio cannot be restored on load...
     for(int i = node_modifier.getMessageOutputs().size(), n = readParameter<int>("output_count"); i < n; ++i) {
         outputs_.push_back(node_modifier.addOutput<connection_types::AnyMessage>("Unknown"));
     }
@@ -221,7 +220,6 @@ void FileImporter::process()
 
     // check if we need to do the import
     if(import_requested_) {
-        import_requested_ = false;
         import();
     }
 
@@ -502,9 +500,9 @@ void FileImporter::signalEnd()
         TokenDataConstPtr end;
 
         if(quit_on_end_) {
-            end = connection_types::makeEmpty<EndOfProgramMessage>();
+            end = makeEmpty<EndOfProgramMessage>();
         } else {
-            end = connection_types::makeEmpty<EndOfSequenceMessage>();
+            end = makeEmpty<EndOfSequenceMessage>();
         }
 
         for(auto& o : node_handle_->getExternalOutputs()) {
@@ -571,6 +569,8 @@ void FileImporter::requestImport()
 
 void FileImporter::import()
 {
+    import_requested_ = false;
+
     directory_import_ = readParameter<bool>("import directory");
     provider_.reset();
 

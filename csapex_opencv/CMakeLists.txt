@@ -52,6 +52,7 @@ add_library(${PROJECT_NAME} SHARED
     src/roi_message.cpp
     src/cv_pyramid_message.cpp
     src/yaml_io.cpp
+    src/binary_io.cpp
 
     ${QT_RESOURCES}
 )

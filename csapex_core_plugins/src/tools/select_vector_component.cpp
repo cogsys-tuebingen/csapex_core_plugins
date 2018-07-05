@@ -8,6 +8,7 @@
 #include <csapex/msg/io.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/generic_pointer_message.hpp>
+#include <csapex/serialization/io/csapex_io.h>
 
 
 using namespace csapex::connection_types;

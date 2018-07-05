@@ -13,9 +13,9 @@ class CSAPEX_EXPORT_PLUGIN ExportFile : public Node
 public:
     ExportFile();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 protected:
     void setExportPath();
@@ -29,6 +29,8 @@ private:
 
     std::string path_;
     std::string base_;
+
+    serialization::Format target_format_;
 
     int suffix_;
 

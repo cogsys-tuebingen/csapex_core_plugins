@@ -17,6 +17,29 @@ RoiMessage::RoiMessage()
 {}
 
 
+SerializationBuffer& csapex::operator << (SerializationBuffer& data, const Roi& roi)
+{
+    data << roi.x();
+    data << roi.y();
+    data << roi.w();
+    data << roi.h();
+
+    return data;
+}
+const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, Roi& roi)
+{
+    int x,y,w,h;
+
+    data >> x;
+    data >> y;
+    data >> w;
+    data >> h;
+
+    roi = Roi(x,y,w,h);
+
+    return data;
+}
+
 /// YAML
 namespace YAML {
 CSAPEX_EXPORT_PLUGIN Node convert<csapex::connection_types::RoiMessage>::encode(const csapex::connection_types::RoiMessage& rhs)

@@ -43,7 +43,14 @@ bool RosNode::isConnected() const
 
 bool RosNode::canProcess() const
 {
-    return Node::canProcess() && isConnected();
+    if(Node::canProcess()) {
+        if(isConnected()) {
+            return true;
+        } else if(!node_modifier_->isError()) {
+            node_modifier_->setWarning("Cannot run, no ROS connection possible.");
+        }
+    }
+    return false;
 }
 
 void RosNode::process()

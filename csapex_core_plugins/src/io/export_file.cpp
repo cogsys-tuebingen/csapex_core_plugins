@@ -4,6 +4,9 @@
 /// PROJECT
 #include <csapex/msg/io.h>
 #include <csapex/model/token_data.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/model/node_state.h>
+#include <csapex/model/generic_state.h>
 #include <csapex/msg/message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/path_parameter.h>
@@ -15,10 +18,10 @@
 
 /// SYSTEM
 #include <fstream>
-#include <QDir>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
+#include <QDir>
 
 CSAPEX_REGISTER_CLASS(csapex::ExportFile, csapex::Node)
 
@@ -49,9 +52,19 @@ void ExportFile::setupParameters(Parameterizable& parameters)
             exportMessage(last_message_);
     });
 
-    addParameter(csapex::param::ParameterFactory::declareBool("yaml",
-                                                              csapex::param::ParameterDescription("Export message in cs::APEX-YAML format?"),
-                                                              true));
+    std::map<std::string, serialization::Format> formats
+    {
+        { "Native file format (partial support)", serialization::Format::NATIVE },
+        { "CS::APEX binary format", serialization::Format::APEX_BINARY },
+        { "CS::APEX yaml format", serialization::Format::APEX_YAML }
+    };
+
+    addParameter(csapex::param::ParameterFactory::declareParameterSet("format",
+                                                                      csapex::param::ParameterDescription("Export format. (Native is only supported some messages, such as PNG for images)"),
+                                                                      formats,
+                                                                      serialization::Format::APEX_BINARY),
+                 target_format_);
+
     addParameter(csapex::param::ParameterFactory::declareText("filename",
                                                               csapex::param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
                                                               "msg"), std::bind(&ExportFile::setExportPath, this));
@@ -69,8 +82,15 @@ void ExportFile::setupParameters(Parameterizable& parameters)
                             vector_as_single_file_,
                             compress_);
 
-
-
+    getNodeHandle()->getNodeState()->getParameterState()->legacy_parameter_added.connect([this](const param::ParameterPtr& p){
+        if(p->name() == "yaml" && p->as<bool>()) {
+            if(target_format_ != serialization::Format::APEX_YAML) {
+                ainfo << "legacy yaml export" << std::endl;
+                setParameter("format", serialization::Format::APEX_YAML);
+                target_format_ = serialization::Format::APEX_YAML;
+            }
+        }
+    });
 }
 
 void ExportFile::setup(NodeModifier& node_modifier)
@@ -134,13 +154,13 @@ void ExportFile::exportVector(const connection_types::GenericVectorMessage::Cons
                     zipped_out.push(boost::iostreams::gzip_compressor());
                     zipped_out.push(out);
                     YAML::Emitter em;
-                    MessageFactory::writeMessage(em, *vector);
+                    em << MessageSerializer::instance().serializeYamlMessage(*vector);
                     zipped_out << em.c_str();
                     break;
                 }
                 else{
                     YAML::Emitter em;
-                    MessageFactory::writeMessage(em, *vector);
+                    em << MessageSerializer::instance().serializeYamlMessage(*vector);
                     std::ofstream out(file);
                     out << em.c_str();
                     out.close();
@@ -159,33 +179,11 @@ void ExportFile::exportVector(const connection_types::GenericVectorMessage::Cons
 
 void ExportFile::exportSingle(const TokenData::ConstPtr& msg)
 {
+    // do not export markers
     if(std::dynamic_pointer_cast<connection_types::MarkerMessage const>(msg)) {
         return;
     }
 
-    QDir dir(path_.c_str());
-    if(!dir.exists()) {
-        QDir().mkpath(path_.c_str());
-    }
-
-    if(readParameter<bool>("yaml")) {
-        while(true) {
-            std::stringstream file_s;
-                file_s << path_ << "/" << base_ << "_" << suffix_ << Settings::message_extension;
-            std::string file = file_s.str();
-
-            if(!QFile(QString::fromStdString(file)).exists()) {
-                MessageFactory::writeMessage(file, *msg);
-                break;
-            } else {
-                ++suffix_;
-            }
-        }
-    } else {
-        std::stringstream ss;
-        ss << "_" << suffix_;
-        msg->writeRaw(path_, base_, ss.str());
-    }
-
-    ++suffix_;
+    // export the file
+    suffix_ = MessageFactory::writeFile(path_, base_, suffix_, *msg, target_format_);
 }

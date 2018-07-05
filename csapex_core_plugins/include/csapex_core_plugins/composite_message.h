@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/msg/message.h>
 #include <csapex/msg/token_traits.h>
+#include <csapex/utility/data_traits.hpp>
 #include <csapex_core_plugins/csapex_core_lib_export.h>
 
 /// SYSTEM
@@ -14,8 +15,12 @@
 namespace csapex {
 namespace connection_types {
 
-struct CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
+class CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
 {
+protected:
+    CLONABLE_IMPLEMENTATION(CompositeMessage);
+
+public:
     typedef std::shared_ptr<CompositeMessage> Ptr;
     typedef std::shared_ptr<const CompositeMessage> ConstPtr;
 
@@ -33,7 +38,7 @@ struct CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
     template <typename T>
     static CompositeMessage::Ptr make()
     {
-        return CompositeMessage::Ptr (new CompositeMessage(connection_types::makeEmpty<T>(), "/", 0));
+        return CompositeMessage::Ptr (new CompositeMessage(csapex::makeEmpty<T>(), "/", 0));
     }
 
     static CompositeMessage::Ptr make(TokenData::Ptr type)
@@ -43,12 +48,11 @@ struct CSAPEX_CORE_LIB_EXPORT CompositeMessage : public Message
 
     static CompositeMessage::Ptr make();
 
-    virtual TokenData::Ptr clone() const override;
-    virtual TokenData::Ptr toType() const override;
+    bool canConnectTo(const TokenData* other_side) const override;
+    bool acceptsConnectionFrom(const TokenData *other_side) const override;
 
-    virtual bool canConnectTo(const TokenData* other_side) const override;
-    virtual bool acceptsConnectionFrom(const TokenData *other_side) const override;
-
+    void serialize(SerializationBuffer &data, SemanticVersion& version) const override;
+    void deserialize(const SerializationBuffer& data, const SemanticVersion& version) override;
 private:
     CompositeMessage(TokenData::Ptr type, const std::string& frame_id, Stamp stamp_micro_seconds);
 

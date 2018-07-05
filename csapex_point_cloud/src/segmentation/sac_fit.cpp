@@ -17,6 +17,7 @@
     #include <tf/tf.h>
 #include <csapex/utility/suppress_warnings_end.h>
 #include <boost/mpl/for_each.hpp>
+#include <pcl/segmentation/sac_segmentation.h>
 
 CSAPEX_REGISTER_CLASS(csapex::SacFit, csapex::Node)
 

@@ -26,13 +26,17 @@ struct CSAPEX_CORE_LIB_EXPORT type<KeyValueMessage> {
     }
 };
 
-template <>
-inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<KeyValueMessage> makeEmpty<KeyValueMessage>()
-{
-    return std::shared_ptr<KeyValueMessage>(new KeyValueMessage);
-}
+//SerializationBuffer& operator << (SerializationBuffer& data, const KeyValueMessage& t);
+//const SerializationBuffer& operator >> (const SerializationBuffer& data, KeyValueMessage& t);
 
 }
+
+template <>
+inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<connection_types::KeyValueMessage> makeEmpty<connection_types::KeyValueMessage>()
+{
+    return std::shared_ptr<connection_types::KeyValueMessage>(new connection_types::KeyValueMessage);
+}
+
 }
 
 /// YAML

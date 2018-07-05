@@ -25,14 +25,15 @@ CvMatMessage::~CvMatMessage()
 {
 }
 
-TokenData::Ptr CvMatMessage::clone() const
+void CvMatMessage::cloneData(const CvMatMessage& other)
 {
-    Ptr new_msg(new CvMatMessage(encoding, frame_id, stamp_micro_seconds));
-    value.copyTo(new_msg->value);
-    return new_msg;
+    Message::cloneDataFrom(other);
+
+    encoding = other.encoding;
+    value = other.value.clone();
 }
 
-void CvMatMessage::writeRaw(const std::string &path, const std::string &base, const std::string &suffix) const
+void CvMatMessage::writeNative(const std::string &path, const std::string &base, const std::string &suffix) const
 {
     std::string file = path + "/" + base + "_" + suffix + ".png";
     cv::imwrite(file, value);
@@ -58,11 +59,13 @@ bool CvMatMessage::hasChannels(std::size_t count, int mat_type) const
 {
     return value.channels() == (int) count && encoding.channelCount() == count && value.type() == mat_type;
 }
+
+
 /// YAML
 namespace YAML {
 CSAPEX_EXPORT_PLUGIN Node convert<csapex::connection_types::CvMatMessage>::encode(const csapex::connection_types::CvMatMessage& rhs)
 {
-    Node node = convert<csapex::connection_types::Message>::encode(rhs);
+    Node node = convert<csapex::connection_types::Message>::encode(rhs, {0, 0, 0});
     node["value"] = rhs.value;
     node["encoding"] = rhs.getEncoding().toString();
     return node;

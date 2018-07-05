@@ -25,13 +25,6 @@ TransformMessage::TransformMessage()
     : MessageTemplate<tf::Transform, TransformMessage> (""), child_frame("")
 {}
 
-TokenData::Ptr TransformMessage::clone() const
-{
-    Ptr new_msg = cloneInstance();
-    new_msg->child_frame = child_frame;
-    return new_msg;
-}
-
 void TransformMessage::sanitize()
 {
     if(frame_id.size() > 0 && frame_id.at(0) == '/') {
@@ -40,6 +33,15 @@ void TransformMessage::sanitize()
     if(child_frame.size() > 0 && child_frame.at(0) == '/') {
         child_frame = child_frame.substr(1);
     }
+}
+
+
+void TransformMessage::cloneData(const TransformMessage& other)
+{
+    Message::cloneDataFrom(other);
+
+    child_frame = other.child_frame;
+    value = other.value;
 }
 
 /// YAML

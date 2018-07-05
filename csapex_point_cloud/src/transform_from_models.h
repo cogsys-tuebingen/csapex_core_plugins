@@ -5,6 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/model_message.h>
 
+/// SYSTEM
+#include <Eigen/Dense>
 
 namespace csapex {
 

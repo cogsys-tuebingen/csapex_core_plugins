@@ -256,12 +256,12 @@ void LabelROIsAdapter::setupUi(QBoxLayout* layout)
     DefaultNodeAdapter::setupUi(layout);
 }
 
-Memento::Ptr LabelROIsAdapter::getState() const
+GenericStatePtr LabelROIsAdapter::getState() const
 {
     return std::shared_ptr<State>(new State(state));
 }
 
-void LabelROIsAdapter::setParameterState(Memento::Ptr memento)
+void LabelROIsAdapter::setParameterState(GenericStatePtr memento)
 {
     std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
     apex_assert_hard(m.get());

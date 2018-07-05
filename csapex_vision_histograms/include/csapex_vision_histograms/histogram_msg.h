@@ -24,6 +24,9 @@ struct type<HistogramMessage> {
 };
 
 }
+
+SerializationBuffer& operator << (SerializationBuffer& data, const HistogramContainer& t);
+const SerializationBuffer& operator >> (const SerializationBuffer& data, HistogramContainer& t);
 }
 
 

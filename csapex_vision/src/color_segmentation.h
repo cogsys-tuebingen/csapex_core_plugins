@@ -19,7 +19,7 @@ public:
     virtual void setupParameters(Parameterizable& params) override;
 
 protected:
-    virtual void setParameterState(MementoPtr memento);
+    virtual void setParameterState(GenericStatePtr memento);
 
 private:
     void updateParameters();

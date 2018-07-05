@@ -95,7 +95,7 @@ void CreateMapMessageAdapter::widgetPicked()
                 node->ainfo << "picked parameter " << connected_parameter->name()  << " with UUID " << connected_parameter->getUUID() << std::endl;
 
                 std::string label = connected_parameter->name();
-                Input* i = node->createVariadicInput(connection_types::makeEmptyMessage<connection_types::AnyMessage>(), label, false);
+                Input* i = node->createVariadicInput(makeEmpty<connection_types::AnyMessage>(), label, false);
 
                 UUID input = i->getUUID();
                 UUID output = UUIDProvider::makeDerivedUUID_forced(connected_parameter->getUUID().parentUUID(), std::string("out_") + connected_parameter->name());

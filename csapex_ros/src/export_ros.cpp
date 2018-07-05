@@ -68,10 +68,13 @@ void ExportRos::processROS()
 
     if(selected_target_type >= 0 && selected_target_type != target_type_) {
         if(pub) {
+            aerr << "Recreate publisher, selected target type has changed from " << target_type_ << " to " << selected_target_type;
             pub.get().shutdown();
             pub.reset();
         }
     }
+
+    target_type_ = selected_target_type;
 
     if(!pub) {
         RosMessageConversion& ros_conv = RosMessageConversion::instance();
@@ -95,7 +98,7 @@ void ExportRos::processROS()
 
     }
 
-    if(!pub) {
+    if(!pub || !pub.get()) {
         return;
     }
 

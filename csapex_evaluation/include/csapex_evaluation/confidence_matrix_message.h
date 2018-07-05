@@ -15,14 +15,15 @@ namespace connection_types {
 
 
 struct ConfidenceMatrixMessage : public Message
-{
+{    
+protected:
+    CLONABLE_IMPLEMENTATION(ConfidenceMatrixMessage);
+
+public:
     typedef std::shared_ptr<ConfidenceMatrixMessage> Ptr;
     typedef std::shared_ptr<ConfidenceMatrixMessage const> ConstPtr;
 
     ConfidenceMatrixMessage(Message::Stamp stamp_micro_seconds = 0);
-
-    virtual TokenData::Ptr clone() const override;
-    virtual TokenData::Ptr toType() const override;
 
     ConfidenceMatrix confidence;
 };

@@ -15,6 +15,33 @@ TutorialMessage::TutorialMessage()
 {}
 
 
+void TutorialMessage::serialize(SerializationBuffer &data, SemanticVersion& version) const
+{
+    Message::serialize(data, version);
+
+    // in version 1 we saved data like this:
+    // data << value;
+    // but in version 2 we save the inverse
+    version = SemanticVersion(2, 0, 0);
+    data << !value;
+}
+
+void TutorialMessage::deserialize(const SerializationBuffer& data, const SemanticVersion& version)
+{
+    Message::deserialize(data, version);
+
+    if(version < SemanticVersion(2, 0, 0)) {
+        // in version 1 we saved data like this:
+        // data << value;
+        data >> value;
+    } else {
+        // but in version 2 we save the inverse
+        bool tmp;
+        data >> tmp;
+        value = !tmp;
+    }
+}
+
 /// YAML
 namespace YAML {
 Node convert<csapex::connection_types::TutorialMessage>::encode(const csapex::connection_types::TutorialMessage& rhs)
@@ -30,8 +57,8 @@ bool convert<csapex::connection_types::TutorialMessage>::decode(const Node& node
     if(!node.IsMap()) {
         return false;
     }
-    Message::Version version = convert<csapex::connection_types::Message>::decode(node, rhs);
-    if(version < Message::Version{2, 0, 0}) {
+    SemanticVersion version = convert<csapex::connection_types::Message>::decode(node, rhs);
+    if(version < SemanticVersion{2, 0, 0}) {
         rhs.value = node["value"].as<bool>();
     } else {
         rhs.value = node["value2"].as<bool>();

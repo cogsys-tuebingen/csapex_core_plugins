@@ -19,24 +19,6 @@ FeaturesMessage::FeaturesMessage(Message::Stamp stamp)
     : FeaturesMessage(Type::CLASSIFICATION, stamp)
 {}
 
-TokenData::Ptr FeaturesMessage::clone() const
-{
-    Ptr new_msg(new FeaturesMessage);
-    new_msg->value = value;
-    new_msg->type = type;
-    new_msg->classification = classification;
-    new_msg->confidence = confidence;
-    return new_msg;
-}
-
-TokenData::Ptr FeaturesMessage::toType() const
-{
-    Ptr new_msg(new FeaturesMessage);
-    new_msg->type = type;
-    return new_msg;
-}
-
-
 
 /// YAML
 namespace YAML {

@@ -34,8 +34,8 @@ public:
 
     virtual std::vector<std::string> getExtensions() const;
 
-    virtual Memento::Ptr getState() const;
-    virtual void setParameterState(Memento::Ptr memento);
+    virtual GenericStatePtr getState() const;
+    virtual void setParameterState(GenericStatePtr memento);
 
     virtual void prepareNext() override;
 

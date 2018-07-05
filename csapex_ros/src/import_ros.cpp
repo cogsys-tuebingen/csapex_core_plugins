@@ -152,7 +152,7 @@ void ImportRos::refresh()
 
 void ImportRos::update()
 {
-    if(doSetTopic()) {
+    if(isConnected() && doSetTopic()) {
         yield();
     }
 }

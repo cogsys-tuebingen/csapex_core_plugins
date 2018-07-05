@@ -2,7 +2,7 @@
 #define ARFFFILEIMPORTER_H
 
 /// PROJECT
-#include <csapex/model/memento.h>
+#include <csapex/serialization/serializable.h>
 #include <csapex/msg/message_provider.h>
 
 /// SYSTEM
@@ -33,8 +33,8 @@ public:
 
     std::vector<std::string> getExtensions() const;
 
-    Memento::Ptr getState() const;
-    void setParameterState(Memento::Ptr memento);
+    GenericStatePtr getState() const;
+    void setParameterState(GenericStatePtr memento);
 
 private:
     cslibs_arff::ArffData::Ptr arff_;

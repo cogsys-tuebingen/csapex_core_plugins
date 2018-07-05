@@ -4,6 +4,9 @@
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
 
+/// COMPONENT
+#include <csapex_transform/binary_io.h>
+
 /// SYSTEM
 #include <tf/LinearMath/Transform.h>
 
@@ -16,9 +19,9 @@ struct TransformMessage : public MessageTemplate<tf::Transform, TransformMessage
     TransformMessage();
     TransformMessage(const std::string &frame_id, const std::string &child_frame_id);
 
-    virtual TokenData::Ptr clone() const override;
-
     void sanitize();
+
+    void cloneData(const TransformMessage& other);
 
 public:
     std::string child_frame;

@@ -6,6 +6,7 @@
 
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
+#include <csapex_opencv/binary_io.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
@@ -32,15 +33,16 @@ struct CSAPEX_OPENCV_EXPORT CvMatMessage : public MessageTemplate<cv::Mat, CvMat
 public:
     CvMatMessage(const Encoding& encoding, const std::string& frame_id, Stamp stamp_micro_seconds);
     ~CvMatMessage();
-    virtual TokenData::Ptr clone() const override;
 
-    virtual void writeRaw(const std::string &file, const std::string &base, const std::string &suffix) const override;
+    virtual void writeNative(const std::string &file, const std::string &base, const std::string &suffix) const override;
 
     const Encoding &getEncoding() const;
     void setEncoding(const Encoding& e);
 
     bool hasChannels(std::size_t count) const;
     bool hasChannels(std::size_t count, int mat_type) const;
+
+    void cloneData(const CvMatMessage& other);
 
 private:
     Encoding encoding;
@@ -51,6 +53,7 @@ private:
 
 
 /// TRAITS
+// stringification
 template <>
 struct CSAPEX_OPENCV_EXPORT type<CvMatMessage> {
     static std::string name() {
@@ -58,12 +61,7 @@ struct CSAPEX_OPENCV_EXPORT type<CvMatMessage> {
     }
 };
 
-template <>
-inline CSAPEX_OPENCV_EXPORT std::shared_ptr<CvMatMessage> makeEmpty<CvMatMessage>()
-{
-    return std::shared_ptr<CvMatMessage>(new CvMatMessage(enc::bgr, "camera", 0));
-}
-
+// accessor to raw data
 template <>
 struct CSAPEX_OPENCV_EXPORT MessageContainer<cv::Mat, false>
 {
@@ -79,6 +77,14 @@ struct CSAPEX_OPENCV_EXPORT MessageContainer<cv::Mat, false>
 
 
 }
+
+// constructor for empty image
+template <>
+inline CSAPEX_OPENCV_EXPORT std::shared_ptr<connection_types::CvMatMessage> makeEmpty<connection_types::CvMatMessage>()
+{
+    return std::shared_ptr<connection_types::CvMatMessage>(new connection_types::CvMatMessage(enc::bgr, "camera", 0));
+}
+
 }
 
 /// YAML
