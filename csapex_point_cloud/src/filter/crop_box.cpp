@@ -28,10 +28,10 @@ void CropBox::setupParameters(Parameterizable &parameters)
     static const auto min_value = -100.0;
     static const auto max_value = 100.0;
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dx", min_value, max_value, min_value, max_value, 0.01));
-    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dy", min_value, max_value, min_value, max_value, 0.01));
-    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("dz", min_value, max_value, min_value, max_value, 0.01));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("keep organized", true));
+    parameters.addParameter(csapex::param::factory::declareInterval("dx", min_value, max_value, min_value, max_value, 0.01));
+    parameters.addParameter(csapex::param::factory::declareInterval("dy", min_value, max_value, min_value, max_value, 0.01));
+    parameters.addParameter(csapex::param::factory::declareInterval("dz", min_value, max_value, min_value, max_value, 0.01));
+    parameters.addParameter(csapex::param::factory::declareBool("keep organized", true));
 }
 
 void CropBox::setup(NodeModifier& node_modifier)

@@ -30,13 +30,13 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        param_  = param::ParameterFactory::declareRange<T>("range",
+        param_  = param::factory::declareRange<T>("range",
                                                            param::ParameterDescription("Adjust the properties of this parameter to your needs."),
                                                            (T) 0.0, (T) 10.0, (T) 10.0, (T) 1.0).
                 template instantiate<param::RangeParameter>();
         parameters.addParameter(param_);
 
-        param::TriggerParameter::Ptr reset = param::ParameterFactory::declareTrigger("reset").
+        param::TriggerParameter::Ptr reset = param::factory::declareTrigger("reset").
                 template instantiate<param::TriggerParameter>();
 
         reset->first_connect.connect([this](param::Parameter*) {

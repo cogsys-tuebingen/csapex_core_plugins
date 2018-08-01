@@ -35,14 +35,14 @@ Plot::~Plot()
 
 void Plot::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareColorParameter(
+    parameters.addParameter(param::factory::declareColorParameter(
                                 "~plot/color/background", 255, 255, 255),
                             setColor(color_bg_));
-    parameters.addParameter(param::ParameterFactory::declareColorParameter(
+    parameters.addParameter(param::factory::declareColorParameter(
                                 "~plot/color/fill", 200, 200, 200),
                             setColor(color_fill_));
 
-    parameters.addParameter(param::ParameterFactory::declareColorParameter(
+    parameters.addParameter(param::factory::declareColorParameter(
                                 "~plot/color/line", 100, 100, 255),
                             [this](param::Parameter* p){
         std::vector<int> c = p->as<std::vector<int>>();

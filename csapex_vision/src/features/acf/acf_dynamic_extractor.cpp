@@ -24,16 +24,16 @@ ACFDynamicExtractor::ACFDynamicExtractor() :
 void ACFDynamicExtractor::setupParameters(Parameterizable &parameters)
 {
     // window setting
-    parameters.addParameter(param::ParameterFactory::declareRange("window/width",
+    parameters.addParameter(param::factory::declareRange("window/width",
                                                                   10, 1024, 64, 1),
                             std::bind(&ACFDynamicExtractor::updateWindow, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("window/height",
+    parameters.addParameter(param::factory::declareRange("window/height",
                                                                   10, 1024, 128, 1),
                             std::bind(&ACFDynamicExtractor::updateWindow, this));
-    parameters.addParameter(param::ParameterFactory::declareBool("window/keep_ratio",
+    parameters.addParameter(param::factory::declareBool("window/keep_ratio",
                                                                  false),
                             keep_ratio_);
-    parameters.addParameter(param::ParameterFactory::declareBool("window/mirror",
+    parameters.addParameter(param::factory::declareBool("window/mirror",
                                                                  false),
                             mirror_);
 
@@ -43,7 +43,7 @@ void ACFDynamicExtractor::setupParameters(Parameterizable &parameters)
             {"2D", cslibs_vision::ACF::Parameters::KERNEL_2D},
             {"NONE", cslibs_vision::ACF::Parameters::NONE}
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("kernel_type",
+    parameters.addParameter(param::factory::declareParameterSet("kernel_type",
                                                                          kernel_types,
                                                                          static_cast<int>(cslibs_vision::ACF::Parameters::KERNEL_2D)),
                             reinterpret_cast<int&>(acf_params_.kernel_type));
@@ -63,34 +63,34 @@ void ACFDynamicExtractor::setupParameters(Parameterizable &parameters)
                                        | cslibs_vision::ACFDynamic::Parameters::HOG
                                        | cslibs_vision::ACFDynamic::Parameters::LUV;
 
-    parameters.addParameter(param::ParameterFactory::declareParameterBitSet("channels",
+    parameters.addParameter(param::factory::declareParameterBitSet("channels",
                                                                             channel_types, channel_default),
                             acf_params_.channel_types);
 
 
     // HOG channel parameter
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/bin_size",
+    parameters.addParameter(param::factory::declareRange("hog/bin_size",
                                                                   5.0, 90.0, 30.0, 0.1),
                             acf_params_.hog_bin_size);
-    parameters.addParameter(param::ParameterFactory::declareBool("hog/directed",
+    parameters.addParameter(param::factory::declareBool("hog/directed",
                                                                  false),
                             acf_params_.hog_directed);
 
     // HOG/magnitude channel parameter
-    parameters.addParameter(param::ParameterFactory::declareBool("magnitude/normalize",
+    parameters.addParameter(param::factory::declareBool("magnitude/normalize",
                                                                  true),
                             acf_params_.normalize_magnitude);
 
     // LUV channel parameter
-    parameters.addParameter(param::ParameterFactory::declareBool("luv/normalize",
+    parameters.addParameter(param::factory::declareBool("luv/normalize",
                                                                  true),
                             acf_params_.normalize_luv);
 
     // LBP/LTP/WLD/HOMOGENITY channel parameter
-    parameters.addParameter(param::ParameterFactory::declareRange("pattern/k",
+    parameters.addParameter(param::factory::declareRange("pattern/k",
                                                                   -1.0, 1.0, 0.0, 0.01),
                             acf_params_.k);
-    parameters.addParameter(param::ParameterFactory::declareBool("pattern/normalize",
+    parameters.addParameter(param::factory::declareBool("pattern/normalize",
                                                                  false),
                             acf_params_.normalize_patterns);
 

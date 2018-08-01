@@ -20,9 +20,9 @@ public:
 
     void setupParameters(Parameterizable &parameters)
     {
-        parameters.addParameter(param::ParameterFactory::declareValue("label/old", 0),
+        parameters.addParameter(param::factory::declareValue("label/old", 0),
                                 label_old_);
-        parameters.addParameter(param::ParameterFactory::declareValue("label/new", -1),
+        parameters.addParameter(param::factory::declareValue("label/new", -1),
                                 label_new_);
     }
 

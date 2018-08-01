@@ -24,23 +24,23 @@ ImageToPointCloud::ImageToPointCloud()
 
 void ImageToPointCloud::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("frame", "/camera"));
+    parameters.addParameter(csapex::param::factory::declareText("frame", "/camera"));
 
     std::map<std::string, DepthType> depth_types = {
         {"Direct (meters)", DepthType::METERS},
         {"Direct (millimeters)", DepthType::MILLIMETERS},
         {"Kinect (tangential)" , DepthType::KINECT_TAN}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("depth/type",
+    parameters.addParameter(csapex::param::factory::declareParameterSet("depth/type",
                                                                                  param::ParameterDescription("Convertion of raw depth values"),
                                                                                  depth_types,
                                                                                  DepthType::METERS),
                             depth_type);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("fov/h", 30.0, 180.0, 90.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("fov/v", 30.0, 180.0, 90.0, 0.1));
+    parameters.addParameter(csapex::param::factory::declareRange("fov/h", 30.0, 180.0, 90.0, 0.1));
+    parameters.addParameter(csapex::param::factory::declareRange("fov/v", 30.0, 180.0, 90.0, 0.1));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareInterval("intensity", 0, 255, 0, 255, 1));
+    parameters.addParameter(csapex::param::factory::declareInterval("intensity", 0, 255, 0, 255, 1));
 }
 
 void ImageToPointCloud::setup(NodeModifier& node_modifier)

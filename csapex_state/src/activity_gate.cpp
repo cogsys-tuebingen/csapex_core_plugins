@@ -34,7 +34,7 @@ public:
     {
         VariadicIO::setupVariadicParameters(params);
 
-        params.addParameter(param::ParameterFactory::declareBool("inverted",
+        params.addParameter(param::factory::declareBool("inverted",
                                                                  param::ParameterDescription("If inverted, messages are forwarded when the node is <b>not</b> active."),
                                                                  false),
                             inverted_);

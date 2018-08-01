@@ -33,8 +33,8 @@ void ScatterPlot::setupParameters(Parameterizable &parameters)
 
     setupVariadicParameters(parameters);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("point_size", 0.1, 10.0, 1.0, 0.01));
-    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+    parameters.addParameter(param::factory::declareRange("point_size", 0.1, 10.0, 1.0, 0.01));
+    parameters.addParameter(param::factory::declareTrigger("reset"),
                             [this](param::Parameter*) {
         reset();
     });

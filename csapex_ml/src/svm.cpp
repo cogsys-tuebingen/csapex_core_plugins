@@ -30,14 +30,14 @@ void SVM::setup(NodeModifier& node_modifier)
 
 void SVM::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declarePath("/svm/path",
+    parameters.addParameter(param::factory::declarePath("/svm/path",
                                                                  csapex::param::ParameterDescription("Path to a saved svm."),
                                                                  true,
                                                                  "",
                                                                  "*.yaml *.tar.gz *.yaml.gz"),
                             path_);
 
-    csapex::param::ParameterPtr param_label = csapex::param::ParameterFactory::declareBool("/svm/compute_labels",
+    csapex::param::ParameterPtr param_label = csapex::param::factory::declareBool("/svm/compute_labels",
                                                                                            csapex::param::ParameterDescription("Directly compute labels. 'false' allows manual threshold setting for binary classification"),
                                                                                            true);
     parameters.addParameter(param_label);
@@ -49,13 +49,13 @@ void SVM::setupParameters(Parameterizable& parameters)
         {"<=", LESS_EQUAL}
     };
     auto threshold_condition = [param_label]() { return param_label->as<bool>() == false; };
-    parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("/svm/threshold/type",
+    parameters.addConditionalParameter(param::factory::declareParameterSet("/svm/threshold/type",
                                                                                     csapex::param::ParameterDescription("SVM threshold comparison type"),
                                                                                     svm_thresh_types,
                                                                                     (int) GREATER),
                                        threshold_condition);
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("/svm/threshold/value",
+    parameters.addConditionalParameter(csapex::param::factory::declareRange("/svm/threshold/value",
                                                                                      csapex::param::ParameterDescription("SVM threshold for binary classification"),
                                                                                      -100.0,
                                                                                      100.0,

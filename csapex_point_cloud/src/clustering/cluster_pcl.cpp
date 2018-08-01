@@ -52,14 +52,14 @@ void ClusterPointCloudPCL::setupParameters(Parameterizable& parameters)
         {"PCL_EUCLIDEAN", (int) Method::PCL_EUCLIDEAN},
         {"PCL_POLAR", (int) Method::PCL_POLAR},
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("method", methods, (int) Method::PCL_EUCLIDEAN),
+    parameters.addParameter(param::factory::declareParameterSet("method", methods, (int) Method::PCL_EUCLIDEAN),
                             [this](param::Parameter* p) {method_ = static_cast<Method>(p->as<int>());});
 
-    parameters.addParameter(param::ParameterFactory::declareRange("cluster tolerance", 0.001, 2.0, 0.02, 0.001), cluster_tolerance_);
-    parameters.addParameter(param::ParameterFactory::declareRange("minimum cluster size", 0, 20000, 100, 1),          cluster_min_size_);
-    parameters.addParameter(param::ParameterFactory::declareRange("maximum cluster size", 0, 100000, 25000, 1),       cluster_max_size_);
+    parameters.addParameter(param::factory::declareRange("cluster tolerance", 0.001, 2.0, 0.02, 0.001), cluster_tolerance_);
+    parameters.addParameter(param::factory::declareRange("minimum cluster size", 0, 20000, 100, 1),          cluster_min_size_);
+    parameters.addParameter(param::factory::declareRange("maximum cluster size", 0, 100000, 25000, 1),       cluster_max_size_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareAngle("opening_angle", 0.001),
+    parameters.addConditionalParameter(param::factory::declareAngle("opening_angle", 0.001),
                                        [this](){return method_ == Method::PCL_POLAR;} ,
     polar_opening_angle_);
 }

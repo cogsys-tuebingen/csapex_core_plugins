@@ -149,17 +149,17 @@ void Histogram::setup(NodeModifier& node_modifier)
 
 void Histogram::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("bins", 2, 512, 255, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("bins", 2, 512, 255, 1),
                             std::bind(&Histogram::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("uniform", uniform_),
+    parameters.addParameter(csapex::param::factory::declareBool("uniform", uniform_),
                             std::bind(&Histogram::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("accumulate", accumulate_),
+    parameters.addParameter(csapex::param::factory::declareBool("accumulate", accumulate_),
                             std::bind(&Histogram::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("min max range", false),
+    parameters.addParameter(csapex::param::factory::declareBool("min max range", false),
                             std::bind(&Histogram::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("global min max", false),
+    parameters.addParameter(csapex::param::factory::declareBool("global min max", false),
                             std::bind(&Histogram::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("append histograms", false),
+    parameters.addParameter(csapex::param::factory::declareBool("append histograms", false),
                             std::bind(&Histogram::update, this));
 }
 

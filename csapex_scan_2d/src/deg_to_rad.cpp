@@ -35,7 +35,7 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("angle", -180.0, 180.0, 0.0, 0.01),
+        parameters.addParameter(param::factory::declareRange("angle", -180.0, 180.0, 0.0, 0.01),
                                 std::bind(&DegToRad::publish, this));
     }
 

@@ -101,10 +101,10 @@ void ConvertType::setupParameters(Parameterizable& parameters)
         {"64 Bit floating", CV_64F}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("convert to", types, CV_8U),
+    parameters.addParameter(csapex::param::factory::declareParameterSet("convert to", types, CV_8U),
                             std::bind(&ConvertType::update, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("normalize", false),
+    parameters.addParameter(csapex::param::factory::declareBool("normalize", false),
                             std::bind(&ConvertType::update, this));
 }
 

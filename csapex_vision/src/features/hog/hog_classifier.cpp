@@ -33,7 +33,7 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
         {"TryGrow", TRY_GROW},
         {"GrowStrict", GROW_STRICT}
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("hog/adaption_mode",
+    parameters.addParameter(param::factory::declareParameterSet("hog/adaption_mode",
                                                                          param::ParameterDescription("Adaption of rois to window size of hog."),
                                                                          adpation_types,
                                                                          (int) SCALE),
@@ -45,7 +45,7 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
         {"daimler", DAIMLER}
     };
     param::Parameter::Ptr svm_param =
-            param::ParameterFactory::declareParameterSet("svm/type", svm_types, (int) DEFAULT);
+            param::factory::declareParameterSet("svm/type", svm_types, (int) DEFAULT);
     parameters.addParameter(svm_param,
                             svm_type_);
 
@@ -55,70 +55,70 @@ void HOGClassifier::setupParameters(Parameterizable& parameters)
         {">=", GREATER_EQUAL},
         {"<=", LESS_EQUAL}
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("svm/thershold_type", svm_thresh_types, (int) GREATER),
+    parameters.addParameter(param::factory::declareParameterSet("svm/thershold_type", svm_thresh_types, (int) GREATER),
                             svm_thresh_type_);
 
 
     std::function<bool()> custom_active = [svm_param]() { return svm_param->as<int>() == CUSTOM; };
-    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz *.yaml.gz"),
+    parameters.addConditionalParameter(param::factory::declareFileInputPath("svm/path","", "*.yml *.yaml *.tar.gz *.yaml.gz"),
                                        custom_active, std::bind(&HOGClassifier::load, this));
 
 
-    parameters.addParameter(param::ParameterFactory::declareRange("svm/thresh", -10000.0, 10000.0, 0.0, 0.01),
+    parameters.addParameter(param::factory::declareRange("svm/thresh", -10000.0, 10000.0, 0.0, 0.01),
                             svm_thresh_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("hog/mirror",
+    parameters.addParameter(param::factory::declareBool("hog/mirror",
                                                                  param::ParameterDescription("Mirror for classification."),
                                                                  false),
                             mirror_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/sigma",
+    parameters.addParameter(param::factory::declareRange("hog/sigma",
                                                                   param::ParameterDescription("Standard deviation for Gaussian blur."),
                                                                   0.0, 10.0, 0.0, 0.1),
                             hog_.winSigma);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("hog/gamma_correction",
+    parameters.addParameter(param::factory::declareBool("hog/gamma_correction",
                                                                  param::ParameterDescription("Enable the gamma correction."),
                                                                  true),
                             hog_.gammaCorrection);
 
     /// paramters only applicable if custom mode is active
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
+    parameters.addConditionalParameter(param::factory::declareBool("hog/signed_gradient",
                                                                             param::ParameterDescription("Un-/directed gradients."),
                                                                             hog_.signedGradient),
                                        custom_active,
                                        signed_gradient_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
+    parameters.addConditionalParameter(param::factory::declareRange("hog/gradient_bins",
                                                                              param::ParameterDescription("Amount of gradient bins."),
                                                                              2, 18, hog_.nbins, 1),
                                        custom_active,
                                        n_bins_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cells_x",
+    parameters.addConditionalParameter(param::factory::declareRange("hog/cells_x",
                                                                              param::ParameterDescription("Cells in x direction."),
                                                                              2, 16, 8, 1),
                                        custom_active,
                                        cells_x_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cells_y",
+    parameters.addConditionalParameter(param::factory::declareRange("hog/cells_y",
                                                                              param::ParameterDescription("Cells in x direction."),
                                                                              2, 16, 16, 1),
                                        custom_active,
                                        cells_y_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/cell_size",
+    parameters.addConditionalParameter(param::factory::declareRange("hog/cell_size",
                                                                              param::ParameterDescription("Size of the cells."),
                                                                              4, 16, 8, 1),
                                        custom_active,
                                        cell_size_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/block_size",
+    parameters.addConditionalParameter(param::factory::declareRange("hog/block_size",
                                                                              param::ParameterDescription("Cell count in both dimension of a block."),
                                                                              1, 4, 2, 1),
                                        custom_active,
                                        block_size_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("hog/bock_stride",
+    parameters.addConditionalParameter(param::factory::declareRange("hog/bock_stride",
                                                                              param::ParameterDescription("Overlap of each block in cells."),
                                                                              1, 3, 1, 1),
                                        custom_active,

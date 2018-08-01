@@ -25,16 +25,16 @@ ACFStandardExtractor::ACFStandardExtractor() :
 void ACFStandardExtractor::setupParameters(Parameterizable &parameters)
 {
     // window setting
-    parameters.addParameter(param::ParameterFactory::declareRange("window/width",
+    parameters.addParameter(param::factory::declareRange("window/width",
                                                                   10, 1024, 64, 1),
                             std::bind(&ACFStandardExtractor::updateWindow, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("window/height",
+    parameters.addParameter(param::factory::declareRange("window/height",
                                                                   10, 1024, 128, 1),
                             std::bind(&ACFStandardExtractor::updateWindow, this));
-    parameters.addParameter(param::ParameterFactory::declareBool("window/mirror",
+    parameters.addParameter(param::factory::declareBool("window/mirror",
                                                                  false),
                             mirror_);
-    parameters.addParameter(param::ParameterFactory::declareBool("window/keep_ratio",
+    parameters.addParameter(param::factory::declareBool("window/keep_ratio",
                                                                  false),
                             keep_ratio_);
 
@@ -44,24 +44,24 @@ void ACFStandardExtractor::setupParameters(Parameterizable &parameters)
             {"2D", cslibs_vision::ACF::Parameters::KERNEL_2D},
             {"NONE", cslibs_vision::ACF::Parameters::NONE}
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("kernel_type",
+    parameters.addParameter(param::factory::declareParameterSet("kernel_type",
                                                                          kernel_types,
                                                                          (int) cslibs_vision::ACF::Parameters::KERNEL_2D),
                             (int &) acf_params_.kernel_type);
 
     // HOG channel parameter
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/bin_size",
+    parameters.addParameter(param::factory::declareRange("hog/bin_size",
                                                                   5.0, 90.0, 30.0, 0.1),
                             acf_params_.hog_bin_size);
-    parameters.addParameter(param::ParameterFactory::declareBool("hog/directed", false),
+    parameters.addParameter(param::factory::declareBool("hog/directed", false),
                             acf_params_.hog_directed);
 
     // HOG/magnitude channel parameter
-    parameters.addParameter(param::ParameterFactory::declareBool("magnitude/normalize", true),
+    parameters.addParameter(param::factory::declareBool("magnitude/normalize", true),
                             acf_params_.normalize_magnitude);
 
     // LUV channel parameter
-    parameters.addParameter(param::ParameterFactory::declareBool("luv/normalize", true),
+    parameters.addParameter(param::factory::declareBool("luv/normalize", true),
                             acf_params_.normalize_luv);
 
 }

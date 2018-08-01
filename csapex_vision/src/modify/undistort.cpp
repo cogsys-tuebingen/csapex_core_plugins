@@ -44,7 +44,7 @@ void Undistort::setup(NodeModifier& node_modifier)
 void Undistort::setupParameters(Parameterizable& parameters)
 {
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("load from file",
+    parameters.addParameter(csapex::param::factory::declareBool("load from file",
                                                                          param::ParameterDescription("Load a calibration from a .yaml file."),
                                                                          true),
                             std::bind(&Undistort::update, this));
@@ -52,48 +52,48 @@ void Undistort::setupParameters(Parameterizable& parameters)
     auto load_from_file = [this](){return readParameter<bool>("load from file");};
     auto do_not_load_from_file = [this](){return !readParameter<bool>("load from file");};
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareFileInputPath("file",
+    parameters.addConditionalParameter(csapex::param::factory::declareFileInputPath("file",
                                                                                              param::ParameterDescription("Path to .yaml calibration file."),
                                                                                              "", "*.yaml"),
                                        load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("fx", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("fx", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("fy", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("fy", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("cx", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("cx", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("cy", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("cy", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k1", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("k1", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k2", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("k2", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k3", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("k3", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k4", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("k4", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k5", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("k5", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("k6", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("k6", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("p1", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("p1", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("p2", 0.0),
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("p2", 0.0),
                                        do_not_load_from_file,
                                        std::bind(&Undistort::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("margin",
+    parameters.addParameter(csapex::param::factory::declareRange("margin",
                                                                           param::ParameterDescription("Add a margin to the undistorted image."),
                                                                           0, 1000, 0, 1),
                             std::bind(&Undistort::update, this));
@@ -104,7 +104,7 @@ void Undistort::setupParameters(Parameterizable& parameters)
     modes["area"] = (int) CV_INTER_AREA;
     modes["cubic"] = (int) CV_INTER_CUBIC;
     modes["lanczos4"] = (int) CV_INTER_LANCZOS4;
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), std::bind(&Undistort::update, this));
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("mode", modes, (int) CV_INTER_NN), std::bind(&Undistort::update, this));
 }
 
 bool Undistort::read_matrices(const std::string &path, cv::Mat &intrinsics, cv::Mat &distortion_coeffs)

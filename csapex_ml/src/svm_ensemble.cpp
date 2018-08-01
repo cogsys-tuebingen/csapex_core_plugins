@@ -54,14 +54,14 @@ void SVMEnsemble::setup(NodeModifier& node_modifier)
 
 void SVMEnsemble::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declarePath("svm array path",
+    parameters.addParameter(csapex::param::factory::declarePath("svm array path",
                                                                          csapex::param::ParameterDescription("Path to a saved svm."),
                                                                          true,
                                                                          "",
                                                                          "*.yaml *.tar.gz"),
                                                                          std::bind(&SVMEnsemble::load, this));
 
-    csapex::param::ParameterPtr param_label = csapex::param::ParameterFactory::declareBool("compute labels",
+    csapex::param::ParameterPtr param_label = csapex::param::factory::declareBool("compute labels",
                                                                                            csapex::param::ParameterDescription("Directly compute labels. 'false' allows manual threshold setting for binary classification"),
                                                                                            true);
     addParameter(param_label);
@@ -73,7 +73,7 @@ void SVMEnsemble::setupParameters(Parameterizable& parameters)
         {"<=", LESS_EQUAL}
     };
 
-    addParameter(param::ParameterFactory::declareParameterSet("threshold/type",
+    addParameter(param::factory::declareParameterSet("threshold/type",
                                                               csapex::param::ParameterDescription("SVM threshold comparison type"),
                                                               svm_thresh_types,
                                                               (int) GREATER));
@@ -211,7 +211,7 @@ void SVMEnsemble::load()
     thresholds_.resize(svms_size_);
     for(std::size_t i = 0 ; i < svms_size_ ; ++i) {
         std::string id = std::to_string((int) svm_responses_.at<float>(i,0));
-        param::Parameter::Ptr param = param::ParameterFactory::declareRange("svm_" + id,
+        param::Parameter::Ptr param = param::factory::declareRange("svm_" + id,
                                                                             -100.0,
                                                                             +100.0,
                                                                             0.0,

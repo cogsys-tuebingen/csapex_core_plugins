@@ -26,7 +26,7 @@ void SignalLight::setupParameters(Parameterizable &parameters)
         {"yellow", 1},
         {"red", 2}
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("state", states, 0),
+    parameters.addParameter(param::factory::declareParameterSet("state", states, 0),
                             [this](param::Parameter* p) {
         display(p->as<int>());
     });

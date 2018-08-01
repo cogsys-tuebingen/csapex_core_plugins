@@ -31,7 +31,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareBool("publish_maximum",true),
+        params.addParameter(param::factory::declareBool("publish_maximum",true),
                             publish_max_);
     }
 

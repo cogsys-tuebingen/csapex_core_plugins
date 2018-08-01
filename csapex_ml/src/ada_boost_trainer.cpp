@@ -22,7 +22,7 @@ AdaBoostTrainer::AdaBoostTrainer()
 void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
 {
     CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
-    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("boost/path",
+    parameters.addParameter(param::factory::declareFileOutputPath("boost/path",
                                                                            "",
                                                                            "*.yaml, *.tar.gz"),
                             path_);
@@ -41,7 +41,7 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
         {"SQERR", Boost::SQERR}
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("boost/split_criteria",
+    parameters.addParameter(param::factory::declareParameterSet("boost/split_criteria",
                                                                          split_criteria,
                                                                          (int) Boost::DEFAULT),
                             split_criteria_);
@@ -54,33 +54,33 @@ void AdaBoostTrainer::setupParameters(Parameterizable &parameters)
         {"GENTLE", Boost::GENTLE}
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("boost/type",
+    parameters.addParameter(param::factory::declareParameterSet("boost/type",
                                                                          boost_types,
                                                                          (int) Boost::DISCRETE),
                             boost_type_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("boost/classifier_count",
+    parameters.addParameter(param::factory::declareRange("boost/classifier_count",
                                                                   1,
                                                                   4096,
                                                                   100,
                                                                   1),
                             weak_count_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("boost/trim_rate",
+    parameters.addParameter(param::factory::declareRange("boost/trim_rate",
                                                                   0.0,
                                                                   1.0,
                                                                   0.0,
                                                                   0.01),
                             weight_trim_rate_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("boost/max_depth",
+    parameters.addParameter(param::factory::declareRange("boost/max_depth",
                                                                   1,
                                                                   64,
                                                                   8,
                                                                   1),
                             max_depth_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("boost/use_surrogates",
+    parameters.addParameter(param::factory::declareBool("boost/use_surrogates",
                                                                  false),
                             use_surrogates_);
 }

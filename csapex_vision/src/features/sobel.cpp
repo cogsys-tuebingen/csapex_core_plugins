@@ -31,9 +31,9 @@ void Sobel::process()
 void Sobel::setupParameters(Parameterizable& parameters)
 {
     Operator::setupParameters(parameters);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dx", 0, 5, dx_, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("dx", 0, 5, dx_, 1),
                  std::bind(&Sobel::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("dy", 0, 5, dy_, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("dy", 0, 5, dy_, 1),
                  std::bind(&Sobel::update, this));
 }
 

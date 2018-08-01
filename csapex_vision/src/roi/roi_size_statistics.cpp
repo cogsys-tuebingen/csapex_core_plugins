@@ -66,34 +66,34 @@ void ROISizeStatistics::setup(csapex::NodeModifier& node_modifier)
 
 void ROISizeStatistics::setupParameters(csapex::Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+    parameters.addParameter(param::factory::declareTrigger("reset"),
                             std::bind(&ROISizeStatistics::resetStats, this));
-    parameters.addParameter(param::ParameterFactory::declareTrigger("save"),
+    parameters.addParameter(param::factory::declareTrigger("save"),
                             std::bind(&ROISizeStatistics::saveStats, this));
 
-    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("path", "", "*.txt"),
+    parameters.addParameter(param::factory::declareFileOutputPath("path", "", "*.txt"),
                             output_path_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("max_width", 1, 1920, 640, 1),
+    parameters.addParameter(param::factory::declareRange("max_width", 1, 1920, 640, 1),
                             [this](csapex::param::Parameter* param)
                             {
                                 max_width_ = param->as<int>();
                                 resetStats();
                             });
-    parameters.addParameter(param::ParameterFactory::declareRange("max_height", 1, 1080, 480, 1),
+    parameters.addParameter(param::factory::declareRange("max_height", 1, 1080, 480, 1),
                             [this](csapex::param::Parameter* param)
                             {
                                 max_height_ = param->as<int>();
                                 resetStats();
                             });
-    parameters.addParameter(param::ParameterFactory::declareRange("histogram_bin_size", 1, 128, 16, 1),
+    parameters.addParameter(param::factory::declareRange("histogram_bin_size", 1, 128, 16, 1),
                             [this](csapex::param::Parameter* param)
                             {
                                 histogram_bin_size_ = param->as<int>();
                                 resetStats();
                             });
 
-    auto bin_count_param = param::ParameterFactory::declareRange("bin/count", 0, 64, 0, 1).build();
+    auto bin_count_param = param::factory::declareRange("bin/count", 0, 64, 0, 1).build();
     auto enable_bin_count = [bin_count_param]() { return bin_count_param->as<int>() > 0; };
     parameters.addParameter(bin_count_param,
                             [this](csapex::param::Parameter* param)
@@ -107,7 +107,7 @@ void ROISizeStatistics::setupParameters(csapex::Parameterizable& parameters)
             { "width", static_cast<int>(BinType::WIDTH) },
             { "area", static_cast<int>(BinType::AREA) },
     };
-    parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("bin/type",
+    parameters.addConditionalParameter(param::factory::declareParameterSet("bin/type",
                                                                                     available_bin_types,
                                                                                     static_cast<int>(BinType::WIDTH)),
                                        enable_bin_count,

@@ -32,10 +32,10 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareValue("seed", 0), [this](param::Parameter* p) {
+        params.addParameter(param::factory::declareValue("seed", 0), [this](param::Parameter* p) {
             twister.seed(p->as<int>());
         });
-        params.addParameter(param::ParameterFactory::declareRange("outlier_prob", 0.0, 1.0, 0.1, 0.001), outlier_prob_);
+        params.addParameter(param::factory::declareRange("outlier_prob", 0.0, 1.0, 0.1, 0.001), outlier_prob_);
 
     }
 

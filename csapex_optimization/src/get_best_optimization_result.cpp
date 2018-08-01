@@ -41,11 +41,11 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareTrigger("clear"),[this](param::Parameter*){
+        params.addParameter(param::factory::declareTrigger("clear"),[this](param::Parameter*){
             fitness_.clear();
             params_.clear();
         });
-        params.addParameter(param::ParameterFactory::declareTrigger("get_best"),[this](param::Parameter*){
+        params.addParameter(param::factory::declareTrigger("get_best"),[this](param::Parameter*){
             std::stringstream str;
             str << "It is expected to have the same number of fitness values and paramter messages."
                 << " Got " << fitness_.size() << " fitness values and "   << params_.size() << " parameter messages.";

@@ -72,5 +72,5 @@ void SetOperation::setupParameters(Parameterizable& parameters)
             {"Union", (int) UNION}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("operation", methods, (int) UNION));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("operation", methods, (int) UNION));
 }

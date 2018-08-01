@@ -65,7 +65,7 @@ csapex::Input* CreateMapMessage::createVariadicInput(csapex::TokenDataConstPtr t
 //    if(hasParameter(param_name)) {
 //        key_param = getParameter(param_name);
 //    } else  {
-//        key_param = param::ParameterFactory::declareText(param_name, "name");
+//        key_param = param::factory::declareText(param_name, "name");
 //    }
 
 //    keys_.push_back("");

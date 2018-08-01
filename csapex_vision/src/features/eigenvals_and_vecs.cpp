@@ -48,11 +48,11 @@ void EigenValsAndVecs::setup(NodeModifier& node_modifier)
 
 void EigenValsAndVecs::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
+    parameters.addParameter(csapex::param::factory::declareRange("k", 1.0, 400.0, 100.0, 1.0),
                             std::bind(&EigenValsAndVecs::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("block size", 3, 31, 3, 2),
+    parameters.addParameter(csapex::param::factory::declareRange("block size", 3, 31, 3, 2),
                             std::bind(&EigenValsAndVecs::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("k size", 1, 31, 1, 2),
+    parameters.addParameter(csapex::param::factory::declareRange("k size", 1, 31, 1, 2),
                             std::bind(&EigenValsAndVecs::update, this));
 
     std::map<std::string, int> border_types = {
@@ -64,7 +64,7 @@ void EigenValsAndVecs::setupParameters(Parameterizable& parameters)
         {"BORDER_REPLICATE", (int) cv::BORDER_REPLICATE}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("border type", border_types, (int) cv::BORDER_DEFAULT),
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("border type", border_types, (int) cv::BORDER_DEFAULT),
                             std::bind(&EigenValsAndVecs::update, this));
 
     std::map<std::string, int> types = {
@@ -72,7 +72,7 @@ void EigenValsAndVecs::setupParameters(Parameterizable& parameters)
         {"EIGEN_VALS_AND_VECS", (int) EIGEN_VALS_AND_VECS}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("eigen type", types, (int) MIN_EIGEN_VAL),
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("eigen type", types, (int) MIN_EIGEN_VAL),
                             std::bind(&EigenValsAndVecs::update, this));
 }
 

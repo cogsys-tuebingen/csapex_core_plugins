@@ -29,7 +29,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareValue("threshold", 0.0), threshold_);
+        params.addParameter(param::factory::declareValue("threshold", 0.0), threshold_);
     }
 
     void process() override

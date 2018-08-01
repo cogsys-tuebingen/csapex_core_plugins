@@ -17,9 +17,9 @@ SegmentLengthSegmentation::SegmentLengthSegmentation()
 
 void SegmentLengthSegmentation::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max distance",  0.01, 2.0, 0.01, 0.01),
+    parameters.addParameter(csapex::param::factory::declareRange("max distance",  0.01, 2.0, 0.01, 0.01),
                             std::bind(&SegmentLengthSegmentation::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max length",  0.01, 2.0, 0.01, 0.01),
+    parameters.addParameter(csapex::param::factory::declareRange("max length",  0.01, 2.0, 0.01, 0.01),
                             std::bind(&SegmentLengthSegmentation::update, this));
 }
 

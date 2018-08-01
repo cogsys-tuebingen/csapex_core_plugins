@@ -46,7 +46,7 @@ public:
     {
         setupVariadicParameters(parameters);
 
-        parameters.addParameter(param::ParameterFactory::declareFileOutputPath("file", "/tmp/bag.bag", "*.bag"), [this](param::Parameter* p) {
+        parameters.addParameter(param::factory::declareFileOutputPath("file", "/tmp/bag.bag", "*.bag"), [this](param::Parameter* p) {
             std::string file_name = p->as<std::string>();
             if(file_name == file_name_){
                 return;
@@ -55,12 +55,12 @@ public:
             start();
         });
 
-        parameters.addParameter(param::ParameterFactory::declareTrigger("reset"), [this](param::Parameter* p) {
+        parameters.addParameter(param::factory::declareTrigger("reset"), [this](param::Parameter* p) {
             start();
 
         });
 
-        parameters.addParameter(param::ParameterFactory::declareTrigger("save and close"), [this](param::Parameter* p) {
+        parameters.addParameter(param::factory::declareTrigger("save and close"), [this](param::Parameter* p) {
             stop();
         });
     }
@@ -117,7 +117,7 @@ public:
                 param::ParameterPtr p;
                 std::string param_name = topic + "_target_type";
                 if(!hasParameter(param_name)) {
-                    p = param::ParameterFactory::declareParameterSet(param_name, possible_conversions, 0);
+                    p = param::factory::declareParameterSet(param_name, possible_conversions, 0);
                     addTemporaryParameter(p);
                     addParameterCallback(p, [this, topic](param::Parameter* p) {
                         topic_to_type_[topic] = p->as<int>();

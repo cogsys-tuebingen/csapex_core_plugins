@@ -32,12 +32,12 @@ EstimateCenter::EstimateCenter()
 
 void EstimateCenter::setupParameters(Parameterizable& parameters)
 {
-    param::ParameterPtr bbox_param = param::ParameterFactory::declareBool("use bounding box",
+    param::ParameterPtr bbox_param = param::factory::declareBool("use bounding box",
                                                                           param::ParameterDescription("Use bounding box to calculate center point."),
                                                                           false);
     parameters.addParameter(bbox_param,
                             param_use_bounding_box_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("only half visible",
+    parameters.addConditionalParameter(param::factory::declareBool("only half visible",
                                                                             param::ParameterDescription("Assumes only half of the object is visible. Moves center point to the back plane of the bounding box"),
                                                                             false),
                                        [=]() { return bbox_param->as<bool>(); },

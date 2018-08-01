@@ -29,7 +29,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareRange("number_of_messages",
+        params.addParameter(param::factory::declareRange("number_of_messages",
                                                                   param::ParameterDescription("Number of messages to buffer. "
                                                                                               "If -1 vector is growing, n > 0 fixed size."),
                                                                   -1,100,10,1),

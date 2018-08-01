@@ -35,15 +35,15 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareTrigger("clear"),[this](param::Parameter*){
+        params.addParameter(param::factory::declareTrigger("clear"),[this](param::Parameter*){
             clear();
         });
 
-        params.addParameter(param::ParameterFactory::declareTrigger("save"),[this](param::Parameter*){
+        params.addParameter(param::factory::declareTrigger("save"),[this](param::Parameter*){
             save();
         });
 
-        params.addParameter(param::ParameterFactory::declareFileOutputPath("file","/tmp/feature_mapping"),
+        params.addParameter(param::factory::declareFileOutputPath("file","/tmp/feature_mapping"),
                             path_);
     }
 

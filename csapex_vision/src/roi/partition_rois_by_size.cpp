@@ -21,8 +21,8 @@ void PartitionROIsBySize::ScaleInfo::create(csapex::Node* node, csapex::NodeModi
 
     index_ = index;
     output_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>(getNameForOutput(index));
-    param_width_ = param::ParameterFactory::declareRange(prefix + "/width", 0, 1920, 64, 1);
-    param_height_ = param::ParameterFactory::declareRange(prefix + "/height", 0, 1200, 128, 1);
+    param_width_ = param::factory::declareRange(prefix + "/width", 0, 1920, 64, 1);
+    param_height_ = param::factory::declareRange(prefix + "/height", 0, 1200, 128, 1);
 
     node->addTemporaryParameter(param_width_);
     node->addTemporaryParameter(param_height_);
@@ -57,7 +57,7 @@ void PartitionROIsBySize::setup(csapex::NodeModifier& node_modifier)
 
 void PartitionROIsBySize::setupParameters(csapex::Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("num_scales", 1, 64, 1, 1),
+    parameters.addParameter(param::factory::declareRange("num_scales", 1, 64, 1, 1),
                             std::bind(&PartitionROIsBySize::updatedScales, this));
 
     static const std::map<std::string, int> available_methods = {
@@ -66,7 +66,7 @@ void PartitionROIsBySize::setupParameters(csapex::Parameterizable& parameters)
             { "width", static_cast<int>(Method::WIDTH) },
             { "height", static_cast<int>(Method::HEIGHT) },
     };
-    param::ParameterPtr method_parameter = param::ParameterFactory::declareParameterSet("method", available_methods,
+    param::ParameterPtr method_parameter = param::factory::declareParameterSet("method", available_methods,
                                                                                         static_cast<int>(Method::AREA));
     parameters.addParameter(method_parameter,
                             reinterpret_cast<int&>(method_));
@@ -76,12 +76,12 @@ void PartitionROIsBySize::setupParameters(csapex::Parameterizable& parameters)
             { "upper", static_cast<int>(RelativeTo::UPPER), },
             { "center", static_cast<int>(RelativeTo::CENTER), },
     };
-    parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("relative_to", available_relative_to,
+    parameters.addConditionalParameter(param::factory::declareParameterSet("relative_to", available_relative_to,
                                                                                     static_cast<int>(RelativeTo::LOWER)),
                                        [this]() { return method_ != Method::NONE; },
                                        reinterpret_cast<int&>(relative_to_));
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("default_scale", 1, 64, 1, 1),
+    parameters.addConditionalParameter(param::factory::declareRange("default_scale", 1, 64, 1, 1),
                                        [this]() { return method_ == Method::NONE; },
                                        default_scale_);
 }

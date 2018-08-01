@@ -30,7 +30,7 @@ void WaldBoost::setup(NodeModifier &node_modifier)
 
 void WaldBoost::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declarePath("/waldboost/path",
+    parameters.addParameter(param::factory::declarePath("/waldboost/path",
                                                                  csapex::param::ParameterDescription("Path to a saved svm."),
                                                                  true,
                                                                  "",

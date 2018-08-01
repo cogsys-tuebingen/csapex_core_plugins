@@ -23,14 +23,14 @@ GradientHistogram::GradientHistogram()
 
 void GradientHistogram::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareAngle("min_angle", 0.0),
+    parameters.addParameter(param::factory::declareAngle("min_angle", 0.0),
                             interval_[0]);
-    parameters.addParameter(param::ParameterFactory::declareAngle("max_angle", M_PI / 4.0),
+    parameters.addParameter(param::factory::declareAngle("max_angle", M_PI / 4.0),
                             interval_[1]);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("ksize", 1, 21, 3, 2),
+    parameters.addParameter(param::factory::declareRange("ksize", 1, 21, 3, 2),
                             ksize_);
-    parameters.addParameter(param::ParameterFactory::declareBool("signed", false),
+    parameters.addParameter(param::factory::declareBool("signed", false),
                             signed_);
 }
 

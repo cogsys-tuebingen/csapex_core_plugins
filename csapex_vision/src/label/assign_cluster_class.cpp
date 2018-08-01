@@ -33,23 +33,23 @@ AssignClusterClass::~AssignClusterClass()
 
 void AssignClusterClass::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("submit"),
+    parameters.addParameter(csapex::param::factory::declareTrigger("submit"),
                             std::bind(&AssignClusterClass::submit, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("drop"),
+    parameters.addParameter(csapex::param::factory::declareTrigger("drop"),
                             std::bind(&AssignClusterClass::drop, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("clear"),
+    parameters.addParameter(csapex::param::factory::declareTrigger("clear"),
                             std::bind(&AssignClusterClass::clear, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("class id",
+    parameters.addParameter(csapex::param::factory::declareRange("class id",
                                                                   csapex::param::ParameterDescription("The class id to be used!"),
                                                                   0, 255, 0, 1),
                                                                   std::bind(&AssignClusterClass::setClass, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("class color", 0, 255, 0),
+    parameters.addParameter(csapex::param::factory::declareColorParameter("class color", 0, 255, 0),
                             std::bind(&AssignClusterClass::setColor, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("border color", 0, 0, 0),
+    parameters.addParameter(csapex::param::factory::declareColorParameter("border color", 0, 0, 0),
                             std::bind(&AssignClusterClass::display, this));
 
     setColor();

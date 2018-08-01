@@ -62,15 +62,15 @@ void ImportRos::setupParameters(Parameterizable& parameters)
 {
     std::vector<std::string> set;
     set.push_back(no_topic_);
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterStringSet("topic", set),
+    parameters.addParameter(csapex::param::factory::declareParameterStringSet("topic", set),
                             std::bind(&ImportRos::update, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("refresh"),
+    parameters.addParameter(csapex::param::factory::declareTrigger("refresh"),
                             std::bind(&ImportRos::refresh, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("queue", 0, 30, 1, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("queue", 0, 30, 1, 1),
                             std::bind(&ImportRos::updateSubscriber, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("latch", false));
+    parameters.addParameter(csapex::param::factory::declareBool("latch", false));
 
 
 
@@ -80,7 +80,7 @@ void ImportRos::setupParameters(Parameterizable& parameters)
         mode_ = readParameter<int>("import_mode");
         return mode_ == (int) FrontAndPop;};
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("buffer_size",1,1024,1024,1),
+    parameters.addConditionalParameter(csapex::param::factory::declareRange("buffer_size",1,1024,1024,1),
                                        buffer_condition,
                                        buffer_size_);
 
@@ -91,7 +91,7 @@ void ImportRos::setupParameters(Parameterizable& parameters)
     };
 
 
-    csapex::param::Parameter::Ptr mode_p  = param::ParameterFactory::declareParameterSet
+    csapex::param::Parameter::Ptr mode_p  = param::factory::declareParameterSet
                                                    ("import_mode",
                                                     csapex::param::ParameterDescription
                                                     ("Select a import mode. BackAndLatch publishes the most recent message. FrontAndPop collects the messages in a queue."),
@@ -103,9 +103,9 @@ void ImportRos::setupParameters(Parameterizable& parameters)
 
 
     std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
-    csapex::param::Parameter::Ptr buffer_p = csapex::param::ParameterFactory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
+    csapex::param::Parameter::Ptr buffer_p = csapex::param::factory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
     parameters.addConditionalParameter(buffer_p, connected_condition);
-    csapex::param::Parameter::Ptr max_wait_p = csapex::param::ParameterFactory::declareRange("buffer/max_wait", 0.0, 10.0, 1.0, 0.1);
+    csapex::param::Parameter::Ptr max_wait_p = csapex::param::factory::declareRange("buffer/max_wait", 0.0, 10.0, 1.0, 0.1);
     parameters.addConditionalParameter(max_wait_p, connected_condition);
 }
 

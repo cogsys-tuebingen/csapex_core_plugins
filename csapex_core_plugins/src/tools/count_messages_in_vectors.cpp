@@ -33,7 +33,7 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+        parameters.addParameter(param::factory::declareTrigger("reset"),
                                 std::bind(&CountMessagesInVectors::reset, this));
     }
 

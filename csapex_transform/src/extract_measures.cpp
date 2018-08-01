@@ -32,19 +32,19 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareAngle("roll", 0));
-        params.addParameter(param::ParameterFactory::declareAngle("pitch", 0));
-        params.addParameter(param::ParameterFactory::declareBool("yaw/cap", true), cap_yaw_);
-        params.addParameter(param::ParameterFactory::declareAngle("yaw", 0));
+        params.addParameter(param::factory::declareAngle("roll", 0));
+        params.addParameter(param::factory::declareAngle("pitch", 0));
+        params.addParameter(param::factory::declareBool("yaw/cap", true), cap_yaw_);
+        params.addParameter(param::factory::declareAngle("yaw", 0));
 
-        params.addParameter(param::ParameterFactory::declareValue("dx", 0.));
-        params.addParameter(param::ParameterFactory::declareValue("dy", 0.));
-        params.addParameter(param::ParameterFactory::declareValue("dz", 0.));
+        params.addParameter(param::factory::declareValue("dx", 0.));
+        params.addParameter(param::factory::declareValue("dy", 0.));
+        params.addParameter(param::factory::declareValue("dz", 0.));
 
-        params.addParameter(param::ParameterFactory::declareValue("norm", 0.));
+        params.addParameter(param::factory::declareValue("norm", 0.));
 
-        params.addParameter(param::ParameterFactory::declareText("frame_id", ""));
-        params.addParameter(param::ParameterFactory::declareText("child_frame_id", ""));
+        params.addParameter(param::factory::declareText("frame_id", ""));
+        params.addParameter(param::factory::declareText("child_frame_id", ""));
     }
 
     void process()

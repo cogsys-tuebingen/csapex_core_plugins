@@ -36,7 +36,9 @@ const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data,
     mat.create(rows, cols, elem_type);
 
     const uint32_t data_size = mat.cols * mat.rows * elem_size;
-    data.readRaw(mat.ptr(), data_size);
+    if(data_size > 0) {
+        data.readRaw(mat.ptr(), data_size);
+    }
 
     return data;
 }

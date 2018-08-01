@@ -38,21 +38,21 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(param::ParameterFactory::declareBool("use_pca_based_estimation", false),
+        parameters.addParameter(param::factory::declareBool("use_pca_based_estimation", false),
                                 use_pca_);
-        parameters.addConditionalParameter(param::ParameterFactory::declareBool("use_open_mp", false),
+        parameters.addConditionalParameter(param::factory::declareBool("use_open_mp", false),
                                            [this](){return use_pca_;},
                                            use_omp_);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("search_radius",
+        parameters.addConditionalParameter(param::factory::declareRange("search_radius",
                                                                                  0.01, 1.0, 0.03, 0.01),
                                            [this](){return use_pca_;},
                                            search_radius_);
 
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("max_depth_change_factor",
+        parameters.addConditionalParameter(param::factory::declareRange("max_depth_change_factor",
                                                                                   0.0, 0.5, 0.02, 0.001),
                                            [this](){return !use_pca_;},
                                            max_depth_change_factor_);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("normal_smoothing_size",
+        parameters.addConditionalParameter(param::factory::declareRange("normal_smoothing_size",
                                                                                  0.0, 50.0, 10.0, 0.1),
                                            [this](){return !use_pca_;},
                                            normal_smoothing_size_);
@@ -65,7 +65,7 @@ public:
             {"AVERAGE_DEPTH_CHANGE", T::AVERAGE_DEPTH_CHANGE},
             {"SIMPLE_3D_GRADIENT", T::SIMPLE_3D_GRADIENT}
         };
-        parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("method", methods,
+        parameters.addConditionalParameter(param::factory::declareParameterSet("method", methods,
                                                                                         (int) T::AVERAGE_3D_GRADIENT),
                                            [this](){return !use_pca_;},
                                            method_);

@@ -46,9 +46,9 @@ void Pyramid::setup(NodeModifier& node_modifier)
 void Pyramid::setupParameters(Parameterizable& parameters)
 {
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("levels", 1, 10, out_levels_, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("levels", 1, 10, out_levels_, 1),
                  std::bind(&Pyramid::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("preview",0, 9, out_level_idx_, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("preview",0, 9, out_level_idx_, 1),
                  std::bind(&Pyramid::update, this));
 }
 

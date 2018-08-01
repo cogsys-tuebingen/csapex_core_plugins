@@ -50,7 +50,7 @@ public:
             {"A <= B", Operation::LTE},
             {"A < B", Operation::LT},
         };
-        params.addParameter(param::ParameterFactory::declareParameterSet("operation",
+        params.addParameter(param::factory::declareParameterSet("operation",
                                                                          operations,
                                                                          Operation::EQ),
                             operation_);

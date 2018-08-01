@@ -27,7 +27,7 @@ PassThroughByCluster::PassThroughByCluster()
 
 void PassThroughByCluster::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("keep organized", true));
+    parameters.addParameter(csapex::param::factory::declareBool("keep organized", true));
 }
 
 void PassThroughByCluster::setup(NodeModifier& node_modifier)

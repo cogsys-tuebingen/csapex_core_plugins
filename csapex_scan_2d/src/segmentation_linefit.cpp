@@ -15,9 +15,9 @@ LineFitSegmentation::LineFitSegmentation()
 
 void LineFitSegmentation::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("sigma",          0.01, 2.0, 0.01, 0.01), std::bind(&LineFitSegmentation::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max. distance",  0.01, 2.0, 0.01, 0.01), std::bind(&LineFitSegmentation::update, this));
-//    parameters.addParameter(csapex::param::ParameterFactory::declareRange("segment lines"), false);
+    parameters.addParameter(csapex::param::factory::declareRange("sigma",          0.01, 2.0, 0.01, 0.01), std::bind(&LineFitSegmentation::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange("max. distance",  0.01, 2.0, 0.01, 0.01), std::bind(&LineFitSegmentation::update, this));
+//    parameters.addParameter(csapex::param::factory::declareRange("segment lines"), false);
 }
 
 void LineFitSegmentation::update()

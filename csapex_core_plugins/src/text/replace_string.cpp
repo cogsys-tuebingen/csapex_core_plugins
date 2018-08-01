@@ -32,8 +32,8 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareText("needle", ""), needle_);
-        params.addParameter(param::ParameterFactory::declareText("replacement", ""), replacement_);
+        params.addParameter(param::factory::declareText("needle", ""), needle_);
+        params.addParameter(param::factory::declareText("replacement", ""), replacement_);
     }
 
     void process() override

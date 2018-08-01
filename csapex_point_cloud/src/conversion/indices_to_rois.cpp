@@ -39,15 +39,15 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareValue("fov/x", 60.0), fov_x_);
-        params.addParameter(param::ParameterFactory::declareValue("fov/y",  60.0), fov_y_);
-        params.addParameter(param::ParameterFactory::declareValue("centre/x", 0), c_x_);
-        params.addParameter(param::ParameterFactory::declareValue("centre/y", 0), c_y_);
-        params.addParameter(param::ParameterFactory::declareValue("width", 640), w_);
-        params.addParameter(param::ParameterFactory::declareValue("height", 480), h_);
+        params.addParameter(param::factory::declareValue("fov/x", 60.0), fov_x_);
+        params.addParameter(param::factory::declareValue("fov/y",  60.0), fov_y_);
+        params.addParameter(param::factory::declareValue("centre/x", 0), c_x_);
+        params.addParameter(param::factory::declareValue("centre/y", 0), c_y_);
+        params.addParameter(param::factory::declareValue("width", 640), w_);
+        params.addParameter(param::factory::declareValue("height", 480), h_);
 
-        params.addParameter(param::ParameterFactory::declareBool("flip rois", false), flip_rois_);
-        params.addConditionalParameter(param::ParameterFactory::declareBool("use_projection",false),
+        params.addParameter(param::factory::declareBool("flip rois", false), flip_rois_);
+        params.addConditionalParameter(param::factory::declareBool("use_projection",false),
                                        dense_, use_projection_);
     }
 

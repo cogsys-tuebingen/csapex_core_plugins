@@ -46,32 +46,32 @@ FileImporter::~FileImporter()
 
 void FileImporter::setupParameters(Parameterizable& parameters)
 {
-    param::Parameter::Ptr directory = param::ParameterFactory::declareBool("import directory", false);
+    param::Parameter::Ptr directory = param::factory::declareBool("import directory", false);
     parameters.addParameter(directory);
 
     std::function<bool()> cond_file = [directory]() { return !directory->as<bool>(); };
     std::function<bool()> cond_dir = [directory]() { return directory->as<bool>(); };
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("recursive import", false), cond_dir);
+    parameters.addConditionalParameter(param::factory::declareBool("recursive import", false), cond_dir);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("split_container_messages",
+    parameters.addParameter(param::factory::declareBool("split_container_messages",
                                                                  param::ParameterDescription("Specifies, wheter imported container messages should be split into their"
                                                                                              "constituent parts for export. (Only applicable to the first output slot.)"),
                                                                  false),
                             split_container_messages_);
 
     std::string filter = std::string("Supported files (") + MessageProviderManager::instance().supportedTypes() + ");;All files (*.*)";
-    parameters.addConditionalParameter(param::ParameterFactory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::requestImport, this));
+    parameters.addConditionalParameter(param::factory::declareFileInputPath("path", "", filter), cond_file, std::bind(&FileImporter::requestImport, this));
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::requestImport, this));
-    parameters.addConditionalParameter(param::ParameterFactory::declareText("directory/current_file", ""), cond_dir);
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool(
+    parameters.addConditionalParameter(param::factory::declareDirectoryInputPath("directory", ""), cond_dir, std::bind(&FileImporter::requestImport, this));
+    parameters.addConditionalParameter(param::factory::declareText("directory/current_file", ""), cond_dir);
+    parameters.addConditionalParameter(param::factory::declareBool(
                                            "directory/sort_numerically",
                                            param::ParameterDescription(
                                                "If true, the expected format is <em>any_text</em>_<b>number</b>.<em>file_ending</em>"
                                                ),
                                            false), cond_dir);
-    parameters.addConditionalParameter(param::ParameterFactory::declareText("directory/filter",
+    parameters.addConditionalParameter(param::factory::declareText("directory/filter",
                                                                             param::ParameterDescription("This filter is applied as a regular expression to all files in the directory."
                                                                                                         "Example usage: <b>.*\\.png</b> to select all .png files."),
                                                                             ".*"),
@@ -79,22 +79,22 @@ void FileImporter::setupParameters(Parameterizable& parameters)
         directory_filter_ = p->as<std::string>();
         doImportDir(QString::fromStdString(readParameter<std::string>("directory")));
     });
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/show parameters", false), cond_dir);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
+    parameters.addConditionalParameter(param::factory::declareBool("directory/show parameters", false), cond_dir);
+    parameters.addConditionalParameter(param::factory::declareRange<int>("directory/current", 0, 1, 0, 1), cond_dir, std::bind(&FileImporter::changeDirIndex, this));
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/play", true), cond_dir);
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/loop", true), cond_dir);
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/latch", false), cond_dir);
-    parameters.addConditionalParameter(param::ParameterFactory::declareBool("directory/quit on end", false), cond_dir, quit_on_end_);
+    parameters.addConditionalParameter(param::factory::declareBool("directory/play", true), cond_dir);
+    parameters.addConditionalParameter(param::factory::declareBool("directory/loop", true), cond_dir);
+    parameters.addConditionalParameter(param::factory::declareBool("directory/latch", false), cond_dir);
+    parameters.addConditionalParameter(param::factory::declareBool("directory/quit on end", false), cond_dir, quit_on_end_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("cache", 0), [this](param::Parameter* p) {
+    parameters.addParameter(param::factory::declareBool("cache", 0), [this](param::Parameter* p) {
         cache_enabled_ = p->as<bool>();
         if(!cache_enabled_) {
             cache_.clear();
         }
     });
 
-    parameters.addHiddenParameter(param::ParameterFactory::declareValue("output_count", 0),
+    parameters.addHiddenParameter(param::factory::declareValue("output_count", 0),
                                   [this](param::Parameter* p) {
         createDummyOutputs(*node_modifier_);
     });

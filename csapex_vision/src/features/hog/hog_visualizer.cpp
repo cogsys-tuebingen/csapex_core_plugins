@@ -27,44 +27,44 @@ HOGVisualizer::HOGVisualizer()
 
 void HOGVisualizer::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
+    parameters.addParameter(param::factory::declareBool("hog/signed_gradient",
                                                                  param::ParameterDescription("Un-/directed gradients."),
                                                                  false),
                             signed_gradient_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
+    parameters.addParameter(param::factory::declareRange("hog/gradient_bins",
                                                                   param::ParameterDescription("Amount of gradient bins."),
                                                                   2, 18, 9, 1),
                             bins_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/cells_x",
+    parameters.addParameter(param::factory::declareRange("hog/cells_x",
                                                                   param::ParameterDescription("Cells in x direction."),
                                                                   2, 16, 8, 1),
                             cells_x_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/cells_y",
+    parameters.addParameter(param::factory::declareRange("hog/cells_y",
                                                                   param::ParameterDescription("Cells in x direction."),
                                                                   2, 16, 16, 1),
                             cells_y_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/block_size",
+    parameters.addParameter(param::factory::declareRange("hog/block_size",
                                                                   param::ParameterDescription("Cell count in both dimension of a block."),
                                                                   1, 4, 2, 1),
                             block_size_);
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/bock_stride",
+    parameters.addParameter(param::factory::declareRange("hog/bock_stride",
                                                                   param::ParameterDescription("Overlap of each block in cells."),
                                                                   1, 3, 1, 1),
                             block_stride_);
-    parameters.addParameter(param::ParameterFactory::declareRange("visuaization/scale_hog_image",
+    parameters.addParameter(param::factory::declareRange("visuaization/scale_hog_image",
                                                                   param::ParameterDescription("Scale for the visualized images."),
                                                                   1.0, 10.0, 4.0, 0.1),
                             scale_hog_image_);
-    parameters.addParameter(param::ParameterFactory::declareRange("visuaization/scale_block_images",
+    parameters.addParameter(param::factory::declareRange("visuaization/scale_block_images",
                                                                   param::ParameterDescription("Scale for the visualized images."),
                                                                   1.0, 200.0, 40.0, 0.1),
                             scale_block_images_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("visuaization/gradient_scale",
+    parameters.addParameter(param::factory::declareRange("visuaization/gradient_scale",
                                                                   param::ParameterDescription("Scale for the visualized images."),
                                                                   1, 200, 8, 1),
                             scale_gradient_);

@@ -30,7 +30,7 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        addParameter(param::ParameterFactory::declareRange("min count for not empty", 0, 1024, 1, 1), min_count_);
+        addParameter(param::factory::declareRange("min count for not empty", 0, 1024, 1, 1), min_count_);
     }
 
     virtual void process() override

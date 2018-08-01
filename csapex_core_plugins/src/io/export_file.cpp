@@ -35,7 +35,7 @@ ExportFile::ExportFile()
 
 void ExportFile::setupParameters(Parameterizable& parameters)
 {
-    param::ParameterPtr one_by_one = csapex::param::ParameterFactory::declareBool(
+    param::ParameterPtr one_by_one = csapex::param::factory::declareBool(
                 "export one",
                 csapex::param::ParameterDescription("Export files one-by-one."),
                 false);
@@ -44,10 +44,10 @@ void ExportFile::setupParameters(Parameterizable& parameters)
         return one_by_one->as<bool>();
     };
 
-    addConditionalParameter(param::ParameterFactory::declareTrigger("save one message"), is_one, [this](param::Parameter* p) {
+    addConditionalParameter(param::factory::declareTrigger("save one message"), is_one, [this](param::Parameter* p) {
         oneshot_allowed_ = true;
     });
-    addConditionalParameter(param::ParameterFactory::declareTrigger("save last message"), is_one, [this](param::Parameter* p) {
+    addConditionalParameter(param::factory::declareTrigger("save last message"), is_one, [this](param::Parameter* p) {
         if (last_message_)
             exportMessage(last_message_);
     });
@@ -59,24 +59,24 @@ void ExportFile::setupParameters(Parameterizable& parameters)
         { "CS::APEX yaml format", serialization::Format::APEX_YAML }
     };
 
-    addParameter(csapex::param::ParameterFactory::declareParameterSet("format",
+    addParameter(csapex::param::factory::declareParameterSet("format",
                                                                       csapex::param::ParameterDescription("Export format. (Native is only supported some messages, such as PNG for images)"),
                                                                       formats,
                                                                       serialization::Format::APEX_BINARY),
                  target_format_);
 
-    addParameter(csapex::param::ParameterFactory::declareText("filename",
+    addParameter(csapex::param::factory::declareText("filename",
                                                               csapex::param::ParameterDescription("Base name of the exported messages, suffixed by a counter"),
                                                               "msg"), std::bind(&ExportFile::setExportPath, this));
-    addParameter(csapex::param::ParameterFactory::declareDirectoryOutputPath("path",
+    addParameter(csapex::param::factory::declareDirectoryOutputPath("path",
                                                                              csapex::param::ParameterDescription("Directory to write messages to"),
                                                                              "", ""), std::bind(&ExportFile::setExportPath, this));
-    addParameter(csapex::param::ParameterFactory::declareBool("vector_as_single_file", false),
+    addParameter(csapex::param::factory::declareBool("vector_as_single_file", false),
                  vector_as_single_file_);
 
 
 
-    addConditionalParameter(csapex::param::ParameterFactory::declareBool("compress",
+    addConditionalParameter(csapex::param::factory::declareBool("compress",
                                                                          csapex::param::ParameterDescription("Compress File?"),
                                                                          false),
                             vector_as_single_file_,

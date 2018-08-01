@@ -76,7 +76,7 @@ public:
             signal.insert({ pair.second, pair.first });
         }
 
-        params.addParameter(param::ParameterFactory::declareParameterSet("signal", signal, SIGUSR1), signal_);
+        params.addParameter(param::factory::declareParameterSet("signal", signal, SIGUSR1), signal_);
     }
 
     void process() override

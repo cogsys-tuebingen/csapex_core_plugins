@@ -112,20 +112,20 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareRange("distance xy", 0.0, 1.0, 0.3, 0.01),
+        params.addParameter(param::factory::declareRange("distance xy", 0.0, 1.0, 0.3, 0.01),
                             cluster_distance_xy_);
-        params.addParameter(param::ParameterFactory::declareRange("distance xy factor", 0.0, 10.0, 0.0, 0.01),
+        params.addParameter(param::factory::declareRange("distance xy factor", 0.0, 10.0, 0.0, 0.01),
                             cluster_distance_xy_distance_factor_);
-        params.addParameter(param::ParameterFactory::declareRange("distance xy offset", -3.0, 3.0, 0.0, 0.01),
+        params.addParameter(param::factory::declareRange("distance xy offset", -3.0, 3.0, 0.0, 0.01),
                             cluster_distance_xy_distance_offset_);
-        params.addParameter(param::ParameterFactory::declareRange("distance z", 0.0, 2.0, 0.3, 0.01),
+        params.addParameter(param::factory::declareRange("distance z", 0.0, 2.0, 0.3, 0.01),
                             cluster_distance_z_);
-        params.addParameter(param::ParameterFactory::declareRange("max mean distance", 0.0, 3.0, 1.0, 0.01),
+        params.addParameter(param::factory::declareRange("max mean distance", 0.0, 3.0, 1.0, 0.01),
                             cluster_max_mean_xyz_);
 
-        params.addParameter(param::ParameterFactory::declareRange("min cluster size", 0, 1000, 100, 1),
+        params.addParameter(param::factory::declareRange("min cluster size", 0, 1000, 100, 1),
                             cluster_min_size_);
-        params.addParameter(param::ParameterFactory::declareRange("min cluster distance factor", 0.0, 100.0, 0.0, 0.001),
+        params.addParameter(param::factory::declareRange("min cluster distance factor", 0.0, 100.0, 0.0, 0.001),
                             cluster_min_size_distance_factor_);
 
     }

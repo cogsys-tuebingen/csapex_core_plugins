@@ -37,7 +37,7 @@ void Split::setup(NodeModifier& node_modifier)
 
 void Split::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareBool
+    addParameter(csapex::param::factory::declareBool
                  ("enforce mono",
                   csapex::param::ParameterDescription("Enforce that the encoding is enc::mono"),
                   true));

@@ -40,7 +40,7 @@ EvaluateFeatureClassification::EvaluateFeatureClassification()
 
 void EvaluateFeatureClassification::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"), [&](csapex::param::Parameter*) { confusion_.reset(); });
+    parameters.addParameter(csapex::param::factory::declareTrigger("reset"), [&](csapex::param::Parameter*) { confusion_.reset(); });
 }
 
 void EvaluateFeatureClassification::setup(NodeModifier& node_modifier)

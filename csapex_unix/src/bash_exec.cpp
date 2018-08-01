@@ -37,7 +37,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareText("command", "cat | cut -b2-"), [this](param::Parameter* p){
+        params.addParameter(param::factory::declareText("command", "cat | cut -b2-"), [this](param::Parameter* p){
             cmd_ = p->as<std::string>();
             reset();
         });

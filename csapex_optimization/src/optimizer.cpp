@@ -32,31 +32,31 @@ Optimizer::Optimizer()
 
 void Optimizer::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("start"), [this](csapex::param::Parameter*) {
+    parameters.addParameter(csapex::param::factory::declareTrigger("start"), [this](csapex::param::Parameter*) {
         start();
     });
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("finish"), [this](csapex::param::Parameter*) {
+    parameters.addParameter(csapex::param::factory::declareTrigger("finish"), [this](csapex::param::Parameter*) {
         finish();
     });
 
-    parameters.addParameter(param::ParameterFactory::declareBool
+    parameters.addParameter(param::factory::declareBool
                             ("finish_immediately",
                              param::ParameterDescription("Evaluate for every received fitness value, w/o relying on EndOfSequence."),
                              false),
                             evaluate_immediately_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool
+    parameters.addParameter(param::factory::declareBool
                             ("perform_evaluation",
                              param::ParameterDescription("Set best parameters after optimization and re-run."),
                              false),
                             perform_evaluation_);
 
-    stop_ = csapex::param::ParameterFactory::declareTrigger("stop").build<param::TriggerParameter>();
+    stop_ = csapex::param::factory::declareTrigger("stop").build<param::TriggerParameter>();
     parameters.addParameter(stop_, [this](csapex::param::Parameter*) {
         doStop();
     });
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("set best"), [this](csapex::param::Parameter*) {
+    parameters.addParameter(csapex::param::factory::declareTrigger("set best"), [this](csapex::param::Parameter*) {
         stop();
         setBest();
     });

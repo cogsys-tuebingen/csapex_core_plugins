@@ -207,7 +207,7 @@ void GenericImageCombiner::setupParameters(Parameterizable& parameters)
 {
     setupVariadicParameters(parameters);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("script",
+    parameters.addParameter(csapex::param::factory::declareText("script",
                                                                          csapex::param::ParameterDescription("An opencv-style script to combine the images.\n"
                                                                                                              "Inputs are mapped to variables $1 ... $n\n"
                                                                                                              "Valid operators are +, -, *, /, ^, &, |\n"

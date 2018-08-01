@@ -17,15 +17,15 @@ using namespace csapex::connection_types;
 
 void FilterROIsByDistance::setupParameters(csapex::Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("method",
+    parameters.addParameter(param::factory::declareParameterSet<int>("method",
                                                                               {{"mean", MEAN}, {"median", MEDIAN}},
                                                                               MEAN),
                             method_);
-    parameters.addParameter(param::ParameterFactory::declareInterval("distance", -100.0, 100.0, 0.5, 5.0, 0.01),
+    parameters.addParameter(param::factory::declareInterval("distance", -100.0, 100.0, 0.5, 5.0, 0.01),
                             distance_);
-    parameters.addParameter(param::ParameterFactory::declareRange("min_point_count", 0, 100000, 0, 1),
+    parameters.addParameter(param::factory::declareRange("min_point_count", 0, 100000, 0, 1),
                             min_point_count_);
-    parameters.addParameter(param::ParameterFactory::declareBool("remove invalid", true),
+    parameters.addParameter(param::factory::declareBool("remove invalid", true),
                             remove_);
 }
 

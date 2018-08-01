@@ -45,7 +45,7 @@ public:
             {"NUMBER", (int) Images::NUMBER},
             {"CAT", (int) Images::CAT}
         };
-        parameters.addParameter(param::ParameterFactory::declareParameterSet("image", set, (int) Images::LENA),
+        parameters.addParameter(param::factory::declareParameterSet("image", set, (int) Images::LENA),
                                 image_type_);
     }
 

@@ -26,8 +26,8 @@ VoxelGrid::VoxelGrid()
 
 void VoxelGrid::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("resolution", 0.01, 1.0, 0.1, 0.005));
-    parameters.addParameter(param::ParameterFactory::declareBool("remove NAN", false), remove_nan_);
+    parameters.addParameter(csapex::param::factory::declareRange("resolution", 0.01, 1.0, 0.1, 0.005));
+    parameters.addParameter(param::factory::declareBool("remove NAN", false), remove_nan_);
 }
 
 void VoxelGrid::setup(NodeModifier& node_modifier)

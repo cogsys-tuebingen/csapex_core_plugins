@@ -24,7 +24,7 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-        addParameter(csapex::param::ParameterFactory::declareRange("inputs", 1, 10, 2, 1), [this](csapex::param::Parameter* p) {
+        addParameter(csapex::param::factory::declareRange("inputs", 1, 10, 2, 1), [this](csapex::param::Parameter* p) {
             updateInputs();
         });
     }

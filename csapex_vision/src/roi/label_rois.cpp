@@ -34,21 +34,21 @@ LabelROIs::~LabelROIs()
 
 void LabelROIs::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("submit"),
+    parameters.addParameter(csapex::param::factory::declareTrigger("submit"),
                             std::bind(&LabelROIs::submit, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("drop"),
+    parameters.addParameter(csapex::param::factory::declareTrigger("drop"),
                             std::bind(&LabelROIs::drop, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("clear"),
+    parameters.addParameter(csapex::param::factory::declareTrigger("clear"),
                             std::bind(&LabelROIs::clear, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("class id",
+    parameters.addParameter(csapex::param::factory::declareRange("class id",
                                                                   csapex::param::ParameterDescription("The class id to be used!"),
                                                                   0, 255, 0, 1),
                                                                   std::bind(&LabelROIs::setClass, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("class color", 0, 255, 0),
+    parameters.addParameter(csapex::param::factory::declareColorParameter("class color", 0, 255, 0),
                             std::bind(&LabelROIs::setColor, this));
     setColor();
 }

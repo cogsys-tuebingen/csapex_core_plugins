@@ -27,7 +27,7 @@ BarCodeReader::BarCodeReader()
 
 void BarCodeReader::setupParameters(Parameterizable &params)
 {
-    params.addParameter(csapex::param::ParameterFactory::declareBool("republish", false)
+    params.addParameter(csapex::param::factory::declareBool("republish", false)
                         .description("Publish the last detected code again, if no new code has been detected."));
 }
 

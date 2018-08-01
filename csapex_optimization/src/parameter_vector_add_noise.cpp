@@ -32,7 +32,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareRange("rel_standard_deviation",0.0,1.0,0.1,0.01),
+        params.addParameter(param::factory::declareRange("rel_standard_deviation",0.0,1.0,0.1,0.01),
                             rel_std_dev_);
     }
 

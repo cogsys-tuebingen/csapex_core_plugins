@@ -20,7 +20,7 @@ TextInput::TextInput()
 
 void TextInput::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("text", ""), [this](param::Parameter* p){
+    parameters.addParameter(csapex::param::factory::declareText("text", ""), [this](param::Parameter* p){
         std::string txt = p->as<std::string>();
         if(txt != text_) {
             text_ = txt;

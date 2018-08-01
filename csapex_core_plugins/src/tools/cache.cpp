@@ -35,20 +35,20 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        csapex::param::Parameter::Ptr p = param::ParameterFactory::declareOutputProgress("buffered messages");
+        csapex::param::Parameter::Ptr p = param::factory::declareOutputProgress("buffered messages");
         buffered_ = dynamic_cast<param::OutputProgressParameter*>(p.get());
         params.addParameter(p);
 
-        params.addParameter(csapex::param::ParameterFactory::declareValue("buffer size", 128), [this](param::Parameter* p) {
+        params.addParameter(csapex::param::factory::declareValue("buffer size", 128), [this](param::Parameter* p) {
             buffer_size_ = p->as<int>();
             update();
         });
 
-        params.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"), [this](param::Parameter*) {
+        params.addParameter(csapex::param::factory::declareTrigger("reset"), [this](param::Parameter*) {
             reset();
         });
 
-        params.addParameter(csapex::param::ParameterFactory::declareValue("playback", false), playback_);
+        params.addParameter(csapex::param::factory::declareValue("playback", false), playback_);
 
         auto playing = [this](){
             return playback_;
@@ -57,19 +57,19 @@ public:
             return !playback_;
         };
 
-        params.addConditionalParameter(csapex::param::ParameterFactory::declareTrigger("start"), not_playing, [this](param::Parameter*) {
+        params.addConditionalParameter(csapex::param::factory::declareTrigger("start"), not_playing, [this](param::Parameter*) {
             setParameter("playback", true);
             yield();
         });
-        params.addConditionalParameter(csapex::param::ParameterFactory::declareTrigger("stop"), playing, [this](param::Parameter*) {
+        params.addConditionalParameter(csapex::param::factory::declareTrigger("stop"), playing, [this](param::Parameter*) {
             setParameter("playback", false);
             yield();
         });
 
-        params.addConditionalParameter(csapex::param::ParameterFactory::declareRange("frame", 0, 128, 0 , 1), playing);
+        params.addConditionalParameter(csapex::param::factory::declareRange("frame", 0, 128, 0 , 1), playing);
 
-        params.addConditionalParameter(csapex::param::ParameterFactory::declareValue("play", true), playing, playing_);
-        params.addConditionalParameter(csapex::param::ParameterFactory::declareValue("loop", true), playing, loop_);
+        params.addConditionalParameter(csapex::param::factory::declareValue("play", true), playing, playing_);
+        params.addConditionalParameter(csapex::param::factory::declareValue("loop", true), playing, loop_);
     }
 
     void reset()

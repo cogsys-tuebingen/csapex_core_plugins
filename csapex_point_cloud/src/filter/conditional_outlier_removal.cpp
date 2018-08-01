@@ -33,9 +33,9 @@ void ConditionalOutlierRemoval::setupParameters(Parameterizable &parameters)
         {"AND", (int) AND},
         {"OR", (int) OR}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("type", types, (int) AND), std::bind(&ConditionalOutlierRemoval::update, this));
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("type", types, (int) AND), std::bind(&ConditionalOutlierRemoval::update, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool ("keep organized", keep_organized_),
+    parameters.addParameter(csapex::param::factory::declareBool ("keep organized", keep_organized_),
                             std::bind(&ConditionalOutlierRemoval::update, this));
 
     std::map<std::string, int> conditions = {
@@ -43,19 +43,19 @@ void ConditionalOutlierRemoval::setupParameters(Parameterizable &parameters)
         {"y", 2},
         {"z", 4}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterBitSet("conditions", conditions),
+    parameters.addParameter(csapex::param::factory::declareParameterBitSet("conditions", conditions),
                             std::bind(&ConditionalOutlierRemoval::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("min x", -30.0, 30.0, x_range_.x(), 0.1),
+    parameters.addParameter(csapex::param::factory::declareRange("min x", -30.0, 30.0, x_range_.x(), 0.1),
                             std::bind(&ConditionalOutlierRemoval::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("min y", -30.0, 30.0, y_range_.x(), 0.1),
+    parameters.addParameter(csapex::param::factory::declareRange("min y", -30.0, 30.0, y_range_.x(), 0.1),
                             std::bind(&ConditionalOutlierRemoval::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("min z", -30.0, 30.0, z_range_.x(), 0.1),
+    parameters.addParameter(csapex::param::factory::declareRange("min z", -30.0, 30.0, z_range_.x(), 0.1),
                             std::bind(&ConditionalOutlierRemoval::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max x", -30.0, 30.0, x_range_.y(), 0.1),
+    parameters.addParameter(csapex::param::factory::declareRange("max x", -30.0, 30.0, x_range_.y(), 0.1),
                             std::bind(&ConditionalOutlierRemoval::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max y", -30.0, 30.0, y_range_.y(), 0.1),
+    parameters.addParameter(csapex::param::factory::declareRange("max y", -30.0, 30.0, y_range_.y(), 0.1),
                             std::bind(&ConditionalOutlierRemoval::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max z", -30.0, 30.0, z_range_.y(), 0.1),
+    parameters.addParameter(csapex::param::factory::declareRange("max z", -30.0, 30.0, z_range_.y(), 0.1),
                             std::bind(&ConditionalOutlierRemoval::update, this));
 }
 

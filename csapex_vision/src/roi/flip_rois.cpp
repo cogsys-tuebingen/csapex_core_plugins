@@ -41,7 +41,7 @@ public:
             {"-90", 3},
             {"v+h", -1}
         };
-        parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("type", types, -1),
+        parameters.addParameter(csapex::param::factory::declareParameterSet("type", types, -1),
                                 mode_);
     }
 

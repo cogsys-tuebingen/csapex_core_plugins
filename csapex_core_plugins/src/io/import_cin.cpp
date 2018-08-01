@@ -30,9 +30,9 @@ void ImportCin::setup(NodeModifier& node_modifier)
 
 void ImportCin::setupParameters(Parameterizable &params)
 {
-    params.addParameter(param::ParameterFactory::declareBool("import yaml", true), import_yaml_);
-    params.addParameter(param::ParameterFactory::declareBool("latch", false), latch_);
-    params.addParameter(param::ParameterFactory::declareBool("signal end", false), signal_end_);
+    params.addParameter(param::factory::declareBool("import yaml", true), import_yaml_);
+    params.addParameter(param::factory::declareBool("latch", false), latch_);
+    params.addParameter(param::factory::declareBool("signal end", false), signal_end_);
 }
 
 

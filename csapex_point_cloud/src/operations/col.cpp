@@ -30,7 +30,7 @@ public:
     virtual void setupParameters(Parameterizable &parameters) override
     {
 
-        param::Parameter::Ptr row_ptr = param::ParameterFactory::declareRange("col", 0, 0, 0, 1);
+        param::Parameter::Ptr row_ptr = param::factory::declareRange("col", 0, 0, 0, 1);
         col_ = std::dynamic_pointer_cast<param::RangeParameter>(row_ptr);
         addParameter(col_);
     }

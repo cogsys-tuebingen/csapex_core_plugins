@@ -35,7 +35,7 @@ void ToFeature::setup(NodeModifier& node_modifier)
 
 void ToFeature::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("class id", 0, 255, 0, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("class id", 0, 255, 0, 1));
 }
 
 namespace {

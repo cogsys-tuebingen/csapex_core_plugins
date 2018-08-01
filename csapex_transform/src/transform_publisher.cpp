@@ -26,8 +26,8 @@ TransformPublisher::TransformPublisher()
 
 void TransformPublisher::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("from", "/"));
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("to", "/"));
+    parameters.addParameter(csapex::param::factory::declareText("from", "/"));
+    parameters.addParameter(csapex::param::factory::declareText("to", "/"));
 }
 
 TransformPublisher::~TransformPublisher()

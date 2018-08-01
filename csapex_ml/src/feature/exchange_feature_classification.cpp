@@ -26,9 +26,9 @@ public:
     }
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareValue("exchange", -1),
+        parameters.addParameter(param::factory::declareValue("exchange", -1),
                                 exchange_);
-        parameters.addParameter(param::ParameterFactory::declareValue("by", 0),
+        parameters.addParameter(param::factory::declareValue("by", 0),
                                 by_);
     }
     virtual void process() override

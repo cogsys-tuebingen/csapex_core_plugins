@@ -20,8 +20,8 @@ Morpholocial::Morpholocial()
 
 void Morpholocial::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("size", 1, 20, 2, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("iterations", 0, 10, 1, 1));
+    parameters.addParameter(csapex::param::factory::declareRange<int>("size", 1, 20, 2, 1));
+    parameters.addParameter(csapex::param::factory::declareRange<int>("iterations", 0, 10, 1, 1));
 
     std::map<std::string, int> types = {
         {"MORPH_ERODE", (int) cv::MORPH_ERODE},
@@ -33,14 +33,14 @@ void Morpholocial::setupParameters(Parameterizable& parameters)
         {"MORPH_BLACKHAT", (int) cv::MORPH_BLACKHAT}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("type", types, (int) cv::MORPH_ERODE));
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("type", types, (int) cv::MORPH_ERODE));
 
     std::map<std::string, int> elem = {
         {"MORPH_RECT", (int) cv::MORPH_RECT},
         {"MORPH_CROSS", (int) cv::MORPH_CROSS},
         {"MORPH_ELLIPSE", (int) cv::MORPH_ELLIPSE}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("elem", elem, (int) cv::MORPH_RECT));
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("elem", elem, (int) cv::MORPH_RECT));
 }
 
 void Morpholocial::process()

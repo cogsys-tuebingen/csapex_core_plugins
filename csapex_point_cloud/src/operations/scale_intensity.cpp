@@ -28,7 +28,7 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareValue("scale", 1.0), scale_);
+        parameters.addParameter(param::factory::declareValue("scale", 1.0), scale_);
     }
 
     virtual void process() override

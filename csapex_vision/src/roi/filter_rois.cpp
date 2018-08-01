@@ -19,17 +19,17 @@ FilterROIs::FilterROIs()
 
 void FilterROIs::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareInterval("width",
+    parameters.addParameter(param::factory::declareInterval("width",
                                                           0, 640,
                                                           0, 0,
                                                           1),
                  width_);
-    parameters.addParameter(param::ParameterFactory::declareInterval("height",
+    parameters.addParameter(param::factory::declareInterval("height",
                                                           0, 480,
                                                           0, 0,
                                                           1),
                  height_);
-    parameters.addParameter(param::ParameterFactory::declareInterval("aspect",
+    parameters.addParameter(param::factory::declareInterval("aspect",
                                                           0.0, 10.0,
                                                           0.0, 0.0,
                                                           0.01),

@@ -71,7 +71,7 @@ csapex::param::Parameter::Ptr ParameterDialog::getParameter()
 
 void ParameterDialog::finish()
 {
-    param_ = csapex::param::ParameterFactory::declareRange<double>(name->text().toStdString(),
+    param_ = csapex::param::factory::declareRange<double>(name->text().toStdString(),
                 min->value(), max->value(), min->value(), step->value());
     if(param_) {
         Q_EMIT accept();

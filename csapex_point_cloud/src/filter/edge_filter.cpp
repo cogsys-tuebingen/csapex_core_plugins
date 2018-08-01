@@ -47,20 +47,20 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(param::ParameterFactory::declareRange
+        parameters.addParameter(param::factory::declareRange
                                 ("max distance",
                                  0.0, 0.1, 0.05, 0.0001),
                                 max_distance_);
-        parameters.addParameter(param::ParameterFactory::declareRange
+        parameters.addParameter(param::factory::declareRange
                                 ("offset",
                                  1, 16, 1, 1),
                                 offset_);
-        parameters.addParameter(param::ParameterFactory::declareRange
+        parameters.addParameter(param::factory::declareRange
                                 ("min height",
                                  -5.0, 5.0, 0.0, 0.01),
                                 min_height_);
 
-        parameters.addParameter(param::ParameterFactory::declareRange
+        parameters.addParameter(param::factory::declareRange
                                 ("distance factor",
                                  0.0, 1.0, 1.0, 0.001),
                                 distance_factor_);

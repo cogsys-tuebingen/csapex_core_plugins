@@ -20,7 +20,7 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(csapex::param::ParameterFactory::declareRange("angle", -M_PI, M_PI, 0.0, 0.001));
+        parameters.addParameter(csapex::param::factory::declareRange("angle", -M_PI, M_PI, 0.0, 0.001));
         std::map<std::string, int> modes = {
             {"nearest", (int) cv::INTER_NEAREST},
             {"linear", (int) cv::INTER_LINEAR},
@@ -28,7 +28,7 @@ public:
             {"cubic", (int) cv::INTER_CUBIC},
             {"lanczos4", (int) cv::INTER_LANCZOS4},
         };
-        parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST));
+        parameters.addParameter(csapex::param::factory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST));
     }
 
     void setup(csapex::NodeModifier& node_modifier)

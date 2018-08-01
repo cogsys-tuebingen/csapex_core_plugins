@@ -38,20 +38,20 @@ public:
                 {"MAX", OVERLAP_MAX},
                 {"IOU", OVERLAP_IOU},
         };
-        parameters.addParameter(param::ParameterFactory::declareParameterSet("overlap_mode",
+        parameters.addParameter(param::factory::declareParameterSet("overlap_mode",
                                                                              overlap_mode_types,
                                                                              static_cast<int>(OVERLAP_MAX)),
                                 reinterpret_cast<int&>(overlap_mode_));
-        parameters.addParameter(param::ParameterFactory::declareRange("min_overlap", 0.0, 1.0, 0.7,0.01),
+        parameters.addParameter(param::factory::declareRange("min_overlap", 0.0, 1.0, 0.7,0.01),
                                 min_overlap_);
-        parameters.addParameter(param::ParameterFactory::declareFileOutputPath("statistic path",
+        parameters.addParameter(param::factory::declareFileOutputPath("statistic path",
                                                                                "",
                                                                                "*.txt"),
                                 path_of_statistic_);
 
-        parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+        parameters.addParameter(param::factory::declareTrigger("reset"),
                                 std::bind(&ROIHitRate::reset, this));
-        parameters.addParameter(param::ParameterFactory::declareTrigger("save"),
+        parameters.addParameter(param::factory::declareTrigger("save"),
                                 std::bind(&ROIHitRate::save, this));
 
     }

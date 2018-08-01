@@ -26,20 +26,20 @@ void ACFDepthChannel::setup(csapex::NodeModifier& node_modifier)
 
 void ACFDepthChannel::setupParameters(csapex::Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("window/width",
+    parameters.addParameter(param::factory::declareRange("window/width",
                                                                   10, 1024, 64, 1),
                             std::bind(&ACFDepthChannel::updateWindow, this));
-    parameters.addParameter(param::ParameterFactory::declareRange("window/height",
+    parameters.addParameter(param::factory::declareRange("window/height",
                                                                   10, 1024, 128, 1),
                             std::bind(&ACFDepthChannel::updateWindow, this));
-    parameters.addParameter(param::ParameterFactory::declareBool("window/keep_ratio",
+    parameters.addParameter(param::factory::declareBool("window/keep_ratio",
                                                                  false),
                             keep_ratio_);
-    parameters.addParameter(param::ParameterFactory::declareBool("window/mirror",
+    parameters.addParameter(param::factory::declareBool("window/mirror",
                                                                  false),
                             mirror_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("aggregate/block_size",
+    parameters.addParameter(param::factory::declareRange("aggregate/block_size",
                                                                   1, 32, 4, 1),
                             block_size_);
 
@@ -47,7 +47,7 @@ void ACFDepthChannel::setupParameters(csapex::Parameterizable& parameters)
             { "binary", static_cast<int>(Type::BINARY) },
             { "ternary", static_cast<int>(Type::TERNARY) },
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("channel/type",
+    parameters.addParameter(param::factory::declareParameterSet("channel/type",
                                                                         available_types,
                                                                         static_cast<int>(Type::BINARY)),
                             reinterpret_cast<int&>(type_));
@@ -57,16 +57,16 @@ void ACFDepthChannel::setupParameters(csapex::Parameterizable& parameters)
             { "mean", static_cast<int>(Method::MEAN) },
             { "histogram", static_cast<int>(Method::HISTOGRAM) },
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("channel/method",
+    parameters.addParameter(param::factory::declareParameterSet("channel/method",
                                                                         available_methods,
                                                                         static_cast<int>(Method::MEDIAN)),
                             reinterpret_cast<int&>(method_));
 
-    parameters.addParameter(param::ParameterFactory::declareRange("channel/threshold",
+    parameters.addParameter(param::factory::declareRange("channel/threshold",
                                                                  0.0, 1000.0, 0.1, 0.01),
                            threshold_);
 
-   parameters.addParameter(param::ParameterFactory::declareBool("channel/normalize",
+   parameters.addParameter(param::factory::declareBool("channel/normalize",
                                                                 false),
                            normalize_);
 }

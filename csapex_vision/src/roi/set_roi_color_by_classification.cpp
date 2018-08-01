@@ -26,9 +26,9 @@ public:
     }
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareValue("class.", -1),
+        parameters.addParameter(param::factory::declareValue("class.", -1),
                                 classification_);
-        parameters.addParameter(param::ParameterFactory::declareColorParameter("color", 0, 0, 0),
+        parameters.addParameter(param::factory::declareColorParameter("color", 0, 0, 0),
                                 color);
     }
     virtual void process() override

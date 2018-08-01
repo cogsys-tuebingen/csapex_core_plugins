@@ -39,7 +39,7 @@ void TransformCombiner::setupParameters(Parameterizable& params)
         {"SECOND (B)", 1}
     };
 
-    params.addParameter(param::ParameterFactory::declareParameterSet<int>("which_timestamp", which, 0),
+    params.addParameter(param::factory::declareParameterSet<int>("which_timestamp", which, 0),
                             which_stamp_);
 }
 

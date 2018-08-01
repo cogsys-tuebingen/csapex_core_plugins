@@ -76,7 +76,7 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters)
     {
-        parameters.addParameter(param::ParameterFactory::declareBool("/float/use_lut", true),
+        parameters.addParameter(param::factory::declareBool("/float/use_lut", true),
                                 float_use_lut_);
     }
 

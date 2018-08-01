@@ -45,10 +45,10 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("height", 0.05, 1.0, 0.1, 0.001));
-        parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+        parameters.addParameter(param::factory::declareRange("height", 0.05, 1.0, 0.1, 0.001));
+        parameters.addParameter(param::factory::declareTrigger("reset"),
                                 std::bind(&PitchAngle::reset, this));
-        parameters.addParameter(param::ParameterFactory::declareBool("degrees", false));
+        parameters.addParameter(param::factory::declareBool("degrees", false));
     }
 
     virtual void process() override

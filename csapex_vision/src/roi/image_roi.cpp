@@ -28,29 +28,29 @@ ImageRoi::~ImageRoi()
 
 void ImageRoi::setupParameters(Parameterizable& parameters)
 {
-    csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareBool("step",
+    csapex::param::Parameter::Ptr method = csapex::param::factory::declareBool("step",
                                                                         csapex::param::ParameterDescription("Step by step submission."),
                                                                         true);
     addParameter(method,
                  std::bind(&ImageRoi::submit, this));
 
     std::function<bool()> k_cond = (std::bind(&csapex::param::Parameter::as<bool>, method.get()));
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareTrigger("submit"),
+    parameters.addConditionalParameter(csapex::param::factory::declareTrigger("submit"),
                             k_cond,
                             std::bind(&ImageRoi::submit, this));
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareTrigger("drop"),
+    parameters.addConditionalParameter(csapex::param::factory::declareTrigger("drop"),
                             k_cond,
                             std::bind(&ImageRoi::drop, this));
 
-    addParameter(csapex::param::ParameterFactory::declareRange("roi width",
+    addParameter(csapex::param::factory::declareRange("roi width",
                                                        csapex::param::ParameterDescription("Set the width of the roi."),
                                                        0, 640, 640, 1));
-    addParameter(csapex::param::ParameterFactory::declareRange("roi height",
+    addParameter(csapex::param::factory::declareRange("roi height",
                                                        csapex::param::ParameterDescription("Set the width of the roi."),
                                                        0, 480, 480, 1));
 
-    addParameter(csapex::param::ParameterFactory::declareRange("class label",
+    addParameter(csapex::param::factory::declareRange("class label",
                                                        csapex::param::ParameterDescription("Assign a class label to roi."),
                                                        -1, 255, -1, 1));
 }

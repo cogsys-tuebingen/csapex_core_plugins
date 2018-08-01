@@ -21,8 +21,8 @@ public:
     {}
 
     virtual void setupParameters(Parameterizable &parameters) {
-        parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("process"), std::bind(&CollectionNode<MessageType, Allocator>::doProcessCollection, this, std::ref(buffer_)));
-        parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType, Allocator>::clearCollection, this));
+        parameters.addParameter(csapex::param::factory::declareTrigger("process"), std::bind(&CollectionNode<MessageType, Allocator>::doProcessCollection, this, std::ref(buffer_)));
+        parameters.addParameter(csapex::param::factory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType, Allocator>::clearCollection, this));
     }
 
     virtual void setup(NodeModifier& modifier) override

@@ -28,7 +28,7 @@ PolygonScanFilter::~PolygonScanFilter()
 
 void PolygonScanFilter::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("invert",
+    parameters.addParameter(param::factory::declareBool("invert",
                                                                  false),
                             invert_);
 }

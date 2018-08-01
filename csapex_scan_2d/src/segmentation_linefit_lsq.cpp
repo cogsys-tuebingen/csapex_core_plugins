@@ -15,9 +15,9 @@ LineFitSegmentationLSQ::LineFitSegmentationLSQ()
 
 void LineFitSegmentationLSQ::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("delta_d",    0.01, 2.0, 0.01, 0.01),
+    parameters.addParameter(csapex::param::factory::declareRange("delta_d",    0.01, 2.0, 0.01, 0.01),
                             std::bind(&LineFitSegmentationLSQ::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("delta_var",  0.01, 2.0, 0.01, 0.01),
+    parameters.addParameter(csapex::param::factory::declareRange("delta_var",  0.01, 2.0, 0.01, 0.01),
                             std::bind(&LineFitSegmentationLSQ::update, this));
 }
 

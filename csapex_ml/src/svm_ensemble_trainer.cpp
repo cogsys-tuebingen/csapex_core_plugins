@@ -29,7 +29,7 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
 {
     CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
 
-    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("svm/path",
+    parameters.addParameter(param::factory::declareFileOutputPath("svm/path",
                                                                            param::ParameterDescription("File to write svm to."),
                                                                            "",
                                                                            "*.yaml *.tar.gz"),
@@ -62,7 +62,7 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
     typedef cv::ml::SVM SVM;
 #endif
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("svm/kernel_type",
+    parameters.addParameter(param::factory::declareParameterSet("svm/kernel_type",
                                                                          csapex::param::ParameterDescription("Kernel type to be trained."),
                                                                          kernel_types,
                                                                          (int) SVM::RBF),
@@ -76,7 +76,7 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
         {"NU_SVR", SVM::NU_SVR}
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("svm/type",
+    parameters.addParameter(param::factory::declareParameterSet("svm/type",
                                                                          csapex::param::ParameterDescription("SVM type to be trained."),
                                                                          svm_types,
                                                                          (int) SVM::EPS_SVR),
@@ -112,41 +112,41 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
         return svm_type_ != SVM::ONE_CLASS;};
 
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/degree", 0.0, 9.0, 3.0, 1.0),
+    parameters.addConditionalParameter(param::factory::declareRange<double>("svm/degree", 0.0, 9.0, 3.0, 1.0),
                                        deg_cond,
                                        degree_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/gamma", 0.0, 10.0, 0.0, 0.01),
+    parameters.addConditionalParameter(param::factory::declareRange<double>("svm/gamma", 0.0, 10.0, 0.0, 0.01),
                                        gamma_cond,
                                        gamma_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/coef0", -10.0, 10.0, 0.0, 0.01),
+    parameters.addConditionalParameter(param::factory::declareRange<double>("svm/coef0", -10.0, 10.0, 0.0, 0.01),
                                        coeff0_cond,
                                        coef0_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/C", 0.0, 10.0, 0.01, 0.01),
+    parameters.addConditionalParameter(param::factory::declareRange<double>("svm/C", 0.0, 10.0, 0.01, 0.01),
                                        c_cond,
                                        C_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange<double>("svm/nu", 0.0, 1.0, 0.5, 0.01),
+    parameters.addConditionalParameter(param::factory::declareRange<double>("svm/nu", 0.0, 1.0, 0.5, 0.01),
                                        nu_cond,
                                        nu_);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>("svm/p", 0.0, 1.0, 0.1, 0.01),
+    parameters.addConditionalParameter(csapex::param::factory::declareRange<double>("svm/p", 0.0, 1.0, 0.1, 0.01),
                                        p_cond,
                                        p_);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareBool("classes/one-vs-all", false),
+    parameters.addConditionalParameter(csapex::param::factory::declareBool("classes/one-vs-all", false),
                                        one_class_cond,
                                        one_vs_all_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool
+    parameters.addParameter(param::factory::declareBool
                             ("classes/balance",
                              param::ParameterDescription("Use the same amount of samples per class."),
                              false),
                             balance_);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareValue<double>
+    parameters.addParameter(csapex::param::factory::declareValue<double>
                             ("svm_accuracy",
                              csapex::param::ParameterDescription("Termination criteria of the iterative SVM training. Accuracy"),
                              1e-3),
                             epsilon_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange(
+    parameters.addParameter(param::factory::declareRange(
                                 "svm_training_iterations",
                                 0, 10000, 1000, 100),
                             term_crit_iterations_);
@@ -157,7 +157,7 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
         {"CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int) CV_TERMCRIT_ITER | CV_TERMCRIT_EPS}
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet(
+    parameters.addParameter(param::factory::declareParameterSet(
                                 "termcrit_type",
                                 csapex::param::ParameterDescription("The type of the termination criteria:\n"
                                                                     "CV_TERMCRIT_ITER Terminate learning by the max_num_of_trees_in_the_forest;\n"

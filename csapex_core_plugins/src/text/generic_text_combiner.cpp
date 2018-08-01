@@ -83,11 +83,11 @@ void GenericTextCombiner::setupParameters(Parameterizable& parameters)
 {
     setupVariadicParameters(parameters);
 
-    parameters.addParameter(param::ParameterFactory::declareText("format",
+    parameters.addParameter(param::factory::declareText("format",
                                                                  param::ParameterDescription("A format string. Inputs are inserted for $1,$2, ...$n"),
                                                                  "$1_$2"),
                             std::bind(&GenericTextCombiner::updateFormula, this));
-    parameters.addParameter(param::ParameterFactory::declareOutputText("last_value"));
+    parameters.addParameter(param::factory::declareOutputText("last_value"));
 }
 
 Input* GenericTextCombiner::createVariadicInput(TokenDataConstPtr type, const std::string& label, bool /*optional*/)

@@ -37,7 +37,7 @@ public:
     }
     virtual void setupParameters(Parameterizable& parameters) override
     {
-        parameters.addParameter(csapex::param::ParameterFactory::declareText("topic", "trigger"),
+        parameters.addParameter(csapex::param::factory::declareText("topic", "trigger"),
                                 [this](param::Parameter* p) {
             setTopic(p->as<std::string>());
         });

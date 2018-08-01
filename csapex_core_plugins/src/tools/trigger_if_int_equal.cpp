@@ -30,7 +30,7 @@ public:
     }
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareValue("value",0),
+        params.addParameter(param::factory::declareValue("value",0),
                             value_);
     }
 

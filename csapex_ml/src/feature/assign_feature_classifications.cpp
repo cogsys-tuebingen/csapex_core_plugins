@@ -28,7 +28,7 @@ void AssignFeatureClassifications::setup(NodeModifier &node_modifier)
 
 void AssignFeatureClassifications::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("label", 0, 255, 0, 1),
+    parameters.addParameter(param::factory::declareRange("label", 0, 255, 0, 1),
                             label_);
 }
 

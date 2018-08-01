@@ -102,6 +102,6 @@ void MatrixStitcher::setupParameters(Parameterizable& parameters)
         {"HORIZONTAL", HORIZONTAL},
         {"VERTICAL", VERTICAL}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("mode", modes, (int) HORIZONTAL));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("offset", 0, 400, 0, 1));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("mode", modes, (int) HORIZONTAL));
+    parameters.addParameter(csapex::param::factory::declareRange("offset", 0, 400, 0, 1));
 }

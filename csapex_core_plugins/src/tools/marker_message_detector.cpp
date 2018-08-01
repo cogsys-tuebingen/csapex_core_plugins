@@ -46,7 +46,7 @@ public:
         types["End Of Program"] = std::make_pair((int) Type::END_OF_PROGRAM, false);
         types["End Of Sequence"] = std::make_pair((int) Type::END_OF_SEQUENCE, false);
 
-        csapex::param::ParameterPtr p = csapex::param::ParameterFactory::declareParameterBitSet("type", types);
+        csapex::param::ParameterPtr p = csapex::param::factory::declareParameterBitSet("type", types);
         types_ = std::dynamic_pointer_cast<param::BitSetParameter>(p);
 
         params.addParameter(types_);

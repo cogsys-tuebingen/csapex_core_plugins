@@ -34,7 +34,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareFileInputPath("saved_mapping",""),
+        params.addParameter(param::factory::declareFileInputPath("saved_mapping",""),
                             [this](param::Parameter* p){
             std::string path = p->as<std::string>();
             if(path != path_){

@@ -31,19 +31,19 @@ void JANNLabMLP::setup(NodeModifier& node_modifier)
 
 void JANNLabMLP::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declarePath("MLP_path",
+    addParameter(csapex::param::factory::declarePath("MLP_path",
                                                       csapex::param::ParameterDescription("Path to a saved MLP."),
                                                       true,
                                                       ""),
                  std::bind(&JANNLabMLP::load, this));
 
-    addParameter(csapex::param::ParameterFactory::declarePath("class_label_path",
+    addParameter(csapex::param::factory::declarePath("class_label_path",
                                                       csapex::param::ParameterDescription("Path to a class label file."),
                                                       true,
                                                       ""),
                  std::bind(&JANNLabMLP::load, this));
 
-    addParameter(csapex::param::ParameterFactory::declarePath("normalization_path",
+    addParameter(csapex::param::factory::declarePath("normalization_path",
                                                       csapex::param::ParameterDescription("Path to a normalization file."),
                                                       true,
                                                       "",

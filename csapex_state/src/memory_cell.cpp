@@ -55,7 +55,7 @@ public:
 
     void setupParameters(Parameterizable& parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareText("name", ""), [this](param::Parameter* p)
+        parameters.addParameter(param::factory::declareText("name", ""), [this](param::Parameter* p)
         {
             std::string name = p->as<std::string>();
             if(name != name_) {
@@ -68,7 +68,7 @@ public:
             }
         });
 
-        parameters.addParameter(param::ParameterFactory::declareTrigger("export"), [this](param::Parameter*) {
+        parameters.addParameter(param::factory::declareTrigger("export"), [this](param::Parameter*) {
             std::unique_lock<std::recursive_mutex> lock(value_mutex_);
             if(value_) {
                 TokenPtr token = std::make_shared<Token>(value_);
@@ -81,14 +81,14 @@ public:
                 msg::trigger(empty_event_);
             }
         });
-        parameters.addParameter(param::ParameterFactory::declareTrigger("clear"), [this](param::Parameter*) {
+        parameters.addParameter(param::factory::declareTrigger("clear"), [this](param::Parameter*) {
             if(!name_.empty()) {
                 getCell(name_).clear();
             }
         });
 
-        parameters.addParameter(param::ParameterFactory::declareBool("show_content", false), show_content_);
-        parameters.addConditionalParameter(param::ParameterFactory::declareOutputText("text"), show_content_);
+        parameters.addParameter(param::factory::declareBool("show_content", false), show_content_);
+        parameters.addConditionalParameter(param::factory::declareOutputText("text"), show_content_);
     }
 
     void setup(NodeModifier& modifier) override

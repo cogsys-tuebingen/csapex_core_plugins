@@ -34,7 +34,7 @@ public:
             comp_ = p->as<int>();
         };
 
-        parameters.addParameter(param::ParameterFactory::declareValue(
+        parameters.addParameter(param::factory::declareValue(
                                     "component", 0),
                                 cb);
     }

@@ -38,32 +38,32 @@ void Gabor::setup(NodeModifier& node_modifier)
 
 void Gabor::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("ksize",
+    parameters.addParameter(param::factory::declareRange("ksize",
                                                                    param::ParameterDescription("Kernel size."),
                                                                    1, 23, 3, 2),
                             ksize_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("sigma",
+    parameters.addParameter(param::factory::declareRange("sigma",
                                                                    param::ParameterDescription("Standard deviation of the gaussian envelope."),
                                                                    0.01, 10.0, 0.5, 0.01),
                             sigma_);
 
-    parameters.addParameter(param::ParameterFactory::declareAngle("theta",
+    parameters.addParameter(param::factory::declareAngle("theta",
                                                                    param::ParameterDescription("Orientation of the normal to the parallel stripes of a Gabor function."),
                                                                    0.0),
                             theta_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("lambda",
+    parameters.addParameter(param::factory::declareRange("lambda",
                                                                    param::ParameterDescription("Wavelength of the sinusoidal factor."),
                                                                    1.0, 100.0, 1.0, 0.01),
                             lambda_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("gamma",
+    parameters.addParameter(param::factory::declareRange("gamma",
                                                                    param::ParameterDescription("Spatial aspect ratio."),
                                                                    1.0, 100.0, 1.0, 0.01),
                             gamma_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("psi",
+    parameters.addParameter(param::factory::declareRange("psi",
                                                                    param::ParameterDescription("Phase offset."),
                                                                    1.0, 100.0, 1.0, 0.01),
                             psi_);

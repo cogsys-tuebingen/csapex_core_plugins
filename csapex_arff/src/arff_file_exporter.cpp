@@ -29,7 +29,7 @@ void ARFFFileExporter::setupParameters(Parameterizable& parameters)
 {
     CollectionNode<FeaturesMessage>::setupParameters(parameters);
 
-    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("path",
+    parameters.addParameter(param::factory::declareFileOutputPath("path",
                                                                            csapex::param::ParameterDescription("Directory to write messages to"),
                                                                            "", ".arff"),
                             path_);

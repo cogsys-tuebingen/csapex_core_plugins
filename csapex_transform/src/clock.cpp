@@ -26,7 +26,7 @@ void Clock::setupParameters(Parameterizable &parameters)
         {"ros::Time(0)", (int) ZERO},
         {"std::chrono::system_clock::now();", (int) CHRONO}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) CURRENT));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("method", methods, (int) CURRENT));
 }
 
 

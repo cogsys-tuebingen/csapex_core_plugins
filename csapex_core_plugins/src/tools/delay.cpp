@@ -40,19 +40,19 @@ Delay::~Delay()
 
 void Delay::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>
+    parameters.addParameter(csapex::param::factory::declareRange<double>
                             ("delay",
                              csapex::param::ParameterDescription("Delay <b><span style='color: red'>in seconds</style></b> to wait after each message."),
                              0.0, 10.0, 1.0, 0.01));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool
+    parameters.addParameter(csapex::param::factory::declareBool
                             ("blocking",
                              csapex::param::ParameterDescription("If true, the node sleeps for the given time, not giving up resources to other nodes in "
                                                                  "the same thread group. Otherwise it uses signals to yield the CPU."),
                              false),
                             blocking_);
 
-    csapex::param::Parameter::Ptr p = csapex::param::ParameterFactory::declareOutputProgress("delay progress");
+    csapex::param::Parameter::Ptr p = csapex::param::factory::declareOutputProgress("delay progress");
     progress_ = dynamic_cast<param::OutputProgressParameter*>(p.get());
     parameters.addParameter(p);
 }

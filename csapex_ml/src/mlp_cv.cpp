@@ -29,7 +29,7 @@ void MLPCv::setup(NodeModifier &node_modifier)
 
 void MLPCv::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("file", "mlp.yaml"),
+    parameters.addParameter(csapex::param::factory::declareFileInputPath("file", "mlp.yaml"),
                             [this](param::Parameter* p) {
         auto path = p->as<std::string>();
         if(path != path_){

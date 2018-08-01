@@ -27,23 +27,23 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
 {
     MachineLearningNode::setupParameters(parameters);
 
-    addParameter(csapex::param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::factory::declareRange<int>
                  ("classes",
                   csapex::param::ParameterDescription("Number of classes to learn."),
                   0, 100, 2, 1),
                  std::bind(&RandomTreesTrainer::updatePriors, this));;
 
-    addParameter(csapex::param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::factory::declareRange<int>
                  ("max depth",
                   csapex::param::ParameterDescription("the depth of the tree. A low value will likely underfit and conversely a high value will likely overfit.\n"
                                                       "The optimal value can be obtained using cross validation or other suitable methods."),
                   1, 64, 8, 1));;
-    addParameter(csapex::param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::factory::declareRange<int>
                  ("min sample count",
                   csapex::param::ParameterDescription("minimum samples required at a leaf node for it to be split.\n"
                                                       "A reasonable value is a small percentage of the total data e.g. 1%."),
                   0, 64, 10, 1));
-    addParameter(csapex::param::ParameterFactory::declareRange<double>
+    addParameter(csapex::param::factory::declareRange<double>
                  ("regression accuracy",
                   csapex::param::ParameterDescription("Termination criteria for regression trees. \n"
                                                       "If all absolute differences between an estimated value in a node and values of train samples in this node \n"
@@ -56,7 +56,7 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
     bool use_surrogates = false; // not yet supported
 #endif
 
-    auto surrogate_p = csapex::param::ParameterFactory::declareBool
+    auto surrogate_p = csapex::param::factory::declareBool
             ("use surrogates",
              csapex::param::ParameterDescription("If true then surrogate splits will be built. \n"
                                                  "These splits allow to work with missing data and compute variable importance correctly."),
@@ -69,7 +69,7 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
 
 
 
-    addParameter(csapex::param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::factory::declareRange<int>
                  ("max categories",
                   csapex::param::ParameterDescription("Cluster possible values of a categorical variable into K <= max_categories clusters to find a suboptimal split.\n"
                                                       "If a discrete variable, on which the training procedure tries to make a split, takes more than max_categories values,\n"
@@ -82,23 +82,23 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
                                                       "thus the parameter is not used in these cases."),
                   0, 100, 15, 1));;
 
-    addParameter(csapex::param::ParameterFactory::declareBool
+    addParameter(csapex::param::factory::declareBool
                  ("calc_var_importance",
                   csapex::param::ParameterDescription("If true then variable importance will be calculated and then it can be retrieved by CvRTrees::get_var_importance()."),
                   false));
 
-    addParameter(csapex::param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::factory::declareRange<int>
                  ("nactive_vars",
                   csapex::param::ParameterDescription("The size of the randomly selected subset of features at each tree node and that are used to find the best split(s).\n"
                                                       "If you set it to 0 then the size will be set to the square root of the total number of features."),
                   0, 100, 0, 1));
-    addParameter(csapex::param::ParameterFactory::declareRange<int>
+    addParameter(csapex::param::factory::declareRange<int>
                  ("max_num_of_trees_in_the_forest",
                   csapex::param::ParameterDescription("The maximum number of trees in the forest (surprise, surprise). Typically the more trees you have the better the accuracy.\n"
                                                       "However, the improvement in accuracy generally diminishes and asymptotes pass a certain number of trees.\n"
                                                       "Also to keep in mind, the number of tree increases the prediction time linearly."),
                   1, 1024, 16, 1));
-    addParameter(csapex::param::ParameterFactory::declareRange<double>
+    addParameter(csapex::param::factory::declareRange<double>
                  ("forest_accuracy",
                   csapex::param::ParameterDescription("Sufficient accuracy (OOB error)."),
                   0.0, 1.0, 0.5, 0.01));
@@ -111,7 +111,7 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
     };
 
 
-    csapex::param::Parameter::Ptr termcrit_type_p = csapex::param::ParameterFactory::declareParameterSet
+    csapex::param::Parameter::Ptr termcrit_type_p = csapex::param::factory::declareParameterSet
             ("termcrit_type",
              csapex::param::ParameterDescription("The type of the termination criteria:\n"
                                                  "CV_TERMCRIT_ITER Terminate learning by the max_num_of_trees_in_the_forest;\n"
@@ -130,7 +130,7 @@ void RandomTreesTrainer::updatePriors()
             for(int c = categories_; c < categories; ++c) {
                 std::stringstream name;
                 name << "~priors/" << c;
-                csapex::param::Parameter::Ptr p = csapex::param::ParameterFactory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
+                csapex::param::Parameter::Ptr p = csapex::param::factory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
                 priors_params_.push_back(p);
                 addTemporaryParameter(p, std::bind(&RandomTreesTrainer::udpatePriorValues, this));
             }

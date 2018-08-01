@@ -49,13 +49,13 @@ void Canny::setup(NodeModifier& node_modifier)
 
 void Canny::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("aperture", 1, 7, 3, 2),
+    parameters.addParameter(csapex::param::factory::declareRange("aperture", 1, 7, 3, 2),
                  std::bind(&Canny::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("threshold 1", 0.0, 50000.0, 0.0, 1.0),
+    parameters.addParameter(csapex::param::factory::declareRange("threshold 1", 0.0, 50000.0, 0.0, 1.0),
                  std::bind(&Canny::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("threshold 2", 0.0, 50000.0, 255.0, 1.0),
+    parameters.addParameter(csapex::param::factory::declareRange("threshold 2", 0.0, 50000.0, 255.0, 1.0),
                  std::bind(&Canny::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("L2 gradient", false),
+    parameters.addParameter(csapex::param::factory::declareBool("L2 gradient", false),
                  std::bind(&Canny::update, this));
 }
 

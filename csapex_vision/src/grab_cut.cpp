@@ -23,12 +23,12 @@ GrabCut::GrabCut()
 
 void GrabCut::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareRange(
+    addParameter(csapex::param::factory::declareRange(
                      "iterations",
                      csapex::param::ParameterDescription("Number of iterations of GrabCut"),
                      1, 100, 1, 1));
 
-    addParameter(csapex::param::ParameterFactory::declareRange(
+    addParameter(csapex::param::factory::declareRange(
                      "threshold",
                      csapex::param::ParameterDescription("Minimum value for a mask pixel to be used as non-zero"),
                      0, 255, 128, 1));
@@ -40,7 +40,7 @@ void GrabCut::setupParameters(Parameterizable& parameters)
         {"most probably foreground", (int) cv::GC_PR_FGD},
     };
 
-    addParameter(csapex::param::ParameterFactory::declareParameterSet<int>(
+    addParameter(csapex::param::factory::declareParameterSet<int>(
                      "initial value",
                      csapex::param::ParameterDescription("Initial mask value for unspecified pixels"),
                      init_value, cv::GC_BGD));

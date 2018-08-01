@@ -19,7 +19,7 @@ using namespace csapex::connection_types;
 
 void GradientBoostedTrees::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareFileInputPath("path", "gbtree.yaml", "*.yaml"),
+    parameters.addParameter(param::factory::declareFileInputPath("path", "gbtree.yaml", "*.yaml"),
                             std::bind(&GradientBoostedTrees::load, this));
 }
 

@@ -40,8 +40,8 @@ void ColorConvert::setupParameters(Parameterizable& parameters)
         {"LUV" ,(int) LUV}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("output", encodings, (int) MONO));
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("input", encodings, (int) BGR));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("output", encodings, (int) MONO));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("input", encodings, (int) BGR));
 
     cs_pair_to_operation_.insert(csiPair(csPair(RGB, BGR), (int) CV_RGB2BGR));
     cs_pair_to_operation_.insert(csiPair(csPair(BGR, RGB), (int) CV_BGR2RGB));

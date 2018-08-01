@@ -58,9 +58,9 @@ namespace csapex
 
         virtual void setupParameters(Parameterizable& parameters)
         {
-            parameters.addParameter(param::ParameterFactory::declareRange("step x", 1, 100, 2, 1),
+            parameters.addParameter(param::factory::declareRange("step x", 1, 100, 2, 1),
                                     step_x_);
-            parameters.addParameter(param::ParameterFactory::declareRange("step y", 1, 100, 2, 1),
+            parameters.addParameter(param::factory::declareRange("step y", 1, 100, 2, 1),
                                     step_y_);
         }
 
