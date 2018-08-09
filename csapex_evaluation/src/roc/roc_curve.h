@@ -51,7 +51,7 @@ private:
 
     Output* out_auc_;
 
-    mutable std::recursive_mutex mutex_;
+    mutable std::recursive_mutex mutex_buffer_;
 
     Type type_;
     std::map<double, Entry> entries_;

@@ -82,7 +82,7 @@ void TimePlot::process()
     timepoint time = std::chrono::system_clock::now();
     double value;
     if(msg::isValue<double>(in_)) {
-        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
         value = msg::getValue<double>(in_);
         if(initialize_){
             deque_v_.resize(1);
@@ -96,7 +96,7 @@ void TimePlot::process()
 
     }
     else {
-        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
         GenericVectorMessage::ConstPtr message = msg::getMessage<GenericVectorMessage>(in_);
         apex_assert(std::dynamic_pointer_cast<GenericValueMessage<double>>(message->nestedType()));
         num_plots_ = message->nestedValueCount();

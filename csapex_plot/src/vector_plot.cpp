@@ -86,7 +86,7 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
 void VectorPlot::process()
 {
     {
-        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
         std::size_t num_inputs = VariadicInputs::getVariadicInputCount();
         num_plots_ = num_inputs;
 
@@ -272,28 +272,28 @@ void VectorPlot::renderAndSend()
 }
 double VectorPlot::getLineWidth() const
 {
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
     return line_width_;
 }
 
 const double* VectorPlot::getTData() const
 {
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
     return data_t_.data();
 }
 const double* VectorPlot::getVData(std::size_t idx) const
 {
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
     return data_v_.at(idx).data();
 }
 std::size_t VectorPlot::getVDataCountNumCurves() const
 {
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
     return data_v_.size();
 }
 std::size_t VectorPlot::getCount() const
 {
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
     std::vector<std::size_t> min_sz(1+data_v_.size());
     min_sz[0] = data_t_.size();
     for(std::size_t i = 0; i < data_v_.size(); ++i){

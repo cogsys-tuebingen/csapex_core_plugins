@@ -75,7 +75,7 @@ void ConfusionMatrixDisplay::process()
     connection_types::ConfusionMatrixMessage::ConstPtr msg = msg::getMessage<connection_types::ConfusionMatrixMessage>(connector_);
 
     {
-        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
         confusion_ = msg->confusion;
     }
 
@@ -84,7 +84,7 @@ void ConfusionMatrixDisplay::process()
 
 ConfusionMatrix ConfusionMatrixDisplay::getConfusionMatrix() const
 {
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
     return confusion_;
 }
 
