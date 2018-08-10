@@ -45,7 +45,7 @@ public:
 private:
     Input* in_;
 
-    mutable std::recursive_mutex mutex_;
+    mutable std::recursive_mutex mutex_buffer_;
     Metrics metrics_;
 
     int negative_class_label_;

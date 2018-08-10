@@ -47,7 +47,7 @@ public:
 
 
 protected:
-    mutable std::recursive_mutex mutex_;
+    mutable std::recursive_mutex mutex_buffer_;
     QwtScaleMap x_map;
     QwtScaleMap y_map;
 

@@ -123,6 +123,9 @@ void ScanSegmentation2DRenderer::render(const std::vector<Segment> &segments)
                 cv::line(output->value, origin + scale * last, origin + scale * current, color, 6, CV_AA);
                 last = current;
             }
+            if(segment.rays.size() == 1) {
+               cv::circle(output->value, origin + scale * last, 3, color, 1, CV_AA);
+            }
 
         } else {
             cv::Point2f from(segment.rays.front().posX(), segment.rays.front().posY());

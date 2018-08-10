@@ -32,7 +32,7 @@ void ROCCurve::setup(NodeModifier& node_modifier)
 void ROCCurve::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareTrigger("reset"), [&](csapex::param::Parameter*) {
-        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
         entries_.clear();
     });
 
@@ -69,7 +69,7 @@ void ROCCurve::process()
     connection_types::ConfusionMatrixMessage::ConstPtr message = msg::getMessage<connection_types::ConfusionMatrixMessage>(in_confusion_);
 
     {
-        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
         ConfusionMatrix cm = message->confusion;
 
         if(cm.classes.size() != 2) {
@@ -156,7 +156,7 @@ void ROCCurve::process()
 
 std::vector<ROCCurve::Entry> ROCCurve::getEntries() const
 {
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
 
     std::vector<ROCCurve::Entry> res;
     res.reserve(entries_.size());

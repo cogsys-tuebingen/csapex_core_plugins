@@ -28,7 +28,6 @@ void ColorAdjustment::setup(NodeModifier& node_modifier)
 
 void ColorAdjustment::setupParameters(Parameterizable& parameters)
 {
-
     std::map<std::string, int> presets = {
         {"HSV", (int) HSV},
         {"HSL", (int) HSL},

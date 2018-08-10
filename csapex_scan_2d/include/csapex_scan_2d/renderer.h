@@ -8,6 +8,7 @@
 #include <csapex/profiling/timable.h>
 #include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
+#include <csapex/view/utility/color.hpp>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
@@ -25,6 +26,7 @@ public:
         w = readParameter<int>("width");
         h = readParameter<int>("height");
         scale = readParameter<double>("scale") * 10.0;
+        mark_random_color = readParameter<bool>("random_mark_color");
 
         double radius = readParameter<double>("radius");
 
@@ -48,6 +50,7 @@ public:
             const std::vector<int>& marked = readParameter<std::vector<int> >("color/marked");
             cv::Scalar hitColor(color[2], color[1], color[0]);
             cv::Scalar markedColor(marked[2], marked[1], marked[0]);
+
             drawHits(scan, output, origin, hitColor, markedColor, angle, scale, radius);
         }
     }
@@ -68,6 +71,7 @@ private:
     int w;
     int h;
     double scale;
+    bool   mark_random_color;
 };
 
 }

@@ -31,7 +31,11 @@
   <tags>Laser, Scan</tags>
 </class>
 <class type="csapex::ScanRenderer" base_class_type="csapex::Node">
-  <description>Rener a scan into an image</description>
+  <description>Render a scan into an image</description>
+  <tags>Laser, Scan</tags>
+</class>
+<class type="csapex::RotateScan" base_class_type="csapex::Node">
+  <description>Rotate a scan.</description>
   <tags>Laser, Scan</tags>
 </class>
 <class type="csapex::ScanSegmentation2DRenderer" base_class_type="csapex::Node">

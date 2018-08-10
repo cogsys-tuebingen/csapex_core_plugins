@@ -48,7 +48,7 @@ void EvaluateBinaryClassifier::process()
         node_modifier_->setNoError();
 
     {
-        std::unique_lock<std::recursive_mutex> lock(mutex_);
+        std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
         metrics_.clear();
 
         int tp = cm.histogram.at(std::make_pair(positive_class_label_, positive_class_label_));
@@ -88,6 +88,6 @@ void EvaluateBinaryClassifier::process()
 
 EvaluateBinaryClassifier::Metrics EvaluateBinaryClassifier::getMetrics() const
 {
-    std::unique_lock<std::recursive_mutex> lock(mutex_);
+    std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
     return metrics_;
 }

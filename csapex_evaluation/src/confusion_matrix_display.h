@@ -35,7 +35,7 @@ public:
 private:
     Input* connector_;
 
-    mutable std::recursive_mutex mutex_;
+    mutable std::recursive_mutex mutex_buffer_;
     ConfusionMatrix confusion_;
     std::string filename_;
     std::string path_;

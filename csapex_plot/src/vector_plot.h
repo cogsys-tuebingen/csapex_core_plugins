@@ -42,7 +42,7 @@ protected:
     void renderAndSend();
 
 private:
-    mutable std::recursive_mutex mutex_;
+    mutable std::recursive_mutex mutex_buffer_;
     csapex::Input* in_time_;
     csapex::Output* out_;
 

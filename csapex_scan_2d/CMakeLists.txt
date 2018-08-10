@@ -89,6 +89,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/scan_renderer.cpp
     src/scan_labeler.cpp
     src/polygon_scan_filter.cpp
+    src/rotate_scan.cpp
 
     src/covariance.cpp
     src/filter.cpp
