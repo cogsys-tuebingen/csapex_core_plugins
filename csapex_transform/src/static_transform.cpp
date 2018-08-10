@@ -10,6 +10,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/param/range_parameter.h>
 #include <csapex/msg/io.h>
+#include <csapex_math/param/factory.h>
 
 /// SYSTEM
 #include <csapex/utility/suppress_warnings_start.h>

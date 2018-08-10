@@ -17,6 +17,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 
+#include <csapex_math/param/factory.h>
+
 #include <pcl/point_representation.h>
 
 #include <boost/mpl/for_each.hpp>

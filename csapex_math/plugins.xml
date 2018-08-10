@@ -1,3 +1,9 @@
+<library path="libcsapex_math_core">
+<class type="csapex::RegisterMath" base_class_type="csapex::CorePlugin">
+  <description></description>
+</class>
+</library>
+
 <library path="libcsapex_math_node">
 <class type="csapex::NormOfGenericVectorMessage" base_class_type="csapex::Node">
   <description>Calculates the Euclidean  norm of a GenericVectorMessage</description>
@@ -21,5 +27,11 @@
   <description>Sums a vector of numbers.</description>
   <tags>Math</tags>
   <icon>:/math.png</icon>
+</class>
+</library>
+
+<library path="libcsapex_math_qt">
+<class type="csapex::AngleParameterAdapterBuilder" base_class_type="csapex::ParameterAdapterBuilder">
+  <description></description>
 </class>
 </library>

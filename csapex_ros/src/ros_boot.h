@@ -30,6 +30,7 @@ private:
     pluginlib::ClassLoader<MessageRenderer> loader_msg_renderer_;
     pluginlib::ClassLoader<Node> loader_node_;
     pluginlib::ClassLoader<NodeAdapterBuilder> loader_node_adapter_;
+    pluginlib::ClassLoader<ParameterAdapterBuilder> loader_param_adapter_;
     pluginlib::ClassLoader<DragIOHandler> loader_drag_io_;
 };
 

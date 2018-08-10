@@ -16,6 +16,8 @@
 #include <csapex_point_cloud/msg/indices_message.h>
 #include <cslibs_indexed_storage/backends.hpp>
 
+#include <csapex_math/param/factory.h>
+
 #include <boost/make_shared.hpp>
 
 using namespace csapex;

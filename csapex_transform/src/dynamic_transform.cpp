@@ -14,6 +14,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/model/node_handle.h>
+#include <csapex_math/param/factory.h>
 
 /// SYSTEM
 #include <tf/transform_datatypes.h>

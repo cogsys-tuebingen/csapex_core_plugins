@@ -18,6 +18,7 @@ add_definitions("-O3")
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
         csapex
+        csapex_math
         csapex_ros
         csapex_transform
         csapex_opencv

@@ -8,6 +8,7 @@
 #include <csapex/msg/message_provider.h>
 #include <csapex/msg/message_renderer.h>
 #include <csapex/view/node/node_adapter_builder.h>
+#include <csapex/view/param/param_adapter_builder.h>
 #include <csapex/view/designer/drag_io_handler.h>
 
 /// SYSTEM
@@ -47,7 +48,8 @@ RosBoot::RosBoot() :
     loader_msg_("csapex", "csapex::MessageProvider", "plugin", valid_plugin_xml_files_),
     loader_msg_renderer_("csapex", "csapex::MessageRenderer", "plugin", valid_plugin_xml_files_),
     loader_node_("csapex", "csapex::Node", "plugin", valid_plugin_xml_files_),
-    loader_node_adapter_("csapex", "csapex::NodeAdapterBuilder", "plugin", valid_plugin_xml_files_),
+    loader_node_adapter_("csapex", "csapex::ParameterAdapterBuilder", "plugin", valid_plugin_xml_files_),
+    loader_param_adapter_("csapex", "csapex::NodeAdapterBuilder", "plugin", valid_plugin_xml_files_),
     loader_drag_io_("csapex", "csapex::DragIOHandler", "plugin", valid_plugin_xml_files_)
 {
 
@@ -83,6 +85,9 @@ void RosBoot::boot(csapex::PluginLocator* locator)
     locator->registerLocator<NodeAdapterBuilder>(std::bind(
                                                      &get_plugin_xml_paths<NodeAdapterBuilder>,
                                                      &loader_node_adapter_, std::placeholders::_1));
+    locator->registerLocator<ParameterAdapterBuilder>(std::bind(
+                                                          &get_plugin_xml_paths<ParameterAdapterBuilder>,
+                                                          &loader_param_adapter_, std::placeholders::_1));
     locator->registerLocator<Node>(std::bind(
                                        &get_plugin_xml_paths<Node>,
                                        &loader_node_, std::placeholders::_1));

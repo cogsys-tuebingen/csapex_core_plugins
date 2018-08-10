@@ -8,6 +8,7 @@
 #include <csapex_ros/yaml_io.hpp>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_transform/transform_message.h>
+#include <csapex_math/param/factory.h>
 
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>

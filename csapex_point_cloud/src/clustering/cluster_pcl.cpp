@@ -12,6 +12,7 @@
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/profiling/timer.h>
+#include <csapex_math/param/factory.h>
 
 /// SYSTEM
 #include <csapex/utility/suppress_warnings_start.h>

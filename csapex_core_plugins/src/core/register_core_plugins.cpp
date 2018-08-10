@@ -13,8 +13,6 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/utility/yaml_io.hpp>
-
-/// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::RegisterCorePlugins, csapex::CorePlugin)
