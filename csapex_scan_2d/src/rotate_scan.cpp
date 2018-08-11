@@ -8,6 +8,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/any_message.h>
+#include <csapex_math/param/factory.h>
 
 namespace csapex {
 
