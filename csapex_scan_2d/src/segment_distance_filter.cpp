@@ -27,7 +27,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(csapex::param::ParameterFactory::declareInterval("threshold", 0.0, 30.0, 0.4, 8.0, 0.01));
+        params.addParameter(csapex::param::factory::declareInterval("threshold", 0.0, 30.0, 0.4, 8.0, 0.01));
     }
 
     void process()

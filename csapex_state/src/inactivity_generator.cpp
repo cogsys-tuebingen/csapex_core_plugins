@@ -32,7 +32,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareTrigger("trigger"), [this](param::Parameter* p) {
+        params.addParameter(param::factory::declareTrigger("trigger"), [this](param::Parameter* p) {
             auto new_val = std::make_shared<connection_types::AnyMessage>();
             TokenPtr token = std::make_shared<Token>(new_val);
             token->setActivityModifier(ActivityModifier::DEACTIVATE);

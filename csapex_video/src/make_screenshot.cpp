@@ -19,9 +19,9 @@ MakeScreenshot::MakeScreenshot()
 
 void MakeScreenshot::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareDirectoryOutputPath("path", "/tmp"));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("quality", 0, 100, 75, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("format", "%s_$wx$h.png"));
+    parameters.addParameter(csapex::param::factory::declareDirectoryOutputPath("path", "/tmp"));
+    parameters.addParameter(csapex::param::factory::declareRange<int>("quality", 0, 100, 75, 1));
+    parameters.addParameter(csapex::param::factory::declareText("format", "%s_$wx$h.png"));
 }
 
 void MakeScreenshot::setup(NodeModifier& node_modifier)

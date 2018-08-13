@@ -27,8 +27,8 @@ GrowROIs::GrowROIs()
 
 void GrowROIs::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("x", 0, 100, 0, 1), x_);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("y", 0, 100, 0, 1), y_);
+    parameters.addParameter(csapex::param::factory::declareRange("x", 0, 100, 0, 1), x_);
+    parameters.addParameter(csapex::param::factory::declareRange("y", 0, 100, 0, 1), y_);
 }
 
 void GrowROIs::process()

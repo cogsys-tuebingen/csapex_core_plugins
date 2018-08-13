@@ -30,7 +30,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareBool("predicate",
+        params.addParameter(param::factory::declareBool("predicate",
                                                                  param::ParameterDescription("hint: make the parameter <b>connectable</b> for dynamic switching."),
                                                                  true),
                             predicate_);

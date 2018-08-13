@@ -13,20 +13,20 @@ public:
     {
         SampleConsensus::setupParameters(parameters);
 
-        parameters.addParameter(param::ParameterFactory::declareBool("use outlier probability", false),
+        parameters.addParameter(param::factory::declareBool("use outlier probability", false),
                                 antsac_parameters_.use_outlier_probability);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("outlier probability", 0.01, 1.0, 0.9, 0.01),
+        parameters.addConditionalParameter(param::factory::declareRange("outlier probability", 0.01, 1.0, 0.9, 0.01),
                                            [this](){return antsac_parameters_.use_outlier_probability;},
                                            antsac_parameters_.outlier_probability);
 
-        parameters.addParameter(param::ParameterFactory::declareValue("random seed", -1),
+        parameters.addParameter(param::factory::declareValue("random seed", -1),
                                 std::bind(&Antsac::setupRandomGenerator, this));
-        parameters.addParameter(param::ParameterFactory::declareRange("maximum sampling retries", 1, 1000, 100, 1),
+        parameters.addParameter(param::factory::declareRange("maximum sampling retries", 1, 1000, 100, 1),
                                 antsac_parameters_.maximum_sampling_retries);
 
-        parameters.addParameter(param::ParameterFactory::declareRange("rho", 0.0, 1.0, 0.9, 0.01),
+        parameters.addParameter(param::factory::declareRange("rho", 0.0, 1.0, 0.9, 0.01),
                                 antsac_parameters_.rho);
-        parameters.addParameter(param::ParameterFactory::declareRange("alpha", 0.01, 10.0, 0.1, 0.01),
+        parameters.addParameter(param::factory::declareRange("alpha", 0.01, 10.0, 0.1, 0.01),
                                 antsac_parameters_.alpha);
     }
 

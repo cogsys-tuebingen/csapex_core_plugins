@@ -21,9 +21,9 @@ ConfidenceClassToggle::ConfidenceClassToggle()
 
 void ConfidenceClassToggle::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareValue("class from", 0));
-    parameters.addParameter(csapex::param::ParameterFactory::declareValue("class to", 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("threshold", 0.0, 1.0, 0.9, 0.01));
+    parameters.addParameter(csapex::param::factory::declareValue("class from", 0));
+    parameters.addParameter(csapex::param::factory::declareValue("class to", 1));
+    parameters.addParameter(csapex::param::factory::declareRange("threshold", 0.0, 1.0, 0.9, 0.01));
 }
 
 void ConfidenceClassToggle::setup(NodeModifier& node_modifier)

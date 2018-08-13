@@ -29,7 +29,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareValue("classification", 0));
+        params.addParameter(param::factory::declareValue("classification", 0));
     }
 
     void process() override
@@ -42,7 +42,7 @@ public:
             if(param_count < features->value.size()){
                 for(int i = param_count, n = features->value.size(); i < n; ++i) {
                     std::string name = std::string("entry_") + std::to_string(i);
-                    param::Parameter::Ptr p = param::ParameterFactory::declareValue<double>(name, features->value.at(i));
+                    param::Parameter::Ptr p = param::factory::declareValue<double>(name, features->value.at(i));
                     addPersistentParameter(p);
                 }
             }

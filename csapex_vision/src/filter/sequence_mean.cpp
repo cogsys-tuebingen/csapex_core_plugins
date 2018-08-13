@@ -60,7 +60,7 @@ void SequenceMean::setup(NodeModifier& node_modifier)
 
 void SequenceMean::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("acc", 1, 100, (int) sequence_size_, 1),
                  std::bind(&SequenceMean::update, this));
 }
 

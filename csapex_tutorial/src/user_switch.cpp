@@ -57,7 +57,7 @@ public:
         };
 
         // we register the parameter with the name "selector", the default value of "Selector::FIRST" and a callback lambda function
-        parameters.addParameter(param::ParameterFactory::declareParameterSet("selector", selector, (int) Selector::FIRST),
+        parameters.addParameter(param::factory::declareParameterSet("selector", selector, (int) Selector::FIRST),
                                 [this](param::Parameter* p) {
             /// this callback is called whenever the parameter value changes
             /// it is also called once before the first call of process

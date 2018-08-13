@@ -37,11 +37,11 @@ BlobDetector::~BlobDetector()
 
 void BlobDetector::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareBool("RoiInformation",
+    addParameter(csapex::param::factory::declareBool("RoiInformation",
                                                csapex::param::ParameterDescription("Show the information of each RoI"),
                                                false));
 
-    addParameter(csapex::param::ParameterFactory::declareInterval("Area",
+    addParameter(csapex::param::factory::declareInterval("Area",
                                                csapex::param::ParameterDescription("Area for the reduced image"),
                                                1, 800000, 1, 800000, 1));
 

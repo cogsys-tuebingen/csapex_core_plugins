@@ -25,8 +25,8 @@ ScanCovariance::ScanCovariance()
 
 void ScanCovariance::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("width", 100, 2000, 1000, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("height", 100, 2000, 1000, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("width", 100, 2000, 1000, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("height", 100, 2000, 1000, 1));
 }
 
 void ScanCovariance::setup(NodeModifier& node_modifier)

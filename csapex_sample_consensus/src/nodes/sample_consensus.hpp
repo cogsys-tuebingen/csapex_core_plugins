@@ -17,6 +17,8 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 
+#include <csapex_math/param/factory.h>
+
 #include <pcl/point_representation.h>
 
 #include <boost/mpl/for_each.hpp>
@@ -35,31 +37,31 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("model search distance", 0.0, 10.0, 0.1, 0.001),
+        parameters.addParameter(param::factory::declareRange("model search distance", 0.0, 10.0, 0.1, 0.001),
                                 sac_parameters_.model_search_distance);
-        parameters.addParameter(param::ParameterFactory::declareRange("model validation ratio", 0.0, 1.0, 0.0, 0.01),
+        parameters.addParameter(param::factory::declareRange("model validation ratio", 0.0, 1.0, 0.0, 0.01),
                                 sac_parameters_.model_validation_ratio);
-        parameters.addParameter(param::ParameterFactory::declareBool("terminate on mean model distance", false),
+        parameters.addParameter(param::factory::declareBool("terminate on mean model distance", false),
                                 sac_parameters_.use_mean_model_distance);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("maximum mean model distance", 0.0, 10.0, 0.05, 0.01),
+        parameters.addConditionalParameter(param::factory::declareRange("maximum mean model distance", 0.0, 10.0, 0.05, 0.01),
                                            [this](){return sac_parameters_.use_mean_model_distance;},
         sac_parameters_.mean_model_distance);
-        //        parameters.addParameter(param::ParameterFactory::declareBool("optimize model coefficients", false),
+        //        parameters.addParameter(param::factory::declareBool("optimize model coefficients", false),
         //                                ransac_parameters_.optimize_model_coefficients);
-        parameters.addParameter(param::ParameterFactory::declareRange("point skip", 0, 10, 0, 1),
+        parameters.addParameter(param::factory::declareRange("point skip", 0, 10, 0, 1),
                                 point_skip_);
-        parameters.addParameter(param::ParameterFactory::declareRange("maximum iterations", 1, 100000, 100, 1),
+        parameters.addParameter(param::factory::declareRange("maximum iterations", 1, 100000, 100, 1),
                                 sac_parameters_.maximum_iterations);
 
-        parameters.addParameter(param::ParameterFactory::declareRange("minimum model cloud size", 1, 100000, 1000, 1),
+        parameters.addParameter(param::factory::declareRange("minimum model cloud size", 1, 100000, 1000, 1),
                                 minimum_model_cloud_size_);
 
-        parameters.addParameter(param::ParameterFactory::declareBool("find multiple models", false),
+        parameters.addParameter(param::factory::declareBool("find multiple models", false),
                                 fit_multiple_models_);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("minimum residual cloud size", 0, 1000, 100, 1),
+        parameters.addConditionalParameter(param::factory::declareRange("minimum residual cloud size", 0, 1000, 100, 1),
                                            [this](){return fit_multiple_models_;},
         minimum_residual_cloud_size_);
-        parameters.addConditionalParameter(param::ParameterFactory::declareRange("maximum model count", -1, 100, 5, 1),
+        parameters.addConditionalParameter(param::factory::declareRange("maximum model count", -1, 100, 5, 1),
                                            [this](){return fit_multiple_models_;},
         maximum_model_count_);
 
@@ -68,7 +70,7 @@ public:
          {"NORMAL_PLANE", NORMAL_PLANE},
          {"PARALLEL_NORMAL_PLANE", PARALLEL_NORMAL_PLANE}};
 
-        parameters.addParameter(param::ParameterFactory::declareParameterSet("model type", model_types, (int) PLANE),
+        parameters.addParameter(param::factory::declareParameterSet("model type", model_types, (int) PLANE),
                                 model_type_);
 
         /// actually, this can be done better ! - temporary
@@ -81,26 +83,26 @@ public:
         };
 
 
-        parameters.addConditionalParameter(param::ParameterFactory::declareValue("axis/x", 0.0),
+        parameters.addConditionalParameter(param::factory::declareValue("axis/x", 0.0),
                                            uses_axis,
                                            axis_(0));
-        parameters.addConditionalParameter(param::ParameterFactory::declareValue("axis/y", 0.0),
+        parameters.addConditionalParameter(param::factory::declareValue("axis/y", 0.0),
                                            uses_axis,
                                            axis_(1));
-        parameters.addConditionalParameter(param::ParameterFactory::declareValue("axis/z", 1.0),
+        parameters.addConditionalParameter(param::factory::declareValue("axis/z", 1.0),
                                            uses_axis,
                                            axis_(2));
 
-        parameters.addConditionalParameter(param::ParameterFactory::declareValue("normal/distance_weight", 0.0),
+        parameters.addConditionalParameter(param::factory::declareValue("normal/distance_weight", 0.0),
                                            uses_normals,
                                            normal_distance_weight_);
 
-        parameters.addConditionalParameter(param::ParameterFactory::declareAngle("normal/angle_distance",
+        parameters.addConditionalParameter(param::factory::declareAngle("normal/angle_distance",
                                                                                  0.0),
                                            uses_axis,
                                            angle_eps_);
 
-        parameters.addParameter(param::ParameterFactory::declareBool("keep invalid as outlier", true),
+        parameters.addParameter(param::factory::declareBool("keep invalid as outlier", true),
                                 keep_invalid_as_outlier_);
     }
 

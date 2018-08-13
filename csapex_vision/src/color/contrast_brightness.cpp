@@ -36,9 +36,9 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters)
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("contrast", 0.1, 4.0, 1.0, 0.01),
+        parameters.addParameter(param::factory::declareRange("contrast", 0.1, 4.0, 1.0, 0.01),
                                 alpha_);
-        parameters.addParameter(param::ParameterFactory::declareRange("brightness", -100, 100, 0, 1),
+        parameters.addParameter(param::factory::declareRange("brightness", -100, 100, 0, 1),
                                 beta_);
     }
 

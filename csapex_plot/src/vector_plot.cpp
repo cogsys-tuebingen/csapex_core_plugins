@@ -44,14 +44,14 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
 
     Plot::setupParameters(parameters);
 
-    parameters.addParameter(param::ParameterFactory::declareRange
+    parameters.addParameter(param::factory::declareRange
                             ("~plot/width",
                              128, 4096, 640, 1),
                             [this](param::Parameter* p) {
         width_ = p->as<int>();
         update();
     });
-    parameters.addParameter(param::ParameterFactory::declareRange
+    parameters.addParameter(param::factory::declareRange
                             ("~plot/height",
                              128, 4096, 320, 1),
                             [this](param::Parameter* p) {
@@ -59,22 +59,22 @@ void VectorPlot::setupParameters(Parameterizable &parameters)
         update();
     });
 
-    parameters.addParameter(param::ParameterFactory::declareRange(
+    parameters.addParameter(param::factory::declareRange(
                                 "~plot/line/width", 0.0, 10.0, 0.0, 0.01),
                             line_width_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool
+    parameters.addParameter(param::factory::declareBool
                             ("~output/time/relative",
                              param::ParameterDescription("Use time relative to the first entry"),
                              true),
                             time_relative_);
-    parameters.addParameter(param::ParameterFactory::declareBool
+    parameters.addParameter(param::factory::declareBool
                             ("~output/time/seconds",
                              param::ParameterDescription("Convert the time to seconds"),
                              true),
                             time_seconds_);
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+    parameters.addParameter(param::factory::declareTrigger("reset"),
                             [this](param::Parameter*) {
         reset();
     });

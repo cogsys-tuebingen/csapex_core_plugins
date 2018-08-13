@@ -32,11 +32,11 @@ bool ActionlibNodeBase::isAsynchronous() const
 
 void ActionlibNodeBase::setupParameters(csapex::Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareTrigger("abort"), [this](param::Parameter*){
+    parameters.addParameter(param::factory::declareTrigger("abort"), [this](param::Parameter*){
         abortAction();
     });
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("detach"), [this](param::Parameter*){
+    parameters.addParameter(param::factory::declareTrigger("detach"), [this](param::Parameter*){
         detachAction();
     });
 

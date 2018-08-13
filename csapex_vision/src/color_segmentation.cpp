@@ -101,9 +101,9 @@ void ColorSegmentation::updateParameters()
         std::string name = channelName(i, c);
         csapex::param::Parameter::Ptr p;
         if(c.fp) {
-            p = csapex::param::ParameterFactory::declareInterval<double>(name, c.min_f, c.max_f, c.min_f, c.max_f, 1.0);
+            p = csapex::param::factory::declareInterval<double>(name, c.min_f, c.max_f, c.min_f, c.max_f, 1.0);
         } else {
-            p = csapex::param::ParameterFactory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
+            p = csapex::param::factory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
         }
         addTemporaryParameter(p, std::bind(&ColorSegmentation::update, this));
     }

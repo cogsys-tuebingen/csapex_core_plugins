@@ -14,6 +14,7 @@
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/model/node_handle.h>
+#include <csapex_math/param/factory.h>
 
 /// SYSTEM
 #include <tf/transform_datatypes.h>
@@ -30,18 +31,18 @@ DynamicTransform::DynamicTransform()
 void DynamicTransform::setupParameters(Parameterizable& parameters)
 {
     std::vector<std::string> topics;
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterStringSet("source", topics), std::bind(&DynamicTransform::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterStringSet("target", topics), std::bind(&DynamicTransform::update, this));
+    parameters.addParameter(csapex::param::factory::declareParameterStringSet("source", topics), std::bind(&DynamicTransform::update, this));
+    parameters.addParameter(csapex::param::factory::declareParameterStringSet("target", topics), std::bind(&DynamicTransform::update, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("refresh"), std::bind(&DynamicTransform::refresh, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset tf"), std::bind(&DynamicTransform::resetTf, this));
+    parameters.addParameter(csapex::param::factory::declareTrigger("refresh"), std::bind(&DynamicTransform::refresh, this));
+    parameters.addParameter(csapex::param::factory::declareTrigger("reset tf"), std::bind(&DynamicTransform::resetTf, this));
 
     source_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("source"));
     target_p = std::dynamic_pointer_cast<param::SetParameter>(getParameter("target"));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("exact_time", false), exact_time_);
+    parameters.addParameter(csapex::param::factory::declareBool("exact_time", false), exact_time_);
 
-    auto is_frozen = csapex::param::ParameterFactory::declareBool("freeze_transformation", false);
+    auto is_frozen = csapex::param::factory::declareBool("freeze_transformation", false);
     parameters.addParameter(is_frozen, [this](param::Parameter* p){
         freeze(p->as<bool>());
     });
@@ -50,12 +51,12 @@ void DynamicTransform::setupParameters(Parameterizable& parameters)
         return frozen_;
     };
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareAngle("~tf/roll", 0.0), freeze_condition, roll);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareAngle("~tf/pitch", 0.0), freeze_condition, pitch);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareAngle("~tf/yaw", 0.0), freeze_condition, yaw);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("~tf/dx", 0.0), freeze_condition, x);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("~tf/dy", 0.0), freeze_condition, y);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue("~tf/dz", 0.0), freeze_condition, z);
+    parameters.addConditionalParameter(csapex::param::factory::declareAngle("~tf/roll", 0.0), freeze_condition, roll);
+    parameters.addConditionalParameter(csapex::param::factory::declareAngle("~tf/pitch", 0.0), freeze_condition, pitch);
+    parameters.addConditionalParameter(csapex::param::factory::declareAngle("~tf/yaw", 0.0), freeze_condition, yaw);
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("~tf/dx", 0.0), freeze_condition, x);
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("~tf/dy", 0.0), freeze_condition, y);
+    parameters.addConditionalParameter(csapex::param::factory::declareValue("~tf/dz", 0.0), freeze_condition, z);
 }
 
 void DynamicTransform::setupROS()

@@ -21,13 +21,13 @@ Camera::Camera()
 
 void Camera::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("device", 0, 5, 0, 1), std::bind(&Camera::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange<int>("device", 0, 5, 0, 1), std::bind(&Camera::update, this));
 
     w_ = 640;
     h_ = 480;
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("w", 640, 1280, w_, 1), std::bind(&Camera::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("h", 480, 800, h_, 1), std::bind(&Camera::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange<int>("w", 640, 1280, w_, 1), std::bind(&Camera::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange<int>("h", 480, 800, h_, 1), std::bind(&Camera::update, this));
 }
 
 void Camera::process()

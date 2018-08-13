@@ -16,6 +16,8 @@
 #include <csapex_point_cloud/msg/indices_message.h>
 #include <cslibs_indexed_storage/backends.hpp>
 
+#include <csapex_math/param/factory.h>
+
 #include <boost/make_shared.hpp>
 
 using namespace csapex;
@@ -46,7 +48,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
         { "k-d tree", static_cast<int>(BackendType::KDTREE) },
         { "array", static_cast<int>(BackendType::ARRAY) },
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("backend",
+    parameters.addParameter(param::factory::declareParameterSet("backend",
                                                                          param::ParameterDescription("Backend used for clustering. Available methods:"
                                                                                                      "<ul>"
                                                                                                      "<li>Page: by-axis nested maps</li>"
@@ -59,21 +61,21 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 
 
     // general clustering config
-    parameters.addParameter(param::ParameterFactory::declareRange("voxel/size/x",
+    parameters.addParameter(param::factory::declareRange("voxel/size/x",
                                                                   param::ParameterDescription("Voxel size (in m) (along x-axis)"),
                                                                   0.01, 10.0, 0.1, 0.01),
                             voxel_size_[0]);
-    parameters.addParameter(param::ParameterFactory::declareRange("voxel/size/y",
+    parameters.addParameter(param::factory::declareRange("voxel/size/y",
                                                                   param::ParameterDescription("Voxel size (in m) (along y-axis)"),
                                                                   0.01, 10.0, 0.1, 0.01),
                             voxel_size_[1]);
-    parameters.addParameter(param::ParameterFactory::declareRange("voxel/size/z",
+    parameters.addParameter(param::factory::declareRange("voxel/size/z",
                                                                   param::ParameterDescription("Voxel size (in m) (along z-axis)"),
                                                                   0.01, 10.0, 0.1, 0.01),
                             voxel_size_[2]);
 
 
-    parameters.addParameter(param::ParameterFactory::declareInterval("filter/point_count",
+    parameters.addParameter(param::factory::declareInterval("filter/point_count",
                                                                      param::ParameterDescription("Filter by points within final clusters,"
                                                                                                  " e.g. to reject small noisy clustering or extremly large ones."),
                                                                      1, 10000000, 1, 10000000, 1),
@@ -83,7 +85,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
     /// voxel pre-clustering validation
     /// by point count
     param::ParameterPtr param_voxel_validation
-            = param::ParameterFactory::declareBool("filter/voxel_validation/points",
+            = param::factory::declareBool("filter/voxel_validation/points",
                                                    param::ParameterDescription("Pre-filter voxels by point count, optionally scaled by distance."
                                                                                " Allows to remove voxels which are likely sensor noise."),
                                                    false);
@@ -91,12 +93,12 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 
     parameters.addParameter(param_voxel_validation,
                             voxel_validation_enabled_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/voxel_validation/points/min_count",
+    parameters.addConditionalParameter(param::factory::declareRange("filter/voxel_validation/points/min_count",
                                                                              param::ParameterDescription("Minimal point count in a valid voxel"),
                                                                              1, 1000, 1, 1),
                                        enable_voxel_validation,
                                        voxel_validation_min_count_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/voxel_validation/points/decrease",
+    parameters.addConditionalParameter(param::factory::declareRange("filter/voxel_validation/points/decrease",
                                                                              param::ParameterDescription("Scale min count with the voxel distance."
                                                                                                          " Allows to adjust non-linear relationship between point denstity and distance."
                                                                                                          "<br>Scale factor: 1 / (scale * depth^2)"),
@@ -105,27 +107,27 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                        voxel_validation_scale_);
 
     /// by normal
-    parameters.addParameter(param::ParameterFactory::declareBool("filter/voxel_validation/normal",
+    parameters.addParameter(param::factory::declareBool("filter/voxel_validation/normal",
                                                                  param::ParameterDescription("Only cluster voxels which have a normal vector parallel to the given one."),
                                                                  false),
                             validate_normal_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareAngle("filter/voxel_validation/normal/angle_eps",
+    parameters.addConditionalParameter(param::factory::declareAngle("filter/voxel_validation/normal/angle_eps",
                                                                              param::ParameterDescription("Maximum angle difference to normal."),
                                                                              0.0),
                                        [this]{return validate_normal_;},
     validation_normal_angle_eps_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/x",
+    parameters.addConditionalParameter(param::factory::declareValue("filter/normal/x",
                                                                              param::ParameterDescription("x coordinate of the normal vector."),
                                                                              0.0),
                                        [this]{return validate_normal_;},
     validation_normal_(0));
-    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/y",
+    parameters.addConditionalParameter(param::factory::declareValue("filter/normal/y",
                                                                              param::ParameterDescription("y coordinate of the normal vector."),
                                                                              0.0),
                                        [this]{return validate_normal_;},
     validation_normal_(1));
-    parameters.addConditionalParameter(param::ParameterFactory::declareValue("filter/normal/z",
+    parameters.addConditionalParameter(param::factory::declareValue("filter/normal/z",
                                                                              param::ParameterDescription("z coordinate of the normal vector."),
                                                                              1.0),
                                        [this]{return validate_normal_;},
@@ -133,7 +135,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 
     // cluster distribution validation
     param::ParameterPtr param_distribution
-            = param::ParameterFactory::declareBool("filter/distribution",
+            = param::factory::declareBool("filter/distribution",
                                                    param::ParameterDescription("Filter clusters by their point distribution."
                                                                                " Allows to distinguish between e.g. walls and persons based on their apprearance."),
                                                    false);
@@ -146,7 +148,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 
     parameters.addParameter(param_distribution,
                             distribution_enabled_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("filter/distribution/type",
+    parameters.addConditionalParameter(param::factory::declareParameterSet("filter/distribution/type",
                                                                                     param::ParameterDescription("Distribution analysis type to determine axis. Available methods:"
                                                                                                                 "<ul>"
                                                                                                                 "<li>default: assume axis alignment</li>"
@@ -157,19 +159,19 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
                                                                                     static_cast<int>(DistributionAnalysisType::DEFAULT)),
                                        enable_distribution,
                                        reinterpret_cast<int&>(distribution_type_));
-    parameters.addConditionalParameter(param::ParameterFactory::declareInterval("filter/distribution/std_dev/x",
+    parameters.addConditionalParameter(param::factory::declareInterval("filter/distribution/std_dev/x",
                                                                                 param::ParameterDescription("Standard Deviation threshold (in m) (along x-axis)."
                                                                                                             " A range of [0,0] deactivates the threshold."),
                                                                                 0.0, 10.0, 0.0, 10.0, 0.01),
                                        enable_distribution,
                                        distribution_std_dev_[0]);
-    parameters.addConditionalParameter(param::ParameterFactory::declareInterval("filter/distribution/std_dev/y",
+    parameters.addConditionalParameter(param::factory::declareInterval("filter/distribution/std_dev/y",
                                                                                 param::ParameterDescription("Standard Deviation threshold (in m) (along y-axis)."
                                                                                                             " A range of [0,0] deactivates the threshold."),
                                                                                 0.0, 10.0, 0.0, 10.0, 0.01),
                                        enable_distribution,
                                        distribution_std_dev_[1]);
-    parameters.addConditionalParameter(param::ParameterFactory::declareInterval("filter/distribution/std_dev/z",
+    parameters.addConditionalParameter(param::factory::declareInterval("filter/distribution/std_dev/z",
                                                                                 param::ParameterDescription("Standard Deviation threshold (in m) (along z-axis) (unused when using 2D PCA)"
                                                                                                             " A range of [0,0] deactivates the threshold."),
                                                                                 0.0, 10.0, 0.0, 10.0, 0.01),
@@ -179,7 +181,7 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 
     /// neighour color validation
     param::ParameterPtr param_color
-            = param::ParameterFactory::declareBool("filter/color",
+            = param::factory::declareBool("filter/color",
                                                    param::ParameterDescription("Filter considered neighboring voxels by their color."
                                                                                " Allows to distinguish persons near walls if the general color appearance is distinct enough."
                                                                                " Works for greyscale and color data."
@@ -195,40 +197,40 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 
     parameters.addParameter(param_color,
                             color_enabled_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareParameterSet("filter/color/type",
+    parameters.addConditionalParameter(param::factory::declareParameterSet("filter/color/type",
                                                                                     param::ParameterDescription("Methods used to determine the color difference."
                                                                                                                 " Uses the LAB color-space."),
                                                                                     color_types,
                                                                                     static_cast<int>(ColorDifferenceType::CIE76)),
                                        enable_color,
                                        reinterpret_cast<int&>(color_type_));
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/color/max_difference",
+    parameters.addConditionalParameter(param::factory::declareRange("filter/color/max_difference",
                                                                              param::ParameterDescription("Maximum allowed color difference."),
                                                                              0.0, 4000.0, 0.0, 0.1),
                                        enable_color,
                                        color_threshold_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/color/weights/l",
+    parameters.addConditionalParameter(param::factory::declareRange("filter/color/weights/l",
                                                                              param::ParameterDescription("Weighting factor for the l-channel"),
                                                                              0.0, 1.0, 1.0, 0.01),
                                        enable_color,
                                        color_weights_[0]);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/color/weights/a",
+    parameters.addConditionalParameter(param::factory::declareRange("filter/color/weights/a",
                                                                              param::ParameterDescription("Weighting factor for the a-channel"),
                                                                              0.0, 1.0, 1.0, 0.01),
                                        enable_color,
                                        color_weights_[1]);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/color/weights/b",
+    parameters.addConditionalParameter(param::factory::declareRange("filter/color/weights/b",
                                                                              param::ParameterDescription("Weighting factor for the b-channel"),
                                                                              0.0, 1.0, 1.0, 0.01),
                                        enable_color,
                                        color_weights_[2]);
     /// neighbour normal validation
-    parameters.addParameter(param::ParameterFactory::declareBool("filter/normal",
+    parameters.addParameter(param::factory::declareBool("filter/normal",
                                                                  param::ParameterDescription("Only cluster voxels togehter which have similar normals."),
                                                                  false),
                                                                  normal_enabled_);
 
-    parameters.addConditionalParameter(param::ParameterFactory::declareAngle("filter/normal/angle_eps",
+    parameters.addConditionalParameter(param::factory::declareAngle("filter/normal/angle_eps",
                                                                              param::ParameterDescription("Maximum angle between normals."),
                                                                              0.0),
                                        [this](){return normal_enabled_;},

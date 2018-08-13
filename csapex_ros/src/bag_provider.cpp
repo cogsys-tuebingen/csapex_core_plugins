@@ -25,15 +25,15 @@ BagProvider::BagProvider()
 {
     std::vector<std::string> set;
 
-    state.addParameter(csapex::param::ParameterFactory::declareBool("bag/play", true));
-    state.addParameter(csapex::param::ParameterFactory::declareBool("bag/loop", false));
-    state.addParameter(csapex::param::ParameterFactory::declareBool("bag/latch", false));
-    state.addParameter(csapex::param::ParameterFactory::declareRange("bag/frame", 0, 1, 0, 1));
-    state.addParameter(csapex::param::ParameterFactory::declareBool("bag/publish tf", false));
-    state.addParameter(csapex::param::ParameterFactory::declareBool("bag/forward_tf", true));
-    state.addParameter(csapex::param::ParameterFactory::declareBool("bag/publish clock", false));
+    state.addParameter(csapex::param::factory::declareBool("bag/play", true));
+    state.addParameter(csapex::param::factory::declareBool("bag/loop", false));
+    state.addParameter(csapex::param::factory::declareBool("bag/latch", false));
+    state.addParameter(csapex::param::factory::declareRange("bag/frame", 0, 1, 0, 1));
+    state.addParameter(csapex::param::factory::declareBool("bag/publish tf", false));
+    state.addParameter(csapex::param::factory::declareBool("bag/forward_tf", true));
+    state.addParameter(csapex::param::factory::declareBool("bag/publish clock", false));
 
-    csapex::param::Parameter::Ptr topic_param = csapex::param::ParameterFactory::declareParameterStringSet("topic",
+    csapex::param::Parameter::Ptr topic_param = csapex::param::factory::declareParameterStringSet("topic",
                                                                                            csapex::param::ParameterDescription("topic to play <b>primarily</b>"), set, "");
     topic_param_ = std::dynamic_pointer_cast<param::SetParameter>(topic_param);
     assert(topic_param_);

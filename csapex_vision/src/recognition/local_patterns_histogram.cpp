@@ -169,13 +169,13 @@ void LocalPatternsHistogram::setupParameters(Parameterizable& parameters)
     };
 
     csapex::param::Parameter::Ptr type =
-            csapex::param::ParameterFactory::declareParameterSet("pattern",
+            csapex::param::factory::declareParameterSet("pattern",
                                                          types,
                                                          (int) LBP);
     std::function<bool()> condition = [type]() { return type->as<int>() == LTP; };
 
     parameters.addParameter(type);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("k1", -100.0, 100.0, 0.0, 0.1),
+    parameters.addConditionalParameter(csapex::param::factory::declareRange("k1", -100.0, 100.0, 0.0, 0.1),
                             condition);
 
 }

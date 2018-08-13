@@ -10,6 +10,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/param/range_parameter.h>
 #include <csapex/msg/io.h>
+#include <csapex_math/param/factory.h>
 
 /// SYSTEM
 #include <csapex/utility/suppress_warnings_start.h>
@@ -26,15 +27,15 @@ StaticTransform::StaticTransform()
 
 void StaticTransform::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("frame", "/base_link"), frame);
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("child_frame", "/marlin"), child_frame);
+    parameters.addParameter(csapex::param::factory::declareText("frame", "/base_link"), frame);
+    parameters.addParameter(csapex::param::factory::declareText("child_frame", "/marlin"), child_frame);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareAngle("roll", 0.0), roll);
-    parameters.addParameter(csapex::param::ParameterFactory::declareAngle("pitch", 0.0), pitch);
-    parameters.addParameter(csapex::param::ParameterFactory::declareAngle("yaw", 0.0), yaw);
-    parameters.addParameter(csapex::param::ParameterFactory::declareValue("dx", 0.0), x);
-    parameters.addParameter(csapex::param::ParameterFactory::declareValue("dy", 0.0), y);
-    parameters.addParameter(csapex::param::ParameterFactory::declareValue("dz", 0.0), z);
+    parameters.addParameter(csapex::param::factory::declareAngle("roll", 0.0), roll);
+    parameters.addParameter(csapex::param::factory::declareAngle("pitch", 0.0), pitch);
+    parameters.addParameter(csapex::param::factory::declareAngle("yaw", 0.0), yaw);
+    parameters.addParameter(csapex::param::factory::declareValue("dx", 0.0), x);
+    parameters.addParameter(csapex::param::factory::declareValue("dy", 0.0), y);
+    parameters.addParameter(csapex::param::factory::declareValue("dz", 0.0), z);
 }
 
 void StaticTransform::process()

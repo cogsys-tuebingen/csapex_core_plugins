@@ -69,11 +69,11 @@ class CSAPEX_EXPORT_PLUGIN FileHandler : public DragIOHandler
                 GenericState::Ptr child_state(new GenericState);
 
                 QDir dir(file_str);
-                child_state->addParameter(csapex::param::ParameterFactory::declareBool("import directory", dir.exists()));
+                child_state->addParameter(csapex::param::factory::declareBool("import directory", dir.exists()));
                 if(dir.exists()) {
-                    child_state->addParameter(csapex::param::ParameterFactory::declareFileInputPath("directory", file_str.toStdString()));
+                    child_state->addParameter(csapex::param::factory::declareFileInputPath("directory", file_str.toStdString()));
                 } else {
-                    child_state->addParameter(csapex::param::ParameterFactory::declareFileInputPath("path", file_str.toStdString()));
+                    child_state->addParameter(csapex::param::factory::declareFileInputPath("path", file_str.toStdString()));
                 }
                 state->setParameterState(child_state);
 

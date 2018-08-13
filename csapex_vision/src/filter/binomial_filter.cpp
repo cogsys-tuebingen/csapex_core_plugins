@@ -42,5 +42,5 @@ void BinomialFilter::setup(NodeModifier& node_modifier)
 
 void BinomialFilter::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("kernel", 3, 131, 3, 2));
+    parameters.addParameter(csapex::param::factory::declareRange("kernel", 3, 131, 3, 2));
 }

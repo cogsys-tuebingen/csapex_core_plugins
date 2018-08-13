@@ -29,7 +29,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareOutputText("count"));
+        params.addParameter(param::factory::declareOutputText("count"));
     }
 
     void process() override

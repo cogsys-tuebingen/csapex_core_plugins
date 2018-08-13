@@ -25,12 +25,12 @@ void WaldBoostTrainer::setup(NodeModifier &modifier)
 void WaldBoostTrainer::setupParameters(Parameterizable &parameters)
 {
     CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
-    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("/waldboost/path",
+    parameters.addParameter(param::factory::declareFileOutputPath("/waldboost/path",
                                                                            param::ParameterDescription("File to write boosted classifier to."),
                                                                            "",
                                                                            "*.yaml *.tar.gz"),
                  path_);
-    parameters.addParameter(param::ParameterFactory::declareRange("/waldboost/classifier_count",
+    parameters.addParameter(param::factory::declareRange("/waldboost/classifier_count",
                                                                   1,
                                                                   4096,
                                                                   100,

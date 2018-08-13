@@ -43,18 +43,18 @@ void VectorOptimizer::setup(csapex::NodeModifier& modifier)
 void VectorOptimizer::setupParameters(csapex::Parameterizable& params)
 {
 
-    params.addParameter(param::ParameterFactory::declareTrigger("restart"),[this](param::Parameter*){
+    params.addParameter(param::factory::declareTrigger("restart"),[this](param::Parameter*){
         start();
     });
 
-    params.addParameter(param::ParameterFactory::declareTrigger("stop"),[this](param::Parameter*){
+    params.addParameter(param::factory::declareTrigger("stop"),[this](param::Parameter*){
         stop();
     });
 
-    params.addParameter(param::ParameterFactory::declareBool("trigger_immediately",false),
+    params.addParameter(param::factory::declareBool("trigger_immediately",false),
                         trigger_immediately_);
 
-    params.addParameter(param::ParameterFactory::declareRange("polling_time",
+    params.addParameter(param::factory::declareRange("polling_time",
                                                               param::ParameterDescription("Time in ms after which is checked if data has arrived."),
                                                               1,1000,20,1),
                         wait_time_ms_);

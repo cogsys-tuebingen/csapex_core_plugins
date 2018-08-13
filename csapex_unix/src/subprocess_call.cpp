@@ -37,7 +37,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareText("command", "echo 'ok'"), [this](param::Parameter* p){
+        params.addParameter(param::factory::declareText("command", "echo 'ok'"), [this](param::Parameter* p){
             cmd_ = p->as<std::string>();
             reset();
         });

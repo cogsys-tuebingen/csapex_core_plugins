@@ -25,18 +25,18 @@ void GammaCorrection::setupParameters(Parameterizable& parameters)
         {"logarithm", (int) LOGARITHM}
     };
 
-    csapex::param::Parameter::Ptr type = csapex::param::ParameterFactory::declareParameterSet<int>(
+    csapex::param::Parameter::Ptr type = csapex::param::factory::declareParameterSet<int>(
                 "type",
                 csapex::param::ParameterDescription("The type of transformation to apply"),
                 types, POWER_LAW);
     parameters.addParameter(type);
 
-    addParameter(csapex::param::ParameterFactory::declareRange(
+    addParameter(csapex::param::factory::declareRange(
                      "c",
                      csapex::param::ParameterDescription("Constant factor in  dst = c * log(src + 1)"),
                      0.1, 255.0, 1.0, 0.01));
 
-    addConditionalParameter(csapex::param::ParameterFactory::declareRange(
+    addConditionalParameter(csapex::param::factory::declareRange(
                                 "gamma",
                                 csapex::param::ParameterDescription("Constant factor in  dst = c * (src ^ gamma)"),
                                 0.001, 10.0, 1.0, 0.001),

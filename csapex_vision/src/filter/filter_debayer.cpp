@@ -35,7 +35,7 @@ void Debayer::setupParameters(Parameterizable& parameters)
         {"BayerGR2RGB", (int) CV_BayerGR2RGB},
         {"NNRG2RGB", 667}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
 }
 
 void Debayer::process(csapex::Parameterizable& parameters)

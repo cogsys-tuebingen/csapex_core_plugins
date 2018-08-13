@@ -22,7 +22,7 @@ class FilterROIsByClassification : public csapex::Node
 public:
     void setupParameters(csapex::Parameterizable& parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareValue<std::string>("classes",
+        parameters.addParameter(param::factory::declareValue<std::string>("classes",
                                                                                    param::ParameterDescription("Comma separated list of allowed classification labels"),
                                                                                    "0,1"),
                                 std::bind(&FilterROIsByClassification::updateLabels, this));

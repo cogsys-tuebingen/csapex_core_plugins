@@ -26,11 +26,11 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
     CollectionNode<FeaturesMessage>::setupParameters(parameters);
 
     /// output path
-    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("path", "", "*.yaml"),
+    parameters.addParameter(param::factory::declareFileOutputPath("path", "", "*.yaml"),
                             path_);
 
     /// ensemble specific parameters
-    parameters.addParameter(param::ParameterFactory::declareRange<int>
+    parameters.addParameter(param::factory::declareRange<int>
                             ("gb/weak_count",
                              param::ParameterDescription("Count of trees in the ensemble."),
                              1, 4096, params_.weak_count, 1),
@@ -42,12 +42,12 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
         {"DEVIANCE_LOSS", CvGBTrees::DEVIANCE_LOSS},
         {"SQUARED_LOSS", CvGBTrees::SQUARED_LOSS}
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet
+    parameters.addParameter(param::factory::declareParameterSet
                             ("gb/loss_function_type",
                              param::ParameterDescription("Loss function used for ensemble training."),
                              loss_function_type,
                              (int) CvGBTrees::ABSOLUTE_LOSS));
-    parameters.addParameter(param::ParameterFactory::declareRange<double>
+    parameters.addParameter(param::factory::declareRange<double>
                             ("gb/subsample_portion",
                              param::ParameterDescription("Portion of whole training set used for \n"
                                                          "every single tree training. \n"
@@ -57,7 +57,7 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
                                                          "step is computed as."),
                              0.001, 1.000, params_.subsample_portion, 0.001),
                             subsample_portion_);
-    parameters.addParameter(param::ParameterFactory::declareRange<double>
+    parameters.addParameter(param::factory::declareRange<double>
                             ("gb/shrinkage",
                              param::ParameterDescription("A regularization parameter.\n"
                                                          "Each tree prediction is multiplied on shrinkage value."),
@@ -65,13 +65,13 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
                             shrinkage_);
 
     /// tree specific parameters
-    parameters.addParameter(param::ParameterFactory::declareRange<int>
+    parameters.addParameter(param::factory::declareRange<int>
                             ("dtree/classes",
                              param::ParameterDescription("Number of classes to learn."),
                              2, 100, 2, 1),
                             std::bind(&GradientBoostedTreesTrainer::updatePriors, this));;
 
-    parameters.addParameter(param::ParameterFactory::declareRange<int>
+    parameters.addParameter(param::factory::declareRange<int>
                             ("dtree/max_depth",
                              param::ParameterDescription("The maximum possible depth of the tree. \n"
                                                          "That is the training algorithms attempts to split a node while its depth is less than max_depth. \n"
@@ -79,25 +79,25 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
                                                          "(see the outline of the training procedure in the beginning of the section), and/or if the tree is pruned."),
                              1, 128, params_.max_depth, 1),
                             params_.max_depth);;
-    parameters.addParameter(param::ParameterFactory::declareRange<int>
+    parameters.addParameter(param::factory::declareRange<int>
                             ("dtree/min_sample_count",
                              param::ParameterDescription("If the number of samples in a node is less than this parameter then the node will not be split."),
                              0, 128, params_.min_sample_count, 1),
                             params_.min_sample_count);
-    parameters.addParameter(param::ParameterFactory::declareRange<double>
+    parameters.addParameter(param::factory::declareRange<double>
                             ("dtree/regression_accuracy",
                              param::ParameterDescription("Termination criteria for regression trees. \n"
                                                          "If all absolute differences between an estimated value in a node and values of train samples in this node \n"
                                                          "are less than this parameter then the node will not be split."),
                              0.0, 255.0, params_.regression_accuracy, 0.001),
                             regression_accuracy_);;
-    parameters.addParameter(param::ParameterFactory::declareBool
+    parameters.addParameter(param::factory::declareBool
                             ("use surrogates",
                              param::ParameterDescription("If true then surrogate splits will be built. \n"
                                                          "These splits allow to work with missing data and compute variable importance correctly."),
                              false),
                             params_.use_surrogates);;
-    parameters.addParameter(param::ParameterFactory::declareRange<int>
+    parameters.addParameter(param::factory::declareRange<int>
                             ("dtree/max_categories",
                              param::ParameterDescription("Cluster possible values of a categorical variable into K < max_categories clusters to find a suboptimal split. \n"
                                                          "If a discrete variable, on which the training procedure tries to make a split, \n"
@@ -111,19 +111,19 @@ void GradientBoostedTreesTrainer::setupParameters(Parameterizable &parameters)
                                                          "without employing clustering, thus the parameter is not used in these cases."),
                              0, 100, params_.max_categories, 1),
                             params_.max_categories);;
-    parameters.addParameter(param::ParameterFactory::declareRange<int>
+    parameters.addParameter(param::factory::declareRange<int>
                             ("dtree/cv_folds",
                              param::ParameterDescription("If cv_folds > 1 then prune a tree with K-fold cross-validation where K is equal to cv_folds."),
                              0, 100, params_.cv_folds, 1),
                             params_.cv_folds);;
-    parameters.addParameter(param::ParameterFactory::declareBool
+    parameters.addParameter(param::factory::declareBool
                             ("dtree/use_1se_rule",
                              param::ParameterDescription("If true then a pruning will be harsher.\n"
                                                          "This will make a tree more compact and more resistant to the training data \n"
                                                          "noise but a bit less accurate."),
                              params_.use_1se_rule),
                             params_.use_1se_rule);;
-    parameters.addParameter(param::ParameterFactory::declareBool
+    parameters.addParameter(param::factory::declareBool
                             ("dtree/truncate_pruned_tree",
                              param::ParameterDescription("If true then pruned branches are physically removed from the tree. \n"
                                                          "Otherwise they are retained and it is possible to get results from the \n"
@@ -192,7 +192,7 @@ void GradientBoostedTreesTrainer::updatePriors()
             for(int c = classes_; c < classes; ++c) {
                 std::stringstream name;
                 name << "~priors/" << c;
-                param::Parameter::Ptr p = csapex::param::ParameterFactory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
+                param::Parameter::Ptr p = csapex::param::factory::declareRange<double>(name.str(), 0.0, 50.0, 1.0, 0.01);
                 priors_params_.push_back(p);
                 addTemporaryParameter(p, std::bind(&GradientBoostedTreesTrainer::udpatePriorValues, this));
             }

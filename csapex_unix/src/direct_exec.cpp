@@ -30,7 +30,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareTrigger("execute"),
+        params.addParameter(param::factory::declareTrigger("execute"),
                             [this](param::Parameter* param)
                             {
                                 std::string command = cmd_;
@@ -40,8 +40,8 @@ public:
                                 else
                                     call();
                             });
-        params.addParameter(param::ParameterFactory::declareText("command", "echo 'Test'"), cmd_);
-        params.addParameter(param::ParameterFactory::declareBool("async", false), async_);
+        params.addParameter(param::factory::declareText("command", "echo 'Test'"), cmd_);
+        params.addParameter(param::factory::declareBool("async", false), async_);
     }
 
     void process() override

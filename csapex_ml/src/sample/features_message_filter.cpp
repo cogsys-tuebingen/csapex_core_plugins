@@ -25,7 +25,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareValue("expected classification", 1),
+        params.addParameter(param::factory::declareValue("expected classification", 1),
                             exp_classification_);
     }
 

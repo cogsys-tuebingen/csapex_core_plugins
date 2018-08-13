@@ -36,7 +36,7 @@ void OutputDisplay::setup(NodeModifier& node_modifier)
 
 void OutputDisplay::setupParameters(Parameterizable &params)
 {
-    params.addHiddenParameter(param::ParameterFactory::declareRange("jpg/quality", 0, 100, 70, 1),
+    params.addHiddenParameter(param::factory::declareRange("jpg/quality", 0, 100, 70, 1),
                               jpg_quality_);
 }
 

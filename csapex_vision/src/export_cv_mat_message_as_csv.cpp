@@ -33,29 +33,29 @@ public:
 
     void setupParameters(Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareText(
+        params.addParameter(param::factory::declareText(
                                 "delimiter",
                                 csapex::param::ParameterDescription("Delimiter of csv file"),
                                 ";"),
                             delimiter_);
 
-        params.addParameter(param::ParameterFactory::declareText(
+        params.addParameter(param::factory::declareText(
                                 "filename",
                                 csapex::param::ParameterDescription("Name of csv file"),
                                 "image"),
                             filename_);
 
-        params.addParameter(param::ParameterFactory::declareDirectoryOutputPath(
+        params.addParameter(param::factory::declareDirectoryOutputPath(
                                 "path",
                                 csapex::param::ParameterDescription("Directory to write file to"),
                                 "",
                                 ""),
                             path_);
 
-        params.addParameter(param::ParameterFactory::declareBool("save_one",true),
+        params.addParameter(param::factory::declareBool("save_one",true),
                             save_one_);
 
-        params.addConditionalParameter(param::ParameterFactory::declareTrigger("save csv file"),
+        params.addConditionalParameter(param::factory::declareTrigger("save csv file"),
                                        save_one_,
                                        [this](param::Parameter*) {
             save();

@@ -30,7 +30,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareValue("scale",1.0),
+        params.addParameter(param::factory::declareValue("scale",1.0),
                             scale_);
     }
 

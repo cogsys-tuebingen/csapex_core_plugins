@@ -96,7 +96,7 @@ void GLCM::setup(NodeModifier& node_modifier)
 
 void GLCM::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareRange("bins",
+    addParameter(csapex::param::factory::declareRange("bins",
                                                        csapex::param::ParameterDescription("GLCM histogram bins."),
                                                        2, 255, 10, 1));
 }

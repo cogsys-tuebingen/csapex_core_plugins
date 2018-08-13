@@ -27,44 +27,44 @@ HOGExtractor::HOGExtractor()
 
 void HOGExtractor::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/sigma",
+    parameters.addParameter(param::factory::declareRange("hog/sigma",
                                                                   param::ParameterDescription("Standard deviation for Gaussian blur."),
                                                                   0.0, 10.0, 0.0, 0.1),
                             hog_.winSigma);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("hog/gamma_correction",
+    parameters.addParameter(param::factory::declareBool("hog/gamma_correction",
                                                                  param::ParameterDescription("Enable the gamma correction."),
                                                                  true),
                             hog_.gammaCorrection);
-    parameters.addParameter(param::ParameterFactory::declareBool("hog/signed_gradient",
+    parameters.addParameter(param::factory::declareBool("hog/signed_gradient",
                                                                  param::ParameterDescription("Un-/directed gradients."),
                                                                  hog_.signedGradient),
                             hog_.signedGradient);
 
-    addParameter(param::ParameterFactory::declareRange("hog/gradient_bins",
+    addParameter(param::factory::declareRange("hog/gradient_bins",
                                                        param::ParameterDescription("Amount of gradient bins."),
                                                        2, 18, hog_.nbins, 1),
                  hog_.nbins);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/cells_x",
+    parameters.addParameter(param::factory::declareRange("hog/cells_x",
                                                                   param::ParameterDescription("Cells in x direction."),
                                                                   2, 16, 8, 1),
                             cells_x_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/cells_y",
+    parameters.addParameter(param::factory::declareRange("hog/cells_y",
                                                                   param::ParameterDescription("Cells in x direction."),
                                                                   2, 16, 16, 1),
                             cells_y_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/cell_size",
+    parameters.addParameter(param::factory::declareRange("hog/cell_size",
                                                                   param::ParameterDescription("Size of the cells."),
                                                                   4, 16, 8, 1),
                             cell_size_);
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/block_size",
+    parameters.addParameter(param::factory::declareRange("hog/block_size",
                                                                   param::ParameterDescription("Cell count in both dimension of a block."),
                                                                   1, 4, 2, 1),
                             block_size_);
-    parameters.addParameter(param::ParameterFactory::declareRange("hog/bock_stride",
+    parameters.addParameter(param::factory::declareRange("hog/bock_stride",
                                                                   param::ParameterDescription("Overlap of each block in cells."),
                                                                   1, 3, 1, 1),
                             block_stride_);
@@ -75,12 +75,12 @@ void HOGExtractor::setupParameters(Parameterizable& parameters)
         {"GrowStrict", GROW_STRICT}
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("hog/adaption_mode",
+    parameters.addParameter(param::factory::declareParameterSet("hog/adaption_mode",
                                                                          param::ParameterDescription("Adaption of rois to window size of hog."),
                                                                          adpation_types,
                                                                          (int) SCALE),
                             adaption_type_);
-    parameters.addParameter(param::ParameterFactory::declareBool("mirror", true),
+    parameters.addParameter(param::factory::declareBool("mirror", true),
                             mirror_);
 
 }

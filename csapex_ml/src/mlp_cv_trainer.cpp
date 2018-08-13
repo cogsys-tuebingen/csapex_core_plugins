@@ -32,14 +32,14 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
 {
     CollectionNode<connection_types::FeaturesMessage>::setupParameters(parameters);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareFileOutputPath("file", "mlp.yaml"));
+    parameters.addParameter(csapex::param::factory::declareFileOutputPath("file", "mlp.yaml"));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>
+    parameters.addParameter(csapex::param::factory::declareRange<int>
                             ("classes",
                              csapex::param::ParameterDescription("Number of classes to learn."),
                              0, 100, 2, 1));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>
+    parameters.addParameter(csapex::param::factory::declareRange<int>
                             ("layers",
                              csapex::param::ParameterDescription("Number of hidden layers"),
                              0, 100, 1, 1),
@@ -58,14 +58,14 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
         {"rprop", Params::RPROP},
     };
 
-    csapex::param::Parameter::Ptr training_parameter = csapex::param::ParameterFactory::declareParameterSet<int>
+    csapex::param::Parameter::Ptr training_parameter = csapex::param::factory::declareParameterSet<int>
             ("trainig method",
              training_method,
              Params::BACKPROP);
     parameters.addParameter(training_parameter);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("training param 1", 0, 10, 0.1, 0.01));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<double>("training param 2", 0, 10, 0.1, 0.01));
+    parameters.addParameter(csapex::param::factory::declareRange<double>("training param 1", 0, 10, 0.1, 0.01));
+    parameters.addParameter(csapex::param::factory::declareRange<double>("training param 2", 0, 10, 0.1, 0.01));
 
     std::map<std::string, int> activation_functions = {
         {"identity", Ann::IDENTITY},
@@ -73,17 +73,17 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
         {"gaussian", Ann::GAUSSIAN},
     };
 
-    csapex::param::Parameter::Ptr activation_parameter = csapex::param::ParameterFactory::declareParameterSet<int>
+    csapex::param::Parameter::Ptr activation_parameter = csapex::param::factory::declareParameterSet<int>
             ("activation function",
              activation_functions,
              Ann::SIGMOID_SYM);
     parameters.addParameter(activation_parameter);
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
+    parameters.addConditionalParameter(csapex::param::factory::declareRange<double>
                                        ("activation alpha",
                                         -10, 10, 1.0, 0.01),
                                        [=](){ return activation_parameter->as<int>() != Ann::IDENTITY; });
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<double>
+    parameters.addConditionalParameter(csapex::param::factory::declareRange<double>
                                        ("activation beta",
                                         -10, 10, 1.0, 0.01),
                                        [=](){ return activation_parameter->as<int>() != Ann::IDENTITY; });
@@ -95,7 +95,7 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
         {"CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int) CV_TERMCRIT_ITER | CV_TERMCRIT_EPS}
     };
 
-    csapex::param::Parameter::Ptr termcrit_parameter = csapex::param::ParameterFactory::declareParameterSet
+    csapex::param::Parameter::Ptr termcrit_parameter = csapex::param::factory::declareParameterSet
             ("termcrit_type",
              csapex::param::ParameterDescription("The type of the termination criteria:\n"
                                                  "CV_TERMCRIT_ITER Terminate learning by the max_num_of_trees_in_the_forest;\n"
@@ -104,13 +104,13 @@ void MLPCvTrainer::setupParameters(Parameterizable &parameters)
              termcrit_type, (int) (CV_TERMCRIT_ITER | CV_TERMCRIT_EPS));
     parameters.addParameter(termcrit_parameter);
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange<int>
+    parameters.addConditionalParameter(csapex::param::factory::declareRange<int>
                                        ("max iterations",
                                         csapex::param::ParameterDescription("Maximum number of training iterations."),
                                         0, 1000000, 10000, 100),
                                        [=](){ return (termcrit_parameter->as<int>() & CV_TERMCRIT_ITER) != 0; });
 
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareValue<double>
+    parameters.addConditionalParameter(csapex::param::factory::declareValue<double>
                                        ("epsilon",
                                         csapex::param::ParameterDescription("Training epsilon"),
                                         0.001),
@@ -129,7 +129,7 @@ void MLPCvTrainer::updateLayers()
             {
                 std::stringstream name;
                 name << "~layer/" << l;
-                csapex::param::Parameter::Ptr p = csapex::param::ParameterFactory::declareRange<int>(name.str(), 0, 10000, 10, 1);
+                csapex::param::Parameter::Ptr p = csapex::param::factory::declareRange<int>(name.str(), 0, 10000, 10, 1);
                 layer_params_.push_back(p);
                 addTemporaryParameter(p);
             }

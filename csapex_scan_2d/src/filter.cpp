@@ -20,11 +20,11 @@ ScanFilter::ScanFilter()
 
 void ScanFilter::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max angle",    0.0, M_PI, M_PI, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("min angle",  -M_PI, 0.0 ,-M_PI, 0.1));
+    parameters.addParameter(csapex::param::factory::declareRange("max angle",    0.0, M_PI, M_PI, 0.1));
+    parameters.addParameter(csapex::param::factory::declareRange("min angle",  -M_PI, 0.0 ,-M_PI, 0.1));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max range", 0.0, 30.0, 30.0, 0.1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("min range", 0.0, 30.0, 0.0, 0.1));
+    parameters.addParameter(csapex::param::factory::declareRange("max range", 0.0, 30.0, 30.0, 0.1));
+    parameters.addParameter(csapex::param::factory::declareRange("min range", 0.0, 30.0, 0.0, 0.1));
 }
 
 void ScanFilter::process()

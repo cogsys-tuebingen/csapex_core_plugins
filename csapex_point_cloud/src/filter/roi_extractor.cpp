@@ -24,13 +24,13 @@ ROIExtractor::ROIExtractor()
 
 void ROIExtractor::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("outputs", 0, 10, 0, 1),
+    parameters.addParameter(csapex::param::factory::declareRange<int>("outputs", 0, 10, 0, 1),
                             std::bind(&ROIExtractor::updateOutputs, this));
 
-    param::ParameterPtr filter_param = param::ParameterFactory::declareBool("filter", false);
+    param::ParameterPtr filter_param = param::factory::declareBool("filter", false);
     parameters.addParameter(filter_param,
                             filter_);
-    parameters.addConditionalParameter(param::ParameterFactory::declareRange("filter/class", -100, 100, 0, 1),
+    parameters.addConditionalParameter(param::factory::declareRange("filter/class", -100, 100, 0, 1),
                                        [filter_param]() { return filter_param->as<bool>(); },
                                        filter_class_);
 

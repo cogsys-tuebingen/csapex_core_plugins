@@ -40,5 +40,5 @@ void BoxBlur::process()
 
 void BoxBlur::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("kernel", 1, 255, 1, 2));
+    parameters.addParameter(csapex::param::factory::declareRange("kernel", 1, 255, 1, 2));
 }

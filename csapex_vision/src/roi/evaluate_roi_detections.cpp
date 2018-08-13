@@ -43,26 +43,26 @@ void EvaluateROIDetections::setupParameters(Parameterizable &parameters)
             {"IOU", OVERLAP_IOU},
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("mode",
+    parameters.addParameter(param::factory::declareParameterSet("mode",
                                                                          mode_types,
                                                                          (int) IGNORE_PARTLY_VISIBLE),
                             (int&) mode_);
-    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("statistic path",
+    parameters.addParameter(param::factory::declareFileOutputPath("statistic path",
                                                                            "",
                                                                            "*.txt"),
                             path_of_statistic_);
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("overlap_mode",
+    parameters.addParameter(param::factory::declareParameterSet("overlap_mode",
                                                                          overlap_mode_types,
                                                                          static_cast<int>(OVERLAP_MAX)),
                             reinterpret_cast<int&>(overlap_mode_));
-    parameters.addParameter(param::ParameterFactory::declareRange("overlap", 0.25, 1.0, 0.7, 0.01),
+    parameters.addParameter(param::factory::declareRange("overlap", 0.25, 1.0, 0.7, 0.01),
                             percentage_of_overlap_);
 
 
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("save"),
+    parameters.addParameter(param::factory::declareTrigger("save"),
                             std::bind(&EvaluateROIDetections::save, this));
-    parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+    parameters.addParameter(param::factory::declareTrigger("reset"),
                             std::bind(&EvaluateROIDetections::resetConfusion, this));
 
 }

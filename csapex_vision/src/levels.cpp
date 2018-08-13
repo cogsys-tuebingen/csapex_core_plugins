@@ -23,7 +23,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        addParameter(csapex::param::ParameterFactory::declareBool("auto levels", false),
+        addParameter(csapex::param::factory::declareBool("auto levels", false),
                      [this](csapex::param::Parameter* p) {
             automatic_ = p->as<bool>();
         });
@@ -41,9 +41,9 @@ public:
             csapex::param::Parameter::Ptr p;
             if(channel.fp) {
                 throw std::logic_error("Levels for fp images is not yet implemented.");
-                //                p = csapex::param::ParameterFactory::declareInterval<double>(channel.name, channel.min_f, channel.max_f,channel.min_f, channel.max_f, 0.01);
+                //                p = csapex::param::factory::declareInterval<double>(channel.name, channel.min_f, channel.max_f,channel.min_f, channel.max_f, 0.01);
             } else {
-                p = csapex::param::ParameterFactory::declareInterval(channel.name, channel.min_i, channel.max_i,channel.min_i, channel.max_i, 1);
+                p = csapex::param::factory::declareInterval(channel.name, channel.min_i, channel.max_i,channel.min_i, channel.max_i, 1);
             }
             addTemporaryParameter(p, [this](csapex::param::Parameter* p) {
                 if(!automatic_) {

@@ -39,7 +39,7 @@ void MedianFilter::setup(NodeModifier& node_modifier)
 
 void MedianFilter::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("kernel", 3, 31, kernel_size_, 2),
+    parameters.addParameter(csapex::param::factory::declareRange("kernel", 3, 31, kernel_size_, 2),
                  std::bind(&MedianFilter::update, this));
 }
 

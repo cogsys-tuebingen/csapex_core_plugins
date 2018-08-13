@@ -18,14 +18,14 @@ void MachineLearningNode::setupParameters(Parameterizable& parameters)
 {
     CollectionNode<FeaturesMessage>::setupParameters(parameters);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("perform_classification",
+    parameters.addParameter(param::factory::declareBool("perform_classification",
                                                                  param::ParameterDescription("Train a classification or a regression problem.\n"
                                                                                              "Set true for classification, false for regression problem"),
                                                                  true),
                             is_classification_);
 
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareFileOutputPath
+    parameters.addParameter(csapex::param::factory::declareFileOutputPath
                             ("file_name", default_file_name_),
                             file_name_);
 }

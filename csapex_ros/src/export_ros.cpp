@@ -28,9 +28,9 @@ ExportRos::ExportRos()
 
 void ExportRos::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("queue", 1, 32, 1, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("queue", 1, 32, 1, 1),
                             std::bind(&ExportRos::updateTopic, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareText("topic", "export"),
+    parameters.addParameter(csapex::param::factory::declareText("topic", "export"),
                             std::bind(&ExportRos::updateTopic, this));
 }
 
@@ -86,7 +86,7 @@ void ExportRos::processROS()
 
         } else {
             if(!hasParameter("target_type")) {
-                addTemporaryParameter(param::ParameterFactory::declareParameterSet("target_type", possible_conversions, 0));
+                addTemporaryParameter(param::factory::declareParameterSet("target_type", possible_conversions, 0));
                 selected_target_type = readParameter<int>("target_type");
             }
 

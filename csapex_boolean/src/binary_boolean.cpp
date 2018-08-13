@@ -49,7 +49,7 @@ public:
             {"A NOR B", Operation::NOR},
             {"A XOR B", Operation::XOR}
         };
-        params.addParameter(param::ParameterFactory::declareParameterSet("operation",
+        params.addParameter(param::factory::declareParameterSet("operation",
                                                                          operations,
                                                                          Operation::AND),
                             operation_);

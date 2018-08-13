@@ -34,7 +34,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareText("child frame", "/pose"), child_frame_);
+        params.addParameter(param::factory::declareText("child frame", "/pose"), child_frame_);
     }
 
     void process()

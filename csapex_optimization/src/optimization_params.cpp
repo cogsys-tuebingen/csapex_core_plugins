@@ -27,7 +27,7 @@ void OptimizationParams::setupParameters(csapex::Parameterizable& params)
 
     params_ = &params;
 
-    params.addParameter(param::ParameterFactory::declareRange("problem_dimension",1,100,1,1),
+    params.addParameter(param::factory::declareRange("problem_dimension",1,100,1,1),
                         [this](param::Parameter* p){
         double new_size = (std::size_t) p->as<int>();
         if(new_size < problem_dim_){
@@ -42,7 +42,7 @@ void OptimizationParams::setupParameters(csapex::Parameterizable& params)
         startParams();
     });
 
-    params.addParameter(param::ParameterFactory::declareBool("set_bounds",false),
+    params.addParameter(param::factory::declareBool("set_bounds",false),
                         [this](param::Parameter* p){
         set_bounds_ = p->as<bool>();
         if(set_bounds_){
@@ -52,10 +52,10 @@ void OptimizationParams::setupParameters(csapex::Parameterizable& params)
 
 
 
-    params.addConditionalParameter(param::ParameterFactory::declareBool("bounds/relative",false),
+    params.addConditionalParameter(param::factory::declareBool("bounds/relative",false),
                                    set_bounds_,relative_bounds_);
 
-    params.addConditionalParameter(param::ParameterFactory::declareBool("bounds/one_bound_for_all_params",false),
+    params.addConditionalParameter(param::factory::declareBool("bounds/one_bound_for_all_params",false),
                                    set_bounds_,
                                    [this](param::Parameter* p){
         one_bound_for_all_ = p->as<bool>();
@@ -67,7 +67,7 @@ void OptimizationParams::setupParameters(csapex::Parameterizable& params)
         }
     });
 
-    params.addParameter(param::ParameterFactory::declareBool("set_start",false),
+    params.addParameter(param::factory::declareBool("set_start",false),
                         [this](param::Parameter* p){
         set_start_ = p->as<bool>();
         if(set_start_){
@@ -142,7 +142,7 @@ void  OptimizationParams::boundParams()
         }
         for(std::size_t i = 0; i < max_dim; ++i){
             param::Parameter::Ptr intervall =
-                    param::ParameterFactory::declareInterval("~bounds/interval_" + std::to_string(i),
+                    param::factory::declareInterval("~bounds/interval_" + std::to_string(i),
                                                              -10.0,
                                                              10.0,
                                                              -10.0,
@@ -174,7 +174,7 @@ void  OptimizationParams::startParams()
     if(set_start_){
         for(std::size_t i = 0; i < problem_dim_; ++i){
             param::Parameter::Ptr startVal =
-                    param::ParameterFactory::declareValue("~start/x0_" +std::to_string(i),
+                    param::factory::declareValue("~start/x0_" +std::to_string(i),
                                                           0.1);
 
             std::function<void(param::Parameter* p)> cb = [this, i](param::Parameter* p){
@@ -199,7 +199,7 @@ void OptimizationParams::removeBounds(std::size_t new_size)
 
         param::Parameter::Ptr intervall;
         if(relative_bounds_){
-            intervall = param::ParameterFactory::declareInterval("~bounds/interval_" +std::to_string(i),
+            intervall = param::factory::declareInterval("~bounds/interval_" +std::to_string(i),
                                                                  -10.0,
                                                                  10.0,
                                                                  -0.1,
@@ -207,7 +207,7 @@ void OptimizationParams::removeBounds(std::size_t new_size)
                                                                  0.1);
         }
         else{
-            intervall = param::ParameterFactory::declareInterval("~bounds/interval_" +std::to_string(i),
+            intervall = param::factory::declareInterval("~bounds/interval_" +std::to_string(i),
                                                                  -100.0,
                                                                  100.0,
                                                                  -100.0,
@@ -227,7 +227,7 @@ void OptimizationParams::removeStart(std::size_t new_size)
 
 
         param::Parameter::Ptr val =
-                param::ParameterFactory::declareValue("~start/x0_" +std::to_string(i),
+                param::factory::declareValue("~start/x0_" +std::to_string(i),
                                                       0.1);
         params_->removePersistentParameter(val);
 
@@ -277,7 +277,7 @@ void OptimizationParams::checkBounds()
 void OptimizationParams::removeProbelmDimParam()
 {
 
-    auto param = param::ParameterFactory::declareRange("problem_dimension",1,100,1,1);
+    auto param = param::factory::declareRange("problem_dimension",1,100,1,1);
     params_->removeTemporaryParameter(param);
 }
 

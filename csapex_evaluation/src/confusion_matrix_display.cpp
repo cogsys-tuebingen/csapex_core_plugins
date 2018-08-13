@@ -26,20 +26,20 @@ ConfusionMatrixDisplay::ConfusionMatrixDisplay()
 
 void ConfusionMatrixDisplay::setupParameters(Parameterizable &params)
 {
-    params.addParameter(csapex::param::ParameterFactory::declareText(
+    params.addParameter(csapex::param::factory::declareText(
                                 "filename",
                                 csapex::param::ParameterDescription("Name of csv file"),
                                 "conf_mat"),
                             filename_);
 
-    params.addParameter(csapex::param::ParameterFactory::declareDirectoryOutputPath(
+    params.addParameter(csapex::param::factory::declareDirectoryOutputPath(
                                 "path",
                                 csapex::param::ParameterDescription("Directory to write file to"),
                                 "",
                                 ""),
                             path_);
 
-    params.addParameter(param::ParameterFactory::declareTrigger("save csv file"),
+    params.addParameter(param::factory::declareTrigger("save csv file"),
                             [this](param::Parameter*) {
         save();
     });

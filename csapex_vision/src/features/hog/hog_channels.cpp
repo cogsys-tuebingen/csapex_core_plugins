@@ -25,13 +25,13 @@ HOGChannels::HOGChannels()
 
 void HOGChannels::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("bins", 1, 18, 9, 1),
+    parameters.addParameter(param::factory::declareRange("bins", 1, 18, 9, 1),
                             bins_);
-    parameters.addParameter(param::ParameterFactory::declareRange("ksize", 1, 21, 3, 2),
+    parameters.addParameter(param::factory::declareRange("ksize", 1, 21, 3, 2),
                             ksize_);
-    parameters.addParameter(param::ParameterFactory::declareBool("signed", false),
+    parameters.addParameter(param::factory::declareBool("signed", false),
                             signed_);
-    parameters.addParameter(param::ParameterFactory::declareBool("invert order", true),
+    parameters.addParameter(param::factory::declareBool("invert order", true),
                             invert_order_);
 }
 

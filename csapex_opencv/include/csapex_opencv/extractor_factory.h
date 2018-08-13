@@ -23,7 +23,7 @@ public:
      * @throws Extractor::IllegalDescriptorException iff <b>descriptor</b> is not recognized
      * @return new instance
      */
-    static Extractor::Ptr create(const std::string& keypoint, const std::string& descriptor, const csapex::param::ParameterProvider &param);
+    static Extractor::Ptr create(const std::string& keypoint, const std::string& descriptor);
 
 private:
     ExtractorFactory();

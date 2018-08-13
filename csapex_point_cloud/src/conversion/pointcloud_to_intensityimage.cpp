@@ -21,7 +21,7 @@ PointCloudToIntensityImage::PointCloudToIntensityImage()
 void PointCloudToIntensityImage::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(
-            param::ParameterFactory::declareBool("skip_invalid", true),
+            param::factory::declareBool("skip_invalid", true),
             skip_invalid_);
 }
 

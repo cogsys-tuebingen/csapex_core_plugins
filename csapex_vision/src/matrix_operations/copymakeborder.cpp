@@ -55,11 +55,11 @@ void CopyMakeBorder::setupParameters(Parameterizable &parameters)
         {"WRAP",cv::BORDER_WRAP}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("type", types, (int) cv::BORDER_REPLICATE));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("left", 1, 1000, 1, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("top", 1, 1000, 1, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("right", 1, 1000, 1, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("bottom", 1, 1000, 1, 1));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("type", types, (int) cv::BORDER_REPLICATE));
+    parameters.addParameter(csapex::param::factory::declareRange("left", 1, 1000, 1, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("top", 1, 1000, 1, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("right", 1, 1000, 1, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("bottom", 1, 1000, 1, 1));
 }
 
 void CopyMakeBorder::setup(NodeModifier &node_modifier)

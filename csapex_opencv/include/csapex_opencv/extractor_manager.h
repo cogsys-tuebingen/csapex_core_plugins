@@ -90,13 +90,13 @@ public:
      * @brief The ExtractorInitializer
      */
     struct ExtractorInitializer/* : public Constructor*/ {
-        typedef std::function<void(Extractor*, const csapex::param::ParameterProvider&, bool)> Call;
+        typedef std::function<void(Extractor*, bool)> Call;
 
-        void operator()(Extractor* r, const csapex::param::ParameterProvider& param, bool complete = false) const {
+        void operator()(Extractor* r, bool complete = false) const {
             return construct(r, param, complete);
         }
 
-        void construct(Extractor* r, const csapex::param::ParameterProvider& param, bool complete = false) const {
+        void construct(Extractor* r, bool complete = false) const {
             if(constructor) {
                 constructor(r, param, complete);
             }
@@ -132,7 +132,7 @@ public:
 
     struct Params {
         template <typename T>
-        T read(const csapex::param::ParameterProvider& param, const std::string& name) {
+        T read(const std::string& name) {
             try {
                 csapex::param::Parameter::Ptr p = param.getConstParameter(name);
                 return p->as<T>();
@@ -227,7 +227,7 @@ protected:
             : kc_(kc), dc_(dc), complete_(complete)
         {}
 
-        virtual void init(Extractor* e, const csapex::param::ParameterProvider& param) {
+        virtual void init(Extractor* e) {
             if(complete_) {
                 kc_(e, param, true);
                 // dc_ == kc_

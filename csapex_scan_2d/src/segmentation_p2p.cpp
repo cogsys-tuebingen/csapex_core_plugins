@@ -17,7 +17,7 @@ P2PSegmentation::P2PSegmentation()
 
 void P2PSegmentation::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max. distance",  0.01, 2.0, 0.01, 0.01), std::bind(&P2PSegmentation::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange("max. distance",  0.01, 2.0, 0.01, 0.01), std::bind(&P2PSegmentation::update, this));
 }
 
 void P2PSegmentation::update()

@@ -30,13 +30,13 @@ void AdaBoost::setup(NodeModifier& node_modifier)
 
 void AdaBoost::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::ParameterFactory::declareFileInputPath(
+    addParameter(csapex::param::factory::declareFileInputPath(
                                                       "/adaboost/path",
                                                       "",
                                                       "*.yaml *.tar.gz *.yaml.gz"),
                  path_);
 
-    addParameter(csapex::param::ParameterFactory::declareBool("/adaboost/compute_labels",
+    addParameter(csapex::param::factory::declareBool("/adaboost/compute_labels",
                                                               false),
                  compute_labels_);
 }

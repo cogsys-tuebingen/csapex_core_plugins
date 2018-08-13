@@ -29,7 +29,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareText("frame_id", "frame_id"), frame_id_);
+        params.addParameter(param::factory::declareText("frame_id", "frame_id"), frame_id_);
     }
 
     void process() override

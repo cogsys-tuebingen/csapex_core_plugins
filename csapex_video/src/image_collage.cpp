@@ -20,10 +20,10 @@ ImageCollage::ImageCollage()
 
 void ImageCollage::setupParameters(Parameterizable& parameters)
 {
-    csapex::param::Parameter::Ptr x = csapex::param::ParameterFactory::declareRange("x",
+    csapex::param::Parameter::Ptr x = csapex::param::factory::declareRange("x",
                                                    csapex::param::ParameterDescription("x position of the overlay"),
                                                    0, 800, 0, 1);
-    csapex::param::Parameter::Ptr y = csapex::param::ParameterFactory::declareRange("y",
+    csapex::param::Parameter::Ptr y = csapex::param::factory::declareRange("y",
                                                    csapex::param::ParameterDescription("y position of the overlay"),
                                                    0, 600, 0, 1);
 

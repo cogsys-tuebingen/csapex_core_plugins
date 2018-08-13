@@ -31,31 +31,31 @@ SacFit::SacFit()
 
 void SacFit::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("iterations", 1, 20000, 5000, 200),
+    parameters.addParameter(param::factory::declareRange("iterations", 1, 20000, 5000, 200),
                             max_iterations_);
-    parameters.addParameter(param::ParameterFactory::declareRange("min inliers", 5, 20000, 100, 100),
+    parameters.addParameter(param::factory::declareRange("min inliers", 5, 20000, 100, 100),
                             min_inliers_);
-    parameters.addParameter(param::ParameterFactory::declareRange("normal distance weight", 0.0, 2.0, 0.085, 0.001),
+    parameters.addParameter(param::factory::declareRange("normal distance weight", 0.0, 2.0, 0.085, 0.001),
                             normal_distance_weight_);
-    parameters.addParameter(param::ParameterFactory::declareRange("distance threshold", 0.0, 2.0, 0.009, 0.001),
+    parameters.addParameter(param::factory::declareRange("distance threshold", 0.0, 2.0, 0.009, 0.001),
                             distance_threshold_);
-    parameters.addParameter(param::ParameterFactory::declareValue<double>("model_main_axis_x",0),
+    parameters.addParameter(param::factory::declareValue<double>("model_main_axis_x",0),
                             model_main_axis_x_);
-    parameters.addParameter(param::ParameterFactory::declareValue<double>("model_main_axis_y",0),
+    parameters.addParameter(param::factory::declareValue<double>("model_main_axis_y",0),
                             model_main_axis_y_);
-    parameters.addParameter(param::ParameterFactory::declareValue<double>("model_main_axis_z",0),
+    parameters.addParameter(param::factory::declareValue<double>("model_main_axis_z",0),
                             model_main_axis_z_);
-    parameters.addParameter(param::ParameterFactory::declareValue<double>("model_angle_offset",0),
+    parameters.addParameter(param::factory::declareValue<double>("model_angle_offset",0),
                             model_angle_offset_);
-    parameters.addParameter(param::ParameterFactory::declareRange("sphere min radius", 0.0, 2.0, 0.02, 0.005),
+    parameters.addParameter(param::factory::declareRange("sphere min radius", 0.0, 2.0, 0.02, 0.005),
                             sphere_r_max_);
-    parameters.addParameter(param::ParameterFactory::declareRange("sphere max radius", 0.0, 2.0, 0.8, 0.005),
+    parameters.addParameter(param::factory::declareRange("sphere max radius", 0.0, 2.0, 0.8, 0.005),
                             sphere_r_min_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("from normals", false),
+    parameters.addParameter(param::factory::declareBool("from normals", false),
                             from_normals_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("optimize coefficients", true),
+    parameters.addParameter(param::factory::declareBool("optimize coefficients", true),
                             optimize_coefficients_);
 
     std::map<std::string, int> model_types = {
@@ -76,7 +76,7 @@ void SacFit::setupParameters(Parameterizable &parameters)
         {"TORUS", pcl::SACMODEL_TORUS}
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("models", model_types, (int) pcl::SACMODEL_PLANE),
+    parameters.addParameter(param::factory::declareParameterSet<int>("models", model_types, (int) pcl::SACMODEL_PLANE),
                             model_type_);
 
     std::map<std::string, int> ransac_types = {
@@ -89,7 +89,7 @@ void SacFit::setupParameters(Parameterizable &parameters)
         {"RRANSAC", pcl::SAC_RRANSAC},
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet<int>("ransac type", ransac_types, (int) pcl::SAC_RANSAC),
+    parameters.addParameter(param::factory::declareParameterSet<int>("ransac type", ransac_types, (int) pcl::SAC_RANSAC),
                             ransac_type_);
 
 }

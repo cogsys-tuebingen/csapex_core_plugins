@@ -57,7 +57,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareBool("PCA", false), pca_);
+        params.addParameter(param::factory::declareBool("PCA", false), pca_);
     }
 
     void process()

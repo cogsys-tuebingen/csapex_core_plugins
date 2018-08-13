@@ -75,7 +75,7 @@ RandomTrees::RandomTrees()
 
 void RandomTrees::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("path", "rforest.yaml"),
+    parameters.addParameter(csapex::param::factory::declareFileInputPath("path", "rforest.yaml"),
                             [this](param::Parameter* p) {
         auto path = p->as<std::string>();
         if(path != path_){
@@ -83,7 +83,7 @@ void RandomTrees::setupParameters(Parameterizable& parameters)
             reloadTree();
         }
     });
-    parameters.addParameter(param::ParameterFactory::declareBool("compute_class_weights", false),
+    parameters.addParameter(param::factory::declareBool("compute_class_weights", false),
                             compute_class_weights_);
 }
 

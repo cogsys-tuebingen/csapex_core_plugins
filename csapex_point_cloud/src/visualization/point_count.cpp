@@ -28,7 +28,7 @@ void PointCount::setup(NodeModifier& node_modifier)
 
 void PointCount::setupParameters(Parameterizable &params)
 {
-    params.addParameter(param::ParameterFactory::declareBool("filter invalid", true), filter_);
+    params.addParameter(param::factory::declareBool("filter invalid", true), filter_);
 }
 
 void PointCount::process()

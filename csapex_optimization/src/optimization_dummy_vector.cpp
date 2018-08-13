@@ -31,7 +31,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareOutputText("function"));
+        params.addParameter(param::factory::declareOutputText("function"));
     }
 
     void process() override

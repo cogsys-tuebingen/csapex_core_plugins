@@ -35,19 +35,19 @@ ScanSegmentation2DRenderer::ScanSegmentation2DRenderer() :
 
 void ScanSegmentation2DRenderer::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("publish marker", false));
+    parameters.addParameter(csapex::param::factory::declareBool("publish marker", false));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("use random color", false));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("draw all points", false));
+    parameters.addParameter(csapex::param::factory::declareBool("use random color", false));
+    parameters.addParameter(csapex::param::factory::declareBool("draw all points", false));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("width", 100, 2000, 1000, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("height", 100, 2000, 1000, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("width", 100, 2000, 1000, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("height", 100, 2000, 1000, 1));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("scale", 0.1, 15.0, 1.0, 0.1));
+    parameters.addParameter(csapex::param::factory::declareRange("scale", 0.1, 15.0, 1.0, 0.1));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/segments", 0xFF, 0xCC, 0x00));
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/segments/classified", 0xFF, 0x00, 0x00));
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/bg", 0x00, 0x00, 0x00));
+    parameters.addParameter(csapex::param::factory::declareColorParameter("color/segments", 0xFF, 0xCC, 0x00));
+    parameters.addParameter(csapex::param::factory::declareColorParameter("color/segments/classified", 0xFF, 0x00, 0x00));
+    parameters.addParameter(csapex::param::factory::declareColorParameter("color/bg", 0x00, 0x00, 0x00));
 }
 
 void ScanSegmentation2DRenderer::process()

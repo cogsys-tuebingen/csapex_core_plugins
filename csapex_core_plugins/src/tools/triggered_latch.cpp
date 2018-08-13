@@ -45,7 +45,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareBool("ignore_marker_tokens", true), ignore_markers_);
+        params.addParameter(param::factory::declareBool("ignore_marker_tokens", true), ignore_markers_);
     }
 
     bool canProcess() const override

@@ -20,9 +20,9 @@ public:
 
     void setupParameters(Parameterizable &parameters)
     {
-        parameters.addParameter(param::ParameterFactory::declareValue("label/invalid", -1),
+        parameters.addParameter(param::factory::declareValue("label/invalid", -1),
                                 label_invalid_);
-        parameters.addParameter(param::ParameterFactory::declareValue("label/valid", 1),
+        parameters.addParameter(param::factory::declareValue("label/valid", 1),
                                 label_valid_);
     }
 

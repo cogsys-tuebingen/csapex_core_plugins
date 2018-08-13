@@ -34,10 +34,10 @@ void MaskRefinement::setup(csapex::NodeModifier& node_modifier)
 
 void MaskRefinement::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("submit"), std::bind(&MaskRefinement::ok, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("drop"), std::bind(&MaskRefinement::drop, this));
+    parameters.addParameter(csapex::param::factory::declareTrigger("submit"), std::bind(&MaskRefinement::ok, this));
+    parameters.addParameter(csapex::param::factory::declareTrigger("drop"), std::bind(&MaskRefinement::drop, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("brush/size", 1, 64, 4, 1), [this](csapex::param::Parameter*){
+    parameters.addParameter(csapex::param::factory::declareRange("brush/size", 1, 64, 4, 1), [this](csapex::param::Parameter*){
         update_brush();
     });
 }

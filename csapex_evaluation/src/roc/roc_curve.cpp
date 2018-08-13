@@ -31,7 +31,7 @@ void ROCCurve::setup(NodeModifier& node_modifier)
 
 void ROCCurve::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"), [&](csapex::param::Parameter*) {
+    parameters.addParameter(csapex::param::factory::declareTrigger("reset"), [&](csapex::param::Parameter*) {
         std::unique_lock<std::recursive_mutex> lock(mutex_buffer_);
         entries_.clear();
     });
@@ -41,7 +41,7 @@ void ROCCurve::setupParameters(Parameterizable& parameters)
         {"Precision/Recall", (int) Type::PR}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("type",
+    parameters.addParameter(csapex::param::factory::declareParameterSet("type",
                                                                                  csapex::param::ParameterDescription("Diagram type."),
                                                                                  type,
                                                                                  (int) Type::ROC),
@@ -50,15 +50,15 @@ void ROCCurve::setupParameters(Parameterizable& parameters)
     });
 
 
-    parameters.addParameter(param::ParameterFactory::declareRange
+    parameters.addParameter(param::factory::declareRange
                             ("width",
                              16, 4096, 128, 1));
-    parameters.addParameter(param::ParameterFactory::declareRange
+    parameters.addParameter(param::factory::declareRange
                             ("height",
                              16, 4096, 128, 1));
-    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("save to", "",  "*.txt"),
+    parameters.addParameter(param::factory::declareFileOutputPath("save to", "",  "*.txt"),
                             out_path_);
-    parameters.addParameter(param::ParameterFactory::declareTrigger("save"),
+    parameters.addParameter(param::factory::declareTrigger("save"),
                             std::bind(&ROCCurve::saveData, this));
 }
 

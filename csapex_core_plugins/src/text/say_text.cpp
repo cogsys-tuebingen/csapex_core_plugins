@@ -25,12 +25,12 @@ void SayText::setup(NodeModifier& node_modifier)
 
 void SayText::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareBool("repeat", false), repeat_);
-    parameters.addParameter(param::ParameterFactory::declareBool("asynchrounous", true), async_);
+    parameters.addParameter(param::factory::declareBool("repeat", false), repeat_);
+    parameters.addParameter(param::factory::declareBool("asynchrounous", true), async_);
 
-    parameters.addParameter(param::ParameterFactory::declareText("language", "en"), language_);
-    parameters.addParameter(param::ParameterFactory::declareRange("pitch", 1, 255, 100, 1), pitch_);
-    parameters.addParameter(param::ParameterFactory::declareRange("speed", 1, 255, 100, 1), speed_);
+    parameters.addParameter(param::factory::declareText("language", "en"), language_);
+    parameters.addParameter(param::factory::declareRange("pitch", 1, 255, 100, 1), pitch_);
+    parameters.addParameter(param::factory::declareRange("speed", 1, 255, 100, 1), speed_);
 }
 
 void SayText::process()

@@ -181,9 +181,9 @@ ThresholdOutlierRemoval::ThresholdOutlierRemoval()
 
 void ThresholdOutlierRemoval::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("threshold", 0, 255, 255, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max. distance", 0.0, 10.0, 0.25, 0.01));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("interpolate", false));
+    parameters.addParameter(csapex::param::factory::declareRange("threshold", 0, 255, 255, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("max. distance", 0.0, 10.0, 0.25, 0.01));
+    parameters.addParameter(csapex::param::factory::declareBool("interpolate", false));
 }
 
 void ThresholdOutlierRemoval::setup(NodeModifier& node_modifier)

@@ -40,9 +40,9 @@ void Scale::setup(NodeModifier& node_modifier)
 
 void Scale::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
+    parameters.addParameter(csapex::param::factory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0),
                             scales_[0]);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
+    parameters.addParameter(csapex::param::factory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0),
                             scales_[1]);
     std::map<std::string, int> modes = {
         {"nearest", (int) cv::INTER_NEAREST},
@@ -51,6 +51,6 @@ void Scale::setupParameters(Parameterizable& parameters)
         {"cubic", (int) cv::INTER_CUBIC},
         {"lanczos4", (int) cv::INTER_LANCZOS4}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST),
+    parameters.addParameter(csapex::param::factory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST),
                             mode_);
 }

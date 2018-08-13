@@ -32,8 +32,8 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(csapex::param::ParameterFactory::declareText("frame", "/base_link"), frame);
-        params.addParameter(csapex::param::ParameterFactory::declareText("child_frame", "/marlin"), child_frame);
+        params.addParameter(csapex::param::factory::declareText("frame", "/base_link"), frame);
+        params.addParameter(csapex::param::factory::declareText("child_frame", "/marlin"), child_frame);
     }
 
     void process() override

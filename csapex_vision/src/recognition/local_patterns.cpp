@@ -196,7 +196,7 @@ void LocalPatterns::setupParameters(Parameterizable &parameters)
     };
 
     csapex::param::Parameter::Ptr type =
-            csapex::param::ParameterFactory::declareParameterSet("descriptor",
+            csapex::param::factory::declareParameterSet("descriptor",
                                                          types,
                                                          (int) LBP);
 
@@ -216,25 +216,25 @@ void LocalPatterns::setupParameters(Parameterizable &parameters)
     parameters.addParameter(type);
 
     parameters.addConditionalParameter(
-                csapex::param::ParameterFactory::declareRange("k",
+                csapex::param::factory::declareRange("k",
                                                       csapex::param::ParameterDescription("Center difference offset."),
                                                       -100.0, 100.0, 0.0, 0.1),
                 condition_threshold);
 
     parameters.addConditionalParameter(
-                csapex::param::ParameterFactory::declareRange("neighbours",
+                csapex::param::factory::declareRange("neighbours",
                                                       csapex::param::ParameterDescription("Amount of neighbours."),
                                                       2, 31, 8, 1),
                 condition_neighbours);
 
     parameters.addConditionalParameter(
-                csapex::param::ParameterFactory::declareRange("radius",
+                csapex::param::factory::declareRange("radius",
                                                       csapex::param::ParameterDescription("Radius of neighbourhood."),
                                                       1, 16, 8, 1),
                 condition_neighbours);
 
     parameters.addParameter(
-                csapex::param::ParameterFactory::declareBool("add border",
+                csapex::param::factory::declareBool("add border",
                                                      csapex::param::ParameterDescription("Add boarder to adjust pattern analysis size to image size."),
                                                      false));
 }

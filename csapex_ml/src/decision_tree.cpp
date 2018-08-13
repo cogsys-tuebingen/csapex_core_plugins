@@ -22,7 +22,7 @@ DecisionTree::DecisionTree()
 
 void DecisionTree::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareFileInputPath("file", "dtree.yaml"), std::bind(&DecisionTree::loadTree, this));
+    parameters.addParameter(csapex::param::factory::declareFileInputPath("file", "dtree.yaml"), std::bind(&DecisionTree::loadTree, this));
 }
 
 void DecisionTree::setup(NodeModifier& node_modifier)

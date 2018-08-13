@@ -19,10 +19,10 @@ CloudLabeler::CloudLabeler()
 
 void CloudLabeler::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("submit"), [this](param::Parameter*){
+    parameters.addParameter(csapex::param::factory::declareTrigger("submit"), [this](param::Parameter*){
         done_request();
     });
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("drop"), [this](param::Parameter*){
+    parameters.addParameter(csapex::param::factory::declareTrigger("drop"), [this](param::Parameter*){
         result_.reset();
         done();
     });
@@ -31,41 +31,41 @@ void CloudLabeler::setupParameters(Parameterizable& parameters)
 
     double d = 10.0;
 
-    addParameter(csapex::param::ParameterFactory::declareRange("label",
+    addParameter(csapex::param::factory::declareRange("label",
                                                        csapex::param::ParameterDescription("The label to be assigned to the selected points"),
                                                        0, 9, 0, 1));
-    addParameter(csapex::param::ParameterFactory::declareRange("radius",
+    addParameter(csapex::param::factory::declareRange("radius",
                                                        csapex::param::ParameterDescription("The radius around the cursor to label in"),
                                                        0.02, 1.0, 0.05, 0.001));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/r", 0.01, 20.0, 10.0, 0.01), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/theta", 0., M_PI, M_PI / 2, 0.001), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/phi", -M_PI, M_PI, 0., 0.001), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/dx", -d, d, 0., 0.01), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/dy", -d, d, 0., 0.01), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~view/dz", -d, d, 0., 0.01), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~view/r", 0.01, 20.0, 10.0, 0.01), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~view/theta", 0., M_PI, M_PI / 2, 0.001), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~view/phi", -M_PI, M_PI, 0., 0.001), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~view/dx", -d, d, 0., 0.01), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~view/dy", -d, d, 0., 0.01), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~view/dz", -d, d, 0., 0.01), refresh);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~size/width", 10, 4096, 400, 1), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~size/height", 10, 4096, 400, 1), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~size/width", 10, 4096, 400, 1), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~size/height", 10, 4096, 400, 1), refresh);
 
-    csapex::param::Parameter::Ptr sync = csapex::param::ParameterFactory::declareBool("~size/out/sync", true);
+    csapex::param::Parameter::Ptr sync = csapex::param::factory::declareBool("~size/out/sync", true);
     parameters.addParameter(sync, refresh);
     std::function<bool()> notsync = [sync]() { return !sync->as<bool>(); };
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("~size/out/width", 10, 1024, 400, 1), notsync, refresh);
-    parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("~size/out/height", 10, 1024, 400, 1), notsync, refresh);
+    parameters.addConditionalParameter(csapex::param::factory::declareRange("~size/out/width", 10, 1024, 400, 1), notsync, refresh);
+    parameters.addConditionalParameter(csapex::param::factory::declareRange("~size/out/height", 10, 1024, 400, 1), notsync, refresh);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/background", 255, 255, 255), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/grid", 0, 0, 0), refresh);
+    parameters.addParameter(csapex::param::factory::declareColorParameter("color/background", 255, 255, 255), refresh);
+    parameters.addParameter(csapex::param::factory::declareColorParameter("color/grid", 0, 0, 0), refresh);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("show axes", false), refresh);
+    parameters.addParameter(csapex::param::factory::declareBool("show axes", false), refresh);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~grid/size", 1, 30, 10, 1), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("~grid/resolution", 0.1, 10.0, 1.0, 0.1), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("~grid/xy", true), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("~grid/yz", false), refresh);
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("~grid/xz", false), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~grid/size", 1, 30, 10, 1), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("~grid/resolution", 0.1, 10.0, 1.0, 0.1), refresh);
+    parameters.addParameter(csapex::param::factory::declareBool("~grid/xy", true), refresh);
+    parameters.addParameter(csapex::param::factory::declareBool("~grid/yz", false), refresh);
+    parameters.addParameter(csapex::param::factory::declareBool("~grid/xz", false), refresh);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("point/size", 1., 30., 5., 0.1), refresh);
+    parameters.addParameter(csapex::param::factory::declareRange("point/size", 1., 30., 5., 0.1), refresh);
 }
 
 void CloudLabeler::setup(NodeModifier& node_modifier)

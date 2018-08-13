@@ -32,10 +32,10 @@ void RenderROIs::setup(NodeModifier& node_modifier)
 
 void RenderROIs::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange<int>("thickness", 1, 20, 1, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color", 0,0,0));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("force color", false));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("ignore unclassified", false));
+    parameters.addParameter(csapex::param::factory::declareRange<int>("thickness", 1, 20, 1, 1));
+    parameters.addParameter(csapex::param::factory::declareColorParameter("color", 0,0,0));
+    parameters.addParameter(csapex::param::factory::declareBool("force color", false));
+    parameters.addParameter(csapex::param::factory::declareBool("ignore unclassified", false));
 }
 
 void RenderROIs::process()

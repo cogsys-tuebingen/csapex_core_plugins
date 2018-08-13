@@ -71,7 +71,7 @@ void LoadFilestorage::setup(NodeModifier &node_modifier)
 void LoadFilestorage::setupParameters(Parameterizable &parameters)
 {
     addParameter(
-    csapex::param::ParameterFactory::declarePath("file storage",
+    csapex::param::factory::declarePath("file storage",
                                          csapex::param::ParameterDescription("Load cv file storage containing name matrices."),
                                          true,
                                          "",
@@ -81,19 +81,19 @@ void LoadFilestorage::setupParameters(Parameterizable &parameters)
 
     std::vector<std::string> empty;
     addParameter(
-    csapex::param::ParameterFactory::declareParameterStringSet("entry",
+    csapex::param::factory::declareParameterStringSet("entry",
                                                        csapex::param::ParameterDescription("All contained matrices"),
                                                        empty),
     std::bind(&LoadFilestorage::entryChanged, this));
 
     addParameter(
-    csapex::param::ParameterFactory::declareBool("iterate",
+    csapex::param::factory::declareBool("iterate",
                                           csapex::param::ParameterDescription("Iterate all contained matrices."),
                                           false),
     std::bind(&LoadFilestorage::checkChanged, this));
 
     addParameter(
-    csapex::param::ParameterFactory::declareBool("resend",
+    csapex::param::factory::declareBool("resend",
                                          csapex::param::ParameterDescription("Resend matrix / all matrices."),
                                          true),
     std::bind(&LoadFilestorage::checkChanged, this));

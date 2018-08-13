@@ -40,7 +40,7 @@ void Times::setup(NodeModifier& node_modifier)
 
 void Times::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareRange("scale", -255.0, 255.0, 1.0, 0.1),
+    parameters.addParameter(param::factory::declareRange("scale", -255.0, 255.0, 1.0, 0.1),
                             scale_);
 
     std::map<std::string, int> types =
@@ -53,7 +53,7 @@ void Times::setupParameters(Parameterizable& parameters)
         {"CV_32F", CV_32F},
         {"CV_64F", CV_64F}
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("mode", types, CV_32F),
+    parameters.addParameter(param::factory::declareParameterSet("mode", types, CV_32F),
                             dtype_);
 }
 

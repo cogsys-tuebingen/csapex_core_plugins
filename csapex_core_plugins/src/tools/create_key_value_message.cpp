@@ -31,7 +31,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::ParameterFactory::declareText(
+        params.addParameter(param::factory::declareText(
                                 "key",
                                param::ParameterDescription("key of the KeyValueMessage (name of the message)"),
                                 "something"),

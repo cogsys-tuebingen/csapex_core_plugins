@@ -27,13 +27,13 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+        parameters.addParameter(param::factory::declareTrigger("reset"),
                                 [this](param::Parameter*) {
             reset();
         });
 
-        parameters.addParameter(param::ParameterFactory::declareOutputText("mean"));
-        parameters.addParameter(param::ParameterFactory::declareOutputText("std dev"));
+        parameters.addParameter(param::factory::declareOutputText("mean"));
+        parameters.addParameter(param::factory::declareOutputText("std dev"));
     }
 
     void process()

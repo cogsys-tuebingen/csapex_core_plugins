@@ -27,7 +27,7 @@ void MakeVideo::setup(NodeModifier &node_modifier)
 
 void MakeVideo::setupParameters(Parameterizable &parameters)
 {
-    parameters.addParameter(param::ParameterFactory::declareFileOutputPath("path",
+    parameters.addParameter(param::factory::declareFileOutputPath("path",
                                                                            ""),
                             path_);
 
@@ -58,21 +58,21 @@ void MakeVideo::setupParameters(Parameterizable &parameters)
         {codec_types["XVID"], ".avi"},
     };
 
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("codec", codec_types, 0),
+    parameters.addParameter(param::factory::declareParameterSet("codec", codec_types, 0),
                             codec_type_);
-    parameters.addParameter(param::ParameterFactory::declareRange("fps", 0.1, 100.0, 33.0, 0.1),
+    parameters.addParameter(param::factory::declareRange("fps", 0.1, 100.0, 33.0, 0.1),
                             frame_rate_);
-    parameters.addParameter(param::ParameterFactory::declareRange("width", 0, 1920, 0, 1),
+    parameters.addParameter(param::factory::declareRange("width", 0, 1920, 0, 1),
                             frame_size_.width);
-    parameters.addParameter(param::ParameterFactory::declareRange("height", 0, 1080, 0, 1),
+    parameters.addParameter(param::factory::declareRange("height", 0, 1080, 0, 1),
                             frame_size_.height);
-    parameters.addParameter(param::ParameterFactory::declareBool("buffer", true),
+    parameters.addParameter(param::factory::declareBool("buffer", true),
                             buffer_);
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("clear"),
+    parameters.addParameter(param::factory::declareTrigger("clear"),
                             std::bind(&MakeVideo::clear, this));
 
-    parameters.addParameter(param::ParameterFactory::declareTrigger("write"),
+    parameters.addParameter(param::factory::declareTrigger("write"),
                             std::bind(&MakeVideo::writeBuffer, this));
 }
 

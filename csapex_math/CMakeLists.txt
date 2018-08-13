@@ -5,9 +5,14 @@ find_package(csapex REQUIRED)
 
 find_package(Qt5 COMPONENTS Core REQUIRED)
 
-csapex_package()
+csapex_package(
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME} ${PROJECT_NAME}_core
+    CATKIN_DEPENDS csapex
+)
 
 include_directories(
+    include
     ${csapex_INCLUDE_DIRS}
     ${Qt5Core_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
@@ -16,6 +21,42 @@ include_directories(
 set(CMAKE_AUTOMOC ON)
 
 qt5_add_resources(QT_RESOURCES res/csapex_math_resources.qrc)
+
+
+add_library(${PROJECT_NAME} SHARED
+    src/param/angle_parameter.cpp
+    src/param/factory.cpp
+    #src/param/vector_parameter.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+        ${catkin_LIBRARIES}
+        ${csapex_LIBRARIES}
+)
+
+
+add_library(${PROJECT_NAME}_core SHARED
+    src/register_math.cpp
+)
+target_link_libraries(${PROJECT_NAME}_core
+    ${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+)
+
+
+
+add_library(${PROJECT_NAME}_qt SHARED
+    #src/view/vector_param_adapter.cpp
+    src/view/angle_param_adapter.cpp
+    ${QT_RESOURCES}
+)
+target_link_libraries(${PROJECT_NAME}_qt
+    ${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+)
+
+
 
 add_library(${PROJECT_NAME}_node SHARED
     src/norm_of_generic_vector_message.cpp
@@ -29,8 +70,9 @@ add_library(${PROJECT_NAME}_node SHARED
     ${QT_RESOURCES}
 )
 target_link_libraries(${PROJECT_NAME}_node
-	${catkin_LIBRARIES}
-	${csapex_LIBRARIES}
+    ${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
 )
 
 #
@@ -40,8 +82,27 @@ target_link_libraries(${PROJECT_NAME}_node
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
+install(TARGETS ${PROJECT_NAME}
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(TARGETS ${PROJECT_NAME}_core
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
 install(TARGETS ${PROJECT_NAME}_node
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(TARGETS ${PROJECT_NAME}_qt
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+
+
+
 

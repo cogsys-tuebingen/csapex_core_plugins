@@ -19,21 +19,21 @@ using namespace lib_laser_processing;
 Renderer::Renderer()
     : w(0), h(0), scale(1.0)
 {
-    addParameter(csapex::param::ParameterFactory::declareRange("width", 100, 2000, 256, 1));
-    addParameter(csapex::param::ParameterFactory::declareRange("height", 100, 2000, 256, 1));
+    addParameter(csapex::param::factory::declareRange("width", 100, 2000, 256, 1));
+    addParameter(csapex::param::factory::declareRange("height", 100, 2000, 256, 1));
 
-    addParameter(csapex::param::ParameterFactory::declareRange("scale", 0.1, 50.0, 5.0, 0.1));
-    addParameter(csapex::param::ParameterFactory::declareRange("radius", 1.0, 5.0, 1.0, 0.1));
-    addParameter(csapex::param::ParameterFactory::declareRange("rotation", -M_PI, M_PI, 0.0, 0.01));
+    addParameter(csapex::param::factory::declareRange("scale", 0.1, 50.0, 5.0, 0.1));
+    addParameter(csapex::param::factory::declareRange("radius", 1.0, 5.0, 1.0, 0.1));
+    addParameter(csapex::param::factory::declareRange("rotation", -M_PI, M_PI, 0.0, 0.01));
 
-    addParameter(csapex::param::ParameterFactory::declareBool("drawRays", true));
-    addParameter(csapex::param::ParameterFactory::declareBool("drawHits", true));
+    addParameter(csapex::param::factory::declareBool("drawRays", true));
+    addParameter(csapex::param::factory::declareBool("drawHits", true));
 
-    addParameter(csapex::param::ParameterFactory::declareColorParameter("color/hit", 0xFF, 0xCC, 0x00));
-    addParameter(csapex::param::ParameterFactory::declareColorParameter("color/marked", 0xCC, 0xFF, 0x00));
-    addParameter(csapex::param::ParameterFactory::declareBool("random_mark_color", false));
-    addParameter(csapex::param::ParameterFactory::declareColorParameter("color/ray", 0xFF, 0xEE, 0xDD));
-    addParameter(csapex::param::ParameterFactory::declareColorParameter("color/bg", 0x00, 0x00, 0x00));
+    addParameter(csapex::param::factory::declareColorParameter("color/hit", 0xFF, 0xCC, 0x00));
+    addParameter(csapex::param::factory::declareColorParameter("color/marked", 0xCC, 0xFF, 0x00));
+    addParameter(csapex::param::factory::declareBool("random_mark_color", false));
+    addParameter(csapex::param::factory::declareColorParameter("color/ray", 0xFF, 0xEE, 0xDD));
+    addParameter(csapex::param::factory::declareColorParameter("color/bg", 0x00, 0x00, 0x00));
 }
 
 void Renderer::drawRays(const Scan& scan, cv::Mat& img, const cv::Point2f& origin, cv::Scalar color, double angle_offset, double scale, double radius)

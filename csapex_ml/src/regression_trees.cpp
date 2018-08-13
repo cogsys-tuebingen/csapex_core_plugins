@@ -32,7 +32,7 @@ void RegressionTrees::setup(NodeModifier& node_modifier)
 
 void RegressionTrees::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declarePath("forest_path",
+    parameters.addParameter(csapex::param::factory::declarePath("forest_path",
                                                                          csapex::param::ParameterDescription("Path to a saved svm."),
                                                                          true,
                                                                          ""),

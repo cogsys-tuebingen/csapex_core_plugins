@@ -47,6 +47,6 @@ void SumChannels::setup(NodeModifier& node_modifier)
 
 void SumChannels::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("mean", true));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("abs",  false));
+    parameters.addParameter(csapex::param::factory::declareBool("mean", true));
+    parameters.addParameter(csapex::param::factory::declareBool("abs",  false));
 }

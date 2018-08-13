@@ -61,6 +61,6 @@ void HistogramMaxima::setup(NodeModifier& node_modifier)
 
 void HistogramMaxima::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("k", 1, 128, 2, 1));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("thresh", 0, 1000, 0, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("k", 1, 128, 2, 1));
+    parameters.addParameter(csapex::param::factory::declareRange("thresh", 0, 1000, 0, 1));
 }

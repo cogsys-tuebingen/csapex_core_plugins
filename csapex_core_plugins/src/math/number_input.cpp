@@ -25,7 +25,7 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(csapex::param::ParameterFactory::declareValue<T>("value", (T) 0.0));
+        parameters.addParameter(csapex::param::factory::declareValue<T>("value", (T) 0.0));
     }
 
     void process() override

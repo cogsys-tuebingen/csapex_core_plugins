@@ -126,21 +126,21 @@ void csapex::CameraCalibration::setup(NodeModifier& node_modifier)
 
 void csapex::CameraCalibration::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareFileOutputPath("path_calibration", "", "*.yaml"),
+    parameters.addParameter(csapex::param::factory::declareFileOutputPath("path_calibration", "", "*.yaml"),
                             path_calibration_);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("reset"),
+    parameters.addParameter(csapex::param::factory::declareTrigger("reset"),
                             std::bind(&CameraCalibration::resetPoints, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("calibrate"),
+    parameters.addParameter(csapex::param::factory::declareTrigger("calibrate"),
                             std::bind(&CameraCalibration::calibrate, this));
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("kernel", 1, 31, 11, 2),
+    parameters.addParameter(csapex::param::factory::declareRange("kernel", 1, 31, 11, 2),
                             std::bind(&CameraCalibration::updateParameters, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("squares_x", 1, 12, 5, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("squares_x", 1, 12, 5, 1),
                             std::bind(&CameraCalibration::updateParameters, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("squares_y", 1, 12, 8, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("squares_y", 1, 12, 8, 1),
                             std::bind(&CameraCalibration::updateParameters, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("squares_scale", 0.05, 0.5, 0.1, 0.05),
+    parameters.addParameter(csapex::param::factory::declareRange("squares_scale", 0.05, 0.5, 0.1, 0.05),
                             std::bind(&CameraCalibration::updateParameters, this));
 
     std::map<std::string, int> types {
@@ -149,7 +149,7 @@ void csapex::CameraCalibration::setupParameters(Parameterizable& parameters)
         {"asym. circles grid", static_cast<int>(ASYMMETRIC_CIRCLES_GRID)}
     };
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterSet<int>("pattern_type", types, static_cast<int>(CHESSBOARD)),
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("pattern_type", types, static_cast<int>(CHESSBOARD)),
                             std::bind(&CameraCalibration::updateParameters, this));
 
     std::map<std::string, std::pair<int, bool> > corner_flags = {
@@ -158,7 +158,7 @@ void csapex::CameraCalibration::setupParameters(Parameterizable& parameters)
         {"CV_CALIB_CB_NORMALIZE_IMAGE", std::make_pair(CV_CALIB_CB_NORMALIZE_IMAGE, false)},
         {"CV_CALIB_CB_FILTER_QUADS",    std::make_pair(CV_CALIB_CB_FILTER_QUADS, true)}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterBitSet("corner_flags", corner_flags),
+    parameters.addParameter(csapex::param::factory::declareParameterBitSet("corner_flags", corner_flags),
                             std::bind(&CameraCalibration::updateParameters, this));
 
     std::map<std::string, std::pair<int, bool> > calib_flags = {
@@ -166,7 +166,7 @@ void csapex::CameraCalibration::setupParameters(Parameterizable& parameters)
         {"CV_CALIB_FIX_K5", std::make_pair(CV_CALIB_FIX_K5, true)},
         {"C_CALIB_FIX_K6", std::make_pair(CV_CALIB_FIX_K6, false)}
     };
-    parameters.addParameter(csapex::param::ParameterFactory::declareParameterBitSet("calibration_flags", calib_flags),
+    parameters.addParameter(csapex::param::factory::declareParameterBitSet("calibration_flags", calib_flags),
                             std::bind(&CameraCalibration::updateParameters, this));
 }
 

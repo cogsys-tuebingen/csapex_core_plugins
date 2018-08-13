@@ -48,16 +48,16 @@ public:
 
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareRange("start height", 0.05, 1.0, 0.1, 0.001),
+        parameters.addParameter(param::factory::declareRange("start height", 0.05, 1.0, 0.1, 0.001),
                                 std::bind(&HeightPitchAngle::updateStartParameters, this));
-        parameters.addParameter(param::ParameterFactory::declareRange("start pitch", -M_PI, M_PI, 0.0, 0.01),
+        parameters.addParameter(param::factory::declareRange("start pitch", -M_PI, M_PI, 0.0, 0.01),
                                 std::bind(&HeightPitchAngle::updateStartParameters, this));
-        parameters.addParameter(param::ParameterFactory::declareRange("switch after", 1, 100, 1, 1));
-        parameters.addParameter(param::ParameterFactory::declareBool("renew", false));
+        parameters.addParameter(param::factory::declareRange("switch after", 1, 100, 1, 1));
+        parameters.addParameter(param::factory::declareBool("renew", false));
 
-        parameters.addParameter(param::ParameterFactory::declareTrigger("reset"),
+        parameters.addParameter(param::factory::declareTrigger("reset"),
                                 std::bind(&HeightPitchAngle::reset, this));
-        parameters.addParameter(param::ParameterFactory::declareBool("degrees", false));
+        parameters.addParameter(param::factory::declareBool("degrees", false));
     }
 
     virtual void process() override

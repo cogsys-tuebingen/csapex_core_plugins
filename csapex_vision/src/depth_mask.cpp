@@ -29,23 +29,23 @@ void DepthMask::setupParameters(csapex::Parameterizable& parameters)
             { "mean", static_cast<int>(Method::MEAN) },
             { "histogram", static_cast<int>(Method::HISTOGRAM) },
     };
-    parameters.addParameter(param::ParameterFactory::declareParameterSet("method",
+    parameters.addParameter(param::factory::declareParameterSet("method",
                                                                          available_methods,
                                                                          static_cast<int>(Method::HISTOGRAM)),
                             reinterpret_cast<int&>(method_));
 
-    parameters.addParameter(param::ParameterFactory::declareRange("threshold",
+    parameters.addParameter(param::factory::declareRange("threshold",
                                                                   0.0, 1000.0, 0.1, 0.01),
                             threshold_);
 
-    parameters.addParameter(param::ParameterFactory::declareBool("invert",
+    parameters.addParameter(param::factory::declareBool("invert",
                                                                  false),
                             invert_);
 
-    parameters.addParameter(param::ParameterFactory::declareRange("offset/x",
+    parameters.addParameter(param::factory::declareRange("offset/x",
                                                                   -640, 640, 0, 1),
                             offset_x_);
-    parameters.addParameter(param::ParameterFactory::declareRange("offset/y",
+    parameters.addParameter(param::factory::declareRange("offset/y",
                                                                   -480, 480, 0, 1),
                             offset_y_);
 }

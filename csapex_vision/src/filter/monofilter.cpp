@@ -54,13 +54,13 @@ void MonoFilter::setup(NodeModifier& node_modifier)
 
 void MonoFilter::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("min", 0, 255, 0, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("min", 0, 255, 0, 1),
                  std::bind(&MonoFilter::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("max", 0, 255, 255, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("max", 0, 255, 255, 1),
                  std::bind(&MonoFilter::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareRange("def", 0, 255, 255, 1),
+    parameters.addParameter(csapex::param::factory::declareRange("def", 0, 255, 255, 1),
                  std::bind(&MonoFilter::update, this));
-    parameters.addParameter(csapex::param::ParameterFactory::declareBool("invert", false),
+    parameters.addParameter(csapex::param::factory::declareBool("invert", false),
                  std::bind(&MonoFilter::update, this));
 }
 

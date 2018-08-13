@@ -28,11 +28,11 @@ ScanLabeler::~ScanLabeler()
 
 void ScanLabeler::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::ParameterFactory::declareTrigger("submit", csapex::param::ParameterDescription("Continue with the current labeling")),
+    parameters.addParameter(csapex::param::factory::declareTrigger("submit", csapex::param::ParameterDescription("Continue with the current labeling")),
                                                          std::bind(&ScanLabeler::submit, this));
 
-    addParameter(csapex::param::ParameterFactory::declareBool("automatic", csapex::param::ParameterDescription("Automatically continue without user interaction"), false));
-    addParameter(csapex::param::ParameterFactory::declareRange("label",
+    addParameter(csapex::param::factory::declareBool("automatic", csapex::param::ParameterDescription("Automatically continue without user interaction"), false));
+    addParameter(csapex::param::factory::declareRange("label",
                                                        csapex::param::ParameterDescription("The label to be assigned to the selected points"),
                                                        0, 9, 0, 1));
 }

@@ -25,7 +25,7 @@ public:
     }
     virtual void setupParameters(Parameterizable &parameters) override
     {
-        parameters.addParameter(param::ParameterFactory::declareValue("set", -1),
+        parameters.addParameter(param::factory::declareValue("set", -1),
                                 set_);
     }
     virtual void process() override
