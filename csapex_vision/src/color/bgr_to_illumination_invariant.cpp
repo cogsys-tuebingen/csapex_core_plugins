@@ -24,25 +24,32 @@ public:
 
         CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::unknown, in->frame_id, in->stamp_micro_seconds));
         out->value = cv::Mat(in->value.rows, in->value.cols, CV_32FC1, cv::Scalar());
+        CvMatMessage::Ptr out_mask(new connection_types::CvMatMessage(enc::mono, in->frame_id, in->stamp_micro_seconds));
+        out_mask->value = cv::Mat(in->value.rows, in->value.cols, CV_8UC1, cv::Scalar(255));
 
-        cv::Mat tmp;
-        in->value.convertTo(tmp, CV_32FC3, normalize_ ? 1.0 / 255.0 : 1.0);
 
-        const cv::Vec3f *src = tmp.ptr<cv::Vec3f>();
-        float *dst = out->value.ptr<float>();
+        const cv::Vec3b *src = in->value.ptr<cv::Vec3b>();
+        float *dst  = out->value.ptr<float>();
+        uchar *mask = out_mask->value.ptr<uchar>();
         const std::size_t size = static_cast<std::size_t>(out->value.cols * out->value.rows);
         for(std::size_t i = 0 ; i < size ; ++i) {
-            const cv::Vec3f &p = src[i];
-            dst[i] = 0.5 + std::log(p[1]) - alpha_ * std::log(p[0]) - (1.0 - alpha_) * std::log(p[2]);
+            const cv::Vec3b &p = src[i];
+            if(p[0] == 0 || p[1] == 0 || p[2] == 0) {
+              mask[i] = 0;
+            } else {
+              dst[i] = 0.5 + std::log(p[1]) - alpha_ * std::log(p[0]) - (1.0 - alpha_) * std::log(p[2]);
+            }
         }
 
         msg::publish(output_, out);
+        msg::publish(output_mask_, out_mask);
     }
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
         input_ = node_modifier.addInput<CvMatMessage>("original");
         output_ = node_modifier.addOutput<CvMatMessage>("adjusted");
+        output_mask_ = node_modifier.addOutput<CvMatMessage>("mask");
     }
 
     virtual void setupParameters(Parameterizable &parameters)
@@ -55,6 +62,8 @@ public:
 
 protected:
     csapex::Output*   output_;
+    csapex::Output*   output_mask_;
+
     csapex::Input*    input_;
     double alpha_;
     bool normalize_;
