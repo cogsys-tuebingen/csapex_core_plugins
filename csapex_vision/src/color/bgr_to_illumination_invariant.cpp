@@ -36,9 +36,8 @@ public:
             const cv::Vec3b &p = src[i];
             if(p[0] == 0 || p[1] == 0 || p[2] == 0) {
               mask[i] = 0;
-            } else {
-              dst[i] = 0.5 + std::log(p[1]) - alpha_ * std::log(p[0]) - (1.0 - alpha_) * std::log(p[2]);
             }
+            dst[i] = 0.5 + std::log(p[1]) - alpha_ * std::log(p[0]) - (1.0 - alpha_) * std::log(p[2]);
         }
 
         msg::publish(output_, out);
