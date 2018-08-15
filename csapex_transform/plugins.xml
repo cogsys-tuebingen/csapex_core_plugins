@@ -5,6 +5,9 @@
 </library>
 
 <library path="libcsapex_transform_plugin_node">
+<class type="csapex::TransformAddNoise" base_class_type="csapex::Node">
+  <description>Adds white noise to transform message</description>
+</class>
 <class type="csapex::VectorDoubleToTransform" base_class_type="csapex::Node">
   <description>Convert a GernericVectorMessage double to TransformMessage.</description>
 </class>

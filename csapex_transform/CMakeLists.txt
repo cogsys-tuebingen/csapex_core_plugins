@@ -52,6 +52,7 @@ target_link_libraries(${PROJECT_NAME}_plugin_core ${PROJECT_NAME}
 
 
 add_library(${PROJECT_NAME}_plugin_node
+    src/transform_add_noise.cpp
     src/vector_double_to_transform.cpp
     src/transform_to_vector_double.cpp
     src/generate_relative_transform.cpp
