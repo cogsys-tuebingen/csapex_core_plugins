@@ -7,6 +7,8 @@
 
 /// SYSTEM
 #include <Eigen/Dense>
+#include <Eigen/StdVector>
+EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3d)
 
 namespace csapex {
 
@@ -43,12 +45,13 @@ private:
      *
      * @return the shift offset that makes the points match
      */
-    int matchSidesOfTriangles(const std::vector<Eigen::Vector3d> &points1, const std::vector<Eigen::Vector3d> &points2);
+    int matchSidesOfTriangles(const std::vector<Eigen::Vector3d> &points1,
+                              const std::vector<Eigen::Vector3d> &points2);
 
     /** Calculate the euklidian distance of two points in 3d Space
      * @return euklidian distance in meter
      */
-    double euklidianDistance(Eigen::Vector3d p1, Eigen::Vector3d p2);
+    double euklidianDistance(const Eigen::Vector3d& p1, const Eigen::Vector3d& p2);
 
     /** calculate euler angles from a Rotationmatrix R
      * @brief calculates the euler angles from a rotatin matrix R based on the example from
@@ -58,10 +61,11 @@ private:
      * @param[out] theta out roation angle around y-axis
      * @param[out] phi roation angle around z-axis
      */
-    void eulerAnglesFromRotationMatrix( Eigen::Matrix3d R, double &psi, double &theta, double &phi);
+    void eulerAnglesFromRotationMatrix( const Eigen::Matrix3d& R, double &psi, double &theta, double &phi);
 
     // Find Transformation from matched triangels
-    Eigen::Matrix4d calculateTransformation(const std::vector<Eigen::Vector3d> &points_ref, const std::vector<Eigen::Vector3d> &points_new, int offset);
+    Eigen::Matrix4d calculateTransformation(const std::vector<Eigen::Vector3d> &points_ref,
+                                            const std::vector<Eigen::Vector3d> &points_new, int offset);
     Eigen::Matrix4d threePointsToTransformation(const std::vector<Eigen::Vector3d> &points);
     // Optimize transform over time see: http://www.cs.cmu.edu/~ranjith/lcct.html
 };

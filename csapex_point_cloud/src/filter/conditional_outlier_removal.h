@@ -17,6 +17,8 @@ public:
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
     enum ConditionType {AND, OR};

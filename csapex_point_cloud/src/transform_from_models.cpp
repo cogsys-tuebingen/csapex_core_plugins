@@ -121,7 +121,7 @@ void TransformFromModels::process()
 }
 
 // TODO: This can also be done by tf library
-void TransformFromModels::eulerAnglesFromRotationMatrix( Eigen::Matrix3d R, double &psi, double &theta, double &phi)
+void TransformFromModels::eulerAnglesFromRotationMatrix(const Eigen::Matrix3d &R, double &psi, double &theta, double &phi)
 {
     /* Note: this function is based on the paper http://www.soi.city.ac.uk/~sbbh653/publications/euler.pdf
      * but the second solution is ignored
@@ -208,12 +208,13 @@ std::vector<Eigen::Vector3d> TransformFromModels::getInterestingPointsFromModels
     return points;
 }
 
-double TransformFromModels::euklidianDistance(Eigen::Vector3d p1, Eigen::Vector3d p2)
+double TransformFromModels::euklidianDistance(const Eigen::Vector3d &p1, const Eigen::Vector3d &p2)
 {
     return std::sqrt((p1(0)-p2(0))*(p1(0)-p2(0)) + (p1(1)-p2(1))*(p1(1)-p2(1)) + (p1(2)-p2(2))*(p1(2)-p2(2)));
 }
 
-int TransformFromModels::matchSidesOfTriangles(const std::vector<Eigen::Vector3d> &points1, const std::vector<Eigen::Vector3d> &points2)
+int TransformFromModels::matchSidesOfTriangles(const std::vector<Eigen::Vector3d> &points1,
+                                               const std::vector<Eigen::Vector3d> &points2)
 {
     // Calculated distances of the points -> that are the sides of the triangles
     std::vector<double> distances1;
@@ -259,7 +260,8 @@ int TransformFromModels::matchSidesOfTriangles(const std::vector<Eigen::Vector3d
     return min_offset;
 }
 
-Eigen::Matrix4d TransformFromModels::calculateTransformation(const std::vector<Eigen::Vector3d> &points_ref, const std::vector<Eigen::Vector3d> &points_new, int offset)
+Eigen::Matrix4d TransformFromModels::calculateTransformation(const std::vector<Eigen::Vector3d> &points_ref,
+                                                             const std::vector<Eigen::Vector3d> &points_new, int offset)
 {
     // Shift the reference points according to the offset
     std::vector<Eigen::Vector3d> points_new_shifted;
