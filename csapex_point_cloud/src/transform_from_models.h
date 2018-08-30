@@ -7,9 +7,7 @@
 
 /// SYSTEM
 #include <Eigen/Dense>
-#include <Eigen/StdVector>
-EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Vector3d)
-
+#include <eigen_stl_containers/eigen_stl_containers.h>
 namespace csapex {
 
 class TransformFromModels : public csapex::Node
@@ -36,7 +34,7 @@ private:
      * @param[in] models a vector with all the models of the segmentation
      * @return a vector with the cordinates of the interresting points
       */
-    std::vector<Eigen::Vector3d> getInterestingPointsFromModels(std::shared_ptr<std::vector<ModelMessage> const> models);
+    EigenSTL::vector_Vector3d getInterestingPointsFromModels(std::shared_ptr<std::vector<ModelMessage> const> models);
 
     /** Match sides of triangle
      * @brief compares the sides of a triangle defined by 3 points
@@ -45,8 +43,8 @@ private:
      *
      * @return the shift offset that makes the points match
      */
-    int matchSidesOfTriangles(const std::vector<Eigen::Vector3d> &points1,
-                              const std::vector<Eigen::Vector3d> &points2);
+    int matchSidesOfTriangles(const EigenSTL::vector_Vector3d &points1,
+                              const EigenSTL::vector_Vector3d &points2);
 
     /** Calculate the euklidian distance of two points in 3d Space
      * @return euklidian distance in meter
@@ -64,9 +62,9 @@ private:
     void eulerAnglesFromRotationMatrix( const Eigen::Matrix3d& R, double &psi, double &theta, double &phi);
 
     // Find Transformation from matched triangels
-    Eigen::Matrix4d calculateTransformation(const std::vector<Eigen::Vector3d> &points_ref,
-                                            const std::vector<Eigen::Vector3d> &points_new, int offset);
-    Eigen::Matrix4d threePointsToTransformation(const std::vector<Eigen::Vector3d> &points);
+    Eigen::Matrix4d calculateTransformation(const EigenSTL::vector_Vector3d &points_ref,
+                                            const EigenSTL::vector_Vector3d &points_new, int offset);
+    Eigen::Matrix4d threePointsToTransformation(const EigenSTL::vector_Vector3d &points);
     // Optimize transform over time see: http://www.cs.cmu.edu/~ranjith/lcct.html
 };
 }
