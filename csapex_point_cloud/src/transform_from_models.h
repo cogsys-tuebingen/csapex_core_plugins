@@ -7,11 +7,14 @@
 
 /// SYSTEM
 #include <Eigen/Dense>
-#include <eigen_stl_containers/eigen_stl_containers.h>
+#include<Eigen/StdVector>
+
 namespace csapex {
 
 class TransformFromModels : public csapex::Node
 {
+public:
+    typedef std::vector<Eigen::Vector3d, Eigen::aligned_allocator<Eigen::Vector3d>> StlVectorEigenVector3d;
 public:
     TransformFromModels();
 
@@ -34,7 +37,7 @@ private:
      * @param[in] models a vector with all the models of the segmentation
      * @return a vector with the cordinates of the interresting points
       */
-    EigenSTL::vector_Vector3d getInterestingPointsFromModels(std::shared_ptr<std::vector<ModelMessage> const> models);
+    StlVectorEigenVector3d getInterestingPointsFromModels(std::shared_ptr<std::vector<ModelMessage> const> models);
 
     /** Match sides of triangle
      * @brief compares the sides of a triangle defined by 3 points
@@ -43,8 +46,8 @@ private:
      *
      * @return the shift offset that makes the points match
      */
-    int matchSidesOfTriangles(const EigenSTL::vector_Vector3d &points1,
-                              const EigenSTL::vector_Vector3d &points2);
+    int matchSidesOfTriangles(const StlVectorEigenVector3d &points1,
+                              const StlVectorEigenVector3d &points2);
 
     /** Calculate the euklidian distance of two points in 3d Space
      * @return euklidian distance in meter
@@ -62,9 +65,9 @@ private:
     void eulerAnglesFromRotationMatrix( const Eigen::Matrix3d& R, double &psi, double &theta, double &phi);
 
     // Find Transformation from matched triangels
-    Eigen::Matrix4d calculateTransformation(const EigenSTL::vector_Vector3d &points_ref,
-                                            const EigenSTL::vector_Vector3d &points_new, int offset);
-    Eigen::Matrix4d threePointsToTransformation(const EigenSTL::vector_Vector3d &points);
+    Eigen::Matrix4d calculateTransformation(const StlVectorEigenVector3d &points_ref,
+                                            const StlVectorEigenVector3d &points_new, int offset);
+    Eigen::Matrix4d threePointsToTransformation(const StlVectorEigenVector3d &points);
     // Optimize transform over time see: http://www.cs.cmu.edu/~ranjith/lcct.html
 };
 }

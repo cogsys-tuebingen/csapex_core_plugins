@@ -53,8 +53,8 @@ void TransformFromModels::process()
 
 
     // Process data
-    EigenSTL::vector_Vector3d points_ref = getInterestingPointsFromModels(models_ref);
-    EigenSTL::vector_Vector3d points_new = getInterestingPointsFromModels(models_new);
+    StlVectorEigenVector3d points_ref = getInterestingPointsFromModels(models_ref);
+    StlVectorEigenVector3d points_new = getInterestingPointsFromModels(models_new);
 
     // Output Varibales
     double x,y,z;
@@ -153,9 +153,9 @@ void TransformFromModels::eulerAnglesFromRotationMatrix(const Eigen::Matrix3d &R
 
 }
 
-EigenSTL::vector_Vector3d TransformFromModels::getInterestingPointsFromModels(std::shared_ptr<std::vector<ModelMessage> const> models)
+TransformFromModels::StlVectorEigenVector3d TransformFromModels::getInterestingPointsFromModels(std::shared_ptr<std::vector<ModelMessage> const> models)
 {
-    EigenSTL::vector_Vector3d points;
+    TransformFromModels::StlVectorEigenVector3d points;
 
     // got through all models
     // TODO: there should only be 3 models
@@ -213,8 +213,8 @@ double TransformFromModels::euklidianDistance(const Eigen::Vector3d &p1, const E
     return std::sqrt((p1(0)-p2(0))*(p1(0)-p2(0)) + (p1(1)-p2(1))*(p1(1)-p2(1)) + (p1(2)-p2(2))*(p1(2)-p2(2)));
 }
 
-int TransformFromModels::matchSidesOfTriangles(const EigenSTL::vector_Vector3d &points1,
-                                               const EigenSTL::vector_Vector3d &points2)
+int TransformFromModels::matchSidesOfTriangles(const StlVectorEigenVector3d &points1,
+                                               const StlVectorEigenVector3d &points2)
 {
     // Calculated distances of the points -> that are the sides of the triangles
     std::vector<double> distances1;
@@ -260,11 +260,11 @@ int TransformFromModels::matchSidesOfTriangles(const EigenSTL::vector_Vector3d &
     return min_offset;
 }
 
-Eigen::Matrix4d TransformFromModels::calculateTransformation(const EigenSTL::vector_Vector3d &points_ref,
-                                                             const EigenSTL::vector_Vector3d &points_new, int offset)
+Eigen::Matrix4d TransformFromModels::calculateTransformation(const StlVectorEigenVector3d &points_ref,
+                                                             const StlVectorEigenVector3d &points_new, int offset)
 {
     // Shift the reference points according to the offset
-    EigenSTL::vector_Vector3d points_new_shifted;
+    StlVectorEigenVector3d points_new_shifted;
     for (unsigned int i=0; i < points_new.size(); i++) {
         points_new_shifted.push_back(points_new.at((i+offset)% points_new.size()));
     }
@@ -281,7 +281,7 @@ Eigen::Matrix4d TransformFromModels::calculateTransformation(const EigenSTL::vec
 
 using namespace std;
 
-Eigen::Matrix4d TransformFromModels::threePointsToTransformation(const EigenSTL::vector_Vector3d &points)
+Eigen::Matrix4d TransformFromModels::threePointsToTransformation(const StlVectorEigenVector3d &points)
 {
     Eigen::Matrix4d transformation;
     transformation.setZero(); // initalize with zeros
