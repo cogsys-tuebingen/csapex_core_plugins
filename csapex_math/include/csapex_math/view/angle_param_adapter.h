@@ -23,7 +23,7 @@ private:
     void set(double angle);
 
 private:
-    param::AngleParameterPtr angle_p_;
+    param::AngleParameter::Ptr angle_p_;
 };
 
 }  // namespace csapex
