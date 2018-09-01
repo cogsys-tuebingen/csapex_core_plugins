@@ -8,6 +8,8 @@
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex_transform/transform_message.h>
 
+/// SYSTEM
+#include <random>
 using namespace csapex;
 using namespace csapex::connection_types;
 
