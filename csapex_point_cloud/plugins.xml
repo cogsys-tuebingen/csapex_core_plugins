@@ -5,6 +5,9 @@
 </library>
 
 <library path="libcsapex_point_cloud_plugin_node">
+<class type="csapex::VectorOfIndiciesToIndices" base_class_type="csapex::Node">
+  <description>Converts vector of PointIndicesMessage</description>
+</class>
 <class type="csapex::PCDPointCloudMessageProvider" base_class_type="csapex::MessageProvider">
   <description></description>
 </class>
