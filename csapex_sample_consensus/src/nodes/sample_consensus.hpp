@@ -116,7 +116,8 @@ public:
         out_inlier_indices_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Model Points");
         out_outlier_indices_= node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Rejected Points");
     }
-
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 protected:
     enum ModelType {PLANE, NORMAL_PLANE, PARALLEL_NORMAL_PLANE};
 

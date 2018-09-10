@@ -99,8 +99,8 @@ public:
     bool                  normal_neighbour_to_neighbour_;
 
     math::Distribution<3> cluster_normal_distribution_;
-
-
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 };
 

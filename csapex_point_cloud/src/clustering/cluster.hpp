@@ -20,7 +20,7 @@ public:
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
-
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 private:
     template<typename PointT>
     void selectData(typename pcl::PointCloud<PointT>::ConstPtr cloud);

@@ -67,6 +67,8 @@ struct VoxelData
     {
         return detail::FeatureOp<FeatureList>::template get<T>(features);
     }
+
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 }}
