@@ -5,6 +5,9 @@
 </library>
 
 <library path="libcsapex_math_node">
+<class type="csapex::VectorInput" base_class_type="csapex::Node">
+  <description>Send a static vector into the graph</description>
+</class>
 <class type="csapex::NormOfGenericVectorMessage" base_class_type="csapex::Node">
   <description>Calculates the Euclidean  norm of a GenericVectorMessage</description>
 </class>

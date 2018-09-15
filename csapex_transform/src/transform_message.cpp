@@ -36,12 +36,16 @@ void TransformMessage::sanitize()
 }
 
 
-void TransformMessage::cloneData(const TransformMessage& other)
+bool TransformMessage::cloneData(const TransformMessage& other)
 {
-    Message::cloneDataFrom(other);
+    if(!Message::cloneDataFrom(other)) {
+        return false;
+    }
 
     child_frame = other.child_frame;
     value = other.value;
+
+    return true;
 }
 
 /// YAML

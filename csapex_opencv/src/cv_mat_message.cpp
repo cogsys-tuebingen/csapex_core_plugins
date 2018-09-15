@@ -25,12 +25,14 @@ CvMatMessage::~CvMatMessage()
 {
 }
 
-void CvMatMessage::cloneData(const CvMatMessage& other)
+bool CvMatMessage::cloneData(const CvMatMessage& other)
 {
     Message::cloneDataFrom(other);
 
     encoding = other.encoding;
     value = other.value.clone();
+
+    return true;
 }
 
 void CvMatMessage::writeNative(const std::string &path, const std::string &base, const std::string &suffix) const

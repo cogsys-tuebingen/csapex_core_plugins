@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-project(csapex_core_plugins_tests)
+project(csapex_math_tests)
 
 enable_testing()
 
@@ -51,7 +51,7 @@ target_compile_definitions(${PROJECT_NAME}
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 set_tests_properties(${PROJECT_NAME} PROPERTIES TIMEOUT 60)
 target_link_libraries(${PROJECT_NAME}
-    csapex_core_plugins_core
-    csapex_core_plugins_node
+    csapex_math_core
+    csapex_math
     ${catkin_LIBRARIES}
     gtest gtest_main)

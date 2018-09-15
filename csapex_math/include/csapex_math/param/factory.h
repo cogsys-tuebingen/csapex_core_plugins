@@ -4,6 +4,9 @@
 /// PROJECT
 #include <csapex/param/parameter_builder.h>
 
+/// COMPONENT
+#include <csapex_math/param/linear_vector_parameter.h>
+
 namespace csapex {
 namespace param {
 namespace factory {
@@ -18,6 +21,11 @@ ParameterBuilder declareAngle(const std::string &name,
                               const ParameterDescription &description,
                               double angle);
 ParameterBuilder declareAngle(const std::string &name, double angle);
+
+
+ParameterBuilder declareVector(const std::string &name, const std::vector<double>& vector);
+ParameterBuilder declareVector(const std::string &name, const ParameterDescription& description, const std::vector<double>& vector);
+
 } // namespace factory
 } // namespace param
 } // namespace csapex

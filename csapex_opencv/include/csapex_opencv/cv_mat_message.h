@@ -42,7 +42,7 @@ public:
     bool hasChannels(std::size_t count) const;
     bool hasChannels(std::size_t count, int mat_type) const;
 
-    void cloneData(const CvMatMessage& other);
+    bool cloneData(const CvMatMessage& other);
 
 private:
     Encoding encoding;
