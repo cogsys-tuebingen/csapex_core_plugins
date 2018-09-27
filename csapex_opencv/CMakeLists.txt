@@ -46,6 +46,7 @@ qt5_add_resources(QT_RESOURCES res/csapex_vision_resources.qrc)
 
 add_library(${PROJECT_NAME} SHARED
     src/circle.cpp
+    src/circle_message.cpp
     src/filter.cpp
     src/encoding.cpp
     src/cv_mat_message.cpp
