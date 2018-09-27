@@ -13,7 +13,7 @@
 #include <csapex_ros/ros_handler.h>
 #include <csapex/factory/generic_node_factory.hpp>
 #include <csapex/factory/node_factory_impl.h>
-
+#include <csapex_opencv/circle.h>
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 #include <QMetaType>
@@ -74,6 +74,7 @@ void RegisterPlugin::init(CsApexCore& core)
     RosMessageConversion::registerConversion<sensor_msgs::Image, connection_types::CvMatMessage, Image2CvMat>();
     RosMessageConversion::registerConversion<sensor_msgs::CompressedImage, connection_types::CvMatMessage, CompressedImage2CvMat>();
     RosMessageConversion::registerConversion<sensor_msgs::RegionOfInterest, connection_types::RoiMessage, ConvertROI>();
+    connection_types::GenericVectorMessage::registerType<connection_types::CircleMessage>();
 
     auto cWrap = GenericNodeFactory::createConstructorFromFunction<ParameterInfoTestWrap>
             (testWrap, "TestWrap");
