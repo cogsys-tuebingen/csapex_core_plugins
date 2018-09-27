@@ -19,6 +19,7 @@ public:
 private:
     Input* input_;
     Output* output_;
+    Output* out_circles_;
 };
 
 }

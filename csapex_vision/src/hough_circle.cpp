@@ -3,7 +3,8 @@
 
 /// COMPONENT
 #include <csapex_opencv/cv_mat_message.h>
-
+#include <csapex_opencv/circle_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 /// PROJECT
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
@@ -41,6 +42,7 @@ void HoughCircle::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<CvMatMessage>("Image");
     output_ = node_modifier.addOutput<CvMatMessage>("Debug Image");
+    out_circles_ = node_modifier.addOutput<GenericVectorMessage, CircleMessage>("Detected Circles");
 }
 
 void HoughCircle::process()
@@ -67,13 +69,23 @@ void HoughCircle::process()
         msg->value.copyTo(out->value);
     }
 
+    std::shared_ptr<std::vector<CircleMessage>> circle_msg(new std::vector<CircleMessage>);
+
     for(unsigned i = 0; i < circles.size(); ++i) {
         cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
         int radius = cvRound(circles[i][2]);
         cv::circle(out->value, center, 3, cv::Scalar(0,255,0), -1, 8, 0 );
         cv::circle(out->value, center, radius, cv::Scalar(0,0,255), 3, 8, 0 );
+        CircleMessage c;
+        c.frame_id = msg->frame_id;
+        c.stamp_micro_seconds = msg->stamp_micro_seconds;
+        c.value = Circle(static_cast<double>(circles[i][0]),
+                         static_cast<double>(circles[i][1]),
+                         static_cast<double>(circles[i][2]));
+        circle_msg->emplace_back(c);
     }
-
     msg::publish(output_, out);
+    msg::publish<GenericVectorMessage, CircleMessage>(out_circles_, circle_msg);
+
 }
 
