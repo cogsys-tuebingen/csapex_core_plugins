@@ -11,7 +11,7 @@ YAML::Node YAML::convert<csapex::connection_types::CircleMessage>::encode(const 
   YAML::Node node = convert<csapex::connection_types::Message>::encode(rhs);
 
   node["center_x"] = rhs.value.center_x;
-  node["center_x"] = rhs.value.center_y;
+  node["center_y"] = rhs.value.center_y;
   node["radius"] = rhs.value.radius;
   return node;
 }
@@ -28,7 +28,7 @@ bool YAML::convert<csapex::connection_types::CircleMessage>::decode(const YAML::
     return false;
   }
   rhs.value.center_x = value["center_x"].as<double>();
-  rhs.value.center_y = value["center_x"].as<double>();
+  rhs.value.center_y = value["center_y"].as<double>();
   rhs.value.radius = value["radius"].as<double>();
   return true;
 }
