@@ -81,6 +81,7 @@ target_link_libraries(${PROJECT_NAME}_plugin_core
 
 
 add_library(${PROJECT_NAME}_plugin_node
+    src/render_circles.cpp
     src/export_cv_mat_message_as_csv.cpp
     src/mask_border_fill.cpp
     src/roi/set_roi_label.cpp
