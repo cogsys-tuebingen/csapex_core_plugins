@@ -2,14 +2,14 @@
 #include "filter_static_mask.h"
 
 /// PROJECT
-#include <csapex/param/parameter_factory.h>
-#include <csapex/utility/assert.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/serialization/node_serializer.h>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
-#include <csapex/utility/register_apex_plugin.h>
 #include <QByteArray>
+#include <csapex/utility/register_apex_plugin.h>
 #include <yaml-cpp/yaml.h>
 
 CSAPEX_REGISTER_CLASS(csapex::FilterStaticMask, csapex::Node)
@@ -20,7 +20,7 @@ FilterStaticMask::FilterStaticMask()
 {
 }
 
-void FilterStaticMask::setupParameters(Parameterizable &parameters)
+void FilterStaticMask::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareTrigger("create mask"), std::bind(&FilterStaticMask::showPainter, this));
 }
@@ -30,7 +30,7 @@ void FilterStaticMask::showPainter()
     show_painter();
 }
 
-void FilterStaticMask::setMask(const cv::Mat &mask)
+void FilterStaticMask::setMask(const cv::Mat& mask)
 {
     mask.copyTo(mask_);
     node_modifier_->setNoError();
@@ -45,18 +45,18 @@ void FilterStaticMask::filter(cv::Mat& img, cv::Mat& mask)
 {
     input(img);
 
-    if(mask_.empty()) {
+    if (mask_.empty()) {
         node_modifier_->setWarning("No mask existing");
         return;
     }
 
-    if(mask_.size != img.size) {
+    if (mask_.size != img.size) {
         node_modifier_->setWarning("The mask has not the same size as the image size");
         return;
     }
 
-    if(!mask_.empty()) {
-        if(mask.empty() || mask.size != mask_.size) {
+    if (!mask_.empty()) {
+        if (mask.empty() || mask.size != mask_.size) {
             mask_.copyTo(mask);
         } else {
             mask = cv::min(mask, mask_);
@@ -82,7 +82,7 @@ public:
 
     static void deserialize(FilterStaticMask& mask, const YAML::Node& doc)
     {
-        if(doc["rawdata"].IsDefined()){
+        if (doc["rawdata"].IsDefined()) {
             int rows = doc["rows"].as<int>();
             int cols = doc["cols"].as<int>();
 
@@ -91,12 +91,12 @@ public:
 
             cv::Mat(rows, cols, CV_8UC1, raw.data()).copyTo(mask.mask_);
 
-        } else if(doc["mask"].IsDefined()) {
+        } else if (doc["mask"].IsDefined()) {
             std::string file = doc["mask"].as<std::string>();
             mask.mask_ = cv::imread(file, 0);
         }
     }
 };
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_SERIALIZER(csapex::FilterStaticMask, StaticMaskSerializer)

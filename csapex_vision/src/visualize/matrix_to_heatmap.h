@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class MatrixToHeatmap : public csapex::Node
 {
 public:
@@ -15,14 +16,18 @@ public:
     virtual void process() override;
 
 private:
-    enum ColorType {BEZIER, PARABOLA};
+    enum ColorType
+    {
+        BEZIER,
+        PARABOLA
+    };
 
     void update();
 
-    ColorType             color_type_;
+    ColorType color_type_;
     csapex::Output* output_;
-    csapex::Input*  input_;
-    csapex::Input*  mask_;
+    csapex::Input* input_;
+    csapex::Input* mask_;
 };
-}
-#endif // EXTREMUM_RENDERER_H
+}  // namespace csapex
+#endif  // EXTREMUM_RENDERER_H

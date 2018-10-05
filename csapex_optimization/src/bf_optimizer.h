@@ -6,9 +6,8 @@
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class BFOptimizer : public Optimizer
 {
     friend class BFOptimizerAdapter;
@@ -36,7 +35,6 @@ private:
     int step_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // BF_OPTIMIZER_H
+#endif  // BF_OPTIMIZER_H

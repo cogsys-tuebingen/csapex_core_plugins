@@ -1,27 +1,24 @@
- /// COMPONENT
+/// COMPONENT
 #include <csapex/model/node.h>
-#include <csapex_scan_2d/labeled_scan_message.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <cslibs_laser_processing/data/segment.h>
+#include <csapex_scan_2d/labeled_scan_message.h>
 #include <cslibs_laser_processing/common/yaml-io.hpp>
-#include <csapex/msg/generic_vector_message.hpp>
+#include <cslibs_laser_processing/data/segment.h>
 
 using namespace lib_laser_processing;
 using namespace csapex::connection_types;
 
-
 namespace csapex
 {
-
 class SegmentMinCountFilter : public Node
 {
 public:
-    SegmentMinCountFilter() :
-        max_size_(1024)
+    SegmentMinCountFilter() : max_size_(1024)
     {
     }
 
@@ -33,32 +30,29 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(csapex::param::factory::declareInterval("threshold", 1, (int) max_size_, 1, (int) max_size_, 1));
+        params.addParameter(csapex::param::factory::declareInterval("threshold", 1, (int)max_size_, 1, (int)max_size_, 1));
     }
 
     void process()
     {
-        std::shared_ptr< std::vector<Segment> const > segments_in = msg::getMessage<GenericVectorMessage, Segment>(in_);
-        std::shared_ptr< std::vector<Segment> > segments_out (new std::vector<Segment>());
+        std::shared_ptr<std::vector<Segment> const> segments_in = msg::getMessage<GenericVectorMessage, Segment>(in_);
+        std::shared_ptr<std::vector<Segment>> segments_out(new std::vector<Segment>());
 
         param::RangeParameter::Ptr p = std::dynamic_pointer_cast<param::RangeParameter>(getParameter("threshold"));
-        auto threshold = readParameter<std::pair<int,int>>("threshold");
+        auto threshold = readParameter<std::pair<int, int>>("threshold");
 
         int min = threshold.first;
         int max = threshold.second;
 
-        for(auto it = segments_in->begin() ;
-                 it != segments_in->end() ;
-                 ++it) {
-            if(max_size_ < it->rays.size()) {
+        for (auto it = segments_in->begin(); it != segments_in->end(); ++it) {
+            if (max_size_ < it->rays.size()) {
                 max_size_ = it->rays.size();
                 p->setInterval<int>(2, max_size_);
             }
             int n = it->rays.size();
-            if(n >= min && n <= max) {
+            if (n >= min && n <= max) {
                 segments_out->push_back(*it);
             }
-
         }
 
         msg::publish<GenericVectorMessage, Segment>(out_, segments_out);
@@ -71,6 +65,6 @@ private:
     Output* out_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::SegmentMinCountFilter, csapex::Node)

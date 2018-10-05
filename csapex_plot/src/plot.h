@@ -6,21 +6,21 @@
 #include <csapex/utility/assert.h>
 
 /// SYSTEM
-#include <chrono>
 #include <QColor>
+#include <chrono>
+#include <functional>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_scaleitem.h>
 #include <qwt_scale_map.h>
-#include <functional>
 
-namespace csapex{
-
+namespace csapex
+{
 class Plot : public csapex::Node
 {
 public:
     virtual ~Plot();
 
-    void setupParameters(Parameterizable &parameters);
+    void setupParameters(Parameterizable& parameters);
 
     const QwtScaleMap& getXMap() const;
     const QwtScaleMap& getYMap() const;
@@ -38,13 +38,11 @@ public:
 protected:
     Plot();
 
-    std::function<void (param::Parameter *)> setColor(QColor& p);
+    std::function<void(param::Parameter*)> setColor(QColor& p);
 
 public:
     slim_signal::Signal<void()> update;
     slim_signal::Signal<void()> display_request;
-
-
 
 protected:
     mutable std::recursive_mutex mutex_buffer_;
@@ -63,5 +61,5 @@ protected:
     std::vector<QColor> color_line_;
 };
 
-}
-#endif // Plot_H
+}  // namespace csapex
+#endif  // Plot_H

@@ -2,12 +2,9 @@
 using namespace csapex;
 using namespace connection_types;
 
-MachineLearningNode::MachineLearningNode(std::string default_file_name):
-    default_file_name_(default_file_name)
+MachineLearningNode::MachineLearningNode(std::string default_file_name) : default_file_name_(default_file_name)
 {
-
 }
-
 
 void MachineLearningNode::setup(NodeModifier& node_modifier)
 {
@@ -19,13 +16,10 @@ void MachineLearningNode::setupParameters(Parameterizable& parameters)
     CollectionNode<FeaturesMessage>::setupParameters(parameters);
 
     parameters.addParameter(param::factory::declareBool("perform_classification",
-                                                                 param::ParameterDescription("Train a classification or a regression problem.\n"
-                                                                                             "Set true for classification, false for regression problem"),
-                                                                 true),
+                                                        param::ParameterDescription("Train a classification or a regression problem.\n"
+                                                                                    "Set true for classification, false for regression problem"),
+                                                        true),
                             is_classification_);
 
-
-    parameters.addParameter(csapex::param::factory::declareFileOutputPath
-                            ("file_name", default_file_name_),
-                            file_name_);
+    parameters.addParameter(csapex::param::factory::declareFileOutputPath("file_name", default_file_name_), file_name_);
 }

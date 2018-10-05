@@ -8,9 +8,8 @@
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class SplitLabeledScan : public csapex::Node
 {
 public:
@@ -26,7 +25,6 @@ private:
     Output* out_labels_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // SPLIT_LABELED_SCAN_H
+#endif  // SPLIT_LABELED_SCAN_H

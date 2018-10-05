@@ -1,27 +1,24 @@
 
 /// PROJECT
+#include "feature_classification_mapping.hpp"
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/signal/slot.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ml/features_message.h>
-#include "feature_classification_mapping.hpp"
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class EncodeFeatureClassification : public Node
 {
 public:
-    EncodeFeatureClassification()
-        : loaded_(false)
+    EncodeFeatureClassification() : loaded_(false)
     {
     }
 
@@ -34,24 +31,21 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::factory::declareFileInputPath("saved_mapping",""),
-                            [this](param::Parameter* p){
+        params.addParameter(param::factory::declareFileInputPath("saved_mapping", ""), [this](param::Parameter* p) {
             std::string path = p->as<std::string>();
-            if(path != path_){
+            if (path != path_) {
                 path_ = path;
                 reloadConfig();
             }
         });
-
-
     }
 
     void process() override
     {
-        if(!loaded_){
-            if(path_ != "") {
+        if (!loaded_) {
+            if (path_ != "") {
                 loaded_ = mapping_.load(path_);
-                if(!loaded_){
+                if (!loaded_) {
                     throw std::runtime_error("Mapping couldn't be loaded!");
                 }
             }
@@ -59,10 +53,10 @@ public:
         }
         std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
         std::shared_ptr<std::vector<FeaturesMessage>> out(new std::vector<FeaturesMessage>);
-        for(auto feature : *input){
+        for (auto feature : *input) {
             FeaturesMessage relabeled = feature;
             bool success = mapping_.forward(feature, relabeled);
-            if(!success){
+            if (!success) {
                 throw std::runtime_error("Classification does not match any rule!");
             }
             out->push_back(relabeled);
@@ -70,6 +64,7 @@ public:
 
         msg::publish<GenericVectorMessage, FeaturesMessage>(out_, out);
     }
+
 private:
     void reloadConfig()
     {
@@ -83,11 +78,8 @@ private:
     Slot* reload_;
     std::string path_;
     FeatureClassificationMapping mapping_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::EncodeFeatureClassification, csapex::Node)
-

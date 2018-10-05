@@ -4,8 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class MonoFilter : public csapex::Node
 {
 public:
@@ -17,16 +17,16 @@ public:
 
 protected:
     csapex::Output* output_;
-    csapex::Input*  input_;
+    csapex::Input* input_;
 
-    int   min_;
-    int   max_;
-    int   def_;
-    bool  invert_;
+    int min_;
+    int max_;
+    int def_;
+    bool invert_;
 
-    void  update();
+    void update();
 };
 
-}
+}  // namespace csapex
 
-#endif // MONOFILTER_H
+#endif  // MONOFILTER_H

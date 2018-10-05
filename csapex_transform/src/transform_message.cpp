@@ -6,39 +6,39 @@
 #include <csapex/utility/register_msg.h>
 
 /// SYSTEM
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <tf/transform_datatypes.h>
+#include <tf/transform_datatypes.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::TransformMessage)
 
 using namespace csapex;
 using namespace connection_types;
 
-TransformMessage::TransformMessage(const std::string& frame_id, const std::string& child_frame_id)
-    : MessageTemplate<tf::Transform, TransformMessage> (frame_id), child_frame(child_frame_id)
+TransformMessage::TransformMessage(const std::string& frame_id, const std::string& child_frame_id) : MessageTemplate<tf::Transform, TransformMessage>(frame_id), child_frame(child_frame_id)
 {
     sanitize();
 }
 
-TransformMessage::TransformMessage()
-    : MessageTemplate<tf::Transform, TransformMessage> (""), child_frame("")
-{}
+TransformMessage::TransformMessage() : MessageTemplate<tf::Transform, TransformMessage>(""), child_frame("")
+{
+}
 
 void TransformMessage::sanitize()
 {
-    if(frame_id.size() > 0 && frame_id.at(0) == '/') {
+    if (frame_id.size() > 0 && frame_id.at(0) == '/') {
         frame_id = frame_id.substr(1);
     }
-    if(child_frame.size() > 0 && child_frame.at(0) == '/') {
+    if (child_frame.size() > 0 && child_frame.at(0) == '/') {
         child_frame = child_frame.substr(1);
     }
 }
 
-
 bool TransformMessage::cloneData(const TransformMessage& other)
 {
-    if(!Message::cloneDataFrom(other)) {
+    if (!Message::cloneDataFrom(other)) {
         return false;
     }
 
@@ -49,7 +49,8 @@ bool TransformMessage::cloneData(const TransformMessage& other)
 }
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::TransformMessage>::encode(const csapex::connection_types::TransformMessage& rhs)
 {
     const tf::Quaternion& q = rhs.value.getRotation();
@@ -70,26 +71,26 @@ Node convert<csapex::connection_types::TransformMessage>::encode(const csapex::c
 
 bool convert<csapex::connection_types::TransformMessage>::decode(const Node& node, csapex::connection_types::TransformMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
 
     convert<csapex::connection_types::Message>::decode(node, rhs);
 
-    if(node["child_frame"].IsDefined()) {
+    if (node["child_frame"].IsDefined()) {
         rhs.child_frame = node["child_frame"].as<std::string>();
     }
 
-    std::vector<float> o = node["orientation"].as< std::vector<float> >();
-    std::vector<float> t = node["translation"].as< std::vector<float> >();
+    std::vector<float> o = node["orientation"].as<std::vector<float>>();
+    std::vector<float> t = node["translation"].as<std::vector<float>>();
 
-    if(o.size() != 4 || t.size() != 3) {
+    if (o.size() != 4 || t.size() != 3) {
         return false;
     }
 
-    rhs.value = tf::Transform(tf::Quaternion(o[0],o[1],o[2],o[3]), tf::Vector3(t[0], t[1], t[2]));
+    rhs.value = tf::Transform(tf::Quaternion(o[0], o[1], o[2], o[3]), tf::Vector3(t[0], t[1], t[2]));
     rhs.sanitize();
 
     return true;
 }
-}
+}  // namespace YAML

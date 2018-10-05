@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class Pyramid : public csapex::Node
 {
 public:
@@ -15,15 +16,15 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    int                     out_levels_;
-    int                     out_level_idx_;
+    int out_levels_;
+    int out_level_idx_;
 
-    csapex::Output*   out_pyr_;
-    csapex::Output*   out_level_;
-    csapex::Input*    input_;
+    csapex::Output* out_pyr_;
+    csapex::Output* out_level_;
+    csapex::Input* input_;
 
     void update();
 };
-}
+}  // namespace csapex
 
-#endif // IMAGE_PYRAMID_H
+#endif  // IMAGE_PYRAMID_H

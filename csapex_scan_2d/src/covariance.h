@@ -4,15 +4,15 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ScanCovariance : public csapex::Node
 {
 public:
     ScanCovariance();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
@@ -20,6 +20,6 @@ private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
-#endif // SCAN_COVARIANCE_H
+#endif  // SCAN_COVARIANCE_H

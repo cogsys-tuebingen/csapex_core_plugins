@@ -5,7 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
+namespace csapex
+{
 class PointCloudValidity : public csapex::Node
 {
 public:
@@ -18,10 +19,10 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 protected:
-    Input*  input_;
+    Input* input_;
     Output* mask_;
     Output* index_;
 };
-}
+}  // namespace csapex
 
-#endif // UNDEFINED_VALUE_MASK_H
+#endif  // UNDEFINED_VALUE_MASK_H

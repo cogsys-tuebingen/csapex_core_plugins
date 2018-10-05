@@ -1,12 +1,12 @@
 
 /// PROJECT
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/msg/io.h>
-#include <csapex_core_plugins/timestamp_message.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_core_plugins/timestamp_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
@@ -17,7 +17,6 @@ using namespace csapex::connection_types;
 
 namespace csapex
 {
-
 class PointCloudToXYZ : public Node
 {
 public:
@@ -25,7 +24,7 @@ public:
     {
     }
 
-    virtual void setupParameters(Parameterizable &parameters) override
+    virtual void setupParameters(Parameterizable& parameters) override
     {
     }
 
@@ -40,7 +39,7 @@ public:
     {
         PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
-        boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToXYZ>(this, msg), msg->value);
+        boost::apply_visitor(PointCloudMessage::Dispatch<PointCloudToXYZ>(this, msg), msg->value);
     }
 
     template <typename PointT>
@@ -53,12 +52,12 @@ public:
         output->value = result;
         msg::publish(output_, output);
     }
+
 private:
     Input* input_;
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::PointCloudToXYZ, csapex::Node)
-

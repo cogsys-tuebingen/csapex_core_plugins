@@ -8,18 +8,19 @@
 
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
-#include <sensor_msgs/Image.h>
 #include <cv_bridge/cv_bridge.h>
-#include <sensor_msgs/image_encodings.h>
 #include <sensor_msgs/CompressedImage.h>
+#include <sensor_msgs/Image.h>
 #include <sensor_msgs/RegionOfInterest.h>
+#include <sensor_msgs/image_encodings.h>
 
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <compressed_image_transport/compressed_subscriber.h>
+#include <compressed_image_transport/compressed_subscriber.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 using namespace csapex;
-
 
 namespace impl
 {
@@ -27,30 +28,30 @@ void convertImage(const connection_types::CvMatMessage::ConstPtr& in, cv_bridge:
 {
     out.image = in->value;
 
-    switch(in->value.type()) {
-    case CV_8UC1:
-        out.encoding = sensor_msgs::image_encodings::MONO8;
-        break;
-    default:
-    case CV_8UC3:
-        if(in->getEncoding().matches(enc::bgr)) {
-            out.encoding = sensor_msgs::image_encodings::BGR8;
-        } else if(in->getEncoding().matches(enc::rgb)) {
-            out.encoding = sensor_msgs::image_encodings::RGB8;
-        } else if(in->getEncoding().matches(enc::yuv)) {
-            out.encoding = sensor_msgs::image_encodings::YUV422;
-        } else if(in->getEncoding().matches(enc::mono)) {
+    switch (in->value.type()) {
+        case CV_8UC1:
             out.encoding = sensor_msgs::image_encodings::MONO8;
-        } else if(in->getEncoding().matches(enc::depth)) {
-            out.encoding = sensor_msgs::image_encodings::TYPE_16UC1;
-        } else {
-            std::cerr << "cannot convert encoding " << in->getEncoding().toString() << " to ROS" << std::endl;
-        }
-        break;
+            break;
+        default:
+        case CV_8UC3:
+            if (in->getEncoding().matches(enc::bgr)) {
+                out.encoding = sensor_msgs::image_encodings::BGR8;
+            } else if (in->getEncoding().matches(enc::rgb)) {
+                out.encoding = sensor_msgs::image_encodings::RGB8;
+            } else if (in->getEncoding().matches(enc::yuv)) {
+                out.encoding = sensor_msgs::image_encodings::YUV422;
+            } else if (in->getEncoding().matches(enc::mono)) {
+                out.encoding = sensor_msgs::image_encodings::MONO8;
+            } else if (in->getEncoding().matches(enc::depth)) {
+                out.encoding = sensor_msgs::image_encodings::TYPE_16UC1;
+            } else {
+                std::cerr << "cannot convert encoding " << in->getEncoding().toString() << " to ROS" << std::endl;
+            }
+            break;
     }
 
     out.header.frame_id = in->frame_id;
-    if(in->stamp_micro_seconds != 0) {
+    if (in->stamp_micro_seconds != 0) {
         out.header.stamp = out.header.stamp.fromNSec(in->stamp_micro_seconds * 1e3);
     } else {
         out.header.stamp = ros::Time::now();
@@ -59,25 +60,25 @@ void convertImage(const connection_types::CvMatMessage::ConstPtr& in, cv_bridge:
 
 csapex::Encoding convertEncoding(const std::string& in)
 {
-    if(in == sensor_msgs::image_encodings::BGR8 || in == sensor_msgs::image_encodings::BGR16) {
+    if (in == sensor_msgs::image_encodings::BGR8 || in == sensor_msgs::image_encodings::BGR16) {
         return enc::bgr;
-    } else if(in == sensor_msgs::image_encodings::RGB8 || in == sensor_msgs::image_encodings::RGB16) {
+    } else if (in == sensor_msgs::image_encodings::RGB8 || in == sensor_msgs::image_encodings::RGB16) {
         return enc::rgb;
-    } else if(in == sensor_msgs::image_encodings::MONO8 || in == sensor_msgs::image_encodings::MONO16) {
+    } else if (in == sensor_msgs::image_encodings::MONO8 || in == sensor_msgs::image_encodings::MONO16) {
         return enc::mono;
-    } else if(in == sensor_msgs::image_encodings::YUV422) {
+    } else if (in == sensor_msgs::image_encodings::YUV422) {
         return enc::yuv;
-    } else if(in.size() > 6 && in.substr(6) == "bayer_") {
+    } else if (in.size() > 6 && in.substr(6) == "bayer_") {
         return enc::mono;
-    } else if(in == sensor_msgs::image_encodings::TYPE_16UC1) {
+    } else if (in == sensor_msgs::image_encodings::TYPE_16UC1) {
         return enc::depth;
     } else {
         return enc::unknown;
     }
 }
-}
+}  // namespace impl
 
-connection_types::CvMatMessage::Ptr Image2CvMat::ros2apex(const sensor_msgs::Image::ConstPtr &ros_msg)
+connection_types::CvMatMessage::Ptr Image2CvMat::ros2apex(const sensor_msgs::Image::ConstPtr& ros_msg)
 {
     u_int64_t stamp_micro_seconds = ros_msg->header.stamp.toNSec() * 1e-3;
 
@@ -96,7 +97,6 @@ connection_types::CvMatMessage::Ptr Image2CvMat::ros2apex(const sensor_msgs::Ima
     return out;
 }
 
-
 sensor_msgs::Image::Ptr Image2CvMat::apex2ros(const connection_types::CvMatMessage::ConstPtr& apex_msg)
 {
     cv_bridge::CvImage cvb;
@@ -104,8 +104,7 @@ sensor_msgs::Image::Ptr Image2CvMat::apex2ros(const connection_types::CvMatMessa
     return cvb.toImageMsg();
 }
 
-
-connection_types::CvMatMessage::Ptr CompressedImage2CvMat::ros2apex(const sensor_msgs::CompressedImage::ConstPtr &ros_msg)
+connection_types::CvMatMessage::Ptr CompressedImage2CvMat::ros2apex(const sensor_msgs::CompressedImage::ConstPtr& ros_msg)
 {
     u_int64_t stamp_micro_seconds = ros_msg->header.stamp.toNSec() * 1e-3;
 
@@ -135,8 +134,7 @@ sensor_msgs::CompressedImage::Ptr CompressedImage2CvMat::apex2ros(const connecti
     return cvb.toCompressedImageMsg();
 }
 
-
-void ConvertROI::ros2apex(const sensor_msgs::RegionOfInterest::ConstPtr &ros_msg, Roi &out)
+void ConvertROI::ros2apex(const sensor_msgs::RegionOfInterest::ConstPtr& ros_msg, Roi& out)
 {
     out.setH(ros_msg->height);
     out.setW(ros_msg->width);
@@ -144,7 +142,7 @@ void ConvertROI::ros2apex(const sensor_msgs::RegionOfInterest::ConstPtr &ros_msg
     out.setY(ros_msg->y_offset);
 }
 
-connection_types::RoiMessage::Ptr ConvertROI::ros2apex(const sensor_msgs::RegionOfInterest::ConstPtr &ros_msg)
+connection_types::RoiMessage::Ptr ConvertROI::ros2apex(const sensor_msgs::RegionOfInterest::ConstPtr& ros_msg)
 {
     connection_types::RoiMessage::Ptr out(new connection_types::RoiMessage);
     out->value = csapex::Roi();
@@ -161,8 +159,8 @@ sensor_msgs::RegionOfInterest::Ptr ConvertROI::apex2ros(const csapex::Roi& apex_
 {
     sensor_msgs::RegionOfInterest::Ptr out(new sensor_msgs::RegionOfInterest);
 
-    out->height   = apex_roi.h();
-    out->width    = apex_roi.w();
+    out->height = apex_roi.h();
+    out->width = apex_roi.w();
     out->x_offset = apex_roi.x();
     out->y_offset = apex_roi.y();
 
@@ -171,5 +169,5 @@ sensor_msgs::RegionOfInterest::Ptr ConvertROI::apex2ros(const csapex::Roi& apex_
 
 sensor_msgs::RegionOfInterest::Ptr ConvertROI::apex2ros(const connection_types::RoiMessage::ConstPtr& apex_msg)
 {
-    return  apex2ros(apex_msg->value);
+    return apex2ros(apex_msg->value);
 }

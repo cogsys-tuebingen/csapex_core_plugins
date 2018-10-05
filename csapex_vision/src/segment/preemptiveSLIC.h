@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class PreemptiveSLIC : public csapex::Node
 {
 public:
@@ -13,11 +14,11 @@ public:
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);
+
 private:
-    csapex::Output*            output_;
-    csapex::Input*             input_;
-
+    csapex::Output* output_;
+    csapex::Input* input_;
 };
-}
+}  // namespace csapex
 
-#endif // PREEMPTIVESLIC_H
+#endif  // PREEMPTIVESLIC_H

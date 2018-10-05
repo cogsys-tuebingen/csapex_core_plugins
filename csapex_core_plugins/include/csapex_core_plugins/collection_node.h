@@ -3,46 +3,48 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/signal/event.h>
 #include <csapex_core_plugins/csapex_core_lib_export.h>
 
 /// SYSTEM
-namespace csapex {
-
+namespace csapex
+{
 template <typename MessageType, typename Allocator = std::allocator<MessageType>>
 class CollectionNode : public Node
 {
 public:
     CollectionNode()
-    {}
+    {
+    }
 
-    virtual void setupParameters(Parameterizable &parameters) {
+    virtual void setupParameters(Parameterizable& parameters)
+    {
         parameters.addParameter(csapex::param::factory::declareTrigger("process"), std::bind(&CollectionNode<MessageType, Allocator>::doProcessCollection, this, std::ref(buffer_)));
         parameters.addParameter(csapex::param::factory::declareTrigger("clear"), std::bind(&CollectionNode<MessageType, Allocator>::clearCollection, this));
     }
 
     virtual void setup(NodeModifier& modifier) override
     {
-        in_vector_generic  = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
-        in_vector  = modifier.addOptionalInput<connection_types::AnyMessage>("messages to collect (deprecated)");
-        in_single  = modifier.addOptionalInput<MessageType>("message to collect");
+        in_vector_generic = modifier.addOptionalInput<connection_types::GenericVectorMessage, MessageType>("messages to collect");
+        in_vector = modifier.addOptionalInput<connection_types::AnyMessage>("messages to collect (deprecated)");
+        in_single = modifier.addOptionalInput<MessageType>("message to collect");
         event_processed = modifier.addEvent("Processed Collection");
     }
 
     virtual void process() override
     {
-        if(msg::hasMessage(in_vector_generic)) {
+        if (msg::hasMessage(in_vector_generic)) {
             std::shared_ptr<std::vector<MessageType> const> input = msg::getMessage<connection_types::GenericVectorMessage, MessageType>(in_vector_generic);
             buffer_.insert(buffer_.end(), input->begin(), input->end());
         }
         if (msg::hasMessage(in_vector)) {
             throw std::runtime_error("VectorMessage no longer exists");
         }
-        if(msg::hasMessage(in_single)) {
+        if (msg::hasMessage(in_single)) {
             std::shared_ptr<MessageType const> input = msg::getMessage<MessageType>(in_single);
             buffer_.push_back(*input);
         }
@@ -51,14 +53,14 @@ public:
 protected:
     void doProcessCollection(std::vector<MessageType, Allocator>& collection)
     {
-        if(collection.empty()) {
+        if (collection.empty()) {
             node_modifier_->setError("Collection is empty!");
             return;
         } else {
             node_modifier_->setNoError();
         }
 
-        if(processCollection(collection)) {
+        if (processCollection(collection)) {
             event_processed->trigger();
         } else {
             node_modifier_->setError("Could not process the collection!");
@@ -82,6 +84,6 @@ private:
     std::vector<MessageType, Allocator> buffer_;
 };
 
-}
+}  // namespace csapex
 
-#endif // COLLECTION_NODE_H
+#endif  // COLLECTION_NODE_H

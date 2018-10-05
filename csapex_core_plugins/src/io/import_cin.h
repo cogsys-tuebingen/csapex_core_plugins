@@ -8,8 +8,8 @@
 #include <deque>
 #include <sstream>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN ImportCin : public Node
 {
 public:
@@ -38,6 +38,6 @@ private:
     bool signal_end_;
 };
 
-}
+}  // namespace csapex
 
-#endif // IMPORT_CIN_H
+#endif  // IMPORT_CIN_H

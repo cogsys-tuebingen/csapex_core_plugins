@@ -2,9 +2,9 @@
 #include "cloud_renderer.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::CloudRenderer, csapex::Node)
@@ -14,7 +14,6 @@ using namespace csapex::connection_types;
 
 CloudRenderer::CloudRenderer()
 {
-
 }
 
 void CloudRenderer::setupParameters(Parameterizable& parameters)
@@ -43,10 +42,7 @@ void CloudRenderer::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::factory::declareColorParameter("color/grid", 0, 0, 0), refresh);
     parameters.addParameter(csapex::param::factory::declareColorParameter("color/gradient/start", 0, 255, 0), refresh);
     parameters.addParameter(csapex::param::factory::declareColorParameter("color/gradient/end", 0, 0, 255), refresh);
-    addParameter(csapex::param::factory::declareBool("color/rainbow",
-                                                      csapex::param::ParameterDescription("Sample from a gradient of rainbow colors"),
-                                                      false),
-                 refresh);
+    addParameter(csapex::param::factory::declareBool("color/rainbow", csapex::param::ParameterDescription("Sample from a gradient of rainbow colors"), false), refresh);
     parameters.addParameter(csapex::param::factory::declareBool("color/force gradient", false), refresh);
 
     std::vector<std::string> field;
@@ -73,9 +69,9 @@ void CloudRenderer::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<CvMatMessage>("Rendered Image");
 }
 
-void CloudRenderer::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
+void CloudRenderer::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters)
 {
-    if(!result_) {
+    if (!result_) {
         refresh();
     }
 
@@ -90,15 +86,15 @@ void CloudRenderer::beginProcess(csapex::NodeModifier& node_modifier, Parameteri
 
     display_request();
 
-    if(!msg::isConnected(output_)) {
+    if (!msg::isConnected(output_)) {
         done();
     }
 }
 
-void CloudRenderer::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
+void CloudRenderer::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters)
 {
-    if(msg::isConnected(output_)) {
-        if(result_) {
+    if (msg::isConnected(output_)) {
+        if (result_) {
             msg::publish(output_, result_);
         }
     }
@@ -120,7 +116,7 @@ void CloudRenderer::refresh()
     refresh_request();
 }
 
-void CloudRenderer::publishImage(const cv::Mat &img)
+void CloudRenderer::publishImage(const cv::Mat& img)
 {
     CvMatMessage::Ptr msg(new CvMatMessage(enc::bgr, "unknown", 0));
     img.copyTo(msg->value);

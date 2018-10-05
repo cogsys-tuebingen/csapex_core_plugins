@@ -9,7 +9,6 @@
 #include <csapex/command/command_factory.h>
 #include <csapex/command/meta.h>
 #include <csapex/model/graph_facade.h>
-#include <csapex/model/graph_facade.h>
 #include <csapex/model/node_facade_impl.h>
 #include <csapex/model/node_handle.h>
 #include <csapex/msg/input.h>
@@ -18,24 +17,21 @@
 #include <csapex/param/range_parameter.h>
 #include <csapex/utility/uuid_provider.h>
 #include <csapex/view/designer/graph_view.h>
-#include <csapex/view/designer/graph_view.h>
 #include <csapex/view/node/box.h>
 #include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
-#include <QPushButton>
+#include <QComboBox>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <QComboBox>
 #include <QFormLayout>
 #include <QProgressBar>
+#include <QPushButton>
 #include <iostream>
 
 using namespace csapex;
 
-
-OptimizerAdapter::OptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_base_(node)
+OptimizerAdapter::OptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node) : DefaultNodeAdapter(worker, parent), wrapped_base_(node)
 {
     QObject::connect(&widget_picker_, SIGNAL(widgetPicked()), this, SLOT(widgetPicked()));
 }
@@ -52,7 +48,6 @@ void OptimizerAdapter::setupUi(QBoxLayout* layout)
     layout->addWidget(btn_add_param);
     QObject::connect(btn_add_param, SIGNAL(clicked()), this, SLOT(createParameter()));
 
-
     QPushButton* btn_pick_param = new QPushButton("Pick Parameter");
     layout->addWidget(btn_pick_param);
     QObject::connect(btn_pick_param, SIGNAL(clicked()), this, SLOT(pickParameter()));
@@ -64,33 +59,32 @@ void OptimizerAdapter::setupUi(QBoxLayout* layout)
 
 void OptimizerAdapter::parameterAdded(param::ParameterPtr param)
 {
-
 }
 
 void OptimizerAdapter::widgetPicked()
 {
     auto node = wrapped_base_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
     QWidget* widget = widget_picker_.getWidget();
-    if(widget) {
-        if(widget != nullptr) {
+    if (widget) {
+        if (widget != nullptr) {
             std::cerr << "picked widget " << widget->metaObject()->className() << std::endl;
         }
 
         QVariant var = widget->property("parameter");
-        if(!var.isNull()) {
+        if (!var.isNull()) {
             csapex::param::Parameter* connected_parameter = static_cast<csapex::param::Parameter*>(var.value<void*>());
 
-            if(connected_parameter != nullptr) {
-                node->ainfo << "picked parameter " << connected_parameter->name()  << " with UUID " << connected_parameter->getUUID() << std::endl;
+            if (connected_parameter != nullptr) {
+                node->ainfo << "picked parameter " << connected_parameter->name() << " with UUID " << connected_parameter->getUUID() << std::endl;
 
                 csapex::param::Parameter::Ptr new_parameter = csapex::param::ParameterFactory::clone(connected_parameter);
                 node->addPersistentParameter(new_parameter);
 
-                if(!connected_parameter->isInteractive()) {
+                if (!connected_parameter->isInteractive()) {
                     connected_parameter->setInteractive(true);
                 }
                 new_parameter->setInteractive(true);
@@ -100,7 +94,7 @@ void OptimizerAdapter::widgetPicked()
 
                 GraphFacade* facade = parent_->getGraphView()->getGraphFacade();
 
-                if(!facade->isConnected(from, to)) {
+                if (!facade->isConnected(from, to)) {
                     AUUID parent_uuid = facade->getAbsoluteUUID();
 
                     command::AddConnection::Ptr cmd(new command::AddConnection(parent_uuid, from, to, false));
@@ -125,17 +119,16 @@ void OptimizerAdapter::widgetPicked()
 void OptimizerAdapter::startOptimization()
 {
     auto node = wrapped_base_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     node->start();
 }
 
-
 void OptimizerAdapter::stopOptimization()
 {
     auto node = wrapped_base_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     node->stop();
@@ -161,7 +154,6 @@ QDialog* OptimizerAdapter::makeTypeDialog()
     buttons->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     layout->addWidget(buttons);
 
-
     QDialog* dialog = new QDialog;
     dialog->setWindowTitle("Create Parameter");
     dialog->setLayout(layout);
@@ -173,7 +165,7 @@ QDialog* OptimizerAdapter::makeTypeDialog()
     return dialog;
 }
 
-void OptimizerAdapter::setNextParameterType(const QString &type)
+void OptimizerAdapter::setNextParameterType(const QString& type)
 {
     next_type_ = type.toStdString();
 }
@@ -181,23 +173,21 @@ void OptimizerAdapter::setNextParameterType(const QString &type)
 void OptimizerAdapter::pickParameter()
 {
     auto designer = parent_->getGraphView()->designerScene();
-    if(designer) {
+    if (designer) {
         widget_picker_.startPicking(designer);
     }
 }
 
-
 void OptimizerAdapter::createParameter()
 {
     auto node = wrapped_base_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     QDialog* type_dialog = makeTypeDialog();
-    if(type_dialog->exec() == QDialog::Accepted) {
-
+    if (type_dialog->exec() == QDialog::Accepted) {
         ParameterDialog diag(next_type_);
-        if(diag.exec() == QDialog::Accepted) {
+        if (diag.exec() == QDialog::Accepted) {
             csapex::param::Parameter::Ptr param = diag.getParameter();
             node->addPersistentParameter(param);
 
@@ -211,7 +201,7 @@ void OptimizerAdapter::createParameter()
 void OptimizerAdapter::removeParameters()
 {
     auto node = wrapped_base_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
@@ -222,11 +212,11 @@ void OptimizerAdapter::removeParameters()
 
     CommandFactory factory(facade);
 
-    for(param::ParameterPtr p : node->getPersistentParameters()) {
-        if(OutputPtr out = nh->getParameterOutput(p->name()).lock()) {
+    for (param::ParameterPtr p : node->getPersistentParameters()) {
+        if (OutputPtr out = nh->getParameterOutput(p->name()).lock()) {
             cmd->add(factory.removeAllConnectionsCmd(out));
         }
-        if(InputPtr in = nh->getParameterInput(p->name()).lock()) {
+        if (InputPtr in = nh->getParameterInput(p->name()).lock()) {
             cmd->add(factory.removeAllConnectionsCmd(in));
         }
     }
@@ -235,4 +225,3 @@ void OptimizerAdapter::removeParameters()
 
     node->removePersistentParameters();
 }
-

@@ -2,14 +2,14 @@
 #include "mask_refinement.h"
 
 /// PROJECT
-#include <csapex/param/parameter_factory.h>
-#include <csapex/utility/assert.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/serialization/node_serializer.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/serialization/node_serializer.h>
+#include <csapex/utility/assert.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/view/utility/QtCvImageConverter.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 /// SYSTEM
 #include <QImage>
@@ -18,11 +18,9 @@ CSAPEX_REGISTER_CLASS(csapex::MaskRefinement, csapex::Node)
 
 using namespace csapex;
 
-MaskRefinement::MaskRefinement()
-    : has_img_(false)
+MaskRefinement::MaskRefinement() : has_img_(false)
 {
 }
-
 
 void MaskRefinement::setup(csapex::NodeModifier& node_modifier)
 {
@@ -32,14 +30,12 @@ void MaskRefinement::setup(csapex::NodeModifier& node_modifier)
     out_ = node_modifier.addOutput<connection_types::CvMatMessage>("refined mask");
 }
 
-void MaskRefinement::setupParameters(Parameterizable &parameters)
+void MaskRefinement::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareTrigger("submit"), std::bind(&MaskRefinement::ok, this));
     parameters.addParameter(csapex::param::factory::declareTrigger("drop"), std::bind(&MaskRefinement::drop, this));
 
-    parameters.addParameter(csapex::param::factory::declareRange("brush/size", 1, 64, 4, 1), [this](csapex::param::Parameter*){
-        update_brush();
-    });
+    parameters.addParameter(csapex::param::factory::declareRange("brush/size", 1, 64, 4, 1), [this](csapex::param::Parameter*) { update_brush(); });
 }
 
 void MaskRefinement::ok()
@@ -53,7 +49,7 @@ void MaskRefinement::drop()
     done();
 }
 
-void MaskRefinement::setMask(const QImage &mask)
+void MaskRefinement::setMask(const QImage& mask)
 {
     node_modifier_->setNoError();
 
@@ -63,8 +59,7 @@ void MaskRefinement::setMask(const QImage &mask)
     done();
 }
 
-
-void MaskRefinement::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
+void MaskRefinement::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters)
 {
     auto in = msg::getMessage<connection_types::CvMatMessage>(in_mask_);
     mask_ = in->value;
@@ -75,21 +70,21 @@ void MaskRefinement::beginProcess(csapex::NodeModifier& node_modifier, Parameter
 
     QImage qmasked;
     has_img_ = msg::isConnected(in_img_);
-    if(has_img_) {
+    if (has_img_) {
         img_ = msg::getMessage<connection_types::CvMatMessage>(in_img_)->value;
         qmasked = QtCvImageConverter::Converter::mat2QImage(img_);
     }
 
     input(qmask, qmasked);
 
-    if(has_img_ && mask_.size != img_.size) {
+    if (has_img_ && mask_.size != img_.size) {
         node_modifier_->setWarning("The mask has not the same size as the image size");
     }
 }
 
-void MaskRefinement::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
+void MaskRefinement::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters)
 {
-    if(result_) {
+    if (result_) {
         msg::publish(out_, result_);
     }
 }

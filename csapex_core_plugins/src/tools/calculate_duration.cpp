@@ -1,18 +1,16 @@
 /// COMPONENT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_core_plugins/timestamp_message.h>
 #include <csapex_core_plugins/duration_message.h>
+#include <csapex_core_plugins/timestamp_message.h>
 
 using namespace csapex::connection_types;
 
-
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN CalculateDuration : public Node
 {
 public:
@@ -35,7 +33,7 @@ public:
 
         std::chrono::microseconds ms(0);
 
-        if(msg::isConnected(in_b_)) {
+        if (msg::isConnected(in_b_)) {
             TimestampMessage::ConstPtr msg_b(msg::getMessage<TimestampMessage>(in_b_));
             ms = (tp_a - msg_b->value);
 
@@ -44,8 +42,8 @@ public:
             auto hires = std::chrono::high_resolution_clock::now();
             now = std::chrono::time_point_cast<std::chrono::microseconds>(hires);
             ms = now - tp_a;
-//            ms = tp_a.time_since_epoch();
-//            ms = now.time_since_epoch();
+            //            ms = tp_a.time_since_epoch();
+            //            ms = now.time_since_epoch();
             ainfo << ms.count() << std::endl;
         }
 
@@ -61,9 +59,6 @@ private:
     Output* out_;
 };
 
-
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::CalculateDuration, csapex::Node)
-
-

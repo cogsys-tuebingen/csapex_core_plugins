@@ -1,20 +1,18 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/msg/io.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class ScaleGenericVectorMessage : public Node
 {
 public:
@@ -30,19 +28,17 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::factory::declareValue("scale",1.0),
-                            scale_);
+        params.addParameter(param::factory::declareValue("scale", 1.0), scale_);
     }
 
     void process() override
     {
         GenericVectorMessage::ConstPtr vec = msg::getMessage<GenericVectorMessage>(in_);
-        if(std::dynamic_pointer_cast<GenericValueMessage<double>>(vec->nestedType())) {
-           scale<double>(vec);
-        } else if(std::dynamic_pointer_cast<GenericValueMessage<int>>(vec->nestedType())) {
+        if (std::dynamic_pointer_cast<GenericValueMessage<double>>(vec->nestedType())) {
+            scale<double>(vec);
+        } else if (std::dynamic_pointer_cast<GenericValueMessage<int>>(vec->nestedType())) {
             scale<int>(vec);
         }
-
     }
 
     template <typename T>
@@ -51,8 +47,8 @@ public:
         std::size_t n = vec->nestedValueCount();
         std::shared_ptr<std::vector<T>> scaled(new std::vector<T>);
         scaled->resize(n);
-        for(std::size_t i = 0; i < n; ++i) {
-            if(auto pval = std::dynamic_pointer_cast<GenericValueMessage<T> const>(vec->nestedValue(i))) {
+        for (std::size_t i = 0; i < n; ++i) {
+            if (auto pval = std::dynamic_pointer_cast<GenericValueMessage<T> const>(vec->nestedValue(i))) {
                 scaled->at(i) = scale_ * pval->value;
             }
         }
@@ -63,11 +59,8 @@ private:
     Input* in_;
     Output* out_;
     double scale_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::ScaleGenericVectorMessage, csapex::Node)
-

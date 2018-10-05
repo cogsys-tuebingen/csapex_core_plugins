@@ -9,12 +9,11 @@ namespace csapex
 class FindHomography : public csapex::Node
 {
 private:
-
 public:
     FindHomography();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
@@ -33,6 +32,6 @@ private:
     double ransac_threshold_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // FIND_HOMOGRAPHY_H
+#endif  // FIND_HOMOGRAPHY_H

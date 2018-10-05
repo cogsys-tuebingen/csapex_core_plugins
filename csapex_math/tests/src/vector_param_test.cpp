@@ -1,43 +1,38 @@
 #include <csapex_testing/stepping_test.h>
 
-#include <csapex/model/graph/graph_impl.h>
-#include <csapex/core/graphio.h>
-#include <csapex/core/csapex_core.h>
 #include <csapex/core/core_plugin.h>
-#include <csapex/plugin/plugin_locator.h>
+#include <csapex/core/csapex_core.h>
+#include <csapex/core/graphio.h>
 #include <csapex/core/settings/settings_impl.h>
-#include <csapex/model/node_handle.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/io.h>
-#include <csapex/msg/generic_value_message.hpp>
-#include <csapex/model/token.h>
-#include <csapex/model/io.h>
-#include <csapex/msg/direct_connection.h>
 #include <csapex/factory/node_wrapper.hpp>
+#include <csapex/model/graph/graph_impl.h>
+#include <csapex/model/io.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/model/token.h>
+#include <csapex/msg/direct_connection.h>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/msg/output.h>
 #include <csapex/param/parameter_modifier.h>
+#include <csapex/plugin/plugin_locator.h>
 
 #include <csapex_math/msg/linear_vector_message.h>
-#include <csapex_math/param/linear_vector_parameter.h>
 #include <csapex_math/param/factory.h>
+#include <csapex_math/param/linear_vector_parameter.h>
 
 using namespace csapex;
 using namespace connection_types;
 
-namespace csapex {
-
+namespace csapex
+{
 class TestPluginLocator : public PluginLocator
 {
 public:
-    TestPluginLocator(Settings& settings)
-        : PluginLocator(settings)
+    TestPluginLocator(Settings& settings) : PluginLocator(settings)
     {
 #ifdef PACKAGE_XML
-        registerLocator<CorePlugin>([this](std::vector<std::string>& paths){
-            paths.push_back(std::string(PACKAGE_XML));
-        });
-        registerLocator<Node>([this](std::vector<std::string>& paths){
-            paths.push_back(std::string(PACKAGE_XML));
-        });
+        registerLocator<CorePlugin>([this](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
+        registerLocator<Node>([this](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
 #else
         std::cerr << "Cannot find plugins for this test!" << std::endl;
 #endif
@@ -49,7 +44,6 @@ class VectorOutputNode
 public:
     VectorOutputNode()
     {
-
     }
 
     void setup(csapex::NodeModifier& node_modifier)
@@ -59,7 +53,6 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-
     }
 
     void process(NodeModifier& node_modifier, Parameterizable& parameters)
@@ -79,7 +72,6 @@ class VectorInputNode
 public:
     VectorInputNode()
     {
-
     }
 
     void setup(csapex::NodeModifier& node_modifier)
@@ -89,7 +81,7 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(param::factory::declareVector("vector_parameter", std::vector<double>{0, 0, 0}));
+        parameters.addParameter(param::factory::declareVector("vector_parameter", std::vector<double>{ 0, 0, 0 }));
     }
 
     void process(NodeModifier& node_modifier, Parameterizable& parameters)
@@ -105,13 +97,11 @@ private:
     Input* input_;
 };
 
-
 class VectorParamNode
 {
 public:
     VectorParamNode()
     {
-
     }
 
     void setup(csapex::NodeModifier& node_modifier)
@@ -120,14 +110,13 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(param::factory::declareVector("vector_parameter", std::vector<double>{0, 0, 0}));
+        parameters.addParameter(param::factory::declareVector("vector_parameter", std::vector<double>{ 0, 0, 0 }));
     }
 
     void process(NodeModifier& node_modifier, Parameterizable& parameters)
     {
     }
 };
-
 
 class VectorParameterTest : public SteppingTest
 {
@@ -164,7 +153,7 @@ private:
 TEST_F(VectorParameterTest, VectorParameterCanBeSerialized)
 {
     SerializationBuffer buffer;
-    math::linear::Vector value({1,2,3});
+    math::linear::Vector value({ 1, 2, 3 });
     {
         param::LinearVectorParameter p("test", param::ParameterDescription(""), value);
         buffer << p;
@@ -177,11 +166,10 @@ TEST_F(VectorParameterTest, VectorParameterCanBeSerialized)
     }
 }
 
-
 TEST_F(VectorParameterTest, VectorParameterCanBeSerializedWithYaml)
 {
     YAML::Node buffer;
-    math::linear::Vector value({1,2,3});
+    math::linear::Vector value({ 1, 2, 3 });
     {
         param::LinearVectorParameter p("test", param::ParameterDescription(""), value);
         p.serialize_yaml(buffer);
@@ -196,9 +184,9 @@ TEST_F(VectorParameterTest, VectorParameterCanBeSerializedWithYaml)
 
 TEST_F(VectorParameterTest, VectorMessageCanCloneDataFromVectorParameter)
 {
-    param::LinearVectorParameter p("test", param::ParameterDescription(""), {1,2,3});
+    param::LinearVectorParameter p("test", param::ParameterDescription(""), { 1, 2, 3 });
     connection_types::LinearVectorMessage m;
-    m.value = math::linear::Vector({0,0,0});
+    m.value = math::linear::Vector({ 0, 0, 0 });
 
     EXPECT_TRUE(p.hasData(typeid(math::linear::Vector)));
     ASSERT_TRUE(m.hasData(typeid(math::linear::Vector)));
@@ -208,12 +196,11 @@ TEST_F(VectorParameterTest, VectorMessageCanCloneDataFromVectorParameter)
     ASSERT_EQ(p.getValue(), m.value);
 }
 
-
 TEST_F(VectorParameterTest, VectorParameterCanCloneDataFromVectorMessage)
 {
-    param::LinearVectorParameter p("test", param::ParameterDescription(""), {1,2,3});
+    param::LinearVectorParameter p("test", param::ParameterDescription(""), { 1, 2, 3 });
     connection_types::LinearVectorMessage m;
-    m.value = math::linear::Vector({0,0,0});
+    m.value = math::linear::Vector({ 0, 0, 0 });
 
     EXPECT_TRUE(p.hasData(typeid(math::linear::Vector)));
     ASSERT_TRUE(m.hasData(typeid(math::linear::Vector)));
@@ -222,7 +209,6 @@ TEST_F(VectorParameterTest, VectorParameterCanCloneDataFromVectorMessage)
 
     ASSERT_EQ(p.getValue(), m.value);
 }
-
 
 TEST_F(VectorParameterTest, VectorMessageIsTransmitted)
 {
@@ -242,7 +228,7 @@ TEST_F(VectorParameterTest, VectorMessageIsTransmitted)
 
     executor.start();
     for (int iter = 0; iter < 23; ++iter) {
-        math::linear::Vector v(std::vector<double> { 1, 2, 3 });
+        math::linear::Vector v(std::vector<double>{ 1, 2, 3 });
         v(0) = iter;
 
         source->latest_vector.value = v;
@@ -277,7 +263,7 @@ TEST_F(VectorParameterTest, VectorMessageCanBeConnectedToParameter)
 
     executor.start();
     for (int iter = 0; iter < 23; ++iter) {
-        math::linear::Vector v(std::vector<double> { 1, 2, 3 });
+        math::linear::Vector v(std::vector<double>{ 1, 2, 3 });
         v(0) = iter;
 
         source->latest_vector.value = v;
@@ -292,4 +278,4 @@ TEST_F(VectorParameterTest, VectorMessageCanBeConnectedToParameter)
     }
 }
 
-}
+}  // namespace csapex

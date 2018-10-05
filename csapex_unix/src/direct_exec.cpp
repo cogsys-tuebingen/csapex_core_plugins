@@ -1,18 +1,18 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 
 /// SYSTEM
-#include <sys/wait.h>
 #include <cstdio>
-#include <signal.h>
-#include <future>
 #include <fcntl.h>
+#include <future>
+#include <signal.h>
+#include <sys/wait.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -23,23 +23,23 @@ class DirectExec : public Node
 {
 public:
     DirectExec()
-    {}
+    {
+    }
 
     void setup(csapex::NodeModifier& modifier) override
-    {}
+    {
+    }
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::factory::declareTrigger("execute"),
-                            [this](param::Parameter* param)
-                            {
-                                std::string command = cmd_;
-                                auto call = [command]() { system(command.c_str()); };
-                                if (async_)
-                                    std::thread(call).detach();
-                                else
-                                    call();
-                            });
+        params.addParameter(param::factory::declareTrigger("execute"), [this](param::Parameter* param) {
+            std::string command = cmd_;
+            auto call = [command]() { system(command.c_str()); };
+            if (async_)
+                std::thread(call).detach();
+            else
+                call();
+        });
         params.addParameter(param::factory::declareText("command", "echo 'Test'"), cmd_);
         params.addParameter(param::factory::declareBool("async", false), async_);
     }
@@ -52,8 +52,6 @@ private:
     std::string cmd_;
     bool async_;
 };
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::DirectExec, csapex::Node)
-

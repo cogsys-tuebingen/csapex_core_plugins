@@ -1,7 +1,6 @@
 #ifndef ROC_CURVE_ADAPTER_H
 #define ROC_CURVE_ADAPTER_H
 
-
 /// PROJECT
 #include <csapex/view/node/default_node_adapter.h>
 
@@ -14,9 +13,8 @@
 #include <qwt_plot_scaleitem.h>
 #include <qwt_scale_map.h>
 
-namespace csapex {
-
-
+namespace csapex
+{
 class ROCCurveAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -36,9 +34,9 @@ Q_SIGNALS:
 protected:
     std::weak_ptr<ROCCurve> wrapped_;
 
-    QwtPlot* plot_widget_ ;
-    QwtPlotCurve *roc_curve_;
+    QwtPlot* plot_widget_;
+    QwtPlotCurve* roc_curve_;
 };
 
-}
-#endif // ROC_CURVE_ADAPTER_H
+}  // namespace csapex
+#endif  // ROC_CURVE_ADAPTER_H

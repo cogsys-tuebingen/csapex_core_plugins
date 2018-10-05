@@ -24,7 +24,7 @@ private:
     void makeString();
 
 private:
-    param::LinearVectorParameter::Ptr vector_;
+    param::LinearVectorParameter::Ptr vector_p_;
     QString string_;
 };
 

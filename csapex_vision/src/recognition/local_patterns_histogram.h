@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class LocalPatternsHistogram : public csapex::Node
 {
 public:
@@ -15,11 +16,15 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    enum Type {LBP, LTP};
+    enum Type
+    {
+        LBP,
+        LTP
+    };
 
-    csapex::Input  *in_img_;
-    csapex::Input  *in_rois_;
-    csapex::Output *out_;
+    csapex::Input* in_img_;
+    csapex::Input* in_rois_;
+    csapex::Output* out_;
 };
-}
-#endif // LOCAL_PATTERNS_H
+}  // namespace csapex
+#endif  // LOCAL_PATTERNS_H

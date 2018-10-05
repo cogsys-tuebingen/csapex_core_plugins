@@ -12,13 +12,13 @@ using namespace csapex;
 using namespace connection_types;
 using namespace lib_laser_processing;
 
-ScanMessage::ScanMessage()
-    : MessageTemplate<lib_laser_processing::Scan, ScanMessage> ("/")
-{}
-
+ScanMessage::ScanMessage() : MessageTemplate<lib_laser_processing::Scan, ScanMessage>("/")
+{
+}
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::ScanMessage>::encode(const csapex::connection_types::ScanMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
@@ -29,7 +29,7 @@ Node convert<csapex::connection_types::ScanMessage>::encode(const csapex::connec
 
 bool convert<csapex::connection_types::ScanMessage>::decode(const Node& node, csapex::connection_types::ScanMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
 
@@ -37,4 +37,4 @@ bool convert<csapex::connection_types::ScanMessage>::decode(const Node& node, cs
     rhs.value = node.as<Scan>();
     return true;
 }
-}
+}  // namespace YAML

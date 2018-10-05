@@ -1,13 +1,13 @@
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 using namespace connection_types;
 
 class Magnitude : public csapex::Node
@@ -22,7 +22,7 @@ public:
         input_ = node_modifier.addInput<CvMatMessage>("Matrix");
         output_ = node_modifier.addOutput<CvMatMessage>("Magnitude");
     }
-    virtual void setupParameters(Parameterizable &parameters) override
+    virtual void setupParameters(Parameterizable& parameters) override
     {
     }
     virtual void process() override
@@ -40,8 +40,8 @@ public:
     }
 
 private:
-    Input*  input_;
+    Input* input_;
     Output* output_;
 };
-}
+}  // namespace csapex
 CSAPEX_REGISTER_CLASS(csapex::Magnitude, csapex::Node)

@@ -5,8 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class SetTimeStamp : public Node
 {
 public:
@@ -25,6 +25,6 @@ private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
-#endif // SET_TIMESTAMP_H_
+#endif  // SET_TIMESTAMP_H_

@@ -2,11 +2,11 @@
 #include "indicator.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/msg/generic_value_message.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::boolean::Indicator, csapex::Node)
 
@@ -18,7 +18,7 @@ Indicator::Indicator()
 {
 }
 
-void Indicator::setupParameters(Parameterizable &parameters)
+void Indicator::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareBool("signal", true));
 }

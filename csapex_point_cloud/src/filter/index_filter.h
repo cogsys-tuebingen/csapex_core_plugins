@@ -5,7 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
+namespace csapex
+{
 class IndexFilter : public Node
 {
 public:
@@ -18,10 +19,9 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 protected:
-    Input*  input_cloud_;
-    Input*  indices_input_;
+    Input* input_cloud_;
+    Input* indices_input_;
     Output* output_cloud_;
-
 };
-}
-#endif // INDEX_FILTER_H
+}  // namespace csapex
+#endif  // INDEX_FILTER_H

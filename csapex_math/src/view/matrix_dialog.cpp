@@ -2,16 +2,16 @@
 #include <csapex_math/view/matrix_dialog.h>
 
 /// COMPONENT
-#include <csapex/view/utility/html_delegate.h>
-#include <csapex/view/designer/graph_view.h>
 #include <csapex/model/graph_facade.h>
+#include <csapex/view/designer/graph_view.h>
+#include <csapex/view/utility/html_delegate.h>
 
 /// SYSTEM
+#include <QButtonGroup>
+#include <QDialogButtonBox>
+#include <QFileDialog>
 #include <QLabel>
 #include <QRadioButton>
-#include <QButtonGroup>
-#include <QFileDialog>
-#include <QDialogButtonBox>
 #include <QVBoxLayout>
 
 using namespace csapex;

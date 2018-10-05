@@ -2,11 +2,11 @@
 #include <csapex_scan_2d/renderer.h>
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/node_modifier.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 /// SYSTEM
 #include <boost/mpl/vector.hpp>
@@ -15,9 +15,7 @@ using namespace csapex;
 using namespace csapex::connection_types;
 using namespace lib_laser_processing;
 
-
-Renderer::Renderer()
-    : w(0), h(0), scale(1.0)
+Renderer::Renderer() : w(0), h(0), scale(1.0)
 {
     addParameter(csapex::param::factory::declareRange("width", 100, 2000, 256, 1));
     addParameter(csapex::param::factory::declareRange("height", 100, 2000, 256, 1));
@@ -40,10 +38,10 @@ void Renderer::drawRays(const Scan& scan, cv::Mat& img, const cv::Point2f& origi
 {
     float angle = scan.angle_min + angle_offset;
     float angle_step = scan.angle_increment;
-    for(std::vector<LaserBeam>::const_iterator it = scan.rays.begin(); it != scan.rays.end(); ++it) {
+    for (std::vector<LaserBeam>::const_iterator it = scan.rays.begin(); it != scan.rays.end(); ++it) {
         const LaserBeam& range = *it;
 
-        if(range.valid()) {
+        if (range.valid()) {
             cv::Point2f pt(range.posX(), range.posY());
             cv::line(img, origin, origin + pt * scale, color, radius, CV_AA);
         }
@@ -54,10 +52,10 @@ void Renderer::drawHits(const Scan& scan, cv::Mat& img, const cv::Point2f& origi
 {
     float angle = scan.angle_min + angle_offset;
     float angle_step = scan.angle_increment;
-    for(std::vector<LaserBeam>::const_iterator it = scan.rays.begin(); it != scan.rays.end(); ++it) {
+    for (std::vector<LaserBeam>::const_iterator it = scan.rays.begin(); it != scan.rays.end(); ++it) {
         const LaserBeam& range = *it;
 
-        if(range.valid()) {
+        if (range.valid()) {
             cv::Point2f pt(range.posX(), range.posY());
             cv::circle(img, origin + pt * scale, radius, color, CV_FILLED, CV_AA);
         }
@@ -72,16 +70,15 @@ void Renderer::drawHits(const LabeledScan& scan, cv::Mat& img, const cv::Point2f
     std::vector<LaserBeam>::const_iterator range_it = scan.rays.begin();
     std::vector<int>::const_iterator label_it = scan.labels.begin();
 
-    for(; range_it != scan.rays.end(); ++range_it, ++label_it) {
+    for (; range_it != scan.rays.end(); ++range_it, ++label_it) {
         const LaserBeam& range = *range_it;
 
-        if(range.range() > 1e-10 && range.valid()) {
-
+        if (range.range() > 1e-10 && range.valid()) {
             int label = *label_it;
 
             cv::Point2f pt(range.posX(), range.posY());
 
-            if(mark_random_color && label != 0) {
+            if (mark_random_color && label != 0) {
                 color::fromCount(label, marked[2], marked[1], marked[0]);
             }
 
@@ -94,7 +91,7 @@ void Renderer::drawHits(const LabeledScan& scan, cv::Mat& img, const cv::Point2f
 
 cv::Point2f Renderer::getOrigin() const
 {
-    return cv::Point2f(w/2, h/2);
+    return cv::Point2f(w / 2, h / 2);
 }
 
 double Renderer::getScale() const

@@ -6,8 +6,8 @@
 #include <csapex/model/token_data.h>
 #include <csapex/msg/generic_vector_message.hpp>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN ExportFile : public Node
 {
 public:
@@ -42,6 +42,6 @@ private:
     TokenData::ConstPtr last_message_;
 };
 
-}
+}  // namespace csapex
 
-#endif // EXPORT_FILE_H_
+#endif  // EXPORT_FILE_H_

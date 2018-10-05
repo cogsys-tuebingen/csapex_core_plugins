@@ -1,22 +1,20 @@
 
 /// PROJECT
+#include <csapex/model/node_handle.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/model/node_state.h>
 #include <csapex/model/throttled_node.h>
+#include <csapex/model/token.h>
+#include <csapex/msg/any_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/any_message.h>
-#include <csapex/model/token.h>
-#include <csapex/model/node_handle.h>
-#include <csapex/model/node_state.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class Throttle : public ThrottledNode
 {
 public:
@@ -35,7 +33,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-       ThrottledNode::setupParameter(params, "frequency");
+        ThrottledNode::setupParameter(params, "frequency");
     }
 
     bool canProcess() const override
@@ -55,8 +53,6 @@ private:
     TokenDataConstPtr data_;
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::Throttle, csapex::Node)
-

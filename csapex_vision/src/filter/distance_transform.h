@@ -8,9 +8,8 @@
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class DistanceTransform : public csapex::Node
 {
 public:
@@ -26,7 +25,6 @@ private:
     Output* out_label_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // DISTANCE_TRANSFORM_H
+#endif  // DISTANCE_TRANSFORM_H

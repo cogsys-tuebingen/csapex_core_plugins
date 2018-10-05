@@ -2,11 +2,11 @@
 #include "extract_timestamp.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex_core_plugins/timestamp_message.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_core_plugins/timestamp_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractTimeStampCloud, csapex::Node)
 
@@ -29,7 +29,7 @@ void ExtractTimeStampCloud::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<ExtractTimeStampCloud>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<ExtractTimeStampCloud>(this, msg), msg->value);
 }
 
 template <class PointT>

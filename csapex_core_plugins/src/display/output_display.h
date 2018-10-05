@@ -2,9 +2,9 @@
 #define OUTPUT_DISPLAY_H
 
 /// PROJECT
+#include "csapex_core_plugins_node_export.h"
 #include <csapex/model/node.h>
 #include <csapex/view/view_fwd.h>
-#include "csapex_core_plugins_node_export.h"
 
 /// SYSTEM
 #include <QImage>
@@ -12,7 +12,6 @@
 
 namespace csapex
 {
-
 class Input;
 
 class CSAPEX_CORE_PLUGINS_NODE_EXPORT OutputDisplay : public Node
@@ -37,6 +36,6 @@ public:
     int jpg_quality_;
 };
 
-}
+}  // namespace csapex
 
-#endif // OUTPUT_DISPLAY_H
+#endif  // OUTPUT_DISPLAY_H

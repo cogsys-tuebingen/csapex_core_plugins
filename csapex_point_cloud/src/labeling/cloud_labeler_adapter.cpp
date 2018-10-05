@@ -3,17 +3,17 @@
 
 /// PROJECT
 #include <csapex/model/node_facade_impl.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/range_parameter.h>
+#include <csapex/view/utility/color.hpp>
 #include <csapex/view/utility/register_node_adapter.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
-#include <csapex/msg/io.h>
-#include <csapex/view/utility/color.hpp>
-#include <csapex/param/range_parameter.h>
 
 /// SYSTEM
 #include <QtOpenGL>
 #include <csapex/view/utility/QtCvImageConverter.h>
-#include <pcl/for_each_type.h>
 #include <pcl/conversions.h>
+#include <pcl/for_each_type.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -21,15 +21,34 @@ using namespace csapex::connection_types;
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(CloudLabelerAdapter, csapex::CloudLabeler)
 
 CloudLabelerAdapter::CloudLabelerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CloudLabeler> node)
-    : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, parent),
-      wrapped_(node), view_(nullptr), pixmap_(nullptr), fbo_(nullptr), drag_(false), repaint_(true),
-      fov_v_(45.0f), near_(0.01f), far_(300.0f),
-      w_view_(10), h_view_(10), point_size_(1),
-      phi_(0), theta_(M_PI/2), r_(-10.0),
-      axes_(false), grid_size_(10), grid_resolution_(1.0), grid_xy_(true), grid_yz_(false), grid_xz_(false),
-      list_cloud_(0), list_augmentation_(0),
-      label_rect_(false), label_point_(false),
-      radius_(0.3)
+  : QGLWidget(QGLFormat(QGL::SampleBuffers))
+  , DefaultNodeAdapter(worker, parent)
+  , wrapped_(node)
+  , view_(nullptr)
+  , pixmap_(nullptr)
+  , fbo_(nullptr)
+  , drag_(false)
+  , repaint_(true)
+  , fov_v_(45.0f)
+  , near_(0.01f)
+  , far_(300.0f)
+  , w_view_(10)
+  , h_view_(10)
+  , point_size_(1)
+  , phi_(0)
+  , theta_(M_PI / 2)
+  , r_(-10.0)
+  , axes_(false)
+  , grid_size_(10)
+  , grid_resolution_(1.0)
+  , grid_xy_(true)
+  , grid_yz_(false)
+  , grid_xz_(false)
+  , list_cloud_(0)
+  , list_augmentation_(0)
+  , label_rect_(false)
+  , label_point_(false)
+  , radius_(0.3)
 {
     auto node_ptr = wrapped_.lock();
 
@@ -56,7 +75,7 @@ void CloudLabelerAdapter::setupUi(QBoxLayout* layout)
 {
     view_ = new QGraphicsView;
     QGraphicsScene* scene = view_->scene();
-    if(scene == nullptr) {
+    if (scene == nullptr) {
         scene = new QGraphicsScene();
         selection_ = scene->addRect(0, 0, 0, 0, QPen(Qt::black));
         view_->setScene(scene);
@@ -73,8 +92,6 @@ void CloudLabelerAdapter::setupUi(QBoxLayout* layout)
 
     DefaultNodeAdapter::setupUi(layout);
 }
-
-
 
 void CloudLabelerAdapter::initializeGL()
 {
@@ -100,14 +117,14 @@ void CloudLabelerAdapter::resizeGL(int width, int height)
     glLoadIdentity();
 
     projection.setToIdentity();
-    projection.perspective(fov_v_,(GLfloat)width/(GLfloat)height,near_, far_);
+    projection.perspective(fov_v_, (GLfloat)width / (GLfloat)height, near_, far_);
     glLoadMatrixf(projection.data());
     glMatrixMode(GL_MODELVIEW);
 }
 
 void CloudLabelerAdapter::resize()
 {
-    if(w_view_ != view_->width() || h_view_ != view_->height()) {
+    if (w_view_ != view_->width() || h_view_ != view_->height()) {
         view_->setFixedSize(w_view_, h_view_);
     }
     resizeGL(w_out_, h_out_);
@@ -117,7 +134,7 @@ void CloudLabelerAdapter::paintAugmentation()
 {
     makeCurrent();
 
-    if(list_augmentation_ == 0) {
+    if (list_augmentation_ == 0) {
         list_augmentation_ = glGenLists(1);
     }
 
@@ -126,16 +143,15 @@ void CloudLabelerAdapter::paintAugmentation()
     glPushAttrib(GL_LINE_SMOOTH);
     glPushAttrib(GL_BLEND);
 
-    glNewList(list_augmentation_,GL_COMPILE);
+    glNewList(list_augmentation_, GL_COMPILE);
 
     // change settings
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-    glDisable( GL_CULL_FACE );
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDisable(GL_CULL_FACE);
     glEnable(GL_LINE_SMOOTH);
-    glEnable (GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
 
     // grid
     qglColor(color_grid_);
@@ -144,58 +160,57 @@ void CloudLabelerAdapter::paintAugmentation()
     glBegin(GL_QUADS);
     double dim = grid_resolution_ * grid_size_ / 2.0;
     double r = grid_resolution_;
-    if(grid_xy_) {
-        for(double x = -dim; x < dim; x += grid_resolution_) {
-            for(double y = -dim; y < dim; y += grid_resolution_) {
-                glVertex3d(x,y,0);
-                glVertex3d(x+r,y,0);
-                glVertex3d(x+r,y+r,0);
-                glVertex3d(x,y+r,0);
+    if (grid_xy_) {
+        for (double x = -dim; x < dim; x += grid_resolution_) {
+            for (double y = -dim; y < dim; y += grid_resolution_) {
+                glVertex3d(x, y, 0);
+                glVertex3d(x + r, y, 0);
+                glVertex3d(x + r, y + r, 0);
+                glVertex3d(x, y + r, 0);
             }
         }
     }
-    if(grid_yz_) {
-        for(double y = -dim; y < dim; y += grid_resolution_) {
-            for(double z = -dim; z < dim; z += grid_resolution_) {
-                glVertex3d(0,y,z);
-                glVertex3d(0,y+r,z);
-                glVertex3d(0,y+r,z+r);
-                glVertex3d(0,y,z+r);
+    if (grid_yz_) {
+        for (double y = -dim; y < dim; y += grid_resolution_) {
+            for (double z = -dim; z < dim; z += grid_resolution_) {
+                glVertex3d(0, y, z);
+                glVertex3d(0, y + r, z);
+                glVertex3d(0, y + r, z + r);
+                glVertex3d(0, y, z + r);
             }
         }
     }
-    if(grid_xz_) {
-        for(double x = -dim; x < dim; x += grid_resolution_) {
-            for(double z = -dim; z < dim; z += grid_resolution_) {
-                glVertex3d(x,0,z);
-                glVertex3d(x+r,0,z);
-                glVertex3d(x+r,0,z+r);
-                glVertex3d(x,0,z+r);
+    if (grid_xz_) {
+        for (double x = -dim; x < dim; x += grid_resolution_) {
+            for (double z = -dim; z < dim; z += grid_resolution_) {
+                glVertex3d(x, 0, z);
+                glVertex3d(x + r, 0, z);
+                glVertex3d(x + r, 0, z + r);
+                glVertex3d(x, 0, z + r);
             }
         }
     }
     glEnd();
 
-    if(axes_) {
+    if (axes_) {
         // axes
         double d = 0.5;
         glLineWidth(20.f);
         glBegin(GL_LINES);
         // x
-        glColor3d(1,0,0);
-        glVertex3d(0,0,0);
-        glVertex3d(d,0,0);
+        glColor3d(1, 0, 0);
+        glVertex3d(0, 0, 0);
+        glVertex3d(d, 0, 0);
         // y
-        glColor3d(0,1,0);
-        glVertex3d(0,0,0);
-        glVertex3d(0,d,0);
+        glColor3d(0, 1, 0);
+        glVertex3d(0, 0, 0);
+        glVertex3d(0, d, 0);
         // z
-        glColor3d(0,0,1);
-        glVertex3d(0,0,0);
-        glVertex3d(0,0,d);
+        glColor3d(0, 0, 1);
+        glVertex3d(0, 0, 0);
+        glVertex3d(0, 0, d);
         glEnd();
     }
-
 
     glEndList();
 
@@ -205,8 +220,7 @@ void CloudLabelerAdapter::paintAugmentation()
     glPopAttrib();
 }
 
-std::pair<QVector3D, QVector3D>
-CloudLabelerAdapter::calculateRay( const QPointF& cursor)
+std::pair<QVector3D, QVector3D> CloudLabelerAdapter::calculateRay(const QPointF& cursor)
 {
     QVector3D view = (look_at_pt - eye).normalized();
 
@@ -228,17 +242,17 @@ CloudLabelerAdapter::calculateRay( const QPointF& cursor)
     x /= (w_view_ / 2);
     y /= (h_view_ / 2);
 
-    QVector3D pos = eye + view * near_ + (h*x + v*y);
+    QVector3D pos = eye + view * near_ + (h * x + v * y);
     QVector3D dir = (pos - eye).normalized();
 
-    std::pair<QVector3D, QVector3D> ray { eye + dir * far_ / 4.0, dir };
+    std::pair<QVector3D, QVector3D> ray{ eye + dir * far_ / 4.0, dir };
     return ray;
 }
 
 void CloudLabelerAdapter::paintGLImpl(bool request)
 {
     auto n = wrapped_.lock();
-    if(!n) {
+    if (!n) {
         return;
     }
 
@@ -246,7 +260,7 @@ void CloudLabelerAdapter::paintGLImpl(bool request)
     makeCurrent();
     initializeGL();
 
-    if(fbo_) {
+    if (fbo_) {
         delete fbo_;
     }
 
@@ -264,35 +278,31 @@ void CloudLabelerAdapter::paintGLImpl(bool request)
 
     // model view matrix
     modelview.setToIdentity();
-    eye = QVector3D(-r_ * std::sin(theta_) * std::cos(phi_),
-                    -r_ * std::sin(theta_) * std::sin(phi_),
-                    -r_ * std::cos(theta_))
-            + offset_;
-    QVector3D center(0,0,0);
-    up = QVector3D(0,0,1);
+    eye = QVector3D(-r_ * std::sin(theta_) * std::cos(phi_), -r_ * std::sin(theta_) * std::sin(phi_), -r_ * std::cos(theta_)) + offset_;
+    QVector3D center(0, 0, 0);
+    up = QVector3D(0, 0, 1);
 
     look_at_pt = center + offset_;
 
     modelview.lookAt(eye, look_at_pt, up);
     glLoadMatrixf(modelview.data());
 
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glCallList(list_cloud_);
 
     // grid
-    if(repaint_ || !list_augmentation_) {
+    if (repaint_ || !list_augmentation_) {
         paintAugmentation();
     }
     glCallList(list_augmentation_);
 
-
     // center point
-    if(drag_) {
+    if (drag_) {
         QVector3D o = center + offset_;
 
         glPointSize(point_size_ * 5);
         glBegin(GL_POINTS);
-        glColor3f(1,1,1);
+        glColor3f(1, 1, 1);
         glVertex3d(o.x(), o.y(), o.z());
         glEnd();
     }
@@ -339,7 +349,7 @@ void CloudLabelerAdapter::paintGLImpl(bool request)
 
     fbo_->release();
 
-    if(pixmap_ == nullptr) {
+    if (pixmap_ == nullptr) {
         pixmap_ = view_->scene()->addPixmap(QPixmap::fromImage(img));
     } else {
         pixmap_->setPixmap(QPixmap::fromImage(img));
@@ -353,19 +363,20 @@ void CloudLabelerAdapter::paintGLImpl(bool request)
     view_->blockSignals(false);
 }
 
-void CloudLabelerAdapter::drawSphere(double radius, int lats, int longs) {
-    for(int i = 0; i <= lats; i++) {
-        double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
-        double z0  = sin(lat0);
-        double zr0 =  cos(lat0);
+void CloudLabelerAdapter::drawSphere(double radius, int lats, int longs)
+{
+    for (int i = 0; i <= lats; i++) {
+        double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
+        double z0 = sin(lat0);
+        double zr0 = cos(lat0);
 
-        double lat1 = M_PI * (-0.5 + (double) i / lats);
+        double lat1 = M_PI * (-0.5 + (double)i / lats);
         double z1 = sin(lat1);
         double zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
-        for(int j = 0; j <= longs; j++) {
-            double lng = 2 * M_PI * (double) (j - 1) / longs;
+        for (int j = 0; j <= longs; j++) {
+            double lng = 2 * M_PI * (double)(j - 1) / longs;
             double x = cos(lng);
             double y = sin(lng);
 
@@ -381,21 +392,20 @@ void CloudLabelerAdapter::drawSphere(double radius, int lats, int longs) {
 void CloudLabelerAdapter::labelPoint()
 {
     NodeFacadePtr node_facade = node_.lock();
-    if(!node_facade) {
+    if (!node_facade) {
         return;
     }
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
     int label = node->readParameter<int>("label");
     radius_ = node->readParameter<double>("radius");
 
-
-    for(pcl::PointXYZL& pt : labeled_->points) {
+    for (pcl::PointXYZL& pt : labeled_->points) {
         QVector3D v(pt.x, pt.y, pt.z);
-        if(v.distanceToPoint(selection_3d_cursor_) < radius_) {
+        if (v.distanceToPoint(selection_3d_cursor_) < radius_) {
             pt.label = label;
         }
     }
@@ -408,15 +418,14 @@ void CloudLabelerAdapter::labelPoint()
 void CloudLabelerAdapter::labelArea()
 {
     NodeFacadePtr node_facade = node_.lock();
-    if(!node_facade) {
+    if (!node_facade) {
         return;
     }
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     int label = node->readParameter<int>("label");
-
 
     double minx = std::min(cursor_label_start_.x(), cursor_label_end_.x());
     double maxx = std::max(cursor_label_start_.x(), cursor_label_end_.x());
@@ -436,25 +445,26 @@ void CloudLabelerAdapter::labelArea()
     selection_d_ = calculateRay(br);
 
     QVector3D n_ab = QVector3D::crossProduct(selection_a_.second, selection_b_.second);
-    QVector3D n_bd = QVector3D::crossProduct(selection_b_.second, selection_d_.second);;
-    QVector3D n_dc = QVector3D::crossProduct(selection_d_.second, selection_c_.second);;
-    QVector3D n_ca = QVector3D::crossProduct(selection_c_.second, selection_a_.second);;
+    QVector3D n_bd = QVector3D::crossProduct(selection_b_.second, selection_d_.second);
+    ;
+    QVector3D n_dc = QVector3D::crossProduct(selection_d_.second, selection_c_.second);
+    ;
+    QVector3D n_ca = QVector3D::crossProduct(selection_c_.second, selection_a_.second);
+    ;
 
-    QVector3D normals[] {
-        n_ab, n_bd, n_dc, n_ca
-    };
+    QVector3D normals[]{ n_ab, n_bd, n_dc, n_ca };
 
-    for(pcl::PointXYZL& pt : labeled_->points) {
+    for (pcl::PointXYZL& pt : labeled_->points) {
         QVector3D v(pt.x, pt.y, pt.z);
         bool inside = true;
-        for(const QVector3D& n : normals) {
+        for (const QVector3D& n : normals) {
             double dot = QVector3D::dotProduct(n, v - eye);
-            if(dot < 0) {
+            if (dot < 0) {
                 inside = false;
                 break;
             }
         }
-        if(inside) {
+        if (inside) {
             pt.label = label;
         }
     }
@@ -464,56 +474,56 @@ void CloudLabelerAdapter::labelArea()
     repaintRequest();
 }
 
-bool CloudLabelerAdapter::eventFilter(QObject * o, QEvent * e)
+bool CloudLabelerAdapter::eventFilter(QObject* o, QEvent* e)
 {
     auto n = node_.lock();
-    if(!n) {
+    if (!n) {
         return false;
     }
 
-    if(view_->signalsBlocked()) {
+    if (view_->signalsBlocked()) {
         return false;
     }
 
-    QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
+    QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*>(e);
 
-    switch(e->type()) {
-    case QEvent::GraphicsSceneMousePress:
-        mousePressEventImpl(me);
-        return true;
-    case QEvent::GraphicsSceneMouseRelease:
-        mouseReleaseEventImpl(me);
-        return true;
-    case QEvent::GraphicsSceneMouseMove:
-        mouseMoveEventImpl(me);
-        return true;
-    case QEvent::GraphicsSceneWheel:
-        wheelEventImpl(dynamic_cast<QGraphicsSceneWheelEvent*>(e));
-        return true;
+    switch (e->type()) {
+        case QEvent::GraphicsSceneMousePress:
+            mousePressEventImpl(me);
+            return true;
+        case QEvent::GraphicsSceneMouseRelease:
+            mouseReleaseEventImpl(me);
+            return true;
+        case QEvent::GraphicsSceneMouseMove:
+            mouseMoveEventImpl(me);
+            return true;
+        case QEvent::GraphicsSceneWheel:
+            wheelEventImpl(dynamic_cast<QGraphicsSceneWheelEvent*>(e));
+            return true;
 
-    case QEvent::KeyPress: {
-        QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e);
+        case QEvent::KeyPress: {
+            QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e);
 
-        int key = ke->key();
+            int key = ke->key();
 
-        if(Qt::Key_0 <= key && key <= Qt::Key_9) {
-            updateLabel(ke->key() - Qt::Key_0);
-        } else if(key == Qt::Key_Enter) {
-            done();
-        } else if(key == Qt::Key_Escape) {
-            updateLabel(0);
+            if (Qt::Key_0 <= key && key <= Qt::Key_9) {
+                updateLabel(ke->key() - Qt::Key_0);
+            } else if (key == Qt::Key_Enter) {
+                done();
+            } else if (key == Qt::Key_Escape) {
+                updateLabel(0);
+            }
+
+            break;
         }
-
-        break;
-    }
-    default:
-        break;
+        default:
+            break;
     }
 
     return false;
 }
 
-void CloudLabelerAdapter::mousePressEventImpl(QGraphicsSceneMouseEvent *event)
+void CloudLabelerAdapter::mousePressEventImpl(QGraphicsSceneMouseEvent* event)
 {
     last_pos_ = event->screenPos();
 
@@ -521,9 +531,8 @@ void CloudLabelerAdapter::mousePressEventImpl(QGraphicsSceneMouseEvent *event)
 
     bool shift = Qt::ShiftModifier & QApplication::keyboardModifiers();
     bool ctrl = Qt::ControlModifier & QApplication::keyboardModifiers();
-    if(!shift) {
-
-        if(ctrl) {
+    if (!shift) {
+        if (ctrl) {
             label_rect_ = true;
             cursor_label_start_ = cursor_;
             event->accept();
@@ -535,23 +544,22 @@ void CloudLabelerAdapter::mousePressEventImpl(QGraphicsSceneMouseEvent *event)
             event->accept();
         }
 
-
     } else {
         drag_ = true;
         event->accept();
     }
 }
 
-void CloudLabelerAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event)
+void CloudLabelerAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent* event)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
     cursor_ = event->scenePos();
 
-    if(label_rect_) {
+    if (label_rect_) {
         cursor_label_end_ = cursor_;
         labelArea();
 
@@ -565,7 +573,7 @@ void CloudLabelerAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event)
     node->getParameter("~size/width")->set<int>(w_view_);
     node->getParameter("~size/height")->set<int>(h_view_);
 
-    if(size_sync_) {
+    if (size_sync_) {
         w_out_ = w_view_;
         h_out_ = h_view_;
         node->getParameter("~size/out/width")->set<int>(w_out_);
@@ -574,10 +582,10 @@ void CloudLabelerAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event)
     event->accept();
 }
 
-void CloudLabelerAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
+void CloudLabelerAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent* event)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
@@ -587,12 +595,12 @@ void CloudLabelerAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
 
     double closest_dist = std::numeric_limits<double>::infinity();
 
-    for(pcl::PointXYZL& pt : labeled_->points) {
+    for (pcl::PointXYZL& pt : labeled_->points) {
         QVector3D v(pt.x, pt.y, pt.z);
         QVector3D ve = v - eye;
         double dist = v.distanceToLine(eye, ray.second);
-        if(dist < 0.05) {
-            if(ve.length() < closest_dist) {
+        if (dist < 0.05) {
+            if (ve.length() < closest_dist) {
                 closest_dist = ve.length();
             }
         }
@@ -600,19 +608,17 @@ void CloudLabelerAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
 
     selection_3d_cursor_ = eye + ray.second * closest_dist;
 
-    if(label_point_) {
+    if (label_point_) {
         labelPoint();
         event->accept();
     }
-    if(label_rect_) {
-        selection_->setRect(QRectF(std::min(cursor_label_start_.x(), cursor_.x()),
-                                   std::min(cursor_label_start_.y(), cursor_.y()),
-                                   std::abs(cursor_label_start_.x() - cursor_.x()),
+    if (label_rect_) {
+        selection_->setRect(QRectF(std::min(cursor_label_start_.x(), cursor_.x()), std::min(cursor_label_start_.y(), cursor_.y()), std::abs(cursor_label_start_.x() - cursor_.x()),
                                    std::abs(cursor_label_start_.y() - cursor_.y())));
         event->accept();
     }
 
-    if(!label_rect_ && drag_) {
+    if (!label_rect_ && drag_) {
         event->accept();
 
         QPointF pos = event->screenPos();
@@ -626,11 +632,11 @@ void CloudLabelerAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
             setPhi(phi_ + f * -dx);
 
         } else if (event->buttons() & Qt::MidButton) {
-            w_view_ = std::max(40, std::min(2000, w_view_ + (int) dx));
-            h_view_ = std::max(40, std::min(2000, h_view_ + (int) dy));
+            w_view_ = std::max(40, std::min(2000, w_view_ + (int)dx));
+            h_view_ = std::max(40, std::min(2000, h_view_ + (int)dy));
 
-            view_->setFixedSize(w_view_,h_view_);
-            if(size_sync_) {
+            view_->setFixedSize(w_view_, h_view_);
+            if (size_sync_) {
                 w_out_ = w_view_;
                 h_out_ = h_view_;
 
@@ -640,28 +646,26 @@ void CloudLabelerAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
         } else if (event->buttons() & Qt::RightButton) {
             QMatrix4x4 rot;
             rot.setToIdentity();
-            rot.rotate(phi_ * 180.0 / M_PI, QVector3D(0,0,1));
-            offset_ += rot * QVector3D(f*dy, f*dx, 0);
-
+            rot.rotate(phi_ * 180.0 / M_PI, QVector3D(0, 0, 1));
+            offset_ += rot * QVector3D(f * dy, f * dx, 0);
 
             node->getParameter("~view/dx")->set<double>(offset_.x());
             node->getParameter("~view/dy")->set<double>(offset_.y());
             node->getParameter("~view/dz")->set<double>(offset_.z());
-
         }
         last_pos_ = pos;
     }
     paintGLImpl(false);
 }
 
-void CloudLabelerAdapter::wheelEventImpl(QGraphicsSceneWheelEvent *event)
+void CloudLabelerAdapter::wheelEventImpl(QGraphicsSceneWheelEvent* event)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     bool shift = Qt::ShiftModifier & QApplication::keyboardModifiers();
-    if(!shift) {
+    if (!shift) {
         param::RangeParameterPtr p = std::dynamic_pointer_cast<param::RangeParameter>(node->getParameter("radius"));
         radius_ += event->delta() * 0.001;
         radius_ = std::min(p->max<double>(), std::max(p->min<double>(), radius_));
@@ -674,7 +678,6 @@ void CloudLabelerAdapter::wheelEventImpl(QGraphicsSceneWheelEvent *event)
     paintGLImpl(false);
 }
 
-
 void CloudLabelerAdapter::display()
 {
     Q_EMIT displayRequest();
@@ -683,22 +686,22 @@ void CloudLabelerAdapter::display()
 void CloudLabelerAdapter::refresh()
 {
     NodeFacadePtr node_facade = node_.lock();
-    if(!node_facade) {
+    if (!node_facade) {
         return;
     }
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     radius_ = node->readParameter<double>("radius");
 
-    if(!drag_){
+    if (!drag_) {
         {
-            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/background");
+            const std::vector<int>& c = node->readParameter<std::vector<int>>("color/background");
             color_bg_ = QColor::fromRgb(c[0], c[1], c[2]);
         }
         {
-            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/grid");
+            const std::vector<int>& c = node->readParameter<std::vector<int>>("color/grid");
             color_grid_ = QColor::fromRgb(c[0], c[1], c[2]);
         }
 
@@ -710,14 +713,14 @@ void CloudLabelerAdapter::refresh()
         double dy = node->readParameter<double>("~view/dy");
         double dz = node->readParameter<double>("~view/dz");
 
-        offset_ = QVector3D(dx,dy,dz);
+        offset_ = QVector3D(dx, dy, dz);
         point_size_ = node->readParameter<double>("point/size");
 
         size_sync_ = node->readParameter<bool>("~size/out/sync");
         w_view_ = node->readParameter<int>("~size/width");
         h_view_ = node->readParameter<int>("~size/height");
 
-        if(size_sync_) {
+        if (size_sync_) {
             w_out_ = w_view_;
             h_out_ = h_view_;
         } else {
@@ -744,7 +747,7 @@ void CloudLabelerAdapter::refresh()
 void CloudLabelerAdapter::done()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     node->setResult(labeled_);
@@ -753,25 +756,25 @@ void CloudLabelerAdapter::done()
 void CloudLabelerAdapter::displayCloud()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     auto copy = node->getMessage();
-    boost::apply_visitor (PointCloudMessage::Dispatch<CloudLabelerAdapter>(this, copy), copy->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<CloudLabelerAdapter>(this, copy), copy->value);
 }
 
 template <class PointT>
 void CloudLabelerAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     labeled_.reset(new pcl::PointCloud<pcl::PointXYZL>);
     labeled_->header = cloud->header;
     labeled_->points.resize(cloud->points.size());
     pcl::PointXYZL* pt_label = &labeled_->points.front();
-    for(const PointT& pt : cloud->points) {
+    for (const PointT& pt : cloud->points) {
         pt_label->x = pt.x;
         pt_label->y = pt.y;
         pt_label->z = pt.z;
@@ -780,10 +783,9 @@ void CloudLabelerAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr 
         ++pt_label;
     }
 
-
     makeCurrent();
 
-    if(list_cloud_ == 0) {
+    if (list_cloud_ == 0) {
         list_cloud_ = glGenLists(1);
     }
 
@@ -796,7 +798,7 @@ void CloudLabelerAdapter::drawPoints()
 {
     makeCurrent();
 
-    glNewList(list_cloud_,GL_COMPILE);
+    glNewList(list_cloud_, GL_COMPILE);
 
     glPointSize(point_size_);
 
@@ -804,9 +806,9 @@ void CloudLabelerAdapter::drawPoints()
 
     glColor3d(0.0, 0.0, 0.0);
 
-    for(auto it = labeled_->points.begin(); it != labeled_->points.end(); ++it) {
+    for (auto it = labeled_->points.begin(); it != labeled_->points.end(); ++it) {
         const pcl::PointXYZL& pt = *it;
-        if(pt.label == 0) {
+        if (pt.label == 0) {
             glColor3d(0.0, 0.0, 0.0);
             glVertex3d(pt.x, pt.y, pt.z);
         }
@@ -814,28 +816,26 @@ void CloudLabelerAdapter::drawPoints()
 
     glEnd();
 
-    glPointSize(point_size_/2.0);
+    glPointSize(point_size_ / 2.0);
 
     glBegin(GL_POINTS);
 
-    for(auto it = labeled_->points.begin(); it != labeled_->points.end(); ++it) {
+    for (auto it = labeled_->points.begin(); it != labeled_->points.end(); ++it) {
         const pcl::PointXYZL& pt = *it;
 
-        if(pt.label > 0) {
+        if (pt.label > 0) {
             double r = 0.0, g = 0.0, b = 0.0;
             color::fromCount(pt.label, r, g, b);
-            glColor3d(r/255., g/255., b/255.);
+            glColor3d(r / 255., g / 255., b / 255.);
 
             glVertex3d(pt.x, pt.y, pt.z);
         }
-
     }
 
     glEnd();
 
     glEndList();
 }
-
 
 QSize CloudLabelerAdapter::minimumSizeHint() const
 {
@@ -847,30 +847,32 @@ QSize CloudLabelerAdapter::sizeHint() const
     return QSize(w_view_, h_view_);
 }
 
-namespace {
-double normalizeAngle(double angle) {
-    while(angle <= -M_PI) {
+namespace
+{
+double normalizeAngle(double angle)
+{
+    while (angle <= -M_PI) {
         angle += 2 * M_PI;
     }
-    while(angle > M_PI) {
+    while (angle > M_PI) {
         angle -= 2 * M_PI;
     }
 
     return angle;
 }
-}
+}  // namespace
 
 void CloudLabelerAdapter::setTheta(double angle)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
     double eps = 1e-3;
-    if(angle < eps) {
+    if (angle < eps) {
         angle = eps;
-    } else if(angle > M_PI - eps) {
+    } else if (angle > M_PI - eps) {
         angle = M_PI - eps;
     }
 
@@ -884,10 +886,9 @@ void CloudLabelerAdapter::setTheta(double angle)
 void CloudLabelerAdapter::setPhi(double angle)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
-
 
     angle = normalizeAngle(angle);
     if (angle != phi_) {
@@ -899,9 +900,9 @@ void CloudLabelerAdapter::setPhi(double angle)
 void CloudLabelerAdapter::updateLabel(int label)
 {
     NodeFacadePtr node_facade = node_.lock();
-    if(node_facade) {
+    if (node_facade) {
         auto node = wrapped_.lock();
-        if(node) {
+        if (node) {
             node->getParameter("label")->set(label);
         }
     }

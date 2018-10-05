@@ -19,27 +19,25 @@ private:
     void updatePriors();
     void udpatePriorValues();
 
-    bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
+    bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;
 
 private:
-    int     classes_;
-    int     max_depth_;
-    int     min_sample_count_;
-    double  regression_accuracy_;
-    bool    use_surrogates_;
-    int     max_categories_;
-    int     cv_folds_;
-    bool    use_1se_rule_;
-    bool    truncate_pruned_tree_;
+    int classes_;
+    int max_depth_;
+    int min_sample_count_;
+    double regression_accuracy_;
+    bool use_surrogates_;
+    int max_categories_;
+    int cv_folds_;
+    bool use_1se_rule_;
+    bool truncate_pruned_tree_;
 
     std::vector<csapex::param::ParameterPtr> priors_params_;
     std::vector<float> priors_;
 
     std::string path_;
-
 };
 
+}  // namespace csapex
 
-}
-
-#endif // DECISION_TREE_TRAINER_H
+#endif  // DECISION_TREE_TRAINER_H

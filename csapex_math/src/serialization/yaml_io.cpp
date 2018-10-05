@@ -1,9 +1,9 @@
 /// HEADER
 #include <csapex_math/serialization/yaml_io.h>
 
-
 /// YAML
-namespace YAML {
+namespace YAML
+{
 CSAPEX_MATH_EXPORT Node convert<csapex::math::linear::Vector>::encode(const csapex::math::linear::Vector& rhs)
 {
     Node node;
@@ -19,4 +19,4 @@ CSAPEX_MATH_EXPORT bool convert<csapex::math::linear::Vector>::decode(const Node
     rhs = csapex::math::linear::Vector(v);
     return true;
 }
-}
+}  // namespace YAML

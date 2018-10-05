@@ -7,17 +7,14 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class EvaluateBinaryClassifier : public csapex::Node
 {
 public:
     struct Metric
     {
-        Metric(const std::string& name, const std::string& description,
-               double worst, double best,
-               double value)
-            : name(name), description(description), worst(worst), best(best), value(value)
+        Metric(const std::string& name, const std::string& description, double worst, double best, double value) : name(name), description(description), worst(worst), best(best), value(value)
         {
         }
 
@@ -52,7 +49,6 @@ private:
     int positive_class_label_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // EVALUATE_BINARY_CLASSIFIER_H
+#endif  // EVALUATE_BINARY_CLASSIFIER_H

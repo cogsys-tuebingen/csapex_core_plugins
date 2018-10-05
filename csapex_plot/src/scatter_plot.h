@@ -6,16 +6,15 @@
 #include <csapex/model/variadic_io.h>
 
 /// SYSTEM
-#include <chrono>
 #include <QColor>
+#include <chrono>
+#include <deque>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_scaleitem.h>
 #include <qwt_scale_map.h>
-#include <deque>
 
 namespace csapex
 {
-
 class ScatterPlot : public Plot, public csapex::VariadicInputs
 {
 public:
@@ -27,14 +26,12 @@ public:
     const double* getYData() const;
     const double* getVarData(std::size_t idx) const;
     std::size_t getCount() const;
-//    std::size_t getNumberOfPlots() const;
-
+    //    std::size_t getNumberOfPlots() const;
 
     double getPointSize() const;
 
 private:
     void reset();
-
 
 private:
     Input* in_x_;
@@ -49,6 +46,6 @@ private:
     double max_y_;
 };
 
-}
+}  // namespace csapex
 
-#endif // SCATTER_PLOT_H
+#endif  // SCATTER_PLOT_H

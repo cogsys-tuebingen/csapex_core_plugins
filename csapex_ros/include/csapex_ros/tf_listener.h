@@ -2,18 +2,19 @@
 #define LISTENER_H
 
 /// PROJECT
-#include <csapex_ros/ros_handler.h>
 #include <csapex/utility/assert.h>
 #include <csapex/utility/singleton.hpp>
+#include <csapex_ros/ros_handler.h>
 
 /// SYSTEM
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <tf/transform_listener.h>
+#include <tf/transform_listener.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 namespace csapex
 {
-
 class LockedTFListener;
 
 class TFListener : public Singleton<TFListener>
@@ -29,7 +30,8 @@ public:
     static void start();
     static void stop();
 
-    void reset() {
+    void reset()
+    {
         tfl->clear();
         std::cout << "reset tf listener" << std::endl;
         tfl.reset(new tf::TransformListener);
@@ -42,7 +44,7 @@ private:
     TFListener();
 
     void cb(const tf::tfMessage::ConstPtr& msg);
-    bool tryFrameAsReference(const tf::tfMessage::ConstPtr &msg, const std::string& frame);
+    bool tryFrameAsReference(const tf::tfMessage::ConstPtr& msg, const std::string& frame);
 
     int retries;
     std::string reference_frame;
@@ -58,10 +60,9 @@ class LockedTFListener
 public:
     TFListener* l;
 
-    LockedTFListener(TFListener* ll)
-        : l(nullptr)
+    LockedTFListener(TFListener* ll) : l(nullptr)
     {
-        if(ll) {
+        if (ll) {
             ll->m.lock();
             l = ll;
         }
@@ -69,12 +70,12 @@ public:
 
     ~LockedTFListener()
     {
-        if(l) {
+        if (l) {
             l->m.unlock();
         }
     }
 };
 
-}
+}  // namespace csapex
 
-#endif // LISTENER_H
+#endif  // LISTENER_H

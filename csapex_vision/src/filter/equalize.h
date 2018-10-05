@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class Equalize : public csapex::Node
 {
 public:
@@ -14,10 +15,10 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
 
 protected:
-    csapex::Output*   output_;
-    csapex::Input*    input_;
+    csapex::Output* output_;
+    csapex::Input* input_;
 };
 
-}
+}  // namespace csapex
 
-#endif // EQUALIZE_H
+#endif  // EQUALIZE_H

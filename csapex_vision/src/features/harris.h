@@ -4,7 +4,8 @@
 /// COMPONENT
 #include "corner_line_detection.h"
 
-namespace csapex {
+namespace csapex
+{
 class CornerHarris : public CornerLineDetection
 {
 public:
@@ -18,11 +19,10 @@ protected:
     void update();
 
     double k_;
-    int    k_size_;
-    int    block_size_;
-    int    border_type_;
-
+    int k_size_;
+    int block_size_;
+    int border_type_;
 };
 
-}
-#endif // HARRIS_H
+}  // namespace csapex
+#endif  // HARRIS_H

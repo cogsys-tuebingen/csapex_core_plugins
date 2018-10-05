@@ -1,19 +1,17 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class CompareInteger : public Node
 {
 public:
@@ -41,19 +39,10 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        std::map<std::string, Operation> operations
-        {
-            {"A > B", Operation::GT},
-            {"A >= B", Operation::GTE},
-            {"A == B", Operation::EQ},
-            {"A != B", Operation::NEQ},
-            {"A <= B", Operation::LTE},
-            {"A < B", Operation::LT},
+        std::map<std::string, Operation> operations{
+            { "A > B", Operation::GT }, { "A >= B", Operation::GTE }, { "A == B", Operation::EQ }, { "A != B", Operation::NEQ }, { "A <= B", Operation::LTE }, { "A < B", Operation::LT },
         };
-        params.addParameter(param::factory::declareParameterSet("operation",
-                                                                         operations,
-                                                                         Operation::EQ),
-                            operation_);
+        params.addParameter(param::factory::declareParameterSet("operation", operations, Operation::EQ), operation_);
     }
 
     void process() override
@@ -64,24 +53,24 @@ public:
         bool res;
 
         switch (operation_) {
-        case Operation::GT:
-            res = a > b;
-            break;
-        case Operation::GTE:
-            res = a >= b;
-            break;
-        case Operation::EQ:
-            res = a == b;
-            break;
-        case Operation::NEQ:
-            res = a != b;
-            break;
-        case Operation::LTE:
-            res = a <= b;
-            break;
-        case Operation::LT:
-            res = a < b;
-            break;
+            case Operation::GT:
+                res = a > b;
+                break;
+            case Operation::GTE:
+                res = a >= b;
+                break;
+            case Operation::EQ:
+                res = a == b;
+                break;
+            case Operation::NEQ:
+                res = a != b;
+                break;
+            case Operation::LTE:
+                res = a <= b;
+                break;
+            case Operation::LT:
+                res = a < b;
+                break;
         }
 
         msg::publish(out, res);
@@ -93,11 +82,8 @@ private:
     Output* out;
 
     Operation operation_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::CompareInteger, csapex::Node)
-

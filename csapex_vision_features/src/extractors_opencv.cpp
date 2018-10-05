@@ -20,11 +20,14 @@ using namespace param;
 
 /// COMBINATIONS
 
-struct Orb : public ExtractorManager::ExtractorInitializer {
+struct Orb : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
             add(ParameterFactory::declareRange("orb/extractor_threshold", 0, 200, 50, 1));
             add(ParameterFactory::declareRange("orb/levels", 1, 20, 8, 1));
             add(ParameterFactory::declareRange("orb/edgeThreshold", 0, 64, 0, 1));
@@ -37,43 +40,47 @@ struct Orb : public ExtractorManager::ExtractorInitializer {
             std::map<std::string, int> set;
             set["ORB::HARRIS_SCORE"] = cv::ORB::HARRIS_SCORE;
             set["ORB::FAST_SCORE"] = cv::ORB::FAST_SCORE;
-            add(ParameterFactory::declareParameterSet("orb/type", set, (int) cv::ORB::HARRIS_SCORE));
+            add(ParameterFactory::declareParameterSet("orb/type", set, (int)cv::ORB::HARRIS_SCORE));
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete) {
-        int et          = params().read<int>   (param, "orb/extractor_threshold");
-        double scale    = params().read<double>(param, "orb/scale");
-        int levels      = params().read<int>   (param, "orb/levels");
-        int edge        = params().read<int>   (param, "orb/edgeThreshold");
-        int first_level = params().read<int>   (param, "orb/first_level");
-        int WTA_K       = params().read<int>   (param, "orb/WTA_K");
-        int patch_size  = params().read<int>   (param, "orb/patch_size");
-        int type        = params().read<int>   (param, "orb/type");
+    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete)
+    {
+        int et = params().read<int>(param, "orb/extractor_threshold");
+        double scale = params().read<double>(param, "orb/scale");
+        int levels = params().read<int>(param, "orb/levels");
+        int edge = params().read<int>(param, "orb/edgeThreshold");
+        int first_level = params().read<int>(param, "orb/first_level");
+        int WTA_K = params().read<int>(param, "orb/WTA_K");
+        int patch_size = params().read<int>(param, "orb/patch_size");
+        int type = params().read<int>(param, "orb/type");
 
         e->keypoint = "orb";
         e->has_orientation = true;
 #if CV_MAJOR_VERSION == 2
-        e->detector = new cv::ORB((200-et)*10, scale, levels, edge, first_level, WTA_K, type, patch_size);
+        e->detector = new cv::ORB((200 - et) * 10, scale, levels, edge, first_level, WTA_K, type, patch_size);
 #elif CV_MAJOR_VERSION == 3
-        e->detector = cv::ORB::create((200-et)*10, scale, levels, edge, first_level, WTA_K, type, patch_size);
+        e->detector = cv::ORB::create((200 - et) * 10, scale, levels, edge, first_level, WTA_K, type, patch_size);
 #endif
 
-        if(complete) {
+        if (complete) {
             e->is_binary = true;
             e->descriptor = "orb";
             e->descriptor_extractor = e->detector;
         }
     }
 
-    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param) {
+    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param)
+    {
         e->is_binary = true;
         e->descriptor = "orb";
 #if CV_MAJOR_VERSION == 2
@@ -87,27 +94,33 @@ REGISTER_FEATURE_DETECTOR(Orb, ORB)
 BOOST_STATIC_ASSERT(DetectorTraits<Orb>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Orb>::HasDescriptor);
 
-struct Brisk : public ExtractorManager::ExtractorInitializer {
+struct Brisk : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
             add(ParameterFactory::declareRange("brisk/extractor_threshold", 0, 1000, 50, 1));
             add(ParameterFactory::declareRange("brisk/octaves", 0, 10, 4, 1));
             add(ParameterFactory::declareRange("brisk/pattern_scale", 0.2, 10.0, 2.0, 0.1));
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete) {
-        int et       = params().read<int>   (param, "brisk/extractor_threshold");
-        int octaves  = params().read<int>   (param, "brisk/octaves");
+    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete)
+    {
+        int et = params().read<int>(param, "brisk/extractor_threshold");
+        int octaves = params().read<int>(param, "brisk/octaves");
         double scale = params().read<double>(param, "brisk/pattern_scale");
 
         e->keypoint = "brisk";
@@ -117,16 +130,17 @@ struct Brisk : public ExtractorManager::ExtractorInitializer {
 #elif CV_MAJOR_VERSION == 3
         e->descriptor_extractor = cv::BRISK::create(et, octaves, scale);
 #endif
-        if(complete) {
+        if (complete) {
             e->is_binary = true;
             e->descriptor = "brisk";
             e->descriptor_extractor = e->detector;
         }
     }
 
-    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param) {
-        int et      = params().read<int> (param, "brisk/extractor_threshold");
-        int octaves = params().read<int> (param, "brisk/octaves");
+    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param)
+    {
+        int et = params().read<int>(param, "brisk/extractor_threshold");
+        int octaves = params().read<int>(param, "brisk/octaves");
 
         e->is_binary = true;
         e->descriptor = "brisk";
@@ -136,19 +150,20 @@ struct Brisk : public ExtractorManager::ExtractorInitializer {
         e->descriptor_extractor = cv::BRISK::create(et, octaves);
 #endif
     }
-
 };
 REGISTER_FEATURE_DETECTOR(Brisk, BRISK)
 BOOST_STATIC_ASSERT(DetectorTraits<Brisk>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Brisk>::HasDescriptor);
 
-
 #if CV_NON_FREE
-struct Sift : public ExtractorManager::ExtractorInitializer {
+struct Sift : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
             add(ParameterFactory::declareRange("sift/extractor_threshold", 0, 1000, 50, 1));
             add(ParameterFactory::declareRange("sift/nOctaveLayers", 0, 5, 3, 1));
             add(ParameterFactory::declareRange("sift/contrastThreshold", 0.0, 1.0, 0.04, 0.005));
@@ -156,46 +171,52 @@ struct Sift : public ExtractorManager::ExtractorInitializer {
             add(ParameterFactory::declareRange("sift/sigma", 0.0, 5.0, 1.6, 0.01));
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
-    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete) {
-        int et                   = params().read<int> (param, "sift/extractor_threshold");
-        int nOctaveLayers        = params().read<int> (param, "sift/nOctaveLayers");
-        double contrastThreshold = params().read<double> (param, "sift/contrastThreshold");
-        double edgeThreshold     = params().read<double> (param, "sift/edgeThreshold");
-        double sigma             = params().read<double> (param, "sift/sigma");
+    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete)
+    {
+        int et = params().read<int>(param, "sift/extractor_threshold");
+        int nOctaveLayers = params().read<int>(param, "sift/nOctaveLayers");
+        double contrastThreshold = params().read<double>(param, "sift/contrastThreshold");
+        double edgeThreshold = params().read<double>(param, "sift/edgeThreshold");
+        double sigma = params().read<double>(param, "sift/sigma");
         e->keypoint = "sift";
         e->has_orientation = true;
         e->detector = new cv::SiftFeatureDetector(et * 0.002 / 3, nOctaveLayers, contrastThreshold, edgeThreshold, sigma);
 
-        if(complete) {
+        if (complete) {
             e->is_binary = false;
             e->descriptor = "sift";
             e->descriptor_extractor = e->detector;
         }
     }
 
-    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param) {
+    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param)
+    {
         e->is_binary = false;
         e->descriptor = "sift";
         e->descriptor_extractor = new cv::SiftDescriptorExtractor();
     }
-
 };
 REGISTER_FEATURE_DETECTOR(Sift, SIFT);
 BOOST_STATIC_ASSERT(DetectorTraits<Sift>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Sift>::HasDescriptor);
 
-struct Surf : public ExtractorManager::ExtractorInitializer {
+struct Surf : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
             add(ParameterFactory::declareRange("surf/extractor_threshold", 0, 5000, 1000, 1));
             add(ParameterFactory::declareRange("surf/nOctaves", 0, 10, 4, 1));
             add(ParameterFactory::declareRange("surf/nOctaveLayers", 0, 10, 2, 1));
@@ -203,69 +224,75 @@ struct Surf : public ExtractorManager::ExtractorInitializer {
             add(ParameterFactory::declareBool("surf/upright", false));
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete) {
-        int et            = params().read<int>  (param, "surf/extractor_threshold");
-        int nOctaves      = params().read<int>  (param, "surf/nOctaves");
-        int nOctaveLayers = params().read<int>  (param, "surf/nOctaveLayers");
-        bool extended     = params().read<bool> (param, "surf/extended");
-        bool upright      = params().read<bool> (param, "surf/upright");
+    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete)
+    {
+        int et = params().read<int>(param, "surf/extractor_threshold");
+        int nOctaves = params().read<int>(param, "surf/nOctaves");
+        int nOctaveLayers = params().read<int>(param, "surf/nOctaveLayers");
+        bool extended = params().read<bool>(param, "surf/extended");
+        bool upright = params().read<bool>(param, "surf/upright");
 
         e->keypoint = "surf";
         e->has_orientation = true;
         e->detector = new cv::SurfFeatureDetector(et, nOctaves, nOctaveLayers, extended, upright);
 
-        if(complete) {
+        if (complete) {
             e->is_binary = false;
             e->descriptor = "surf";
             e->descriptor_extractor = e->detector;
         }
     }
 
-    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param) {
+    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param)
+    {
         e->is_binary = false;
         e->descriptor = "surf";
         e->descriptor_extractor = new cv::SurfDescriptorExtractor();
     }
-
 };
 REGISTER_FEATURE_DETECTOR(Surf, SURF);
 BOOST_STATIC_ASSERT(DetectorTraits<Surf>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Surf>::HasDescriptor);
 #endif
 
-
-
 /// KEYPOINTS ONLY
 
-
-struct Fast : public ExtractorManager::ExtractorInitializer {
+struct Fast : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
             add(ParameterFactory::declareRange("fast/extractor_threshold", 0, 200, 50, 1));
             add(ParameterFactory::declareBool("fast/nonmaxSuppression", true));
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete) {
-        int et                 = params().read<int>  (param, "fast/extractor_threshold");
-        bool nonmaxSuppression = params().read<bool> (param, "fast/nonmaxSuppression");
+    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete)
+    {
+        int et = params().read<int>(param, "fast/extractor_threshold");
+        bool nonmaxSuppression = params().read<bool>(param, "fast/nonmaxSuppression");
         e->keypoint = "fast";
         e->has_orientation = false;
 #if CV_MAJOR_VERSION == 2
@@ -279,13 +306,14 @@ REGISTER_FEATURE_DETECTOR(Fast, FAST)
 BOOST_STATIC_ASSERT(DetectorTraits<Fast>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<Fast>::HasDescriptor);
 
-
-
-struct Mser : public ExtractorManager::ExtractorInitializer {
+struct Mser : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
             add(ParameterFactory::declareRange("mser/delta", 0, 50, 5, 1));
             add(ParameterFactory::declareRange("mser/minArea", 0, 1000, 60, 1));
             add(ParameterFactory::declareRange("mser/maxArea", 0, 30000, 14400, 1));
@@ -297,24 +325,27 @@ struct Mser : public ExtractorManager::ExtractorInitializer {
             add(ParameterFactory::declareRange("mser/edgeBlurSize", 0, 50, 5, 1));
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete) {
-        int delta            = params().read<int>    (param, "mser/delta");
-        int minArea          = params().read<int>    (param, "mser/minArea");
-        int maxArea          = params().read<int>    (param, "mser/maxArea");
-        double maxVariation  = params().read<double> (param, "mser/maxVariation");
-        double minDiversity  = params().read<double> (param, "mser/minDiversity");
-        int maxEvolution     = params().read<int>    (param, "mser/maxEvolution");
-        double areaThreshold = params().read<double> (param, "mser/areaThreshold");
-        double minMargin     = params().read<double> (param, "mser/minMargin");
-        int edgeBlurSize     = params().read<int>    (param, "mser/edgeBlurSize");
+    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete)
+    {
+        int delta = params().read<int>(param, "mser/delta");
+        int minArea = params().read<int>(param, "mser/minArea");
+        int maxArea = params().read<int>(param, "mser/maxArea");
+        double maxVariation = params().read<double>(param, "mser/maxVariation");
+        double minDiversity = params().read<double>(param, "mser/minDiversity");
+        int maxEvolution = params().read<int>(param, "mser/maxEvolution");
+        double areaThreshold = params().read<double>(param, "mser/areaThreshold");
+        double minMargin = params().read<double>(param, "mser/minMargin");
+        int edgeBlurSize = params().read<int>(param, "mser/edgeBlurSize");
 
         e->keypoint = "mser";
         e->has_orientation = true;
@@ -330,27 +361,32 @@ REGISTER_FEATURE_DETECTOR(Mser, MSER)
 BOOST_STATIC_ASSERT(DetectorTraits<Mser>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<Mser>::HasDescriptor);
 
-
 #if CV_MAJOR_VERSION == 2
 
-struct Star : public ExtractorManager::ExtractorInitializer {
+struct Star : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
             add(ParameterFactory::declareRange("star/extractor_threshold", 0, 1000, 50, 1));
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete) {
-        int et          = params().read<int>   (param, "star/extractor_threshold");
+    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete)
+    {
+        int et = params().read<int>(param, "star/extractor_threshold");
 
         e->keypoint = "star";
         e->has_orientation = true;
@@ -364,24 +400,30 @@ BOOST_STATIC_ASSERT(!DetectorTraits<Star>::HasDescriptor);
 
 #endif
 
-struct Gftt : public ExtractorManager::ExtractorInitializer {
+struct Gftt : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
             add(ParameterFactory::declareRange("gftt/extractor_threshold", 0, 1000, 50, 1));
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete) {
-        int et          = params().read<int>   (param, "gftt/extractor_threshold");
+    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete)
+    {
+        int et = params().read<int>(param, "gftt/extractor_threshold");
 
         e->keypoint = "gftt";
         e->has_orientation = true;
@@ -397,25 +439,30 @@ REGISTER_FEATURE_DETECTOR(Gftt, GFTT)
 BOOST_STATIC_ASSERT(DetectorTraits<Gftt>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<Gftt>::HasDescriptor);
 
-
-struct GfttHarris : public ExtractorManager::ExtractorInitializer {
+struct GfttHarris : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
             add(ParameterFactory::declareRange("gftth/extractor_threshold", 0, 1000, 50, 1));
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete) {
-        int et          = params().read<int>   (param, "gftth/extractor_threshold");
+    static void keypoint(Extractor* e, const csapex::param::ParameterProvider& param, bool complete)
+    {
+        int et = params().read<int>(param, "gftth/extractor_threshold");
 
         e->keypoint = "gftt_harris";
         e->has_orientation = true;
@@ -431,28 +478,32 @@ REGISTER_FEATURE_DETECTOR(GfttHarris, GFTT_HARRIS)
 BOOST_STATIC_ASSERT(DetectorTraits<GfttHarris>::HasKeypoint);
 BOOST_STATIC_ASSERT(!DetectorTraits<GfttHarris>::HasDescriptor);
 
-
-
 /// DESCRIPTORS ONLY
 
 #if CV_MAJOR_VERSION == 2
 
-struct Brief : public ExtractorManager::ExtractorInitializer {
+struct Brief : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param) {
+    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param)
+    {
         e->is_binary = true;
         e->descriptor = "brief";
 
@@ -467,23 +518,28 @@ REGISTER_FEATURE_DETECTOR(Brief, BRIEF);
 BOOST_STATIC_ASSERT(!DetectorTraits<Brief>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Brief>::HasDescriptor);
 
-
-struct Freak : public ExtractorManager::ExtractorInitializer {
+struct Freak : public ExtractorManager::ExtractorInitializer
+{
     EXTRACTOR_IMPLEMENTATION
 
-    struct KeyParams : public ExtractorManager::Params  {
-        KeyParams() {
+    struct KeyParams : public ExtractorManager::Params
+    {
+        KeyParams()
+        {
         }
     };
-    static KeyParams& params() {
+    static KeyParams& params()
+    {
         static KeyParams p;
         return p;
     }
-    static std::vector<Parameter::Ptr> usedParameters() {
+    static std::vector<Parameter::Ptr> usedParameters()
+    {
         return params().params;
     }
 
-    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param) {
+    static void descriptor(Extractor* e, const csapex::param::ParameterProvider& param)
+    {
         e->is_binary = true;
         e->descriptor = "freak";
         e->descriptor_extractor = new cv::FREAK();
@@ -494,4 +550,4 @@ BOOST_STATIC_ASSERT(!DetectorTraits<Freak>::HasKeypoint);
 BOOST_STATIC_ASSERT(DetectorTraits<Freak>::HasDescriptor);
 
 #endif
-#endif // EXTRACTORS_DEFAULT_HPP
+#endif  // EXTRACTORS_DEFAULT_HPP

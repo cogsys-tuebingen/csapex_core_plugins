@@ -4,11 +4,10 @@
 #include <memory>
 #include <opencv2/opencv.hpp>
 
-
-namespace csapex {
+namespace csapex
+{
 #if CV_MAJOR_VERSION == 2
-struct ExtendedSVM :
-        public cv::SVM
+struct ExtendedSVM : public cv::SVM
 {
     typedef std::shared_ptr<ExtendedSVM> Ptr;
 
@@ -19,7 +18,7 @@ struct ExtendedSVM :
 
     inline double rho() const
     {
-        if(decision_func != nullptr)
+        if (decision_func != nullptr)
             return decision_func->rho;
         else
             return std::numeric_limits<double>::quiet_NaN();
@@ -28,31 +27,30 @@ struct ExtendedSVM :
     inline void print_decision_func()
     {
         std::cout << "alpha: [";
-        for(int i = 0 ; i < decision_func->sv_count - 1; ++i) {
+        for (int i = 0; i < decision_func->sv_count - 1; ++i) {
             std::cout << decision_func->alpha[i] << ", ";
         }
-        std::cout << decision_func->alpha[decision_func->sv_count - 1]
-                << "]" << std::endl;
-        std::cout << "rho: " << decision_func->rho  * -1 << std::endl;
+        std::cout << decision_func->alpha[decision_func->sv_count - 1] << "]" << std::endl;
+        std::cout << "rho: " << decision_func->rho * -1 << std::endl;
     }
 
-   inline void export_decision_func(cv::FileStorage &fs) const
+    inline void export_decision_func(cv::FileStorage& fs) const
     {
-        fs << "svm_alpha" << "[";
-        for(int i = 0 ; i < decision_func->sv_count ; ++i)
+        fs << "svm_alpha"
+           << "[";
+        for (int i = 0; i < decision_func->sv_count; ++i)
             fs << decision_func->alpha[i];
         fs << "]";
         fs << "svm_rho" << -decision_func->rho;
     }
 
-    inline void set_parameters(const cv::SVMParams &params)
+    inline void set_parameters(const cv::SVMParams& params)
     {
         set_params(params);
     }
 };
 
 #endif
-}
+}  // namespace csapex
 
-
-#endif // EXTENDED_SVM_HPP
+#endif  // EXTENDED_SVM_HPP

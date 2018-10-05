@@ -7,8 +7,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ScanRenderer : public csapex::Node
 {
 public:
@@ -28,6 +28,6 @@ private:
     Renderer renderer;
 };
 
-}
+}  // namespace csapex
 
-#endif // SCAN_RENDERER_H
+#endif  // SCAN_RENDERER_H

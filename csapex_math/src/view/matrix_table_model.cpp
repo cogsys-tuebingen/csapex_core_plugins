@@ -7,15 +7,14 @@
 #include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
-#include <QTableView>
-#include <QPainter>
 #include <QGridLayout>
 #include <QLabel>
+#include <QPainter>
+#include <QTableView>
 
 using namespace csapex;
 
-MatrixTableModel::MatrixTableModel(int rows, int cols)
-    : rows_(rows), cols_(cols)
+MatrixTableModel::MatrixTableModel(int rows, int cols) : rows_(rows), cols_(cols)
 {
 }
 
@@ -28,16 +27,15 @@ void MatrixTableModel::update(const std::vector<double>& data)
     endResetModel();
 }
 
-int MatrixTableModel::rowCount(const QModelIndex &parent) const
+int MatrixTableModel::rowCount(const QModelIndex& parent) const
 {
     return rows_;
 }
 
-int MatrixTableModel::columnCount(const QModelIndex &parent) const
+int MatrixTableModel::columnCount(const QModelIndex& parent) const
 {
     return cols_;
 }
-
 
 bool MatrixTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
@@ -46,7 +44,7 @@ bool MatrixTableModel::setData(const QModelIndex& index, const QVariant& value, 
 
     f = value.toDouble(&ok);
 
-    if(ok) {
+    if (ok) {
         QModelIndex top = createIndex(index.row(), 0);
         QModelIndex bottom = createIndex(index.row(), 5);
 
@@ -55,9 +53,9 @@ bool MatrixTableModel::setData(const QModelIndex& index, const QVariant& value, 
     return ok;
 }
 
-QVariant MatrixTableModel::data(const QModelIndex &index, int role) const
+QVariant MatrixTableModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::EditRole && role != Qt::DisplayRole) {
+    if (role != Qt::EditRole && role != Qt::DisplayRole) {
         return QVariant();
     }
 
@@ -66,7 +64,6 @@ QVariant MatrixTableModel::data(const QModelIndex &index, int role) const
     double f = data_.at(row * cols_ + col);
     return QString::number(f);
 }
-
 
 QVariant MatrixTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {

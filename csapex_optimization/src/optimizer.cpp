@@ -2,59 +2,48 @@
 #include <csapex_optimization/optimizer.h>
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/param/range_parameter.h>
-#include <csapex/msg/generic_value_message.hpp>
-#include <csapex/msg/any_message.h>
-#include <csapex/param/trigger_parameter.h>
-#include <csapex/msg/end_of_sequence_message.h>
-#include <csapex/model/token.h>
 #include <csapex/model/node_handle.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/model/token.h>
+#include <csapex/msg/any_message.h>
+#include <csapex/msg/end_of_sequence_message.h>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/param/range_parameter.h>
+#include <csapex/param/trigger_parameter.h>
 #include <csapex/profiling/interlude.hpp>
+#include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-
 Optimizer::Optimizer()
-    : init_(false),
-      optimization_running_(false),
-      validation_running_(false),
-      can_send_next_parameters_(false),
-      last_fitness_(std::numeric_limits<double>::infinity()),
-      best_fitness_(std::numeric_limits<double>::infinity()),
-      worst_fitness_(-std::numeric_limits<double>::infinity())
+  : init_(false)
+  , optimization_running_(false)
+  , validation_running_(false)
+  , can_send_next_parameters_(false)
+  , last_fitness_(std::numeric_limits<double>::infinity())
+  , best_fitness_(std::numeric_limits<double>::infinity())
+  , worst_fitness_(-std::numeric_limits<double>::infinity())
 {
 }
 
 void Optimizer::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::factory::declareTrigger("start"), [this](csapex::param::Parameter*) {
-        start();
-    });
-    parameters.addParameter(csapex::param::factory::declareTrigger("finish"), [this](csapex::param::Parameter*) {
-        finish();
-    });
+    parameters.addParameter(csapex::param::factory::declareTrigger("start"), [this](csapex::param::Parameter*) { start(); });
+    parameters.addParameter(csapex::param::factory::declareTrigger("finish"), [this](csapex::param::Parameter*) { finish(); });
 
-    parameters.addParameter(param::factory::declareBool
-                            ("finish_immediately",
-                             param::ParameterDescription("Evaluate for every received fitness value, w/o relying on EndOfSequence."),
-                             false),
+    parameters.addParameter(param::factory::declareBool("finish_immediately",
+                                                        param::ParameterDescription("Evaluate for every received fitness "
+                                                                                    "value, w/o relying on EndOfSequence."),
+                                                        false),
                             evaluate_immediately_);
 
-    parameters.addParameter(param::factory::declareBool
-                            ("perform_evaluation",
-                             param::ParameterDescription("Set best parameters after optimization and re-run."),
-                             false),
-                            perform_evaluation_);
+    parameters.addParameter(param::factory::declareBool("perform_evaluation", param::ParameterDescription("Set best parameters after optimization and re-run."), false), perform_evaluation_);
 
     stop_ = csapex::param::factory::declareTrigger("stop").build<param::TriggerParameter>();
-    parameters.addParameter(stop_, [this](csapex::param::Parameter*) {
-        doStop();
-    });
+    parameters.addParameter(stop_, [this](csapex::param::Parameter*) { doStop(); });
 
     parameters.addParameter(csapex::param::factory::declareTrigger("set best"), [this](csapex::param::Parameter*) {
         stop();
@@ -64,22 +53,22 @@ void Optimizer::setupParameters(Parameterizable& parameters)
 
 void Optimizer::setup(NodeModifier& node_modifier)
 {
-    slot_fitness_  = node_modifier.addSlot<GenericValueMessage<double>>("Fitness", [this](const TokenPtr& token) {
-        if(!optimization_running_) {
+    slot_fitness_ = node_modifier.addSlot<GenericValueMessage<double>>("Fitness", [this](const TokenPtr& token) {
+        if (!optimization_running_) {
             return;
         }
 
         auto m = token->getTokenData();
 
-        if(std::dynamic_pointer_cast<connection_types::EndOfSequenceMessage const>(m)) {
+        if (std::dynamic_pointer_cast<connection_types::EndOfSequenceMessage const>(m)) {
             finish();
 
         } else {
-            if(auto vm = std::dynamic_pointer_cast<connection_types::GenericValueMessage<double> const>(m)){
+            if (auto vm = std::dynamic_pointer_cast<connection_types::GenericValueMessage<double> const>(m)) {
                 fitness_ = vm->value;
             }
 
-            if(evaluate_immediately_) {
+            if (evaluate_immediately_) {
                 finish();
 
             } else {
@@ -88,8 +77,8 @@ void Optimizer::setup(NodeModifier& node_modifier)
             }
         }
     });
-    out_last_fitness_  = node_modifier.addOutput<double>("Last Fitness");
-    out_best_fitness_  = node_modifier.addOutput<double>("Best Fitness");
+    out_last_fitness_ = node_modifier.addOutput<double>("Last Fitness");
+    out_best_fitness_ = node_modifier.addOutput<double>("Best Fitness");
 
     trigger_start_evaluation_ = node_modifier.addEvent("Evaluate");
     trigger_iteration_finished = node_modifier.addEvent<double>("Iteration finished");
@@ -104,19 +93,18 @@ bool Optimizer::canProcess() const
 
 void Optimizer::process()
 {
-    if(optimization_running_) {
+    if (optimization_running_) {
         apex_assert(can_send_next_parameters_);
         can_send_next_parameters_ = false;
     }
 
-    if(best_fitness_ != std::numeric_limits<double>::infinity()) {
+    if (best_fitness_ != std::numeric_limits<double>::infinity()) {
         msg::publish(out_best_fitness_, best_fitness_);
     }
-    if(last_fitness_ != std::numeric_limits<double>::infinity()) {
+    if (last_fitness_ != std::numeric_limits<double>::infinity()) {
         msg::publish(out_last_fitness_, last_fitness_);
     }
 }
-
 
 void Optimizer::reset()
 {
@@ -137,15 +125,12 @@ void Optimizer::start()
     validation_running_ = false;
     can_send_next_parameters_ = true;
 
-
     msg::trigger(trigger_start_evaluation_);
     yield();
 }
 
-
 void Optimizer::stop()
 {
-
     INTERLUDE("stop");
     stop_->trigger();
 
@@ -162,7 +147,7 @@ void Optimizer::doStop()
 
     setBest();
 
-    if(perform_evaluation_) {
+    if (perform_evaluation_) {
         validation_running_ = true;
         msg::trigger(trigger_start_evaluation_);
     }
@@ -173,36 +158,34 @@ void Optimizer::doStop()
 void Optimizer::finish()
 {
     INTERLUDE("finish");
-    if(validation_running_) {
+    if (validation_running_) {
         validation_running_ = false;
         return;
     }
 
-    if(!optimization_running_) {
+    if (!optimization_running_) {
         return;
     }
 
-
     last_fitness_ = fitness_;
 
-    if(worst_fitness_ < fitness_) {
+    if (worst_fitness_ < fitness_) {
         worst_fitness_ = fitness_;
     }
 
-    if(best_fitness_ > fitness_) {
-
+    if (best_fitness_ > fitness_) {
         INTERLUDE("update fitness");
         ainfo << "got better fitness: " << fitness_ << ", best was " << best_fitness_ << std::endl;
         best_fitness_ = fitness_;
 
         best_parameters_.clear();
-        for(param::ParameterPtr p : getPersistentParameters()) {
+        for (param::ParameterPtr p : getPersistentParameters()) {
             best_parameters_[p->getUUID()] = param::ParameterFactory::clone(p);
         }
     }
 
     INTERLUDE("generate and trigger");
-    if(generateNextParameterSet()) {
+    if (generateNextParameterSet()) {
         INTERLUDE("trigger");
         msg::trigger(trigger_start_evaluation_);
         can_send_next_parameters_ = true;
@@ -214,7 +197,7 @@ void Optimizer::finish()
 
 void Optimizer::setBest()
 {
-    for(param::ParameterPtr p : getPersistentParameters()) {
+    for (param::ParameterPtr p : getPersistentParameters()) {
         p->cloneDataFrom(*best_parameters_.at(p->getUUID()));
     }
 }

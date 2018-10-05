@@ -3,19 +3,19 @@
 
 #include "segmentation.h"
 
-namespace csapex {
-
+namespace csapex
+{
 class SegmentLengthSegmentation : public ScanSegmentation
 {
 public:
     SegmentLengthSegmentation();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
     void update();
 };
 
-}
-#endif // SEGMENTATIONSEGMENTLENGTH_H
+}  // namespace csapex
+#endif  // SEGMENTATIONSEGMENTLENGTH_H

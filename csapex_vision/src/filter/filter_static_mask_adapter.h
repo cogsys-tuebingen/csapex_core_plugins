@@ -10,8 +10,8 @@
 /// SYSTEM
 #include <QGraphicsView>
 
-namespace csapex {
-
+namespace csapex
+{
 class FilterStaticMaskAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -32,7 +32,6 @@ private:
     std::weak_ptr<FilterStaticMask> wrapped_;
 };
 
-}
+}  // namespace csapex
 
-
-#endif // FILTER_STATIC_MASK_ADAPTER_H
+#endif  // FILTER_STATIC_MASK_ADAPTER_H

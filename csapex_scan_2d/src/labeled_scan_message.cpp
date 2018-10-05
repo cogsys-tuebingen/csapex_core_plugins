@@ -3,8 +3,8 @@
 
 /// PROJECT
 #include <csapex/utility/assert.h>
-#include <cslibs_laser_processing/common/yaml-io.hpp>
 #include <csapex/utility/register_msg.h>
+#include <cslibs_laser_processing/common/yaml-io.hpp>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::LabeledScanMessage)
 
@@ -12,13 +12,13 @@ using namespace csapex;
 using namespace connection_types;
 using namespace lib_laser_processing;
 
-
-LabeledScanMessage::LabeledScanMessage()
-    : MessageTemplate<LabeledScan, LabeledScanMessage> ("/")
-{}
+LabeledScanMessage::LabeledScanMessage() : MessageTemplate<LabeledScan, LabeledScanMessage>("/")
+{
+}
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::LabeledScanMessage>::encode(const csapex::connection_types::LabeledScanMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
@@ -29,7 +29,7 @@ Node convert<csapex::connection_types::LabeledScanMessage>::encode(const csapex:
 
 bool convert<csapex::connection_types::LabeledScanMessage>::decode(const Node& node, csapex::connection_types::LabeledScanMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
 
@@ -37,4 +37,4 @@ bool convert<csapex::connection_types::LabeledScanMessage>::decode(const Node& n
     rhs.value = node["value"].as<LabeledScan>();
     return true;
 }
-}
+}  // namespace YAML

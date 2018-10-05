@@ -10,9 +10,8 @@
 /// SYSTEM
 #include <unordered_map>
 
-namespace csapex {
-
-
+namespace csapex
+{
 class Optimizer : public csapex::Node
 {
 public:
@@ -50,7 +49,6 @@ private:
     bool evaluate_immediately_;
     bool perform_evaluation_;
 
-
     bool init_;
     bool optimization_running_;
     bool validation_running_;
@@ -59,13 +57,13 @@ private:
     std::unordered_map<UUID, param::Parameter::Ptr, UUID::Hasher> best_parameters_;
 
     double last_fitness_;
+
 protected:
     double fitness_;
     double best_fitness_;
     double worst_fitness_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // OPTIMIZER_H
+#endif  // OPTIMIZER_H

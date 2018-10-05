@@ -2,18 +2,20 @@
 #include "voxel_grid.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/node_modifier.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
-#include <boost/mpl/for_each.hpp>
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <pcl_ros/transforms.h>
-    #include <pcl/filters/voxel_grid.h>
+#include <boost/mpl/for_each.hpp>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl_ros/transforms.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 CSAPEX_REGISTER_CLASS(csapex::VoxelGrid, csapex::Node)
 
@@ -24,7 +26,7 @@ VoxelGrid::VoxelGrid()
 {
 }
 
-void VoxelGrid::setupParameters(Parameterizable &parameters)
+void VoxelGrid::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareRange("resolution", 0.01, 1.0, 0.1, 0.005));
     parameters.addParameter(param::factory::declareBool("remove NAN", false), remove_nan_);
@@ -41,7 +43,7 @@ void VoxelGrid::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<VoxelGrid>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<VoxelGrid>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -54,12 +56,12 @@ void VoxelGrid::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
     typename pcl::PointCloud<PointT>::ConstPtr in;
 
-    if(remove_nan_) {
+    if (remove_nan_) {
         typename pcl::PointCloud<PointT>::Ptr tmp(new pcl::PointCloud<PointT>);
         tmp->points.reserve(cloud->points.size());
 
-        for(auto it = cloud->begin(); it != cloud->end(); ++it) {
-            if(!std::isnan(it->x)) {
+        for (auto it = cloud->begin(); it != cloud->end(); ++it) {
+            if (!std::isnan(it->x)) {
                 tmp->points.push_back(*it);
             }
         }

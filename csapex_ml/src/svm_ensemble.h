@@ -2,14 +2,15 @@
 #define SVM_ARRAY_H
 
 /// COMPONENT
-#include <csapex_ml/features_message.h>
 #include <csapex/param/range_parameter.h>
+#include <csapex_ml/features_message.h>
 
 /// PROJECT
-#include <csapex/model/node.h>
 #include "extended_svm.hpp"
+#include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN SVMEnsemble : public Node
 {
 public:
@@ -20,35 +21,43 @@ public:
     virtual void process() override;
 
 private:
-
 #if CV_MAJOR_VERSION == 2
     typedef std::shared_ptr<cv::SVM> SVMPtr;
 #elif CV_MAJOR_VERSION == 3
     typedef cv::Ptr<cv::ml::SVM> SVMPtr;
 #endif
 
+    enum ThresholdType
+    {
+        GREATER = 0,
+        LESS,
+        LESS_EQUAL,
+        GREATER_EQUAL
+    };
+    enum ClassTypes
+    {
+        NEGATIVE = -1,
+        POSITIVE = 1
+    };
 
-    enum ThresholdType { GREATER = 0, LESS, LESS_EQUAL, GREATER_EQUAL};
-    enum ClassTypes {NEGATIVE = -1, POSITIVE = 1};
+    Input* in_;
+    Output* out_;
+    Slot* reload_;
 
-    Input  *in_;
-    Output *out_;
-    Slot   *reload_;
-
-    bool                                    loaded_;
+    bool loaded_;
 #if CV_MAJOR_VERSION == 2
-    std::vector<ExtendedSVM::Ptr>           svms_;
+    std::vector<ExtendedSVM::Ptr> svms_;
 #elif CV_MAJOR_VERSION == 3
-    std::vector<SVMPtr>                     svms_;
+    std::vector<SVMPtr> svms_;
 #endif
-    std::size_t                             svms_size_;
-    cv::Mat                                 svm_responses_;
+    std::size_t svms_size_;
+    cv::Mat svm_responses_;
     std::vector<param::RangeParameter::Ptr> params_thresholds_;
-    std::vector<double>                     thresholds_;
+    std::vector<double> thresholds_;
 
-    void                                    load();
-    void                                    updateThresholds();
+    void load();
+    void updateThresholds();
 };
-}
+}  // namespace csapex
 
-#endif // SVM_ARRAY_H
+#endif  // SVM_ARRAY_H

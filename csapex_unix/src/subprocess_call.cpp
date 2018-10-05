@@ -1,31 +1,28 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 
 /// SYSTEM
-#include <sys/wait.h>
 #include <cstdio>
-#include <signal.h>
-#include <future>
 #include <fcntl.h>
+#include <future>
+#include <signal.h>
+#include <sys/wait.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class SubprocessCall : public Node
 {
 public:
-    SubprocessCall()
-        : active_(false)
+    SubprocessCall() : active_(false)
     {
     }
 
@@ -37,7 +34,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::factory::declareText("command", "echo 'ok'"), [this](param::Parameter* p){
+        params.addParameter(param::factory::declareText("command", "echo 'ok'"), [this](param::Parameter* p) {
             cmd_ = p->as<std::string>();
             reset();
         });
@@ -48,11 +45,9 @@ public:
         return true;
     }
 
-    void process(NodeModifier &node_modifier, Parameterizable &parameters, Continuation continuation) override
+    void process(NodeModifier& node_modifier, Parameterizable& parameters, Continuation continuation) override
     {
-        future_ = std::async(std::launch::async, [this, continuation]{
-            execute(continuation);
-        });
+        future_ = std::async(std::launch::async, [this, continuation] { execute(continuation); });
     }
 
 private:
@@ -67,8 +62,7 @@ private:
 
         pid = fork();
 
-        if (pid == 0)
-        {
+        if (pid == 0) {
             // CHILD -> execute command
             close(pipe_out[0]);
             dup2(pipe_out[1], STDOUT_FILENO);
@@ -84,12 +78,12 @@ private:
                 tokens.push_back(token);
             }
 
-            if(tokens.empty()) {
+            if (tokens.empty()) {
                 throw std::runtime_error("no command specified");
             }
 
             std::vector<char*> args;
-            for(const std::string& token : tokens) {
+            for (const std::string& token : tokens) {
                 args.push_back(const_cast<char*>(token.data()));
             }
             args.push_back(nullptr);
@@ -100,7 +94,7 @@ private:
             // PARENT -> observe child
             std::string value = msg::getValue<std::string>(in_);
 
-            if (write(pipe_in[1], value.c_str(), value.size()) != (int) value.size()) {
+            if (write(pipe_in[1], value.c_str(), value.size()) != (int)value.size()) {
                 close(pipe_in[1]);
                 throw std::runtime_error("failure writing to subprocess");
             }
@@ -113,16 +107,15 @@ private:
 
             close(pipe_out[1]);
             active_ = true;
-            while(active_)
-            {
+            while (active_) {
                 char line[256];
                 std::size_t nbytes = read(pipe_out[0], line, sizeof(line));
-                if(nbytes == 0) {
+                if (nbytes == 0) {
                     active_ = false;
                 }
-                result << std::string(line, nbytes);;
+                result << std::string(line, nbytes);
+                ;
             }
-
 
             close(pipe_out[0]);
 
@@ -134,7 +127,7 @@ private:
 
     void reset() override
     {
-        if(future_.valid()) {
+        if (future_.valid()) {
             active_ = false;
             future_.wait();
         };
@@ -150,8 +143,6 @@ private:
     std::future<void> future_;
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::SubprocessCall, csapex::Node)
-

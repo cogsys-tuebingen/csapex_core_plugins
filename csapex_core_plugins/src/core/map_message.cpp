@@ -1,4 +1,4 @@
-///HEADER
+/// HEADER
 #include <csapex_core_plugins/map_message.h>
 /// PROJECT
 #include <csapex/utility/assert.h>
@@ -11,14 +11,14 @@ using namespace connection_types;
 
 using namespace std::chrono;
 
-MapMessage::MapMessage(std::size_t size, const std::string &frame_id, Stamp stamp)
-    : MessageTemplate<std::vector<KeyValueMessage>,MapMessage>(frame_id, stamp)
+MapMessage::MapMessage(std::size_t size, const std::string& frame_id, Stamp stamp) : MessageTemplate<std::vector<KeyValueMessage>, MapMessage>(frame_id, stamp)
 {
     value = std::vector<KeyValueMessage>(size);
 }
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::MapMessage>::encode(const csapex::connection_types::MapMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
@@ -28,7 +28,7 @@ Node convert<csapex::connection_types::MapMessage>::encode(const csapex::connect
 
 bool convert<csapex::connection_types::MapMessage>::decode(const Node& node, csapex::connection_types::MapMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
 
@@ -38,4 +38,4 @@ bool convert<csapex::connection_types::MapMessage>::decode(const Node& node, csa
 
     return true;
 }
-}
+}  // namespace YAML

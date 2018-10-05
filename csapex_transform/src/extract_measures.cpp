@@ -1,28 +1,27 @@
 /// COMPONENT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_pointer_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_pointer_message.hpp>
-#include <csapex_ros/yaml_io.hpp>
-#include <csapex_ros/ros_message_conversion.h>
-#include <csapex_transform/transform_message.h>
 #include <csapex_math/param/factory.h>
+#include <csapex_ros/ros_message_conversion.h>
+#include <csapex_ros/yaml_io.hpp>
+#include <csapex_transform/transform_message.h>
 
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>
-
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <tf/tf.h>
+#include <tf/tf.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 using namespace csapex::connection_types;
 
-
 namespace csapex
 {
-
 class ExtractMeasures : public Node
 {
 public:
@@ -57,14 +56,13 @@ public:
         double roll, pitch, yaw;
         rotation.getRPY(roll, pitch, yaw);
 
-        if(cap_yaw_) {
+        if (cap_yaw_) {
             yaw = cap(yaw);
         }
 
         setParameter("roll", roll);
         setParameter("pitch", pitch);
         setParameter("yaw", yaw);
-
 
         tf::Vector3 delta = tf_trafo.getOrigin();
         setParameter("dx", delta.x());
@@ -80,11 +78,13 @@ public:
     static double cap(double a)
     {
         double r = a;
-        while(r < -M_PI) r += 2*M_PI;
-        while(r >= M_PI) r -= 2*M_PI;
-        if(r >= M_PI / 2.0) {
+        while (r < -M_PI)
+            r += 2 * M_PI;
+        while (r >= M_PI)
+            r -= 2 * M_PI;
+        if (r >= M_PI / 2.0) {
             return r - M_PI;
-        } else if(r <= -M_PI / 2.0) {
+        } else if (r <= -M_PI / 2.0) {
             return r + M_PI;
         } else {
             return r;
@@ -97,7 +97,6 @@ private:
     bool cap_yaw_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractMeasures, csapex::Node)
-

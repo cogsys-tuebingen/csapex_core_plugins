@@ -10,7 +10,8 @@
 #include <QImage>
 #include <QSharedPointer>
 
-namespace csapex {
+namespace csapex
+{
 class LabelROIs : public csapex::InteractiveNode
 {
     friend class LabelROIsAdapter;
@@ -36,22 +37,22 @@ private:
     void display();
 
 protected:
-    csapex::Input*    in_image_;
-    csapex::Input*    in_rois_;
-    csapex::Output*   out_rois_;
+    csapex::Input* in_image_;
+    csapex::Input* in_rois_;
+    csapex::Output* out_rois_;
 
-    cv::Mat                                                image_;
-    std::vector<csapex::connection_types::RoiMessage>      rois_;
+    cv::Mat image_;
+    std::vector<csapex::connection_types::RoiMessage> rois_;
 
 public:
     slim_signal::Signal<void(QImage)> display_request;
-    slim_signal::Signal<void()>                       submit_request;
-    slim_signal::Signal<void()>                       drop_request;
-    slim_signal::Signal<void()>                       clear_request;
-    slim_signal::Signal<void(int)>                    set_class;
-    slim_signal::Signal<void(int,int,int)>            set_color;
+    slim_signal::Signal<void()> submit_request;
+    slim_signal::Signal<void()> drop_request;
+    slim_signal::Signal<void()> clear_request;
+    slim_signal::Signal<void(int)> set_class;
+    slim_signal::Signal<void(int, int, int)> set_color;
 };
 
-}
+}  // namespace csapex
 
-#endif // ASSIGN_ROI_CLASS_H
+#endif  // ASSIGN_ROI_CLASS_H

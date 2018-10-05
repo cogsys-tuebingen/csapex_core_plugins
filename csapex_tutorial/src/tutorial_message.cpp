@@ -10,12 +10,11 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::TutorialMessage)
 using namespace csapex;
 using namespace connection_types;
 
-TutorialMessage::TutorialMessage()
-    : MessageTemplate<bool, TutorialMessage>("/", 0)
-{}
+TutorialMessage::TutorialMessage() : MessageTemplate<bool, TutorialMessage>("/", 0)
+{
+}
 
-
-void TutorialMessage::serialize(SerializationBuffer &data, SemanticVersion& version) const
+void TutorialMessage::serialize(SerializationBuffer& data, SemanticVersion& version) const
 {
     Message::serialize(data, version);
 
@@ -30,7 +29,7 @@ void TutorialMessage::deserialize(const SerializationBuffer& data, const Semanti
 {
     Message::deserialize(data, version);
 
-    if(version < SemanticVersion(2, 0, 0)) {
+    if (version < SemanticVersion(2, 0, 0)) {
         // in version 1 we saved data like this:
         // data << value;
         data >> value;
@@ -43,10 +42,11 @@ void TutorialMessage::deserialize(const SerializationBuffer& data, const Semanti
 }
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::TutorialMessage>::encode(const csapex::connection_types::TutorialMessage& rhs)
 {
-    Node node = convert<csapex::connection_types::Message>::encode(rhs, {2, 0, 0});
+    Node node = convert<csapex::connection_types::Message>::encode(rhs, { 2, 0, 0 });
     node["value2"] = rhs.value;
 
     return node;
@@ -54,11 +54,11 @@ Node convert<csapex::connection_types::TutorialMessage>::encode(const csapex::co
 
 bool convert<csapex::connection_types::TutorialMessage>::decode(const Node& node, csapex::connection_types::TutorialMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
     SemanticVersion version = convert<csapex::connection_types::Message>::decode(node, rhs);
-    if(version < SemanticVersion{2, 0, 0}) {
+    if (version < SemanticVersion{ 2, 0, 0 }) {
         rhs.value = node["value"].as<bool>();
     } else {
         rhs.value = node["value2"].as<bool>();
@@ -66,4 +66,4 @@ bool convert<csapex::connection_types::TutorialMessage>::decode(const Node& node
 
     return true;
 }
-}
+}  // namespace YAML

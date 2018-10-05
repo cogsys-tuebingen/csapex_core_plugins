@@ -5,7 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_opencv/cv_mat_message.h>
 
-namespace csapex {
+namespace csapex
+{
 class ColorAdjustment : public csapex::Node
 {
 public:
@@ -24,23 +25,29 @@ private:
 
 private:
     /// presets
-    enum Preset{NONE, HSV, HSL, STD};
+    enum Preset
+    {
+        NONE,
+        HSV,
+        HSL,
+        STD
+    };
 
     /// connectors
-    Input   *input_;
-    Output  *output_;
+    Input* input_;
+    Output* output_;
 
     GenericStatePtr loaded_state_;
 
-    Preset  active_preset_;
+    Preset active_preset_;
 
     Encoding current_encoding;
     std::vector<double> mins;
     std::vector<double> maxs;
 
     /// helpers
-    void addLightness(cv::Mat &img);
+    void addLightness(cv::Mat& img);
 };
-}
+}  // namespace csapex
 
-#endif // FILTER_COLORCHANNEL_H
+#endif  // FILTER_COLORCHANNEL_H

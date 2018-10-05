@@ -4,12 +4,12 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
-
+namespace csapex
+{
 class GammaCorrection : public csapex::Node
 {
-    enum Type {
+    enum Type
+    {
         POWER_LAW,
         LOGARITHM
     };
@@ -26,7 +26,6 @@ private:
     Output* out_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // GAMMA_CORRECTION_H
+#endif  // GAMMA_CORRECTION_H

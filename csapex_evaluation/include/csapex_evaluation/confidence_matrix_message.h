@@ -10,12 +10,12 @@
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
 
-namespace csapex {
-namespace connection_types {
-
-
+namespace csapex
+{
+namespace connection_types
+{
 struct ConfidenceMatrixMessage : public Message
-{    
+{
 protected:
     CLONABLE_IMPLEMENTATION(ConfidenceMatrixMessage);
 
@@ -30,21 +30,25 @@ public:
 
 /// TRAITS
 template <>
-struct type<ConfidenceMatrixMessage> {
-    static std::string name() {
+struct type<ConfidenceMatrixMessage>
+{
+    static std::string name()
+    {
         return "ConfidenceMatrixMessage";
     }
 };
-}
-}
+}  // namespace connection_types
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct convert<csapex::connection_types::ConfidenceMatrixMessage> {
-  static Node encode(const csapex::connection_types::ConfidenceMatrixMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::ConfidenceMatrixMessage& rhs);
+namespace YAML
+{
+template <>
+struct convert<csapex::connection_types::ConfidenceMatrixMessage>
+{
+    static Node encode(const csapex::connection_types::ConfidenceMatrixMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::ConfidenceMatrixMessage& rhs);
 };
-}
+}  // namespace YAML
 
-#endif // CONFIDENCE_MATRIX_MESSAGE_H
+#endif  // CONFIDENCE_MATRIX_MESSAGE_H

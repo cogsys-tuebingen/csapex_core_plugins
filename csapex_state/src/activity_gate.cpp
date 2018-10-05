@@ -1,12 +1,12 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/model/variadic_io.h>
+#include <csapex/msg/any_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/any_message.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -15,19 +15,16 @@ namespace csapex
 {
 namespace state
 {
-
 class ActivityGate : public Node, public VariadicIO
 {
 public:
-    ActivityGate()
-        : inverted_(false), active_(false)
+    ActivityGate() : inverted_(false), active_(false)
     {
     }
 
     void setup(csapex::NodeModifier& modifier) override
     {
         VariadicIO::setupVariadic(modifier);
-
     }
 
     void setupParameters(csapex::Parameterizable& params) override
@@ -35,8 +32,9 @@ public:
         VariadicIO::setupVariadicParameters(params);
 
         params.addParameter(param::factory::declareBool("inverted",
-                                                                 param::ParameterDescription("If inverted, messages are forwarded when the node is <b>not</b> active."),
-                                                                 false),
+                                                        param::ParameterDescription("If inverted, messages are forwarded "
+                                                                                    "when the node is <b>not</b> active."),
+                                                        false),
                             inverted_);
     }
 
@@ -52,10 +50,10 @@ public:
 
     void process() override
     {
-        if(active_ ^ inverted_) {
+        if (active_ ^ inverted_) {
             apex_assert(variadic_outputs_.size() == variadic_inputs_.size());
 
-            for(std::size_t i = 0, n = variadic_inputs_.size(); i < n; ++i) {
+            for (std::size_t i = 0, n = variadic_inputs_.size(); i < n; ++i) {
                 InputPtr in = variadic_inputs_.at(i);
                 OutputPtr out = variadic_outputs_.at(i);
 
@@ -70,7 +68,6 @@ public:
         return VariadicInputs::createVariadicInput(makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
     }
 
-
     Output* createVariadicOutput(TokenDataConstPtr type, const std::string& label) override
     {
         VariadicInputs::createVariadicInput(makeEmpty<connection_types::AnyMessage>(), label.empty() ? "Value" : label, getVariadicInputCount() == 0 ? false : true);
@@ -80,7 +77,7 @@ public:
     void finishSetup() override
     {
         apex_assert(variadic_outputs_.size() == variadic_inputs_.size());
-        if(getVariadicInputCount() == 0) {
+        if (getVariadicInputCount() == 0) {
             createVariadicInput(makeEmpty<connection_types::AnyMessage>(), "", false);
         }
     }
@@ -90,8 +87,7 @@ private:
     bool active_;
 };
 
-}
-}
+}  // namespace state
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::state::ActivityGate, csapex::Node)
-

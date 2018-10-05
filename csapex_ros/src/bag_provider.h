@@ -8,15 +8,16 @@
 #include <csapex/param/set_parameter.h>
 
 /// SYSTEM
+// clang-format on
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <rosbag/bag.h>
-    #include <rosbag/view.h>
-    #include <ros/publisher.h>
+#include <ros/publisher.h>
+#include <rosbag/bag.h>
+#include <rosbag/view.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format off
 
 namespace csapex
 {
-
 class BagProvider : public MessageProvider
 {
 public:
@@ -74,7 +75,6 @@ private:
     bool end_signaled_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-
-#endif // BAG_PROVIDER_H
+#endif  // BAG_PROVIDER_H

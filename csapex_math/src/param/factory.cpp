@@ -18,12 +18,12 @@ ParameterBuilder factory::declareAngle(const std::string& name, double angle)
     return declareAngle(name, ParameterDescription(), angle);
 }
 
-ParameterBuilder factory::declareVector(const std::string &name, const std::vector<double>& vector)
+ParameterBuilder factory::declareVector(const std::string& name, const std::vector<double>& vector)
 {
     return declareVector(name, ParameterDescription(), vector);
 }
 
-ParameterBuilder factory::declareVector(const std::string &name, const ParameterDescription& description, const std::vector<double>& vector)
+ParameterBuilder factory::declareVector(const std::string& name, const ParameterDescription& description, const std::vector<double>& vector)
 {
     std::shared_ptr<LinearVectorParameter> result(new LinearVectorParameter(name, description, math::linear::Vector(vector)));
     return ParameterBuilder(std::move(result));

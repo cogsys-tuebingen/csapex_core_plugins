@@ -6,7 +6,6 @@
 
 namespace csapex
 {
-
 class ImageProviderMov : public ImageProviderSet
 {
 public:
@@ -25,6 +24,6 @@ private:
     cv::VideoCapture capture_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // IMAGE_PROVIDER_BAG_H
+#endif  // IMAGE_PROVIDER_BAG_H

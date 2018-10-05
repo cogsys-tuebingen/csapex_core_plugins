@@ -7,7 +7,6 @@
 
 namespace csapex
 {
-
 class ColorSegmentation : public csapex::Node
 {
 public:
@@ -38,6 +37,6 @@ private:
     bool loaded_;
 };
 
-}
+}  // namespace csapex
 
-#endif // COLOR_SEGMENTATION_H
+#endif  // COLOR_SEGMENTATION_H

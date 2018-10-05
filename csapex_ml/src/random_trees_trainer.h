@@ -2,12 +2,11 @@
 #define RANDOM_TREES_TRAINER_H
 
 /// PROJECT
+#include "machine_learning_node.h"
 #include <csapex_core_plugins/collection_node.h>
 #include <csapex_ml/features_message.h>
-#include "machine_learning_node.h"
-namespace csapex {
-
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN RandomTreesTrainer : public MachineLearningNode
 {
 public:
@@ -19,16 +18,15 @@ private:
     void updatePriors();
     void udpatePriorValues();
 
-    bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
+    bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;
 
 private:
     int categories_;
     std::vector<csapex::param::ParameterPtr> priors_params_;
     std::vector<float> priors_;
-//    std::string        path_;
+    //    std::string        path_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // RANDOM_TREES_TRAINER_H
+#endif  // RANDOM_TREES_TRAINER_H

@@ -2,12 +2,12 @@
 #include "toggle.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/signal/event.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::boolean::Toggle, csapex::Node)
 
@@ -18,10 +18,9 @@ Toggle::Toggle()
 {
 }
 
-void Toggle::setupParameters(Parameterizable &parameters)
+void Toggle::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::factory::declareBool("true", true),
-                 std::bind(&Toggle::setSignal, this));
+    parameters.addParameter(csapex::param::factory::declareBool("true", true), std::bind(&Toggle::setSignal, this));
 }
 
 void Toggle::setup(NodeModifier& node_modifier)
@@ -38,8 +37,8 @@ void Toggle::process()
 void Toggle::setSignal()
 {
     auto s = readParameter<bool>("true");
-    if(signal_  != s) {
-        signal_  = s;
+    if (signal_ != s) {
+        signal_ = s;
         msg::trigger(event_);
     }
 }

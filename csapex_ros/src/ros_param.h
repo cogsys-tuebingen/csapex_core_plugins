@@ -9,9 +9,8 @@
 /// SYSTEM
 #include <ros/service.h>
 
-namespace csapex {
-
-
+namespace csapex
+{
 class RosParam : public csapex::RosNode
 {
 public:
@@ -25,7 +24,6 @@ private:
     void update();
 };
 
+}  // namespace csapex
 
-}
-
-#endif // ROS_PARAM_H
+#endif  // ROS_PARAM_H

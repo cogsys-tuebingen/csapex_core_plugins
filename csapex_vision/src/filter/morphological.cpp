@@ -5,9 +5,9 @@
 #include <csapex_opencv/cv_mat_message.h>
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Morpholocial, csapex::Node)
@@ -23,24 +23,14 @@ void Morpholocial::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::factory::declareRange<int>("size", 1, 20, 2, 1));
     parameters.addParameter(csapex::param::factory::declareRange<int>("iterations", 0, 10, 1, 1));
 
-    std::map<std::string, int> types = {
-        {"MORPH_ERODE", (int) cv::MORPH_ERODE},
-        {"MORPH_DILATE", (int) cv::MORPH_DILATE},
-        {"MORPH_OPEN", (int) cv::MORPH_OPEN},
-        {"MORPH_CLOSE", (int) cv::MORPH_CLOSE},
-        {"MORPH_GRADIENT", (int) cv::MORPH_GRADIENT},
-        {"MORPH_TOPHAT", (int) cv::MORPH_TOPHAT},
-        {"MORPH_BLACKHAT", (int) cv::MORPH_BLACKHAT}
-    };
+    std::map<std::string, int> types = { { "MORPH_ERODE", (int)cv::MORPH_ERODE },      { "MORPH_DILATE", (int)cv::MORPH_DILATE },     { "MORPH_OPEN", (int)cv::MORPH_OPEN },
+                                         { "MORPH_CLOSE", (int)cv::MORPH_CLOSE },      { "MORPH_GRADIENT", (int)cv::MORPH_GRADIENT }, { "MORPH_TOPHAT", (int)cv::MORPH_TOPHAT },
+                                         { "MORPH_BLACKHAT", (int)cv::MORPH_BLACKHAT } };
 
-    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("type", types, (int) cv::MORPH_ERODE));
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("type", types, (int)cv::MORPH_ERODE));
 
-    std::map<std::string, int> elem = {
-        {"MORPH_RECT", (int) cv::MORPH_RECT},
-        {"MORPH_CROSS", (int) cv::MORPH_CROSS},
-        {"MORPH_ELLIPSE", (int) cv::MORPH_ELLIPSE}
-    };
-    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("elem", elem, (int) cv::MORPH_RECT));
+    std::map<std::string, int> elem = { { "MORPH_RECT", (int)cv::MORPH_RECT }, { "MORPH_CROSS", (int)cv::MORPH_CROSS }, { "MORPH_ELLIPSE", (int)cv::MORPH_ELLIPSE } };
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("elem", elem, (int)cv::MORPH_RECT));
 }
 
 void Morpholocial::process()
@@ -51,19 +41,18 @@ void Morpholocial::process()
     int op = readParameter<int>("type");
     int morph_elem = readParameter<int>("elem");
     int morph_size = readParameter<int>("size");
-    cv::Mat kernel = cv::getStructuringElement(morph_elem, cv::Size(2*morph_size+1, 2*morph_size+1), cv::Point(morph_size, morph_size));
-    cv::Point anchor(-1,-1);
+    cv::Mat kernel = cv::getStructuringElement(morph_elem, cv::Size(2 * morph_size + 1, 2 * morph_size + 1), cv::Point(morph_size, morph_size));
+    cv::Point anchor(-1, -1);
     int iterations = readParameter<int>("iterations");
     int border_type = cv::BORDER_CONSTANT;
     const cv::Scalar& border_value = cv::morphologyDefaultBorderValue();
 
-    if(!a->value.empty()) {
+    if (!a->value.empty()) {
         cv::morphologyEx(a->value, msg->value, op, kernel, anchor, iterations, border_type, border_value);
     }
 
     msg::publish(output_, msg);
 }
-
 
 void Morpholocial::setup(NodeModifier& node_modifier)
 {

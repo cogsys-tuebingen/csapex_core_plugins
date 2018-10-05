@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class FeatureToHistogram : public csapex::Node
 {
 public:
@@ -14,11 +15,10 @@ public:
     virtual void process() override;
 
 protected:
-    csapex::Input  *in_;
-    csapex::Input  *in_vector_;
-    csapex::Output *out_;
-
+    csapex::Input* in_;
+    csapex::Input* in_vector_;
+    csapex::Output* out_;
 };
 
-}
-#endif // FEATURE_TO_HISTOGRAM_H
+}  // namespace csapex
+#endif  // FEATURE_TO_HISTOGRAM_H

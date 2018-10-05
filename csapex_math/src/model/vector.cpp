@@ -5,34 +5,30 @@ using namespace csapex;
 using namespace csapex::math;
 using namespace csapex::math::linear;
 
-Vector::Vector(std::vector<double> value)
-    : data_(std::move(value))
+Vector::Vector(std::vector<double> value) : data_(std::move(value))
 {
 }
 
-Vector::Vector(std::initializer_list<double> value)
-    : data_{value}
+Vector::Vector(std::initializer_list<double> value) : data_{ value }
 {
 }
 
-
-double Vector::operator() (int row) const
+double Vector::operator()(int row) const
 {
     return operator[](row);
 }
-double& Vector::operator() (int row)
+double& Vector::operator()(int row)
 {
     return operator[](row);
 }
-double Vector::operator[] (int row) const
+double Vector::operator[](int row) const
 {
     return data_[row];
 }
-double& Vector::operator[] (int row)
+double& Vector::operator[](int row)
 {
     return data_[row];
 }
-
 
 int Vector::rows() const
 {
@@ -54,6 +50,10 @@ std::vector<double> Vector::getData() const
 std::size_t Vector::size() const
 {
     return data_.size();
+}
+void Vector::resize(std::size_t new_size, double value)
+{
+    data_.resize(new_size, value);
 }
 
 bool Vector::isEqual(const Vector& rhs) const

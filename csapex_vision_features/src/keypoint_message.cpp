@@ -2,20 +2,18 @@
 #include <csapex_vision_features/keypoint_message.h>
 
 /// PROJECT
-#include <csapex_opencv/yaml_io.hpp>
-#include <csapex/utility/register_msg.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/utility/register_msg.h>
+#include <csapex_opencv/yaml_io.hpp>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::KeypointMessage)
-
 
 using namespace csapex;
 using namespace connection_types;
 
-
-KeypointMessage::KeypointMessage()
-    : MessageTemplate<std::vector<cv::KeyPoint>, KeypointMessage> ("/")
-{}
+KeypointMessage::KeypointMessage() : MessageTemplate<std::vector<cv::KeyPoint>, KeypointMessage>("/")
+{
+}
 
 bool KeypointMessage::isContainer() const
 {
@@ -37,18 +35,17 @@ std::size_t KeypointMessage::nestedValueCount() const
 {
     return value.size();
 }
-void KeypointMessage::addNestedValue(const TokenData::ConstPtr &msg)
+void KeypointMessage::addNestedValue(const TokenData::ConstPtr& msg)
 {
-    auto v = std::dynamic_pointer_cast<GenericValueMessage<cv::KeyPoint> const> (msg);
-    if(v) {
+    auto v = std::dynamic_pointer_cast<GenericValueMessage<cv::KeyPoint> const>(msg);
+    if (v) {
         value.push_back(v->value);
     }
 }
 
-
-
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::KeypointMessage>::encode(const csapex::connection_types::KeypointMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
@@ -58,13 +55,13 @@ Node convert<csapex::connection_types::KeypointMessage>::encode(const csapex::co
 
 bool convert<csapex::connection_types::KeypointMessage>::decode(const Node& node, csapex::connection_types::KeypointMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
 
     convert<csapex::connection_types::Message>::decode(node, rhs);
 
-    rhs.value = node["keypoints"].as<std::vector<cv::KeyPoint> >();
+    rhs.value = node["keypoints"].as<std::vector<cv::KeyPoint>>();
     return true;
 }
-}
+}  // namespace YAML

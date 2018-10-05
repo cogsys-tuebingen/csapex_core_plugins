@@ -1,43 +1,47 @@
 #include "mlp.h"
-#include <math.h>
 #include <fstream>
 #include <iterator>
+#include <math.h>
 #include <sstream>
 
 // TODOS:
 // use other activation functions than relu
 // implement softmax layer
 
-namespace mlp {
-
-double exp(const double& arg) {
+namespace mlp
+{
+double exp(const double& arg)
+{
     return ::exp(arg);
 }
 
-double tanh(const double& arg) {
+double tanh(const double& arg)
+{
     return ::tanh(arg);
 }
 
-double sigmoid(const double& arg) {
+double sigmoid(const double& arg)
+{
     return 1.0 / (1.0 + exp(-arg));
 }
 
-
-double relu(const double& arg) {
-    return (arg > 0)?(arg):(0.0);
+double relu(const double& arg)
+{
+    return (arg > 0) ? (arg) : (0.0);
 }
 
-template<char delimiter>
+template <char delimiter>
 class LayerDelimitedBy : public std::string
-{};
-
-bool MLPConfig::load(const std::string &path)
 {
-    std::ifstream in( path );
+};
+
+bool MLPConfig::load(const std::string& path)
+{
+    std::ifstream in(path);
 
     std::string line;
     std::getline(in, line);
-    if(line != "network:"){
+    if (line != "network:") {
         return false;
     }
     // Read Networkconfig
@@ -54,7 +58,7 @@ bool MLPConfig::load(const std::string &path)
 
     layers.push_back(line);
 
-    if(layers.front() != "MLP"){
+    if (layers.front() != "MLP") {
         return false;
     }
 
@@ -65,18 +69,17 @@ bool MLPConfig::load(const std::string &path)
 
     layers_num = layers.size();
 
-    while(!layers.empty()){
+    while (!layers.empty()) {
         std::string layer = layers.front();
 
         // bias layer?
-        char&  bias = layer.at(layer.size() -1);
-        if(bias == 'b'){
-            layer.erase(layer.size() -1,1);
+        char& bias = layer.at(layer.size() - 1);
+        if (bias == 'b') {
+            layer.erase(layer.size() - 1, 1);
             layer_bias.push_back(true);
-        } else{
+        } else {
             layer_bias.push_back(false);
         }
-
 
         std::size_t pos_e = layer.find(exp_layer);
         std::size_t pos_h = layer.find(tanh_layer);
@@ -85,22 +88,22 @@ bool MLPConfig::load(const std::string &path)
         std::size_t pos_l = layer.find(linear_layer);
         std::size_t pos_so = layer.find(softmax_layer);
 
-        if(pos_e != std::string::npos){
+        if (pos_e != std::string::npos) {
             layer.erase(0, exp_layer.size());
             function = ActivationFunction::EXP;
-        } else if(pos_h != std::string::npos){
+        } else if (pos_h != std::string::npos) {
             layer.erase(0, tanh_layer.size());
             function = ActivationFunction::TANH;
-        } else if(pos_s != std::string::npos ){
+        } else if (pos_s != std::string::npos) {
             layer.erase(0, sigmoid_layer.size());
             function = ActivationFunction::SIGMOID;
-        } else if(pos_r != std::string::npos){
+        } else if (pos_r != std::string::npos) {
             layer.erase(0, relu_layer.size());
             function = ActivationFunction::RELU;
-        } else if(pos_l != std::string::npos){
+        } else if (pos_l != std::string::npos) {
             layer.erase(0, linear_layer.size());
             output_type = OutputType::LINEAR;
-        } else if(pos_so != std::string::npos){
+        } else if (pos_so != std::string::npos) {
             layer.erase(0, softmax_layer.size());
             output_type = OutputType::SOFTMAX;
         }
@@ -110,11 +113,11 @@ bool MLPConfig::load(const std::string &path)
         layers.erase(layers.begin());
     }
 
-    //empty space
+    // empty space
     std::getline(in, line);
 
-    while(line != "weights:"){
-        if(!std::getline(in,line)){
+    while (line != "weights:") {
+        if (!std::getline(in, line)) {
             return false;
         }
     }
@@ -123,45 +126,29 @@ bool MLPConfig::load(const std::string &path)
     std::getline(in, line);
     std::istringstream weights_str(line);
 
-
-    weights = std::vector<double>( ( std::istream_iterator<double>( weights_str ) ),
-                                   std::istream_iterator<double>() );
+    weights = std::vector<double>((std::istream_iterator<double>(weights_str)), std::istream_iterator<double>());
 
     weights_num = weights.size();
 
     return true;
-
 }
 
-MLP::MLP(const MLPConfig &config) :
-    layers_num_(config.layers_num),
-    layer_sizes_(config.layer_sizes),
-    layer_bias_(config.layer_bias),
-    input_size_(config.input_size),
-    output_size_(layer_sizes_.back()),
-    weights_num_(config.weights_num),
-    weights_(config.weights),
-    out_type_(config.output_type),
-    act_func_(config.function)
+MLP::MLP(const MLPConfig& config)
+  : layers_num_(config.layers_num)
+  , layer_sizes_(config.layer_sizes)
+  , layer_bias_(config.layer_bias)
+  , input_size_(config.input_size)
+  , output_size_(layer_sizes_.back())
+  , weights_num_(config.weights_num)
+  , weights_(config.weights)
+  , out_type_(config.output_type)
+  , act_func_(config.function)
 {
     initialize();
-
 }
 
-MLP::MLP (const size_t input_size,
-        const size_t layers_num,
-        const std::vector<size_t> &layer_sizes,
-        const std::vector<bool> &layer_bias,
-        const size_t weights_num,
-        const std::vector<double> &weights
-        ) :
-    layers_num_(layers_num),
-    layer_sizes_(layer_sizes),
-    layer_bias_(layer_bias),
-    input_size_(input_size),
-    output_size_(layer_sizes_.back()),
-    weights_num_(weights_num),
-    weights_(weights)
+MLP::MLP(const size_t input_size, const size_t layers_num, const std::vector<size_t>& layer_sizes, const std::vector<bool>& layer_bias, const size_t weights_num, const std::vector<double>& weights)
+  : layers_num_(layers_num), layer_sizes_(layer_sizes), layer_bias_(layer_bias), input_size_(input_size), output_size_(layer_sizes_.back()), weights_num_(weights_num), weights_(weights)
 {
     initialize();
 }
@@ -175,23 +162,22 @@ void MLP::initialize()
     }
 
     buffer_ = std::vector<double>(buffer_size_);
-
 }
 
-
-void MLP::setOutputType(const OutputType &type)
+void MLP::setOutputType(const OutputType& type)
 {
     out_type_ = type;
 }
 
-void MLP::setActivationFunction(const ActivationFunction &func_type)
+void MLP::setActivationFunction(const ActivationFunction& func_type)
 {
     act_func_ = func_type;
 }
 
-void MLP::compute(const double* input, double* output) {
+void MLP::compute(const double* input, double* output)
+{
     //
-    const double* input_ptr  = input;
+    const double* input_ptr = input;
     //
     const double* read_ptr;
     double* ptr;
@@ -212,18 +198,18 @@ void MLP::compute(const double* input, double* output) {
     const double* weight_ptr = weights_.data();
     //
     size_t prev_size = input_size_;
-    double* prev_ptr  = buffer_.data();
+    double* prev_ptr = buffer_.data();
     //
     // for all hidden layer + output layer.
     //
     const size_t output_layer = layers_num_ - 1;
     double softmax_sum = 0;
     //
-    for (size_t h = 0;  h < (layers_num_); ++h) {
+    for (size_t h = 0; h < (layers_num_); ++h) {
         //
         curr_size = layer_sizes_[h];
-        curr_ptr  = prev_ptr + prev_size;
-        ptr       = curr_ptr;
+        curr_ptr = prev_ptr + prev_size;
+        ptr = curr_ptr;
         //
         for (size_t j = 0; j < curr_size; ++j) {
             //
@@ -251,7 +237,7 @@ void MLP::compute(const double* input, double* output) {
             //
             if (h < output_layer) {
                 *ptr = activationFunction(*ptr);
-            } else if (h == output_layer && out_type_ == OutputType::SOFTMAX){ // softmax layer
+            } else if (h == output_layer && out_type_ == OutputType::SOFTMAX) {  // softmax layer
                 const double x = activationFunction(*ptr);
                 softmax_sum += x;
                 *ptr = x;
@@ -267,8 +253,8 @@ void MLP::compute(const double* input, double* output) {
     //
     // softmax activation and copy output.
     //
-    if (out_type_ == OutputType::SOFTMAX){
-    const double inv_softmax_sum = 1.0 / softmax_sum;
+    if (out_type_ == OutputType::SOFTMAX) {
+        const double inv_softmax_sum = 1.0 / softmax_sum;
         ptr = curr_ptr;
         for (size_t j = 0; j < curr_size; ++j) {
             //
@@ -276,7 +262,6 @@ void MLP::compute(const double* input, double* output) {
             ptr++;
         }
     }
-
 
     //
     // copy output.
@@ -299,26 +284,24 @@ void MLP::compute(const double* input, double* output) {
     */
 }
 
-
-double MLP::activationFunction(const double &arg)
+double MLP::activationFunction(const double& arg)
 {
     double res = 0;
     switch (act_func_) {
-    case ActivationFunction::EXP:
-        res = exp(arg);
-        break;
-    case ActivationFunction::TANH:
-        res = tanh(arg);
-        break;
-    case ActivationFunction::SIGMOID:
-        res = sigmoid(arg);
-        break;
-    case ActivationFunction::RELU:
-        res = relu(arg);
-        break;
+        case ActivationFunction::EXP:
+            res = exp(arg);
+            break;
+        case ActivationFunction::TANH:
+            res = tanh(arg);
+            break;
+        case ActivationFunction::SIGMOID:
+            res = sigmoid(arg);
+            break;
+        case ActivationFunction::RELU:
+            res = relu(arg);
+            break;
     }
     return res;
 }
 
-
-}
+}  // namespace mlp

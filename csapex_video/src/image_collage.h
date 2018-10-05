@@ -6,9 +6,8 @@
 #include <csapex/param/parameter.h>
 #include <csapex/param/range_parameter.h>
 
-namespace csapex {
-
-
+namespace csapex
+{
 class ImageCollage : public csapex::Node
 {
 public:
@@ -27,7 +26,6 @@ private:
     param::RangeParameter::Ptr p_y_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // IMAGE_COLLAGE_H
+#endif  // IMAGE_COLLAGE_H

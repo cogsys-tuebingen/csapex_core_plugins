@@ -2,8 +2,8 @@
 #include "register_plugin.h"
 
 /// COMPONENT
-#include <csapex_transform/transform_message.h>
 #include <csapex_ros/tf_listener.h>
+#include <csapex_transform/transform_message.h>
 
 /// PROJECT
 #include <csapex/factory/message_factory.h>
@@ -21,7 +21,8 @@ using namespace csapex;
 
 struct ConvertTf
 {
-    static typename connection_types::TransformMessage::Ptr ros2apex(const typename tf2_msgs::TFMessage::ConstPtr &ros_msg) {
+    static typename connection_types::TransformMessage::Ptr ros2apex(const typename tf2_msgs::TFMessage::ConstPtr& ros_msg)
+    {
         typename connection_types::TransformMessage::Ptr out(new connection_types::TransformMessage);
         const geometry_msgs::TransformStamped& tf(ros_msg->transforms.front());
 
@@ -32,7 +33,8 @@ struct ConvertTf
 
         return out;
     }
-    static typename tf2_msgs::TFMessage::Ptr apex2ros(const typename connection_types::TransformMessage::ConstPtr& apex_msg) {
+    static typename tf2_msgs::TFMessage::Ptr apex2ros(const typename connection_types::TransformMessage::ConstPtr& apex_msg)
+    {
         typename tf2_msgs::TFMessage::Ptr out(new tf2_msgs::TFMessage);
         geometry_msgs::TransformStamped tf;
 
@@ -57,7 +59,7 @@ void RegisterTransformPlugin::prepare(Settings&)
 
     auto init = std::bind(&TFListener::start);
 
-    if(ROSHandler::instance().isConnected()) {
+    if (ROSHandler::instance().isConnected()) {
         init();
     } else {
         observe(ROSHandler::instance().connected, init);

@@ -1,12 +1,13 @@
 /// COMPONENT
 #include <csapex/model/node.h>
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
-#include <csapex/model/node_modifier.h>
 
-namespace csapex {
+namespace csapex
+{
 using namespace csapex;
 using namespace connection_types;
 
@@ -15,7 +16,6 @@ class ContrastBrightness : public csapex::Node
 public:
     ContrastBrightness()
     {
-
     }
 
     virtual void process() override
@@ -34,20 +34,18 @@ public:
         output_ = node_modifier.addOutput<CvMatMessage>("adjusted");
     }
 
-    virtual void setupParameters(Parameterizable &parameters)
+    virtual void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(param::factory::declareRange("contrast", 0.1, 4.0, 1.0, 0.01),
-                                alpha_);
-        parameters.addParameter(param::factory::declareRange("brightness", -100, 100, 0, 1),
-                                beta_);
+        parameters.addParameter(param::factory::declareRange("contrast", 0.1, 4.0, 1.0, 0.01), alpha_);
+        parameters.addParameter(param::factory::declareRange("brightness", -100, 100, 0, 1), beta_);
     }
 
 protected:
-    csapex::Output*   output_;
-    csapex::Input*    input_;
+    csapex::Output* output_;
+    csapex::Input* input_;
     double alpha_;
-    int    beta_;
+    int beta_;
 };
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::ContrastBrightness, csapex::Node)

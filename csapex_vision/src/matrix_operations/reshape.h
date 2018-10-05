@@ -16,8 +16,8 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 private:
-    Input  *input_;
-    Output *output_;
+    Input* input_;
+    Output* output_;
     unsigned int in_size_;
     unsigned int in_rows_;
     unsigned int in_cols_;
@@ -26,8 +26,7 @@ private:
 
     void reset();
     bool reset_;
-
 };
-}
+}  // namespace csapex
 
-#endif // ROW_H
+#endif  // ROW_H

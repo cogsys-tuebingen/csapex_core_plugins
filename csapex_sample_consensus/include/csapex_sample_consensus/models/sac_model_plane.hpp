@@ -8,115 +8,107 @@
 /// SYSTEM
 #include <pcl/point_types.h>
 
-namespace csapex_sample_consensus {
-namespace models {
-template<typename PointT>
-Plane<PointT>::Plane(const typename PointCloud::ConstPtr &pointcloud) :
-    Base(pointcloud)
+namespace csapex_sample_consensus
+{
+namespace models
+{
+template <typename PointT>
+Plane<PointT>::Plane(const typename PointCloud::ConstPtr& pointcloud) : Base(pointcloud)
 {
 }
 
-template<typename PointT>
+template <typename PointT>
 inline typename Plane<PointT>::Base::Ptr Plane<PointT>::clone() const
 {
-    Plane *plane = new Plane(Base::pointcloud_);
+    Plane* plane = new Plane(Base::pointcloud_);
     plane->model_coefficients_ = Base::model_coefficients_;
     plane->model_indices_ = Base::model_indices_;
     return typename Base::Ptr(plane);
 }
 
-
-
-template<typename PointT>
+template <typename PointT>
 inline bool Plane<PointT>::isValid() const
 {
     return Base::model_coefficients_.size() == 4;
 }
 
-template<typename PointT>
+template <typename PointT>
 inline bool Plane<PointT>::optimizeModelCoefficients(const float maximum_distance)
 {
     std::vector<int> indices;
     Base::getInliers(maximum_distance, indices);
 
-    if(indices.size() == 0)
+    if (indices.size() == 0)
         return false;
 
     csapex::math::Distribution<3> distribution;
-    for(const int i : indices) {
-        const auto &p = Base::pointcloud_->at(i);
-        distribution.add({p.x, p.y, p.z});
+    for (const int i : indices) {
+        const auto& p = Base::pointcloud_->at(i);
+        distribution.add({ p.x, p.y, p.z });
     }
 
     Eigen::Vector3d x_0, normal;
-    if(!csapex::math::Plane::fit(distribution, x_0, normal))
+    if (!csapex::math::Plane::fit(distribution, x_0, normal))
         return false;
 
     Base::model_coefficients_[0] = normal(0);
     Base::model_coefficients_[1] = normal(1);
     Base::model_coefficients_[2] = normal(2);
     Base::model_coefficients_[3] = 0;
-    Base::model_coefficients_[3] = -1 * normal.dot (x_0);
+    Base::model_coefficients_[3] = -1 * normal.dot(x_0);
     return true;
 }
 
-template<typename PointT>
-inline bool Plane<PointT>::optimizeModelCoefficients(const std::vector<int> &src_indices,
-                                                          const float maximum_distance)
+template <typename PointT>
+inline bool Plane<PointT>::optimizeModelCoefficients(const std::vector<int>& src_indices, const float maximum_distance)
 {
     std::vector<int> indices;
     Base::getInliers(src_indices, maximum_distance, indices);
 
-
-    if(indices.size() == 0)
+    if (indices.size() == 0)
         return false;
 
     csapex::math::Distribution<3> distribution;
-    for(const int i : indices) {
-        const auto &p = Base::pointcloud_->at(i);
-        distribution.add({p.x, p.y, p.z});
+    for (const int i : indices) {
+        const auto& p = Base::pointcloud_->at(i);
+        distribution.add({ p.x, p.y, p.z });
     }
 
     Eigen::Vector3d x_0, normal;
-    if(!csapex::math::Plane::fit(distribution, x_0, normal))
+    if (!csapex::math::Plane::fit(distribution, x_0, normal))
         return false;
 
     Base::model_coefficients_[0] = normal(0);
     Base::model_coefficients_[1] = normal(1);
     Base::model_coefficients_[2] = normal(2);
     Base::model_coefficients_[3] = 0;
-    Base::model_coefficients_[3] = -1 * normal.dot (x_0);
+    Base::model_coefficients_[3] = -1 * normal.dot(x_0);
     return true;
 }
 
-template<typename PointT>
-inline bool Plane<PointT>::validateSamples(const std::vector<int> &indices) const
+template <typename PointT>
+inline bool Plane<PointT>::validateSamples(const std::vector<int>& indices) const
 {
-    if(indices.size() != 3)
+    if (indices.size() != 3)
         return false;
 
     const PointT p0 = Base::pointcloud_->at(indices[0]);
     const PointT p1 = Base::pointcloud_->at(indices[1]);
     const PointT p2 = Base::pointcloud_->at(indices[2]);
 
-    if(Base::isNan(p0) ||
-            Base::isNan(p1) ||
-                Base::isNan(p2)) {
+    if (Base::isNan(p0) || Base::isNan(p1) || Base::isNan(p2)) {
         return false;
     }
 
+    const Eigen::Vector3f dy1dy2 = { (p1.x - p0.x) / (p2.x - p0.x), (p1.y - p0.y) / (p2.y - p0.y), (p1.z - p0.z) / (p2.z - p0.z) };
 
-    const Eigen::Vector3f dy1dy2 = {(p1.x - p0.x) / (p2.x - p0.x),
-                                    (p1.y - p0.y) / (p2.y - p0.y),
-                                    (p1.z - p0.z) / (p2.z - p0.z)};
-
-    return ( (dy1dy2[0] != dy1dy2[1]) || (dy1dy2[2] != dy1dy2[1]) );
+    return ((dy1dy2[0] != dy1dy2[1]) || (dy1dy2[2] != dy1dy2[1]));
 }
 
-template<typename PointT>
-inline bool Plane<PointT>::validateSamples(const std::set<int> &indices) const
+template <typename PointT>
+inline bool Plane<PointT>::validateSamples(const std::set<int>& indices) const
 {
-    if(indices.size() != 3)
+    if (indices.size() != 3)
         return false;
 
     auto it = indices.begin();
@@ -126,65 +118,59 @@ inline bool Plane<PointT>::validateSamples(const std::set<int> &indices) const
     ++it;
     const PointT p2 = Base::pointcloud_->at(*(it));
 
-    if(Base::isNan(p0) ||
-            Base::isNan(p1) ||
-                Base::isNan(p2)) {
+    if (Base::isNan(p0) || Base::isNan(p1) || Base::isNan(p2)) {
         return false;
     }
 
-    const Eigen::Vector3f dy1dy2 = {(p1.x - p0.x) / (p2.x - p0.x),
-                                    (p1.y - p0.y) / (p2.y - p0.y),
-                                    (p1.z - p0.z) / (p2.z - p0.z)};
+    const Eigen::Vector3f dy1dy2 = { (p1.x - p0.x) / (p2.x - p0.x), (p1.y - p0.y) / (p2.y - p0.y), (p1.z - p0.z) / (p2.z - p0.z) };
 
-    return ( (dy1dy2[0] != dy1dy2[1]) || (dy1dy2[2] != dy1dy2[1]) );
+    return ((dy1dy2[0] != dy1dy2[1]) || (dy1dy2[2] != dy1dy2[1]));
 }
 
-template<typename PointT>
+template <typename PointT>
 inline std::size_t Plane<PointT>::getModelDimension() const
 {
     return 3ul;
 }
 
-template<typename PointT>
-inline double Plane<PointT>::getDistanceToModel(const int &index) const
+template <typename PointT>
+inline double Plane<PointT>::getDistanceToModel(const int& index) const
 {
-    if(!isValid())
+    if (!isValid())
         return std::numeric_limits<float>::lowest();
 
     return dot(Base::pointcloud_->at(index));
 }
 
-template<typename PointT>
-inline void Plane<PointT>::getDistancesToModel(const std::vector<int> &indices,
-                                                    std::vector<float> &distances) const
+template <typename PointT>
+inline void Plane<PointT>::getDistancesToModel(const std::vector<int>& indices, std::vector<float>& distances) const
 {
-    if(!isValid())
+    if (!isValid())
         return;
 
     const std::size_t size = indices.size();
     distances.resize(size, std::numeric_limits<float>::lowest());
-    for(std::size_t i = 0 ; i < size ; ++i) {
+    for (std::size_t i = 0; i < size; ++i) {
         distances[i] = dot(Base::pointcloud_->at(indices[i]));
     }
 }
 
-
-template<typename PointT>
-inline bool Plane<PointT>::doComputeModelCoefficients(const std::vector<int> &indices)
+template <typename PointT>
+inline bool Plane<PointT>::doComputeModelCoefficients(const std::vector<int>& indices)
 {
-    if(indices.size() != 3) {
+    if (indices.size() != 3) {
         return false;
     }
 
-    const PointT &p0 = Base::pointcloud_->at(indices[0]);
-    const PointT &p1 = Base::pointcloud_->at(indices[1]);
-    const PointT &p2 = Base::pointcloud_->at(indices[2]);
-    const Eigen::Vector4f p1p0 = {p1.x - p0.x, p1.y - p0.y, p1.z - p0.z, 0.f};
-    const Eigen::Vector4f p2p0 = {p2.x - p0.x, p2.y - p0.y, p2.z - p0.z, 0.f};
+    const PointT& p0 = Base::pointcloud_->at(indices[0]);
+    const PointT& p1 = Base::pointcloud_->at(indices[1]);
+    const PointT& p2 = Base::pointcloud_->at(indices[2]);
+    const Eigen::Vector4f p1p0 = { p1.x - p0.x, p1.y - p0.y, p1.z - p0.z, 0.f };
+    const Eigen::Vector4f p2p0 = { p2.x - p0.x, p2.y - p0.y, p2.z - p0.z, 0.f };
 
     /// Check for collinearity
     const Eigen::Vector4f dy1dy2 = p1p0.cwiseQuotient(p2p0);
-    if ( (dy1dy2[0] == dy1dy2[1]) && (dy1dy2[2] == dy1dy2[1]) ) {
+    if ((dy1dy2[0] == dy1dy2[1]) && (dy1dy2[2] == dy1dy2[1])) {
         return false;
     }
 
@@ -194,21 +180,18 @@ inline bool Plane<PointT>::doComputeModelCoefficients(const std::vector<int> &in
     Base::model_coefficients_[2] = p1p0[0] * p2p0[1] - p1p0[1] * p2p0[0];
     Base::model_coefficients_[3] = 0;
 
-    Base::model_coefficients_.normalize ();
+    Base::model_coefficients_.normalize();
     float d = -1 * dot(p0);
     Base::model_coefficients_[3] = d;
 
     return true;
 }
-template<typename PointT>
-inline float Plane<PointT>::dot(const PointT &p) const
+template <typename PointT>
+inline float Plane<PointT>::dot(const PointT& p) const
 {
-    return std::abs(p.x * Base::model_coefficients_[0] +
-            p.y * Base::model_coefficients_[1] +
-            p.z * Base::model_coefficients_[2] +
-            Base::model_coefficients_[3]);
+    return std::abs(p.x * Base::model_coefficients_[0] + p.y * Base::model_coefficients_[1] + p.z * Base::model_coefficients_[2] + Base::model_coefficients_[3]);
 }
-}
-}
+}  // namespace models
+}  // namespace csapex_sample_consensus
 
-#endif // SAC_MODEL_PLANE_HPP
+#endif  // SAC_MODEL_PLANE_HPP

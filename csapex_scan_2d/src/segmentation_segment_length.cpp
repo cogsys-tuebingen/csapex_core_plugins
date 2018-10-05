@@ -1,8 +1,8 @@
 #include "segmentation_segment_length.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <cslibs_laser_processing/segmentation/segment_length.h>
 
 using namespace csapex;
@@ -12,15 +12,12 @@ CSAPEX_REGISTER_CLASS(csapex::SegmentLengthSegmentation, csapex::Node)
 
 SegmentLengthSegmentation::SegmentLengthSegmentation()
 {
-
 }
 
-void SegmentLengthSegmentation::setupParameters(Parameterizable &parameters)
+void SegmentLengthSegmentation::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::factory::declareRange("max distance",  0.01, 2.0, 0.01, 0.01),
-                            std::bind(&SegmentLengthSegmentation::update, this));
-    parameters.addParameter(csapex::param::factory::declareRange("max length",  0.01, 2.0, 0.01, 0.01),
-                            std::bind(&SegmentLengthSegmentation::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange("max distance", 0.01, 2.0, 0.01, 0.01), std::bind(&SegmentLengthSegmentation::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange("max length", 0.01, 2.0, 0.01, 0.01), std::bind(&SegmentLengthSegmentation::update, this));
 }
 
 void SegmentLengthSegmentation::update()

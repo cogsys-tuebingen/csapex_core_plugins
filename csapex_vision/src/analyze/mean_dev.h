@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class MeanStdDev : public Node
 {
 public:
@@ -15,11 +16,10 @@ public:
     virtual void process() override;
 
 private:
-
-    Input  *in_mat_;
-    Input  *in_mask_;
-    Output *out_mean_;
-    Output *out_stddev_;
+    Input* in_mat_;
+    Input* in_mask_;
+    Output* out_mean_;
+    Output* out_stddev_;
 };
-}
-#endif // MEAN_H
+}  // namespace csapex
+#endif  // MEAN_H

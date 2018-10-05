@@ -21,4 +21,4 @@ private:
 
     std::set<int> labels_;
 };
-}
+}  // namespace csapex

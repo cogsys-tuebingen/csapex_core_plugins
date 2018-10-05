@@ -1,14 +1,14 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/model/token.h>
+#include <csapex/msg/any_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/signal/event.h>
-#include <csapex/msg/any_message.h>
-#include <csapex/model/node_handle.h>
-#include <csapex/model/token.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -17,7 +17,6 @@ namespace csapex
 {
 namespace state
 {
-
 class InactivityGenerator : public Node
 {
 public:
@@ -56,8 +55,7 @@ private:
     Event* out_;
 };
 
-}
-}
+}  // namespace state
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::state::InactivityGenerator, csapex::Node)
-

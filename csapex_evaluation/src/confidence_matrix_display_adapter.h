@@ -1,7 +1,6 @@
 #ifndef CONFIDENCE_MATRIX_DISPLAY_ADAPTER_H
 #define CONFIDENCE_MATRIX_DISPLAY_ADAPTER_H
 
-
 /// PROJECT
 #include <csapex/view/node/node_adapter.h>
 
@@ -9,25 +8,23 @@
 #include "confidence_matrix_display.h"
 
 /// SYSTEM
-#include <QTableView>
 #include <QStyledItemDelegate>
+#include <QTableView>
 
-namespace csapex {
-
+namespace csapex
+{
 class ConfidenceMatrixTableModel : public QAbstractTableModel
 {
 public:
     ConfidenceMatrixTableModel();
 
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+    virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual QVariant headerData(int section, Qt::Orientation orientation,
-                                int role = Qt::DisplayRole) const;
-
-    void update(const ConfidenceMatrix &confidence);
+    void update(const ConfidenceMatrix& confidence);
 
 private:
     ConfidenceMatrix confidence_;
@@ -50,12 +47,12 @@ Q_SIGNALS:
     void displayRequest();
 
 protected:
-    std::weak_ptr<ConfidenceMatrixDisplay>    wrapped_;
+    std::weak_ptr<ConfidenceMatrixDisplay> wrapped_;
 
 private:
     ConfidenceMatrixTableModel* model_;
-    QTableView*                 table_;
+    QTableView* table_;
 };
 
-}
-#endif // CONFIDENCE_MATRIX_DISPLAY_ADAPTER_H
+}  // namespace csapex
+#endif  // CONFIDENCE_MATRIX_DISPLAY_ADAPTER_H

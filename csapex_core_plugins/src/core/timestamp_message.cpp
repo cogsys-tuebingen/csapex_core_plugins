@@ -12,22 +12,19 @@ using namespace connection_types;
 
 using namespace std::chrono;
 
-TimestampMessage::TimestampMessage(TimestampMessage::Tp time)
-    : MessageTemplate<Tp,TimestampMessage>("/", std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count())
+TimestampMessage::TimestampMessage(TimestampMessage::Tp time) : MessageTemplate<Tp, TimestampMessage>("/", std::chrono::duration_cast<std::chrono::microseconds>(time.time_since_epoch()).count())
 {
     value = time;
 }
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data,
-                                  const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>& t)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>& t)
 {
     int64_t micro_seconds_since_epoch = duration_cast<microseconds>(t.time_since_epoch()).count();
     data << micro_seconds_since_epoch;
 
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data,
-                                        std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>& t)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, std::chrono::time_point<std::chrono::high_resolution_clock, std::chrono::microseconds>& t)
 {
     int64_t micro_seconds_since_epoch;
     data >> micro_seconds_since_epoch;
@@ -38,7 +35,8 @@ const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data,
 }
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::TimestampMessage>::encode(const csapex::connection_types::TimestampMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
@@ -49,7 +47,7 @@ Node convert<csapex::connection_types::TimestampMessage>::encode(const csapex::c
 
 bool convert<csapex::connection_types::TimestampMessage>::decode(const Node& node, csapex::connection_types::TimestampMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
 
@@ -59,5 +57,4 @@ bool convert<csapex::connection_types::TimestampMessage>::decode(const Node& nod
     rhs.value = TimestampMessage::Tp(microseconds(micro_seconds_since_epoch));
     return true;
 }
-}
-
+}  // namespace YAML

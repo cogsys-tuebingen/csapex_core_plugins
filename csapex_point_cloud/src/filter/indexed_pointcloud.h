@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class IndexedPointCloud : public Node
 {
 public:
@@ -14,8 +15,8 @@ public:
     virtual void process() override;
 
 protected:
-    Input  *input_;
-    Output *output_;
+    Input* input_;
+    Output* output_;
 };
-}
-#endif // INDEXED_POINTCLOUD_H
+}  // namespace csapex
+#endif  // INDEXED_POINTCLOUD_H

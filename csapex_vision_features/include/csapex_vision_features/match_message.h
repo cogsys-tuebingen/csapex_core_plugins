@@ -8,41 +8,43 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
-namespace connection_types {
-
-
+namespace csapex
+{
+namespace connection_types
+{
 struct MatchMessage : public MessageTemplate<std::vector<cv::DMatch>, MatchMessage>
 {
     MatchMessage();
 
     bool isContainer() const override;
     TokenData::Ptr nestedType() const override;
-    virtual void addNestedValue(const TokenData::ConstPtr &msg) override;
+    virtual void addNestedValue(const TokenData::ConstPtr& msg) override;
     virtual TokenData::ConstPtr nestedValue(std::size_t i) const override;
     virtual std::size_t nestedValueCount() const override;
 };
 
-
 /// TRAITS
 template <>
-struct type<MatchMessage> {
-    static std::string name() {
+struct type<MatchMessage>
+{
+    static std::string name()
+    {
         return "std::vector<cv::DMatch>";
     }
 };
 
-}
-}
+}  // namespace connection_types
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct convert<csapex::connection_types::MatchMessage> {
-  static Node encode(const csapex::connection_types::MatchMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::MatchMessage& rhs);
+namespace YAML
+{
+template <>
+struct convert<csapex::connection_types::MatchMessage>
+{
+    static Node encode(const csapex::connection_types::MatchMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::MatchMessage& rhs);
 };
-}
+}  // namespace YAML
 
-
-#endif // MATCH_MESSAGE_H
+#endif  // MATCH_MESSAGE_H

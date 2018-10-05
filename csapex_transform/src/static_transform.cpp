@@ -5,17 +5,19 @@
 #include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/param/parameter_factory.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/param/range_parameter.h>
 #include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/param/range_parameter.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_math/param/factory.h>
 
 /// SYSTEM
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <tf/transform_datatypes.h>
+#include <tf/transform_datatypes.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 CSAPEX_REGISTER_CLASS(csapex::StaticTransform, csapex::Node)
 
@@ -25,7 +27,7 @@ StaticTransform::StaticTransform()
 {
 }
 
-void StaticTransform::setupParameters(Parameterizable &parameters)
+void StaticTransform::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareText("frame", "/base_link"), frame);
     parameters.addParameter(csapex::param::factory::declareText("child_frame", "/marlin"), child_frame);
@@ -40,7 +42,7 @@ void StaticTransform::setupParameters(Parameterizable &parameters)
 
 void StaticTransform::process()
 {
-    if(msg::hasMessage(input_)) {
+    if (msg::hasMessage(input_)) {
         connection_types::TransformMessage::ConstPtr pose = msg::getMessage<connection_types::TransformMessage>(input_);
         tf::Transform trafo = pose->value;
 
@@ -62,14 +64,12 @@ void StaticTransform::process()
         setParameter("dz", z);
     }
 
-
     connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
     msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
     msg->frame_id = frame;
     msg->child_frame = child_frame;
     msg::publish(output_, msg);
 }
-
 
 void StaticTransform::setup(NodeModifier& node_modifier)
 {

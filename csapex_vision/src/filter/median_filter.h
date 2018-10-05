@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class MedianFilter : public csapex::Node
 {
 public:
@@ -15,11 +16,11 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 private:
-    int           kernel_size_;
+    int kernel_size_;
     csapex::Output* output_;
-    csapex::Input*  input_;
+    csapex::Input* input_;
 
     void update();
 };
-}
-#endif // MEDIAN_FILTER_H
+}  // namespace csapex
+#endif  // MEDIAN_FILTER_H

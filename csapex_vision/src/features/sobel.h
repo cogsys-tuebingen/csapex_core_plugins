@@ -4,7 +4,8 @@
 /// COMPONENT
 #include "operator.h"
 
-namespace csapex {
+namespace csapex
+{
 class Sobel : public Operator
 {
 public:
@@ -14,11 +15,10 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    int     dx_;
-    int     dy_;
+    int dx_;
+    int dy_;
 
     void update();
-
 };
-}
-#endif // SOBEL_H
+}  // namespace csapex
+#endif  // SOBEL_H

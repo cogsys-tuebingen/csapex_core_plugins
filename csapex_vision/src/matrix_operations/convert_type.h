@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class ConvertType : public csapex::Node
 {
 public:
@@ -15,13 +16,13 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 private:
-    csapex::Input  *input_;
-    csapex::Output *output_;
+    csapex::Input* input_;
+    csapex::Output* output_;
 
     void update();
 
-    int  mode_;
+    int mode_;
     bool normalize_;
 };
-}
-#endif // TYPE_CONVERTER_H
+}  // namespace csapex
+#endif  // TYPE_CONVERTER_H

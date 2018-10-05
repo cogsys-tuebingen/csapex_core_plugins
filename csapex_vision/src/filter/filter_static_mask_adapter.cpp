@@ -10,21 +10,19 @@
 #include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
-#include <QPainter>
-#include <QGraphicsSceneEvent>
-#include <QGraphicsPixmapItem>
 #include <QCheckBox>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsSceneEvent>
+#include <QPainter>
 #include <QPushButton>
 
 using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(FilterStaticMaskAdapter, csapex::FilterStaticMask)
 
-
-FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<FilterStaticMask> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_(node)
+FilterStaticMaskAdapter::FilterStaticMaskAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<FilterStaticMask> node) : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
-    qRegisterMetaType < cv::Mat > ("cv::Mat");
+    qRegisterMetaType<cv::Mat>("cv::Mat");
 
     auto n = wrapped_.lock();
 
@@ -42,7 +40,7 @@ FilterStaticMaskAdapter::~FilterStaticMaskAdapter()
 void FilterStaticMaskAdapter::setMask(cv::Mat mask)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     node->setMask(mask);
@@ -51,7 +49,7 @@ void FilterStaticMaskAdapter::setMask(cv::Mat mask)
 void FilterStaticMaskAdapter::display()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     StaticMaskPainter painter(node->getMask());

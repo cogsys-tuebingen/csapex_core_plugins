@@ -10,8 +10,8 @@
 /// SYSTEM
 #include <deque>
 
-namespace csapex {
-
+namespace csapex
+{
 class ImportRos : public RosNode
 {
 public:
@@ -56,9 +56,7 @@ private:
     int buffer_size_;
     bool running_;
     int mode_;
-
 };
-}
+}  // namespace csapex
 
-
-#endif // IMPORT_ROS_H
+#endif  // IMPORT_ROS_H

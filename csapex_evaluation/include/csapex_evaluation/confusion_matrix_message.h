@@ -10,10 +10,10 @@
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
 
-namespace csapex {
-namespace connection_types {
-
-
+namespace csapex
+{
+namespace connection_types
+{
 struct ConfusionMatrixMessage : public Message
 {
 protected:
@@ -30,21 +30,25 @@ public:
 
 /// TRAITS
 template <>
-struct type<ConfusionMatrixMessage> {
-    static std::string name() {
+struct type<ConfusionMatrixMessage>
+{
+    static std::string name()
+    {
         return "ConfusionMatrixMessage";
     }
 };
-}
-}
+}  // namespace connection_types
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct convert<csapex::connection_types::ConfusionMatrixMessage> {
-  static Node encode(const csapex::connection_types::ConfusionMatrixMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::ConfusionMatrixMessage& rhs);
+namespace YAML
+{
+template <>
+struct convert<csapex::connection_types::ConfusionMatrixMessage>
+{
+    static Node encode(const csapex::connection_types::ConfusionMatrixMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::ConfusionMatrixMessage& rhs);
 };
-}
+}  // namespace YAML
 
-#endif // CONFUSION_MATRIX_MESSAGE_H
+#endif  // CONFUSION_MATRIX_MESSAGE_H

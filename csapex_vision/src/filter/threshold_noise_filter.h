@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class ThresholdNoiseFilter : public csapex::Node
 {
 public:
@@ -15,10 +16,9 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Output *output_;
-    csapex::Input  *input_;
-    csapex::Input  *threshold_;
-
+    csapex::Output* output_;
+    csapex::Input* input_;
+    csapex::Input* threshold_;
 };
-}
-#endif // WEIGHTED_NOISE_FILTER_H
+}  // namespace csapex
+#endif  // WEIGHTED_NOISE_FILTER_H

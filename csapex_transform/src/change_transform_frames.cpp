@@ -1,11 +1,11 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 #include <csapex_transform/transform_message.h>
 
 using namespace csapex;
@@ -13,7 +13,6 @@ using namespace csapex::connection_types;
 
 namespace csapex
 {
-
 class ChangeTransformFrames : public Node
 {
 public:
@@ -37,11 +36,11 @@ public:
     {
         TransformMessage::Ptr trafo = msg::getClonedMessage<TransformMessage>(in_);
 
-        if(!frame_id_.empty()) {
+        if (!frame_id_.empty()) {
             trafo->frame_id = frame_id_;
         }
 
-        if(!child_frame_id_.empty()) {
+        if (!child_frame_id_.empty()) {
             trafo->child_frame = child_frame_id_;
         }
 
@@ -56,7 +55,6 @@ private:
     std::string child_frame_id_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::ChangeTransformFrames, csapex::Node)
-

@@ -1,14 +1,17 @@
 #pragma once
 
-namespace csapex { namespace clustering {
-
-template<typename Data>
+namespace csapex
+{
+namespace clustering
+{
+template <typename Data>
 class NoOpValidator
 {
 public:
-    template<typename... Args>
+    template <typename... Args>
     NoOpValidator(Args&&...)
-    {}
+    {
+    }
 
     constexpr bool start(const Data&)
     {
@@ -26,4 +29,5 @@ public:
     }
 };
 
-}}
+}  // namespace clustering
+}  // namespace csapex

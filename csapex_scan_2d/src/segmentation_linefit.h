@@ -3,19 +3,19 @@
 
 #include "segmentation.h"
 
-namespace csapex {
-
+namespace csapex
+{
 class LineFitSegmentation : public ScanSegmentation
 {
 public:
     LineFitSegmentation();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
     void update();
 };
 
-}
-#endif // SEGMNETATION_LINEFIT_H
+}  // namespace csapex
+#endif  // SEGMNETATION_LINEFIT_H

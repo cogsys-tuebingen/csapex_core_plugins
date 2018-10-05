@@ -1,11 +1,11 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/any_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/any_message.h>
 #include <csapex_core_plugins/timestamp_message.h>
 
 using namespace csapex;
@@ -13,8 +13,6 @@ using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class OverwriteTimestamp : public Node
 {
 public:
@@ -37,7 +35,7 @@ public:
     {
         TokenDataConstPtr message = msg::getMessage(in_);
         MessagePtr message_clone = message->cloneAs<Message>();
-        if(message_clone) {
+        if (message_clone) {
             TimestampMessage::ConstPtr time = msg::getMessage<TimestampMessage>(in_time_);
 
             message_clone->stamp_micro_seconds = time->stamp_micro_seconds;
@@ -49,11 +47,8 @@ private:
     Input* in_;
     Input* in_time_;
     Output* out_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::OverwriteTimestamp, csapex::Node)
-

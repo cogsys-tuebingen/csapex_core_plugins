@@ -40,7 +40,6 @@ private:
     bool loaded_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // DECISION_TREE_H
+#endif  // DECISION_TREE_H

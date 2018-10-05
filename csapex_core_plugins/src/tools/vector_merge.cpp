@@ -1,19 +1,19 @@
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/model/variadic_io.h>
-#include <csapex/msg/io.h>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN VectorMerge : public Node, public VariadicInputs
 {
 public:
     VectorMerge()
-    {}
+    {
+    }
 
     void setup(csapex::NodeModifier& node_modifier)
     {
@@ -33,23 +33,23 @@ public:
 
         bool first = true;
         std::vector<InputPtr> inputs = node_modifier_->getMessageInputs();
-        for(std::size_t i = 0 ; i < inputs.size() ; i++) {
-            Input *in = inputs[i].get();
-            if(msg::hasMessage(in)) {
+        for (std::size_t i = 0; i < inputs.size(); i++) {
+            Input* in = inputs[i].get();
+            if (msg::hasMessage(in)) {
                 connection_types::GenericVectorMessage::ConstPtr msg;
-                if(first) {
-                    result =  msg::getClonedMessage<connection_types::GenericVectorMessage>(in);
+                if (first) {
+                    result = msg::getClonedMessage<connection_types::GenericVectorMessage>(in);
                     first = false;
                 } else {
                     msg = msg::getMessage<connection_types::GenericVectorMessage>(in);
-                    for(std::size_t j = 0, total = msg->nestedValueCount(); j < total; ++j) {
+                    for (std::size_t j = 0, total = msg->nestedValueCount(); j < total; ++j) {
                         result->addNestedValue(msg->nestedValue(j));
                     }
                 }
             }
         }
 
-        if(result) {
+        if (result) {
             msg::publish(output, result);
         }
     }
@@ -63,6 +63,6 @@ private:
     Output* output;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::VectorMerge, csapex::Node)

@@ -4,8 +4,8 @@
 /// HEADER
 #include <csapex/core/core_plugin.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class RegisterPointCloudPlugin : public CorePlugin
 {
 public:
@@ -14,6 +14,6 @@ public:
     void prepare(Settings&) override;
 };
 
-}
+}  // namespace csapex
 
-#endif // REGISTER_PLUGIN_H
+#endif  // REGISTER_PLUGIN_H

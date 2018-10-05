@@ -6,44 +6,70 @@
 #include <csapex/msg/token_traits.h>
 
 /// SYSTEM
+#include <boost/mpl/vector.hpp>
+#include <boost/variant.hpp>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
-#include <boost/variant.hpp>
-#include <boost/mpl/vector.hpp>
 
 namespace YAML
 {
-template<typename T, typename S>
+template <typename T, typename S>
 struct as_if;
 }
 
-namespace csapex {
-namespace connection_types {
-
+namespace csapex
+{
+namespace connection_types
+{
 /// ALL SUPPORTED POINT TYPES
-typedef boost::mpl::vector<
-pcl::PointXYZI,
-pcl::PointXYZRGB,
-pcl::PointXYZRGBL,
-pcl::PointXYZRGBA,
-pcl::PointXYZL,
-pcl::PointXYZ,
-pcl::PointNormal
-> PointCloudPointTypes;
+typedef boost::mpl::vector<pcl::PointXYZI, pcl::PointXYZRGB, pcl::PointXYZRGBL, pcl::PointXYZRGBA, pcl::PointXYZL, pcl::PointXYZ, pcl::PointNormal> PointCloudPointTypes;
 
-namespace traits {
-template <typename T> inline std::string name() { return ""; }
-
-template <> inline std::string name<pcl::PointXYZ>() { return "PointXYZ"; }
-template <> inline std::string name<pcl::PointXYZI>() { return "PointXYZI"; }
-template <> inline std::string name<pcl::PointXYZRGB>() { return "PointXYZRGB"; }
-template <> inline std::string name<pcl::PointXYZRGBA>() { return "PointXYZRGBA"; }
-template <> inline std::string name<pcl::PointXYZRGBL>() { return "PointXYZRGBL"; }
-template <> inline std::string name<pcl::PointXYZL>() { return "PointXYZL"; }
-template <> inline std::string name<pcl::PointNormal>() { return "PointNormal"; }
+namespace traits
+{
+template <typename T>
+inline std::string name()
+{
+    return "";
 }
 
-template<class T>
+template <>
+inline std::string name<pcl::PointXYZ>()
+{
+    return "PointXYZ";
+}
+template <>
+inline std::string name<pcl::PointXYZI>()
+{
+    return "PointXYZI";
+}
+template <>
+inline std::string name<pcl::PointXYZRGB>()
+{
+    return "PointXYZRGB";
+}
+template <>
+inline std::string name<pcl::PointXYZRGBA>()
+{
+    return "PointXYZRGBA";
+}
+template <>
+inline std::string name<pcl::PointXYZRGBL>()
+{
+    return "PointXYZRGBL";
+}
+template <>
+inline std::string name<pcl::PointXYZL>()
+{
+    return "PointXYZL";
+}
+template <>
+inline std::string name<pcl::PointNormal>()
+{
+    return "PointNormal";
+}
+}  // namespace traits
+
+template <class T>
 struct add_point_cloud_ptr
 {
     typedef typename pcl::PointCloud<T>::Ptr type;
@@ -60,12 +86,12 @@ public:
     template <typename T>
     struct Dispatch : public boost::static_visitor<void>
     {
-        Dispatch(T* pc, PointCloudMessage::ConstPtr msg)
-            : pc_(pc), msg_(msg)
-        {}
+        Dispatch(T* pc, PointCloudMessage::ConstPtr msg) : pc_(pc), msg_(msg)
+        {
+        }
 
         template <typename PointCloudT>
-        void operator () (PointCloudT cloud) const
+        void operator()(PointCloudT cloud) const
         {
             typedef typename PointCloudT::element_type::PointType PointT;
             cloud->header.frame_id = msg_->frame_id;
@@ -80,11 +106,7 @@ public:
     typedef std::shared_ptr<PointCloudMessage> Ptr;
     typedef std::shared_ptr<PointCloudMessage const> ConstPtr;
 
-    typedef typename boost::make_variant_over<
-    typename boost::mpl::transform<
-    PointCloudPointTypes, add_point_cloud_ptr<boost::mpl::_1>
-    >::type
-    >::type variant;
+    typedef typename boost::make_variant_over<typename boost::mpl::transform<PointCloudPointTypes, add_point_cloud_ptr<boost::mpl::_1>>::type>::type variant;
 
     PointCloudMessage(const std::string& frame_id, Stamp stamp_micro_seconds);
 
@@ -98,32 +120,33 @@ private:
     PointCloudMessage();
 };
 
-
 /// TRAITS
 template <>
-struct type<PointCloudMessage> {
-    static std::string name() {
+struct type<PointCloudMessage>
+{
+    static std::string name()
+    {
         return "PointCloud";
     }
 };
 
-}
+}  // namespace connection_types
 
 template <>
 inline std::shared_ptr<connection_types::PointCloudMessage> makeEmpty<connection_types::PointCloudMessage>()
 {
     return std::shared_ptr<connection_types::PointCloudMessage>(new connection_types::PointCloudMessage("/", 0));
 }
-}
-
-
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct convert<csapex::connection_types::PointCloudMessage> {
-  static Node encode(const csapex::connection_types::PointCloudMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::PointCloudMessage& rhs);
+namespace YAML
+{
+template <>
+struct convert<csapex::connection_types::PointCloudMessage>
+{
+    static Node encode(const csapex::connection_types::PointCloudMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::PointCloudMessage& rhs);
 };
-}
-#endif // POINT_CLOUD_MESSAGE_H
+}  // namespace YAML
+#endif  // POINT_CLOUD_MESSAGE_H

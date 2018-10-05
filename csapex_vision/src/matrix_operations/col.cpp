@@ -2,20 +2,19 @@
 #include "col.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
-#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Col, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-Col::Col() :
-    request_center_(false)
+Col::Col() : request_center_(false)
 {
 }
 
@@ -24,19 +23,18 @@ void Col::process()
     CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
     CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
 
-    if(in->value.empty()) {
+    if (in->value.empty()) {
         throw std::runtime_error("Cannot extract row of empty matrix!");
     }
 
-    param::RangeParameter::Ptr range =
-            getParameter<param::RangeParameter>("col");
+    param::RangeParameter::Ptr range = getParameter<param::RangeParameter>("col");
 
     int max_idx = in->value.cols - 1;
-    if(range->max<int>() != max_idx) {
+    if (range->max<int>() != max_idx) {
         range->setMax(max_idx);
     }
 
-    if(request_center_) {
+    if (request_center_) {
         int center = max_idx / 2;
         range->set(center);
         request_center_ = false;
@@ -50,18 +48,14 @@ void Col::process()
 
 void Col::setup(NodeModifier& node_modifier)
 {
-    input_  = node_modifier.addInput<CvMatMessage>("Matrix");
+    input_ = node_modifier.addInput<CvMatMessage>("Matrix");
     output_ = node_modifier.addOutput<CvMatMessage>("Col");
 }
 
 void Col::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::factory::declareRange("col",
-                                                       csapex::param::ParameterDescription("Col to extract."),
-                                                       0, 1, 0, 1));
-    parameters.addParameter(csapex::param::factory::declareTrigger("center"),
-                 std::bind(&Col::requestCenter, this));
-
+    addParameter(csapex::param::factory::declareRange("col", csapex::param::ParameterDescription("Col to extract."), 0, 1, 0, 1));
+    parameters.addParameter(csapex::param::factory::declareTrigger("center"), std::bind(&Col::requestCenter, this));
 }
 
 void Col::requestCenter()

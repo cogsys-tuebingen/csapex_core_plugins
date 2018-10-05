@@ -2,8 +2,8 @@
 #include <csapex/core/core_plugin.h>
 #include <csapex/utility/register_apex_plugin.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN RegisterMath : public CorePlugin
 {
 public:
@@ -14,6 +14,6 @@ public:
     }
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::RegisterMath, csapex::CorePlugin)

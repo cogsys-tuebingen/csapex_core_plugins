@@ -5,15 +5,15 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class VoxelGrid : public Node
 {
 public:
     VoxelGrid();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
     template <class PointT>
@@ -26,6 +26,6 @@ private:
     bool remove_nan_;
 };
 
-}
+}  // namespace csapex
 
-#endif // VOXEL_GRID_H
+#endif  // VOXEL_GRID_H

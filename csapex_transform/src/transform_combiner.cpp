@@ -2,12 +2,12 @@
 #include "transform_combiner.h"
 
 /// COMPONENT
-#include <csapex_transform/transform_message.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TransformCombiner, csapex::Node)
@@ -31,16 +31,11 @@ void TransformCombiner::process()
     msg::publish(output_, msg);
 }
 
-
 void TransformCombiner::setupParameters(Parameterizable& params)
 {
-    std::map<std::string, int> which = {
-        {"FIRST (A)", 0},
-        {"SECOND (B)", 1}
-    };
+    std::map<std::string, int> which = { { "FIRST (A)", 0 }, { "SECOND (B)", 1 } };
 
-    params.addParameter(param::factory::declareParameterSet<int>("which_timestamp", which, 0),
-                            which_stamp_);
+    params.addParameter(param::factory::declareParameterSet<int>("which_timestamp", which, 0), which_stamp_);
 }
 
 void TransformCombiner::setup(NodeModifier& node_modifier)

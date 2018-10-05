@@ -2,11 +2,11 @@
 #include "extract_timestamp.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex_core_plugins/timestamp_message.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/any_message.h>
+#include <csapex/msg/io.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_core_plugins/timestamp_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractTimeStamp, csapex::Node)
 
@@ -34,4 +34,3 @@ void ExtractTimeStamp::process()
     time->stamp_micro_seconds = msg->stamp_micro_seconds;
     msg::publish(output_, time);
 }
-

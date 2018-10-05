@@ -4,8 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN ExportCout : public Node
 {
 public:
@@ -18,6 +18,6 @@ private:
     Input* connector_;
 };
 
-}
+}  // namespace csapex
 
-#endif // EXPORT_COUT_H
+#endif  // EXPORT_COUT_H

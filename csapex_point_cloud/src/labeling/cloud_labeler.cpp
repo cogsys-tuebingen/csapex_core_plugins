@@ -2,9 +2,9 @@
 #include "cloud_labeler.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::CloudLabeler, csapex::Node)
@@ -14,15 +14,12 @@ using namespace csapex::connection_types;
 
 CloudLabeler::CloudLabeler()
 {
-
 }
 
 void CloudLabeler::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::factory::declareTrigger("submit"), [this](param::Parameter*){
-        done_request();
-    });
-    parameters.addParameter(csapex::param::factory::declareTrigger("drop"), [this](param::Parameter*){
+    parameters.addParameter(csapex::param::factory::declareTrigger("submit"), [this](param::Parameter*) { done_request(); });
+    parameters.addParameter(csapex::param::factory::declareTrigger("drop"), [this](param::Parameter*) {
         result_.reset();
         done();
     });
@@ -31,12 +28,8 @@ void CloudLabeler::setupParameters(Parameterizable& parameters)
 
     double d = 10.0;
 
-    addParameter(csapex::param::factory::declareRange("label",
-                                                       csapex::param::ParameterDescription("The label to be assigned to the selected points"),
-                                                       0, 9, 0, 1));
-    addParameter(csapex::param::factory::declareRange("radius",
-                                                       csapex::param::ParameterDescription("The radius around the cursor to label in"),
-                                                       0.02, 1.0, 0.05, 0.001));
+    addParameter(csapex::param::factory::declareRange("label", csapex::param::ParameterDescription("The label to be assigned to the selected points"), 0, 9, 0, 1));
+    addParameter(csapex::param::factory::declareRange("radius", csapex::param::ParameterDescription("The radius around the cursor to label in"), 0.02, 1.0, 0.05, 0.001));
 
     parameters.addParameter(csapex::param::factory::declareRange("~view/r", 0.01, 20.0, 10.0, 0.01), refresh);
     parameters.addParameter(csapex::param::factory::declareRange("~view/theta", 0., M_PI, M_PI / 2, 0.001), refresh);
@@ -74,7 +67,7 @@ void CloudLabeler::setup(NodeModifier& node_modifier)
     output_ = node_modifier.addOutput<PointCloudMessage>("Labeled Cloud");
 }
 
-void CloudLabeler::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
+void CloudLabeler::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters)
 {
     PointCloudMessage::ConstPtr msg = msg::getMessage<PointCloudMessage>(input_);
 
@@ -87,10 +80,10 @@ void CloudLabeler::beginProcess(csapex::NodeModifier& node_modifier, Parameteriz
     display_request();
 }
 
-void CloudLabeler::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
+void CloudLabeler::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters)
 {
-    if(msg::isConnected(output_)) {
-        if(result_) {
+    if (msg::isConnected(output_)) {
+        if (result_) {
             msg::publish(output_, result_);
         }
     }
@@ -112,7 +105,7 @@ void CloudLabeler::refresh()
     refresh_request();
 }
 
-void CloudLabeler::setResult(const pcl::PointCloud<pcl::PointXYZL>::Ptr &labeled)
+void CloudLabeler::setResult(const pcl::PointCloud<pcl::PointXYZL>::Ptr& labeled)
 {
     result_->value = labeled;
 

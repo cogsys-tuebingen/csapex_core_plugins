@@ -9,23 +9,21 @@
 #include <csapex_evaluation/confusion_matrix.h>
 
 /// SYSTEM
-#include <QTableView>
 #include <QStyledItemDelegate>
+#include <QTableView>
 
-namespace csapex {
-
+namespace csapex
+{
 class EvaluateBinaryClassifierTableModel : public QAbstractTableModel
 {
 public:
     EvaluateBinaryClassifierTableModel();
 
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+    virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
-
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual QVariant headerData(int section, Qt::Orientation orientation,
-                                int role = Qt::DisplayRole) const;
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
     void update(EvaluateBinaryClassifier::Metrics metrics);
 
@@ -58,5 +56,5 @@ private:
     QTableView* table_;
 };
 
-}
-#endif // EVALUATE_BINARY_CLASSIFIER_ADAPTER_H
+}  // namespace csapex
+#endif  // EVALUATE_BINARY_CLASSIFIER_ADAPTER_H

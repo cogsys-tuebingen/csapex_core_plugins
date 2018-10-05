@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class ClusterHistograms : public csapex::Node
 {
 public:
@@ -15,13 +16,12 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Output*   out_histograms_;
-    csapex::Output*   out_clusters_;
+    csapex::Output* out_histograms_;
+    csapex::Output* out_clusters_;
 
-    csapex::Input*    input_;
-    csapex::Input*    clusters_;
-    csapex::Input*    mask_;
-
+    csapex::Input* input_;
+    csapex::Input* clusters_;
+    csapex::Input* mask_;
 };
-}
-#endif // CLUSTERHISTOGRAMS_H
+}  // namespace csapex
+#endif  // CLUSTERHISTOGRAMS_H

@@ -2,18 +2,18 @@
 #include "dynamic_transform.h"
 
 /// COMPONENT
-#include <csapex_transform/transform_message.h>
 #include <csapex_core_plugins/timestamp_message.h>
 #include <csapex_ros/tf_listener.h>
+#include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/signal/event.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/model/node_handle.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/signal/event.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_math/param/factory.h>
 
 /// SYSTEM
@@ -23,8 +23,7 @@ CSAPEX_REGISTER_CLASS(csapex::DynamicTransform, csapex::Node)
 
 using namespace csapex;
 
-DynamicTransform::DynamicTransform()
-    : init_(false), initial_retries_(10), frozen_(false)
+DynamicTransform::DynamicTransform() : init_(false), initial_retries_(10), frozen_(false)
 {
 }
 
@@ -43,13 +42,9 @@ void DynamicTransform::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::factory::declareBool("exact_time", false), exact_time_);
 
     auto is_frozen = csapex::param::factory::declareBool("freeze_transformation", false);
-    parameters.addParameter(is_frozen, [this](param::Parameter* p){
-        freeze(p->as<bool>());
-    });
+    parameters.addParameter(is_frozen, [this](param::Parameter* p) { freeze(p->as<bool>()); });
 
-    std::function<bool()> freeze_condition = [this]() {
-        return frozen_;
-    };
+    std::function<bool()> freeze_condition = [this]() { return frozen_; };
 
     parameters.addConditionalParameter(csapex::param::factory::declareAngle("~tf/roll", 0.0), freeze_condition, roll);
     parameters.addConditionalParameter(csapex::param::factory::declareAngle("~tf/pitch", 0.0), freeze_condition, pitch);
@@ -66,10 +61,9 @@ void DynamicTransform::setupROS()
 
 void DynamicTransform::freeze(bool frozen)
 {
-    if(frozen != frozen_) {
-
-        if(frozen) {
-            if(boost::optional<tf::Transform> t = last_transform) {
+    if (frozen != frozen_) {
+        if (frozen) {
+            if (boost::optional<tf::Transform> t = last_transform) {
                 tf::Transform last = *t;
 
                 auto o = last.getOrigin();
@@ -94,14 +88,14 @@ void DynamicTransform::freeze(bool frozen)
 
 void DynamicTransform::processROS()
 {
-    if(!init_) {
+    if (!init_) {
         refresh();
     }
 
     node_modifier_->setNoError();
 
     try {
-        if(msg::isConnected(time_in_) && msg::hasMessage(time_in_)) {
+        if (msg::isConnected(time_in_) && msg::hasMessage(time_in_)) {
             connection_types::TimestampMessage::ConstPtr time_msg = msg::getMessage<connection_types::TimestampMessage>(time_in_);
             auto nano = std::chrono::duration_cast<std::chrono::nanoseconds>(time_msg->value.time_since_epoch());
             ros::Time time;
@@ -110,20 +104,21 @@ void DynamicTransform::processROS()
         } else {
             publishTransform(ros::Time(0));
         }
-    } catch(const std::exception& e) {
+    } catch (const std::exception& e) {
         aerr << "error: " << e.what() << std::endl;
         node_modifier_->setWarning(e.what());
     }
 }
 
-namespace {
-bool waitForTransform(tf::TransformListener& tfl, const std::string& target, const std::string& source, const ros::Time& time,
-                      const ros::WallDuration& duration, const ros::WallDuration& poll_duration)
+namespace
+{
+bool waitForTransform(tf::TransformListener& tfl, const std::string& target, const std::string& source, const ros::Time& time, const ros::WallDuration& duration,
+                      const ros::WallDuration& poll_duration)
 {
     ros::WallTime start = ros::WallTime::now();
     ros::WallTime end = start + duration;
-    while(ros::WallTime::now() < end) {
-        if(tfl.canTransform(target, source, time)) {
+    while (ros::WallTime::now() < end) {
+        if (tfl.canTransform(target, source, time)) {
             return true;
         }
 
@@ -132,18 +127,17 @@ bool waitForTransform(tf::TransformListener& tfl, const std::string& target, con
 
     return false;
 }
-}
+}  // namespace
 
 void DynamicTransform::publishTransform(const ros::Time& time)
 {
-    if(!init_ || source_p->noParameters() == 0 || target_p->noParameters() == 0) {
+    if (!init_ || source_p->noParameters() == 0 || target_p->noParameters() == 0) {
         refresh();
     }
 
-    if(!init_) {
+    if (!init_) {
         return;
     }
-
 
     std::string target = readParameter<std::string>("target");
     std::string source = readParameter<std::string>("source");
@@ -151,7 +145,7 @@ void DynamicTransform::publishTransform(const ros::Time& time)
     apex_assert(!target.empty());
     apex_assert(!source.empty());
 
-    if(frozen_) {
+    if (frozen_) {
         connection_types::TransformMessage::Ptr msg(new connection_types::TransformMessage);
         msg->value = tf::Transform(tf::createQuaternionFromRPY(roll, pitch, yaw), tf::Vector3(x, y, z));
         msg->frame_id = target;
@@ -160,10 +154,10 @@ void DynamicTransform::publishTransform(const ros::Time& time)
 
     } else {
         tf::StampedTransform t;
-        if(getParameter("source")->is<void>()) {
+        if (getParameter("source")->is<void>()) {
             throw std::runtime_error("from is not a string");
         }
-        if(getParameter("target")->is<void>()) {
+        if (getParameter("target")->is<void>()) {
             throw std::runtime_error("to is not a string");
         }
 
@@ -174,26 +168,24 @@ void DynamicTransform::publishTransform(const ros::Time& time)
             apex_assert(listener);
             tf::TransformListener& tfl = *listener;
 
-            if(waitForTransform(tfl, target, source, time, ros::WallDuration(0.1), ros::WallDuration(0.01))) {
+            if (waitForTransform(tfl, target, source, time, ros::WallDuration(0.1), ros::WallDuration(0.01))) {
                 tfl.lookupTransform(target, source, time, t);
 
-            } else if(exact_time_) {
-                node_modifier_->setWarning(std::string("cannot exactly transform between ") +
-                                           target + " and " + source);
+            } else if (exact_time_) {
+                node_modifier_->setWarning(std::string("cannot exactly transform between ") + target + " and " + source);
                 return;
 
             } else {
-                if(tfl.canTransform(target, source, ros::Time(0))) {
+                if (tfl.canTransform(target, source, ros::Time(0))) {
                     node_modifier_->setWarning("cannot transform, using latest transform");
                     tfl.lookupTransform(target, source, ros::Time(0), t);
                 } else {
-                    node_modifier_->setWarning(std::string("cannot transform between ") +
-                                               target + " and " + source + " at all...");
+                    node_modifier_->setWarning(std::string("cannot transform between ") + target + " and " + source + " at all...");
                     return;
                 }
             }
             node_modifier_->setNoError();
-        } catch(const tf2::TransformException& e) {
+        } catch (const tf2::TransformException& e) {
             node_modifier_->setWarning(e.what());
             return;
         }
@@ -223,12 +215,11 @@ void DynamicTransform::setup(NodeModifier& node_modifier)
     reset_ = node_modifier.addEvent("reset");
 }
 
-
 void DynamicTransform::resetTf()
 {
     {
         LockedTFListener l = TFListener::getLocked();
-        if(l.l) {
+        if (l.l) {
             l.l->reset();
         }
     }
@@ -244,10 +235,10 @@ void DynamicTransform::refresh()
 
     std::string to, from;
 
-    if(getParameter("source")->is<std::string>()) {
+    if (getParameter("source")->is<std::string>()) {
         to = target_p->as<std::string>();
     }
-    if(getParameter("target")->is<std::string>()) {
+    if (getParameter("target")->is<std::string>()) {
         from = source_p->as<std::string>();
     }
 
@@ -262,33 +253,32 @@ void DynamicTransform::refresh()
 
     bool has_from = false;
     bool has_to = false;
-    for(std::size_t i = 0; i < f.size(); ++i) {
+    for (std::size_t i = 0; i < f.size(); ++i) {
         std::string frame = std::string("/") + f[i];
         frames.push_back(frame);
 
-        if(frame == from) {
+        if (frame == from) {
             has_from = true;
         }
-        if(frame == to) {
+        if (frame == to) {
             has_to = true;
         }
     }
 
-    if((!from.empty() && !has_from) ||
-            (!to.empty() && !has_to)) {
-        if(initial_retries_ --> 0) {
+    if ((!from.empty() && !has_from) || (!to.empty() && !has_to)) {
+        if (initial_retries_-- > 0) {
             ainfo << "retry" << std::endl;
             return;
         }
     }
 
-    if(!from.empty()) {
-        if(std::find(frames.begin(), frames.end(), from) == frames.end()) {
+    if (!from.empty()) {
+        if (std::find(frames.begin(), frames.end(), from) == frames.end()) {
             frames.push_back(from);
         }
     }
-    if(!to.empty()) {
-        if(std::find(frames.begin(), frames.end(), to) == frames.end()) {
+    if (!to.empty()) {
+        if (std::find(frames.begin(), frames.end(), to) == frames.end()) {
             frames.push_back(to);
         }
     }

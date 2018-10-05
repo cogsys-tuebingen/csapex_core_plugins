@@ -5,10 +5,10 @@
 #include <csapex_core_plugins/timestamp_message.h>
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::TimeOffset, csapex::Node)
 
@@ -18,11 +18,10 @@ TimeOffset::TimeOffset()
 {
 }
 
-void TimeOffset::setupParameters(Parameterizable &parameters)
+void TimeOffset::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareRange<double>("offset", -5.0, 5.0, 0.0, 0.001));
 }
-
 
 void TimeOffset::process()
 {
@@ -33,7 +32,7 @@ void TimeOffset::process()
 
     auto t = in->value;
 
-    if(t.time_since_epoch().count() == 0) {
+    if (t.time_since_epoch().count() == 0) {
         node_modifier_->setWarning("Time is 0, using current time as base");
         auto hires = std::chrono::high_resolution_clock::now();
         t = std::chrono::time_point_cast<std::chrono::microseconds>(hires);

@@ -1,21 +1,19 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/msg/io.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex_opencv/roi_message.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/roi_message.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class SetRoiLabel : public Node
 {
 public:
@@ -41,13 +39,13 @@ public:
 
         std::stringstream label;
 
-        if(msg::isValue<std::string>(in_value_)) {
+        if (msg::isValue<std::string>(in_value_)) {
             label << msg::getValue<std::string>(in_value_);
 
-        } else if(msg::isValue<int>(in_value_)) {
+        } else if (msg::isValue<int>(in_value_)) {
             label << msg::getValue<int>(in_value_);
 
-        } else if(msg::isValue<double>(in_value_)) {
+        } else if (msg::isValue<double>(in_value_)) {
             label << msg::getValue<double>(in_value_);
 
         } else {
@@ -63,11 +61,8 @@ private:
     Input* in_roi_;
     Input* in_value_;
     Output* out_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::SetRoiLabel, csapex::Node)
-

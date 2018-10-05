@@ -8,15 +8,15 @@
 #include "cloud_labeler.h"
 
 /// SYSTEM
+#include <QGLFramebufferObject>
 #include <QGLWidget>
-#include <QVector3D>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QGLFramebufferObject>
 #include <QMatrix4x4>
+#include <QVector3D>
 
-namespace csapex {
-
+namespace csapex
+{
 class CloudLabelerAdapter : public QGLWidget, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -41,14 +41,14 @@ public:
 protected:
     void initializeGL();
     void resizeGL(int width, int height);
-    void mousePressEventImpl(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEventImpl(QGraphicsSceneMouseEvent *event);
-    void wheelEventImpl(QGraphicsSceneWheelEvent *event);
+    void mousePressEventImpl(QGraphicsSceneMouseEvent* event);
+    void mouseReleaseEventImpl(QGraphicsSceneMouseEvent* event);
+    void mouseMoveEventImpl(QGraphicsSceneMouseEvent* event);
+    void wheelEventImpl(QGraphicsSceneWheelEvent* event);
 
-    bool eventFilter(QObject *, QEvent *);
+    bool eventFilter(QObject*, QEvent*);
 
-    std::pair<QVector3D, QVector3D> calculateRay(const QPointF &cursor);
+    std::pair<QVector3D, QVector3D> calculateRay(const QPointF& cursor);
 
     void drawPoints();
 
@@ -146,6 +146,6 @@ protected:
     QVector3D selection_eye_;
 };
 
-}
+}  // namespace csapex
 
-#endif // CLOUD_LABELER_ADAPTER_H
+#endif  // CLOUD_LABELER_ADAPTER_H

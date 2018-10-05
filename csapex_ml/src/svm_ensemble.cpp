@@ -2,11 +2,11 @@
 #include "svm_ensemble.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::SVMEnsemble, csapex::Node)
@@ -14,8 +14,9 @@ CSAPEX_REGISTER_CLASS(csapex::SVMEnsemble, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-namespace impl {
-template<typename T>
+namespace impl
+{
+template <typename T>
 inline std::string str(const T value)
 {
     std::stringstream ss;
@@ -23,23 +24,22 @@ inline std::string str(const T value)
     return ss.str();
 }
 
-template<typename T>
+template <typename T>
 inline std::size_t digits(const T number)
 {
     std::size_t count = 0;
     T absolute = std::abs(number);
     absolute -= std::floor(absolute);
-    while(absolute > 0.0) {
+    while (absolute > 0.0) {
         absolute *= 10;
         ++count;
         absolute -= std::floor(absolute);
     }
-    return std::min(count, (std::size_t) 15);
+    return std::min(count, (std::size_t)15);
 }
-}
+}  // namespace impl
 
-SVMEnsemble::SVMEnsemble() :
-    loaded_(false)
+SVMEnsemble::SVMEnsemble() : loaded_(false)
 {
 }
 
@@ -49,34 +49,22 @@ void SVMEnsemble::setup(NodeModifier& node_modifier)
     out_ = node_modifier.addOutput<GenericVectorMessage, CvMatMessage::ConstPtr>("responses");
 
     reload_ = node_modifier.addSlot("Reload", std::bind(&SVMEnsemble::load, this) /*[this](){load();}*/);
-
 }
 
 void SVMEnsemble::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::factory::declarePath("svm array path",
-                                                                         csapex::param::ParameterDescription("Path to a saved svm."),
-                                                                         true,
-                                                                         "",
-                                                                         "*.yaml *.tar.gz"),
-                                                                         std::bind(&SVMEnsemble::load, this));
+    parameters.addParameter(csapex::param::factory::declarePath("svm array path", csapex::param::ParameterDescription("Path to a saved svm."), true, "", "*.yaml *.tar.gz"),
+                            std::bind(&SVMEnsemble::load, this));
 
     csapex::param::ParameterPtr param_label = csapex::param::factory::declareBool("compute labels",
-                                                                                           csapex::param::ParameterDescription("Directly compute labels. 'false' allows manual threshold setting for binary classification"),
-                                                                                           true);
+                                                                                  csapex::param::ParameterDescription("Directly compute labels. 'false' allows manual threshold setting "
+                                                                                                                      "for binary classification"),
+                                                                                  true);
     addParameter(param_label);
 
-    std::map<std::string, int> svm_thresh_types = {
-        {">", GREATER},
-        {"<" , LESS},
-        {">=", GREATER_EQUAL},
-        {"<=", LESS_EQUAL}
-    };
+    std::map<std::string, int> svm_thresh_types = { { ">", GREATER }, { "<", LESS }, { ">=", GREATER_EQUAL }, { "<=", LESS_EQUAL } };
 
-    addParameter(param::factory::declareParameterSet("threshold/type",
-                                                              csapex::param::ParameterDescription("SVM threshold comparison type"),
-                                                              svm_thresh_types,
-                                                              (int) GREATER));
+    addParameter(param::factory::declareParameterSet("threshold/type", csapex::param::ParameterDescription("SVM threshold comparison type"), svm_thresh_types, (int)GREATER));
 }
 
 void SVMEnsemble::process()
@@ -84,11 +72,9 @@ void SVMEnsemble::process()
     std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
     std::shared_ptr<std::vector<CvMatMessage::ConstPtr>> output(new std::vector<CvMatMessage::ConstPtr>);
 
-    if(!loaded_) {
+    if (!loaded_) {
         throw std::runtime_error("No SVM is loaded!");
     }
-
-
 
     const bool compute_label = readParameter<bool>("compute labels");
     std::function<bool(float, float)> comparator;
@@ -96,36 +82,34 @@ void SVMEnsemble::process()
     {
         const int comparison_type = readParameter<int>("threshold/type");
 
-        switch (comparison_type)
-        {
-        default:
-        case GREATER:
-            comparator = [](float value, float threshold) { return value > threshold; };
-            break;
-        case GREATER_EQUAL:
-            comparator = [](float value, float threshold) { return value >= threshold; };
-            break;
-        case LESS:
-            comparator = [](float value, float threshold) { return value < threshold; };
-            break;
-        case LESS_EQUAL:
-            comparator = [](float value, float threshold) { return value <= threshold; };
-            break;
+        switch (comparison_type) {
+            default:
+            case GREATER:
+                comparator = [](float value, float threshold) { return value > threshold; };
+                break;
+            case GREATER_EQUAL:
+                comparator = [](float value, float threshold) { return value >= threshold; };
+                break;
+            case LESS:
+                comparator = [](float value, float threshold) { return value < threshold; };
+                break;
+            case LESS_EQUAL:
+                comparator = [](float value, float threshold) { return value <= threshold; };
+                break;
         }
     }
 
     /// TODO : OMP?
 
     std::size_t size = input->size();
-    for(std::size_t i = 0 ; i < size ; ++i)
-    {
+    for (std::size_t i = 0; i < size; ++i) {
         cv::Mat sample(input->at(i).value);
         CvMatMessage::Ptr result_msg(new CvMatMessage(enc::unknown, "unknown", 0));
-        cv::Mat &result_value = result_msg->value;
+        cv::Mat& result_value = result_msg->value;
         result_value = svm_responses_.clone();
 
-        for(std::size_t j = 0 ; j < svms_size_ ; ++j) {
-            double           thresh = thresholds_[j];
+        for (std::size_t j = 0; j < svms_size_; ++j) {
+            double thresh = thresholds_[j];
 
 #if CV_MAJOR_VERSION == 2
             ExtendedSVM::Ptr svm = svms_.at(j);
@@ -133,14 +117,14 @@ void SVMEnsemble::process()
             SVMPtr svm = svms_.at(j);
 #endif
             if (compute_label) {
-                result_value.at<float>(j,1) = svm->predict(sample);
+                result_value.at<float>(j, 1) = svm->predict(sample);
             } else {
 #if CV_MAJOR_VERSION == 2
                 const float response = svm->predict(sample, true);
 #else
                 const float response = svm->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
 #endif
-                result_value.at<float>(j,1) = comparator(response, thresh) ? POSITIVE : NEGATIVE;
+                result_value.at<float>(j, 1) = comparator(response, thresh) ? POSITIVE : NEGATIVE;
             }
         }
         output->push_back(result_msg);
@@ -152,7 +136,7 @@ void SVMEnsemble::process()
 void SVMEnsemble::load()
 {
     std::string path = readParameter<std::string>("svm array path");
-    if(path == "")
+    if (path == "")
         return;
 
     svms_.clear();
@@ -161,7 +145,7 @@ void SVMEnsemble::load()
     std::vector<int> labels;
     fs["labels"] >> labels;
 
-    if(labels.empty())
+    if (labels.empty())
         throw std::runtime_error("File entry 'labels' may not be empty!");
 
     /// get svms for labels
@@ -169,15 +153,15 @@ void SVMEnsemble::load()
 
     //// find the minimum floating point precision
     double min_rho = std::numeric_limits<double>::max();
-    for(std::size_t i = 0 ; i < labels.size() ; ++i) {
+    for (std::size_t i = 0; i < labels.size(); ++i) {
         std::string label = prefix + std::to_string(labels.at(i));
 
 #if CV_MAJOR_VERSION == 2
         ExtendedSVM::Ptr svm(new ExtendedSVM);
-        svm->read(fs.fs, (CvFileNode*) fs[label].node);
+        svm->read(fs.fs, (CvFileNode*)fs[label].node);
 #elif CV_MAJOR_VERSION == 3
         SVMPtr svm = cv::ml::SVM::create();
-        svm->read(*(cv::FileNode*) fs[label].node);
+        svm->read(*(cv::FileNode*)fs[label].node);
 #endif
 
         svms_.push_back(svm);
@@ -189,37 +173,32 @@ void SVMEnsemble::load()
         auto rho = svm->getDecisionFunction(0, cv::noArray(), cv::noArray());
 #endif
 
-        if(rho < min_rho)
+        if (rho < min_rho)
             min_rho = fabs(rho);
     }
 
-    if(!params_thresholds_.empty()) {
+    if (!params_thresholds_.empty()) {
         removeTemporaryParameters();
         params_thresholds_.clear();
     }
 
-    double step = std::pow(10,ceil(log10(min_rho)))*1e-7;/*.1;*/
+    double step = std::pow(10, ceil(log10(min_rho))) * 1e-7; /*.1;*/
     std::cout << min_rho << std::endl;
     std::cout << step << std::endl;
-//    std::size_t digits = impl::digits(min_rho);
-//    std::cout << digits << std::endl;
-//    for(std::size_t i = 0 ; i < digits ; ++i) {
-//        step *= .1;
-//    }
+    //    std::size_t digits = impl::digits(min_rho);
+    //    std::cout << digits << std::endl;
+    //    for(std::size_t i = 0 ; i < digits ; ++i) {
+    //        step *= .1;
+    //    }
 
     svms_size_ = svms_.size();
     thresholds_.resize(svms_size_);
-    for(std::size_t i = 0 ; i < svms_size_ ; ++i) {
-        std::string id = std::to_string((int) svm_responses_.at<float>(i,0));
-        param::Parameter::Ptr param = param::factory::declareRange("svm_" + id,
-                                                                            -100.0,
-                                                                            +100.0,
-                                                                            0.0,
-                                                                            step);
-        param::RangeParameter::Ptr thresh =
-                std::dynamic_pointer_cast<param::RangeParameter>(param);
+    for (std::size_t i = 0; i < svms_size_; ++i) {
+        std::string id = std::to_string((int)svm_responses_.at<float>(i, 0));
+        param::Parameter::Ptr param = param::factory::declareRange("svm_" + id, -100.0, +100.0, 0.0, step);
+        param::RangeParameter::Ptr thresh = std::dynamic_pointer_cast<param::RangeParameter>(param);
 
-        if(!thresh) {
+        if (!thresh) {
             throw std::runtime_error("Could not create temporary parameter!");
         }
 
@@ -227,14 +206,12 @@ void SVMEnsemble::load()
         addTemporaryParameter(param, std::bind(&SVMEnsemble::updateThresholds, this));
     }
 
-
     loaded_ = true;
-
 }
 
 void SVMEnsemble::updateThresholds()
 {
-    for(std::size_t i = 0 ; i < svms_size_ ; ++i) {
+    for (std::size_t i = 0; i < svms_size_; ++i) {
         thresholds_[i] = params_thresholds_[i]->as<double>();
     }
 }

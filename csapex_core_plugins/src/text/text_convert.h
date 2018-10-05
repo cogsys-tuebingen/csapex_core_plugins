@@ -7,8 +7,8 @@
 /// SYSTEM
 #include <QLabel>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN TextConvert : public Node
 {
 public:
@@ -22,6 +22,6 @@ private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
-#endif // TEXT_DISPLAY_H_
+#endif  // TEXT_DISPLAY_H_

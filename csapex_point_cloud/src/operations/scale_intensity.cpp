@@ -1,17 +1,15 @@
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 using namespace connection_types;
-
 
 class ScaleIntensity : public Node
 {
@@ -26,7 +24,7 @@ public:
         output_cloud_ = node_modifier.addOutput<PointCloudMessage>("scaled PointCloud");
     }
 
-    virtual void setupParameters(Parameterizable &parameters) override
+    virtual void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareValue("scale", 1.0), scale_);
     }
@@ -37,7 +35,7 @@ public:
         PointCloudMessage::ConstPtr out = msg;
 
         auto intens_cloud = boost::get<typename pcl::PointCloud<pcl::PointXYZI>::Ptr>(msg->value);
-        if(intens_cloud && scale_ != 1.0) {
+        if (intens_cloud && scale_ != 1.0) {
             PointCloudMessage::Ptr res(new PointCloudMessage(msg->frame_id, msg->stamp_micro_seconds));
             res->value = scaleCloud(intens_cloud);
             out = res;
@@ -59,7 +57,7 @@ public:
 
         out->points = in->points;
 
-        for(auto& pt : out->points) {
+        for (auto& pt : out->points) {
             pt.intensity *= scale_;
         }
 
@@ -67,7 +65,7 @@ public:
     }
 
 private:
-    Input*  input_cloud_;
+    Input* input_cloud_;
     Output* output_cloud_;
     Output* output_cloud_complement_;
 
@@ -76,4 +74,4 @@ private:
     double scale_;
 };
 CSAPEX_REGISTER_CLASS(csapex::ScaleIntensity, csapex::Node)
-}
+}  // namespace csapex

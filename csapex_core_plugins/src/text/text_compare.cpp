@@ -1,20 +1,18 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/signal/event.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class TextCompare : public Node
 {
 public:
@@ -39,7 +37,7 @@ public:
         std::string A = msg::getValue<std::string>(in_a_);
         std::string B = msg::getValue<std::string>(in_b_);
 
-        if(A == B) {
+        if (A == B) {
             msg::trigger(e_);
         } else {
             msg::trigger(ne_);
@@ -51,11 +49,8 @@ private:
     Input* in_b_;
     Event* e_;
     Event* ne_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::TextCompare, csapex::Node)
-

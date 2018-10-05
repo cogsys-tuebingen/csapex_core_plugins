@@ -7,12 +7,12 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
+#include <csapex_opencv/cv_mat_message.h>
 
 /// SYSTEM
 #include <zbar.h>
@@ -23,19 +23,21 @@ using namespace csapex;
 using namespace connection_types;
 
 BarCodeReader::BarCodeReader()
-{}
+{
+}
 
-void BarCodeReader::setupParameters(Parameterizable &params)
+void BarCodeReader::setupParameters(Parameterizable& params)
 {
     params.addParameter(csapex::param::factory::declareBool("republish", false)
-                        .description("Publish the last detected code again, if no new code has been detected."));
+                            .description("Publish the last detected code again, "
+                                         "if no new code has been detected."));
 }
 
 void BarCodeReader::process()
 {
     CvMatMessage::ConstPtr msg = msg::getMessage<CvMatMessage>(in_img);
 
-    if(msg->value.channels() != 1) {
+    if (msg->value.channels() != 1) {
         throw std::runtime_error("Input must be 1-channel image!");
     }
 
@@ -54,14 +56,10 @@ void BarCodeReader::process()
     // scan the image for barcodes
     scanner.scan(image);
 
-    std::shared_ptr< std::vector<RoiMessage> > out(new std::vector<RoiMessage> );
-
+    std::shared_ptr<std::vector<RoiMessage>> out(new std::vector<RoiMessage>);
 
     // extract results
-    for(zbar::Image::SymbolIterator symbol = image.symbol_begin();
-        symbol != image.symbol_end();
-        ++symbol) {
-
+    for (zbar::Image::SymbolIterator symbol = image.symbol_begin(); symbol != image.symbol_end(); ++symbol) {
         const zbar::Symbol& sym = *symbol;
         std::string data = sym.get_data();
 
@@ -71,7 +69,7 @@ void BarCodeReader::process()
             int X = std::numeric_limits<int>::min();
             int Y = std::numeric_limits<int>::min();
 
-            for(int i = 0; i < sym.get_location_size(); ++i) {
+            for (int i = 0; i < sym.get_location_size(); ++i) {
                 int px = sym.get_location_x(i);
                 int py = sym.get_location_y(i);
                 x = std::min(x, px);
@@ -81,9 +79,9 @@ void BarCodeReader::process()
             }
 
             RoiMessage msg;
-            cv::Rect rect(x,y, X-x, Y-y);
-            if(rect.x >= 0 && rect.y >= 0) {
-                msg.value = Roi(rect, cv::Scalar(0,0,0));
+            cv::Rect rect(x, y, X - x, Y - y);
+            if (rect.x >= 0 && rect.y >= 0) {
+                msg.value = Roi(rect, cv::Scalar(0, 0, 0));
                 out->push_back(msg);
             }
         }
@@ -104,8 +102,8 @@ void BarCodeReader::process()
         data_ = data;
     }
 
-    if(!published) {
-        if(republish) {
+    if (!published) {
+        if (republish) {
             msg::publish(out_str, data_);
         } else {
             msg::publish(out_str, std::string(""));
@@ -116,9 +114,7 @@ void BarCodeReader::process()
 
     // clean up
     image.set_data(nullptr, 0);
-
 }
-
 
 void BarCodeReader::setup(NodeModifier& node_modifier)
 {

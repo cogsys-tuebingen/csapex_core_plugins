@@ -2,19 +2,21 @@
 
 #include <pcl/point_types.h>
 
-namespace csapex_sample_consensus {
-namespace models {
-template<>
+namespace csapex_sample_consensus
+{
+namespace models
+{
+template <>
 class NormalPlane<pcl::PointXYZ, pcl::Normal>;
-template<>
+template <>
 class NormalPlane<pcl::PointXYZI, pcl::Normal>;
-template<>
+template <>
 class NormalPlane<pcl::PointXYZRGB, pcl::Normal>;
-template<>
+template <>
 class NormalPlane<pcl::PointXYZRGBA, pcl::Normal>;
-template<>
+template <>
 class NormalPlane<pcl::PointXYZRGBL, pcl::Normal>;
-template<>
+template <>
 class NormalPlane<pcl::PointXYZL, pcl::Normal>;
-}
-}
+}  // namespace models
+}  // namespace csapex_sample_consensus

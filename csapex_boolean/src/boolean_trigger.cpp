@@ -1,20 +1,18 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/signal/event.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class BooleanTrigger : public Node
 {
 public:
@@ -38,7 +36,7 @@ public:
     {
         bool value = msg::getValue<bool>(in_);
 
-        if(value) {
+        if (value) {
             true_->trigger();
         } else {
             false_->trigger();
@@ -49,11 +47,8 @@ private:
     Input* in_;
     Event* true_;
     Event* false_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::BooleanTrigger, csapex::Node)
-

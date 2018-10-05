@@ -1,14 +1,13 @@
 /// HEADER
 #include "gradient_histogram.h"
 
-
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_opencv/cv_mat_message.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_math/param/factory.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 #include <cslibs_vision/features/gradient_histogram.hpp>
 
@@ -24,31 +23,27 @@ GradientHistogram::GradientHistogram()
 
 void GradientHistogram::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::factory::declareAngle("min_angle", 0.0),
-                            interval_[0]);
-    parameters.addParameter(param::factory::declareAngle("max_angle", M_PI / 4.0),
-                            interval_[1]);
+    parameters.addParameter(param::factory::declareAngle("min_angle", 0.0), interval_[0]);
+    parameters.addParameter(param::factory::declareAngle("max_angle", M_PI / 4.0), interval_[1]);
 
-    parameters.addParameter(param::factory::declareRange("ksize", 1, 21, 3, 2),
-                            ksize_);
-    parameters.addParameter(param::factory::declareBool("signed", false),
-                            signed_);
+    parameters.addParameter(param::factory::declareRange("ksize", 1, 21, 3, 2), ksize_);
+    parameters.addParameter(param::factory::declareBool("signed", false), signed_);
 }
 
 void GradientHistogram::setup(NodeModifier& node_modifier)
 {
-    in_img_   = node_modifier.addInput<CvMatMessage>("image");
+    in_img_ = node_modifier.addInput<CvMatMessage>("image");
     out_hist_ = node_modifier.addOutput<CvMatMessage>("histogram");
-    out_mag_  = node_modifier.addOutput<CvMatMessage>("magnitude");
+    out_mag_ = node_modifier.addOutput<CvMatMessage>("magnitude");
 }
 
 void GradientHistogram::process()
 {
-    CvMatMessage::ConstPtr  in  = msg::getMessage<CvMatMessage>(in_img_);
-    CvMatMessage::Ptr       hist(new CvMatMessage(enc::mono, in->frame_id, in->stamp_micro_seconds));
-    CvMatMessage::Ptr       mag(new CvMatMessage(enc::unknown, in->frame_id, in->stamp_micro_seconds));
+    CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(in_img_);
+    CvMatMessage::Ptr hist(new CvMatMessage(enc::mono, in->frame_id, in->stamp_micro_seconds));
+    CvMatMessage::Ptr mag(new CvMatMessage(enc::unknown, in->frame_id, in->stamp_micro_seconds));
 
-    if(signed_) {
+    if (signed_) {
         cslibs_vision::GradientHistogram::directed(in->value, interval_, hist->value, mag->value, ksize_);
     } else {
         cslibs_vision::GradientHistogram::standard(in->value, interval_, hist->value, mag->value, ksize_);

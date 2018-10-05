@@ -2,12 +2,12 @@
 #define HISTOGRAM_MAXIMA_CONTAINER_H
 
 #include <vector>
-struct HistogramMaximaContainer {
+struct HistogramMaximaContainer
+{
     typedef std::pair<unsigned int, float> Maximum;
     /// position in the histogram
-    std::vector<std::vector<Maximum> > maxima;
-    float                              bin_range;
+    std::vector<std::vector<Maximum>> maxima;
+    float bin_range;
 };
 
-
-#endif // HISTOGRAM_MAXIMA_CONTAINER_H
+#endif  // HISTOGRAM_MAXIMA_CONTAINER_H

@@ -14,7 +14,6 @@ class CSAPEX_EXPORT_PLUGIN ImageRenderer : public MessageRendererImplementation<
 public:
     virtual std::unique_ptr<QImage> doRender(const connection_types::CvMatMessage& msg);
 };
-}
+}  // namespace csapex
 
-#endif // IMAGE_RENDERER_H
-
+#endif  // IMAGE_RENDERER_H

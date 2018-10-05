@@ -8,8 +8,8 @@
 /// SYSTEM
 #include <mutex>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_CORE_LIB_EXPORT InteractiveNode : public Node
 {
     friend class InteractiveNodeAdapter;
@@ -18,10 +18,9 @@ public:
     InteractiveNode();
 
     virtual void process() final override;
-    virtual void process(csapex::NodeModifier& node_modifier, Parameterizable &parameters) final override;
+    virtual void process(csapex::NodeModifier& node_modifier, Parameterizable& parameters) final override;
 
-    virtual void process(csapex::NodeModifier& node_modifier, Parameterizable &parameters,
-                         Continuation continuation) final override;
+    virtual void process(csapex::NodeModifier& node_modifier, Parameterizable& parameters, Continuation continuation) final override;
     virtual void reset() override;
 
     virtual bool isAsynchronous() const override;
@@ -29,9 +28,9 @@ public:
     void done();
 
 protected:
-    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters);
+    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters);
     virtual void beginProcess();
-    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters);
+    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters);
     virtual void finishProcess();
 
 protected:
@@ -41,6 +40,6 @@ protected:
     Continuation continuation_;
 };
 
-}
+}  // namespace csapex
 
-#endif // INTERACTIVE_NODE_H
+#endif  // INTERACTIVE_NODE_H

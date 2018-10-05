@@ -1,39 +1,34 @@
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/model/token_data.h>
-#include <csapex/msg/message.h>
+#include <csapex/model/node.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/token_data.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/msg/message.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node.h>
-#include <csapex/model/token_data.h>
 #include <csapex/signal/slot.h>
+#include <csapex/utility/register_apex_plugin.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN CountMessages : public Node
 {
 public:
-    CountMessages()
-        : input_(nullptr), output_(nullptr), reset_(nullptr), count_(0)
+    CountMessages() : input_(nullptr), output_(nullptr), reset_(nullptr), count_(0)
     {
     }
-
 
     virtual void setup(csapex::NodeModifier& node_modifier) override
     {
         input_ = node_modifier.addInput<connection_types::AnyMessage>("Anything");
         output_ = node_modifier.addOutput<int>("Count");
-        reset_ = node_modifier.addSlot("Reset",
-                                            std::bind(&CountMessages::reset, this));
+        reset_ = node_modifier.addSlot("Reset", std::bind(&CountMessages::reset, this));
     }
 
-    virtual void setupParameters(Parameterizable &parameters) override
+    virtual void setupParameters(Parameterizable& parameters) override
     {
-        parameters.addParameter(param::factory::declareTrigger("reset"),
-                                std::bind(&CountMessages::reset, this));
+        parameters.addParameter(param::factory::declareTrigger("reset"), std::bind(&CountMessages::reset, this));
     }
 
     virtual void process() override
@@ -45,7 +40,7 @@ public:
 private:
     Input* input_;
     Output* output_;
-    Slot*   reset_;
+    Slot* reset_;
 
     int count_;
 
@@ -53,9 +48,8 @@ private:
     {
         count_ = 0;
     }
-
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::CountMessages, csapex::Node)

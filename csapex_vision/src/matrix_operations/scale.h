@@ -7,7 +7,8 @@
 /// SYSTEM
 #include <opencv2/core/core.hpp>
 
-namespace csapex {
+namespace csapex
+{
 class Scale : public csapex::Node
 {
 public:
@@ -18,12 +19,12 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 private:
-    csapex::Output*   output_;
-    csapex::Input*    input_;
+    csapex::Output* output_;
+    csapex::Input* input_;
 
-    cv::Vec2d               scales_;
-    int                     mode_;
+    cv::Vec2d scales_;
+    int mode_;
 };
 
-}
-#endif // SCALE_H
+}  // namespace csapex
+#endif  // SCALE_H

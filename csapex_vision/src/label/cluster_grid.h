@@ -4,8 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ClusterGrid : public csapex::Node
 {
 public:
@@ -16,10 +16,9 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Output*   output_;
-    csapex::Input*    input_;
+    csapex::Output* output_;
+    csapex::Input* input_;
 };
-}
+}  // namespace csapex
 
-
-#endif // CLUSTERGRID_H
+#endif  // CLUSTERGRID_H

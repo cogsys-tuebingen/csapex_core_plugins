@@ -4,8 +4,8 @@
 /// HEADER
 #include <csapex/core/core_plugin.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class RegisterVisionFeaturePlugin : public CorePlugin
 {
 public:
@@ -14,6 +14,6 @@ public:
     void init(CsApexCore& core);
 };
 
-}
+}  // namespace csapex
 
-#endif // REGISTER_PLUGIN_H
+#endif  // REGISTER_PLUGIN_H

@@ -2,8 +2,8 @@
 #define MASK_REFINEMENT_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/node/default_node_adapter.h>
 #include <csapex/model/generic_state.h>
+#include <csapex/view/node/default_node_adapter.h>
 
 /// COMPONENT
 #include "mask_refinement.h"
@@ -12,8 +12,8 @@
 #include <QGraphicsView>
 #include <yaml-cpp/yaml.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class MaskRefinementAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -23,7 +23,7 @@ public:
     ~MaskRefinementAdapter();
 
     virtual GenericStatePtr getState() const;
-    virtual void         setParameterState(GenericStatePtr memento);
+    virtual void setParameterState(GenericStatePtr memento);
 
     virtual void setupUi(QBoxLayout* layout);
 
@@ -42,28 +42,30 @@ protected:
 
     struct State : public GenericState
     {
-        int     width;
-        int     height;
+        int width;
+        int height;
 
-        State()
-            : width(300), height(300)
-        {}
-
-        virtual void writeYaml(YAML::Node& out) const {
-            out["width"]           = width;
-            out["height"]          = height;
+        State() : width(300), height(300)
+        {
         }
 
-        virtual void readYaml(const YAML::Node& node) {
+        virtual void writeYaml(YAML::Node& out) const
+        {
+            out["width"] = width;
+            out["height"] = height;
+        }
+
+        virtual void readYaml(const YAML::Node& node)
+        {
             width = node["width"].as<int>();
-            height = node["height"].as<int>();;
+            height = node["height"].as<int>();
+            ;
         }
-
     };
 
 private:
     void fitView();
-    void updateCursor(const QPointF &pos);
+    void updateCursor(const QPointF& pos);
     void draw(const QPointF& pos, Qt::GlobalColor color);
     void maskImage();
 
@@ -75,18 +77,18 @@ private:
 
     QImage mask_;
     QPixmap mask_pm_;
-    QGraphicsPixmapItem *mask_pixmap_;
+    QGraphicsPixmapItem* mask_pixmap_;
 
     QImage img_;
 
     QPixmap masked_red_pm_;
-    QGraphicsPixmapItem *masked_red_pixmap_;
+    QGraphicsPixmapItem* masked_red_pixmap_;
 
     QPixmap masked_bw_pm_;
-    QGraphicsPixmapItem *masked_bw_pixmap_;
+    QGraphicsPixmapItem* masked_bw_pixmap_;
 
     QGraphicsView* view_;
-    QGraphicsEllipseItem *cursor_;
+    QGraphicsEllipseItem* cursor_;
 
     QPoint middle_last_pos_;
 
@@ -95,6 +97,6 @@ private:
     int brush_size_;
 };
 
-}
+}  // namespace csapex
 
-#endif // MASK_REFINEMENT_ADAPTER_H
+#endif  // MASK_REFINEMENT_ADAPTER_H

@@ -1,11 +1,11 @@
 #include "index_filter.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex_point_cloud/msg/indices_message.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_point_cloud/msg/indices_message.h>
 
 /// SYSTEM
 #include <pcl/point_types.h>
@@ -29,7 +29,7 @@ void IndexFilter::setup(NodeModifier& node_modifier)
 void IndexFilter::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
-    boost::apply_visitor (PointCloudMessage::Dispatch<IndexFilter>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<IndexFilter>(this, msg), msg->value);
 }
 
 template <class PointT>

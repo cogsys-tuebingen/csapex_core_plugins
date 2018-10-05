@@ -32,62 +32,53 @@ using namespace std;
 
 namespace cvb
 {
-
-double distantBlobTrack(CvBlob const *b, CvTrack const *t)
+double distantBlobTrack(CvBlob const* b, CvTrack const* t)
 {
     double d1;
-    if (b->centroid.x<t->minx)
-    {
-        if (b->centroid.y<t->miny)
+    if (b->centroid.x < t->minx) {
+        if (b->centroid.y < t->miny)
             d1 = MAX(t->minx - b->centroid.x, t->miny - b->centroid.y);
-        else if (b->centroid.y>t->maxy)
+        else if (b->centroid.y > t->maxy)
             d1 = MAX(t->minx - b->centroid.x, b->centroid.y - t->maxy);
-        else // if (t->miny < b->centroid.y)&&(b->centroid.y < t->maxy)
+        else  // if (t->miny < b->centroid.y)&&(b->centroid.y < t->maxy)
             d1 = t->minx - b->centroid.x;
-    }
-    else if (b->centroid.x>t->maxx)
-    {
-        if (b->centroid.y<t->miny)
+    } else if (b->centroid.x > t->maxx) {
+        if (b->centroid.y < t->miny)
             d1 = MAX(b->centroid.x - t->maxx, t->miny - b->centroid.y);
-        else if (b->centroid.y>t->maxy)
+        else if (b->centroid.y > t->maxy)
             d1 = MAX(b->centroid.x - t->maxx, b->centroid.y - t->maxy);
         else
             d1 = b->centroid.x - t->maxx;
-    }
-    else // if (t->minx =< b->centroid.x) && (b->centroid.x =< t->maxx)
+    } else  // if (t->minx =< b->centroid.x) && (b->centroid.x =< t->maxx)
     {
-        if (b->centroid.y<t->miny)
+        if (b->centroid.y < t->miny)
             d1 = t->miny - b->centroid.y;
-        else if (b->centroid.y>t->maxy)
+        else if (b->centroid.y > t->maxy)
             d1 = b->centroid.y - t->maxy;
         else
             return 0.;
     }
 
     double d2;
-    if (t->centroid.x<b->minx)
-    {
-        if (t->centroid.y<b->miny)
+    if (t->centroid.x < b->minx) {
+        if (t->centroid.y < b->miny)
             d2 = MAX(b->minx - t->centroid.x, b->miny - t->centroid.y);
-        else if (t->centroid.y>b->maxy)
+        else if (t->centroid.y > b->maxy)
             d2 = MAX(b->minx - t->centroid.x, t->centroid.y - b->maxy);
-        else // if (b->miny < t->centroid.y)&&(t->centroid.y < b->maxy)
+        else  // if (b->miny < t->centroid.y)&&(t->centroid.y < b->maxy)
             d2 = b->minx - t->centroid.x;
-    }
-    else if (t->centroid.x>b->maxx)
-    {
-        if (t->centroid.y<b->miny)
+    } else if (t->centroid.x > b->maxx) {
+        if (t->centroid.y < b->miny)
             d2 = MAX(t->centroid.x - b->maxx, b->miny - t->centroid.y);
-        else if (t->centroid.y>b->maxy)
+        else if (t->centroid.y > b->maxy)
             d2 = MAX(t->centroid.x - b->maxx, t->centroid.y - b->maxy);
         else
             d2 = t->centroid.x - b->maxx;
-    }
-    else // if (b->minx =< t->centroid.x) && (t->centroid.x =< b->maxx)
+    } else  // if (b->minx =< t->centroid.x) && (t->centroid.x =< b->maxx)
     {
-        if (t->centroid.y<b->miny)
+        if (t->centroid.y < b->miny)
             d2 = b->miny - t->centroid.y;
-        else if (t->centroid.y>b->maxy)
+        else if (t->centroid.y > b->maxy)
             d2 = t->centroid.y - b->maxy;
         else
             return 0.;
@@ -97,25 +88,23 @@ double distantBlobTrack(CvBlob const *b, CvTrack const *t)
 }
 
 // Access to matrix
-#define C(blob, track) close[((blob) + (track)*(nBlobs+2))]
+#define C(blob, track) close[((blob) + (track) * (nBlobs + 2))]
 // Access to accumulators
 #define AB(label) C((label), (nTracks))
 #define AT(id) C((nBlobs), (id))
 // Access to identifications
-#define IB(label) C((label), (nTracks)+1)
-#define IT(id) C((nBlobs)+1, (id))
+#define IB(label) C((label), (nTracks) + 1)
+#define IT(id) C((nBlobs) + 1, (id))
 // Access to registers
 #define B(label) blobs.find(IB(label))->second
 #define T(id) tracks.find(IT(id))->second
 
-void getClusterForTrack(unsigned int trackPos, CvID *close, unsigned int nBlobs, unsigned int nTracks, CvBlobs const &blobs, CvTracks const &tracks, list<CvBlob*> &bb, list<CvTrack*> &tt);
+void getClusterForTrack(unsigned int trackPos, CvID* close, unsigned int nBlobs, unsigned int nTracks, CvBlobs const& blobs, CvTracks const& tracks, list<CvBlob*>& bb, list<CvTrack*>& tt);
 
-void getClusterForBlob(unsigned int blobPos, CvID *close, unsigned int nBlobs, unsigned int nTracks, CvBlobs const &blobs, CvTracks const &tracks, list<CvBlob*> &bb, list<CvTrack*> &tt)
+void getClusterForBlob(unsigned int blobPos, CvID* close, unsigned int nBlobs, unsigned int nTracks, CvBlobs const& blobs, CvTracks const& tracks, list<CvBlob*>& bb, list<CvTrack*>& tt)
 {
-    for (unsigned int j=0; j<nTracks; j++)
-    {
-        if (C(blobPos, j))
-        {
+    for (unsigned int j = 0; j < nTracks; j++) {
+        if (C(blobPos, j)) {
             tt.push_back(T(j));
 
             unsigned int c = AT(j);
@@ -124,20 +113,17 @@ void getClusterForBlob(unsigned int blobPos, CvID *close, unsigned int nBlobs, u
             AB(blobPos)--;
             AT(j)--;
 
-            if (c>1)
-            {
+            if (c > 1) {
                 getClusterForTrack(j, close, nBlobs, nTracks, blobs, tracks, bb, tt);
             }
         }
     }
 }
 
-void getClusterForTrack(unsigned int trackPos, CvID *close, unsigned int nBlobs, unsigned int nTracks, CvBlobs const &blobs, CvTracks const &tracks, list<CvBlob*> &bb, list<CvTrack*> &tt)
+void getClusterForTrack(unsigned int trackPos, CvID* close, unsigned int nBlobs, unsigned int nTracks, CvBlobs const& blobs, CvTracks const& tracks, list<CvBlob*>& bb, list<CvTrack*>& tt)
 {
-    for (unsigned int i=0; i<nBlobs; i++)
-    {
-        if (C(i, trackPos))
-        {
+    for (unsigned int i = 0; i < nBlobs; i++) {
+        if (C(i, trackPos)) {
             bb.push_back(B(i));
 
             unsigned int c = AB(i);
@@ -146,15 +132,14 @@ void getClusterForTrack(unsigned int trackPos, CvID *close, unsigned int nBlobs,
             AB(i)--;
             AT(trackPos)--;
 
-            if (c>1)
-            {
+            if (c > 1) {
                 getClusterForBlob(i, close, nBlobs, nTracks, blobs, tracks, bb, tt);
             }
         }
     }
 }
 
-void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDistance, const unsigned int thInactive, const unsigned int thActive)
+void cvUpdateTracks(CvBlobs const& blobs, CvTracks& tracks, const double thDistance, const unsigned int thInactive, const unsigned int thActive)
 {
     __CV_BEGIN__;
 
@@ -164,23 +149,20 @@ void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDista
     // Proximity matrix:
     // Last row/column is for ID/label.
     // Last-1 "/" is for accumulation.
-    CvID *close = new unsigned int[(nBlobs+2)*(nTracks+2)]; // XXX Must be same type than CvLabel.
+    CvID* close = new unsigned int[(nBlobs + 2) * (nTracks + 2)];  // XXX Must be same type than CvLabel.
 
-    try
-    {
+    try {
         // Inicialization:
-        unsigned int i=0;
-        for (CvBlobs::const_iterator it = blobs.begin(); it!=blobs.end(); ++it, i++)
-        {
+        unsigned int i = 0;
+        for (CvBlobs::const_iterator it = blobs.begin(); it != blobs.end(); ++it, i++) {
             AB(i) = 0;
             IB(i) = it->second->label;
         }
 
         CvID maxTrackID = 0;
 
-        unsigned int j=0;
-        for (CvTracks::const_iterator jt = tracks.begin(); jt!=tracks.end(); ++jt, j++)
-        {
+        unsigned int j = 0;
+        for (CvTracks::const_iterator jt = tracks.begin(); jt != tracks.end(); ++jt, j++) {
             AT(j) = 0;
             IT(j) = jt->second->id;
             if (jt->second->id > maxTrackID)
@@ -188,45 +170,40 @@ void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDista
         }
 
         // Proximity matrix calculation and "used blob" list inicialization:
-        for (i=0; i<nBlobs; i++)
-            for (j=0; j<nTracks; j++)
-                if ((C(i, j) = (distantBlobTrack(B(i), T(j)) < thDistance)))
-                {
+        for (i = 0; i < nBlobs; i++)
+            for (j = 0; j < nTracks; j++)
+                if ((C(i, j) = (distantBlobTrack(B(i), T(j)) < thDistance))) {
                     AB(i)++;
                     AT(j)++;
                 }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Detect inactive tracks
-        for (j=0; j<nTracks; j++)
-        {
+        for (j = 0; j < nTracks; j++) {
             unsigned int c = AT(j);
 
-            if (c==0)
-            {
-                //cout << "Inactive track: " << j << endl;
+            if (c == 0) {
+                // cout << "Inactive track: " << j << endl;
 
                 // Inactive track.
-                CvTrack *track = T(j);
+                CvTrack* track = T(j);
                 track->inactive++;
                 track->label = 0;
             }
         }
 
         // Detect new tracks
-        for (i=0; i<nBlobs; i++)
-        {
+        for (i = 0; i < nBlobs; i++) {
             unsigned int c = AB(i);
 
-            if (c==0)
-            {
-                //cout << "Blob (new track): " << maxTrackID+1 << endl;
-                //cout << *B(i) << endl;
+            if (c == 0) {
+                // cout << "Blob (new track): " << maxTrackID+1 << endl;
+                // cout << *B(i) << endl;
 
                 // New track.
                 maxTrackID++;
-                CvBlob *blob = B(i);
-                CvTrack *track = new CvTrack;
+                CvBlob* blob = B(i);
+                CvTrack* track = new CvTrack;
                 track->id = maxTrackID;
                 track->label = blob->label;
                 track->minx = blob->minx;
@@ -242,63 +219,59 @@ void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDista
         }
 
         // Clustering
-        for (j=0; j<nTracks; j++)
-        {
+        for (j = 0; j < nTracks; j++) {
             unsigned int c = AT(j);
 
-            if (c)
-            {
-                list<CvTrack*> tt; tt.push_back(T(j));
+            if (c) {
+                list<CvTrack*> tt;
+                tt.push_back(T(j));
                 list<CvBlob*> bb;
 
                 getClusterForTrack(j, close, nBlobs, nTracks, blobs, tracks, bb, tt);
 
                 // Select track
-                CvTrack *track = nullptr;
+                CvTrack* track = nullptr;
                 unsigned int area = 0;
-                for (list<CvTrack*>::const_iterator it=tt.begin(); it!=tt.end(); ++it)
-                {
-                    CvTrack *t = *it;
+                for (list<CvTrack*>::const_iterator it = tt.begin(); it != tt.end(); ++it) {
+                    CvTrack* t = *it;
 
-                    unsigned int a = (t->maxx-t->minx)*(t->maxy-t->miny);
-                    if (a>area)
-                    {
+                    unsigned int a = (t->maxx - t->minx) * (t->maxy - t->miny);
+                    if (a > area) {
                         area = a;
                         track = t;
                     }
                 }
 
-                if(!track) {
+                if (!track) {
                     // should not happend
                     continue;
                 }
 
                 // Select blob
-                CvBlob *blob = nullptr;
+                CvBlob* blob = nullptr;
                 area = 0;
-                //cout << "Matching blobs: ";
-                for (list<CvBlob*>::const_iterator it=bb.begin(); it!=bb.end(); ++it)
-                {
-                    CvBlob *b = *it;
+                // cout << "Matching blobs: ";
+                for (list<CvBlob*>::const_iterator it = bb.begin(); it != bb.end(); ++it) {
+                    CvBlob* b = *it;
 
-                    //cout << b->label << " ";
+                    // cout << b->label << " ";
 
-                    if (b->area>area)
-                    {
+                    if (b->area > area) {
                         area = b->area;
                         blob = b;
                     }
                 }
 
-                if(!blob) {
+                if (!blob) {
                     // should not happend
                     continue;
                 }
 
-                //cout << endl;
+                // cout << endl;
 
                 // Update track
-                //cout << "Matching: track=" << track->id << ", blob=" << blob->label << endl;
+                // cout << "Matching: track=" << track->id << ", blob=" << blob->label
+                // << endl;
                 track->label = blob->label;
                 track->centroid = blob->centroid;
                 track->minx = blob->minx;
@@ -310,13 +283,11 @@ void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDista
                 track->inactive = 0;
 
                 // Others to inactive
-                for (list<CvTrack*>::const_iterator it=tt.begin(); it!=tt.end(); ++it)
-                {
-                    CvTrack *t = *it;
+                for (list<CvTrack*>::const_iterator it = tt.begin(); it != tt.end(); ++it) {
+                    CvTrack* t = *it;
 
-                    if (t!=track)
-                    {
-                        //cout << "Inactive: track=" << t->id << endl;
+                    if (t != track) {
+                        // cout << "Inactive: track=" << t->id << endl;
                         t->inactive++;
                         t->label = 0;
                     }
@@ -325,24 +296,19 @@ void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDista
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        for (CvTracks::iterator jt=tracks.begin(); jt!=tracks.end();)
-            if ((jt->second->inactive>=thInactive)||((jt->second->inactive)&&(thActive)&&(jt->second->active<thActive)))
-            {
+        for (CvTracks::iterator jt = tracks.begin(); jt != tracks.end();)
+            if ((jt->second->inactive >= thInactive) || ((jt->second->inactive) && (thActive) && (jt->second->active < thActive))) {
                 delete jt->second;
                 tracks.erase(jt++);
-            }
-            else
-            {
+            } else {
                 jt->second->lifetime++;
                 if (!jt->second->inactive)
                     jt->second->active++;
                 ++jt;
             }
-    }
-    catch (...)
-    {
+    } catch (...) {
         delete[] close;
-        throw; // TODO: OpenCV style.
+        throw;  // TODO: OpenCV style.
     }
 
     delete[] close;
@@ -350,19 +316,17 @@ void cvUpdateTracks(CvBlobs const &blobs, CvTracks &tracks, const double thDista
     __CV_END__;
 }
 
-CvFont *defaultFont = NULL;
+CvFont* defaultFont = NULL;
 
-void cvRenderTracks(CvTracks const tracks, IplImage *imgSource, IplImage *imgDest, unsigned short mode, CvFont *font)
+void cvRenderTracks(CvTracks const tracks, IplImage* imgSource, IplImage* imgDest, unsigned short mode, CvFont* font)
 {
     CV_FUNCNAME("cvRenderTracks");
     __CV_BEGIN__;
 
-    CV_ASSERT(imgDest&&(imgDest->depth==IPL_DEPTH_8U)&&(imgDest->nChannels==3));
+    CV_ASSERT(imgDest && (imgDest->depth == IPL_DEPTH_8U) && (imgDest->nChannels == 3));
 
-    if ((mode&CV_TRACK_RENDER_ID)&&(!font))
-    {
-        if (!defaultFont)
-        {
+    if ((mode & CV_TRACK_RENDER_ID) && (!font)) {
+        if (!defaultFont) {
             font = defaultFont = new CvFont;
             cvInitFont(font, CV_FONT_HERSHEY_DUPLEX, 0.5, 0.5, 0, 1);
             // Other fonts:
@@ -370,32 +334,27 @@ void cvRenderTracks(CvTracks const tracks, IplImage *imgSource, IplImage *imgDes
             //   CV_FONT_HERSHEY_DUPLEX, CV_FONT_HERSHEY_COMPLEX,
             //   CV_FONT_HERSHEY_TRIPLEX, CV_FONT_HERSHEY_COMPLEX_SMALL,
             //   CV_FONT_HERSHEY_SCRIPT_SIMPLEX, CV_FONT_HERSHEY_SCRIPT_COMPLEX
-        }
-        else
+        } else
             font = defaultFont;
     }
 
-    if (mode)
-    {
-        for (CvTracks::const_iterator it=tracks.begin(); it!=tracks.end(); ++it)
-        {
-            if (mode&CV_TRACK_RENDER_ID)
-                if (!it->second->inactive)
-                {
+    if (mode) {
+        for (CvTracks::const_iterator it = tracks.begin(); it != tracks.end(); ++it) {
+            if (mode & CV_TRACK_RENDER_ID)
+                if (!it->second->inactive) {
                     stringstream buffer;
                     buffer << it->first;
-                    cvPutText(imgDest, buffer.str().c_str(), cvPoint((int)it->second->centroid.x, (int)it->second->centroid.y), font, CV_RGB(0.,255.,0.));
+                    cvPutText(imgDest, buffer.str().c_str(), cvPoint((int)it->second->centroid.x, (int)it->second->centroid.y), font, CV_RGB(0., 255., 0.));
                 }
 
-            if (mode&CV_TRACK_RENDER_BOUNDING_BOX) {
+            if (mode & CV_TRACK_RENDER_BOUNDING_BOX) {
                 if (it->second->inactive) {
-                    cvRectangle(imgDest, cvPoint(it->second->minx, it->second->miny), cvPoint(it->second->maxx-1, it->second->maxy-1), CV_RGB(0., 0., 50.));
+                    cvRectangle(imgDest, cvPoint(it->second->minx, it->second->miny), cvPoint(it->second->maxx - 1, it->second->maxy - 1), CV_RGB(0., 0., 50.));
                 } else {
-                    cvRectangle(imgDest, cvPoint(it->second->minx, it->second->miny), cvPoint(it->second->maxx-1, it->second->maxy-1), CV_RGB(0., 0., 255.));
+                    cvRectangle(imgDest, cvPoint(it->second->minx, it->second->miny), cvPoint(it->second->maxx - 1, it->second->maxy - 1), CV_RGB(0., 0., 255.));
                 }
             }
-            if (mode&CV_TRACK_RENDER_TO_LOG)
-            {
+            if (mode & CV_TRACK_RENDER_TO_LOG) {
                 clog << "Track " << it->second->id << endl;
                 if (it->second->inactive)
                     clog << " - Inactive for " << it->second->inactive << " frames" << endl;
@@ -408,8 +367,7 @@ void cvRenderTracks(CvTracks const tracks, IplImage *imgSource, IplImage *imgDes
                 clog << endl;
             }
 
-            if (mode&CV_TRACK_RENDER_TO_STD)
-            {
+            if (mode & CV_TRACK_RENDER_TO_STD) {
                 cout << "Track " << it->second->id << endl;
                 if (it->second->inactive)
                     cout << " - Inactive for " << it->second->inactive << " frames" << endl;
@@ -427,4 +385,4 @@ void cvRenderTracks(CvTracks const tracks, IplImage *imgSource, IplImage *imgDes
     __CV_END__;
 }
 
-}
+}  // namespace cvb

@@ -10,8 +10,7 @@ CSAPEX_REGISTER_CLASS(csapex::LabeledScanMessageRenderer, csapex::MessageRendere
 
 using namespace csapex;
 
-
-std::unique_ptr<QImage> ScanMessageRenderer::doRender(const connection_types::ScanMessage &msg)
+std::unique_ptr<QImage> ScanMessageRenderer::doRender(const connection_types::ScanMessage& msg)
 {
     cv::Mat mat;
     renderer.render(msg.value, mat);
@@ -23,7 +22,7 @@ std::vector<csapex::param::ParameterPtr> ScanMessageRenderer::getParameters() co
     return renderer.getParameters();
 }
 
-std::unique_ptr<QImage> LabeledScanMessageRenderer::doRender(const connection_types::LabeledScanMessage &msg)
+std::unique_ptr<QImage> LabeledScanMessageRenderer::doRender(const connection_types::LabeledScanMessage& msg)
 {
     cv::Mat mat;
     renderer.render(msg.value, mat);

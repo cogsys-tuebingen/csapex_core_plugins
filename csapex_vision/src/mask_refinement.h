@@ -9,7 +9,6 @@ class QImage;
 
 namespace csapex
 {
-
 class MaskRefinement : public InteractiveNode
 {
 public:
@@ -19,11 +18,11 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters) override;
 
-    void setMask(const QImage &m);
+    void setMask(const QImage& m);
 
 protected:
-    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters) override;
-    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters) override;
+    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
+    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
 
 private:
     void ok();
@@ -49,6 +48,6 @@ private:
     connection_types::CvMatMessage::Ptr result_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // MASK_REFINEMENT_H
+#endif  // MASK_REFINEMENT_H

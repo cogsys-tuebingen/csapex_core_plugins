@@ -8,8 +8,8 @@
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ImageWidget;
 
 class OutputDisplayAdapter : public QObject, public ResizableNodeAdapter
@@ -19,7 +19,6 @@ class OutputDisplayAdapter : public QObject, public ResizableNodeAdapter
 public:
     OutputDisplayAdapter(NodeFacadePtr node, NodeBox* parent);
     ~OutputDisplayAdapter();
-
 
     virtual void setupUi(QBoxLayout* layout) override;
 
@@ -37,14 +36,11 @@ protected:
     virtual void resize(const QSize& size) override;
 
 private:
-
     QSize last_image_size_;
 
     ImageWidget* label_view_;
 };
 
+}  // namespace csapex
 
-
-}
-
-#endif // OUTPUT_DISPLAY_ADAPTER_PROXY_H
+#endif  // OUTPUT_DISPLAY_ADAPTER_PROXY_H

@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class MatrixStitcher : public csapex::Node
 {
 public:
@@ -15,11 +16,15 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
-    enum Mode {HORIZONTAL, VERTICAL};
+    enum Mode
+    {
+        HORIZONTAL,
+        VERTICAL
+    };
 
-    csapex::Input     *matrix_1_;
-    csapex::Input     *matrix_2_;
-    csapex::Output    *stitched_;
+    csapex::Input* matrix_1_;
+    csapex::Input* matrix_2_;
+    csapex::Output* stitched_;
 };
-}
-#endif // IMAGE_STITCHER_H
+}  // namespace csapex
+#endif  // IMAGE_STITCHER_H

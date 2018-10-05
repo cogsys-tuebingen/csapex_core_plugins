@@ -10,24 +10,26 @@
 /// SYSTEM
 #include <mutex>
 
-namespace csapex {
-
+namespace csapex
+{
 class ROCCurve : public Node
 {
 public:
-    struct Entry {
+    struct Entry
+    {
         double threshold;
         double recall;
         double specificity;
         double precision;
 
-        bool operator < (const Entry& rhs) const
+        bool operator<(const Entry& rhs) const
         {
             return threshold < rhs.threshold;
         }
     };
 
-    enum class Type {
+    enum class Type
+    {
         ROC = 1,
         PR = 2
     };
@@ -61,6 +63,6 @@ private:
     void saveData();
 };
 
-}
+}  // namespace csapex
 
-#endif // ROC_CURVE_H
+#endif  // ROC_CURVE_H

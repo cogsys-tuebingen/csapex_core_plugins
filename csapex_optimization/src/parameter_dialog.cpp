@@ -6,15 +6,14 @@
 #include <csapex/param/parameter_factory.h>
 
 /// SYSTEM
-#include <QDialogButtonBox>
 #include <QBoxLayout>
-#include <QFormLayout>
+#include <QDialogButtonBox>
 #include <QDoubleSpinBox>
+#include <QFormLayout>
 #include <QLineEdit>
 #include <limits>
 
-ParameterDialog::ParameterDialog(const std::string& type, QWidget *parent, Qt::WindowFlags f)
-    : QDialog(parent, f), type_(type)
+ParameterDialog::ParameterDialog(const std::string& type, QWidget* parent, Qt::WindowFlags f) : QDialog(parent, f), type_(type)
 {
     makeUI();
 }
@@ -55,8 +54,7 @@ void ParameterDialog::makeUI()
     buttons->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     layout->addWidget(buttons);
 
-
-    setWindowTitle(QString("Create RangeParam<") + type_.c_str()  + ">");
+    setWindowTitle(QString("Create RangeParam<") + type_.c_str() + ">");
     setLayout(layout);
     setModal(true);
 
@@ -71,9 +69,8 @@ csapex::param::Parameter::Ptr ParameterDialog::getParameter()
 
 void ParameterDialog::finish()
 {
-    param_ = csapex::param::factory::declareRange<double>(name->text().toStdString(),
-                min->value(), max->value(), min->value(), step->value());
-    if(param_) {
+    param_ = csapex::param::factory::declareRange<double>(name->text().toStdString(), min->value(), max->value(), min->value(), step->value());
+    if (param_) {
         Q_EMIT accept();
     } else {
         Q_EMIT reject();

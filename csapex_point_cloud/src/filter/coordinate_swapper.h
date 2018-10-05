@@ -5,7 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
+namespace csapex
+{
 class CoordinateSwapper : public Node
 {
 public:
@@ -18,10 +19,8 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
-    Input*  input_;
+    Input* input_;
     Output* output_;
-
-
 };
-}
-#endif // COORDINATE_SWAPPER_H
+}  // namespace csapex
+#endif  // COORDINATE_SWAPPER_H

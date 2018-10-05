@@ -6,7 +6,6 @@
 
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN ImageProviderSet : public ImageProvider
 {
 protected:
@@ -18,7 +17,7 @@ public:
 
     void setPlaying(bool playing);
 
-protected: // abstract
+protected:  // abstract
     virtual void reallyNext(cv::Mat& img, cv::Mat& mask) = 0;
 
 protected:
@@ -32,6 +31,6 @@ protected:
     int next_frame;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // IMAGE_PROVIDER_SET_H
+#endif  // IMAGE_PROVIDER_SET_H

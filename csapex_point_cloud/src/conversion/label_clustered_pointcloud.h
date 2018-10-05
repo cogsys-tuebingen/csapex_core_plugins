@@ -9,13 +9,14 @@
 #if __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
-#endif //__clang__
+#endif  //__clang__
 #include <pcl/filters/filter_indices.h>
 #if __clang__
 #pragma clang diagnostic pop
-#endif //__clang__
+#endif  //__clang__
 
-namespace csapex {
+namespace csapex
+{
 class LabelClusteredPointCloud : public csapex::Node
 {
 public:
@@ -32,11 +33,11 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 protected:
-    Input*                        input_;
-    Input*                        in_indices_;
-    Output*                       output_;
+    Input* input_;
+    Input* in_indices_;
+    Output* output_;
 
     IndicesPtr cluster_indices;
 };
-}
-#endif // LABEL_POINTCLOUD_H
+}  // namespace csapex
+#endif  // LABEL_POINTCLOUD_H

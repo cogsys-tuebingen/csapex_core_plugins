@@ -2,8 +2,8 @@
 #define MATRIX_DIALOG_H
 
 /// COMPONENT
-#include <csapex_qt_export.h>
 #include <csapex_math/view/matrix_table_model.h>
+#include <csapex_qt_export.h>
 
 /// PROJECT
 #include <csapex/model/model_fwd.h>
@@ -23,7 +23,7 @@ class CSAPEX_QT_EXPORT MatrixDialog : public QDialog
     Q_OBJECT
 
 public:
-    MatrixDialog(int rows, int cols, const std::vector<double> &data, QWidget* parent = 0, Qt::WindowFlags f = 0);
+    MatrixDialog(int rows, int cols, const std::vector<double>& data, QWidget* parent = 0, Qt::WindowFlags f = 0);
 
     std::vector<double> getData() const;
 
@@ -40,4 +40,4 @@ private:
 
 }  // namespace csapex
 
-#endif // MATRIX_DIALOG_H
+#endif  // MATRIX_DIALOG_H

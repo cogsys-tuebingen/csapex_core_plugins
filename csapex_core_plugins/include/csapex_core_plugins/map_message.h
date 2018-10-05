@@ -7,28 +7,27 @@
 /// SYSTEM
 #include <vector>
 
-namespace csapex {
-namespace connection_types {
-
-struct CSAPEX_CORE_LIB_EXPORT MapMessage : public MessageTemplate<
-        std::vector<KeyValueMessage>,
-        MapMessage>
+namespace csapex
 {
-
+namespace connection_types
+{
+struct CSAPEX_CORE_LIB_EXPORT MapMessage : public MessageTemplate<std::vector<KeyValueMessage>, MapMessage>
+{
 public:
     MapMessage(std::size_t size = 0, const std::string& frame_id = "/", Stamp stamp = 0);
 };
 
-
 /// TRAITS
 template <>
-struct CSAPEX_CORE_LIB_EXPORT type<MapMessage> {
-    static std::string name() {
+struct CSAPEX_CORE_LIB_EXPORT type<MapMessage>
+{
+    static std::string name()
+    {
         return "Map";
     }
 };
 
-}
+}  // namespace connection_types
 
 template <>
 inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<connection_types::MapMessage> makeEmpty<connection_types::MapMessage>()
@@ -36,14 +35,16 @@ inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<connection_types::MapMessage> make
     return std::shared_ptr<connection_types::MapMessage>(new connection_types::MapMessage());
 }
 
-}
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct CSAPEX_CORE_LIB_EXPORT convert<csapex::connection_types::MapMessage> {
-  static Node encode(const csapex::connection_types::MapMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::MapMessage& rhs);
+namespace YAML
+{
+template <>
+struct CSAPEX_CORE_LIB_EXPORT convert<csapex::connection_types::MapMessage>
+{
+    static Node encode(const csapex::connection_types::MapMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::MapMessage& rhs);
 };
-}
-#endif // MAP_MESSAGE_H
+}  // namespace YAML
+#endif  // MAP_MESSAGE_H

@@ -2,19 +2,19 @@
 #define RQT_EVALUATION_H
 
 /// PROJECT
-#include <csapex/core/csapex_core.h>
-#include <csapex/core/settings.h>
 #include <csapex/command/command_fwd.h>
-#include <csapex/utility/exceptions.h>
+#include <csapex/core/csapex_core.h>
 #include <csapex/core/exception_handler.h>
+#include <csapex/core/settings.h>
 #include <csapex/model/observer.h>
+#include <csapex/utility/exceptions.h>
 #include <csapex/view/csapex_window.h>
 
 /// SYSTEM
 #include <rqt_gui_cpp/plugin.h>
 
-namespace csapex_rqt {
-
+namespace csapex_rqt
+{
 class CsApex : public rqt_gui_cpp::Plugin
 {
 public:
@@ -35,10 +35,9 @@ private:
     csapex::CsApexCorePtr core;
 
     std::shared_ptr<csapex::CsApexViewCore> view_core;
-    csapex::CsApexWindow*  window;
-
+    csapex::CsApexWindow* window;
 };
 
-}
+}  // namespace csapex_rqt
 
-#endif // RQT_EVALUATION_H
+#endif  // RQT_EVALUATION_H

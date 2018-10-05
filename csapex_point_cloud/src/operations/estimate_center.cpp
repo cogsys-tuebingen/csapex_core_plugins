@@ -1,21 +1,20 @@
 #include "estimate_center.hpp"
 
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_pointer_message.hpp>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/msg/output.h>
-#include <csapex/msg/generic_value_message.hpp>
-#include <csapex/msg/generic_pointer_message.hpp>
-#include <csapex/model/node_modifier.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_opencv/roi_message.h>
 #include <csapex_point_cloud/msg/indices_message.h>
+#include <csapex_ros/binary_io.hpp>
 #include <csapex_ros/ros_message_conversion.h>
 #include <csapex_ros/yaml_io.hpp>
-#include <csapex_ros/binary_io.hpp>
-#include <pcl/common/common.h>
 #include <pcl/common/centroid.h>
-
+#include <pcl/common/common.h>
 
 CSAPEX_REGISTER_CLASS(csapex::EstimateCenter, csapex::Node)
 
@@ -32,16 +31,13 @@ EstimateCenter::EstimateCenter()
 
 void EstimateCenter::setupParameters(Parameterizable& parameters)
 {
-    param::ParameterPtr bbox_param = param::factory::declareBool("use bounding box",
-                                                                          param::ParameterDescription("Use bounding box to calculate center point."),
-                                                                          false);
-    parameters.addParameter(bbox_param,
-                            param_use_bounding_box_);
+    param::ParameterPtr bbox_param = param::factory::declareBool("use bounding box", param::ParameterDescription("Use bounding box to calculate center point."), false);
+    parameters.addParameter(bbox_param, param_use_bounding_box_);
     parameters.addConditionalParameter(param::factory::declareBool("only half visible",
-                                                                            param::ParameterDescription("Assumes only half of the object is visible. Moves center point to the back plane of the bounding box"),
-                                                                            false),
-                                       [=]() { return bbox_param->as<bool>(); },
-                                       param_use_bounding_box_);
+                                                                   param::ParameterDescription("Assumes only half of the object is visible. Moves center point "
+                                                                                               "to the back plane of the bounding box"),
+                                                                   false),
+                                       [=]() { return bbox_param->as<bool>(); }, param_use_bounding_box_);
 }
 
 void EstimateCenter::setup(NodeModifier& node_modifier)
@@ -54,21 +50,18 @@ void EstimateCenter::setup(NodeModifier& node_modifier)
 
 void EstimateCenter::process()
 {
-    std::shared_ptr<std::vector<PointCloudMessage::ConstPtr> const> pcl_vector =
-            msg::getMessage<GenericVectorMessage, PointCloudMessage::ConstPtr>(input_clouds_);
+    std::shared_ptr<std::vector<PointCloudMessage::ConstPtr> const> pcl_vector = msg::getMessage<GenericVectorMessage, PointCloudMessage::ConstPtr>(input_clouds_);
 
     output_.clear();
 
-    for (const PointCloudMessage::ConstPtr& pcl_msg : *pcl_vector)
-    {
+    for (const PointCloudMessage::ConstPtr& pcl_msg : *pcl_vector) {
         tmp.frame_id = pcl_msg->frame_id;
         tmp.stamp_micro_seconds = pcl_msg->stamp_micro_seconds;
 
         boost::apply_visitor(PointCloudMessage::Dispatch<EstimateCenter>(this, pcl_msg), pcl_msg->value);
     }
 
-    if (output_poses_->isConnected())
-    {
+    if (output_poses_->isConnected()) {
         geometry_msgs::PoseArray::Ptr display_pose(new geometry_msgs::PoseArray());
         display_pose->header.frame_id = tmp.frame_id;
         ros::Time now;
@@ -81,10 +74,8 @@ void EstimateCenter::process()
         msg::publish(output_poses_, display_pose);
     }
 
-    if (output_poses_covariance_->isConnected())
-    {
-        std::shared_ptr< std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>>>
-                msgs(new std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>> );
+    if (output_poses_covariance_->isConnected()) {
+        std::shared_ptr<std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>>> msgs(new std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>>);
 
         *msgs = output_;
 
@@ -99,13 +90,12 @@ std::string print(const Eigen::Vector4f v)
     return os.str();
 }
 
-template<typename PointT>
+template <typename PointT>
 void EstimateCenter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     Eigen::Vector4f center;
     Eigen::Matrix3f covariance;
-    if (param_use_bounding_box_)
-    {
+    if (param_use_bounding_box_) {
         Eigen::Vector4f min_point;
         Eigen::Vector4f max_point;
 
@@ -113,16 +103,13 @@ void EstimateCenter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud
 
         center = (min_point + max_point) / 2;
 
-        if (param_assume_half_visible_)
-        {
+        if (param_assume_half_visible_) {
             // move point to the back of the bounding box
             center[0] = std::max(min_point[0], max_point[0]);
         }
 
         pcl::computeCovarianceMatrixNormalized(*cloud, center, covariance);
-    }
-    else
-    {
+    } else {
         pcl::computeMeanAndCovarianceMatrix(*cloud, covariance, center);
     }
 

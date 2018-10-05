@@ -1,19 +1,17 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class OptimizationDummyVector : public Node
 {
 public:
@@ -45,17 +43,18 @@ public:
 
         std::stringstream sstream;
         sstream << "f(x) = ";
-        for(auto p : *params){
-            res += (x-i + p) * (x-i + p);
-            if(i != 1){
+        for (auto p : *params) {
+            res += (x - i + p) * (x - i + p);
+            if (i != 1) {
                 sstream << " +" << std::endl;
             }
-            sstream << "pow(" << x - i << " + " << "p_" << i << ",2)  ";
-            grad->push_back( 2.0 * (x-i + p) );
+            sstream << "pow(" << x - i << " + "
+                    << "p_" << i << ",2)  ";
+            grad->push_back(2.0 * (x - i + p));
             ++i;
         }
 
-        setParameter("function",sstream.str());
+        setParameter("function", sstream.str());
         msg::publish(out_, res);
         msg::publish<GenericVectorMessage, double>(out_grad_, grad);
     }
@@ -65,11 +64,8 @@ private:
     Input* in_x_;
     Output* out_;
     Output* out_grad_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::OptimizationDummyVector, csapex::Node)
-

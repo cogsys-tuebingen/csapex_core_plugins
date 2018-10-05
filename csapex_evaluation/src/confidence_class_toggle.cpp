@@ -2,12 +2,12 @@
 #include "confidence_class_toggle.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/signal/slot.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ml/features_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ConfidenceClassToggle, csapex::Node)
@@ -28,25 +28,24 @@ void ConfidenceClassToggle::setupParameters(Parameterizable& parameters)
 
 void ConfidenceClassToggle::setup(NodeModifier& node_modifier)
 {
-    in_  = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Features");
+    in_ = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Features");
     out_ = node_modifier.addOutput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Toggled");
 }
 
 void ConfidenceClassToggle::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> in = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
-    std::shared_ptr<std::vector<FeaturesMessage>>       out(new std::vector<connection_types::FeaturesMessage>(in->size()));
+    std::shared_ptr<std::vector<FeaturesMessage>> out(new std::vector<connection_types::FeaturesMessage>(in->size()));
 
     int from = readParameter<int>("class from");
-    int to   = readParameter<int>("class to");
+    int to = readParameter<int>("class to");
     float thresh = readParameter<double>("threshold");
 
     auto it_in = in->begin();
     auto it_out = out->begin();
-    for(; it_in != in->end() ; ++it_in, ++it_out) {
+    for (; it_in != in->end(); ++it_in, ++it_out) {
         *it_out = *it_in;
-        if(it_out->classification == from &&
-                it_out->confidence < thresh) {
+        if (it_out->classification == from && it_out->confidence < thresh) {
             it_out->classification = to;
             it_out->confidence = 1 - it_out->confidence;
         }

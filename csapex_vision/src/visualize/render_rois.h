@@ -4,8 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class RenderROIs : public csapex::Node
 {
 public:
@@ -22,5 +22,5 @@ private:
     Output* output_;
 };
 
-}
-#endif // RENDER_ROIS_H
+}  // namespace csapex
+#endif  // RENDER_ROIS_H

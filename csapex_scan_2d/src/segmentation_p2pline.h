@@ -3,19 +3,19 @@
 
 #include "segmentation.h"
 
-namespace csapex {
-
+namespace csapex
+{
 class P2PLineSegmentation : public ScanSegmentation
 {
 public:
     P2PLineSegmentation();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
     void update();
 };
 
-}
-#endif // SEGMENTATION_P2PLINE_H
+}  // namespace csapex
+#endif  // SEGMENTATION_P2PLINE_H

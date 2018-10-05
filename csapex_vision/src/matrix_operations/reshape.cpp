@@ -2,25 +2,19 @@
 #include "reshape.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
-#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Reshape, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-Reshape::Reshape() :
-    in_size_ (0),
-    in_rows_ (0),
-    in_cols_ (0),
-    out_rows_(0),
-    out_cols_(0),
-    reset_(false)
+Reshape::Reshape() : in_size_(0), in_rows_(0), in_cols_(0), out_rows_(0), out_cols_(0), reset_(false)
 {
 }
 
@@ -28,8 +22,7 @@ void Reshape::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(input_);
     CvMatMessage::Ptr out(new CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
-    if((unsigned int) in->value.rows != in_rows_ ||
-       (unsigned int) in->value.cols != in_cols_) {
+    if ((unsigned int)in->value.rows != in_rows_ || (unsigned int)in->value.cols != in_cols_) {
         in_rows_ = in->value.rows;
         in_cols_ = in->value.cols;
         in_size_ = in_rows_ * in_cols_;
@@ -44,7 +37,7 @@ void Reshape::process()
     }
     unsigned int out_rows = readParameter<int>("rows");
     unsigned int out_cols = readParameter<int>("cols");
-    if(out_rows != out_rows_ && in_size_ % out_rows == 0) {
+    if (out_rows != out_rows_ && in_size_ % out_rows == 0) {
         param::RangeParameter::Ptr range_cols = getParameter<param::RangeParameter>("cols");
 
         unsigned int adapted_cols = in_size_ / out_rows;
@@ -73,21 +66,15 @@ void Reshape::process()
 
 void Reshape::setup(NodeModifier& node_modifier)
 {
-    input_  = node_modifier.addInput<CvMatMessage>("Matrix");
+    input_ = node_modifier.addInput<CvMatMessage>("Matrix");
     output_ = node_modifier.addOutput<CvMatMessage>("Reshaped");
 }
 
 void Reshape::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::factory::declareRange("rows",
-                                                       csapex::param::ParameterDescription("New row count."),
-                                                       1, 1, 1, 1));
-    addParameter(csapex::param::factory::declareRange("cols",
-                                                       csapex::param::ParameterDescription("New col count."),
-                                                       1, 1, 1, 1));
-    addParameter(csapex::param::factory::declareTrigger("reset",
-                                                         csapex::param::ParameterDescription("Reset to default size.")),
-                                                         std::bind(&Reshape::reset, this));
+    addParameter(csapex::param::factory::declareRange("rows", csapex::param::ParameterDescription("New row count."), 1, 1, 1, 1));
+    addParameter(csapex::param::factory::declareRange("cols", csapex::param::ParameterDescription("New col count."), 1, 1, 1, 1));
+    addParameter(csapex::param::factory::declareTrigger("reset", csapex::param::ParameterDescription("Reset to default size.")), std::bind(&Reshape::reset, this));
 }
 
 void Reshape::reset()

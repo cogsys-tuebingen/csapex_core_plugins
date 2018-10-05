@@ -1,9 +1,9 @@
 #include "laplacian.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 
 using namespace csapex;
@@ -16,13 +16,12 @@ Laplacian::Laplacian()
 {
 }
 
-
 void Laplacian::process()
 {
     CvMatMessage::ConstPtr in = msg::getMessage<connection_types::CvMatMessage>(input_);
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::mono, in->frame_id, in->stamp_micro_seconds));
 
-    if(in->value.empty())
+    if (in->value.empty())
         return;
 
     int depth = in->value.type() & 7;

@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class FloatToUchar : public csapex::Node
 {
 public:
@@ -15,9 +16,8 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
-    csapex::Input*   input_;
-    csapex::Output*  output_;
-
+    csapex::Input* input_;
+    csapex::Output* output_;
 };
-}
-#endif // FLOAT_TO_UCHAR_H
+}  // namespace csapex
+#endif  // FLOAT_TO_UCHAR_H

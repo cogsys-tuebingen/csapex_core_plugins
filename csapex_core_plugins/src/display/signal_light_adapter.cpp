@@ -2,11 +2,11 @@
 #include "signal_light_adapter.h"
 
 /// PROJECT
+#include <csapex/io/raw_message.h>
+#include <csapex/model/node_facade.h>
 #include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
 #include <csapex/view/utility/register_node_adapter.h>
-#include <csapex/model/node_facade.h>
-#include <csapex/io/raw_message.h>
 
 /// SYSTEM
 #include <QBoxLayout>
@@ -15,17 +15,14 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(SignalLightAdapter, csapex::SignalLight)
 
-
-SignalLightAdapter::SignalLightAdapter(NodeFacadePtr node, NodeBox* parent)
-    : ResizableNodeAdapter(node, parent)
+SignalLightAdapter::SignalLightAdapter(NodeFacadePtr node, NodeBox* parent) : ResizableNodeAdapter(node, parent)
 {
     observe(node->raw_data_connection, [this](StreamableConstPtr msg) {
-        if(std::shared_ptr<RawMessage const> raw = std::dynamic_pointer_cast<RawMessage const>(msg)) {
+        if (std::shared_ptr<RawMessage const> raw = std::dynamic_pointer_cast<RawMessage const>(msg)) {
             displayRequest(raw->getData().at(0));
         }
     });
 }
-
 
 SignalLightAdapter::~SignalLightAdapter()
 {
@@ -67,10 +64,9 @@ void SignalLightAdapter::display(int state)
     light_->red()->setEnabled(state == 2);
 }
 
-
 void SignalLightAdapter::setManualResize(bool manual)
 {
-    if(manual) {
+    if (manual) {
         light_->setMinimumSize(20, 60);
         light_->setMaximumSize(200, 600);
     } else {
@@ -82,4 +78,3 @@ void SignalLightAdapter::setManualResize(bool manual)
 
 /// MOC
 #include "moc_signal_light_adapter.cpp"
-

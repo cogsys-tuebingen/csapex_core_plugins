@@ -2,19 +2,19 @@
 #include "passthrough_by_cluster.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
-#include <csapex_point_cloud/msg/indices_message.h>
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/param/interval_parameter.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/interval_parameter.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_point_cloud/msg/indices_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
-#include <pcl/filters/passthrough.h>
 #include <pcl/PointIndices.h>
 #include <pcl/filters/extract_indices.h>
+#include <pcl/filters/passthrough.h>
 
 CSAPEX_REGISTER_CLASS(csapex::PassThroughByCluster, csapex::Node)
 
@@ -25,7 +25,7 @@ PassThroughByCluster::PassThroughByCluster()
 {
 }
 
-void PassThroughByCluster::setupParameters(Parameterizable &parameters)
+void PassThroughByCluster::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareBool("keep organized", true));
 }
@@ -43,18 +43,17 @@ void PassThroughByCluster::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<PassThroughByCluster>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<PassThroughByCluster>(this, msg), msg->value);
 }
 
 template <class PointT>
 void PassThroughByCluster::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    std::shared_ptr<std::vector<pcl::PointIndices> const> input_clusters =
-            msg::getMessage<GenericVectorMessage, pcl::PointIndices>(input_clusters_);
+    std::shared_ptr<std::vector<pcl::PointIndices> const> input_clusters = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(input_clusters_);
 
     // merge all cluster indices
     pcl::PointIndices::Ptr indices(new pcl::PointIndices);
-    for(const pcl::PointIndices &i : *input_clusters) {
+    for (const pcl::PointIndices& i : *input_clusters) {
         indices->indices.insert(indices->indices.end(), i.indices.begin(), i.indices.end());
     }
 
@@ -65,7 +64,7 @@ void PassThroughByCluster::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
     pass.setInputCloud(cloud);
     pass.setKeepOrganized(readParameter<bool>("keep organized"));
 
-    if(msg::isConnected(output_pos_)) {
+    if (msg::isConnected(output_pos_)) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
         pass.filter(*out);
         out->header = cloud->header;
@@ -75,7 +74,7 @@ void PassThroughByCluster::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
         msg::publish(output_pos_, msg);
     }
 
-    if(msg::isConnected(output_neg_)) {
+    if (msg::isConnected(output_neg_)) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
         pass.setNegative(true);
         pass.filter(*out);
@@ -85,5 +84,4 @@ void PassThroughByCluster::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
         msg->value = out;
         msg::publish(output_neg_, msg);
     }
-
 }

@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class HistogramMaxima : public csapex::Node
 {
 public:
@@ -16,8 +17,7 @@ public:
 
 protected:
     csapex::Output* maxima_;
-    csapex::Input*  histograms_;
-
+    csapex::Input* histograms_;
 };
-}
-#endif // HISTOGRAM_MAXIMA_H
+}  // namespace csapex
+#endif  // HISTOGRAM_MAXIMA_H

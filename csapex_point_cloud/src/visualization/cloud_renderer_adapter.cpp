@@ -3,16 +3,16 @@
 
 /// PROJECT
 #include <csapex/model/node_facade_impl.h>
-#include <csapex/view/utility/register_node_adapter.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/set_parameter.h>
+#include <csapex/view/utility/register_node_adapter.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
 #include <QtOpenGL>
 #include <csapex/view/utility/QtCvImageConverter.h>
-#include <pcl/for_each_type.h>
 #include <pcl/conversions.h>
+#include <pcl/for_each_type.h>
 #include <pcl/point_types.h>
 
 using namespace csapex;
@@ -21,12 +21,28 @@ using namespace csapex::connection_types;
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(CloudRendererAdapter, csapex::CloudRenderer)
 
 CloudRendererAdapter::CloudRendererAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CloudRenderer> node)
-    : QGLWidget(QGLFormat(QGL::SampleBuffers)), DefaultNodeAdapter(worker, parent),
-      wrapped_(node), view_(nullptr), pixmap_(nullptr), fbo_(nullptr), drag_(false), repaint_(true),
-      w_view_(10), h_view_(10), point_size_(1),
-      phi_(0), theta_(M_PI/2), r_(-10.0),
-      axes_(false), grid_size_(10), grid_resolution_(1.0), grid_xy_(true), grid_yz_(false), grid_xz_(false),
-      list_cloud_(0), list_augmentation_(0)
+  : QGLWidget(QGLFormat(QGL::SampleBuffers))
+  , DefaultNodeAdapter(worker, parent)
+  , wrapped_(node)
+  , view_(nullptr)
+  , pixmap_(nullptr)
+  , fbo_(nullptr)
+  , drag_(false)
+  , repaint_(true)
+  , w_view_(10)
+  , h_view_(10)
+  , point_size_(1)
+  , phi_(0)
+  , theta_(M_PI / 2)
+  , r_(-10.0)
+  , axes_(false)
+  , grid_size_(10)
+  , grid_resolution_(1.0)
+  , grid_xy_(true)
+  , grid_yz_(false)
+  , grid_xz_(false)
+  , list_cloud_(0)
+  , list_augmentation_(0)
 {
     auto node_ptr = wrapped_.lock();
 
@@ -52,9 +68,9 @@ void CloudRendererAdapter::setupUi(QBoxLayout* layout)
 {
     view_ = new QGraphicsView;
     QGraphicsScene* scene = view_->scene();
-    if(scene == nullptr) {
+    if (scene == nullptr) {
         scene = new QGraphicsScene();
-        //scene->addWidget(this);
+        // scene->addWidget(this);
         view_->setScene(scene);
     }
 
@@ -68,8 +84,6 @@ void CloudRendererAdapter::setupUi(QBoxLayout* layout)
 
     DefaultNodeAdapter::setupUi(layout);
 }
-
-
 
 void CloudRendererAdapter::initializeGL()
 {
@@ -96,14 +110,14 @@ void CloudRendererAdapter::resizeGL(int width, int height)
 
     QMatrix4x4 projection;
     projection.setToIdentity();
-    projection.perspective(45.0f,(GLfloat)width/(GLfloat)height,0.0001f,300.0f);
+    projection.perspective(45.0f, (GLfloat)width / (GLfloat)height, 0.0001f, 300.0f);
     glLoadMatrixf(projection.data());
     glMatrixMode(GL_MODELVIEW);
 }
 
 void CloudRendererAdapter::resize()
 {
-    if(w_view_ != view_->width() || h_view_ != view_->height()) {
+    if (w_view_ != view_->width() || h_view_ != view_->height()) {
         view_->setFixedSize(w_view_, h_view_);
     }
     resizeGL(w_out_, h_out_);
@@ -113,7 +127,7 @@ void CloudRendererAdapter::paintAugmentation()
 {
     makeCurrent();
 
-    if(list_augmentation_ == 0) {
+    if (list_augmentation_ == 0) {
         list_augmentation_ = glGenLists(1);
     }
 
@@ -122,16 +136,15 @@ void CloudRendererAdapter::paintAugmentation()
     glPushAttrib(GL_LINE_SMOOTH);
     glPushAttrib(GL_BLEND);
 
-    glNewList(list_augmentation_,GL_COMPILE);
+    glNewList(list_augmentation_, GL_COMPILE);
 
     // change settings
-    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-    glDisable( GL_CULL_FACE );
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDisable(GL_CULL_FACE);
     glEnable(GL_LINE_SMOOTH);
-    glEnable (GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
 
     // grid
     qglColor(color_grid_);
@@ -140,58 +153,57 @@ void CloudRendererAdapter::paintAugmentation()
     glBegin(GL_QUADS);
     double dim = grid_resolution_ * grid_size_ / 2.0;
     double r = grid_resolution_;
-    if(grid_xy_) {
-        for(double x = -dim; x < dim; x += grid_resolution_) {
-            for(double y = -dim; y < dim; y += grid_resolution_) {
-                glVertex3d(x,y,0);
-                glVertex3d(x+r,y,0);
-                glVertex3d(x+r,y+r,0);
-                glVertex3d(x,y+r,0);
+    if (grid_xy_) {
+        for (double x = -dim; x < dim; x += grid_resolution_) {
+            for (double y = -dim; y < dim; y += grid_resolution_) {
+                glVertex3d(x, y, 0);
+                glVertex3d(x + r, y, 0);
+                glVertex3d(x + r, y + r, 0);
+                glVertex3d(x, y + r, 0);
             }
         }
     }
-    if(grid_yz_) {
-        for(double y = -dim; y < dim; y += grid_resolution_) {
-            for(double z = -dim; z < dim; z += grid_resolution_) {
-                glVertex3d(0,y,z);
-                glVertex3d(0,y+r,z);
-                glVertex3d(0,y+r,z+r);
-                glVertex3d(0,y,z+r);
+    if (grid_yz_) {
+        for (double y = -dim; y < dim; y += grid_resolution_) {
+            for (double z = -dim; z < dim; z += grid_resolution_) {
+                glVertex3d(0, y, z);
+                glVertex3d(0, y + r, z);
+                glVertex3d(0, y + r, z + r);
+                glVertex3d(0, y, z + r);
             }
         }
     }
-    if(grid_xz_) {
-        for(double x = -dim; x < dim; x += grid_resolution_) {
-            for(double z = -dim; z < dim; z += grid_resolution_) {
-                glVertex3d(x,0,z);
-                glVertex3d(x+r,0,z);
-                glVertex3d(x+r,0,z+r);
-                glVertex3d(x,0,z+r);
+    if (grid_xz_) {
+        for (double x = -dim; x < dim; x += grid_resolution_) {
+            for (double z = -dim; z < dim; z += grid_resolution_) {
+                glVertex3d(x, 0, z);
+                glVertex3d(x + r, 0, z);
+                glVertex3d(x + r, 0, z + r);
+                glVertex3d(x, 0, z + r);
             }
         }
     }
     glEnd();
 
-    if(axes_) {
+    if (axes_) {
         // axes
         double d = 0.5;
         glLineWidth(20.f);
         glBegin(GL_LINES);
         // x
-        glColor3d(1,0,0);
-        glVertex3d(0,0,0);
-        glVertex3d(d,0,0);
+        glColor3d(1, 0, 0);
+        glVertex3d(0, 0, 0);
+        glVertex3d(d, 0, 0);
         // y
-        glColor3d(0,1,0);
-        glVertex3d(0,0,0);
-        glVertex3d(0,d,0);
+        glColor3d(0, 1, 0);
+        glVertex3d(0, 0, 0);
+        glVertex3d(0, d, 0);
         // z
-        glColor3d(0,0,1);
-        glVertex3d(0,0,0);
-        glVertex3d(0,0,d);
+        glColor3d(0, 0, 1);
+        glVertex3d(0, 0, 0);
+        glVertex3d(0, 0, d);
         glEnd();
     }
-
 
     glEndList();
 
@@ -204,7 +216,7 @@ void CloudRendererAdapter::paintAugmentation()
 void CloudRendererAdapter::paintGLImpl(bool request)
 {
     auto n = wrapped_.lock();
-    if(!n) {
+    if (!n) {
         return;
     }
 
@@ -212,7 +224,7 @@ void CloudRendererAdapter::paintGLImpl(bool request)
     makeCurrent();
     initializeGL();
 
-    if(fbo_) {
+    if (fbo_) {
         delete fbo_;
     }
 
@@ -231,32 +243,29 @@ void CloudRendererAdapter::paintGLImpl(bool request)
     // model view matrix
     QMatrix4x4 lookat;
     lookat.setToIdentity();
-    QVector3D eye(-r_ * std::sin(theta_) * std::cos(phi_),
-                  -r_ * std::sin(theta_) * std::sin(phi_),
-                  -r_ * std::cos(theta_));
-    QVector3D center(0,0,0);
-    QVector3D up(0,0,1);
+    QVector3D eye(-r_ * std::sin(theta_) * std::cos(phi_), -r_ * std::sin(theta_) * std::sin(phi_), -r_ * std::cos(theta_));
+    QVector3D center(0, 0, 0);
+    QVector3D up(0, 0, 1);
     lookat.lookAt(eye + offset_, center + offset_, up);
     glLoadMatrixf(lookat.data());
 
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glCallList(list_cloud_);
 
     // grid
-    if(repaint_ || !list_augmentation_) {
+    if (repaint_ || !list_augmentation_) {
         paintAugmentation();
     }
     glCallList(list_augmentation_);
 
-
     // center point
-    if(drag_) {
+    if (drag_) {
         QVector3D o = center + offset_;
 
         glPointSize(point_size_ * 5);
         glBegin(GL_POINTS);
-        glColor3f(1,1,1);
+        glColor3f(1, 1, 1);
         glVertex3d(o.x(), o.y(), o.z());
         glEnd();
     }
@@ -266,7 +275,7 @@ void CloudRendererAdapter::paintGLImpl(bool request)
 
     fbo_->release();
 
-    if(pixmap_ == nullptr) {
+    if (pixmap_ == nullptr) {
         pixmap_ = view_->scene()->addPixmap(QPixmap::fromImage(img));
     } else {
         pixmap_->setPixmap(QPixmap::fromImage(img));
@@ -278,57 +287,57 @@ void CloudRendererAdapter::paintGLImpl(bool request)
     view_->blockSignals(false);
     //    view_->scene()->update();
 
-    if(n->isOutputConnected() && request){
+    if (n->isOutputConnected() && request) {
         cv::Mat mat = QtCvImageConverter::Converter::QImage2Mat(img);
         n->publishImage(mat);
     }
 }
 
-bool CloudRendererAdapter::eventFilter(QObject * o, QEvent * e)
+bool CloudRendererAdapter::eventFilter(QObject* o, QEvent* e)
 {
     auto n = node_.lock();
-    if(!n) {
+    if (!n) {
         return false;
     }
 
-    if(view_->signalsBlocked()) {
+    if (view_->signalsBlocked()) {
         return false;
     }
 
-    QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
+    QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*>(e);
 
-    switch(e->type()) {
-    case QEvent::GraphicsSceneMousePress:
-        mousePressEventImpl(me);
-        return true;
-    case QEvent::GraphicsSceneMouseRelease:
-        mouseReleaseEventImpl(me);
-        return true;
-    case QEvent::GraphicsSceneMouseMove:
-        mouseMoveEventImpl(me);
-        return true;
-    case QEvent::GraphicsSceneWheel:
-        wheelEventImpl(dynamic_cast<QGraphicsSceneWheelEvent*>(e));
-        return true;
+    switch (e->type()) {
+        case QEvent::GraphicsSceneMousePress:
+            mousePressEventImpl(me);
+            return true;
+        case QEvent::GraphicsSceneMouseRelease:
+            mouseReleaseEventImpl(me);
+            return true;
+        case QEvent::GraphicsSceneMouseMove:
+            mouseMoveEventImpl(me);
+            return true;
+        case QEvent::GraphicsSceneWheel:
+            wheelEventImpl(dynamic_cast<QGraphicsSceneWheelEvent*>(e));
+            return true;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     return false;
 }
 
-void CloudRendererAdapter::mousePressEventImpl(QGraphicsSceneMouseEvent *event)
+void CloudRendererAdapter::mousePressEventImpl(QGraphicsSceneMouseEvent* event)
 {
     last_pos_ = event->screenPos();
     drag_ = true;
     event->accept();
 }
 
-void CloudRendererAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event)
+void CloudRendererAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent* event)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
@@ -337,7 +346,7 @@ void CloudRendererAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event
     node->getParameter("~size/width")->set<int>(w_view_);
     node->getParameter("~size/height")->set<int>(h_view_);
 
-    if(size_sync_) {
+    if (size_sync_) {
         w_out_ = w_view_;
         h_out_ = h_view_;
         node->getParameter("~size/out/width")->set<int>(w_out_);
@@ -346,13 +355,13 @@ void CloudRendererAdapter::mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event
     event->accept();
 }
 
-void CloudRendererAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
+void CloudRendererAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent* event)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
-    if(!drag_) {
+    if (!drag_) {
         return;
     }
 
@@ -369,11 +378,11 @@ void CloudRendererAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
         setPhi(phi_ + f * -dx);
 
     } else if (event->buttons() & Qt::MidButton) {
-        w_view_ = std::max(40, std::min(2000, w_view_ + (int) dx));
-        h_view_ = std::max(40, std::min(2000, h_view_ + (int) dy));
+        w_view_ = std::max(40, std::min(2000, w_view_ + (int)dx));
+        h_view_ = std::max(40, std::min(2000, h_view_ + (int)dy));
 
-        view_->setFixedSize(w_view_,h_view_);
-        if(size_sync_) {
+        view_->setFixedSize(w_view_, h_view_);
+        if (size_sync_) {
             w_out_ = w_view_;
             h_out_ = h_view_;
 
@@ -383,24 +392,22 @@ void CloudRendererAdapter::mouseMoveEventImpl(QGraphicsSceneMouseEvent *event)
     } else if (event->buttons() & Qt::RightButton) {
         QMatrix4x4 rot;
         rot.setToIdentity();
-        rot.rotate(phi_ * 180.0 / M_PI, QVector3D(0,0,1));
-        offset_ += rot * QVector3D(f*dy, f*dx, 0);
-
+        rot.rotate(phi_ * 180.0 / M_PI, QVector3D(0, 0, 1));
+        offset_ += rot * QVector3D(f * dy, f * dx, 0);
 
         node->getParameter("~view/dx")->set<double>(offset_.x());
         node->getParameter("~view/dy")->set<double>(offset_.y());
         node->getParameter("~view/dz")->set<double>(offset_.z());
-
     }
     last_pos_ = pos;
 
     Q_EMIT repaintRequest();
 }
 
-void CloudRendererAdapter::wheelEventImpl(QGraphicsSceneWheelEvent *event)
+void CloudRendererAdapter::wheelEventImpl(QGraphicsSceneWheelEvent* event)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     event->accept();
@@ -411,7 +418,6 @@ void CloudRendererAdapter::wheelEventImpl(QGraphicsSceneWheelEvent *event)
     Q_EMIT repaintRequest();
 }
 
-
 void CloudRendererAdapter::display()
 {
     Q_EMIT displayRequest();
@@ -420,24 +426,24 @@ void CloudRendererAdapter::display()
 void CloudRendererAdapter::refresh()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
-    if(!drag_){
+    if (!drag_) {
         {
-            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/background");
+            const std::vector<int>& c = node->readParameter<std::vector<int>>("color/background");
             color_bg_ = QColor::fromRgb(c[0], c[1], c[2]);
         }
         {
-            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/grid");
+            const std::vector<int>& c = node->readParameter<std::vector<int>>("color/grid");
             color_grid_ = QColor::fromRgb(c[0], c[1], c[2]);
         }
         {
-            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/gradient/start");
+            const std::vector<int>& c = node->readParameter<std::vector<int>>("color/gradient/start");
             color_grad_start_ = QVector3D(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
         }
         {
-            const std::vector<int>& c = node->readParameter<std::vector<int> >("color/gradient/end");
+            const std::vector<int>& c = node->readParameter<std::vector<int>>("color/gradient/end");
             color_grad_end_ = QVector3D(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
         }
         r_ = node->readParameter<double>("~view/r");
@@ -448,14 +454,14 @@ void CloudRendererAdapter::refresh()
         double dy = node->readParameter<double>("~view/dy");
         double dz = node->readParameter<double>("~view/dz");
 
-        offset_ = QVector3D(dx,dy,dz);
+        offset_ = QVector3D(dx, dy, dz);
         point_size_ = node->readParameter<double>("point/size");
 
         size_sync_ = node->readParameter<bool>("~size/out/sync");
         w_view_ = node->readParameter<int>("~size/width");
         h_view_ = node->readParameter<int>("~size/height");
 
-        if(size_sync_) {
+        if (size_sync_) {
             w_out_ = w_view_;
             h_out_ = h_view_;
         } else {
@@ -482,22 +488,23 @@ void CloudRendererAdapter::refresh()
 void CloudRendererAdapter::displayCloud()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     auto copy = node->getMessage();
-    boost::apply_visitor (PointCloudMessage::Dispatch<CloudRendererAdapter>(this, copy), copy->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<CloudRendererAdapter>(this, copy), copy->value);
 }
 
 namespace
 {
-
 enum Component
 {
-    X, Y, Z, I,
+    X,
+    Y,
+    Z,
+    I,
     AUTO
 };
-
 
 template <class PointT, int Component>
 struct Access
@@ -565,11 +572,11 @@ struct Util
     {
         min = std::numeric_limits<double>::max();
         max = std::numeric_limits<double>::min();
-        for(auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
-            if(Access<PointT, Component>::access(it) < min) {
+        for (auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
+            if (Access<PointT, Component>::access(it) < min) {
                 min = Access<PointT, Component>::access(it);
             }
-            if(Access<PointT, Component>::access(it) > max) {
+            if (Access<PointT, Component>::access(it) > max) {
                 max = Access<PointT, Component>::access(it);
             }
         }
@@ -585,14 +592,20 @@ void getRainbowColor(float value, Color& color)
     float h = value * 5.0f + 1.0f;
     int i = floor(h);
     float f = h - i;
-    if ( !(i&1) ) f = 1 - f; // if i is even
+    if (!(i & 1))
+        f = 1 - f;  // if i is even
     float n = 1 - f;
 
-    if (i <= 1) color.setX(n), color.setY(0), color.setZ(1);
-    else if (i == 2) color.setX(0), color.setY(n), color.setZ(1);
-    else if (i == 3) color.setX(0), color.setY(1), color.setZ(n);
-    else if (i == 4) color.setX(n), color.setY(1), color.setZ(0);
-    else if (i >= 5) color.setX(1), color.setY(n), color.setZ(0);
+    if (i <= 1)
+        color.setX(n), color.setY(0), color.setZ(1);
+    else if (i == 2)
+        color.setX(0), color.setY(n), color.setZ(1);
+    else if (i == 3)
+        color.setX(0), color.setY(1), color.setZ(n);
+    else if (i == 4)
+        color.setX(n), color.setY(1), color.setZ(0);
+    else if (i >= 5)
+        color.setX(1), color.setY(n), color.setZ(0);
 }
 
 template <class PointT, int Component>
@@ -600,7 +613,7 @@ struct RendererGradient
 {
     static void render(typename pcl::PointCloud<PointT>::ConstPtr cloud, bool rainbow, const QVector3D& color_grad_start, const QVector3D& color_grad_end)
     {
-        if(rainbow) {
+        if (rainbow) {
             renderRainbow(cloud);
         } else {
             renderGradient(cloud, color_grad_start, color_grad_end);
@@ -611,12 +624,12 @@ struct RendererGradient
         double min, max;
         Util<PointT, Component>::findExtrema(cloud, min, max);
 
-        for(auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
+        for (auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
             const PointT& pt = *it;
 
             double v = Access<PointT, Component>::access(it);
             double f = (v - min) / (max - min);
-            QVector3D c = f * color_grad_start + (1.0-f) * color_grad_end;
+            QVector3D c = f * color_grad_start + (1.0 - f) * color_grad_end;
 
             glColor3d(c.x(), c.y(), c.z());
 
@@ -628,7 +641,7 @@ struct RendererGradient
         double min, max;
         Util<PointT, Component>::findExtrema(cloud, min, max);
 
-        for(auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
+        for (auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
             const PointT& pt = *it;
 
             double v = Access<PointT, Component>::access(it);
@@ -657,7 +670,7 @@ struct Renderer<pcl::PointXYZRGB, AUTO>
 {
     static void render(typename pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud, bool, const QVector3D&, const QVector3D&)
     {
-        for(auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
+        for (auto it = cloud->points.begin(); it != cloud->points.end(); ++it) {
             const pcl::PointXYZRGB& pt = *it;
 
             glColor3d(pt.r / 255.0, pt.g / 255.0, pt.b / 255.0);
@@ -666,13 +679,13 @@ struct Renderer<pcl::PointXYZRGB, AUTO>
         }
     }
 };
-}
+}  // namespace
 
 template <class PointT>
 void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
@@ -680,7 +693,7 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
     std::vector<std::string> field_names;
     pcl::for_each_type<typename pcl::traits::fieldList<PointT>::type>(pcl::detail::FieldAdder<PointT>(fields));
 
-    for(size_t d = 0; d < fields.size (); ++d) {
+    for (size_t d = 0; d < fields.size(); ++d) {
         field_names.push_back(fields[d].name);
     }
 
@@ -689,29 +702,28 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
 
     std::vector<std::string> list_values = list->getSetTexts();
 
-
     std::sort(field_names.begin(), field_names.end());
     std::sort(list_values.begin(), list_values.end());
 
     bool change = false;
-    for(std::size_t i = 0; i < field_names.size(); ++i) {
-        if(field_names[i] != list_values[i]) {
+    for (std::size_t i = 0; i < field_names.size(); ++i) {
+        if (field_names[i] != list_values[i]) {
             change = true;
             break;
         }
     }
 
-    if(change) {
+    if (change) {
         list->setSet(field_names);
     }
 
     makeCurrent();
 
-    if(list_cloud_ == 0) {
+    if (list_cloud_ == 0) {
         list_cloud_ = glGenLists(1);
     }
 
-    glNewList(list_cloud_,GL_COMPILE);
+    glNewList(list_cloud_, GL_COMPILE);
 
     glPointSize(point_size_);
 
@@ -721,27 +733,27 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
 
     bool rainbow = node->readParameter<bool>("color/rainbow");
 
-    if(node->readParameter<bool>("color/force gradient")) {
-        if(component == "x") {
+    if (node->readParameter<bool>("color/force gradient")) {
+        if (component == "x") {
             RendererGradient<PointT, X>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "y") {
+        } else if (component == "y") {
             RendererGradient<PointT, Y>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "z") {
+        } else if (component == "z") {
             RendererGradient<PointT, Z>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "intensity" || component == "i") {
+        } else if (component == "intensity" || component == "i") {
             RendererGradient<PointT, I>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else {
             Renderer<PointT, AUTO>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         }
 
     } else {
-        if(component == "x") {
+        if (component == "x") {
             Renderer<PointT, X>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "y") {
+        } else if (component == "y") {
             Renderer<PointT, Y>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "z") {
+        } else if (component == "z") {
             Renderer<PointT, Z>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
-        } else if(component == "intensity" || component == "i") {
+        } else if (component == "intensity" || component == "i") {
             Renderer<PointT, I>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
         } else {
             Renderer<PointT, AUTO>::render(cloud, rainbow, color_grad_start_, color_grad_end_);
@@ -755,7 +767,6 @@ void CloudRendererAdapter::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr
     Q_EMIT repaintRequest();
 }
 
-
 QSize CloudRendererAdapter::minimumSizeHint() const
 {
     return QSize(10, 10);
@@ -766,30 +777,32 @@ QSize CloudRendererAdapter::sizeHint() const
     return QSize(w_view_, h_view_);
 }
 
-namespace {
-double normalizeAngle(double angle) {
-    while(angle <= -M_PI) {
+namespace
+{
+double normalizeAngle(double angle)
+{
+    while (angle <= -M_PI) {
         angle += 2 * M_PI;
     }
-    while(angle > M_PI) {
+    while (angle > M_PI) {
         angle -= 2 * M_PI;
     }
 
     return angle;
 }
-}
+}  // namespace
 
 void CloudRendererAdapter::setTheta(double angle)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
     double eps = 1e-3;
-    if(angle < eps) {
+    if (angle < eps) {
         angle = eps;
-    } else if(angle > M_PI - eps) {
+    } else if (angle > M_PI - eps) {
         angle = M_PI - eps;
     }
 
@@ -803,10 +816,9 @@ void CloudRendererAdapter::setTheta(double angle)
 void CloudRendererAdapter::setPhi(double angle)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
-
 
     angle = normalizeAngle(angle);
     if (angle != phi_) {

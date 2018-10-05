@@ -9,7 +9,6 @@ using namespace csapex;
 
 void ActionlibNodeBase::abortAction()
 {
-
 }
 
 void ActionlibNodeBase::startTimer()
@@ -19,9 +18,7 @@ void ActionlibNodeBase::startTimer()
 
 void ActionlibNodeBase::startTimer(ros::Duration max_wait)
 {
-    timeout_ = getRosHandler().nh()->createTimer(max_wait, [this](const ros::TimerEvent& e){
-        abortAction();
-    }, true);
+    timeout_ = getRosHandler().nh()->createTimer(max_wait, [this](const ros::TimerEvent& e) { abortAction(); }, true);
 }
 
 bool ActionlibNodeBase::isAsynchronous() const
@@ -29,17 +26,11 @@ bool ActionlibNodeBase::isAsynchronous() const
     return true;
 }
 
-
 void ActionlibNodeBase::setupParameters(csapex::Parameterizable& parameters)
 {
-    parameters.addParameter(param::factory::declareTrigger("abort"), [this](param::Parameter*){
-        abortAction();
-    });
+    parameters.addParameter(param::factory::declareTrigger("abort"), [this](param::Parameter*) { abortAction(); });
 
-    parameters.addParameter(param::factory::declareTrigger("detach"), [this](param::Parameter*){
-        detachAction();
-    });
-
+    parameters.addParameter(param::factory::declareTrigger("detach"), [this](param::Parameter*) { detachAction(); });
 }
 
 void ActionlibNodeBase::setup(csapex::NodeModifier& modifier)
@@ -57,12 +48,10 @@ void ActionlibNodeBase::tearDown()
 
 void ActionlibNodeBase::setupROS()
 {
-    observe(getRosHandler().shutdown, [this](){
-        tearDown();
-    });
+    observe(getRosHandler().shutdown, [this]() { tearDown(); });
 }
 
-void ActionlibNodeBase::process(csapex::NodeModifier& modifier, csapex::Parameterizable& params,  Continuation continuation)
+void ActionlibNodeBase::process(csapex::NodeModifier& modifier, csapex::Parameterizable& params, Continuation continuation)
 {
     continuation_ = continuation;
 

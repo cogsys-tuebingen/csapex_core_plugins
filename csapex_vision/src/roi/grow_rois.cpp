@@ -7,14 +7,13 @@
 #include <csapex_opencv/roi_message.h>
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <cslibs_vision/utils/rectangle_cluster.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <cslibs_vision/utils/rectangle_cluster.h>
 
 /// SYSTEM
-
 
 CSAPEX_REGISTER_CLASS(csapex::GrowROIs, csapex::Node)
 
@@ -25,7 +24,7 @@ GrowROIs::GrowROIs()
 {
 }
 
-void GrowROIs::setupParameters(Parameterizable &parameters)
+void GrowROIs::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareRange("x", 0, 100, 0, 1), x_);
     parameters.addParameter(csapex::param::factory::declareRange("y", 0, 100, 0, 1), y_);
@@ -33,12 +32,11 @@ void GrowROIs::setupParameters(Parameterizable &parameters)
 
 void GrowROIs::process()
 {
-    std::shared_ptr<std::vector<RoiMessage> const> rois_in =
-            msg::getMessage<GenericVectorMessage, RoiMessage>(input_);
+    std::shared_ptr<std::vector<RoiMessage> const> rois_in = msg::getMessage<GenericVectorMessage, RoiMessage>(input_);
     std::shared_ptr<std::vector<RoiMessage>> rois_out(new std::vector<RoiMessage>);
     rois_out->assign(rois_in->begin(), rois_in->end());
 
-    for(RoiMessage &roi : *rois_out) {
+    for (RoiMessage& roi : *rois_out) {
         roi.value.grow(x_, y_);
     }
 

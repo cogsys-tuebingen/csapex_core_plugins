@@ -1,7 +1,6 @@
 #ifndef SIGNAL_LIGHT_ADAPTER_H
 #define SIGNAL_LIGHT_ADAPTER_H
 
-
 /// PROJECT
 #include <csapex/view/node/resizable_node_adapter.h>
 
@@ -13,15 +12,16 @@
 #include <QPainter>
 #include <yaml-cpp/yaml.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class LightWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    LightWidget(const QColor &color, QWidget *parent = 0)
-        : QWidget(parent), color_(color), enabled_(false) {}
+    LightWidget(const QColor& color, QWidget* parent = 0) : QWidget(parent), color_(color), enabled_(false)
+    {
+    }
 
     void setEnabled(bool on)
     {
@@ -32,7 +32,7 @@ public:
     }
 
 protected:
-    virtual void paintEvent(QPaintEvent *) override
+    virtual void paintEvent(QPaintEvent*) override
     {
         if (!enabled_) {
             return;
@@ -43,7 +43,7 @@ protected:
         painter.setBrush(color_);
         int w = width();
         int h = height();
-        int dim = std::min(w,h);
+        int dim = std::min(w, h);
 
         int cx = (w - dim) / 2;
         int cy = (h - dim) / 2;
@@ -66,10 +66,9 @@ class SignalLightWidget : public QWidget
     Q_OBJECT
 
 public:
-    SignalLightWidget(QWidget *parent = 0)
-        : QWidget(parent)
+    SignalLightWidget(QWidget* parent = 0) : QWidget(parent)
     {
-        QVBoxLayout *vbox = new QVBoxLayout(this);
+        QVBoxLayout* vbox = new QVBoxLayout(this);
 
         red_ = new LightWidget(Qt::red);
         vbox->addWidget(red_);
@@ -86,23 +85,23 @@ public:
         setAutoFillBackground(true);
     }
 
-    LightWidget *red() const
+    LightWidget* red() const
     {
         return red_;
     }
-    LightWidget *yellow() const
+    LightWidget* yellow() const
     {
         return yellow_;
     }
-    LightWidget *gren() const
+    LightWidget* gren() const
     {
         return green;
     }
 
 private:
-    LightWidget *red_;
-    LightWidget *yellow_;
-    LightWidget *green;
+    LightWidget* red_;
+    LightWidget* yellow_;
+    LightWidget* green;
 };
 
 class SignalLightAdapter : public QObject, public ResizableNodeAdapter
@@ -117,7 +116,7 @@ public:
 
     virtual void setManualResize(bool manual) override;
 
-    virtual void resize(const QSize &size) override;
+    virtual void resize(const QSize& size) override;
 
 public Q_SLOTS:
     void display(int state);
@@ -129,5 +128,5 @@ private:
     SignalLightWidget* light_;
 };
 
-}
-#endif // SIGNAL_LIGHT_ADAPTER_H
+}  // namespace csapex
+#endif  // SIGNAL_LIGHT_ADAPTER_H

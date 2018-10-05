@@ -3,11 +3,11 @@
 
 /// PROJECT
 #include <csapex_core_plugins/interactive_node.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex_opencv/cv_mat_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class CloudLabeler : public InteractiveNode
 {
 public:
@@ -16,10 +16,10 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);
 
-    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters) override;
-    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters) override;
+    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
+    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
 
-    void setResult(const pcl::PointCloud<pcl::PointXYZL>::Ptr &labeled);
+    void setResult(const pcl::PointCloud<pcl::PointXYZL>::Ptr& labeled);
 
     connection_types::PointCloudMessage::ConstPtr getMessage() const;
     bool isOutputConnected() const;
@@ -43,6 +43,6 @@ private:
     connection_types::PointCloudMessage::Ptr result_;
 };
 
-}
+}  // namespace csapex
 
-#endif // CLOUD_LABELER_H
+#endif  // CLOUD_LABELER_H

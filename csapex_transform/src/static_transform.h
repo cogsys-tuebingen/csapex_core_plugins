@@ -4,8 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class StaticTransform : public csapex::Node
 {
 public:
@@ -13,7 +13,7 @@ public:
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 private:
     Input* input_;
@@ -30,6 +30,6 @@ private:
     double z;
 };
 
-}
+}  // namespace csapex
 
-#endif // STATIC_TRANSFORM_H
+#endif  // STATIC_TRANSFORM_H

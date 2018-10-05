@@ -1,19 +1,17 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class Threshold : public Node
 {
 public:
@@ -36,10 +34,10 @@ public:
     {
         double x = 0.0;
 
-        if(msg::isMessage<connection_types::GenericValueMessage<double>>(in_)) {
+        if (msg::isMessage<connection_types::GenericValueMessage<double>>(in_)) {
             x = msg::getValue<double>(in_);
 
-        } else if(msg::isMessage<connection_types::GenericValueMessage<int>>(in_)) {
+        } else if (msg::isMessage<connection_types::GenericValueMessage<int>>(in_)) {
             x = msg::getValue<int>(in_);
 
         } else {
@@ -56,8 +54,6 @@ private:
     double threshold_;
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::Threshold, csapex::Node)
-

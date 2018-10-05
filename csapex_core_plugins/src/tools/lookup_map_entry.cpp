@@ -1,27 +1,24 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_handle.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/msg/io.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/msg/output.h>
+#include <csapex/model/token.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/msg/generic_value_message.hpp>
-#include <csapex/utility/yaml_io.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/msg/output.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/signal/event.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/utility/yaml_io.hpp>
 #include <csapex_core_plugins/map_message.h>
-#include <csapex/model/token.h>
-#include <csapex/model/node_handle.h>
-#include <csapex/msg/generic_value_message.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class CSAPEX_EXPORT_PLUGIN LookupMapEntry : public Node
 {
     friend class LookupMapEntrySerializer;
@@ -39,7 +36,7 @@ public:
         out_value_ = modifier.addOutput<AnyMessage>("Entry");
 
         modifier.addSlot<MapMessage>("Map", [this](const TokenConstPtr& token) {
-            if(auto map = std::dynamic_pointer_cast<MapMessage const>(token->getTokenData())) {
+            if (auto map = std::dynamic_pointer_cast<MapMessage const>(token->getTokenData())) {
                 map_ = map;
             }
         });
@@ -53,18 +50,18 @@ public:
 
     void process() override
     {
-        if(msg::isConnected(in_map_)) {
+        if (msg::isConnected(in_map_)) {
             map_ = msg::getMessage<MapMessage>(in_map_);
         }
 
         std::string key = msg::getValue<std::string>(in_key_);
 
-        if(map_) {
-            for(KeyValueMessage part : map_->value) {
+        if (map_) {
+            for (KeyValueMessage part : map_->value) {
                 apex_assert_msg(!part.value.first.empty(), "invalid key (empty)");
                 apex_assert_msg(part.value.second, "invalid value (null)");
 
-                if(part.value.first == key) {
+                if (part.value.first == key) {
                     msg::publish(out_value_, part.value.second);
                     return;
                 }
@@ -90,7 +87,6 @@ private:
     MapMessage::ConstPtr map_;
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::LookupMapEntry, csapex::Node)

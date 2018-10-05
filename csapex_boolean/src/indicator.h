@@ -4,10 +4,10 @@
 /// HEADER
 #include <csapex/model/node.h>
 
-namespace csapex {
-
-namespace boolean {
-
+namespace csapex
+{
+namespace boolean
+{
 class CSAPEX_EXPORT_PLUGIN Indicator : public Node
 {
 public:
@@ -15,7 +15,7 @@ public:
 
 public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
     virtual void process() override;
 
@@ -23,8 +23,8 @@ private:
     Input* in;
 };
 
-}
+}  // namespace boolean
 
-}
+}  // namespace csapex
 
-#endif // INDICATOR_H
+#endif  // INDICATOR_H

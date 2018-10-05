@@ -9,19 +9,18 @@ namespace pcl
 class PCLHeader;
 class PointIndices;
 class ModelCoefficients;
-}
+}  // namespace pcl
 
 namespace csapex
 {
+SerializationBuffer& operator<<(SerializationBuffer& data, const pcl::PCLHeader& header);
+const SerializationBuffer& operator>>(const SerializationBuffer& data, pcl::PCLHeader& header);
 
-SerializationBuffer& operator << (SerializationBuffer& data, const pcl::PCLHeader& header);
-const SerializationBuffer& operator >> (const SerializationBuffer& data, pcl::PCLHeader& header);
+SerializationBuffer& operator<<(SerializationBuffer& data, const pcl::PointIndices& pi);
+const SerializationBuffer& operator>>(const SerializationBuffer& data, pcl::PointIndices& pi);
 
-SerializationBuffer& operator << (SerializationBuffer& data, const pcl::PointIndices& pi);
-const SerializationBuffer& operator >> (const SerializationBuffer& data, pcl::PointIndices& pi);
+SerializationBuffer& operator<<(SerializationBuffer& data, const pcl::ModelCoefficients& ci);
+const SerializationBuffer& operator>>(const SerializationBuffer& data, pcl::ModelCoefficients& ci);
 
-SerializationBuffer& operator << (SerializationBuffer& data, const pcl::ModelCoefficients& ci);
-const SerializationBuffer& operator >> (const SerializationBuffer& data, pcl::ModelCoefficients& ci);
-
-}
-#endif // PCL_BINARY_IO_H
+}  // namespace csapex
+#endif  // PCL_BINARY_IO_H

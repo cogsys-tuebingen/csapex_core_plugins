@@ -1,27 +1,27 @@
 /// PROJECT
-#include <csapex/msg/io.h>
+#include <csapex/model/node.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex_point_cloud/msg/indices_message.h>
-#include <csapex/model/node.h>
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex_opencv/cv_mat_message.h>
+#include <csapex_point_cloud/msg/indices_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
+namespace csapex
+{
 using namespace connection_types;
 
 class ToVectorOfIndices : public Node
 {
 public:
-    void setup(NodeModifier &node_modifier) override
+    void setup(NodeModifier& node_modifier) override
     {
         input_indices_ = node_modifier.addInput<PointIndicesMessage>("PointIndices");
         output_indices_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("PointIndices");
     }
-    void setupParameters(Parameterizable &parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
     }
     void process() override
@@ -33,10 +33,10 @@ public:
     }
 
 protected:
-    Input  *input_indices_;
-    Output *output_indices_;
+    Input* input_indices_;
+    Output* output_indices_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::ToVectorOfIndices, csapex::Node)

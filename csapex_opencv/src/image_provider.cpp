@@ -2,8 +2,8 @@
 #include <csapex_opencv/image_provider.h>
 
 /// COMPONENT
-#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 /// SYSTEM
 #include <boost/filesystem.hpp>
@@ -23,7 +23,6 @@ ImageProvider::~ImageProvider()
 {
 }
 
-
 void ImageProvider::init()
 {
     doInit();
@@ -42,14 +41,13 @@ connection_types::Message::Ptr ImageProvider::next(std::size_t slot)
 
 std::vector<std::string> ImageProvider::getExtensions() const
 {
-    return std::vector<std::string> ();
+    return std::vector<std::string>();
 }
 
 int ImageProvider::sleepTime()
 {
     return 100;
 }
-
 
 GenericStatePtr ImageProvider::getState() const
 {
@@ -59,8 +57,8 @@ GenericStatePtr ImageProvider::getState() const
 
 void ImageProvider::setParameterState(GenericStatePtr memento)
 {
-    std::shared_ptr<GenericState> m = std::dynamic_pointer_cast<GenericState> (memento);
-    if(m) {
+    std::shared_ptr<GenericState> m = std::dynamic_pointer_cast<GenericState>(memento);
+    if (m) {
         state.setFrom(*m);
     }
 }

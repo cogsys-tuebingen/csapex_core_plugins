@@ -8,22 +8,19 @@ using namespace csapex;
 
 Roi::Roi()
 {
-
 }
 
-Roi::Roi(cv::Rect rectangle, cv::Scalar color, int classification)
-    : rect_(rectangle), color_(color), classification_(classification)
+Roi::Roi(cv::Rect rectangle, cv::Scalar color, int classification) : rect_(rectangle), color_(color), classification_(classification)
 {
     check();
 }
 
-Roi::Roi(int x, int y, int width, int height, cv::Scalar color, int classification)
-    : rect_(x, y, width, height), color_(color), classification_(classification)
+Roi::Roi(int x, int y, int width, int height, cv::Scalar color, int classification) : rect_(x, y, width, height), color_(color), classification_(classification)
 {
     check();
 }
 
-void Roi::setLabel(const std::string &label)
+void Roi::setLabel(const std::string& label)
 {
     label_ = label;
 }
@@ -41,7 +38,7 @@ void Roi::check()
 
 bool Roi::covers(const Roi& rhs) const
 {
-    if(rect_ == rhs.rect_ || rect_ == (rect_ | rhs.rect_)) {
+    if (rect_ == rhs.rect_ || rect_ == (rect_ | rhs.rect_)) {
         /// rhs is equal to roi
         ///  or contained in roi
         return true;
@@ -82,9 +79,8 @@ int Roi::w() const
 
 void Roi::setW(const int w)
 {
-   rect_.width = w;
+    rect_.width = w;
 }
-
 
 int Roi::h() const
 {
@@ -111,7 +107,7 @@ cv::Rect Roi::rect() const
     return rect_;
 }
 
-void Roi::setRect(const cv::Rect &r)
+void Roi::setRect(const cv::Rect& r)
 {
     rect_ = r;
 }
@@ -121,7 +117,7 @@ cv::Scalar Roi::color() const
     return color_;
 }
 
-void Roi::setColor(const cv::Scalar &c)
+void Roi::setColor(const cv::Scalar& c)
 {
     color_ = c;
 }

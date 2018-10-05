@@ -3,7 +3,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class GLCM : public csapex::Node
 {
 public:
@@ -14,9 +15,9 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Input  *in_;
-    csapex::Output *out_;
+    csapex::Input* in_;
+    csapex::Output* out_;
 };
-}
+}  // namespace csapex
 
-#endif // GLCM_H
+#endif  // GLCM_H

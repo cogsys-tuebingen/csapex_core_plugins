@@ -8,9 +8,8 @@
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class SegmentLabeler : public csapex::Node
 {
 public:
@@ -26,7 +25,6 @@ private:
     Output* out_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // SEGMENT_LABELER_H
+#endif  // SEGMENT_LABELER_H

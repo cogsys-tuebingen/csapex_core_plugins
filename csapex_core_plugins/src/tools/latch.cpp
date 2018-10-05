@@ -1,21 +1,19 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/msg/io.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/any_message.h>
-#include <csapex/msg/marker_message.h>
 #include <csapex/model/token.h>
+#include <csapex/msg/any_message.h>
+#include <csapex/msg/io.h>
+#include <csapex/msg/marker_message.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class Latch : public Node
 {
 public:
@@ -26,14 +24,12 @@ public:
     {
         modifier.addSlot<AnyMessage>("Message", [this](const TokenPtr& token) {
             const std::shared_ptr<TokenData const>& data = token->getTokenData();
-            if(!std::dynamic_pointer_cast<MarkerMessage const>(data)) {
+            if (!std::dynamic_pointer_cast<MarkerMessage const>(data)) {
                 data_ = data;
                 yield();
             }
         });
-        modifier.addSlot("reset", [this](){
-            data_.reset();
-        });
+        modifier.addSlot("reset", [this]() { data_.reset(); });
         out_ = modifier.addOutput<AnyMessage>("Throttled");
     }
 
@@ -55,11 +51,8 @@ private:
     Output* out_;
 
     TokenDataConstPtr data_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::Latch, csapex::Node)
-

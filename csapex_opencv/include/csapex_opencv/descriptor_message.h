@@ -7,38 +7,41 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
-namespace connection_types {
-
-
+namespace csapex
+{
+namespace connection_types
+{
 struct DescriptorMessage : public MessageTemplate<cv::Mat, DescriptorMessage>
 {
     DescriptorMessage();
 
     bool isBinary() const;
 
-    void write(std::ostream &out) const;
+    void write(std::ostream& out) const;
 };
 
 /// TRAITS
 template <>
-struct type<DescriptorMessage> {
-    static std::string name() {
+struct type<DescriptorMessage>
+{
+    static std::string name()
+    {
         return "cv::Mat (descriptors)";
     }
 };
 
-}
-}
+}  // namespace connection_types
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct convert<csapex::connection_types::DescriptorMessage> {
-  static Node encode(const csapex::connection_types::DescriptorMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::DescriptorMessage& rhs);
+namespace YAML
+{
+template <>
+struct convert<csapex::connection_types::DescriptorMessage>
+{
+    static Node encode(const csapex::connection_types::DescriptorMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::DescriptorMessage& rhs);
 };
-}
+}  // namespace YAML
 
-
-#endif // DESCRIPTOR_MESSAGE_H
+#endif  // DESCRIPTOR_MESSAGE_H

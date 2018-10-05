@@ -3,13 +3,12 @@
 
 /// SYSTEM
 #include <QDialog>
-#include <QGraphicsView>
 #include <QDialogButtonBox>
+#include <QGraphicsView>
 #include <opencv2/opencv.hpp>
 
 namespace csapex
 {
-
 class StaticMaskPainter : public QObject
 {
     Q_OBJECT
@@ -43,6 +42,6 @@ private:
     bool dragging;
 };
 
-}
+}  // namespace csapex
 
-#endif // FILTER_STATIC_MASK_PAINTER_H
+#endif  // FILTER_STATIC_MASK_PAINTER_H

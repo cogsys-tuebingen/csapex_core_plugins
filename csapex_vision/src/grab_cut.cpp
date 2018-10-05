@@ -2,20 +2,19 @@
 #include "grab_cut.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/timer.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 #include <csapex_opencv/roi_message.h>
-#include <csapex/profiling/timer.h>
-#include <csapex/profiling/interlude.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::GrabCut, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-
 
 GrabCut::GrabCut()
 {
@@ -23,36 +22,27 @@ GrabCut::GrabCut()
 
 void GrabCut::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::factory::declareRange(
-                     "iterations",
-                     csapex::param::ParameterDescription("Number of iterations of GrabCut"),
-                     1, 100, 1, 1));
+    addParameter(csapex::param::factory::declareRange("iterations", csapex::param::ParameterDescription("Number of iterations of GrabCut"), 1, 100, 1, 1));
 
-    addParameter(csapex::param::factory::declareRange(
-                     "threshold",
-                     csapex::param::ParameterDescription("Minimum value for a mask pixel to be used as non-zero"),
-                     0, 255, 128, 1));
+    addParameter(csapex::param::factory::declareRange("threshold", csapex::param::ParameterDescription("Minimum value for a mask pixel to be used as non-zero"), 0, 255, 128, 1));
 
     std::map<std::string, int> init_value = {
-        {"background", (int) cv::GC_BGD},
-        {"foreground", (int) cv::GC_FGD},
-        {"most probably background", (int) cv::GC_PR_BGD},
-        {"most probably foreground", (int) cv::GC_PR_FGD},
+        { "background", (int)cv::GC_BGD },
+        { "foreground", (int)cv::GC_FGD },
+        { "most probably background", (int)cv::GC_PR_BGD },
+        { "most probably foreground", (int)cv::GC_PR_FGD },
     };
 
-    addParameter(csapex::param::factory::declareParameterSet<int>(
-                     "initial value",
-                     csapex::param::ParameterDescription("Initial mask value for unspecified pixels"),
-                     init_value, cv::GC_BGD));
+    addParameter(csapex::param::factory::declareParameterSet<int>("initial value", csapex::param::ParameterDescription("Initial mask value for unspecified pixels"), init_value, cv::GC_BGD));
 }
 
 void GrabCut::setup(NodeModifier& node_modifier)
 {
-    in_  = node_modifier.addInput<CvMatMessage>("Image");
-    in_fg_  = node_modifier.addInput<CvMatMessage>("certain foreground");
-    in_bg_  = node_modifier.addInput<CvMatMessage>("certain background");
+    in_ = node_modifier.addInput<CvMatMessage>("Image");
+    in_fg_ = node_modifier.addInput<CvMatMessage>("certain foreground");
+    in_bg_ = node_modifier.addInput<CvMatMessage>("certain background");
 
-    in_roi_  = node_modifier.addOptionalInput<RoiMessage>("ROI");
+    in_roi_ = node_modifier.addOptionalInput<RoiMessage>("ROI");
 
     out_fg_ = node_modifier.addOutput<CvMatMessage>("possible foreground");
     out_bg_ = node_modifier.addOutput<CvMatMessage>("possible background");
@@ -66,10 +56,10 @@ void GrabCut::process()
     CvMatMessage::ConstPtr fg_msg = msg::getMessage<CvMatMessage>(in_fg_);
     CvMatMessage::ConstPtr bg_msg = msg::getMessage<CvMatMessage>(in_bg_);
 
-    if(!fg_msg->hasChannels(1, CV_8U)) {
+    if (!fg_msg->hasChannels(1, CV_8U)) {
         throw std::runtime_error("foreground mask is not mono");
     }
-    if(!bg_msg->hasChannels(1, CV_8U)) {
+    if (!bg_msg->hasChannels(1, CV_8U)) {
         throw std::runtime_error("background mask is not mono");
     }
 
@@ -85,19 +75,19 @@ void GrabCut::process()
         INTERLUDE("create mask");
 
         unsigned char threshold = readParameter<int>("threshold");
-        for(int i = 0; i < img.rows; ++i) {
-            for(int j = 0; j < img.rows; ++j) {
-                if(fg_certain.at<unsigned char>(i,j) > threshold) {
-                    mask.at<unsigned char>(i,j) = cv::GC_FGD;
+        for (int i = 0; i < img.rows; ++i) {
+            for (int j = 0; j < img.rows; ++j) {
+                if (fg_certain.at<unsigned char>(i, j) > threshold) {
+                    mask.at<unsigned char>(i, j) = cv::GC_FGD;
                     has_fg = true;
-                } else if(bg_certain.at<unsigned char>(i,j) > threshold) {
-                    mask.at<unsigned char>(i,j) = cv::GC_BGD;
+                } else if (bg_certain.at<unsigned char>(i, j) > threshold) {
+                    mask.at<unsigned char>(i, j) = cv::GC_BGD;
                     has_bg = true;
                 }
             }
         }
 
-        if(!has_fg || !has_bg) {
+        if (!has_fg || !has_bg) {
             CvMatMessage::Ptr bg_out(new CvMatMessage(enc::mono, img_msg->frame_id, img_msg->stamp_micro_seconds));
             CvMatMessage::Ptr fg_out(new CvMatMessage(enc::mono, img_msg->frame_id, img_msg->stamp_micro_seconds));
             bg_out->value = cv::Mat(img.rows, img.cols, CV_8UC1, cv::Scalar::all(255));
@@ -106,12 +96,10 @@ void GrabCut::process()
             msg::publish(out_bg_, bg_out);
             return;
         }
-
-
     }
 
     cv::Rect roi;
-    if(msg::hasMessage(in_roi_)) {
+    if (msg::hasMessage(in_roi_)) {
         roi = msg::getMessage<RoiMessage>(in_roi_)->value.rect();
     } else {
         roi = cv::Rect(0, 0, img.cols, img.rows);
@@ -136,4 +124,3 @@ void GrabCut::process()
     msg::publish(out_fg_, fg_out);
     msg::publish(out_bg_, bg_out);
 }
-

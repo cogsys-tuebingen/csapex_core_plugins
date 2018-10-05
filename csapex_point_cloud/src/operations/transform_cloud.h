@@ -5,8 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class TransformCloud : public Node
 {
 public:
@@ -24,6 +24,6 @@ private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
-#endif // POINT_COUNT_H
+#endif  // POINT_COUNT_H

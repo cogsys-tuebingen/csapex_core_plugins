@@ -10,14 +10,14 @@
 /// SYSTEM
 #include <tf/LinearMath/Transform.h>
 
-namespace csapex {
-namespace connection_types {
-
-
+namespace csapex
+{
+namespace connection_types
+{
 struct TransformMessage : public MessageTemplate<tf::Transform, TransformMessage>
 {
     TransformMessage();
-    TransformMessage(const std::string &frame_id, const std::string &child_frame_id);
+    TransformMessage(const std::string& frame_id, const std::string& child_frame_id);
 
     void sanitize();
 
@@ -27,26 +27,28 @@ public:
     std::string child_frame;
 };
 
-
 /// TRAITS
 template <>
-struct type<TransformMessage> {
-    static std::string name() {
+struct type<TransformMessage>
+{
+    static std::string name()
+    {
         return "TransformMessage";
     }
 };
 
-}
-}
+}  // namespace connection_types
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct convert<csapex::connection_types::TransformMessage> {
-  static Node encode(const csapex::connection_types::TransformMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::TransformMessage& rhs);
+namespace YAML
+{
+template <>
+struct convert<csapex::connection_types::TransformMessage>
+{
+    static Node encode(const csapex::connection_types::TransformMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::TransformMessage& rhs);
 };
-}
+}  // namespace YAML
 
-
-#endif // TRANSFORM_MESSAGE_H
+#endif  // TRANSFORM_MESSAGE_H

@@ -10,12 +10,14 @@
 /// YAML
 ///
 ///
-namespace YAML {
-template<>
-struct CSAPEX_MATH_EXPORT convert<csapex::math::linear::Vector> {
+namespace YAML
+{
+template <>
+struct CSAPEX_MATH_EXPORT convert<csapex::math::linear::Vector>
+{
     static Node encode(const csapex::math::linear::Vector& rhs);
     static bool decode(const Node& node, csapex::math::linear::Vector& rhs);
 };
-}
+}  // namespace YAML
 
-#endif // YAML_IO_H
+#endif  // YAML_IO_H

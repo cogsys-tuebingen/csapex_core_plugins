@@ -10,8 +10,8 @@
 #include <QImage>
 #include <QSharedPointer>
 
-
-namespace csapex {
+namespace csapex
+{
 class AssignClusterClass : public csapex::InteractiveNode
 {
     friend class AssignClusterClassAdapter;
@@ -26,7 +26,7 @@ public:
     virtual void beginProcess() override;
     virtual void finishProcess() override;
 
-    void setResult(std::vector<int> &result);
+    void setResult(std::vector<int>& result);
     void setActiveClassColor(const int r, const int g, const int b);
 
 private:
@@ -38,26 +38,25 @@ private:
     void display();
 
 protected:
-    csapex::Input*    in_image_;
-    csapex::Input*    in_clusters_;
-    csapex::Output*   out_labels_;
+    csapex::Input* in_image_;
+    csapex::Input* in_clusters_;
+    csapex::Output* out_labels_;
 
-    cv::Mat           image_;
-    cv::Mat           mask_;
-    cv::Mat           clusters_;
+    cv::Mat image_;
+    cv::Mat mask_;
+    cv::Mat clusters_;
 
     std::shared_ptr<std::vector<int>> result_;
 
-
 public:
     slim_signal::Signal<void(QImage, const cv::Mat&)> display_request;
-    slim_signal::Signal<void()>                                       submit_request;
-    slim_signal::Signal<void()>                                       drop_request;
-    slim_signal::Signal<void()>                                       clear_request;
-    slim_signal::Signal<void(int)>                                    set_class;
-    slim_signal::Signal<void(int,int,int)>                            set_color;
+    slim_signal::Signal<void()> submit_request;
+    slim_signal::Signal<void()> drop_request;
+    slim_signal::Signal<void()> clear_request;
+    slim_signal::Signal<void(int)> set_class;
+    slim_signal::Signal<void(int, int, int)> set_color;
 };
 
-}
+}  // namespace csapex
 
-#endif // ASSIGN_CLUSTER_CLASS_H
+#endif  // ASSIGN_CLUSTER_CLASS_H

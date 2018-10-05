@@ -5,16 +5,16 @@
 #include <csapex/msg/message.h>
 #include <csapex_core_plugins/csapex_core_lib_export.h>
 
-
 namespace YAML
 {
-template<typename T, typename S>
+template <typename T, typename S>
 struct as_if;
 }
 
-namespace csapex {
-namespace connection_types {
-
+namespace csapex
+{
+namespace connection_types
+{
 struct CSAPEX_CORE_LIB_EXPORT PointMessage : public Message
 {
 protected:
@@ -27,7 +27,7 @@ public:
 
     PointMessage(Message::Stamp stamp_micro_seconds);
 
-    void serialize(SerializationBuffer &data, SemanticVersion& version) const override;
+    void serialize(SerializationBuffer& data, SemanticVersion& version) const override;
     void deserialize(const SerializationBuffer& data, const SemanticVersion& version) override;
 
 private:
@@ -38,31 +38,34 @@ public:
     float y;
 };
 
-
 /// TRAITS
 template <>
-struct CSAPEX_CORE_LIB_EXPORT type<PointMessage> {
-    static std::string name() {
+struct CSAPEX_CORE_LIB_EXPORT type<PointMessage>
+{
+    static std::string name()
+    {
         return "Point";
     }
 };
 
-}
+}  // namespace connection_types
 
 template <>
 inline CSAPEX_CORE_LIB_EXPORT std::shared_ptr<connection_types::PointMessage> makeEmpty<connection_types::PointMessage>()
 {
     return std::shared_ptr<connection_types::PointMessage>(new connection_types::PointMessage(0));
 }
-}
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct CSAPEX_EXPORT_PLUGIN convert<csapex::connection_types::PointMessage> {
-  static Node encode(const csapex::connection_types::PointMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::PointMessage& rhs);
+namespace YAML
+{
+template <>
+struct CSAPEX_EXPORT_PLUGIN convert<csapex::connection_types::PointMessage>
+{
+    static Node encode(const csapex::connection_types::PointMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::PointMessage& rhs);
 };
-}
+}  // namespace YAML
 
-#endif // POINT_MESSAGE_H
+#endif  // POINT_MESSAGE_H

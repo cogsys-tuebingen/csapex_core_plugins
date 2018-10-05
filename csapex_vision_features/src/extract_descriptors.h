@@ -9,15 +9,14 @@
 
 namespace csapex
 {
-
 class ExtractDescriptors : public csapex::Node
 {
 public:
-    ExtractDescriptors();    
+    ExtractDescriptors();
 
 public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
@@ -33,6 +32,6 @@ private:
     bool refresh_;
 };
 
-}
+}  // namespace csapex
 
-#endif // EXTRACT_DESCRIPTORS_H
+#endif  // EXTRACT_DESCRIPTORS_H

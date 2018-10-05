@@ -2,11 +2,11 @@
 #include "times.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
-#include <csapex/model/node_modifier.h>
 #include <opencv2/core/core.hpp>
 
 using namespace csapex;
@@ -40,20 +40,8 @@ void Times::setup(NodeModifier& node_modifier)
 
 void Times::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::factory::declareRange("scale", -255.0, 255.0, 1.0, 0.1),
-                            scale_);
+    parameters.addParameter(param::factory::declareRange("scale", -255.0, 255.0, 1.0, 0.1), scale_);
 
-    std::map<std::string, int> types =
-    {
-        {"CV_8U", CV_8U},
-        {"CV_8S", CV_8S},
-        {"CV_16U", CV_16U},
-        {"CV_16S", CV_16S},
-        {"CV_32S", CV_32S},
-        {"CV_32F", CV_32F},
-        {"CV_64F", CV_64F}
-    };
-    parameters.addParameter(param::factory::declareParameterSet("mode", types, CV_32F),
-                            dtype_);
+    std::map<std::string, int> types = { { "CV_8U", CV_8U }, { "CV_8S", CV_8S }, { "CV_16U", CV_16U }, { "CV_16S", CV_16S }, { "CV_32S", CV_32S }, { "CV_32F", CV_32F }, { "CV_64F", CV_64F } };
+    parameters.addParameter(param::factory::declareParameterSet("mode", types, CV_32F), dtype_);
 }
-

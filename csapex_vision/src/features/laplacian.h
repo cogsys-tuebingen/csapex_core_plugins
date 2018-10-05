@@ -4,7 +4,8 @@
 /// COMPONENT
 #include "operator.h"
 
-namespace csapex {
+namespace csapex
+{
 class Laplacian : public Operator
 {
 public:
@@ -12,5 +13,5 @@ public:
 
     virtual void process() override;
 };
-}
-#endif // LAPLACIAN_H
+}  // namespace csapex
+#endif  // LAPLACIAN_H

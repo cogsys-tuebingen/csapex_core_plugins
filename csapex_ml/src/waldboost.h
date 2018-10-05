@@ -2,10 +2,11 @@
 #define WALDBOOST_H
 
 /// PROJECT
-#include <csapex/model/node.h>
 #include "waldboost/waldboost.hpp"
+#include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN WaldBoost : public Node
 {
 public:
@@ -16,18 +17,17 @@ public:
     virtual void process() override;
 
 private:
-    Input      *in_;
-    Output     *out_;
-    Slot       *reload_;
+    Input* in_;
+    Output* out_;
+    Slot* reload_;
 
     cv::WaldBoost wb_;
-    std::string   path_;
-    bool          loaded_;
-    bool          compute_labels_;
+    std::string path_;
+    bool loaded_;
+    bool compute_labels_;
 
     void reload();
-
 };
-}
+}  // namespace csapex
 
-#endif // WALDBOOST_H
+#endif  // WALDBOOST_H

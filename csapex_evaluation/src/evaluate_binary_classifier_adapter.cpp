@@ -7,19 +7,17 @@
 #include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
-#include <QTableView>
-#include <QPainter>
-#include <QVector3D>
 #include <QApplication>
+#include <QPainter>
+#include <QTableView>
+#include <QVector3D>
 
 using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(EvaluateBinaryClassifierAdapter, csapex::EvaluateBinaryClassifier)
 
-EvaluateBinaryClassifierTableModel::EvaluateBinaryClassifierTableModel() :
-    rows(0)
+EvaluateBinaryClassifierTableModel::EvaluateBinaryClassifierTableModel() : rows(0)
 {
-
 }
 
 void EvaluateBinaryClassifierTableModel::update(EvaluateBinaryClassifier::Metrics metrics)
@@ -28,38 +26,37 @@ void EvaluateBinaryClassifierTableModel::update(EvaluateBinaryClassifier::Metric
 
     metrics_ = metrics;
 
-    if(rows < (int) metrics_.size()){
-        beginInsertRows(QModelIndex(), rows, metrics_.size()-1);
+    if (rows < (int)metrics_.size()) {
+        beginInsertRows(QModelIndex(), rows, metrics_.size() - 1);
         rows = metrics_.size();
         endInsertRows();
     }
 }
 
-int EvaluateBinaryClassifierTableModel::rowCount(const QModelIndex &parent) const
+int EvaluateBinaryClassifierTableModel::rowCount(const QModelIndex& parent) const
 {
     std::unique_lock<std::recursive_mutex> lock(mutex_);
     return rows;
 }
 
-int EvaluateBinaryClassifierTableModel::columnCount(const QModelIndex &parent) const
+int EvaluateBinaryClassifierTableModel::columnCount(const QModelIndex& parent) const
 {
     return 1;
 }
 
-QVariant EvaluateBinaryClassifierTableModel::data(const QModelIndex &index, int role) const
+QVariant EvaluateBinaryClassifierTableModel::data(const QModelIndex& index, int role) const
 {
     std::unique_lock<std::recursive_mutex> lock(mutex_);
-    if(role == Qt::DisplayRole) {
+    if (role == Qt::DisplayRole) {
         return metrics_[index.row()].value;
-    } else if(role == Qt::ToolTipRole) {
+    } else if (role == Qt::ToolTipRole) {
         return QString::fromStdString(metrics_[index.row()].description);
-    } else if(role == Qt::SizeHintRole) {
+    } else if (role == Qt::SizeHintRole) {
         QSize s(78, 0);
         return QVariant::fromValue(s);
     }
 
-
-    if(role != Qt::BackgroundColorRole && role != Qt::ForegroundRole) {
+    if (role != Qt::BackgroundColorRole && role != Qt::ForegroundRole) {
         return QVariant();
     }
 
@@ -91,53 +88,50 @@ QVariant EvaluateBinaryClassifierTableModel::data(const QModelIndex &index, int 
      *
      */
 
-//    static QColor min_color = QColor::fromRgb(255, 0, 0);
-//    static QColor mid_color = QColor::fromRgb(255, 255, 0);
-//    static QColor max_color = QColor::fromRgb(0, 255, 0);
+    //    static QColor min_color = QColor::fromRgb(255, 0, 0);
+    //    static QColor mid_color = QColor::fromRgb(255, 255, 0);
+    //    static QColor max_color = QColor::fromRgb(0, 255, 0);
 
-//    int r = std::min(255, std::max(0, int(min_color.red() * (1.0-f) + max_color.red() * f)));
-//    int g = std::min(255, std::max(0, int(min_color.green() * (1.0-f) + max_color.green() * f)));
-//    int b = std::min(255, std::max(0, int(min_color.blue() * (1.0-f) + max_color.blue() * f)));
+    //    int r = std::min(255, std::max(0, int(min_color.red() * (1.0-f) +
+    //    max_color.red() * f))); int g = std::min(255, std::max(0,
+    //    int(min_color.green() * (1.0-f) + max_color.green() * f))); int b =
+    //    std::min(255, std::max(0, int(min_color.blue() * (1.0-f) +
+    //    max_color.blue() * f)));
 
     static QVector3D min_color(255, 0, 0);
     static QVector3D mid_color(255, 100, 50);
     static QVector3D max_color(50, 255, 50);
 
     QVector3D color;
-    if(f > 0.5) { // 0.5 ... 1.0
+    if (f > 0.5) {  // 0.5 ... 1.0
         double ff = (f - 0.5) * 2.0;
         color = mid_color * (1.0 - ff) + max_color * ff;
-    } else { // 0.0 ... 0.5
+    } else {  // 0.0 ... 0.5
         double ff = f * 2.0;
         color = min_color * (1.0 - ff) + mid_color * ff;
     }
 
     if (role == Qt::ForegroundRole) {
         int v = std::max(color[0], std::max(color[1], color[2])) < 100 ? 255 : 0;
-        return QVariant::fromValue(QColor::fromRgb(v,v,v));
+        return QVariant::fromValue(QColor::fromRgb(v, v, v));
     } else {
         return QVariant::fromValue(QColor::fromRgb(color[0], color[1], color[2]));
     }
-
 }
-
 
 QVariant EvaluateBinaryClassifierTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     std::unique_lock<std::recursive_mutex> lock(mutex_);
     if (role == Qt::DisplayRole) {
         return QString::fromStdString(orientation == Qt::Vertical ? metrics_[section].name : std::string("Value"));
-    } else if(role == Qt::ToolTipRole) {
+    } else if (role == Qt::ToolTipRole) {
         return QString::fromStdString(metrics_[section].description);
     }
     return QVariant();
 }
 
-
-
-
 EvaluateBinaryClassifierAdapter::EvaluateBinaryClassifierAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_(node)
+  : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
@@ -167,7 +161,7 @@ void EvaluateBinaryClassifierAdapter::setupUi(QBoxLayout* layout)
 void EvaluateBinaryClassifierAdapter::display()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 

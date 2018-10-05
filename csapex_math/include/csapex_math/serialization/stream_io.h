@@ -13,11 +13,10 @@ namespace math
 {
 namespace linear
 {
-
-inline std::ostream& operator << (std::ostream& stream, const Vector& vector)
+inline std::ostream& operator<<(std::ostream& stream, const Vector& vector)
 {
-    for(std::size_t i = 0; i < vector.size(); ++i) {
-        if(i > 0) {
+    for (std::size_t i = 0; i < vector.size(); ++i) {
+        if (i > 0) {
             stream << ", ";
         }
         stream << vector[i];
@@ -25,9 +24,8 @@ inline std::ostream& operator << (std::ostream& stream, const Vector& vector)
     return stream;
 }
 
-}
-}
-}
+}  // namespace linear
+}  // namespace math
+}  // namespace csapex
 
-
-#endif // PARAMETER_STREAM_IO_H
+#endif  // PARAMETER_STREAM_IO_H

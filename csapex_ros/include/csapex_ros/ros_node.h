@@ -12,7 +12,6 @@
 
 namespace csapex
 {
-
 class RosNode : public Node
 {
 protected:
@@ -35,6 +34,6 @@ protected:
     bool isConnected() const;
 };
 
-}
+}  // namespace csapex
 
-#endif // ROS_NODE_H
+#endif  // ROS_NODE_H

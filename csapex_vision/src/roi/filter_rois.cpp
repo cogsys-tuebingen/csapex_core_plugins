@@ -1,7 +1,7 @@
 #include "filter_rois.hpp"
 
-#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -19,27 +19,15 @@ FilterROIs::FilterROIs()
 
 void FilterROIs::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::factory::declareInterval("width",
-                                                          0, 640,
-                                                          0, 0,
-                                                          1),
-                 width_);
-    parameters.addParameter(param::factory::declareInterval("height",
-                                                          0, 480,
-                                                          0, 0,
-                                                          1),
-                 height_);
-    parameters.addParameter(param::factory::declareInterval("aspect",
-                                                          0.0, 10.0,
-                                                          0.0, 0.0,
-                                                          0.01),
-                 aspect_);
+    parameters.addParameter(param::factory::declareInterval("width", 0, 640, 0, 0, 1), width_);
+    parameters.addParameter(param::factory::declareInterval("height", 0, 480, 0, 0, 1), height_);
+    parameters.addParameter(param::factory::declareInterval("aspect", 0.0, 10.0, 0.0, 0.0, 0.01), aspect_);
 }
 
 void FilterROIs::setup(NodeModifier& node_modifier)
 {
-    in_rois_           = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
-    out_rois_passed_   = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs (passed)");
+    in_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
+    out_rois_passed_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs (passed)");
     out_rois_rejected_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs (rejected)");
 }
 
@@ -49,8 +37,7 @@ void FilterROIs::process()
     std::shared_ptr<std::vector<RoiMessage>> rois_out_passed(new std::vector<RoiMessage>());
     std::shared_ptr<std::vector<RoiMessage>> rois_out_rejected(new std::vector<RoiMessage>());
 
-    for (const RoiMessage& roi : *rois_in)
-    {
+    for (const RoiMessage& roi : *rois_in) {
         if (check(roi.value))
             rois_out_passed->emplace_back(roi);
         else
@@ -71,4 +58,3 @@ bool FilterROIs::check(const Roi& roi) const
 
     return passed;
 }
-

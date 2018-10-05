@@ -9,7 +9,6 @@
 
 namespace csapex
 {
-
 class LKTracking : public csapex::Node
 {
 public:
@@ -17,13 +16,13 @@ public:
 
 public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
     void reset();
 
 private:
-    void update(const csapex::param::Parameter *);
+    void update(const csapex::param::Parameter*);
 
 private:
     Input* in_image_;
@@ -39,6 +38,6 @@ private:
     cv::Mat prevGray;
 };
 
-}
+}  // namespace csapex
 
-#endif // FILTER_TOOL_DETECTION_H
+#endif  // FILTER_TOOL_DETECTION_H

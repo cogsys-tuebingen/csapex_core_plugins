@@ -10,29 +10,26 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::HistogramMessage)
 using namespace csapex;
 using namespace connection_types;
 
-HistogramMessage::HistogramMessage() :
-    MessageTemplate<HistogramContainer,
-                    HistogramMessage>()
+HistogramMessage::HistogramMessage() : MessageTemplate<HistogramContainer, HistogramMessage>()
 {
 }
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const HistogramContainer& t)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const HistogramContainer& t)
 {
     data << t.ranges;
     data << t.histograms;
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, HistogramContainer& t)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, HistogramContainer& t)
 {
     data >> t.ranges;
     data >> t.histograms;
     return data;
 }
 
-
-
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::HistogramMessage>::encode(const csapex::connection_types::HistogramMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
@@ -42,11 +39,11 @@ Node convert<csapex::connection_types::HistogramMessage>::encode(const csapex::c
 
 bool convert<csapex::connection_types::HistogramMessage>::decode(const Node& node, csapex::connection_types::HistogramMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
     // TODO: implement
     return true;
 }
-}
+}  // namespace YAML

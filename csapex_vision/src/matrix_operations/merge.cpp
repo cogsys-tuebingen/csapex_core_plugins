@@ -1,23 +1,22 @@
 #include "merge.h"
 
 /// PROJECT
-#include <csapex_opencv/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Merge, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
 
-Merge::Merge()
-    : VariadicInputs(makeEmpty<CvMatMessage>())
+Merge::Merge() : VariadicInputs(makeEmpty<CvMatMessage>())
 {
 }
 
-void Merge::setupParameters(Parameterizable &parameters)
+void Merge::setupParameters(Parameterizable& parameters)
 {
     setupVariadicParameters(parameters);
 }
@@ -41,7 +40,7 @@ void Merge::process()
     collectMessage(msgs, encoding);
     cv::Mat out_img;
 
-    if(msgs.empty()) {
+    if (msgs.empty()) {
         return;
     }
 
@@ -51,15 +50,15 @@ void Merge::process()
     msg::publish(output_, out_msg);
 }
 
-void Merge::collectMessage(std::vector<cv::Mat> &messages, Encoding& encoding)
+void Merge::collectMessage(std::vector<cv::Mat>& messages, Encoding& encoding)
 {
     bool first = true;
     std::vector<InputPtr> inputs = node_modifier_->getMessageInputs();
-    for(std::size_t i = 0 ; i < inputs.size() ; i++) {
-        Input *in = inputs[i].get();
-        if(msg::hasMessage(in)) {
+    for (std::size_t i = 0; i < inputs.size(); i++) {
+        Input* in = inputs[i].get();
+        if (msg::hasMessage(in)) {
             CvMatMessage::ConstPtr msg = msg::getMessage<CvMatMessage>(in);
-            if(first) {
+            if (first) {
                 stamp_ = msg->stamp_micro_seconds;
                 frame_id_ = msg->frame_id;
                 first = false;

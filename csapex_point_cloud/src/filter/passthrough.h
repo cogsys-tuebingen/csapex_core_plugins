@@ -5,15 +5,15 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class PassThrough : public Node
 {
 public:
     PassThrough();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
     template <class PointT>
@@ -21,7 +21,7 @@ public:
 
 private:
     void updateBorders();
-    void updateFields(const std::vector<std::string> &fields);
+    void updateFields(const std::vector<std::string>& fields);
 
 private:
     Input* input_cloud_;
@@ -31,6 +31,6 @@ private:
     std::vector<std::string> fields_;
 };
 
-}
+}  // namespace csapex
 
-#endif // PASSTHROUGH_H_
+#endif  // PASSTHROUGH_H_

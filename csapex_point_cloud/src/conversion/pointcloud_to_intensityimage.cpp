@@ -2,12 +2,12 @@
 #include "pointcloud_to_intensityimage.h"
 
 /// PROJECT
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/msg/io.h>
-#include <csapex_core_plugins/timestamp_message.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_core_plugins/timestamp_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::PointCloudToIntensityImage, csapex::Node)
 
@@ -20,9 +20,7 @@ PointCloudToIntensityImage::PointCloudToIntensityImage()
 
 void PointCloudToIntensityImage::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(
-            param::factory::declareBool("skip_invalid", true),
-            skip_invalid_);
+    parameters.addParameter(param::factory::declareBool("skip_invalid", true), skip_invalid_);
 }
 
 void PointCloudToIntensityImage::setup(NodeModifier& node_modifier)
@@ -36,11 +34,11 @@ void PointCloudToIntensityImage::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<PointCloudToIntensityImage>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<PointCloudToIntensityImage>(this, msg), msg->value);
 }
 
-namespace impl {
-
+namespace impl
+{
 template <class PointT>
 struct Impl
 {
@@ -58,7 +56,7 @@ struct Impl<pcl::PointXYZI>
         instance->inputCloudImpl(cloud);
     }
 };
-}
+}  // namespace impl
 
 template <class PointT>
 void PointCloudToIntensityImage::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
@@ -74,14 +72,14 @@ void PointCloudToIntensityImage::inputCloudImpl(typename pcl::PointCloud<pcl::Po
     int rows = n / cols;
 
     CvMatMessage::Ptr output(new CvMatMessage(enc::mono, cloud->header.frame_id, cloud->header.stamp));
-    output->value = cv::Mat(rows,cols, CV_16U, cv::Scalar::all(0));
+    output->value = cv::Mat(rows, cols, CV_16U, cv::Scalar::all(0));
 
     typename pcl::PointCloud<pcl::PointXYZI>::const_iterator pt = cloud->points.begin();
-    ushort* data = (ushort*) output->value.data;
+    ushort* data = (ushort*)output->value.data;
 
-    for(unsigned idx = 0; idx < n; ++idx) {
+    for (unsigned idx = 0; idx < n; ++idx) {
         const pcl::PointXYZI& p = *pt;
-        double dist = std::sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
+        double dist = std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
         if (!skip_invalid_ || dist == dist) {
             *data = p.intensity;
         }

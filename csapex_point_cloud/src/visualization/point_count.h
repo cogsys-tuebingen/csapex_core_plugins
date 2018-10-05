@@ -5,8 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class PointCount : public Node
 {
 public:
@@ -29,6 +29,6 @@ public:
     slim_signal::Signal<void(int)> display_request;
 };
 
-}
+}  // namespace csapex
 
-#endif // POINT_COUNT_H
+#endif  // POINT_COUNT_H

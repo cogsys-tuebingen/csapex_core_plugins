@@ -7,9 +7,10 @@
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
 
-namespace csapex {
-namespace connection_types {
-
+namespace csapex
+{
+namespace connection_types
+{
 struct TutorialMessage : public MessageTemplate<bool, TutorialMessage>
 {
     typedef std::shared_ptr<TutorialMessage> Ptr;
@@ -17,26 +18,30 @@ struct TutorialMessage : public MessageTemplate<bool, TutorialMessage>
 
     TutorialMessage();
 
-    void serialize(SerializationBuffer &data, SemanticVersion& version) const override;
+    void serialize(SerializationBuffer& data, SemanticVersion& version) const override;
     void deserialize(const SerializationBuffer& data, const SemanticVersion& version) override;
 };
 
 /// TRAITS
 template <>
-struct type<TutorialMessage> {
-    static std::string name() {
+struct type<TutorialMessage>
+{
+    static std::string name()
+    {
         return "TutorialMessage";
     }
 };
-}
-}
+}  // namespace connection_types
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct convert<csapex::connection_types::TutorialMessage> {
-  static Node encode(const csapex::connection_types::TutorialMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::TutorialMessage& rhs);
+namespace YAML
+{
+template <>
+struct convert<csapex::connection_types::TutorialMessage>
+{
+    static Node encode(const csapex::connection_types::TutorialMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::TutorialMessage& rhs);
 };
-}
-#endif // TUTORIAL_MESSAGE_H
+}  // namespace YAML
+#endif  // TUTORIAL_MESSAGE_H

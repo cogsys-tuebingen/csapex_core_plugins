@@ -3,12 +3,12 @@
 
 /// PROJECT
 #include <csapex/param/register_parameter.h>
-#include <csapex/serialization/io/std_io.h>
 #include <csapex/param/value_parameter.h>
+#include <csapex/serialization/io/std_io.h>
 
 /// SYSTEM
-#include <yaml-cpp/yaml.h>
 #include <boost/any.hpp>
+#include <yaml-cpp/yaml.h>
 
 CSAPEX_REGISTER_PARAM(AngleParameter)
 

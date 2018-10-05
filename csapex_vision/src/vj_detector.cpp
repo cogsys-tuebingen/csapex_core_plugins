@@ -2,35 +2,34 @@
 #include "vj_detector.h"
 
 /// PROJECT
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex_opencv/roi_message.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
+#include <csapex_opencv/roi_message.h>
 
 /// SYSTEM
-#include <fstream>
 #include <CascadeDetector.h>
+#include <fstream>
 
 CSAPEX_REGISTER_CLASS(csapex::VJDetector, csapex::Node)
 
 using namespace csapex;
 using namespace connection_types;
 
-VJDetector::VJDetector()
-    : vj_detector(nullptr), image_scanner(nullptr)
+VJDetector::VJDetector() : vj_detector(nullptr), image_scanner(nullptr)
 {
     addParameter(csapex::param::factory::declareFileInputPath("file", ""));
 }
 
 VJDetector::~VJDetector()
 {
-    if(vj_detector) {
+    if (vj_detector) {
         delete vj_detector;
     }
-    if(image_scanner) {
+    if (image_scanner) {
         delete image_scanner;
     }
 }
@@ -39,19 +38,19 @@ void VJDetector::process()
 {
     std::string filename = readParameter<std::string>("file");
 
-    if(!vj_detector || filename != file_) {
+    if (!vj_detector || filename != file_) {
         file_ = filename;
 
-        if(vj_detector) {
+        if (vj_detector) {
             delete vj_detector;
             vj_detector = nullptr;
             delete image_scanner;
             image_scanner = nullptr;
         }
 
-        if(!file_.empty()) {
+        if (!file_.empty()) {
             std::ifstream in(file_.c_str());
-            if(!in.is_open()) {
+            if (!in.is_open()) {
                 throw std::runtime_error(std::string("Error Viola Jones Classifier from file: ") + file_);
 
             } else {
@@ -59,20 +58,20 @@ void VJDetector::process()
 
                 vj_detector = CascadeDetector::load(&in, false, false);
                 image_scanner = new ImageScanner(vj_detector,
-                                                 7.5, // minscale
-                                                 55.0, // maxscale
+                                                 7.5,   // minscale
+                                                 55.0,  // maxscale
                                                  1.414213562);
             }
         }
     }
 
-    if(!vj_detector) {
+    if (!vj_detector) {
         return;
     }
 
     CvMatMessage::ConstPtr a = msg::getMessage<CvMatMessage>(input_);
 
-    if(!a->hasChannels(1, CV_8U)) {
+    if (!a->hasChannels(1, CV_8U)) {
         throw std::runtime_error("image must be one channel grayscale.");
     }
 
@@ -82,7 +81,7 @@ void VJDetector::process()
     image_scanner->setImage(&img);
 
     utilities::rectangle rect;
-    while(image_scanner->scanNext(&rect)) {
+    while (image_scanner->scanNext(&rect)) {
         RoiMessage::Ptr msg(new RoiMessage);
         msg->value = cv::Rect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
         out->value.push_back(msg);
@@ -90,7 +89,6 @@ void VJDetector::process()
 
     msg::publish(output_, out);
 }
-
 
 void VJDetector::setup()
 {

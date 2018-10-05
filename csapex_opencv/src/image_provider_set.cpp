@@ -6,8 +6,7 @@
 
 using namespace csapex;
 
-ImageProviderSet::ImageProviderSet()
-    : next_frame(-1)
+ImageProviderSet::ImageProviderSet() : next_frame(-1)
 {
     state.addParameter(csapex::param::factory::declareBool("set/playing", true));
     state.addParameter(csapex::param::factory::declareBool("set/loop", false));
@@ -21,16 +20,16 @@ ImageProviderSet::~ImageProviderSet()
 
 bool ImageProviderSet::hasNext()
 {
-    if(state.readParameter<bool>("playback/resend")) {
+    if (state.readParameter<bool>("playback/resend")) {
         return true;
     }
 
-    if(!state.readParameter<bool>("set/playing")) {
+    if (!state.readParameter<bool>("set/playing")) {
         // not resend and not playing
         return false;
     }
 
-    if(state.readParameter<bool>("set/loop")) {
+    if (state.readParameter<bool>("set/loop")) {
         return true;
     }
 
@@ -43,7 +42,7 @@ void ImageProviderSet::next(cv::Mat& img, cv::Mat& mask)
     cv::Mat i;
 
     int requested_frame = state.readParameter<int>("set/current_frame");
-    if(state.readParameter<bool>("set/playing") || requested_frame != next_frame) {
+    if (state.readParameter<bool>("set/playing") || requested_frame != next_frame) {
         reallyNext(i, mask);
 
     } else {
