@@ -13,6 +13,7 @@ struct Circle
   double center_x;
   double center_y;
   double radius;
+  int id;
 };
 
 SerializationBuffer& operator << (SerializationBuffer& data, const Circle& c);
