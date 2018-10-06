@@ -5,22 +5,20 @@
 #include <csapex/model/node_facade_impl.h>
 
 /// SYSTEM
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
 #include <qwt_legend.h>
 #include <qwt_legend_label.h>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
 
 using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ScatterPlotAdapter, csapex::ScatterPlot)
 
-
-ScatterPlotAdapter::ScatterPlotAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ScatterPlot> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_(node)
+ScatterPlotAdapter::ScatterPlotAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ScatterPlot> node) : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
-    observe(n ->display_request, this, &ScatterPlotAdapter::displayRequest);
-    observe(n ->update, this, &ScatterPlotAdapter::displayRequest);
+    observe(n->display_request, this, &ScatterPlotAdapter::displayRequest);
+    observe(n->update, this, &ScatterPlotAdapter::displayRequest);
 }
 
 void ScatterPlotAdapter::setupUi(QBoxLayout* layout)
@@ -47,7 +45,7 @@ void ScatterPlotAdapter::display()
     std::size_t n_plots = n->getNumberOfPlots();
     n->updateLineColors();
     std::vector<QwtPlotCurve*> curve(n_plots);
-    for(std::size_t i = 0; i < n_plots; ++ i){
+    for (std::size_t i = 0; i < n_plots; ++i) {
         curve[i] = new QwtPlotCurve;
     }
 
@@ -63,22 +61,19 @@ void ScatterPlotAdapter::display()
 
     plot_widget_->replot();
 
-    for(std::size_t i = 1; i < n_plots; ++i){
+    for (std::size_t i = 1; i < n_plots; ++i) {
         curve[i]->setBaseline(0.0);
         curve[i]->setStyle(QwtPlotCurve::Dots);
         curve[i]->setPen(n->getLineColor(i), n->readParameter<double>("point_size"));
 
-        curve[i]->setRawSamples(n->getXData(), n->getVarData(i-1), n->getCount());
+        curve[i]->setRawSamples(n->getXData(), n->getVarData(i - 1), n->getCount());
 
         curve[i]->scaleRect(n->getXMap(), n->getYMap());
 
         curve[i]->attach(plot_widget_);
         plot_widget_->replot();
     }
-
 }
-
 
 /// MOC
 #include "moc_scatter_plot_adapter.cpp"
-

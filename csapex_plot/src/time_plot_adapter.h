@@ -6,14 +6,14 @@
 
 /// PROJECT
 #include <csapex/msg/io.h>
-#include <csapex/view/utility/register_node_adapter.h>
 #include <csapex/view/node/default_node_adapter.h>
+#include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
 #include <QBoxLayout>
 
-namespace csapex {
-
+namespace csapex
+{
 class TimePlotAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -32,9 +32,9 @@ Q_SIGNALS:
 protected:
     std::weak_ptr<TimePlot> wrapped_;
 
-    QwtPlot* plot_widget_ ;
+    QwtPlot* plot_widget_;
 };
 
-}
+}  // namespace csapex
 
-#endif // TIME_PLOT_ADAPTER_H
+#endif  // TIME_PLOT_ADAPTER_H

@@ -1,52 +1,58 @@
 #pragma once
 
-#include "../data/voxel_index.hpp"
 #include "../data/voxel_data.hpp"
+#include "../data/voxel_index.hpp"
 #include <cslibs_indexed_storage/operations/clustering.hpp>
 
-namespace csapex { namespace clustering
+namespace csapex
 {
-
+namespace clustering
+{
 namespace detail
 {
-
-template<std::size_t I, std::size_t N, typename Tuple>
+template <std::size_t I, std::size_t N, typename Tuple>
 struct ValidatorVisitorImpl
 {
     static constexpr bool finish(Tuple& visitors)
     {
-        return std::get<I>(visitors).finish()
-               & ValidatorVisitorImpl<I + 1, N, Tuple>::finish(visitors);
+        return std::get<I>(visitors).finish() & ValidatorVisitorImpl<I + 1, N, Tuple>::finish(visitors);
     }
 
-    template<typename Data>
+    template <typename Data>
     static constexpr bool start(Tuple& visitors, const Data& data)
     {
-        return std::get<I>(visitors).start(data)
-               & ValidatorVisitorImpl<I + 1, N, Tuple>::start(visitors, data);
+        return std::get<I>(visitors).start(data) & ValidatorVisitorImpl<I + 1, N, Tuple>::start(visitors, data);
     }
 
-    template<typename Data>
+    template <typename Data>
     static constexpr bool extend(Tuple& visitors, const Data& data, const Data& other)
     {
-        return std::get<I>(visitors).extend(data, other)
-               & ValidatorVisitorImpl<I + 1, N, Tuple>::extend(visitors, data, other);
+        return std::get<I>(visitors).extend(data, other) & ValidatorVisitorImpl<I + 1, N, Tuple>::extend(visitors, data, other);
     }
 };
 
-template<std::size_t N, typename Tuple>
+template <std::size_t N, typename Tuple>
 struct ValidatorVisitorImpl<N, N, Tuple>
 {
-    static constexpr bool finish(Tuple&) { return true; }
+    static constexpr bool finish(Tuple&)
+    {
+        return true;
+    }
 
-    template<typename Data>
-    static constexpr bool start(Tuple&, const Data&) { return true; }
+    template <typename Data>
+    static constexpr bool start(Tuple&, const Data&)
+    {
+        return true;
+    }
 
-    template<typename Data>
-    static constexpr bool extend(Tuple&, const Data&, const Data&) { return true; }
+    template <typename Data>
+    static constexpr bool extend(Tuple&, const Data&, const Data&)
+    {
+        return true;
+    }
 };
 
-template<typename Tuple>
+template <typename Tuple>
 struct ValidatorVisitor
 {
     static constexpr auto Size = std::tuple_size<Tuple>::value;
@@ -56,22 +62,22 @@ struct ValidatorVisitor
         return ValidatorVisitorImpl<0, Size, Tuple>::finish(visitors);
     }
 
-    template<typename Data>
+    template <typename Data>
     static constexpr bool start(Tuple& visitors, const Data& data)
     {
         return ValidatorVisitorImpl<0, Size, Tuple>::start(visitors, data);
     }
 
-    template<typename Data>
+    template <typename Data>
     static constexpr bool extend(Tuple& visitors, const Data& data, const Data& other)
     {
         return ValidatorVisitorImpl<0, Size, Tuple>::extend(visitors, data, other);
     }
 };
 
-}
+}  // namespace detail
 
-template<typename Storage, typename... Validators>
+template <typename Storage, typename... Validators>
 class ClusterOperation
 {
 public:
@@ -79,10 +85,9 @@ public:
     using Data = typename Storage::data_t;
     using ValidatorList = std::tuple<Validators&...>;
 
-    ClusterOperation(const Storage& storage, Validators&... validator) :
-            storage_(storage),
-            validators_(std::forward_as_tuple(validator...))
-    {}
+    ClusterOperation(const Storage& storage, Validators&... validator) : storage_(storage), validators_(std::forward_as_tuple(validator...))
+    {
+    }
 
     std::size_t getClusterCount() const
     {
@@ -103,7 +108,7 @@ public:
         if (!detail::ValidatorVisitor<ValidatorList>::start(validators_, data))
             return false;
 
-        current_cluster_index_ +=1;
+        current_cluster_index_ += 1;
 
         data.cluster = current_cluster_index_;
         current_cluster_.push_back(&data);
@@ -132,7 +137,7 @@ public:
     using neighborhood_t = cslibs_indexed_storage::operations::clustering::GridNeighborhoodStatic<std::tuple_size<Index>::value, 3>;
     using visitor_index_t = typename neighborhood_t::offset_t;
 
-    template<typename visitor_t>
+    template <typename visitor_t>
     void visit_neighbours(const Index&, const visitor_t& visitior)
     {
         static constexpr auto neighborhood = neighborhood_t{};
@@ -155,4 +160,5 @@ private:
     ValidatorList validators_;
 };
 
-}}
+}  // namespace clustering
+}  // namespace csapex

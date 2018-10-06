@@ -8,8 +8,8 @@
 /// SYSTEM
 #include <future>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN Delay : public Node
 {
 public:
@@ -18,8 +18,7 @@ public:
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
     virtual void setupParameters(Parameterizable& parameters);
-    virtual void process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters,
-                         Continuation continuation);
+    virtual void process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters, Continuation continuation);
 
     virtual void tearDown() override;
 
@@ -31,7 +30,7 @@ private:
     void doSleep();
 
     void delayInput(Continuation continuation);
-    void delayEvent(const TokenPtr &token);
+    void delayEvent(const TokenPtr& token);
 
 private:
     Input* input_;
@@ -45,9 +44,8 @@ private:
     param::OutputProgressParameter* progress_;
 
     std::future<void> future;
-
 };
 
-}
+}  // namespace csapex
 
-#endif // DELAY_H
+#endif  // DELAY_H

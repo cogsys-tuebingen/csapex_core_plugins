@@ -11,7 +11,6 @@
 
 namespace csapex
 {
-
 class Input;
 
 class ImageRoi : public InteractiveNode
@@ -35,18 +34,18 @@ private:
     void drop();
 
 protected:
-    Input*        input_;
-    Output*       output_;
-    cv::Size      last_mat_size_;
+    Input* input_;
+    Output* output_;
+    cv::Size last_mat_size_;
 
     connection_types::RoiMessage::Ptr result_;
 
 public:
     slim_signal::Signal<void(QImage)> display_request;
-    slim_signal::Signal<void()>                       submit_request;
-    slim_signal::Signal<void()>                       drop_request;
+    slim_signal::Signal<void()> submit_request;
+    slim_signal::Signal<void()> drop_request;
 };
 
-}
+}  // namespace csapex
 
-#endif // ROI_IMAGE_H
+#endif  // ROI_IMAGE_H

@@ -3,8 +3,8 @@
 #include <csapex/model/node.h>
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
-#include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 
 namespace csapex
@@ -15,7 +15,7 @@ public:
     EstimateCenter();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
     template <class PointT>
@@ -37,4 +37,4 @@ private:
 
     std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>> output_;
 };
-}
+}  // namespace csapex

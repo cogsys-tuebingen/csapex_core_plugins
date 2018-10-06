@@ -10,9 +10,8 @@
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class OptimizationDummy : public csapex::Node
 {
 public:
@@ -28,7 +27,6 @@ private:
     Output* out_grad_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // OPTIMIZATION_DUMMY_H
+#endif  // OPTIMIZATION_DUMMY_H

@@ -6,14 +6,14 @@
 
 using namespace csapex;
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const lib_laser_processing::Scan::Header& header)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const lib_laser_processing::Scan::Header& header)
 {
     data << header.seq;
     data << header.stamp_nsec;
     data << header.frame_id;
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, lib_laser_processing::Scan::Header& header)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, lib_laser_processing::Scan::Header& header)
 {
     data >> header.seq;
     data >> header.stamp_nsec;
@@ -21,13 +21,13 @@ const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data,
     return data;
 }
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const lib_laser_processing::LaserBeam& beam)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const lib_laser_processing::LaserBeam& beam)
 {
     data << beam.yaw();
     data << beam.range();
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, lib_laser_processing::LaserBeam& beam)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, lib_laser_processing::LaserBeam& beam)
 {
     float yaw, range;
     data >> yaw;
@@ -36,7 +36,7 @@ const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data,
     return data;
 }
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const lib_laser_processing::Scan& scan)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const lib_laser_processing::Scan& scan)
 {
     data << scan.header;
     data << scan.angle_min;
@@ -48,7 +48,7 @@ SerializationBuffer& csapex::operator << (SerializationBuffer& data, const lib_l
     data << scan.valid;
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, lib_laser_processing::Scan& scan)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, lib_laser_processing::Scan& scan)
 {
     data >> scan.header;
     data >> scan.angle_min;
@@ -61,20 +61,20 @@ const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data,
     return data;
 }
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const lib_laser_processing::LabeledScan& scan)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const lib_laser_processing::LabeledScan& scan)
 {
     data << static_cast<const lib_laser_processing::Scan&>(scan);
     data << scan.labels;
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, lib_laser_processing::LabeledScan& scan)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, lib_laser_processing::LabeledScan& scan)
 {
     data >> static_cast<lib_laser_processing::Scan&>(scan);
     data >> scan.labels;
     return data;
 }
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const lib_laser_processing::Segment& segment)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const lib_laser_processing::Segment& segment)
 {
     data << segment.rays;
     data << segment.frame_id;
@@ -83,7 +83,7 @@ SerializationBuffer& csapex::operator << (SerializationBuffer& data, const lib_l
     data << segment.start_idx;
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, lib_laser_processing::Segment& segment)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, lib_laser_processing::Segment& segment)
 {
     data >> segment.rays;
     data >> segment.frame_id;

@@ -8,9 +8,8 @@
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class MakeScreenshot : public csapex::Node
 {
 public:
@@ -28,7 +27,6 @@ private:
     Event* done_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // MAKE_SCREENSHOT_H
+#endif  // MAKE_SCREENSHOT_H

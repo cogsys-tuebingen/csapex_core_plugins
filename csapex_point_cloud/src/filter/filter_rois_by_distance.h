@@ -8,7 +8,11 @@ namespace csapex
 class FilterROIsByDistance : public Node
 {
 public:
-    enum Method { MEAN, MEDIAN };
+    enum Method
+    {
+        MEAN,
+        MEDIAN
+    };
 
 public:
     void setupParameters(csapex::Parameterizable& parameters) override;
@@ -28,4 +32,4 @@ private:
     int method_;
     bool remove_;
 };
-}
+}  // namespace csapex

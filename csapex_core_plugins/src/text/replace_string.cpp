@@ -1,11 +1,11 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 
 /// SYSTEM
 #include <boost/algorithm/string.hpp>
@@ -15,8 +15,6 @@ using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class ReplaceString : public Node
 {
 public:
@@ -40,7 +38,7 @@ public:
     {
         std::string value = msg::getValue<std::string>(in_);
 
-        if(!needle_.empty()) {
+        if (!needle_.empty()) {
             boost::replace_all(value, needle_, replacement_);
         }
 
@@ -55,8 +53,6 @@ private:
     std::string replacement_;
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::ReplaceString, csapex::Node)
-

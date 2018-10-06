@@ -2,8 +2,8 @@
 #define SCAN_LABELER_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/node/default_node_adapter.h>
 #include <csapex/model/generic_state.h>
+#include <csapex/view/node/default_node_adapter.h>
 
 /// COMPONENT
 #include "scan_labeler.h"
@@ -13,8 +13,8 @@
 #include <QGraphicsView>
 #include <yaml-cpp/yaml.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ScanLabelerAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -54,34 +54,36 @@ protected:
         QPolygonF inside;
         QGraphicsPolygonItem* inside_item;
 
-        State()
-            : width(300), height(300)
-        {}
+        State() : width(300), height(300)
+        {
+        }
 
-        virtual void writeYaml(YAML::Node& out) const {
+        virtual void writeYaml(YAML::Node& out) const
+        {
             out["width"] = width;
             out["height"] = height;
 
             std::vector<double> pts;
-            for(const auto& pt : inside) {
+            for (const auto& pt : inside) {
                 pts.push_back(pt.x());
                 pts.push_back(pt.y());
             }
             out["inside"] = pts;
         }
-        virtual void readYaml(const YAML::Node& node) {
-            if(node["width"].IsDefined()) {
+        virtual void readYaml(const YAML::Node& node)
+        {
+            if (node["width"].IsDefined()) {
                 width = node["width"].as<int>();
             }
-            if(node["height"].IsDefined()) {
+            if (node["height"].IsDefined()) {
                 height = node["height"].as<int>();
             }
-            if(node["inside"].IsDefined()) {
+            if (node["inside"].IsDefined()) {
                 auto pts = node["inside"].as<std::vector<double>>();
-                for(std::size_t i = 0; i < pts.size(); i+= 2) {
+                for (std::size_t i = 0; i < pts.size(); i += 2) {
                     QPointF pt;
                     pt.setX(pts[i]);
-                    pt.setY(pts[i+1]);
+                    pt.setY(pts[i + 1]);
                     inside.push_back(pt);
                 }
             }
@@ -104,6 +106,6 @@ private:
     QPoint last_pos_;
 };
 
-}
+}  // namespace csapex
 
-#endif // SCAN_LABELER_ADAPTER_H
+#endif  // SCAN_LABELER_ADAPTER_H

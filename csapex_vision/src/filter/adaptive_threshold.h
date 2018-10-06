@@ -6,7 +6,6 @@
 
 namespace csapex
 {
-
 class AdaptiveThreshold : public Node
 {
 public:
@@ -22,6 +21,6 @@ private:
     Input* input_;
 };
 
-}
+}  // namespace csapex
 
-#endif // ADAPTIVE_THRESHOLD_H
+#endif  // ADAPTIVE_THRESHOLD_H

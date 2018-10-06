@@ -2,8 +2,8 @@
 #define ROI_IMAGE_ADAPTER_H
 
 /// PROJECT
-#include <csapex/view/node/default_node_adapter.h>
 #include <csapex/model/generic_state.h>
+#include <csapex/view/node/default_node_adapter.h>
 
 /// COMPONENT
 #include "image_roi.h"
@@ -12,8 +12,8 @@
 #include <QGraphicsView>
 #include <yaml-cpp/yaml.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ImageRoiAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -22,12 +22,12 @@ public:
     ImageRoiAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node);
 
     virtual GenericStatePtr getState() const;
-    virtual void         setParameterState(GenericStatePtr memento);
+    virtual void setParameterState(GenericStatePtr memento);
 
-    virtual void         setupUi(QBoxLayout* layout);
+    virtual void setupUi(QBoxLayout* layout);
 
 public Q_SLOTS:
-    void display(const QImage &img);
+    void display(const QImage& img);
     void fitInView();
     void submit();
     void drop();
@@ -40,34 +40,35 @@ Q_SIGNALS:
 protected:
     bool eventFilter(QObject* o, QEvent* e);
 
-    struct State : public GenericState {
-        int     width;
-        int     height;
-        QSize   last_size;
-        QSize   last_roi_size;
-        QRectF  roi_rect;
+    struct State : public GenericState
+    {
+        int width;
+        int height;
+        QSize last_size;
+        QSize last_roi_size;
+        QRectF roi_rect;
         QPointF scene_pos;
 
-        State()
-            : width(300), height(300),
-              last_size(-1,-1),
-              last_roi_size(-1,-1)
-        {}
-
-        virtual void writeYaml(YAML::Node& out) const {
-            out["width"]           = width;
-            out["height"]          = height;
-            out["last_width"]      = last_size.width();
-            out["last_height"]     = last_size.height();
-            out["last_roi_height"] = last_roi_size.height();
-            out["last_roi_width"]  = last_roi_size.width();
-            out["roi_r_w"]         = roi_rect.width();
-            out["roi_r_h"]         = roi_rect.height();
-            out["scene_r_x"]       = scene_pos.x();
-            out["scene_r_y"]       = scene_pos.y();
+        State() : width(300), height(300), last_size(-1, -1), last_roi_size(-1, -1)
+        {
         }
 
-        virtual void readYaml(const YAML::Node& node) {
+        virtual void writeYaml(YAML::Node& out) const
+        {
+            out["width"] = width;
+            out["height"] = height;
+            out["last_width"] = last_size.width();
+            out["last_height"] = last_size.height();
+            out["last_roi_height"] = last_roi_size.height();
+            out["last_roi_width"] = last_roi_size.width();
+            out["roi_r_w"] = roi_rect.width();
+            out["roi_r_h"] = roi_rect.height();
+            out["scene_r_x"] = scene_pos.x();
+            out["scene_r_y"] = scene_pos.y();
+        }
+
+        virtual void readYaml(const YAML::Node& node)
+        {
             width = node["width"].as<int>();
             height = node["height"].as<int>();
             last_size.setHeight(node["last_height"].as<float>());
@@ -79,29 +80,28 @@ protected:
             scene_pos.setX(node["scene_r_x"].as<float>());
             scene_pos.setY(node["scene_r_y"].as<float>());
         }
-
     };
 
     std::weak_ptr<ImageRoi> wrapped_;
 
 private:
-    State                state;
+    State state;
 
-    QGraphicsPixmapItem *pixmap_;
-    QGraphicsRectItem   *rect_;
+    QGraphicsPixmapItem* pixmap_;
+    QGraphicsRectItem* rect_;
 
-    QGraphicsView*       view_;
+    QGraphicsView* view_;
 
-    QImage               empty;
-    QPainter             painter;
+    QImage empty;
+    QPainter painter;
 
-    bool                 middle_button_down_;
-//    bool                 left_button_down_;
-    bool                 loaded_;
-    QPoint               middle_last_pos_;
-    QPoint               left_last_pos_;
+    bool middle_button_down_;
+    //    bool                 left_button_down_;
+    bool loaded_;
+    QPoint middle_last_pos_;
+    QPoint left_last_pos_;
 };
 
-}
+}  // namespace csapex
 
-#endif // ROI_IMAGE_ADAPTER_H
+#endif  // ROI_IMAGE_ADAPTER_H

@@ -8,9 +8,8 @@
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class GrabCut : public csapex::Node
 {
 public:
@@ -31,7 +30,6 @@ private:
     Output* out_bg_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // GRAB_CUT_H
+#endif  // GRAB_CUT_H

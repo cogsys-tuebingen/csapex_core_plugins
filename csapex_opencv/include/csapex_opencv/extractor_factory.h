@@ -19,8 +19,10 @@ public:
      * @brief create instanciates a new Extractor
      * @param keypoint name of the keypoint detector
      * @param descriptor name of the descriptor extractor
-     * @throws Extractor::IllegalKeypointException iff <b>keypoint</b> is not recognized
-     * @throws Extractor::IllegalDescriptorException iff <b>descriptor</b> is not recognized
+     * @throws Extractor::IllegalKeypointException iff <b>keypoint</b> is not
+     * recognized
+     * @throws Extractor::IllegalDescriptorException iff <b>descriptor</b> is not
+     * recognized
      * @return new instance
      */
     static Extractor::Ptr create(const std::string& keypoint, const std::string& descriptor);
@@ -28,7 +30,8 @@ public:
 private:
     ExtractorFactory();
 
-    static ExtractorFactory& instance() {
+    static ExtractorFactory& instance()
+    {
         static ExtractorFactory i;
         return i;
     }
@@ -37,4 +40,4 @@ private:
     csapex::ExtractorManager& manager;
 };
 
-#endif // EXTRACTOR_FACTORY_H
+#endif  // EXTRACTOR_FACTORY_H

@@ -5,14 +5,13 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/model/variadic_io.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class MergeClouds : public csapex::Node, public VariadicInputs
 {
 public:
@@ -36,7 +35,6 @@ private:
     connection_types::PointCloudMessage::Ptr result_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // MERGE_CLOUDS_H
+#endif  // MERGE_CLOUDS_H

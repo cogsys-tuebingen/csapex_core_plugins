@@ -1,14 +1,13 @@
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/utility/register_apex_plugin.h>
 
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN Statistics : public Node
 {
 public:
@@ -27,10 +26,7 @@ public:
 
     void setupParameters(Parameterizable& parameters)
     {
-        parameters.addParameter(param::factory::declareTrigger("reset"),
-                                [this](param::Parameter*) {
-            reset();
-        });
+        parameters.addParameter(param::factory::declareTrigger("reset"), [this](param::Parameter*) { reset(); });
 
         parameters.addParameter(param::factory::declareOutputText("mean"));
         parameters.addParameter(param::factory::declareOutputText("std dev"));
@@ -40,10 +36,10 @@ public:
     {
         double x = 0.0;
 
-        if(msg::isMessage<connection_types::GenericValueMessage<double>>(in_)) {
+        if (msg::isMessage<connection_types::GenericValueMessage<double>>(in_)) {
             x = msg::getValue<double>(in_);
 
-        } else if(msg::isMessage<connection_types::GenericValueMessage<int>>(in_)) {
+        } else if (msg::isMessage<connection_types::GenericValueMessage<int>>(in_)) {
             x = msg::getValue<int>(in_);
 
         } else {
@@ -52,8 +48,8 @@ public:
 
         double prev_mean = m;
         ++n;
-        m = m + (x-m)/n;
-        S = ((n-1)*S + (x-m)*(x-prev_mean))/((double)n);
+        m = m + (x - m) / n;
+        S = ((n - 1) * S + (x - m) * (x - prev_mean)) / ((double)n);
 
         double std = sqrt(S);
         setParameter("mean", "mean : " + std::to_string(m));
@@ -81,6 +77,6 @@ private:
     int n;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::Statistics, csapex::Node)

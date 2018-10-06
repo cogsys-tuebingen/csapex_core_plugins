@@ -1,11 +1,11 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/any_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/any_message.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -14,7 +14,6 @@ namespace csapex
 {
 namespace state
 {
-
 class ActivitySwitch : public Node
 {
 public:
@@ -31,7 +30,6 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-
     }
 
     void activation() override
@@ -49,7 +47,7 @@ public:
         auto message = msg::getMessage(in_);
         apex_assert(message);
 
-        if(active_) {
+        if (active_) {
             msg::publish(out_active_, message);
 
         } else {
@@ -65,8 +63,7 @@ private:
     bool active_;
 };
 
-}
-}
+}  // namespace state
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::state::ActivitySwitch, csapex::Node)
-

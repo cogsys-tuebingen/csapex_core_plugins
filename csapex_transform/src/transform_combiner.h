@@ -4,8 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class TransformCombiner : public csapex::Node
 {
 public:
@@ -24,6 +24,6 @@ private:
     int which_stamp_;
 };
 
-}
+}  // namespace csapex
 
-#endif // TRANSFORM_COMBINER_H
+#endif  // TRANSFORM_COMBINER_H

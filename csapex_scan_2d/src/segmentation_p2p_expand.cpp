@@ -1,8 +1,8 @@
 #include "segmentation_p2p_expand.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <cslibs_laser_processing/segmentation/p2pdistance_expand.h>
 
 using namespace csapex;
@@ -12,12 +12,11 @@ CSAPEX_REGISTER_CLASS(csapex::P2PSegmentationExpand, csapex::Node)
 
 P2PSegmentationExpand::P2PSegmentationExpand()
 {
-
 }
 
-void P2PSegmentationExpand::setupParameters(Parameterizable &parameters)
+void P2PSegmentationExpand::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::factory::declareRange("max. distance",  0.01, 2.0, 0.01, 0.01), std::bind(&P2PSegmentationExpand::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange("max. distance", 0.01, 2.0, 0.01, 0.01), std::bind(&P2PSegmentationExpand::update, this));
 }
 
 void P2PSegmentationExpand::update()

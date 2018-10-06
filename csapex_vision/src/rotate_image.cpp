@@ -1,16 +1,15 @@
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_opencv/cv_mat_message.h>
 #include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 using namespace csapex::connection_types;
 
-
-namespace csapex {
-
+namespace csapex
+{
 class RotateImage : public csapex::Node
 {
 public:
@@ -22,18 +21,14 @@ public:
     {
         parameters.addParameter(csapex::param::factory::declareRange("angle", -M_PI, M_PI, 0.0, 0.001));
         std::map<std::string, int> modes = {
-            {"nearest", (int) cv::INTER_NEAREST},
-            {"linear", (int) cv::INTER_LINEAR},
-            {"area", (int) cv::INTER_AREA},
-            {"cubic", (int) cv::INTER_CUBIC},
-            {"lanczos4", (int) cv::INTER_LANCZOS4},
+            { "nearest", (int)cv::INTER_NEAREST }, { "linear", (int)cv::INTER_LINEAR }, { "area", (int)cv::INTER_AREA }, { "cubic", (int)cv::INTER_CUBIC }, { "lanczos4", (int)cv::INTER_LANCZOS4 },
         };
-        parameters.addParameter(csapex::param::factory::declareParameterSet("mode", modes, (int) cv::INTER_NEAREST));
+        parameters.addParameter(csapex::param::factory::declareParameterSet("mode", modes, (int)cv::INTER_NEAREST));
     }
 
     void setup(csapex::NodeModifier& node_modifier)
     {
-        in_  = node_modifier.addInput<CvMatMessage>("image");
+        in_ = node_modifier.addInput<CvMatMessage>("image");
         out_ = node_modifier.addOutput<CvMatMessage>("rotated image");
     }
 
@@ -48,14 +43,11 @@ public:
         doProcess(src, angle, mode, dst);
     }
 
-    void doProcess(const CvMatMessage::ConstPtr& src,
-                   double angle,
-                   int mode,
-                   CvMatMessage::Ptr& dst)
+    void doProcess(const CvMatMessage::ConstPtr& src, double angle, int mode, CvMatMessage::Ptr& dst)
     {
         int dim = std::max(src->value.cols, src->value.rows);
 
-        cv::Point2d pt(dim/2.0, dim/2.0);
+        cv::Point2d pt(dim / 2.0, dim / 2.0);
         cv::Mat r = cv::getRotationMatrix2D(pt, angle / M_PI * 180.0, 1.0);
 
         cv::warpAffine(src->value, dst->value, r, cv::Size(dim, dim), mode);
@@ -68,6 +60,6 @@ private:
     Output* out_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::RotateImage, csapex::Node)

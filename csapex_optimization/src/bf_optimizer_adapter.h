@@ -10,8 +10,8 @@
 class QDialog;
 class QProgressBar;
 
-namespace csapex {
-
+namespace csapex
+{
 class BFOptimizerAdapter : public OptimizerAdapter
 {
     Q_OBJECT
@@ -33,5 +33,5 @@ protected:
     QProgressBar* progress_;
 };
 
-}
-#endif // BF_OPTIMIZER_ADAPTER_H
+}  // namespace csapex
+#endif  // BF_OPTIMIZER_ADAPTER_H

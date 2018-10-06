@@ -10,7 +10,8 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN DecisionTreeForest : public Node
 {
 public:
@@ -21,12 +22,12 @@ public:
     virtual void process() override;
 
 private:
-    Input      *in_;
-    Output     *out_;
-    Slot       *reload_;
-    bool        loaded_;
+    Input* in_;
+    Output* out_;
+    Slot* reload_;
+    bool loaded_;
 
-    cv::Mat     forest_responses_;
+    cv::Mat forest_responses_;
     std::size_t forest_size_;
 #if CV_MAJOR_VERSION == 2
     typedef std::shared_ptr<cv::DecisionTree> DTreePtr;
@@ -37,10 +38,8 @@ private:
     std::vector<DTreePtr> forest_;
 #endif
 
-
     void load();
-
 };
-}
+}  // namespace csapex
 
-#endif // DECISION_TREE_FOREST_H
+#endif  // DECISION_TREE_FOREST_H

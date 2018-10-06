@@ -2,11 +2,11 @@
 #include "register_plugin.h"
 
 /// COMPONENT
-#include <csapex_vision_features/keypoint_message.h>
-#include <csapex_vision_features/descriptor_message.h>
 #include <csapex/factory/generic_node_factory.hpp>
-#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/factory/node_factory_impl.h>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex_vision_features/descriptor_message.h>
+#include <csapex_vision_features/keypoint_message.h>
 
 /// PROJECT
 #include <csapex/factory/message_factory.h>
@@ -24,8 +24,7 @@ RegisterVisionFeaturePlugin::RegisterVisionFeaturePlugin()
 {
 }
 
-void rotateKeypoint(const connection_types::GenericValueMessage<cv::KeyPoint>& input,
-                    connection_types::GenericValueMessage<cv::KeyPoint>& output)
+void rotateKeypoint(const connection_types::GenericValueMessage<cv::KeyPoint>& input, connection_types::GenericValueMessage<cv::KeyPoint>& output)
 {
     output = input;
 }

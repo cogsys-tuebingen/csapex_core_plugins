@@ -12,7 +12,6 @@ class Mat;
 
 namespace csapex
 {
-
 class ImageToPointCloud : public Node
 {
 public:
@@ -35,17 +34,15 @@ public:
     ImageToPointCloud();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
     template <typename PointT, IntensityType>
-    connection_types::PointCloudMessage::Ptr
-    transform(const cv::Mat& range, const cv::Mat& intensity, std::uint64_t stamp);
+    connection_types::PointCloudMessage::Ptr transform(const cv::Mat& range, const cv::Mat& intensity, std::uint64_t stamp);
 
     template <typename PointT, typename ImageType, IntensityType>
-    connection_types::PointCloudMessage::Ptr
-    transformImpl(const cv::Mat& range, const cv::Mat& intensity, std::uint64_t stamp);
+    connection_types::PointCloudMessage::Ptr transformImpl(const cv::Mat& range, const cv::Mat& intensity, std::uint64_t stamp);
 
     double depth_to_range(double) const;
 
@@ -57,6 +54,6 @@ private:
     DepthType depth_type;
 };
 
-}
+}  // namespace csapex
 
-#endif // IMAGE_TO_POINT_CLOUD_H
+#endif  // IMAGE_TO_POINT_CLOUD_H

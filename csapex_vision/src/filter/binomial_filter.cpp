@@ -2,12 +2,12 @@
 #include "binomial_filter.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 #include <cslibs_vision/utils/kernel.hpp>
-#include <csapex/model/node_modifier.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -25,7 +25,7 @@ void BinomialFilter::process()
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(in->getEncoding(), in->frame_id, in->stamp_micro_seconds));
 
     int kernel_size = readParameter<int>("kernel");
-    if(kernel_size != kernel_size_) {
+    if (kernel_size != kernel_size_) {
         cslibs_vision::buildBinomialKernel(kernel_, kernel_size);
         kernel_size_ = kernel_size;
     }

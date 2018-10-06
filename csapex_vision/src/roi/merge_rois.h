@@ -1,12 +1,11 @@
 #ifndef MERGE_ROIS_H
 #define MERGE_ROIS_H
 
-
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class MergeROIs : public csapex::Node
 {
 public:
@@ -20,6 +19,6 @@ private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
-#endif // MERGE_ROIS_H
+#endif  // MERGE_ROIS_H

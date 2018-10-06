@@ -4,8 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class LabelRegions : public csapex::Node
 {
 public:
@@ -16,9 +16,9 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Output*   output_;
-    csapex::Input*    input_;
+    csapex::Output* output_;
+    csapex::Input* input_;
 };
-}
+}  // namespace csapex
 
-#endif // LABEL_REGIONS_H
+#endif  // LABEL_REGIONS_H

@@ -9,7 +9,6 @@
 
 namespace csapex
 {
-
 class CSAPEX_OPENCV_EXPORT Roi
 {
 public:
@@ -33,15 +32,12 @@ public:
     void setLabel(const std::string& label);
     std::string label() const;
 
-    int        classification() const;
-    void       setClassification(const int c);
-    cv::Rect   rect() const;
-    void       setRect(const cv::Rect &r);
+    int classification() const;
+    void setClassification(const int c);
+    cv::Rect rect() const;
+    void setRect(const cv::Rect& r);
     cv::Scalar color() const;
-    void       setColor(const cv::Scalar &c);
-
-
-
+    void setColor(const cv::Scalar& c);
 
 private:
     void check();
@@ -53,5 +49,5 @@ private:
     std::string label_;
 };
 
-}
-#endif // ROI_H
+}  // namespace csapex
+#endif  // ROI_H

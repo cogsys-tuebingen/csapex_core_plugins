@@ -1,9 +1,9 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 
@@ -12,8 +12,6 @@ using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class ImageInformation : public Node
 {
 public:
@@ -48,13 +46,13 @@ public:
 
     std::string getImageType(int number)
     {
-        // taken from https://stackoverflow.com/questions/12335663/getting-enum-names-e-g-cv-32fc1-of-opencv-image-types
+        // taken from
+        // https://stackoverflow.com/questions/12335663/getting-enum-names-e-g-cv-32fc1-of-opencv-image-types
         // find type
-        int imgTypeInt = number%8;
+        int imgTypeInt = number % 8;
         std::string imgTypeString;
 
-        switch (imgTypeInt)
-        {
+        switch (imgTypeInt) {
             case 0:
                 imgTypeString = "8U";
                 break;
@@ -81,22 +79,18 @@ public:
         }
 
         // find channel
-        int channel = (number/8) + 1;
+        int channel = (number / 8) + 1;
 
         std::stringstream type;
-        type<<"CV_"<<imgTypeString<<"C"<<channel;
+        type << "CV_" << imgTypeString << "C" << channel;
 
         return type.str();
     }
 
-
 private:
     Input* in_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::ImageInformation, csapex::Node)
-

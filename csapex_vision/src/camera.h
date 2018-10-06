@@ -12,7 +12,6 @@
 
 namespace csapex
 {
-
 class Camera : public Node
 {
 public:
@@ -20,7 +19,7 @@ public:
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
     virtual bool canProcess() const override;
 
@@ -36,6 +35,6 @@ private:
     int h_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // CAMERA_H_
+#endif  // CAMERA_H_

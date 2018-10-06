@@ -12,12 +12,11 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::GenericRosMessage)
 using namespace csapex;
 using namespace connection_types;
 
-GenericRosMessage::GenericRosMessage()
-    : MessageTemplate<std::shared_ptr<topic_tools::ShapeShifter const>, GenericRosMessage> ("/")
-{}
+GenericRosMessage::GenericRosMessage() : MessageTemplate<std::shared_ptr<topic_tools::ShapeShifter const>, GenericRosMessage>("/")
+{
+}
 
-
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const topic_tools::ShapeShifter& rhs)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const topic_tools::ShapeShifter& rhs)
 {
     auto serialized = ros::serialization::serializeMessage(rhs);
 
@@ -26,7 +25,7 @@ SerializationBuffer& csapex::operator << (SerializationBuffer& data, const topic
 
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, topic_tools::ShapeShifter& shape)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, topic_tools::ShapeShifter& shape)
 {
     std::size_t num_bytes;
     data >> num_bytes;
@@ -41,7 +40,8 @@ const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data,
 }
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::GenericRosMessage>::encode(const csapex::connection_types::GenericRosMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
@@ -55,7 +55,7 @@ Node convert<csapex::connection_types::GenericRosMessage>::encode(const csapex::
     auto buf = node["buf"];
 
     // fill the buffer
-    for(std::size_t i = 0; i < serialized.num_bytes; ++i) {
+    for (std::size_t i = 0; i < serialized.num_bytes; ++i) {
         buf[i] = serialized.buf[i];
     }
 
@@ -64,7 +64,7 @@ Node convert<csapex::connection_types::GenericRosMessage>::encode(const csapex::
 
 bool convert<csapex::connection_types::GenericRosMessage>::decode(const Node& node, csapex::connection_types::GenericRosMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
 
@@ -83,4 +83,4 @@ bool convert<csapex::connection_types::GenericRosMessage>::decode(const Node& no
     rhs.value = shapeshifter;
     return true;
 }
-}
+}  // namespace YAML

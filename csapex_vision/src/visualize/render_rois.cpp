@@ -2,16 +2,15 @@
 #include "render_rois.h"
 
 /// PROJECT
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex_opencv/roi_message.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
+#include <csapex_opencv/roi_message.h>
 
 /// SYSTEM
-
 
 CSAPEX_REGISTER_CLASS(csapex::RenderROIs, csapex::Node)
 
@@ -24,7 +23,7 @@ RenderROIs::RenderROIs()
 
 void RenderROIs::setup(NodeModifier& node_modifier)
 {
-    input_img_  = node_modifier.addInput<CvMatMessage>("image");
+    input_img_ = node_modifier.addInput<CvMatMessage>("image");
     input_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
 
     output_ = node_modifier.addOutput<CvMatMessage>("Rendered Image");
@@ -33,7 +32,7 @@ void RenderROIs::setup(NodeModifier& node_modifier)
 void RenderROIs::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareRange<int>("thickness", 1, 20, 1, 1));
-    parameters.addParameter(csapex::param::factory::declareColorParameter("color", 0,0,0));
+    parameters.addParameter(csapex::param::factory::declareColorParameter("color", 0, 0, 0));
     parameters.addParameter(csapex::param::factory::declareBool("force color", false));
     parameters.addParameter(csapex::param::factory::declareBool("ignore unclassified", false));
 }
@@ -47,7 +46,7 @@ void RenderROIs::process()
     int thickness = readParameter<int>("thickness");
     bool force_color = readParameter<bool>("force color");
 
-    if(img->hasChannels(1, CV_8U)) {
+    if (img->hasChannels(1, CV_8U)) {
         cv::cvtColor(img->value, out->value, CV_GRAY2BGR);
         out->setEncoding(enc::bgr);
     } else {
@@ -55,17 +54,16 @@ void RenderROIs::process()
     }
 
     cv::Scalar color;
-    if(force_color) {
-        std::vector<int> c = readParameter<std::vector<int> >("color");
+    if (force_color) {
+        std::vector<int> c = readParameter<std::vector<int>>("color");
         color = cv::Scalar(c[2], c[1], c[0]);
     }
 
     bool ignore_uc = readParameter<bool>("ignore unclassified");
-    std::shared_ptr< std::vector<RoiMessage> const> rois =
-            msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_);
+    std::shared_ptr<std::vector<RoiMessage> const> rois = msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_);
 
-    for(const RoiMessage& roi : *rois) {
-        if(ignore_uc && roi.value.classification() == -1) {
+    for (const RoiMessage& roi : *rois) {
+        if (ignore_uc && roi.value.classification() == -1) {
             continue;
         }
 
@@ -73,7 +71,7 @@ void RenderROIs::process()
 
         std::string text = roi.value.label();
 
-        if(!text.empty()) {
+        if (!text.empty()) {
             cv::Point pt = roi.value.rect().tl();
             cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar::all(0), 4, CV_AA);
             cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., roi.value.color(), 1, CV_AA);
@@ -82,4 +80,3 @@ void RenderROIs::process()
 
     msg::publish(output_, out);
 }
-

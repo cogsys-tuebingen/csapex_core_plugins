@@ -7,7 +7,6 @@
 
 namespace csapex
 {
-
 class PointCloudToIntensityImage : public Node
 {
 public:
@@ -28,6 +27,6 @@ private:
     bool skip_invalid_;
 };
 
-}
+}  // namespace csapex
 
-#endif // POINTCLOUD_TO_INTENSITYIMAGE_H
+#endif  // POINTCLOUD_TO_INTENSITYIMAGE_H

@@ -4,7 +4,8 @@
 /// COMPONENT
 #include "corner_line_detection.h"
 
-namespace csapex {
+namespace csapex
+{
 class Canny : public CornerLineDetection
 {
 public:
@@ -16,13 +17,11 @@ public:
 protected:
     void update();
 
-    double  threshold_1_;
-    double  threshold_2_;
-    int     aperture_size_;
-    bool    L2_gradient_;
-
+    double threshold_1_;
+    double threshold_2_;
+    int aperture_size_;
+    bool L2_gradient_;
 };
-}
+}  // namespace csapex
 
-
-#endif // CANNY_H
+#endif  // CANNY_H

@@ -1,20 +1,17 @@
 /// COMPONENT
 #include <csapex/model/node.h>
-#include <csapex/msg/io.h>
-#include <csapex/msg/generic_value_message.hpp>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/token.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/signal/event.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex::connection_types;
 
-
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN SignalDelayMeasurement : public Node
 {
 public:
@@ -24,9 +21,7 @@ public:
 
         time_out_ = modifier.addEvent<double>("time_delay_ms");
 
-        modifier.addSlot("start", [this]() {
-            start_ = std::chrono::system_clock::now();
-        });
+        modifier.addSlot("start", [this]() { start_ = std::chrono::system_clock::now(); });
         modifier.addSlot("stop", [this]() {
             end_ = std::chrono::system_clock::now();
 
@@ -55,10 +50,6 @@ private:
     Event* time_out_;
 };
 
-
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::SignalDelayMeasurement, csapex::Node)
-
-
-

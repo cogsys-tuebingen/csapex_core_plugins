@@ -2,10 +2,10 @@
 #include "image_collage.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImageCollage, csapex::Node)
@@ -13,19 +13,14 @@ CSAPEX_REGISTER_CLASS(csapex::ImageCollage, csapex::Node)
 using namespace csapex;
 using namespace csapex::connection_types;
 
-
 ImageCollage::ImageCollage()
 {
 }
 
 void ImageCollage::setupParameters(Parameterizable& parameters)
 {
-    csapex::param::Parameter::Ptr x = csapex::param::factory::declareRange("x",
-                                                   csapex::param::ParameterDescription("x position of the overlay"),
-                                                   0, 800, 0, 1);
-    csapex::param::Parameter::Ptr y = csapex::param::factory::declareRange("y",
-                                                   csapex::param::ParameterDescription("y position of the overlay"),
-                                                   0, 600, 0, 1);
+    csapex::param::Parameter::Ptr x = csapex::param::factory::declareRange("x", csapex::param::ParameterDescription("x position of the overlay"), 0, 800, 0, 1);
+    csapex::param::Parameter::Ptr y = csapex::param::factory::declareRange("y", csapex::param::ParameterDescription("y position of the overlay"), 0, 600, 0, 1);
 
     p_x_ = std::dynamic_pointer_cast<param::RangeParameter>(x);
     p_y_ = std::dynamic_pointer_cast<param::RangeParameter>(y);
@@ -36,8 +31,8 @@ void ImageCollage::setupParameters(Parameterizable& parameters)
 
 void ImageCollage::setup(NodeModifier& node_modifier)
 {
-    in_main_  = node_modifier.addInput<CvMatMessage>("Main image");
-    in_secondary_  = node_modifier.addInput<CvMatMessage>("Secondary image");
+    in_main_ = node_modifier.addInput<CvMatMessage>("Main image");
+    in_secondary_ = node_modifier.addInput<CvMatMessage>("Secondary image");
 
     out_ = node_modifier.addOutput<CvMatMessage>("Collage");
 }
@@ -51,7 +46,6 @@ void ImageCollage::process()
 
     primary->value.copyTo(output->value);
 
-
     int w_1 = primary->value.cols;
     int h_1 = primary->value.rows;
 
@@ -61,10 +55,10 @@ void ImageCollage::process()
     int max_x = std::max(0, w_1 - w_2);
     int max_y = std::max(0, h_1 - h_2);
 
-    if(p_x_->max<int>() != max_x) {
+    if (p_x_->max<int>() != max_x) {
         p_x_->setMax(max_x);
     }
-    if(p_y_->max<int>() != max_y) {
+    if (p_y_->max<int>() != max_y) {
         p_y_->setMax(max_y);
     }
 
@@ -81,4 +75,3 @@ void ImageCollage::process()
 
     msg::publish(out_, output);
 }
-

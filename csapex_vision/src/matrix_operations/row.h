@@ -16,12 +16,12 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 private:
-    Input  *input_;
-    Output *output_;
+    Input* input_;
+    Output* output_;
 
     bool request_center_;
     void requestCenter();
 };
-}
+}  // namespace csapex
 
-#endif // ROW_H
+#endif  // ROW_H

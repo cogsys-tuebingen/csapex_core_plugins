@@ -2,10 +2,11 @@
 #define SVM_H
 
 /// PROJECT
-#include <csapex/model/node.h>
 #include "extended_svm.hpp"
+#include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN SVM : public Node
 {
 public:
@@ -16,12 +17,17 @@ public:
     virtual void process() override;
 
 private:
-    enum ThresholdType { GREATER = 0, LESS, LESS_EQUAL, GREATER_EQUAL};
+    enum ThresholdType
+    {
+        GREATER = 0,
+        LESS,
+        LESS_EQUAL,
+        GREATER_EQUAL
+    };
 
-    Input      *in_;
-    Output     *out_;
-    Slot       *reload_;
-
+    Input* in_;
+    Output* out_;
+    Slot* reload_;
 
 #if CV_MAJOR_VERSION == 2
     ExtendedSVM svm_;
@@ -29,10 +35,10 @@ private:
     cv::Ptr<cv::ml::SVM> svm_;
 #endif
     std::string path_;
-    bool        loaded_;
+    bool loaded_;
 
     void reload();
 };
-}
+}  // namespace csapex
 
-#endif // SVM_H
+#endif  // SVM_H

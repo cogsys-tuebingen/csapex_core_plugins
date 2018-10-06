@@ -1,7 +1,7 @@
 /*
-By downloading, copying, installing or using the software you agree to this license.
-If you do not agree to this license, do not download, install,
-copy or use the software.
+By downloading, copying, installing or using the software you agree to this
+license. If you do not agree to this license, do not download, install, copy or
+use the software.
 
 
                           License Agreement
@@ -32,9 +32,9 @@ are permitted provided that the following conditions are met:
 
 This software is provided by the copyright holders and contributors "as is" and
 any express or implied warranties, including, but not limited to, the implied
-warranties of merchantability and fitness for a particular purpose are disclaimed.
-In no event shall copyright holders or contributors be liable for any direct,
-indirect, incidental, special, exemplary, or consequential damages
+warranties of merchantability and fitness for a particular purpose are
+disclaimed. In no event shall copyright holders or contributors be liable for
+any direct, indirect, incidental, special, exemplary, or consequential damages
 (including, but not limited to, procurement of substitute goods or services;
 loss of use, data, or profits; or business interruption) however caused
 and on any theory of liability, whether in contract, strict liability,
@@ -47,21 +47,22 @@ the use of this software, even if advised of the possibility of such damage.
 
 #include <opencv2/opencv.hpp>
 
-namespace cv {
-
-class WaldBoost {
+namespace cv
+{
+class WaldBoost
+{
 public:
     WaldBoost(int weak_count);
     WaldBoost();
     std::vector<int> get_feature_indices();
 
     void train(Mat& data_pos, Mat& data_neg);
-    int  predict(const cv::Mat &sample, float &confidence) const;
+    int predict(const cv::Mat& sample, float& confidence) const;
     void save(const std::string& filename);
     void load(const std::string& filename);
 
-    void read(const FileNode &node);
-    void write(FileStorage &fs) const;
+    void read(const FileNode& node);
+    void write(FileStorage& fs) const;
 
     void reset(int weak_count);
     ~WaldBoost();
@@ -75,6 +76,6 @@ private:
     std::vector<float> cascade_thresholds_;
 };
 
-}
+}  // namespace cv
 
 #endif

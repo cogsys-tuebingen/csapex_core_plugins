@@ -4,13 +4,11 @@
 /// COMPONENT
 #include <csapex_vision_features/extractor_manager.h>
 
-ExtractorFactory::ExtractorFactory()
-    : manager(csapex::ExtractorManager::instance())
+ExtractorFactory::ExtractorFactory() : manager(csapex::ExtractorManager::instance())
 {
 }
 
-Extractor::Ptr ExtractorFactory::create(const std::string& keypoint, const std::string& descriptor,
-                                        const csapex::param::ParameterProvider& param)
+Extractor::Ptr ExtractorFactory::create(const std::string& keypoint, const std::string& descriptor, const csapex::param::ParameterProvider& param)
 {
     Extractor::Ptr e(new Extractor(0));
 

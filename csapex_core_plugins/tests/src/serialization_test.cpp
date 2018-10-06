@@ -1,17 +1,17 @@
 #include <csapex_testing/stepping_test.h>
 
-#include <csapex/model/graph/graph_impl.h>
-#include <csapex/core/graphio.h>
 #include <csapex/core/csapex_core.h>
-#include <csapex/plugin/plugin_locator.h>
+#include <csapex/core/graphio.h>
 #include <csapex/core/settings/settings_impl.h>
-#include <csapex/model/node_handle.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/io.h>
-#include <csapex/msg/generic_value_message.hpp>
-#include <csapex/model/token.h>
+#include <csapex/model/graph/graph_impl.h>
 #include <csapex/model/io.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/model/token.h>
 #include <csapex/msg/direct_connection.h>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/msg/output.h>
+#include <csapex/plugin/plugin_locator.h>
 #include <csapex_core_plugins/composite_message.h>
 #include <csapex_core_plugins/duration_message.h>
 #include <csapex_core_plugins/timestamp_message.h>
@@ -21,21 +21,16 @@
 using namespace csapex;
 using namespace connection_types;
 
-namespace csapex {
-
+namespace csapex
+{
 class TestPluginLocator : public PluginLocator
 {
 public:
-    TestPluginLocator(Settings& settings)
-        : PluginLocator(settings)
+    TestPluginLocator(Settings& settings) : PluginLocator(settings)
     {
 #ifdef PACKAGE_XML
-        registerLocator<CorePlugin>([this](std::vector<std::string>& paths){
-            paths.push_back(std::string(PACKAGE_XML));
-        });
-        registerLocator<Node>([this](std::vector<std::string>& paths){
-            paths.push_back(std::string(PACKAGE_XML));
-        });
+        registerLocator<CorePlugin>([this](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
+        registerLocator<Node>([this](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
 #else
         std::cerr << "Cannot find plugins for this test!" << std::endl;
 #endif
@@ -90,5 +85,4 @@ TEST_F(CorePluginsSerializationTest, CompositeMessageSerialization)
     }
 }
 
-
-}
+}  // namespace csapex

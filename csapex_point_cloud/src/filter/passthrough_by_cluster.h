@@ -5,27 +5,27 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class PassThroughByCluster : public Node
 {
 public:
     PassThroughByCluster();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
-    Input  *input_cloud_;
-    Input  *input_clusters_;
+    Input* input_cloud_;
+    Input* input_clusters_;
 
-    Output *output_pos_;
-    Output *output_neg_;
+    Output* output_pos_;
+    Output* output_neg_;
 };
-}
+}  // namespace csapex
 
-#endif // PASSTHROUGH_H_
+#endif  // PASSTHROUGH_H_

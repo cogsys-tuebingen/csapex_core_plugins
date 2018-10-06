@@ -2,13 +2,13 @@
 #include "image_to_point_cloud.h"
 
 /// PROJECT
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/msg/io.h>
-#include <csapex_core_plugins/timestamp_message.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/assert.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_core_plugins/timestamp_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 /// SYSTEM
 #include <type_traits>
@@ -22,20 +22,12 @@ ImageToPointCloud::ImageToPointCloud()
 {
 }
 
-void ImageToPointCloud::setupParameters(Parameterizable &parameters)
+void ImageToPointCloud::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareText("frame", "/camera"));
 
-    std::map<std::string, DepthType> depth_types = {
-        {"Direct (meters)", DepthType::METERS},
-        {"Direct (millimeters)", DepthType::MILLIMETERS},
-        {"Kinect (tangential)" , DepthType::KINECT_TAN}
-    };
-    parameters.addParameter(csapex::param::factory::declareParameterSet("depth/type",
-                                                                                 param::ParameterDescription("Convertion of raw depth values"),
-                                                                                 depth_types,
-                                                                                 DepthType::METERS),
-                            depth_type);
+    std::map<std::string, DepthType> depth_types = { { "Direct (meters)", DepthType::METERS }, { "Direct (millimeters)", DepthType::MILLIMETERS }, { "Kinect (tangential)", DepthType::KINECT_TAN } };
+    parameters.addParameter(csapex::param::factory::declareParameterSet("depth/type", param::ParameterDescription("Convertion of raw depth values"), depth_types, DepthType::METERS), depth_type);
 
     parameters.addParameter(csapex::param::factory::declareRange("fov/h", 30.0, 180.0, 90.0, 0.1));
     parameters.addParameter(csapex::param::factory::declareRange("fov/v", 30.0, 180.0, 90.0, 0.1));
@@ -56,7 +48,6 @@ namespace
 template <typename PointT>
 void setIntensity(PointT&, int)
 {
-
 }
 
 template <>
@@ -65,11 +56,9 @@ void setIntensity<pcl::PointXYZI>(pcl::PointXYZI& pt, int v)
     pt.intensity = v;
 }
 
-
 template <typename PointT, ImageToPointCloud::IntensityType>
 void setColor(PointT&, const cv::Vec3b& color)
 {
-
 }
 
 template <>
@@ -87,23 +76,22 @@ void setColor<pcl::PointXYZRGB, ImageToPointCloud::IntensityType::RGB>(pcl::Poin
     pt.b = color.val[2];
 }
 
-}
+}  // namespace
 
 double ImageToPointCloud::depth_to_range(double v) const
 {
-    switch(depth_type)
-    {
-    case DepthType::METERS:
-        return v;
-        break;
-    case DepthType::MILLIMETERS:
-        return v / 1000.0;
-        break;
-    case DepthType::KINECT_TAN:
-        // https://stackoverflow.com/questions/8824743/kinect-raw-depth-to-distance-in-meters
-        return 0.1236 * std::tan(v / 2842.5 + 1.1863);
-    default:
-        return std::numeric_limits<double>::quiet_NaN();
+    switch (depth_type) {
+        case DepthType::METERS:
+            return v;
+            break;
+        case DepthType::MILLIMETERS:
+            return v / 1000.0;
+            break;
+        case DepthType::KINECT_TAN:
+            // https://stackoverflow.com/questions/8824743/kinect-raw-depth-to-distance-in-meters
+            return 0.1236 * std::tan(v / 2842.5 + 1.1863);
+        default:
+            return std::numeric_limits<double>::quiet_NaN();
     }
 }
 
@@ -124,23 +112,23 @@ PointCloudMessage::Ptr ImageToPointCloud::transformImpl(const cv::Mat& depth, co
     double mid_x = w / 2.0;
     double mid_y = h / 2.0;
 
-    std::pair<int,int> range = readParameter<std::pair<int,int> >("intensity");
+    std::pair<int, int> range = readParameter<std::pair<int, int>>("intensity");
 
-    for(int y = 0; y < depth.rows; ++y) {
-        for(int x = 0; x < depth.cols; ++x) {
+    for (int y = 0; y < depth.rows; ++y) {
+        for (int x = 0; x < depth.cols; ++x) {
             PointT pt;
 
-            double r = depth_to_range(depth.at<ImageType>(y,x));
+            double r = depth_to_range(depth.at<ImageType>(y, x));
 
-            if(std::is_same<PointT, pcl::PointXYZI>()){
+            if (std::is_same<PointT, pcl::PointXYZI>()) {
                 int i = intensity.at<uint8_t>(y, x);
                 setIntensity(pt, i);
 
-                if(i < range.first || i > range.second) {
+                if (i < range.first || i > range.second) {
                     continue;
                 }
 
-            } else if(std::is_same<PointT, pcl::PointXYZRGB>()){
+            } else if (std::is_same<PointT, pcl::PointXYZRGB>()) {
                 cv::Vec3b color = intensity.at<cv::Vec3b>(cv::Point(x, y));
                 setColor<PointT, IT>(pt, color);
             }
@@ -173,17 +161,15 @@ PointCloudMessage::Ptr ImageToPointCloud::transformImpl(const cv::Mat& depth, co
 template <typename PointT, ImageToPointCloud::IntensityType IT>
 PointCloudMessage::Ptr ImageToPointCloud::transform(const cv::Mat& depth, const cv::Mat& intensity, std::uint64_t stamp)
 {
-    apex_assert_msg(depth.type() == CV_32FC1 || depth.type() == CV_16UC1,
-                    "Depth is not of type CV_32FC1 or CV_16UC1");
+    apex_assert_msg(depth.type() == CV_32FC1 || depth.type() == CV_16UC1, "Depth is not of type CV_32FC1 or CV_16UC1");
 
-    switch(depth.type())
-    {
-    case CV_32FC1:
-        return transformImpl<PointT, float, IT>(depth, intensity, stamp);
-    case CV_16UC1:
-        return transformImpl<PointT, std::uint16_t, IT>(depth, intensity, stamp);
-    default:
-        throw std::runtime_error("Unsupported image type");
+    switch (depth.type()) {
+        case CV_32FC1:
+            return transformImpl<PointT, float, IT>(depth, intensity, stamp);
+        case CV_16UC1:
+            return transformImpl<PointT, std::uint16_t, IT>(depth, intensity, stamp);
+        default:
+            throw std::runtime_error("Unsupported image type");
     }
 }
 
@@ -192,28 +178,28 @@ void ImageToPointCloud::process()
     CvMatMessage::ConstPtr depth_msg(msg::getMessage<CvMatMessage>(input_depth_));
 
     PointCloudMessage::Ptr result(new PointCloudMessage(readParameter<std::string>("frame"), depth_msg->stamp_micro_seconds));
-    if(msg::hasMessage(input_intensity_)) {
+    if (msg::hasMessage(input_intensity_)) {
         CvMatMessage::ConstPtr intensity_msg(msg::getMessage<CvMatMessage>(input_intensity_));
 
-        if(intensity_msg->value.type() == CV_8UC1) {
+        if (intensity_msg->value.type() == CV_8UC1) {
             result = transform<pcl::PointXYZI, IntensityType::INTENSITY>(depth_msg->value, intensity_msg->value, depth_msg->stamp_micro_seconds);
 
-        } else if(intensity_msg->value.type() == CV_8UC3) {
-            if(intensity_msg->getEncoding().matches(enc::rgb)) {
+        } else if (intensity_msg->value.type() == CV_8UC3) {
+            if (intensity_msg->getEncoding().matches(enc::rgb)) {
                 result = transform<pcl::PointXYZRGB, IntensityType::RGB>(depth_msg->value, intensity_msg->value, depth_msg->stamp_micro_seconds);
             } else {
                 result = transform<pcl::PointXYZRGB, IntensityType::BGR>(depth_msg->value, intensity_msg->value, depth_msg->stamp_micro_seconds);
             }
 
         } else {
-            node_modifier_->setWarning("Cannot interpret intensity. Please provide either CV_8UC1 or CV_8UC3 images.");
+            node_modifier_->setWarning("Cannot interpret intensity. Please provide "
+                                       "either CV_8UC1 or CV_8UC3 images.");
             result = transform<pcl::PointXYZ, IntensityType::NONE>(depth_msg->value, cv::Mat(), depth_msg->stamp_micro_seconds);
         }
 
     } else {
         result = transform<pcl::PointXYZ, IntensityType::NONE>(depth_msg->value, cv::Mat(), depth_msg->stamp_micro_seconds);
     }
-
 
     msg::publish(output_, result);
 }

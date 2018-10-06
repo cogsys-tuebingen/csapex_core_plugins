@@ -4,7 +4,8 @@
 /// COMPONENT
 #include "corner_line_detection.h"
 
-namespace csapex {
+namespace csapex
+{
 class HoughLinesP : public CornerLineDetection
 {
 public:
@@ -19,12 +20,12 @@ protected:
 
     double rho_;
     double theta_;
-    int    threshold_;
+    int threshold_;
     double min_line_length_;
     double max_line_gap_;
 
 private:
     csapex::Output* output_vector_;
 };
-}
-#endif // HOUGH_LINESP_H
+}  // namespace csapex
+#endif  // HOUGH_LINESP_H

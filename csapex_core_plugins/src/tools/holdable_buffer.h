@@ -8,7 +8,8 @@
 /// SYSTEM
 #include <deque>
 
-namespace csapex {
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN HoldableBuffer : public Node
 {
 public:
@@ -19,11 +20,11 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 private:
-    Input  *in_;
-    Output *out_;
+    Input* in_;
+    Output* out_;
 
     std::deque<TokenData::ConstPtr> buffer_;
 };
-}
+}  // namespace csapex
 
-#endif // BUFFER_H
+#endif  // BUFFER_H

@@ -7,24 +7,20 @@
 #include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
-#include <QPainter>
-#include <QGraphicsSceneEvent>
-#include <QGraphicsPixmapItem>
-#include <QCheckBox>
-#include <QPushButton>
 #include <QBitmap>
+#include <QCheckBox>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsSceneEvent>
+#include <QPainter>
+#include <QPushButton>
 #include <yaml-cpp/yaml.h>
 
 using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(MaskRefinementAdapter, csapex::MaskRefinement)
 
-
 MaskRefinementAdapter::MaskRefinementAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<MaskRefinement> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_(node),
-      view_(new QGraphicsView),
-      refresh_(false),
-      brush_size_(1)
+  : DefaultNodeAdapter(worker, parent), wrapped_(node), view_(new QGraphicsView), refresh_(false), brush_size_(1)
 {
     auto n = wrapped_.lock();
 
@@ -49,7 +45,7 @@ GenericStatePtr MaskRefinementAdapter::getState() const
 
 void MaskRefinementAdapter::setParameterState(GenericStatePtr memento)
 {
-    std::shared_ptr<State> m = std::dynamic_pointer_cast<State> (memento);
+    std::shared_ptr<State> m = std::dynamic_pointer_cast<State>(memento);
     apex_assert(m.get());
 
     state = *m;
@@ -57,10 +53,10 @@ void MaskRefinementAdapter::setParameterState(GenericStatePtr memento)
     view_->setFixedSize(QSize(state.width, state.height));
 }
 
-void MaskRefinementAdapter::setupUi(QBoxLayout *layout)
+void MaskRefinementAdapter::setupUi(QBoxLayout* layout)
 {
     QGraphicsScene* scene = view_->scene();
-    if(scene == nullptr) {
+    if (scene == nullptr) {
         scene = new QGraphicsScene();
         view_->setScene(scene);
         scene->installEventFilter(this);
@@ -86,104 +82,102 @@ void MaskRefinementAdapter::setupUi(QBoxLayout *layout)
     DefaultNodeAdapter::setupUi(layout);
 }
 
-bool MaskRefinementAdapter::eventFilter(QObject *o, QEvent *e)
+bool MaskRefinementAdapter::eventFilter(QObject* o, QEvent* e)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return false;
     }
 
-    QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*> (e);
+    QGraphicsSceneMouseEvent* me = dynamic_cast<QGraphicsSceneMouseEvent*>(e);
 
-    switch(e->type()) {
-    case QEvent::KeyPress: {
-        break;
-    }
-
-    case QEvent::Resize:
-    {
-        if(refresh_) {
-            fitView();
-            refresh_ = false;
-        }
-        return false;
-    }
-
-    case QEvent::GraphicsSceneMousePress:
-        if(me->button() == Qt::MiddleButton) {
-            middle_last_pos_ = me->screenPos();
-
-        } else if(me->button() == Qt::LeftButton) {
-            draw(me->scenePos(), Qt::white);
-
-        } else if(me->button() == Qt::RightButton) {
-            draw(me->scenePos(), Qt::black);
+    switch (e->type()) {
+        case QEvent::KeyPress: {
+            break;
         }
 
-        e->accept();
-        return true;
+        case QEvent::Resize: {
+            if (refresh_) {
+                fitView();
+                refresh_ = false;
+            }
+            return false;
+        }
 
-    case QEvent::GraphicsSceneMouseRelease: {
-        e->accept();
-        return true;
-    }
+        case QEvent::GraphicsSceneMousePress:
+            if (me->button() == Qt::MiddleButton) {
+                middle_last_pos_ = me->screenPos();
 
-    case QEvent::GraphicsSceneMouseMove:
-        if(me->buttons() & Qt::MiddleButton) {
-            auto scene = view_->scene();
-            if(!scene) {
-                return false;
+            } else if (me->button() == Qt::LeftButton) {
+                draw(me->scenePos(), Qt::white);
+
+            } else if (me->button() == Qt::RightButton) {
+                draw(me->scenePos(), Qt::black);
             }
 
-            QPoint delta     = me->screenPos() - middle_last_pos_;
-
-            middle_last_pos_ = me->screenPos();
-
-            state.width = std::max(32, view_->width() + delta.x());
-            state.height = std::max(32, view_->height() + delta.y());
-
-            view_->setFixedSize(QSize(state.width, state.height));
-
-            refresh_ = true;
-
             e->accept();
+            return true;
 
-        } else if(me->buttons() & Qt::LeftButton) {
-            draw(me->scenePos(), Qt::white);
-
-        } else if(me->buttons() & Qt::RightButton) {
-            draw(me->scenePos(), Qt::black);
+        case QEvent::GraphicsSceneMouseRelease: {
+            e->accept();
+            return true;
         }
 
+        case QEvent::GraphicsSceneMouseMove:
+            if (me->buttons() & Qt::MiddleButton) {
+                auto scene = view_->scene();
+                if (!scene) {
+                    return false;
+                }
 
-        updateCursor(me->scenePos());
+                QPoint delta = me->screenPos() - middle_last_pos_;
 
-        return true;
+                middle_last_pos_ = me->screenPos();
 
-        break;
-    case QEvent::GraphicsSceneWheel: {
-        e->accept();
+                state.width = std::max(32, view_->width() + delta.x());
+                state.height = std::max(32, view_->height() + delta.y());
 
-        QGraphicsSceneWheelEvent* we = dynamic_cast<QGraphicsSceneWheelEvent*> (e);
+                view_->setFixedSize(QSize(state.width, state.height));
 
-        int delta = we->delta() > 0 ? 1 : -1;
-        brush_size_ = std::max(1, std::min(64, brush_size_ + delta));
+                refresh_ = true;
 
-        node->setParameter<int>("brush/size", brush_size_);
+                e->accept();
 
-        updateCursor(we->scenePos());
+            } else if (me->buttons() & Qt::LeftButton) {
+                draw(me->scenePos(), Qt::white);
 
-        return true;
-    }
-    default:
-        break;
+            } else if (me->buttons() & Qt::RightButton) {
+                draw(me->scenePos(), Qt::black);
+            }
+
+            updateCursor(me->scenePos());
+
+            return true;
+
+            break;
+        case QEvent::GraphicsSceneWheel: {
+            e->accept();
+
+            QGraphicsSceneWheelEvent* we = dynamic_cast<QGraphicsSceneWheelEvent*>(e);
+
+            int delta = we->delta() > 0 ? 1 : -1;
+            brush_size_ = std::max(1, std::min(64, brush_size_ + delta));
+
+            node->setParameter<int>("brush/size", brush_size_);
+
+            updateCursor(we->scenePos());
+
+            return true;
+        }
+        default:
+            break;
     }
     return false;
 }
 
 void MaskRefinementAdapter::maskImage()
 {
-    if(masked_red_pixmap_->isVisible()) {
+    if (masked_red_pixmap_->isVisible()) {
         masked_red_pm_ = QPixmap::fromImage(img_);
 
         QPainter img_painter_red(&masked_red_pm_);
@@ -204,8 +198,7 @@ void MaskRefinementAdapter::maskImage()
     }
 }
 
-
-void MaskRefinementAdapter::draw(const QPointF &pos, Qt::GlobalColor color)
+void MaskRefinementAdapter::draw(const QPointF& pos, Qt::GlobalColor color)
 {
     double x = pos.x();
     double y = pos.y();
@@ -213,10 +206,10 @@ void MaskRefinementAdapter::draw(const QPointF &pos, Qt::GlobalColor color)
     auto bound = mask_pixmap_->boundingRect();
     double w = bound.width();
     double h = bound.height();
-    if(x >= w) {
+    if (x >= w) {
         x -= w;
     }
-    if(y >= h) {
+    if (y >= h) {
         y -= h;
     }
 
@@ -228,7 +221,7 @@ void MaskRefinementAdapter::draw(const QPointF &pos, Qt::GlobalColor color)
     painter.setBrush(brush);
 
     int r = std::max(1, brush_size_ / 2);
-    painter.drawEllipse(x-r/2,y-r/2, r, r);
+    painter.drawEllipse(x - r / 2, y - r / 2, r, r);
     painter.end();
 
     mask_pm_ = QPixmap::fromImage(mask_);
@@ -247,16 +240,20 @@ void MaskRefinementAdapter::updateCursor(const QPointF& pos)
     double x = pos.x();
     double y = pos.y();
 
-    if(x < 0) x = 0;
-    if(y < 0) y = 0;
+    if (x < 0)
+        x = 0;
+    if (y < 0)
+        y = 0;
 
     double w = mask_pixmap_->boundingRect().width() + masked_bw_pixmap_->boundingRect().width();
     double h = mask_pixmap_->boundingRect().height() + masked_red_pixmap_->boundingRect().height();
-    if(x >= w) x = w;
-    if(y >= h) y = h;
+    if (x >= w)
+        x = w;
+    if (y >= h)
+        y = h;
 
     int r = std::max(1, brush_size_ / 2);
-    cursor_->setRect(x-r/2, y-r/2,  r, r);
+    cursor_->setRect(x - r / 2, y - r / 2, r, r);
     cursor_->update();
     view_->update();
 }
@@ -264,7 +261,7 @@ void MaskRefinementAdapter::updateCursor(const QPointF& pos)
 void MaskRefinementAdapter::setMask(QImage mask, QImage masked)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
@@ -274,7 +271,7 @@ void MaskRefinementAdapter::setMask(QImage mask, QImage masked)
     mask_pm_ = QPixmap::fromImage(mask_);
     mask_pixmap_->setPixmap(mask_pm_);
 
-    if(masked.isNull()) {
+    if (masked.isNull()) {
         masked_red_pixmap_->hide();
     } else {
         img_ = masked;
@@ -297,11 +294,10 @@ void MaskRefinementAdapter::fitView()
     view_->update();
 }
 
-
 void MaskRefinementAdapter::next()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
@@ -311,7 +307,7 @@ void MaskRefinementAdapter::next()
 void MaskRefinementAdapter::updateBrush()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 

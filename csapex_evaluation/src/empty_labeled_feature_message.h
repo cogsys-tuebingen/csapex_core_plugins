@@ -6,8 +6,8 @@
 #include <csapex/model/token_data.h>
 #include <csapex/msg/generic_vector_message.hpp>
 
-namespace csapex {
-
+namespace csapex
+{
 class EmptyLabeledFeaturesMessage : public Node
 {
 public:
@@ -18,10 +18,9 @@ public:
     virtual void process() override;
 
 protected:
-    csapex::Output *output_;
-    csapex::Output *output_vec_;
-
+    csapex::Output* output_;
+    csapex::Output* output_vec_;
 };
 
-}
-#endif // TO_FEATURE_H
+}  // namespace csapex
+#endif  // TO_FEATURE_H

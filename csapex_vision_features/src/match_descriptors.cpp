@@ -2,13 +2,13 @@
 #include "match_descriptors.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
-#include <cslibs_vision/utils/matcher.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <cslibs_vision/data/matchable.h>
 #include <cslibs_vision/utils/hough_peak.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
+#include <cslibs_vision/utils/matcher.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
@@ -26,10 +26,8 @@ public:
      * @param keypoints
      * @param descriptors
      */
-    MatchableImpl(const std::vector<cv::KeyPoint> &keypoints, const cv::Mat& descriptors)
-        : Matchable(keypoints, descriptors)
+    MatchableImpl(const std::vector<cv::KeyPoint>& keypoints, const cv::Mat& descriptors) : Matchable(keypoints, descriptors)
     {
-
     }
     /**
      * @brief get_dimensions
@@ -37,68 +35,66 @@ public:
      */
     virtual cv::Rect getDimensions() const
     {
-        return cv::Rect(0,0,0,0);
+        return cv::Rect(0, 0, 0, 0);
     }
 };
 
-//RobustMatcher class taken from OpenCV2 Computer Vision Application Programming Cookbook Ch 9
+// RobustMatcher class taken from OpenCV2 Computer Vision Application
+// Programming Cookbook Ch 9
 class RobustMatcher
 {
 private:
     // pointer to the matcher object
-    cv::Ptr<cv::DescriptorMatcher > matcher;
-    float ratio; // max ratio between 1st and 2nd NN
-    bool refineF; // if true will refine the F matrix
-    double confidence; // confidence level (probability)
-    double distance; // min distance to epipolar
+    cv::Ptr<cv::DescriptorMatcher> matcher;
+    float ratio;        // max ratio between 1st and 2nd NN
+    bool refineF;       // if true will refine the F matrix
+    double confidence;  // confidence level (probability)
+    double distance;    // min distance to epipolar
 public:
-    RobustMatcher(cv::Ptr<cv::DescriptorMatcher > m) : ratio(0.75f), refineF(true),
-        confidence(0.99), distance(3.0) {
-        matcher= m;
+    RobustMatcher(cv::Ptr<cv::DescriptorMatcher> m) : ratio(0.75f), refineF(true), confidence(0.99), distance(3.0)
+    {
+        matcher = m;
     }
 
     // Set the matcher
-    void setDescriptorMatcher(
-            cv::Ptr<cv::DescriptorMatcher>& match) {
-        matcher= match;
+    void setDescriptorMatcher(cv::Ptr<cv::DescriptorMatcher>& match)
+    {
+        matcher = match;
     }
     // Set confidence level
-    void setConfidenceLevel(
-            double conf) {
-        confidence= conf;
+    void setConfidenceLevel(double conf)
+    {
+        confidence = conf;
     }
-    //Set MinDistanceToEpipolar
-    void setMinDistanceToEpipolar(
-            double dist) {
-        distance= dist;
+    // Set MinDistanceToEpipolar
+    void setMinDistanceToEpipolar(double dist)
+    {
+        distance = dist;
     }
-    //Set ratio
-    void setRatio(
-            float rat) {
-        ratio= rat;
+    // Set ratio
+    void setRatio(float rat)
+    {
+        ratio = rat;
     }
 
     // Clear matches for which NN ratio is > than threshold
     // return the number of removed points
     // (corresponding entries being cleared,
     // i.e. size will be 0)
-    int ratioTest(std::vector<std::vector<cv::DMatch> >
-                  &matches) {
-        int removed=0;
+    int ratioTest(std::vector<std::vector<cv::DMatch>>& matches)
+    {
+        int removed = 0;
         // for all matches
-        for(std::vector<std::vector<cv::DMatch> >::iterator
-            matchIterator= matches.begin();
-            matchIterator!= matches.end(); ++matchIterator) {
+        for (std::vector<std::vector<cv::DMatch>>::iterator matchIterator = matches.begin(); matchIterator != matches.end(); ++matchIterator) {
             // if 2 NN has been identified
-            if(matchIterator->size() > 1) {
+            if (matchIterator->size() > 1) {
                 // check distance ratio
-                if((*matchIterator)[0].distance/
-                        (*matchIterator)[1].distance > ratio) {
-                    matchIterator->clear(); // remove match
+                if ((*matchIterator)[0].distance / (*matchIterator)[1].distance > ratio) {
+                    matchIterator->clear();  // remove match
                     removed++;
                 }
-            } else { // does not have 2 neighbours
-                matchIterator->clear(); // remove match
+            } else {                     // does not have 2 neighbours
+                matchIterator->clear();  // remove match
                 removed++;
             }
         }
@@ -106,36 +102,23 @@ public:
     }
 
     // Insert symmetrical matches in symMatches vector
-    void symmetryTest(
-            const std::vector<std::vector<cv::DMatch> >& matches1,
-            const std::vector<std::vector<cv::DMatch> >& matches2,
-            std::vector<cv::DMatch>& symMatches) {
+    void symmetryTest(const std::vector<std::vector<cv::DMatch>>& matches1, const std::vector<std::vector<cv::DMatch>>& matches2, std::vector<cv::DMatch>& symMatches)
+    {
         // for all matches image 1 -> image 2
-        for(std::vector<std::vector<cv::DMatch> >::
-            const_iterator matchIterator1= matches1.begin();
-            matchIterator1!= matches1.end(); ++matchIterator1) {
+        for (std::vector<std::vector<cv::DMatch>>::const_iterator matchIterator1 = matches1.begin(); matchIterator1 != matches1.end(); ++matchIterator1) {
             // ignore deleted matches
-            if(matchIterator1->size() < 2)
+            if (matchIterator1->size() < 2)
                 continue;
             // for all matches image 2 -> image 1
-            for(std::vector<std::vector<cv::DMatch> >::
-                const_iterator matchIterator2= matches2.begin();
-                matchIterator2!= matches2.end();
-                ++matchIterator2) {
+            for (std::vector<std::vector<cv::DMatch>>::const_iterator matchIterator2 = matches2.begin(); matchIterator2 != matches2.end(); ++matchIterator2) {
                 // ignore deleted matches
-                if(matchIterator2->size() < 2)
+                if (matchIterator2->size() < 2)
                     continue;
                 // Match symmetry test
-                if((*matchIterator1)[0].queryIdx ==
-                        (*matchIterator2)[0].trainIdx &&
-                        (*matchIterator2)[0].queryIdx ==
-                        (*matchIterator1)[0].trainIdx) {
+                if ((*matchIterator1)[0].queryIdx == (*matchIterator2)[0].trainIdx && (*matchIterator2)[0].queryIdx == (*matchIterator1)[0].trainIdx) {
                     // add symmetrical match
-                    symMatches.push_back(
-                                cv::DMatch((*matchIterator1)[0].queryIdx,
-                                (*matchIterator1)[0].trainIdx,
-                            (*matchIterator1)[0].distance));
-                    break; // next match in image 1 -> image 2
+                    symMatches.push_back(cv::DMatch((*matchIterator1)[0].queryIdx, (*matchIterator1)[0].trainIdx, (*matchIterator1)[0].distance));
+                    break;  // next match in image 1 -> image 2
                 }
             }
         }
@@ -143,70 +126,60 @@ public:
 
     // Identify good matches using RANSAC
     // Return fundemental matrix
-    cv::Mat ransacTest(
-            const std::vector<cv::DMatch>& matches,
-            const std::vector<cv::KeyPoint>& keypoints1,
-            const std::vector<cv::KeyPoint>& keypoints2,
-            std::vector<cv::DMatch>& outMatches) {
+    cv::Mat ransacTest(const std::vector<cv::DMatch>& matches, const std::vector<cv::KeyPoint>& keypoints1, const std::vector<cv::KeyPoint>& keypoints2, std::vector<cv::DMatch>& outMatches)
+    {
         // Convert keypoints into Point2f
         std::vector<cv::Point2f> points1, points2;
         cv::Mat fundemental;
-        for(std::vector<cv::DMatch>::
-            const_iterator it= matches.begin();
-            it!= matches.end(); ++it) {
+        for (std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
             // Get the position of left keypoints
-            float x= keypoints1[it->queryIdx].pt.x;
-            float y= keypoints1[it->queryIdx].pt.y;
-            points1.push_back(cv::Point2f(x,y));
+            float x = keypoints1[it->queryIdx].pt.x;
+            float y = keypoints1[it->queryIdx].pt.y;
+            points1.push_back(cv::Point2f(x, y));
             // Get the position of right keypoints
-            x= keypoints2[it->trainIdx].pt.x;
-            y= keypoints2[it->trainIdx].pt.y;
-            points2.push_back(cv::Point2f(x,y));
+            x = keypoints2[it->trainIdx].pt.x;
+            y = keypoints2[it->trainIdx].pt.y;
+            points2.push_back(cv::Point2f(x, y));
         }
         // Compute F matrix using RANSAC
-        std::vector<uchar> inliers(points1.size(),0);
-        if(points1.size()>0&&points2.size()>0) {
-            cv::Mat fundemental= cv::findFundamentalMat(
-                        cv::Mat(points1),cv::Mat(points2), // matching points
-                        inliers,       // match status (inlier or outlier)
-                        CV_FM_RANSAC, // RANSAC method
-                        distance,      // distance to epipolar line
-                        confidence); // confidence probability
+        std::vector<uchar> inliers(points1.size(), 0);
+        if (points1.size() > 0 && points2.size() > 0) {
+            cv::Mat fundemental = cv::findFundamentalMat(cv::Mat(points1), cv::Mat(points2),  // matching points
+                                                         inliers,                             // match status (inlier or outlier)
+                                                         CV_FM_RANSAC,                        // RANSAC method
+                                                         distance,                            // distance to epipolar line
+                                                         confidence);                         // confidence probability
             // extract the surviving (inliers) matches
-            std::vector<uchar>::const_iterator
-                    itIn= inliers.begin();
-            std::vector<cv::DMatch>::const_iterator
-                    itM= matches.begin();
+            std::vector<uchar>::const_iterator itIn = inliers.begin();
+            std::vector<cv::DMatch>::const_iterator itM = matches.begin();
             // for all matches
-            for(; itIn!= inliers.end(); ++itIn, ++itM) {
-                if(*itIn) {  // it is a valid match
+            for (; itIn != inliers.end(); ++itIn, ++itM) {
+                if (*itIn) {  // it is a valid match
                     outMatches.push_back(*itM);
                 }
             }
-            if(refineF) {
+            if (refineF) {
                 // The F matrix will be recomputed with
                 // all accepted matches
                 // Convert keypoints into Point2f
                 // for final F computation
                 points1.clear();
                 points2.clear();
-                for(std::vector<cv::DMatch>::
-                    const_iterator it= outMatches.begin();
-                    it!= outMatches.end(); ++it) {
+                for (std::vector<cv::DMatch>::const_iterator it = outMatches.begin(); it != outMatches.end(); ++it) {
                     // Get the position of left keypoints
-                    float x= keypoints1[it->queryIdx].pt.x;
-                    float y= keypoints1[it->queryIdx].pt.y;
-                    points1.push_back(cv::Point2f(x,y));
+                    float x = keypoints1[it->queryIdx].pt.x;
+                    float y = keypoints1[it->queryIdx].pt.y;
+                    points1.push_back(cv::Point2f(x, y));
                     // Get the position of right keypoints
-                    x= keypoints2[it->trainIdx].pt.x;
-                    y= keypoints2[it->trainIdx].pt.y;
-                    points2.push_back(cv::Point2f(x,y));
+                    x = keypoints2[it->trainIdx].pt.x;
+                    y = keypoints2[it->trainIdx].pt.y;
+                    points2.push_back(cv::Point2f(x, y));
                 }
                 // Compute 8-point F from all accepted matches
-                if(points1.size()>0&&points2.size()>0) {
-                    fundemental= cv::findFundamentalMat(
-                                cv::Mat(points1),cv::Mat(points2), // matches
-                                CV_FM_8POINT); // 8-point method
+                if (points1.size() > 0 && points2.size() > 0) {
+                    fundemental = cv::findFundamentalMat(cv::Mat(points1),
+                                                         cv::Mat(points2),  // matches
+                                                         CV_FM_8POINT);     // 8-point method
                 }
             }
         }
@@ -215,16 +188,12 @@ public:
 
     // Match feature points using symmetry test and RANSAC
     // returns fundemental matrix
-    cv::Mat match(const cv::Mat& image1,
-                  const cv::Mat& image2,
-                  std::vector<cv::DMatch>& matches,
-                  const std::vector<cv::KeyPoint>& keypoints1,
-                  const std::vector<cv::KeyPoint>& keypoints2,
-                  const cv::Mat& descriptors1,
-                  const cv::Mat& descriptors2) {
+    cv::Mat match(const cv::Mat& image1, const cv::Mat& image2, std::vector<cv::DMatch>& matches, const std::vector<cv::KeyPoint>& keypoints1, const std::vector<cv::KeyPoint>& keypoints2,
+                  const cv::Mat& descriptors1, const cv::Mat& descriptors2)
+    {
         // 2. Match the two image descriptors
         // Construction of the matcher
-        //cv::BruteForceMatcher<cv::L2<float>> matcher;
+        // cv::BruteForceMatcher<cv::L2<float>> matcher;
         // from image 1 to image 2
         // based on k nearest neighbours (with k=2)
         //        aerr << "d1: \n";
@@ -237,7 +206,6 @@ public:
 
         //        aerr << std::endl;
 
-
         //        aerr << "d2: \n";
         //        for(size_t r = 0; r < descriptors2.rows; ++r) {
         //            for(size_t c = 0; c < descriptors2.cols; ++c) {
@@ -248,17 +216,17 @@ public:
 
         //        aerr << std::endl;
 
-        std::vector<std::vector<cv::DMatch> > matches1;
+        std::vector<std::vector<cv::DMatch>> matches1;
 
-        matcher->knnMatch(descriptors1,descriptors2,
-                          matches1, // vector of matches (up to 2 per entry)
+        matcher->knnMatch(descriptors1, descriptors2,
+                          matches1,  // vector of matches (up to 2 per entry)
                           2);        // return 2 nearest neighbours
 
         // from image 2 to image 1
         // based on k nearest neighbours (with k=2)
-        std::vector<std::vector<cv::DMatch> > matches2;
-        matcher->knnMatch(descriptors2,descriptors1,
-                          matches2, // vector of matches (up to 2 per entry)
+        std::vector<std::vector<cv::DMatch>> matches2;
+        matcher->knnMatch(descriptors2, descriptors1,
+                          matches2,  // vector of matches (up to 2 per entry)
                           2);        // return 2 nearest neighbours
         // 3. Remove matches for which NN ratio is
         // > than threshold
@@ -269,36 +237,30 @@ public:
 
         // 4. Remove non-symmetrical matches
         std::vector<cv::DMatch> symMatches;
-        symmetryTest(matches1,matches2,symMatches);
+        symmetryTest(matches1, matches2, symMatches);
 
         // 5. Validate matches using RANSAC
-        cv::Mat fundemental= ransacTest(symMatches,
-                                        keypoints1, keypoints2, matches);
+        cv::Mat fundemental = ransacTest(symMatches, keypoints1, keypoints2, matches);
         // return the found fundemental matrix
         return fundemental;
     }
 };
 
-MatchDescriptors::MatchDescriptors()
-    : in_img_1(nullptr), current_method_(SIMPLE)
+MatchDescriptors::MatchDescriptors() : in_img_1(nullptr), current_method_(SIMPLE)
 {
 }
 
-void MatchDescriptors::setupParameters(Parameterizable &parameters)
+void MatchDescriptors::setupParameters(Parameterizable& parameters)
 {
     std::function<void(csapex::param::Parameter*)> update = std::bind(&MatchDescriptors::update, this);
 
-    std::map<std::string, int> methods = {
-        {"Simple", (int) SIMPLE},
-        {"Peak", (int) PEAK},
-        {"Robust", (int) ROBUST}
-    };
+    std::map<std::string, int> methods = { { "Simple", (int)SIMPLE }, { "Peak", (int)PEAK }, { "Robust", (int)ROBUST } };
 
-    csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareParameterSet("method", methods, (int) ROBUST);
+    csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareParameterSet("method", methods, (int)ROBUST);
     parameters.addParameter(method, update);
 
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/match", 255,128,128));
-    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/single", 128,128,255));
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/match", 255, 128, 128));
+    parameters.addParameter(csapex::param::ParameterFactory::declareColorParameter("color/single", 128, 128, 255));
 
     // simple
     std::function<bool()> cond_simple = [method]() { return method->as<int>() == SIMPLE; };
@@ -317,7 +279,7 @@ void MatchDescriptors::setupParameters(Parameterizable &parameters)
 
 void MatchDescriptors::update()
 {
-    current_method_ = static_cast<Method> (readParameter<int>("method"));
+    current_method_ = static_cast<Method>(readParameter<int>("method"));
 }
 
 void MatchDescriptors::process()
@@ -331,33 +293,32 @@ void MatchDescriptors::process()
     DescriptorMessage::ConstPtr descriptors1 = msg::getMessage<DescriptorMessage>(in_des_1);
     DescriptorMessage::ConstPtr descriptors2 = msg::getMessage<DescriptorMessage>(in_des_2);
 
-
-    if(descriptors1->value.type() != descriptors2->value.type()) {
+    if (descriptors1->value.type() != descriptors2->value.type()) {
         node_modifier_->setError("#types don't match");
         return;
     }
 
-    std::vector<std::vector<cv::DMatch> > matches;
+    std::vector<std::vector<cv::DMatch>> matches;
 
-    if(descriptors1->value.cols > 0 && descriptors2->value.cols > 0) {
+    if (descriptors1->value.cols > 0 && descriptors2->value.cols > 0) {
         match(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
     }
 
     CvMatMessage::Ptr out(new CvMatMessage(image1->getEncoding(), image1->frame_id, image1->stamp_micro_seconds));
 
     std::vector<int> c;
-    c = readParameter<std::vector<int> >("color/match");
-    cv::Scalar matchColor  = cv::Scalar(c[2], c[1], c[0]);
-    c = readParameter<std::vector<int> >("color/single");
-    cv::Scalar singlePointColor  = cv::Scalar(c[2], c[1], c[0]);
+    c = readParameter<std::vector<int>>("color/match");
+    cv::Scalar matchColor = cv::Scalar(c[2], c[1], c[0]);
+    c = readParameter<std::vector<int>>("color/single");
+    cv::Scalar singlePointColor = cv::Scalar(c[2], c[1], c[0]);
 
-    std::vector<std::vector<char> > mask;
+    std::vector<std::vector<char>> mask;
     int flag = cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS;
 
     cv::drawMatches(image1->value, keypoints1->value, image2->value, keypoints2->value, matches, out->value, matchColor, singlePointColor, mask, flag);
 
     MatchMessage::Ptr matches_msg(new MatchMessage());
-    for (std::vector<std::vector<cv::DMatch> >::iterator it = matches.begin(); it != matches.end(); it++) {
+    for (std::vector<std::vector<cv::DMatch>>::iterator it = matches.begin(); it != matches.end(); it++) {
         matches_msg->value.insert(matches_msg->value.end(), it->begin(), it->end());
     }
 
@@ -365,37 +326,27 @@ void MatchDescriptors::process()
     msg::publish(out_img, out);
 }
 
-void MatchDescriptors::match(CvMatMessage::ConstPtr image1,
-                             CvMatMessage::ConstPtr image2,
-                             KeypointMessage::ConstPtr keypoints1,
-                             KeypointMessage::ConstPtr keypoints2,
-                             DescriptorMessage::ConstPtr descriptors1,
-                             DescriptorMessage::ConstPtr descriptors2,
-                             std::vector<std::vector<cv::DMatch> > &matches)
+void MatchDescriptors::match(CvMatMessage::ConstPtr image1, CvMatMessage::ConstPtr image2, KeypointMessage::ConstPtr keypoints1, KeypointMessage::ConstPtr keypoints2,
+                             DescriptorMessage::ConstPtr descriptors1, DescriptorMessage::ConstPtr descriptors2, std::vector<std::vector<cv::DMatch>>& matches)
 {
-    switch(current_method_) {
-    case SIMPLE:
-        matchSimple(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
-        break;
-    case PEAK:
-        matchPeak(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
-        break;
-    case ROBUST:
-        matchRobust(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
-        break;
+    switch (current_method_) {
+        case SIMPLE:
+            matchSimple(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
+            break;
+        case PEAK:
+            matchPeak(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
+            break;
+        case ROBUST:
+            matchRobust(image1, image2, keypoints1, keypoints2, descriptors1, descriptors2, matches);
+            break;
     }
 }
 
-void MatchDescriptors::matchRobust(CvMatMessage::ConstPtr image1,
-                                   CvMatMessage::ConstPtr image2,
-                                   KeypointMessage::ConstPtr keypoints1,
-                                   KeypointMessage::ConstPtr keypoints2,
-                                   DescriptorMessage::ConstPtr descriptors1,
-                                   DescriptorMessage::ConstPtr descriptors2,
-                                   std::vector<std::vector<cv::DMatch> > &matches)
+void MatchDescriptors::matchRobust(CvMatMessage::ConstPtr image1, CvMatMessage::ConstPtr image2, KeypointMessage::ConstPtr keypoints1, KeypointMessage::ConstPtr keypoints2,
+                                   DescriptorMessage::ConstPtr descriptors1, DescriptorMessage::ConstPtr descriptors2, std::vector<std::vector<cv::DMatch>>& matches)
 {
-    cv::Ptr<cv::DescriptorMatcher > matcher;
-    if(descriptors1->value.type() == CV_8U) {
+    cv::Ptr<cv::DescriptorMatcher> matcher;
+    if (descriptors1->value.type() == CV_8U) {
         matcher = new cv::BFMatcher(cv::NORM_HAMMING);
     } else {
         matcher = new cv::BFMatcher(cv::NORM_L2);
@@ -406,21 +357,15 @@ void MatchDescriptors::matchRobust(CvMatMessage::ConstPtr image1,
 
     m.match(image1->value, image2->value, tmp_matches, keypoints1->value, keypoints2->value, descriptors1->value, descriptors2->value);
 
-    for(std::size_t i = 0, n = tmp_matches.size(); i < n; ++i) {
+    for (std::size_t i = 0, n = tmp_matches.size(); i < n; ++i) {
         std::vector<cv::DMatch> v;
         v.push_back(tmp_matches[i]);
         matches.push_back(v);
     }
 }
 
-
-void MatchDescriptors::matchSimple(CvMatMessage::ConstPtr image1,
-                                   CvMatMessage::ConstPtr image2,
-                                   KeypointMessage::ConstPtr keypoints1,
-                                   KeypointMessage::ConstPtr keypoints2,
-                                   DescriptorMessage::ConstPtr descriptors1,
-                                   DescriptorMessage::ConstPtr descriptors2,
-                                   std::vector<std::vector<cv::DMatch> > &matches)
+void MatchDescriptors::matchSimple(CvMatMessage::ConstPtr image1, CvMatMessage::ConstPtr image2, KeypointMessage::ConstPtr keypoints1, KeypointMessage::ConstPtr keypoints2,
+                                   DescriptorMessage::ConstPtr descriptors1, DescriptorMessage::ConstPtr descriptors2, std::vector<std::vector<cv::DMatch>>& matches)
 {
     MatchableImpl m1(keypoints1->value, descriptors1->value);
     MatchableImpl m2(keypoints2->value, descriptors2->value);
@@ -429,35 +374,25 @@ void MatchDescriptors::matchSimple(CvMatMessage::ConstPtr image1,
     m.match(&m1, &m2, matches);
 }
 
-
-
-
-void MatchDescriptors::matchPeak(CvMatMessage::ConstPtr,
-                                 CvMatMessage::ConstPtr,
-                                 KeypointMessage::ConstPtr keypoints1,
-                                 KeypointMessage::ConstPtr keypoints2,
-                                 DescriptorMessage::ConstPtr descriptors1,
-                                 DescriptorMessage::ConstPtr descriptors2,
-                                 std::vector<std::vector<cv::DMatch> > &matches)
+void MatchDescriptors::matchPeak(CvMatMessage::ConstPtr, CvMatMessage::ConstPtr, KeypointMessage::ConstPtr keypoints1, KeypointMessage::ConstPtr keypoints2, DescriptorMessage::ConstPtr descriptors1,
+                                 DescriptorMessage::ConstPtr descriptors2, std::vector<std::vector<cv::DMatch>>& matches)
 {
     MatchableImpl m1(keypoints1->value, descriptors1->value);
     MatchableImpl m2(keypoints2->value, descriptors2->value);
 
     HoughAlgorithm* h;
 
-    if(false) {
-        h = new HoughPeak<true, true> (readParameter<int>("peak/cluster_count"), readParameter<int>("peak/scaling"), readParameter<int>("peak/octaves"), m1, m2);
+    if (false) {
+        h = new HoughPeak<true, true>(readParameter<int>("peak/cluster_count"), readParameter<int>("peak/scaling"), readParameter<int>("peak/octaves"), m1, m2);
     } else {
         h = new HoughPeak<true, false>(readParameter<int>("peak/cluster_count"), readParameter<int>("peak/scaling"), readParameter<int>("peak/octaves"), m1, m2);
     }
-
 
     h->min_count = readParameter<int>("peak/min_cluster_size");
 
     std::vector<HoughData::Cluster> clusters;
     h->filter(matches, clusters);
 }
-
 
 void MatchDescriptors::setup(NodeModifier& node_modifier)
 {

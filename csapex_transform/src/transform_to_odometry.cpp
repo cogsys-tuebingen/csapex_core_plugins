@@ -5,26 +5,26 @@
 #include <csapex_transform/transform_message.h>
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex_ros/yaml_io.hpp>
 #include <csapex/msg/generic_pointer_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ros/ros_message_conversion.h>
+#include <csapex_ros/yaml_io.hpp>
 
 /// SYSTEM
 #include <nav_msgs/Odometry.h>
-
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <tf/tf.h>
+#include <tf/tf.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 CSAPEX_REGISTER_CLASS(csapex::TransformToOdometry, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-
 
 TransformToOdometry::TransformToOdometry()
 {
@@ -51,4 +51,3 @@ void TransformToOdometry::process()
 
     msg::publish<nav_msgs::Odometry>(out_, msg);
 }
-

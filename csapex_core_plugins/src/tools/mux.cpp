@@ -1,20 +1,20 @@
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/model/variadic_io.h>
-#include <csapex/msg/io.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 namespace csapex
 {
-
 class Mux : public Node, public VariadicInputs
 {
 public:
     Mux()
-    {}
+    {
+    }
 
     void setup(csapex::NodeModifier& node_modifier)
     {
@@ -64,6 +64,6 @@ private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::Mux, csapex::Node)

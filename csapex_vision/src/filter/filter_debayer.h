@@ -7,9 +7,11 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
+namespace csapex
+{
 /**
- * @brief The Debayer class can be used to debayer raw images to get color images.
+ * @brief The Debayer class can be used to debayer raw images to get color
+ * images.
  */
 class Debayer : public csapex::Node
 {
@@ -35,5 +37,5 @@ private:
     csapex::Output* output_img_;
 };
 
-}
-#endif // FILTER_DEBAYER_H
+}  // namespace csapex
+#endif  // FILTER_DEBAYER_H

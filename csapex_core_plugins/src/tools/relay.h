@@ -5,8 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex/model/token_data.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN Relay : public Node
 {
 public:
@@ -20,6 +20,6 @@ private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
-#endif // RELAY_H
+#endif  // RELAY_H

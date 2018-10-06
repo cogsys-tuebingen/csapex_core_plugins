@@ -6,15 +6,11 @@
 
 CSAPEX_REGISTER_CLASS(csapex::ImageProviderImg, csapex::MessageProvider)
 
-
 using namespace csapex;
 
+std::function<bool(ImageProvider*)> ImageProviderImg::Identity = std::bind(&ImageProviderImg::checkIdentity, std::placeholders::_1);
 
-std::function<bool(ImageProvider*)> ImageProviderImg::Identity
-= std::bind(&ImageProviderImg::checkIdentity, std::placeholders::_1);
-
-ImageProviderImg::ImageProviderImg()
-    : sent_(false)
+ImageProviderImg::ImageProviderImg() : sent_(false)
 {
 }
 

@@ -2,16 +2,15 @@
 #include "make_screenshot.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::MakeScreenshot, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
-
 
 MakeScreenshot::MakeScreenshot()
 {
@@ -42,11 +41,9 @@ void MakeScreenshot::makeScreenshot()
     ss << "cd " << path << " && scrot ";
     ss << '\'' << readParameter<std::string>("format") << '\'';
     ss << " -q " << readParameter<int>("quality");
-    if(system(ss.str().c_str())) {
+    if (system(ss.str().c_str())) {
         throw std::runtime_error(std::string("call to ") + ss.str() + " failed");
     }
 
-
     msg::trigger(done_);
 }
-

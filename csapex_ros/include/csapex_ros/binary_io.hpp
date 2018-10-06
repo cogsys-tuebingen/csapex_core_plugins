@@ -5,15 +5,16 @@
 #include <csapex/serialization/serialization_buffer.h>
 
 /// SYSTEM
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <ros/serialization.h>
+#include <ros/serialization.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 namespace csapex
 {
-
-template<typename Message, typename std::enable_if<ros::message_traits::IsMessage<Message>::value, int>::type = 0>
-SerializationBuffer& operator << (SerializationBuffer& data, const Message& rhs)
+template <typename Message, typename std::enable_if<ros::message_traits::IsMessage<Message>::value, int>::type = 0>
+SerializationBuffer& operator<<(SerializationBuffer& data, const Message& rhs)
 {
     auto serialized = ros::serialization::serializeMessage(rhs);
 
@@ -22,8 +23,8 @@ SerializationBuffer& operator << (SerializationBuffer& data, const Message& rhs)
 
     return data;
 }
-template<typename Message, typename std::enable_if<ros::message_traits::IsMessage<Message>::value, int>::type = 0>
-const SerializationBuffer& operator >> (const SerializationBuffer& data, Message& rhs)
+template <typename Message, typename std::enable_if<ros::message_traits::IsMessage<Message>::value, int>::type = 0>
+const SerializationBuffer& operator>>(const SerializationBuffer& data, Message& rhs)
 {
     std::size_t num_bytes;
     data >> num_bytes;
@@ -36,6 +37,6 @@ const SerializationBuffer& operator >> (const SerializationBuffer& data, Message
 
     return data;
 }
-}
+}  // namespace csapex
 
-#endif // ROS_BINARY_IO_HPP
+#endif  // ROS_BINARY_IO_HPP

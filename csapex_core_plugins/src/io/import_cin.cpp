@@ -3,24 +3,23 @@
 
 /// PROJECT
 #include <csapex/factory/message_factory.h>
-#include <csapex/utility/stream_interceptor.h>
-#include <csapex/msg/message.h>
-#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/any_message.h>
+#include <csapex/msg/end_of_sequence_message.h>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/msg/message.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/serialization/message_serializer.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/msg/any_message.h>
-#include <csapex/msg/generic_value_message.hpp>
-#include <csapex/msg/end_of_sequence_message.h>
+#include <csapex/utility/stream_interceptor.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImportCin, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-ImportCin::ImportCin()
-    : connector_(nullptr)
+ImportCin::ImportCin() : connector_(nullptr)
 {
 }
 void ImportCin::setup(NodeModifier& node_modifier)
@@ -28,13 +27,12 @@ void ImportCin::setup(NodeModifier& node_modifier)
     connector_ = node_modifier.addOutput<connection_types::AnyMessage>("Anything");
 }
 
-void ImportCin::setupParameters(Parameterizable &params)
+void ImportCin::setupParameters(Parameterizable& params)
 {
     params.addParameter(param::factory::declareBool("import yaml", true), import_yaml_);
     params.addParameter(param::factory::declareBool("latch", false), latch_);
     params.addParameter(param::factory::declareBool("signal end", false), signal_end_);
 }
-
 
 void ImportCin::process()
 {
@@ -45,7 +43,7 @@ void ImportCin::process()
 
 void ImportCin::publishNextMessage()
 {
-    if(!message_buffer_.empty()) {
+    if (!message_buffer_.empty()) {
         auto msg = message_buffer_.front();
         message_buffer_.pop_front();
 
@@ -53,10 +51,10 @@ void ImportCin::publishNextMessage()
 
         msg::publish(connector_, msg);
 
-    } else if(latch_ && last_message_) {
+    } else if (latch_ && last_message_) {
         msg::publish(connector_, last_message_);
 
-    } else if(signal_end_) {
+    } else if (signal_end_) {
         msg::publish(connector_, makeEmpty<EndOfSequenceMessage>());
     }
 }
@@ -75,11 +73,11 @@ void ImportCin::readMessages()
     std::string buffered = buffer.str();
     int pos = buffered.find("---");
 
-    while(pos >= 0) {
+    while (pos >= 0) {
         std::string message = buffered.substr(0, pos);
-        buffered = buffered.substr(pos+3);
+        buffered = buffered.substr(pos + 3);
 
-        if(import_yaml_) {
+        if (import_yaml_) {
             readYAML(message);
         } else {
             auto msg = makeEmpty<connection_types::GenericValueMessage<std::string>>();
@@ -94,8 +92,6 @@ void ImportCin::readMessages()
     buffer << buffered;
 }
 
-
-
 void ImportCin::readYAML(const std::string& message)
 {
     try {
@@ -105,14 +101,13 @@ void ImportCin::readYAML(const std::string& message)
             TokenData::Ptr msg = MessageSerializer::readYaml(doc);
             message_buffer_.push_back(msg);
 
-        } catch(const MessageSerializer::DeserializationError& e) {
+        } catch (const MessageSerializer::DeserializationError& e) {
             ainfo << "could not deserialize message: \n";
             ainfo << doc << std::endl;
             ainfo << e.what();
         }
 
-
-    } catch(YAML::ParserException& e) {
+    } catch (YAML::ParserException& e) {
         ainfo << "YAML::ParserException: " << e.what() << ", node was: " << message << "\n";
     }
 }

@@ -7,26 +7,23 @@
 #include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
-#include <QTableView>
-#include <QPainter>
 #include <QGridLayout>
 #include <QLabel>
+#include <QPainter>
+#include <QTableView>
 
 using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ConfidenceMatrixDisplayAdapter, csapex::ConfidenceMatrixDisplay)
 
-ConfidenceMatrixTableModel::ConfidenceMatrixTableModel()
-    : dim(0)
+ConfidenceMatrixTableModel::ConfidenceMatrixTableModel() : dim(0)
 {
-
 }
 
 void ConfidenceMatrixTableModel::update(const ConfidenceMatrix& confidence)
 {
-
     int new_dim = confidence.classes.size();
-    if(dim != new_dim) {
+    if (dim != new_dim) {
         beginInsertRows(QModelIndex(), dim, new_dim - 1);
         beginInsertColumns(QModelIndex(), dim, new_dim - 1);
 
@@ -39,42 +36,41 @@ void ConfidenceMatrixTableModel::update(const ConfidenceMatrix& confidence)
     confidence_ = confidence;
 }
 
-int ConfidenceMatrixTableModel::rowCount(const QModelIndex &parent) const
+int ConfidenceMatrixTableModel::rowCount(const QModelIndex& parent) const
 {
     return dim;
 }
 
-int ConfidenceMatrixTableModel::columnCount(const QModelIndex &parent) const
+int ConfidenceMatrixTableModel::columnCount(const QModelIndex& parent) const
 {
     return dim;
 }
 
-QVariant ConfidenceMatrixTableModel::data(const QModelIndex &index, int role) const
+QVariant ConfidenceMatrixTableModel::data(const QModelIndex& index, int role) const
 {
-    if(role != Qt::ForegroundRole && role != Qt::BackgroundColorRole && role != Qt::DisplayRole) {
+    if (role != Qt::ForegroundRole && role != Qt::BackgroundColorRole && role != Qt::DisplayRole) {
         return QVariant();
     }
 
     auto actual = index.column();
     auto prediction = index.row();
     double f = confidence_.confidences.at(std::make_pair(actual, prediction));
-    if(role == Qt::DisplayRole) {
+    if (role == Qt::DisplayRole) {
         return f;
     }
 
     static QColor min_color = QColor::fromRgb(255, 255, 255);
     static QColor max_color = QColor::fromRgb(0, 0, 0);
 
-    int grey = std::min(255, std::max(0, int(min_color.red() * (1.0-f) + max_color.red() * f)));
+    int grey = std::min(255, std::max(0, int(min_color.red() * (1.0 - f) + max_color.red() * f)));
 
     if (role == Qt::ForegroundRole) {
         int v = grey < 100 ? 255 : 0;
-        return QVariant::fromValue(QColor::fromRgb(v,v,v));
+        return QVariant::fromValue(QColor::fromRgb(v, v, v));
     } else {
-        return QVariant::fromValue(QColor::fromRgb(grey,grey,grey));
+        return QVariant::fromValue(QColor::fromRgb(grey, grey, grey));
     }
 }
-
 
 QVariant ConfidenceMatrixTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -83,11 +79,8 @@ QVariant ConfidenceMatrixTableModel::headerData(int section, Qt::Orientation ori
     return confidence_.classes.at(section);
 }
 
-
-
-
 ConfidenceMatrixDisplayAdapter::ConfidenceMatrixDisplayAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ConfidenceMatrixDisplay> node)
-    : NodeAdapter(worker, parent), wrapped_(node)
+  : NodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 
@@ -117,14 +110,13 @@ void ConfidenceMatrixDisplayAdapter::setupUi(QBoxLayout* layout)
 
     grid->addWidget(table_, 1, 1);
 
-
     connect(this, SIGNAL(displayRequest()), this, SLOT(display()));
 }
 
 void ConfidenceMatrixDisplayAdapter::display()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 

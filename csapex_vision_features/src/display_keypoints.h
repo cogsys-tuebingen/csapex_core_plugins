@@ -9,7 +9,6 @@
 
 namespace csapex
 {
-
 class DisplayKeypoints : public csapex::Node
 {
 public:
@@ -17,7 +16,7 @@ public:
 
 public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
     virtual void process() override;
 
@@ -28,6 +27,6 @@ private:
     Output* out_img;
 };
 
-}
+}  // namespace csapex
 
-#endif // DisplayFeatures_H
+#endif  // DisplayFeatures_H

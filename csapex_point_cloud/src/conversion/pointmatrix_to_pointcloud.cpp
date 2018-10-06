@@ -2,33 +2,33 @@
 #include "pointmatrix_to_pointcloud.h"
 
 /// PROJECT
-#include <csapex_point_cloud/msg/point_cloud_message.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
-#include <pcl/point_types.h>
 #include <pcl/conversions.h>
+#include <pcl/point_types.h>
 
 CSAPEX_REGISTER_CLASS(csapex::PointmatrixToPointcloud, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-namespace implementation {
-inline void convert(const CvMatMessage::ConstPtr &in,
-                    PointCloudMessage::Ptr &out)
+namespace implementation
 {
-    const cv::Mat &matrix = in->value;
+inline void convert(const CvMatMessage::ConstPtr& in, PointCloudMessage::Ptr& out)
+{
+    const cv::Mat& matrix = in->value;
 
-    if(in->getEncoding().matches(enc::pointXYZ)) {
+    if (in->getEncoding().matches(enc::pointXYZ)) {
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
-        for(int i = 0 ; i < matrix.rows ; ++i) {
-            for(int j = 0 ; j < matrix.cols ; ++j) {
+        for (int i = 0; i < matrix.rows; ++i) {
+            for (int j = 0; j < matrix.cols; ++j) {
                 pcl::PointXYZ pt;
                 pt.x = matrix.at<float>(i, (j * 3 + 0));
                 pt.y = matrix.at<float>(i, (j * 3 + 1));
@@ -38,17 +38,17 @@ inline void convert(const CvMatMessage::ConstPtr &in,
         }
 
         cloud->height = matrix.rows;
-        cloud->width  = matrix.cols;
+        cloud->width = matrix.cols;
         cloud->is_dense = true;
         cloud->header.frame_id = in->frame_id;
         cloud->header.stamp = in->stamp_micro_seconds;
 
         out->value = cloud;
-    } else if(in->getEncoding().matches(enc::pointXYZI)) {
+    } else if (in->getEncoding().matches(enc::pointXYZI)) {
         pcl::PointCloud<pcl::PointXYZI>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZI>);
 
-        for(int i = 0 ; i < matrix.rows ; ++i) {
-            for(int j = 0 ; j < matrix.cols ; ++j) {
+        for (int i = 0; i < matrix.rows; ++i) {
+            for (int j = 0; j < matrix.cols; ++j) {
                 pcl::PointXYZI pt;
                 pt.x = matrix.at<float>(i, (j * 4 + 0));
                 pt.y = matrix.at<float>(i, (j * 4 + 1));
@@ -59,18 +59,17 @@ inline void convert(const CvMatMessage::ConstPtr &in,
         }
 
         cloud->height = matrix.rows;
-        cloud->width  = matrix.cols;
+        cloud->width = matrix.cols;
         cloud->is_dense = true;
         cloud->header.frame_id = in->frame_id;
         cloud->header.stamp = in->stamp_micro_seconds;
 
         out->value = cloud;
-    } else if(in->getEncoding().matches(enc::pointXYZRGB)) {
+    } else if (in->getEncoding().matches(enc::pointXYZRGB)) {
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-
-        for(int i = 0 ; i < matrix.rows ; ++i) {
-            for(int j = 0 ; j < matrix.cols ; ++j) {
+        for (int i = 0; i < matrix.rows; ++i) {
+            for (int j = 0; j < matrix.cols; ++j) {
                 pcl::PointXYZRGB pt;
                 pt.x = matrix.at<float>(i, (j * 6 + 0));
                 pt.y = matrix.at<float>(i, (j * 6 + 1));
@@ -83,7 +82,7 @@ inline void convert(const CvMatMessage::ConstPtr &in,
         }
 
         cloud->height = matrix.rows;
-        cloud->width  = matrix.cols;
+        cloud->width = matrix.cols;
         cloud->is_dense = true;
         cloud->header.frame_id = in->frame_id;
         cloud->header.stamp = in->stamp_micro_seconds;
@@ -93,7 +92,7 @@ inline void convert(const CvMatMessage::ConstPtr &in,
         throw std::runtime_error("Unsupported encoding!");
     }
 }
-}
+}  // namespace implementation
 
 PointmatrixToPointcloud::PointmatrixToPointcloud()
 {
@@ -109,7 +108,7 @@ void PointmatrixToPointcloud::process()
 
 void PointmatrixToPointcloud::setup(NodeModifier& node_modifier)
 {
-    input_  = node_modifier.addInput<CvMatMessage>("Point Matrix");
+    input_ = node_modifier.addInput<CvMatMessage>("Point Matrix");
     output_ = node_modifier.addOutput<PointCloudMessage>("PointCloud");
 }
 

@@ -6,48 +6,47 @@
 
 using namespace csapex;
 
-
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const tf::Matrix3x3& mat)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const tf::Matrix3x3& mat)
 {
-    for(int row = 0; row < 3; ++row) {
-        for(int col = 0; col < 3; ++col) {
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
             data << mat[row][col];
         }
     }
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, tf::Matrix3x3& mat)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, tf::Matrix3x3& mat)
 {
-    for(int row = 0; row < 3; ++row) {
-        for(int col = 0; col < 3; ++col) {
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
             data >> mat[row][col];
         }
     }
     return data;
 }
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const tf::Vector3& vec)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const tf::Vector3& vec)
 {
-    for(int row = 0; row < 3; ++row) {
+    for (int row = 0; row < 3; ++row) {
         data << vec[row];
     }
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, tf::Vector3& vec)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, tf::Vector3& vec)
 {
-    for(int row = 0; row < 3; ++row) {
+    for (int row = 0; row < 3; ++row) {
         data >> vec[row];
     }
     return data;
 }
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const tf::Transform& tf)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const tf::Transform& tf)
 {
     data << tf.getOrigin();
     data << tf.getBasis();
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, tf::Transform& tf)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, tf::Transform& tf)
 {
     tf::Vector3 origin;
     data >> origin;

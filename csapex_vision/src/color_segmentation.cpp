@@ -2,21 +2,20 @@
 #include "color_segmentation.h"
 
 /// PROJECT
+#include <csapex/model/generic_state.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/profiling/interlude.hpp>
 #include <csapex/profiling/timer.h>
-#include <csapex/model/generic_state.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ColorSegmentation, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-ColorSegmentation::ColorSegmentation()
-    : loaded_(false)
+ColorSegmentation::ColorSegmentation() : loaded_(false)
 {
 }
 
@@ -35,11 +34,11 @@ void ColorSegmentation::process()
 
     CvMatMessage::Ptr out_mask(new CvMatMessage(enc::mono, img->frame_id, img->stamp_micro_seconds));
 
-    if(encoding_changed) {
-        if(!loaded_) {
+    if (encoding_changed) {
+        if (!loaded_) {
             updateParameters();
 
-            if(loaded_state_) {
+            if (loaded_state_) {
                 Node::setParameterState(loaded_state_);
                 loaded_state_.reset();
                 triggerParameterSetChanged();
@@ -58,7 +57,7 @@ void ColorSegmentation::process()
     cv::Mat bw;
     cv::inRange(img->value, min, max, bw);
 
-    if(msg::hasMessage(input_mask_)) {
+    if (msg::hasMessage(input_mask_)) {
         CvMatMessage::ConstPtr mask = msg::getMessage<CvMatMessage>(input_mask_);
         cv::min(mask->value, bw, out_mask->value);
     } else {
@@ -69,22 +68,23 @@ void ColorSegmentation::process()
     msg::publish(output_mask_, out_mask);
 }
 
-namespace {
+namespace
+{
 std::string channelName(int idx, const Channel& c)
 {
     std::stringstream name;
     name << "c" << idx << " [" << c.name << "]";
     return name.str();
 }
-}
+}  // namespace
 
 void ColorSegmentation::update()
 {
     min = cv::Scalar::all(0);
     max = cv::Scalar::all(0);
 
-    for(std::size_t i = 0; i < current_encoding.channelCount(); ++i) {
-        std::pair<int,int> val = readParameter<std::pair<int, int> >(channelName(i, current_encoding.getChannel(i)));
+    for (std::size_t i = 0; i < current_encoding.channelCount(); ++i) {
+        std::pair<int, int> val = readParameter<std::pair<int, int>>(channelName(i, current_encoding.getChannel(i)));
 
         min[i] = val.first;
         max[i] = val.second;
@@ -95,12 +95,12 @@ void ColorSegmentation::updateParameters()
 {
     setParameterSetSilence(true);
     removeTemporaryParameters();
-    for(std::size_t i = 0; i < current_encoding.channelCount(); ++i) {
+    for (std::size_t i = 0; i < current_encoding.channelCount(); ++i) {
         Channel c = current_encoding.getChannel(i);
 
         std::string name = channelName(i, c);
         csapex::param::Parameter::Ptr p;
-        if(c.fp) {
+        if (c.fp) {
             p = csapex::param::factory::declareInterval<double>(name, c.min_f, c.max_f, c.min_f, c.max_f, 1.0);
         } else {
             p = csapex::param::factory::declareInterval<int>(name, c.min_i, c.max_i, c.min_i, c.max_i, 1);
@@ -119,10 +119,10 @@ void ColorSegmentation::setup(NodeModifier& node_modifier)
     output_mask_ = node_modifier.addOutput<CvMatMessage>("Mask");
 }
 
-void ColorSegmentation::setupParameters(Parameterizable &params)
+void ColorSegmentation::setupParameters(Parameterizable& params)
 {
-    if(loaded_state_) {
-        for(auto pair : loaded_state_->params) {
+    if (loaded_state_) {
+        for (auto pair : loaded_state_->params) {
             params.addParameter(param::ParameterFactory::clone(pair.second));
         }
         Node::setParameterState(loaded_state_);

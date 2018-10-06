@@ -8,23 +8,24 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::PointIndicesMessage)
 
 using namespace csapex::connection_types;
 
-PointIndicesMessage::PointIndicesMessage() :
-    MessageTemplate<pcl::PointIndices::Ptr, PointIndicesMessage>("/")
+PointIndicesMessage::PointIndicesMessage() : MessageTemplate<pcl::PointIndices::Ptr, PointIndicesMessage>("/")
 {
     value.reset(new pcl::PointIndices);
 }
 
-
 /// YAML
-namespace YAML {
-Node convert<csapex::connection_types::PointIndicesMessage>::encode(const csapex::connection_types::PointIndicesMessage& rhs) {
+namespace YAML
+{
+Node convert<csapex::connection_types::PointIndicesMessage>::encode(const csapex::connection_types::PointIndicesMessage& rhs)
+{
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
     node["indices"] = *rhs.value;
     return node;
 }
 
-bool convert<csapex::connection_types::PointIndicesMessage>::decode(const Node& node, csapex::connection_types::PointIndicesMessage& rhs) {
-    if(!node.IsMap()) {
+bool convert<csapex::connection_types::PointIndicesMessage>::decode(const Node& node, csapex::connection_types::PointIndicesMessage& rhs)
+{
+    if (!node.IsMap()) {
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
@@ -33,8 +34,8 @@ bool convert<csapex::connection_types::PointIndicesMessage>::decode(const Node& 
     return true;
 }
 
-
-Node convert<pcl::PointIndices>::encode(const pcl::PointIndices& rhs) {
+Node convert<pcl::PointIndices>::encode(const pcl::PointIndices& rhs)
+{
     Node node;
     node["indices"] = rhs.indices;
     node["header/frame_id"] = rhs.header.frame_id;
@@ -44,14 +45,15 @@ Node convert<pcl::PointIndices>::encode(const pcl::PointIndices& rhs) {
     return node;
 }
 
-bool convert<pcl::PointIndices>::decode(const Node& node, pcl::PointIndices& rhs) {
-    if(!node.IsMap()) {
+bool convert<pcl::PointIndices>::decode(const Node& node, pcl::PointIndices& rhs)
+{
+    if (!node.IsMap()) {
         return false;
     }
-    rhs.indices = node["indices"].as<std::vector<int> >();
+    rhs.indices = node["indices"].as<std::vector<int>>();
     rhs.header.frame_id = node["header/frame_id"].as<std::string>();
     rhs.header.seq = node["header/seq"].as<unsigned int>();
     rhs.header.stamp = node["header/stamp"].as<unsigned long>();
     return true;
 }
-}
+}  // namespace YAML

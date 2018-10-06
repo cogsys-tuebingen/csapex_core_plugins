@@ -1,17 +1,16 @@
 /// COMPONENT
 #include <csapex/model/node.h>
-#include <csapex/msg/io.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/interval_parameter.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
-#include <csapex/param/interval_parameter.h>
 
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
 class Levels : public Node
 {
 public:
@@ -23,10 +22,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        addParameter(csapex::param::factory::declareBool("auto levels", false),
-                     [this](csapex::param::Parameter* p) {
-            automatic_ = p->as<bool>();
-        });
+        addParameter(csapex::param::factory::declareBool("auto levels", false), [this](csapex::param::Parameter* p) { automatic_ = p->as<bool>(); });
     }
 
     void setEncoding(const Encoding& e)
@@ -36,17 +32,20 @@ public:
         levels_.clear();
         removeTemporaryParameters();
 
-        for(std::size_t ch = 0; ch < current_encoding_.channelCount(); ++ch) {
+        for (std::size_t ch = 0; ch < current_encoding_.channelCount(); ++ch) {
             auto channel = current_encoding_.getChannel(ch);
             csapex::param::Parameter::Ptr p;
-            if(channel.fp) {
+            if (channel.fp) {
                 throw std::logic_error("Levels for fp images is not yet implemented.");
-                //                p = csapex::param::factory::declareInterval<double>(channel.name, channel.min_f, channel.max_f,channel.min_f, channel.max_f, 0.01);
+                //                p =
+                //                csapex::param::factory::declareInterval<double>(channel.name,
+                //                channel.min_f, channel.max_f,channel.min_f,
+                //                channel.max_f, 0.01);
             } else {
-                p = csapex::param::factory::declareInterval(channel.name, channel.min_i, channel.max_i,channel.min_i, channel.max_i, 1);
+                p = csapex::param::factory::declareInterval(channel.name, channel.min_i, channel.max_i, channel.min_i, channel.max_i, 1);
             }
             addTemporaryParameter(p, [this](csapex::param::Parameter* p) {
-                if(!automatic_) {
+                if (!automatic_) {
                     updateLut();
                 }
             });
@@ -55,44 +54,44 @@ public:
     }
 
     template <typename T>
-    void map(T& v, std::size_t i, int lower, int upper) {
-        if(i < (std::size_t) lower) {
+    void map(T& v, std::size_t i, int lower, int upper)
+    {
+        if (i < (std::size_t)lower) {
             v = 0;
-        } else if(i > (std::size_t) upper){
+        } else if (i > (std::size_t)upper) {
             v = 255;
         } else {
             v = 255.0 * (i - lower) / double(upper - lower);
         }
     }
 
-
     std::pair<int, int> getBounds(std::size_t channel)
     {
-        return readParameter<std::pair<int,int>>(current_encoding_.getChannel(channel).name);
+        return readParameter<std::pair<int, int>>(current_encoding_.getChannel(channel).name);
     }
 
     void updateLut()
     {
         std::size_t channels = levels_.size();
-        if(channels != 1 && channels != 3) {
+        if (channels != 1 && channels != 3) {
             throw std::logic_error("Levels is only implemented for 1 or 3 channels.");
         }
 
         int dim = 256;
         lut_ = cv::Mat(1, &dim, CV_8UC(channels));
 
-        if(channels == 1) {
+        if (channels == 1) {
             std::pair<int, int> interval = getBounds(0);
 
-            for (int i=0; i<dim; i++) {
+            for (int i = 0; i < dim; i++) {
                 map(lut_.at<uchar>(i), i, interval.first, interval.second);
             }
 
         } else {
-            for(std::size_t ch = 0; ch < channels; ++ch) {
+            for (std::size_t ch = 0; ch < channels; ++ch) {
                 std::pair<int, int> interval = getBounds(ch);
 
-                for (int i=0; i<dim; i++) {
+                for (int i = 0; i < dim; i++) {
                     map(lut_.at<cv::Vec3b>(i)[ch], i, interval.first, interval.second);
                 }
             }
@@ -113,22 +112,22 @@ public:
     {
         std::vector<std::pair<int, int>> pairs;
         pairs.resize(3);
-        for(std::size_t ch = 0; ch < 3; ++ch) {
+        for (std::size_t ch = 0; ch < 3; ++ch) {
             pairs[ch].first = 255;
             pairs[ch].second = 0;
         }
 
-        for(int row = 0; row < img.rows; ++row) {
-            for(int col = 0; col < img.cols; ++col) {
+        for (int row = 0; row < img.rows; ++row) {
+            for (int col = 0; col < img.cols; ++col) {
                 const auto& v = img_.at<cv::Vec3b>(row, col);
-                for(std::size_t ch = 0; ch < 3; ++ch) {
-                    pairs[ch].first = std::min(pairs[ch].first, (int) v[ch]);
-                    pairs[ch].second = std::max(pairs[ch].second, (int) v[ch]);
+                for (std::size_t ch = 0; ch < 3; ++ch) {
+                    pairs[ch].first = std::min(pairs[ch].first, (int)v[ch]);
+                    pairs[ch].second = std::max(pairs[ch].second, (int)v[ch]);
                 }
             }
         }
 
-        for(std::size_t ch = 0; ch < 3; ++ch) {
+        for (std::size_t ch = 0; ch < 3; ++ch) {
             param::IntervalParameter::Ptr& p = levels_.at(ch);
             p->set(pairs[ch]);
         }
@@ -137,9 +136,9 @@ public:
     void calculateLut(const cv::Mat& img)
     {
         std::size_t channels = levels_.size();
-        if(channels == 1) {
+        if (channels == 1) {
             calculateLut1(img);
-        } else if(channels == 3){
+        } else if (channels == 3) {
             calculateLut3(img);
         } else {
             throw std::logic_error("Levels is only implemented for 1 or 3 channels.");
@@ -152,14 +151,13 @@ public:
         CvMatMessage::ConstPtr img_in = msg::getMessage<CvMatMessage>(in_);
         img_ = img_in->value;
 
-        if(!img_in->getEncoding().matches(current_encoding_)) {
+        if (!img_in->getEncoding().matches(current_encoding_)) {
             setEncoding(img_in->getEncoding());
-            if(!automatic_) {
+            if (!automatic_) {
                 updateLut();
             }
-
         }
-        if(automatic_){
+        if (automatic_) {
             calculateLut(img_);
         }
 
@@ -182,7 +180,6 @@ private:
     cv::Mat lut_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::Levels, csapex::Node)
-

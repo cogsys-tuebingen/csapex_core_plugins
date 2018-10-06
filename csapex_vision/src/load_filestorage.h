@@ -7,7 +7,8 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
+namespace csapex
+{
 class LoadFilestorage : public Node
 {
 public:
@@ -20,17 +21,15 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 private:
-    Output *output_;
-    std::map<std::string, cv::Mat>           mats_;
+    Output* output_;
+    std::map<std::string, cv::Mat> mats_;
     std::map<std::string, cv::Mat>::iterator mats_it_;
     std::map<std::string, cv::Mat>::iterator mats_last_;
-
-
 
     void loadFile();
     void entryChanged();
     void checkChanged();
 };
-}
+}  // namespace csapex
 
-#endif // LOADFILESTORAGE_H
+#endif  // LOADFILESTORAGE_H

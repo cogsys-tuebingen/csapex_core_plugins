@@ -6,7 +6,6 @@
 
 namespace csapex
 {
-
 class BoxBlur : public Node
 {
 public:
@@ -17,11 +16,10 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 private:
-
-    Input  *input_;
-    Output *output_;
+    Input* input_;
+    Output* output_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // FilterBlur_H
+#endif  // FilterBlur_H

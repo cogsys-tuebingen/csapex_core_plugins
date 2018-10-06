@@ -8,7 +8,7 @@ CSAPEX_REGISTER_MESSAGE_WITH_NAME(csapex::connection_types::CircleMessage, Circl
 
 YAML::Node YAML::convert<csapex::connection_types::CircleMessage>::encode(const csapex::connection_types::CircleMessage& rhs)
 {
-  YAML::Node node = convert<csapex::connection_types::Message>::encode(rhs);
+    YAML::Node node = convert<csapex::connection_types::Message>::encode(rhs);
 
   node["center_x"] = rhs.value.center_x;
   node["center_y"] = rhs.value.center_y;
@@ -19,9 +19,9 @@ YAML::Node YAML::convert<csapex::connection_types::CircleMessage>::encode(const 
 
 bool YAML::convert<csapex::connection_types::CircleMessage>::decode(const YAML::Node& node, csapex::connection_types::CircleMessage& rhs)
 {
-  if(!node.IsMap()) {
-    return false;
-  }
+    if (!node.IsMap()) {
+        return false;
+    }
 
   convert<csapex::connection_types::Message>::decode(node, rhs);
   auto value = node["value"];

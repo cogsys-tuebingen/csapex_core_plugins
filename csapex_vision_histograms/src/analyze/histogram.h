@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class Histogram : public csapex::Node
 {
 public:
@@ -15,12 +16,12 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Output*   output_;
-    csapex::Input*    input_;
-    csapex::Input*    mask_;
+    csapex::Output* output_;
+    csapex::Input* input_;
+    csapex::Input* mask_;
 
-    int  bins_;
-    int  last_type_;
+    int bins_;
+    int last_type_;
     bool uniform_;
     bool accumulate_;
     bool min_max_;
@@ -32,6 +33,6 @@ protected:
 
     void resetMinMax();
 };
-}
+}  // namespace csapex
 
-#endif // HISTOGRAM_VISION_H
+#endif  // HISTOGRAM_VISION_H

@@ -2,16 +2,15 @@
 #include "extract_roi.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex_opencv/roi_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
+#include <csapex_opencv/roi_message.h>
 
 /// SYSTEM
-
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractROI, csapex::Node)
 
@@ -22,7 +21,7 @@ ExtractROI::ExtractROI()
 {
 }
 
-void ExtractROI::setupParameters(Parameterizable &parameters)
+void ExtractROI::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareRange<int>("thickness", 1, 20, 1, 1));
 }
@@ -37,21 +36,21 @@ void ExtractROI::process()
     cv::Mat mat = img->value;
     cv::Rect rect = roi->value.rect();
 
-    if(rect.x < 0) {
+    if (rect.x < 0) {
         rect.x = 0;
-    } else if(rect.x >= mat.cols) {
+    } else if (rect.x >= mat.cols) {
         rect.x = mat.cols;
     }
-    if(rect.y < 0) {
+    if (rect.y < 0) {
         rect.y = 0;
-    } else if(rect.y >= mat.rows) {
+    } else if (rect.y >= mat.rows) {
         rect.y = mat.rows;
     }
 
-    if(rect.x + rect.width >= mat.cols) {
+    if (rect.x + rect.width >= mat.cols) {
         rect.width = mat.cols - rect.x - 1;
     }
-    if(rect.y + rect.height >= mat.rows) {
+    if (rect.y + rect.height >= mat.rows) {
         rect.height = mat.rows - rect.y - 1;
     }
 
@@ -63,7 +62,7 @@ void ExtractROI::process()
 void ExtractROI::setup(NodeModifier& node_modifier)
 {
     input_img_ = node_modifier.addInput<CvMatMessage>("Image");
-    input_roi_ = node_modifier.addInput<RoiMessage >("ROI");
+    input_roi_ = node_modifier.addInput<RoiMessage>("ROI");
 
     output_ = node_modifier.addOutput<CvMatMessage>("SubImage");
 }

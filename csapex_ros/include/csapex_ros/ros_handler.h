@@ -5,16 +5,17 @@
 #include <csapex/core/settings.h>
 
 /// SYSTEM
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <ros/ros.h>
+#include <ros/ros.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 #include <future>
 #include <mutex>
 
 namespace csapex
 {
-
 class ROSHandler : public boost::noncopyable
 {
 public:
@@ -25,7 +26,7 @@ public:
     }
     static void createInstance(Settings& settings)
     {
-        if(!g_instance_) {
+        if (!g_instance_) {
             g_instance_ = new ROSHandler(settings);
         }
     }
@@ -81,6 +82,6 @@ private:
     std::map<std::string, std::function<void()>> topic_callbacks_;
 };
 
-}
+}  // namespace csapex
 
-#endif // ROS_HANDLER_H
+#endif  // ROS_HANDLER_H

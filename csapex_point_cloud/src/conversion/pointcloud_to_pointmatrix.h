@@ -5,7 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
+namespace csapex
+{
 class PointCloudToPointMatrix : public csapex::Node
 {
 public:
@@ -18,9 +19,9 @@ public:
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 protected:
-    Input*  input_;
+    Input* input_;
     Output* output_;
     Output* mask_;
 };
-}
-#endif // TO_POINT_MATRIX_H
+}  // namespace csapex
+#endif  // TO_POINT_MATRIX_H

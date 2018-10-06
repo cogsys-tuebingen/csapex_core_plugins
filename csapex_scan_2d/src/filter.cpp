@@ -2,11 +2,11 @@
 #include "filter.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/io.h>
-#include <csapex_scan_2d/scan_message.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_scan_2d/scan_message.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -18,10 +18,10 @@ ScanFilter::ScanFilter()
 {
 }
 
-void ScanFilter::setupParameters(Parameterizable &parameters)
+void ScanFilter::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::factory::declareRange("max angle",    0.0, M_PI, M_PI, 0.1));
-    parameters.addParameter(csapex::param::factory::declareRange("min angle",  -M_PI, 0.0 ,-M_PI, 0.1));
+    parameters.addParameter(csapex::param::factory::declareRange("max angle", 0.0, M_PI, M_PI, 0.1));
+    parameters.addParameter(csapex::param::factory::declareRange("min angle", -M_PI, 0.0, -M_PI, 0.1));
 
     parameters.addParameter(csapex::param::factory::declareRange("max range", 0.0, 30.0, 30.0, 0.1));
     parameters.addParameter(csapex::param::factory::declareRange("min range", 0.0, 30.0, 0.0, 0.1));
@@ -45,10 +45,9 @@ void ScanFilter::process()
     double min_angle = readParameter<double>("min angle");
 
     double angle = scan.angle_min;
-    for(std::vector<LaserBeam>::const_iterator it = scan.rays.begin() ; it != scan.rays.end() ; ++it, angle += scan.angle_increment) {
+    for (std::vector<LaserBeam>::const_iterator it = scan.rays.begin(); it != scan.rays.end(); ++it, angle += scan.angle_increment) {
         const LaserBeam& ray = *it;
-        if(angle >= min_angle && angle <= max_angle &&
-                ray.range() > min_range && ray.range() < max_range) {
+        if (angle >= min_angle && angle <= max_angle && ray.range() > min_range && ray.range() < max_range) {
             filtered_scan.rays.push_back(ray);
         } else {
             filtered_scan.rays.push_back(LaserBeam(ray.yaw(), 0.0f));

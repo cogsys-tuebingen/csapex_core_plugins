@@ -2,8 +2,8 @@
 #define ARFFFILEIMPORTER_H
 
 /// PROJECT
-#include <csapex/serialization/serializable.h>
 #include <csapex/msg/message_provider.h>
+#include <csapex/serialization/serializable.h>
 
 /// SYSTEM
 #include <functional>
@@ -13,7 +13,8 @@
 
 #include <cslibs_arff/arff_data.h>
 
-namespace csapex {
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN ARFFFeatureMessageProvider : public MessageProvider
 {
 public:
@@ -42,6 +43,6 @@ private:
 
     static std::map<std::string, ProviderConstructor> plugins;
 };
-}
+}  // namespace csapex
 
-#endif // ARFFFILEIMPORTER_H
+#endif  // ARFFFILEIMPORTER_H

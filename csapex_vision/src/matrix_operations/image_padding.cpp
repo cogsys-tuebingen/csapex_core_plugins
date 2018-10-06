@@ -2,14 +2,13 @@
 #include "image_padding.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ImagePadding, csapex::Node)
-
 
 using namespace csapex;
 using namespace connection_types;
@@ -35,7 +34,7 @@ void ImagePadding::setup(NodeModifier& node_modifier)
 
 void ImagePadding::process()
 {
-    if(!msg::isConnected(output_) && !msg::isConnected(output_mask_)) {
+    if (!msg::isConnected(output_) && !msg::isConnected(output_mask_)) {
         return;
     }
 
@@ -46,9 +45,9 @@ void ImagePadding::process()
 
     int border = readParameter<int>("border");
 
-    if(msg::isConnected(output_)) {
+    if (msg::isConnected(output_)) {
         CvMatMessage::Ptr result(new CvMatMessage(img_msg->getEncoding(), img_msg->frame_id, img_msg->stamp_micro_seconds));
-        const std::vector<int>& c = readParameter<std::vector<int> >("color");
+        const std::vector<int>& c = readParameter<std::vector<int>>("color");
         cv::Scalar color(c[2], c[1], c[0]);
         result->value = cv::Mat(rows + 2 * border, cols + 2 * border, img_msg->value.type(), color);
         cv::Mat roi(result->value, cv::Rect(border, border, cols, rows));
@@ -58,16 +57,15 @@ void ImagePadding::process()
         msg::publish(output_, result);
     }
 
-    if(msg::isConnected(output_mask_)) {
+    if (msg::isConnected(output_mask_)) {
         CvMatMessage::Ptr result(new CvMatMessage(enc::mono, img_msg->frame_id, img_msg->stamp_micro_seconds));
 
         result->value = cv::Mat(rows + 2 * border, cols + 2 * border, CV_8UC1, cv::Scalar::all(0));
 
         int mask_offset = readParameter<int>("mask offset");
-        cv::Rect roi_rect(border+mask_offset, border+mask_offset, cols-2*mask_offset, rows-2*mask_offset);
+        cv::Rect roi_rect(border + mask_offset, border + mask_offset, cols - 2 * mask_offset, rows - 2 * mask_offset);
         cv::rectangle(result->value, roi_rect, cv::Scalar::all(255), CV_FILLED);
 
         msg::publish(output_mask_, result);
     }
-
 }

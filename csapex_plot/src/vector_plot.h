@@ -3,17 +3,18 @@
 
 /// PROJECT
 #include "plot.h"
-#include <csapex/utility/assert.h>
 #include <csapex/model/variadic_io.h>
+#include <csapex/utility/assert.h>
 
 /// SYSTEM
-#include <chrono>
 #include <QColor>
+#include <chrono>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_scaleitem.h>
 #include <qwt_scale_map.h>
 
-namespace csapex{
+namespace csapex
+{
 class VectorPlot : public Plot, public csapex::VariadicInputs
 {
 public:
@@ -27,9 +28,9 @@ public:
 
     double getLineWidth() const;
 
-//    QColor getLineColor(std::size_t idx) const;
+    //    QColor getLineColor(std::size_t idx) const;
 
-    const double *getTData() const;
+    const double* getTData() const;
     const double* getVData(std::size_t idx) const;
     std::size_t getVDataCountNumCurves() const;
     std::size_t getCount() const;
@@ -59,11 +60,9 @@ private:
     double start_t_;
     std::vector<double> data_t_raw_;
 
-
     std::vector<double> data_t_;
     std::vector<std::vector<double>> data_v_;
-
 };
 
-}
-#endif // VECTORPLOT_H
+}  // namespace csapex
+#endif  // VECTORPLOT_H

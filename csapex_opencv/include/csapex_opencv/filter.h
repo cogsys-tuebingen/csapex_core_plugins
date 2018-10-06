@@ -11,7 +11,6 @@
 
 namespace csapex
 {
-
 class Input;
 class Output;
 
@@ -42,6 +41,6 @@ protected:
     Output* output_mask_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // FILTER_H
+#endif  // FILTER_H

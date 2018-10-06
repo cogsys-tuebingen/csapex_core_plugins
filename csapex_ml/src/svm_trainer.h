@@ -10,34 +10,34 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN SVMTrainer : public CollectionNode<connection_types::FeaturesMessage>
 {
 public:
     SVMTrainer();
 
-    void setup(NodeModifier &modifier) override;
+    void setup(NodeModifier& modifier) override;
     void setupParameters(Parameterizable& parameters) override;
 
 private:
-    std::string     path_;
-    bool            save_for_hog_;
+    std::string path_;
+    bool save_for_hog_;
 
-    int         svm_type_;
-    int         kernel_type_;
-    double      degree_; // for poly
-    double      gamma_;  // for poly/rbf/sigmoid
-    double      coef0_;  // for poly/sigmoid
+    int svm_type_;
+    int kernel_type_;
+    double degree_;  // for poly
+    double gamma_;   // for poly/rbf/sigmoid
+    double coef0_;   // for poly/sigmoid
 
-    double      C_;  // for CV_SVM_C_SVC, CV_SVM_EPS_SVR and CV_SVM_NU_SVR
-    double      nu_; // for CV_SVM_NU_SVC, CV_SVM_ONE_CLASS, and CV_SVM_NU_SVR
-    double      p_; // for CV_SVM_EPS_SVR
-//    CvMat*      class_weights; // for CV_SVM_C_SVC
-    CvTermCriteria term_crit_; // termination criteria
+    double C_;                  // for CV_SVM_C_SVC, CV_SVM_EPS_SVR and CV_SVM_NU_SVR
+    double nu_;                 // for CV_SVM_NU_SVC, CV_SVM_ONE_CLASS, and CV_SVM_NU_SVR
+    double p_;                  // for CV_SVM_EPS_SVR
+                                //    CvMat*      class_weights; // for CV_SVM_C_SVC
+    CvTermCriteria term_crit_;  // termination criteria
 
-    bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
-
+    bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;
 };
-}
+}  // namespace csapex
 
-#endif // SVM_TRAINER_H
+#endif  // SVM_TRAINER_H

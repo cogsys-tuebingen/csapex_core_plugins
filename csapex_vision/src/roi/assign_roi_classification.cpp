@@ -1,15 +1,15 @@
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_ml/features_message.h>
-#include <csapex_opencv/roi_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_ml/features_message.h>
+#include <csapex_opencv/roi_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 using namespace connection_types;
 
 class AssignROIClassification : public csapex::Node
@@ -25,22 +25,20 @@ public:
         input_features_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
         output_rois_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
     }
-    virtual void setupParameters(Parameterizable &parameters) override
+    virtual void setupParameters(Parameterizable& parameters) override
     {
     }
     virtual void process() override
     {
-        std::shared_ptr<std::vector<RoiMessage> const> input_rois =
-                msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_);
-        std::shared_ptr<std::vector<FeaturesMessage> const> input_features =
-                msg::getMessage<GenericVectorMessage, FeaturesMessage>(input_features_);
+        std::shared_ptr<std::vector<RoiMessage> const> input_rois = msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_);
+        std::shared_ptr<std::vector<FeaturesMessage> const> input_features = msg::getMessage<GenericVectorMessage, FeaturesMessage>(input_features_);
         std::shared_ptr<std::vector<RoiMessage>> output_rois(new std::vector<RoiMessage>);
 
-        if(input_rois->size() != input_features->size())
+        if (input_rois->size() != input_features->size())
             throw std::runtime_error("Amount of ROIs and Features must be the same!");
 
         std::size_t size = input_rois->size();
-        for(std::size_t i = 0 ; i < size ; ++i) {
+        for (std::size_t i = 0; i < size; ++i) {
             FeaturesMessage fm = input_features->at(i);
             apex_assert(fm.type == FeaturesMessage::Type::CLASSIFICATION);
             RoiMessage roi = input_rois->at(i);
@@ -61,5 +59,5 @@ private:
     Output* output_rois_;
 };
 
-}
+}  // namespace csapex
 CSAPEX_REGISTER_CLASS(csapex::AssignROIClassification, csapex::Node)

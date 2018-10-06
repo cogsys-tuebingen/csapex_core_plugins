@@ -2,21 +2,19 @@
 #include "decision_tree.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/signal/slot.h>
+#include <csapex/utility/register_apex_plugin.h>
 
 CSAPEX_REGISTER_CLASS(csapex::DecisionTree, csapex::Node)
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
-
-DecisionTree::DecisionTree()
-    : loaded_(false)
+DecisionTree::DecisionTree() : loaded_(false)
 {
 }
 
@@ -27,7 +25,7 @@ void DecisionTree::setupParameters(Parameterizable& parameters)
 
 void DecisionTree::setup(NodeModifier& node_modifier)
 {
-    in_  = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Unclassified feature");
+    in_ = node_modifier.addInput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Unclassified feature");
     out_ = node_modifier.addOutput<GenericVectorMessage, csapex::connection_types::FeaturesMessage>("Classified feature");
 
     reload_ = node_modifier.addSlot("Reload", std::bind(&DecisionTree::loadTree, this));
@@ -36,13 +34,13 @@ void DecisionTree::setup(NodeModifier& node_modifier)
 void DecisionTree::process()
 {
     std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
-    std::shared_ptr< std::vector<FeaturesMessage> > output (new std::vector<FeaturesMessage>);
+    std::shared_ptr<std::vector<FeaturesMessage>> output(new std::vector<FeaturesMessage>);
 
     std::size_t n = input->size();
 
-    if(loaded_) {
+    if (loaded_) {
         output->resize(n);
-        for(std::size_t i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             output->at(i) = classify(input->at(i));
         }
 
@@ -54,7 +52,7 @@ void DecisionTree::process()
     msg::publish<GenericVectorMessage, FeaturesMessage>(out_, output);
 }
 
-connection_types::FeaturesMessage DecisionTree::classify(const FeaturesMessage &input)
+connection_types::FeaturesMessage DecisionTree::classify(const FeaturesMessage& input)
 {
     connection_types::FeaturesMessage result = input;
 
@@ -78,6 +76,6 @@ void DecisionTree::loadTree()
     dtree_.load(file.c_str());
     loaded_ = dtree_.get_root() != nullptr;
 #elif CV_MAJOR_VERSION == 3
-    dtree_ = cv::ml::StatModel::load<cv::ml::DTrees>( file );
+    dtree_ = cv::ml::StatModel::load<cv::ml::DTrees>(file);
 #endif
 }

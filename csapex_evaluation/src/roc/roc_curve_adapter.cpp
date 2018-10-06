@@ -7,11 +7,11 @@
 #include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
-#include <QTableView>
-#include <QPainter>
+#include <QApplication>
 #include <QGridLayout>
 #include <QLabel>
-#include <QApplication>
+#include <QPainter>
+#include <QTableView>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 
@@ -19,13 +19,11 @@ using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(ROCCurveAdapter, csapex::ROCCurve)
 
-
-ROCCurveAdapter::ROCCurveAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ROCCurve> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_(node), plot_widget_(nullptr)
+ROCCurveAdapter::ROCCurveAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ROCCurve> node) : DefaultNodeAdapter(worker, parent), wrapped_(node), plot_widget_(nullptr)
 {
     auto n = wrapped_.lock();
     // translate to UI thread via Qt signal
-    observe(n ->display_request, this, &ROCCurveAdapter::displayRequest);
+    observe(n->display_request, this, &ROCCurveAdapter::displayRequest);
 }
 
 ROCCurveAdapter::~ROCCurveAdapter()
@@ -40,19 +38,16 @@ void ROCCurveAdapter::setupUi(QBoxLayout* layout)
     layout->addLayout(grid);
 
     plot_widget_ = new QwtPlot;
-    plot_widget_->setFixedSize(n->readParameter<int>("width"),
-                               n->readParameter<int>("height"));
+    plot_widget_->setFixedSize(n->readParameter<int>("width"), n->readParameter<int>("height"));
 
     plot_widget_->setAxisAutoScale(QwtPlot::xBottom, false);
     plot_widget_->setAxisAutoScale(QwtPlot::yLeft, false);
     plot_widget_->setAxisScale(QwtPlot::xBottom, 0.0, 1.0);
     plot_widget_->setAxisScale(QwtPlot::yLeft, 0.0, 1.0);
 
-
     roc_curve_ = new QwtPlotCurve("ROC");
 
     roc_curve_->attach(plot_widget_);
-
 
     grid->addWidget(plot_widget_, 1, 1);
     connect(this, SIGNAL(displayRequest()), this, SLOT(display()));
@@ -63,25 +58,25 @@ void ROCCurveAdapter::setupUi(QBoxLayout* layout)
 void ROCCurveAdapter::display()
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
 
     QVector<double> x;
     QVector<double> y;
 
-    if(node->getType() == ROCCurve::Type::ROC) {
+    if (node->getType() == ROCCurve::Type::ROC) {
         x.push_back(0);
         y.push_back(0);
-        for(const ROCCurve::Entry& entry : node->getEntries()) {
+        for (const ROCCurve::Entry& entry : node->getEntries()) {
             y.push_back(entry.recall);
             x.push_back(entry.specificity);
         }
         x.push_back(1);
         y.push_back(1);
 
-    } else if(node->getType() == ROCCurve::Type::PR) {
-        for(const ROCCurve::Entry& entry : node->getEntries()) {
+    } else if (node->getType() == ROCCurve::Type::PR) {
+        for (const ROCCurve::Entry& entry : node->getEntries()) {
             y.push_back(entry.recall);
             x.push_back(entry.precision);
         }

@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class PointmatrixToPointcloud : public csapex::Node
 {
 public:
@@ -17,7 +18,6 @@ public:
 private:
     Input* input_;
     Output* output_;
-
 };
-}
-#endif // POINTMATRIX_TO_POINTCLOUD_H
+}  // namespace csapex
+#endif  // POINTMATRIX_TO_POINTCLOUD_H

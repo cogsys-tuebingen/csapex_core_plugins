@@ -10,8 +10,8 @@
 /// SYSTEM
 #include <QLCDNumber>
 
-namespace csapex {
-
+namespace csapex
+{
 class PointCountAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -33,6 +33,6 @@ private:
     QLCDNumber* number_;
 };
 
-}
+}  // namespace csapex
 
-#endif // POINT_COUNT_ADAPTER_H
+#endif  // POINT_COUNT_ADAPTER_H

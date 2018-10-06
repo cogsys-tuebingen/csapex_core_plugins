@@ -1,21 +1,19 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_transform/transform_message.h>
 #include <csapex_core_plugins/timestamp_message.h>
+#include <csapex_transform/transform_message.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class VectorDoubleToTransform : public Node
 {
 public:
@@ -42,7 +40,7 @@ public:
         TransformMessage::Ptr out(new TransformMessage);
         out->stamp_micro_seconds = 0;
 
-        if(msg::hasMessage(in_ts_)){
+        if (msg::hasMessage(in_ts_)) {
             TimestampMessage::ConstPtr stamp = msg::getMessage<TimestampMessage>(in_ts_);
             out->stamp_micro_seconds = std::chrono::duration_cast<std::chrono::microseconds>(stamp->value.time_since_epoch()).count();
         }
@@ -64,11 +62,8 @@ private:
     Output* out_;
     std::string frame;
     std::string child_frame;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::VectorDoubleToTransform, csapex::Node)
-

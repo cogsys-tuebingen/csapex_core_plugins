@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN BlobDetector : public csapex::Node
 {
 public:
@@ -22,6 +23,6 @@ private:
 
     Input* input_;
 };
-}
+}  // namespace csapex
 
-#endif // BLOB_DETECTOR_H
+#endif  // BLOB_DETECTOR_H

@@ -8,9 +8,8 @@
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class TransformToOdometry : public csapex::Node
 {
 public:
@@ -25,7 +24,6 @@ private:
     Output* out_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // TRANSFORM_TO_ODOMETRY_H
+#endif  // TRANSFORM_TO_ODOMETRY_H

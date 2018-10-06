@@ -6,20 +6,19 @@
 
 using namespace csapex;
 
-InteractiveNode::InteractiveNode()
-    : stopped_(false), done_(false)
+InteractiveNode::InteractiveNode() : stopped_(false), done_(false)
 {
 }
 void InteractiveNode::process()
 {
     throw std::runtime_error("not implemented");
 }
-void InteractiveNode::process(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
+void InteractiveNode::process(csapex::NodeModifier& node_modifier, Parameterizable& parameters)
 {
     throw std::runtime_error("not implemented");
 }
 
-void InteractiveNode::process(csapex::NodeModifier& node_modifier, Parameterizable &parameters, Continuation continuation)
+void InteractiveNode::process(csapex::NodeModifier& node_modifier, Parameterizable& parameters, Continuation continuation)
 {
     continuation_ = continuation;
 
@@ -34,11 +33,9 @@ bool InteractiveNode::isAsynchronous() const
 
 void InteractiveNode::done()
 {
-    if(!done_){
+    if (!done_) {
         done_ = true;
-        continuation_([this](csapex::NodeModifier& node_modifier, Parameterizable &parameters){
-            finishProcess(node_modifier, parameters);
-        });
+        continuation_([this](csapex::NodeModifier& node_modifier, Parameterizable& parameters) { finishProcess(node_modifier, parameters); });
     }
 }
 
@@ -46,27 +43,25 @@ void InteractiveNode::reset()
 {
     stopped_ = true;
 
-    if(continuation_) {
-        continuation_([](csapex::NodeModifier& node_modifier, Parameterizable &parameters){});
+    if (continuation_) {
+        continuation_([](csapex::NodeModifier& node_modifier, Parameterizable& parameters) {});
     }
 }
 
-void InteractiveNode::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
+void InteractiveNode::beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters)
 {
     beginProcess();
 }
 
-void InteractiveNode::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable &parameters)
+void InteractiveNode::finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters)
 {
     finishProcess();
 }
 
 void InteractiveNode::beginProcess()
 {
-
 }
 
 void InteractiveNode::finishProcess()
 {
-
 }

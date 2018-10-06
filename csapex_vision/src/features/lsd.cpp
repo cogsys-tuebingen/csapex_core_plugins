@@ -23,25 +23,24 @@
 #include "lsd.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/model/node_modifier.h>
 
+#include <ctype.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
-#include <ctype.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 using namespace csapex;
 
 CSAPEX_REGISTER_CLASS(csapex::LineSegmentDetector, csapex::Node)
-
 
 LineSegmentDetector::LineSegmentDetector()
 {
@@ -51,34 +50,35 @@ void LineSegmentDetector::process()
 {
     connection_types::CvMatMessage::ConstPtr a = msg::getMessage<connection_types::CvMatMessage>(input_);
 
-//    cv::Mat image_cv = a->value;
+    //    cv::Mat image_cv = a->value;
 
+    //    X = image_cv.rows;
+    //    Y = image.cv.cols;
+    //    /* get memory */
 
-//    X = image_cv.rows;
-//    Y = image.cv.cols;
-//    /* get memory */
+    //    image = new double [X*Y];
+    //    if( image == NULL ) throw std::runtime_error("unsupported norm type");
 
-//    image = new double [X*Y];
-//    if( image == NULL ) throw std::runtime_error("unsupported norm type");
+    //    if(Image.type() == CV_8UC3) {
+    //          Reading_image_impl<cv::Vec1b, Norm>(Image, Distance, Direction,
+    //          Interpolation_coeff);
+    //      } else if (Image.type() == CV_32FC3) {
+    //          Reading_image_impl<cv::Vec1f, Norm>(Image, Distance, Direction,
+    //          Interpolation_coeff);
+    //      } else if (Image.type() == CV_64FC3) {
+    //          Reading_image_impl<cv::Vec1d, Norm>(Image, Distance, Direction,
+    //          Interpolation_coeff);
+    //      } else {
+    //          throw std::runtime_error("unsupported image type");
+    //      }
 
-//    if(Image.type() == CV_8UC3) {
-//          Reading_image_impl<cv::Vec1b, Norm>(Image, Distance, Direction, Interpolation_coeff);
-//      } else if (Image.type() == CV_32FC3) {
-//          Reading_image_impl<cv::Vec1f, Norm>(Image, Distance, Direction, Interpolation_coeff);
-//      } else if (Image.type() == CV_64FC3) {
-//          Reading_image_impl<cv::Vec1d, Norm>(Image, Distance, Direction, Interpolation_coeff);
-//      } else {
-//          throw std::runtime_error("unsupported image type");
-//      }
-
-
-////  template <typename PixelType, template<typename> class Norm>
-////  void color_edge_detection::RCMG_computation_impl(cv::Mat Image, cv::Mat Distance, cv::Mat Direction, cv::Mat Interpolation_coeff)
-////  {
-///* read data */
-//for(int y=0;y<Y;y++)
-//  for(int x=0;x<X;x++)
-//    image[ x + y * X ] = (double) image_cv.at<image_cv.type()>(x,y);
+    ////  template <typename PixelType, template<typename> class Norm>
+    ////  void color_edge_detection::RCMG_computation_impl(cv::Mat Image, cv::Mat
+    /// Distance, cv::Mat Direction, cv::Mat Interpolation_coeff) /  {
+    ///* read data */
+    // for(int y=0;y<Y;y++)
+    //  for(int x=0;x<X;x++)
+    //    image[ x + y * X ] = (double) image_cv.at<image_cv.type()>(x,y);
 }
 
 void LineSegmentDetector::setup()
@@ -87,5 +87,3 @@ void LineSegmentDetector::setup()
 
     output_ = node_modifier_->addOutput<connection_types::CvMatMessage>("Image");
 }
-
-

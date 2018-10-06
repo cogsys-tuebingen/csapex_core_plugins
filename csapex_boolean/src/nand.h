@@ -4,10 +4,10 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
-namespace boolean {
-
+namespace csapex
+{
+namespace boolean
+{
 class CSAPEX_EXPORT_PLUGIN NAND : public Node
 {
 public:
@@ -23,8 +23,8 @@ private:
     Output* out;
 };
 
-}
+}  // namespace boolean
 
-}
+}  // namespace csapex
 
-#endif // NAND_H
+#endif  // NAND_H

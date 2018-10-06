@@ -2,11 +2,11 @@
 #include "set_operation.h"
 
 /// PROJECT
-#include <csapex_opencv/cv_mat_message.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 using namespace csapex;
 using namespace csapex;
@@ -22,37 +22,36 @@ void SetOperation::process()
 {
     CvMatMessage::ConstPtr img1 = msg::getMessage<CvMatMessage>(i1_);
 
-    if(!img1->hasChannels(1)) {
+    if (!img1->hasChannels(1)) {
         throw std::runtime_error("No Single Channel!");
     }
-
 
     CvMatMessage::Ptr out(new CvMatMessage(img1->getEncoding(), img1->frame_id, img1->stamp_micro_seconds));
 
     int op = readParameter<int>("operation");
-    if(op == COMPLEMENT) {
+    if (op == COMPLEMENT) {
         out->value = ~img1->value;
 
     } else {
-        if(!msg::hasMessage(i2_)) {
+        if (!msg::hasMessage(i2_)) {
             return;
         }
 
         CvMatMessage::ConstPtr img2 = msg::getMessage<CvMatMessage>(i2_);
 
-        if(img1->value.rows != img2->value.rows || img1->value.cols != img2->value.cols) {
+        if (img1->value.rows != img2->value.rows || img1->value.cols != img2->value.cols) {
             throw std::runtime_error("Dimension is not matching!");
         }
 
-        if(op == INTERSECTION) {
+        if (op == INTERSECTION) {
             out->value = img1->value & img2->value;
 
-        } else if(op == UNION) {
+        } else if (op == UNION) {
             out->value = img1->value | img2->value;
         }
     }
 
-    if(out->value.rows != 0 && out->value.cols != 0) {
+    if (out->value.rows != 0 && out->value.cols != 0) {
         msg::publish(out_, out);
     }
 }
@@ -66,11 +65,7 @@ void SetOperation::setup(NodeModifier& node_modifier)
 
 void SetOperation::setupParameters(Parameterizable& parameters)
 {
-    std::map<std::string, int> methods = {
-            {"Complement", (int) COMPLEMENT},
-            {"Intersection", (int) INTERSECTION},
-            {"Union", (int) UNION}
-    };
+    std::map<std::string, int> methods = { { "Complement", (int)COMPLEMENT }, { "Intersection", (int)INTERSECTION }, { "Union", (int)UNION } };
 
-    parameters.addParameter(csapex::param::factory::declareParameterSet("operation", methods, (int) UNION));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("operation", methods, (int)UNION));
 }

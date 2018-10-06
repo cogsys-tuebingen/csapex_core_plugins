@@ -6,18 +6,18 @@
 
 namespace csapex
 {
-
 /**
  * @brief The SetOperation class can be used to compare two images using a grid
- *        overlay. The Feature observed in this case is the mean value of values given
- *        in a grid cell.
+ *        overlay. The Feature observed in this case is the mean value of values
+ * given in a grid cell.
  */
 class SetOperation : public csapex::Node
 {
-    enum {
-        COMPLEMENT   = 0,
+    enum
+    {
+        COMPLEMENT = 0,
         INTERSECTION = 1,
-        UNION        = 2
+        UNION = 2
     };
 
 public:
@@ -32,5 +32,5 @@ private:
     csapex::Input* i2_;
     csapex::Output* out_;
 };
-}
-#endif // COMBINER_SET_OPERATION_H
+}  // namespace csapex
+#endif  // COMBINER_SET_OPERATION_H

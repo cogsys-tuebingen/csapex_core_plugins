@@ -7,8 +7,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ConfidenceMatrixDisplay : public Node
 {
 public:
@@ -23,11 +23,11 @@ public:
     slim_signal::Signal<void()> display_request;
 
 private:
-    Input*           connector_;
+    Input* connector_;
 
     ConfidenceMatrix confidence_;
 };
 
-}
+}  // namespace csapex
 
-#endif // CONFIDENCE_MATRIX_DISPLAY_H
+#endif  // CONFIDENCE_MATRIX_DISPLAY_H

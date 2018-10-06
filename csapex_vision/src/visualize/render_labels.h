@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class RenderLabels : public csapex::Node
 {
 public:
@@ -15,10 +16,9 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Input*    labels_;
-    csapex::Input*    image_;
-    csapex::Output*   output_;
-
+    csapex::Input* labels_;
+    csapex::Input* image_;
+    csapex::Output* output_;
 };
-}
-#endif // RENDER_LABELS_H
+}  // namespace csapex
+#endif  // RENDER_LABELS_H

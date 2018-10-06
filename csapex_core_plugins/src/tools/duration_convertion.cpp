@@ -1,18 +1,16 @@
 /// COMPONENT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 #include <csapex_core_plugins/duration_message.h>
 
 using namespace csapex::connection_types;
 
-
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN DurationConvertion : public Node
 {
 public:
@@ -38,9 +36,6 @@ private:
     Output* out_;
 };
 
-
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::DurationConvertion, csapex::Node)
-
-

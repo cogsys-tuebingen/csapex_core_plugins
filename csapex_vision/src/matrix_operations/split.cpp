@@ -1,13 +1,13 @@
 #include "split.h"
 
 /// PROJECT
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/utility/assert.h>
+#include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/serialization/node_serializer.h>
+#include <csapex/utility/assert.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_opencv/cv_mat_message.h>
 
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
@@ -17,8 +17,7 @@ CSAPEX_REGISTER_CLASS(csapex::Split, csapex::Node)
 using namespace csapex;
 using namespace connection_types;
 
-Split::Split() :
-    input_(nullptr)
+Split::Split() : input_(nullptr)
 {
     channel_count_ = 0;
 }
@@ -37,10 +36,7 @@ void Split::setup(NodeModifier& node_modifier)
 
 void Split::setupParameters(Parameterizable& parameters)
 {
-    addParameter(csapex::param::factory::declareBool
-                 ("enforce mono",
-                  csapex::param::ParameterDescription("Enforce that the encoding is enc::mono"),
-                  true));
+    addParameter(csapex::param::factory::declareBool("enforce mono", csapex::param::ParameterDescription("Enforce that the encoding is enc::mono"), true));
 }
 
 void Split::process()
@@ -48,27 +44,28 @@ void Split::process()
     CvMatMessage::ConstPtr m = msg::getMessage<CvMatMessage>(input_);
 
     int esize = m->getEncoding().channelCount();
-    if(esize != m->value.channels()) {
+    if (esize != m->value.channels()) {
         std::stringstream error;
-        error << "encoding size (" << m->getEncoding().channelCount() << ") != " << " image channels (" << m->value.channels() << ")";
+        error << "encoding size (" << m->getEncoding().channelCount() << ") != "
+              << " image channels (" << m->value.channels() << ")";
         node_modifier_->setWarning(error.str());
     }
 
     std::vector<cv::Mat> channels;
     cv::split(m->value, channels);
 
-    bool recompute = channel_count_ != (int) channels.size();
-    if(m->getEncoding().channelCount() != encoding_.channelCount()) {
+    bool recompute = channel_count_ != (int)channels.size();
+    if (m->getEncoding().channelCount() != encoding_.channelCount()) {
         recompute = true;
     } else {
-        for(int i = 0, n = esize; i < n; ++i) {
-            if(m->getEncoding().getChannel(i).name != encoding_.getChannel(i).name) {
+        for (int i = 0, n = esize; i < n; ++i) {
+            if (m->getEncoding().getChannel(i).name != encoding_.getChannel(i).name) {
                 recompute = true;
                 break;
             }
         }
     }
-    if(recompute) {
+    if (recompute) {
         encoding_ = m->getEncoding();
         channel_count_ = channels.size();
 
@@ -80,10 +77,10 @@ void Split::process()
     bool enforce_mono = readParameter<bool>("enforce mono");
 
     std::vector<OutputPtr> outputs = node_modifier_->getMessageOutputs();
-    for(unsigned i = 0 ; i < channels.size() ; i++) {
+    for (unsigned i = 0; i < channels.size(); i++) {
         Encoding e;
-        if(i < encoding_.channelCount()) {
-            if(enforce_mono) {
+        if (i < encoding_.channelCount()) {
+            if (enforce_mono) {
                 e = enc::mono;
             } else {
                 e.push_back(encoding_.getChannel(i));
@@ -103,9 +100,9 @@ void Split::updateOutputs()
     std::vector<OutputPtr> outputs = node_modifier_->getMessageOutputs();
     int n = outputs.size();
 
-    if(channel_count_ > n) {
-        for(int i = n ; i < channel_count_ ; ++i) {
-            if(i < (int) encoding_.channelCount()) {
+    if (channel_count_ > n) {
+        for (int i = n; i < channel_count_; ++i) {
+            if (i < (int)encoding_.channelCount()) {
                 node_modifier_->addOutput<CvMatMessage>(encoding_.getChannel(i).name);
             } else {
                 node_modifier_->addOutput<CvMatMessage>("unknown");
@@ -113,13 +110,13 @@ void Split::updateOutputs()
         }
     } else {
         bool del = true;
-        for(int i = n-1 ; i >= (int) channel_count_; --i) {
+        for (int i = n - 1; i >= (int)channel_count_; --i) {
             Output* output = outputs[i].get();
-            if(msg::isConnected(output)) {
+            if (msg::isConnected(output)) {
                 del = false;
             }
 
-            if(del) {
+            if (del) {
                 node_modifier_->removeOutput(msg::getUUID(output));
             } else {
                 msg::disable(output);
@@ -127,18 +124,16 @@ void Split::updateOutputs()
         }
     }
 
-
     outputs = node_modifier_->getMessageOutputs();
-    for(int i = 0, n = channel_count_; i < n; ++i) {
+    for (int i = 0, n = channel_count_; i < n; ++i) {
         Output* output = outputs[i].get();
-        if(i < (int) encoding_.channelCount()) {
+        if (i < (int)encoding_.channelCount()) {
             msg::setLabel(output, encoding_.getChannel(i).name);
         } else {
             msg::setLabel(output, "unknown");
         }
         msg::enable(output);
     }
-
 }
 
 namespace csapex
@@ -153,13 +148,13 @@ public:
 
     static void deserialize(Split& splitter, const YAML::Node& doc)
     {
-        if(doc["channel_count"].IsDefined()) {
+        if (doc["channel_count"].IsDefined()) {
             splitter.channel_count_ = doc["channel_count"].as<int>();
         }
 
         splitter.updateOutputs();
     }
 };
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_SERIALIZER(csapex::Split, SplitSerializer)

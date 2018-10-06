@@ -2,14 +2,14 @@
 #include "segmentation.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_scan_2d/scan_message.h>
-#include <csapex/model/node_modifier.h>
-#include <cslibs_laser_processing/data/segment.h>
 #include <cslibs_laser_processing/common/yaml-io.hpp>
+#include <cslibs_laser_processing/data/segment.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -26,22 +26,21 @@ void ScanSegmentation::process()
     ScanMessage::ConstPtr scan_msg = msg::getMessage<ScanMessage>(input_);
     const Scan& scan = scan_msg->value;
 
-    std::shared_ptr<std::vector<Segment> > segments_msg(new std::vector<Segment>);
+    std::shared_ptr<std::vector<Segment>> segments_msg(new std::vector<Segment>);
 
     segmentation_->segmentation(scan, *segments_msg);
 
-    for(Segment& segment : *segments_msg) {
+    for (Segment& segment : *segments_msg) {
         segment.frame_id = scan_msg->frame_id;
         segment.stamp_micro_seconds = scan_msg->stamp_micro_seconds;
     }
-
 
     msg::publish<GenericVectorMessage, Segment>(output_segments_, segments_msg);
 }
 
 void ScanSegmentation::setup(NodeModifier& node_modifier)
 {
-    input_           = node_modifier.addInput<ScanMessage>("Scan");
-    output_scan_     = node_modifier.addOutput<ScanMessage>("FilteredScan");
+    input_ = node_modifier.addInput<ScanMessage>("Scan");
+    output_scan_ = node_modifier.addOutput<ScanMessage>("FilteredScan");
     output_segments_ = node_modifier.addOutput<GenericVectorMessage, Segment>("Segments");
 }

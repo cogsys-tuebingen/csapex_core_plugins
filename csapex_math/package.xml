@@ -12,8 +12,10 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>csapex</build_depend>
+  <build_depend>csapex_testing</build_depend>
 
   <run_depend>csapex</run_depend>
+  <run_depend>csapex_testing</run_depend>
 
   <export>
      <csapex plugin="${prefix}/plugins.xml"/>

@@ -19,30 +19,30 @@
 
 namespace csapex
 {
-
 class ModelMessage
 {
 public:
     ModelMessage();
-    pcl::SacModel               model_type;
+    pcl::SacModel model_type;
     pcl::ModelCoefficients::Ptr coefficients;
-    std::string                 frame_id;
+    std::string frame_id;
     double probability;
 };
 
-SerializationBuffer& operator << (SerializationBuffer& data, const ModelMessage& rhs);
-const SerializationBuffer& operator >> (const SerializationBuffer& data, ModelMessage& rhs);
+SerializationBuffer& operator<<(SerializationBuffer& data, const ModelMessage& rhs);
+const SerializationBuffer& operator>>(const SerializationBuffer& data, ModelMessage& rhs);
 
-}
-
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct convert<csapex::ModelMessage> {
-  static Node encode(const csapex::ModelMessage& rhs);
-  static bool decode(const Node& node, csapex::ModelMessage& rhs);
+namespace YAML
+{
+template <>
+struct convert<csapex::ModelMessage>
+{
+    static Node encode(const csapex::ModelMessage& rhs);
+    static bool decode(const Node& node, csapex::ModelMessage& rhs);
 };
-}
+}  // namespace YAML
 
-#endif // MODEL_MESSAGE_H
+#endif  // MODEL_MESSAGE_H

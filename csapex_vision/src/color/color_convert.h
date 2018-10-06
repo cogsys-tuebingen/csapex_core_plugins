@@ -8,11 +8,11 @@
 #include <csapex/model/node.h>
 #include <csapex_opencv/cv_mat_message.h>
 
-
-namespace csapex {
+namespace csapex
+{
 /**
- * @brief The ColorConvert class can be used to convert colored images from one color space
- *        to another.
+ * @brief The ColorConvert class can be used to convert colored images from one
+ * color space to another.
  */
 class ColorConvert : public csapex::Node
 {
@@ -37,9 +37,20 @@ public:
 
 protected:
     /// internal typdefs
-    enum ColorSpace {YUV, RGB, BGR, HSL, HSV, MONO, LAB, LCh, LUV};
+    enum ColorSpace
+    {
+        YUV,
+        RGB,
+        BGR,
+        HSL,
+        HSV,
+        MONO,
+        LAB,
+        LCh,
+        LUV
+    };
     typedef std::pair<ColorSpace, ColorSpace> csPair;
-    typedef std::pair<csPair, int>     csiPair;
+    typedef std::pair<csPair, int> csiPair;
     typedef std::pair<int, ColorSpace> icsPair;
 
     std::map<csPair, int> cs_pair_to_operation_;
@@ -51,5 +62,5 @@ protected:
     csapex::Output* output_img_;
 };
 
-}
-#endif // FILTER_COLORCONVERT_H
+}  // namespace csapex
+#endif  // FILTER_COLORCONVERT_H

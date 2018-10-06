@@ -2,19 +2,19 @@
 #include <csapex_math/view/angle_param_adapter.h>
 
 /// PROJECT
-#include <csapex/view/utility/qwrapper.h>
-#include <csapex/view/node/parameter_context_menu.h>
-#include <csapex/view/utility/qt_helper.hpp>
+#include <csapex/command/update_parameter.h>
 #include <csapex/utility/assert.h>
 #include <csapex/utility/type.h>
-#include <csapex/command/update_parameter.h>
+#include <csapex/view/node/parameter_context_menu.h>
+#include <csapex/view/utility/qt_helper.hpp>
+#include <csapex/view/utility/qwrapper.h>
 #include <csapex/view/utility/register_param_adapter.h>
 
 /// SYSTEM
-#include <QPointer>
 #include <QBoxLayout>
-#include <QLabel>
 #include <QDial>
+#include <QLabel>
+#include <QPointer>
 #include <iostream>
 
 using namespace csapex;
@@ -163,6 +163,8 @@ void AngleParameterAdapter::setupContextMenu(ParameterContextMenu* context_handl
 
 void AngleParameterAdapter::set(double angle)
 {
-    command::UpdateParameter::Ptr update_parameter = std::make_shared<command::UpdateParameter>(p_->getUUID().getAbsoluteUUID(), angle);
+    auto p = angle_p_->cloneAs<param::AngleParameter>();
+    p->set(angle);
+    command::UpdateParameter::Ptr update_parameter = std::make_shared<command::UpdateParameter>(p_->getUUID().getAbsoluteUUID(), *p);
     executeCommand(update_parameter);
 }

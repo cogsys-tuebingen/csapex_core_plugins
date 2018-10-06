@@ -19,5 +19,5 @@ private:
     Input* input_;
     Output* output_;
 };
-}
-#endif // COPYMAKEBORDER_H
+}  // namespace csapex
+#endif  // COPYMAKEBORDER_H

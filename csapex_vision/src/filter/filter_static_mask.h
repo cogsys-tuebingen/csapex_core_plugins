@@ -6,7 +6,6 @@
 
 namespace csapex
 {
-
 class FilterStaticMask : public Filter
 {
     friend class StaticMaskSerializer;
@@ -16,7 +15,7 @@ public:
 
 public:
     virtual void filter(cv::Mat& img, cv::Mat& mask) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
     void setMask(const cv::Mat& m);
     cv::Mat getMask() const;
@@ -32,6 +31,6 @@ private:
     cv::Mat mask_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // FILTER_STATIC_MASK_H
+#endif  // FILTER_STATIC_MASK_H

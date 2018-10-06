@@ -5,12 +5,14 @@
 #include <csapex_ros/ros_node.h>
 
 /// SYSTEM
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <tf/transform_broadcaster.h>
+#include <tf/transform_broadcaster.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
-namespace csapex {
-
+namespace csapex
+{
 class TransformPublisher : public RosNode
 {
 public:
@@ -20,7 +22,7 @@ public:
     virtual void setupROS() override;
     virtual void processROS() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 private:
     Input* input_transform;
@@ -29,6 +31,6 @@ private:
     tf::TransformBroadcaster* tfb_;
 };
 
-}
+}  // namespace csapex
 
-#endif // TRANSFORM_PUBLISHER_H
+#endif  // TRANSFORM_PUBLISHER_H

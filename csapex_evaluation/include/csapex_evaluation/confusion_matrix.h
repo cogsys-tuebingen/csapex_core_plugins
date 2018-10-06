@@ -2,13 +2,12 @@
 #define CONFUSION_MATRIX_H
 
 /// SYSTEM
-#include <vector>
-#include <set>
 #include <map>
+#include <set>
+#include <vector>
 
 namespace csapex
 {
-
 class ConfusionMatrix
 {
 public:
@@ -23,7 +22,6 @@ public:
     std::map<int, std::string> class_names;
     std::map<std::pair<int, int>, int> histogram;
 
-
     double threshold;
 
 private:
@@ -33,7 +31,6 @@ private:
     std::set<int> classes_set;
 };
 
-}
+}  // namespace csapex
 
-#endif // CONFUSION_MATRIX_H
-
+#endif  // CONFUSION_MATRIX_H

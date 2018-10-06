@@ -1,7 +1,6 @@
 #ifndef CONFUSION_MATRIX_DISPLAY_ADAPTER_H
 #define CONFUSION_MATRIX_DISPLAY_ADAPTER_H
 
-
 /// PROJECT
 #include <csapex/view/node/default_node_adapter.h>
 
@@ -9,25 +8,23 @@
 #include "confusion_matrix_display.h"
 
 /// SYSTEM
-#include <QTableView>
 #include <QStyledItemDelegate>
+#include <QTableView>
 
-namespace csapex {
-
+namespace csapex
+{
 class ConfusionMatrixTableModel : public QAbstractTableModel
 {
 public:
     ConfusionMatrixTableModel();
 
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+    virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual QVariant headerData(int section, Qt::Orientation orientation,
-                                int role = Qt::DisplayRole) const;
-
-    void update(const ConfusionMatrix &confusion_matrix);
+    void update(const ConfusionMatrix& confusion_matrix);
 
 private:
     ConfusionMatrix confusion_;
@@ -61,5 +58,5 @@ private:
     QTableView* table_;
 };
 
-}
-#endif // CONFUSION_MATRIX_DISPLAY_ADAPTER_H
+}  // namespace csapex
+#endif  // CONFUSION_MATRIX_DISPLAY_ADAPTER_H

@@ -1,8 +1,8 @@
 #include "partition_rois_by_size.hpp"
 
-#include <csapex/msg/io.h>
-#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
 #include <csapex/utility/register_apex_plugin.h>
@@ -39,9 +39,9 @@ void PartitionROIsBySize::ScaleInfo::destroy(csapex::Node* node, csapex::NodeMod
         node_modifier.removeOutput(msg::getUUID(output_));
 }
 
-PartitionROIsBySize::PartitionROIsBySize() :
-    num_scales_(0)
-{}
+PartitionROIsBySize::PartitionROIsBySize() : num_scales_(0)
+{
+}
 
 std::string PartitionROIsBySize::getNameForOutput(std::size_t i)
 {
@@ -57,33 +57,35 @@ void PartitionROIsBySize::setup(csapex::NodeModifier& node_modifier)
 
 void PartitionROIsBySize::setupParameters(csapex::Parameterizable& parameters)
 {
-    parameters.addParameter(param::factory::declareRange("num_scales", 1, 64, 1, 1),
-                            std::bind(&PartitionROIsBySize::updatedScales, this));
+    parameters.addParameter(param::factory::declareRange("num_scales", 1, 64, 1, 1), std::bind(&PartitionROIsBySize::updatedScales, this));
 
     static const std::map<std::string, int> available_methods = {
-            { "none", static_cast<int>(Method::NONE) },
-            { "area", static_cast<int>(Method::AREA) },
-            { "width", static_cast<int>(Method::WIDTH) },
-            { "height", static_cast<int>(Method::HEIGHT) },
+        { "none", static_cast<int>(Method::NONE) },
+        { "area", static_cast<int>(Method::AREA) },
+        { "width", static_cast<int>(Method::WIDTH) },
+        { "height", static_cast<int>(Method::HEIGHT) },
     };
-    param::ParameterPtr method_parameter = param::factory::declareParameterSet("method", available_methods,
-                                                                                        static_cast<int>(Method::AREA));
-    parameters.addParameter(method_parameter,
-                            reinterpret_cast<int&>(method_));
+    param::ParameterPtr method_parameter = param::factory::declareParameterSet("method", available_methods, static_cast<int>(Method::AREA));
+    parameters.addParameter(method_parameter, reinterpret_cast<int&>(method_));
 
     static const std::map<std::string, int> available_relative_to = {
-            { "lower", static_cast<int>(RelativeTo::LOWER), },
-            { "upper", static_cast<int>(RelativeTo::UPPER), },
-            { "center", static_cast<int>(RelativeTo::CENTER), },
+        {
+            "lower",
+            static_cast<int>(RelativeTo::LOWER),
+        },
+        {
+            "upper",
+            static_cast<int>(RelativeTo::UPPER),
+        },
+        {
+            "center",
+            static_cast<int>(RelativeTo::CENTER),
+        },
     };
-    parameters.addConditionalParameter(param::factory::declareParameterSet("relative_to", available_relative_to,
-                                                                                    static_cast<int>(RelativeTo::LOWER)),
-                                       [this]() { return method_ != Method::NONE; },
+    parameters.addConditionalParameter(param::factory::declareParameterSet("relative_to", available_relative_to, static_cast<int>(RelativeTo::LOWER)), [this]() { return method_ != Method::NONE; },
                                        reinterpret_cast<int&>(relative_to_));
 
-    parameters.addConditionalParameter(param::factory::declareRange("default_scale", 1, 64, 1, 1),
-                                       [this]() { return method_ == Method::NONE; },
-                                       default_scale_);
+    parameters.addConditionalParameter(param::factory::declareRange("default_scale", 1, 64, 1, 1), [this]() { return method_ == Method::NONE; }, default_scale_);
 }
 
 void PartitionROIsBySize::process()
@@ -92,14 +94,9 @@ void PartitionROIsBySize::process()
 
     using ROIMessageList = std::shared_ptr<std::vector<RoiMessage>>;
     std::vector<ROIMessageList> out_rois;
-    std::generate_n(std::back_inserter(out_rois), num_scales_,
-                   []()
-                   {
-                       return std::make_shared<std::vector<RoiMessage>>();
-                   });
+    std::generate_n(std::back_inserter(out_rois), num_scales_, []() { return std::make_shared<std::vector<RoiMessage>>(); });
 
-    for (const RoiMessage& roi_msg : *in_rois)
-    {
+    for (const RoiMessage& roi_msg : *in_rois) {
         const std::size_t scale = selectScale(roi_msg.value);
         out_rois[scale]->push_back(roi_msg);
     }
@@ -113,10 +110,8 @@ std::size_t PartitionROIsBySize::selectScale(const Roi& roi) const
     if (method_ == Method::NONE)
         return default_scale_ - 1;
 
-    const auto get_value = [this](int width, int height)
-    {
-        switch (method_)
-        {
+    const auto get_value = [this](int width, int height) {
+        switch (method_) {
             case Method::AREA:
                 return width * height;
             case Method::WIDTH:
@@ -129,15 +124,12 @@ std::size_t PartitionROIsBySize::selectScale(const Roi& roi) const
     };
 
     std::map<float, std::size_t> breaks;
-    std::transform(scales_.begin(), scales_.end(),
-                   std::inserter(breaks, breaks.begin()),
-                   [this, &get_value](const ScaleInfo& info)
-                   {
-                       auto size = info.getSize();
-                       float value = get_value(size.first, size.second);
+    std::transform(scales_.begin(), scales_.end(), std::inserter(breaks, breaks.begin()), [this, &get_value](const ScaleInfo& info) {
+        auto size = info.getSize();
+        float value = get_value(size.first, size.second);
 
-                       return std::make_pair(value, info.getIndex());
-                   });
+        return std::make_pair(value, info.getIndex());
+    });
 
     float value = get_value(roi.w(), roi.h());
 
@@ -146,22 +138,20 @@ std::size_t PartitionROIsBySize::selectScale(const Roi& roi) const
     Iter upper;
     std::tie(lower, upper) = breaks.equal_range(value);
 
-    if (lower == breaks.begin())    // first element is >= -> select smallest scale
+    if (lower == breaks.begin())  // first element is >= -> select smallest scale
         return breaks.begin()->second;
-    if (upper == breaks.end())      // no element is > -> select biggest scale
+    if (upper == breaks.end())  // no element is > -> select biggest scale
         return breaks.rbegin()->second;
 
-    lower = std::prev(lower);       // first element <
+    lower = std::prev(lower);  // first element <
     // upper                        // first element >
 
-    switch (relative_to_)
-    {
+    switch (relative_to_) {
         case RelativeTo::LOWER:
             return lower->second;
         case RelativeTo::UPPER:
             return upper->second;
-        case RelativeTo::CENTER:
-        {
+        case RelativeTo::CENTER: {
             const float center = (lower->first + lower->second) / 2.f;
             if (value >= center)
                 return upper->second;
@@ -177,20 +167,15 @@ void PartitionROIsBySize::updatedScales()
 {
     const std::size_t new_scales = readParameter<int>("num_scales");
 
-    if (new_scales > num_scales_)
-    {
-        for (std::size_t i = num_scales_; i < new_scales; ++i)
-        {
+    if (new_scales > num_scales_) {
+        for (std::size_t i = num_scales_; i < new_scales; ++i) {
             ScaleInfo scale;
             scale.create(this, *(this->node_modifier_), i);
             scales_.push_back(std::move(scale));
         }
 
-    }
-    else if (new_scales < num_scales_)
-    {
-        for (std::size_t i = new_scales; i < num_scales_; ++i)
-        {
+    } else if (new_scales < num_scales_) {
+        for (std::size_t i = new_scales; i < num_scales_; ++i) {
             auto itr = std::next(scales_.begin(), i);
             itr->destroy(this, *(this->node_modifier_));
             scales_.erase(std::next(scales_.begin(), i));
@@ -200,4 +185,3 @@ void PartitionROIsBySize::updatedScales()
     num_scales_ = new_scales;
     getParameter<param::RangeParameter>("default_scale")->setMax<int>(new_scales);
 }
-

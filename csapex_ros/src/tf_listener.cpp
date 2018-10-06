@@ -14,7 +14,7 @@ TFListener::TFListener()
 LockedTFListener TFListener::getLocked()
 {
     TFListener* l = &instance();
-    if(l->tfl) {
+    if (l->tfl) {
         return LockedTFListener(l);
     } else {
         return LockedTFListener(nullptr);
@@ -41,14 +41,14 @@ bool TFListener::ok()
     return init && tfl;
 }
 
-void TFListener::cb(const tf::tfMessage::ConstPtr &msg)
+void TFListener::cb(const tf::tfMessage::ConstPtr& msg)
 {
     ros::Time now;
-    if(init) {
-        for(unsigned i = 0, n = msg->transforms.size(); i < n; ++i) {
-            if(msg->transforms[i].child_frame_id == reference_frame) {
+    if (init) {
+        for (unsigned i = 0, n = msg->transforms.size(); i < n; ++i) {
+            if (msg->transforms[i].child_frame_id == reference_frame) {
                 now = msg->transforms[i].header.stamp;
-                if(last_ > now + ros::Duration(3.0)) {
+                if (last_ > now + ros::Duration(3.0)) {
                     reset();
                 }
 
@@ -60,16 +60,16 @@ void TFListener::cb(const tf::tfMessage::ConstPtr &msg)
     } else {
         // try to use /base_link as reference frame, if it exists
         reference_frame = "";
-        if(tryFrameAsReference(msg, "base_link")) {
+        if (tryFrameAsReference(msg, "base_link")) {
             return;
-        } else if(tryFrameAsReference(msg, "/base_link")) {
+        } else if (tryFrameAsReference(msg, "/base_link")) {
             return;
         }
 
         // if /base_link doesn't exist, use the first random one
 
-        if(--retries <= 0) {
-            if(msg->transforms.empty()) {
+        if (--retries <= 0) {
+            if (msg->transforms.empty()) {
                 std::cerr << "warning: no tf frames available!" << std::endl;
                 init = false;
             } else {
@@ -82,11 +82,10 @@ void TFListener::cb(const tf::tfMessage::ConstPtr &msg)
     }
 }
 
-bool TFListener::tryFrameAsReference(const tf::tfMessage::ConstPtr &msg, const std::string &frame)
+bool TFListener::tryFrameAsReference(const tf::tfMessage::ConstPtr& msg, const std::string& frame)
 {
-
-    for(unsigned i = 0, n = msg->transforms.size(); i < n; ++i) {
-        if(msg->transforms[i].child_frame_id == frame) {
+    for (unsigned i = 0, n = msg->transforms.size(); i < n; ++i) {
+        if (msg->transforms[i].child_frame_id == frame) {
             reference_frame = frame;
             init = true;
 
@@ -98,9 +97,9 @@ bool TFListener::tryFrameAsReference(const tf::tfMessage::ConstPtr &msg, const s
     return false;
 }
 
-void TFListener::addTransforms(const tf2_msgs::TFMessage &msg)
+void TFListener::addTransforms(const tf2_msgs::TFMessage& msg)
 {
-    for(const geometry_msgs::TransformStamped& trafo_msg : msg.transforms) {
+    for (const geometry_msgs::TransformStamped& trafo_msg : msg.transforms) {
         tf::StampedTransform trafo;
         tf::transformMsgToTF(trafo_msg.transform, trafo);
         trafo.child_frame_id_ = trafo_msg.child_frame_id;

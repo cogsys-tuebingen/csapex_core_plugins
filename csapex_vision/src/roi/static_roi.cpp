@@ -2,11 +2,11 @@
 #include "static_roi.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 #include <csapex_opencv/roi_message.h>
 
@@ -35,17 +35,17 @@ void StaticRoi::setup(NodeModifier& node_modifier)
 
 void StaticRoi::process()
 {
-    RoiMessage::Ptr     roi(new RoiMessage);
-    std::pair<int,int>  plane_size;
+    RoiMessage::Ptr roi(new RoiMessage);
+    std::pair<int, int> plane_size;
 
-    if(msg::hasMessage(in_)) {
+    if (msg::hasMessage(in_)) {
         CvMatMessage::ConstPtr in = msg::getMessage<CvMatMessage>(in_);
 
-        plane_size.first  = in->value.cols;
+        plane_size.first = in->value.cols;
         plane_size.second = in->value.rows;
 
     } else {
-        plane_size.first  = 8192;
+        plane_size.first = 8192;
         plane_size.second = 8192;
     }
 
@@ -54,21 +54,21 @@ void StaticRoi::process()
     param::RangeParameter::Ptr x = getParameter<param::RangeParameter>("x");
     param::RangeParameter::Ptr y = getParameter<param::RangeParameter>("y");
 
-    if(w->max<int>() > plane_size.first) {
+    if (w->max<int>() > plane_size.first) {
         w->setInterval(1, plane_size.first);
     }
 
-    if(h->max<int>() > plane_size.second) {
+    if (h->max<int>() > plane_size.second) {
         h->setInterval(1, plane_size.second);
     }
 
-    int max_idx = plane_size.first  - w->as<int>() - 1;
+    int max_idx = plane_size.first - w->as<int>() - 1;
     int max_idy = plane_size.second - h->as<int>() - 1;
 
-    if(x->max<int>() != max_idx) {
+    if (x->max<int>() != max_idx) {
         x->setInterval(0, max_idx);
     }
-    if(y->max<int>() != max_idy) {
+    if (y->max<int>() != max_idy) {
         y->setInterval(0, max_idy);
     }
 

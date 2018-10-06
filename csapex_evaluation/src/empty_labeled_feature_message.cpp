@@ -2,14 +2,14 @@
 #include "empty_labeled_feature_message.h"
 
 /// PROJECT
+#include <csapex/factory/message_factory.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/model/token_data.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
-#include <csapex/factory/message_factory.h>
-#include <csapex/model/token_data.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/msg/generic_vector_message.hpp>
 
 /// CONCRETE MESSAGES
 #include <csapex_ml/features_message.h>
@@ -34,7 +34,6 @@ void EmptyLabeledFeaturesMessage::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::factory::declareRange("class id", 0, 255, 0, 1));
 }
 
-
 void EmptyLabeledFeaturesMessage::process()
 {
     FeaturesMessage::Ptr static_feature(new FeaturesMessage);
@@ -42,7 +41,7 @@ void EmptyLabeledFeaturesMessage::process()
     static_feature->classification = readParameter<int>("class id");
     msg::publish(output_, static_feature);
 
-    std::shared_ptr<std::vector<FeaturesMessage> > static_features(new std::vector<FeaturesMessage>);
+    std::shared_ptr<std::vector<FeaturesMessage>> static_features(new std::vector<FeaturesMessage>);
     static_features->push_back(*static_feature);
     msg::publish<GenericVectorMessage, FeaturesMessage>(output_vec_, static_features);
 }

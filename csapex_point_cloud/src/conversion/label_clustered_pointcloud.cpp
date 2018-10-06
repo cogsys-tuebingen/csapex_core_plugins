@@ -2,17 +2,17 @@
 #include "label_clustered_pointcloud.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/model/node_modifier.h>
 #include <csapex_point_cloud/msg/indices_message.h>
 
 /// SYSTEM
-#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <pcl/point_types.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <pcl/conversions.h>
+#include <pcl/point_types.h>
 
 CSAPEX_REGISTER_CLASS(csapex::LabelClusteredPointCloud, csapex::Node)
 
@@ -31,20 +31,21 @@ void LabelClusteredPointCloud::process()
 
     cluster_indices = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(in_indices_);
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<LabelClusteredPointCloud>(this, cloud), cloud->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<LabelClusteredPointCloud>(this, cloud), cloud->value);
 }
 
 void LabelClusteredPointCloud::setup(NodeModifier& node_modifier)
 {
-    input_  = node_modifier.addInput<PointCloudMessage>("PointCloud");
+    input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
     in_indices_ = node_modifier.addInput<GenericVectorMessage, pcl::PointIndices>("Indices");
     output_ = node_modifier.addOutput<PointCloudMessage>("Labeled PointCloud");
 }
 
-namespace implementation {
-
-template<class PointT, class PointS>
-struct Copy {
+namespace implementation
+{
+template <class PointT, class PointS>
+struct Copy
+{
     static inline void apply(const PointS& src, PointT& dst)
     {
         dst.x = src.x;
@@ -53,8 +54,9 @@ struct Copy {
     }
 };
 
-template<>
-struct Copy<pcl::PointXYZRGBL, pcl::PointXYZRGB> {
+template <>
+struct Copy<pcl::PointXYZRGBL, pcl::PointXYZRGB>
+{
     inline static void apply(const pcl::PointXYZRGB& src, pcl::PointXYZRGBL& dst)
     {
         dst.x = src.x;
@@ -66,22 +68,21 @@ struct Copy<pcl::PointXYZRGBL, pcl::PointXYZRGB> {
     }
 };
 
-template<class PointT, class PointS>
-struct Impl {
-    inline static void label(const typename pcl::PointCloud<PointT>::ConstPtr src,
-                             typename pcl::PointCloud<PointS>::Ptr dst,
-                             const LabelClusteredPointCloud::Indices &indices)
+template <class PointT, class PointS>
+struct Impl
+{
+    inline static void label(const typename pcl::PointCloud<PointT>::ConstPtr src, typename pcl::PointCloud<PointS>::Ptr dst, const LabelClusteredPointCloud::Indices& indices)
     {
         std::size_t n = src->points.size();
         dst->points.resize(n);
-        for(std::size_t i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             Copy<PointS, PointT>::apply(src->points[i], dst->points[i]);
             dst->points[i].label = 0;
         }
 
         int region = 1;
-        for (LabelClusteredPointCloud::Indices::const_iterator it = indices.begin(); it != indices.end (); ++it) {
-            for(std::vector<int>::const_iterator i = it->indices.begin(); i != it->indices.end(); ++i) {
+        for (LabelClusteredPointCloud::Indices::const_iterator it = indices.begin(); it != indices.end(); ++it) {
+            for (std::vector<int>::const_iterator i = it->indices.begin(); i != it->indices.end(); ++i) {
                 dst->points[*i].label = region;
             }
             ++region;
@@ -89,11 +90,10 @@ struct Impl {
     }
 };
 
-template<class PointT>
-struct Label {
-    static void apply(const typename pcl::PointCloud<PointT>::ConstPtr src,
-                      PointCloudMessage::Ptr &dst_msg,
-                      const LabelClusteredPointCloud::Indices &indices)
+template <class PointT>
+struct Label
+{
+    static void apply(const typename pcl::PointCloud<PointT>::ConstPtr src, PointCloudMessage::Ptr& dst_msg, const LabelClusteredPointCloud::Indices& indices)
     {
         pcl::PointCloud<pcl::PointXYZL>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZL>);
         cloud->header = src->header;
@@ -105,11 +105,10 @@ struct Label {
     }
 };
 
-template<>
-struct Label<pcl::PointXYZRGB> {
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr src,
-                      PointCloudMessage::Ptr &dst_msg,
-                      const LabelClusteredPointCloud::Indices &indices)
+template <>
+struct Label<pcl::PointXYZRGB>
+{
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr src, PointCloudMessage::Ptr& dst_msg, const LabelClusteredPointCloud::Indices& indices)
     {
         pcl::PointCloud<pcl::PointXYZRGBL>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGBL>);
         Impl<pcl::PointXYZRGB, pcl::PointXYZRGBL>::label(src, cloud, indices);
@@ -121,16 +120,15 @@ struct Label<pcl::PointXYZRGB> {
     }
 };
 
-template<>
-struct Label<pcl::PointXY> {
-    static void apply(const typename pcl::PointCloud<pcl::PointXY>::ConstPtr src,
-                      PointCloudMessage::Ptr &dst_msg,
-                      const LabelClusteredPointCloud::Indices &indices)
+template <>
+struct Label<pcl::PointXY>
+{
+    static void apply(const typename pcl::PointCloud<pcl::PointXY>::ConstPtr src, PointCloudMessage::Ptr& dst_msg, const LabelClusteredPointCloud::Indices& indices)
     {
         throw std::runtime_error("Pointcloud must be of type XYZ!");
     }
 };
-}
+}  // namespace implementation
 
 template <class PointT>
 void LabelClusteredPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)

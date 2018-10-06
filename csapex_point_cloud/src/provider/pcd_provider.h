@@ -2,14 +2,15 @@
 #define PCD_PROVIDER_H
 
 /// PROJECT
-#include <csapex/serialization/serializable.h>
 #include <csapex/msg/message_provider.h>
+#include <csapex/serialization/serializable.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
 #include <functional>
 
-namespace csapex {
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN PCDPointCloudMessageProvider : public MessageProvider
 {
 public:
@@ -20,7 +21,7 @@ protected:
 
 public:
     PCDPointCloudMessageProvider();
-    void load(const std::string &file);
+    void load(const std::string& file);
 
 public:
     bool hasNext();
@@ -37,8 +38,7 @@ private:
     bool sent_;
 
     static std::map<std::string, ProviderConstructor> plugins;
-
 };
-}
+}  // namespace csapex
 
-#endif // PCD_PROVIDER_H
+#endif  // PCD_PROVIDER_H

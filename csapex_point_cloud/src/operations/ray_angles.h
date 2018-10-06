@@ -8,7 +8,6 @@
 
 namespace csapex
 {
-
 class RayAngles : public Node
 {
 public:
@@ -29,11 +28,15 @@ public:
 
     void doProcess2D(pcl::PointCloud<pcl::PointXY>::ConstPtr cloud);
 
-
-    enum RefAxis{X, Y, Z};
+    enum RefAxis
+    {
+        X,
+        Y,
+        Z
+    };
 
 private:
-    Input*  input_;
+    Input* input_;
     Output* output_general_;
     Output* output_component_a_;
     Output* output_component_b_;
@@ -41,11 +44,8 @@ private:
     cv::Mat angles_general_;
     cv::Mat angles_component_a_;
     cv::Mat angles_component_b_;
-
-
 };
 
-}
+}  // namespace csapex
 
-
-#endif // RAYANGLES_H
+#endif  // RAYANGLES_H

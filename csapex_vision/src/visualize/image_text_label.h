@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class ImageTextLabel : public csapex::Node
 {
 public:
@@ -15,12 +16,16 @@ public:
     void process() override;
 
 protected:
-    enum Position {TOP_LEFT, BOTTOM_LEFT,
-                   TOP_RIGHT, BOTTOM_RIGHT};
+    enum Position
+    {
+        TOP_LEFT,
+        BOTTOM_LEFT,
+        TOP_RIGHT,
+        BOTTOM_RIGHT
+    };
 
-    csapex::Input  *input_;
-    csapex::Output *output_;
-
+    csapex::Input* input_;
+    csapex::Output* output_;
 };
-}
-#endif // IMAGE_TEXT_LABEL_H
+}  // namespace csapex
+#endif  // IMAGE_TEXT_LABEL_H

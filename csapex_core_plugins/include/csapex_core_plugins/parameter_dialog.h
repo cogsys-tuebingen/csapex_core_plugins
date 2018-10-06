@@ -1,7 +1,6 @@
 #ifndef PARAMETERDIALOG_H
 #define PARAMETERDIALOG_H
 
-
 /// PROJECT
 #include <csapex/param/param_fwd.h>
 
@@ -16,7 +15,7 @@ class ParameterDialog : public QDialog
     Q_OBJECT
 
 public:
-    ParameterDialog(const std::string &type, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    ParameterDialog(const std::string& type, QWidget* parent = 0, Qt::WindowFlags f = 0);
 
     csapex::param::ParameterPtr getParameter();
 
@@ -37,5 +36,4 @@ private:
     csapex::param::ParameterPtr param_;
 };
 
-
-#endif // PARAMETERDIALOG_H
+#endif  // PARAMETERDIALOG_H

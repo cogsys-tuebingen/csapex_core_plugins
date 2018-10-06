@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class Flip : public csapex::Node
 {
 public:
@@ -16,11 +17,10 @@ public:
 
 protected:
     csapex::Output* output_;
-    csapex::Input*  input_;
+    csapex::Input* input_;
 
     int mode_;
-
 };
-}
+}  // namespace csapex
 
-#endif // FLIP_H
+#endif  // FLIP_H

@@ -12,14 +12,14 @@ using namespace connection_types;
 
 using namespace std::chrono;
 
-DurationMessage::DurationMessage(std::chrono::microseconds duration, Message::Stamp stamp_micro_seconds)
-    : MessageTemplate<std::chrono::microseconds, DurationMessage>("/", stamp_micro_seconds)
+DurationMessage::DurationMessage(std::chrono::microseconds duration, Message::Stamp stamp_micro_seconds) : MessageTemplate<std::chrono::microseconds, DurationMessage>("/", stamp_micro_seconds)
 {
     value = duration;
 }
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
 Node convert<csapex::connection_types::DurationMessage>::encode(const csapex::connection_types::DurationMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
@@ -35,17 +35,16 @@ bool convert<csapex::connection_types::DurationMessage>::decode(const Node& node
     rhs.value = microseconds(dur);
     return true;
 }
-}
+}  // namespace YAML
 
-
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const std::chrono::microseconds& t)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const std::chrono::microseconds& t)
 {
     int64_t micro_seconds_since_epoch = duration_cast<microseconds>(t).count();
     data << micro_seconds_since_epoch;
 
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, std::chrono::microseconds& t)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, std::chrono::microseconds& t)
 {
     int64_t micro_seconds_since_epoch;
     data >> micro_seconds_since_epoch;

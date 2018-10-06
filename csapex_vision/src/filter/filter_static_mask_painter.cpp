@@ -2,17 +2,16 @@
 #include "filter_static_mask_painter.h"
 
 /// SYSTEM
-#include <QPixmap>
-#include <QGraphicsSceneEvent>
-#include <csapex/view/utility/QtCvImageConverter.h>
-#include <QKeyEvent>
-#include <QPushButton>
 #include <QBoxLayout>
+#include <QGraphicsSceneEvent>
+#include <QKeyEvent>
+#include <QPixmap>
+#include <QPushButton>
+#include <csapex/view/utility/QtCvImageConverter.h>
 
 using namespace csapex;
 
-StaticMaskPainter::StaticMaskPainter(const cv::Mat& mask)
-    : dragging(false)
+StaticMaskPainter::StaticMaskPainter(const cv::Mat& mask) : dragging(false)
 {
     mask.copyTo(mask_);
 }
@@ -47,7 +46,7 @@ void StaticMaskPainter::run()
     modal->setLayout(layout);
 
     int result = modal->exec();
-    if(result == QDialog::Accepted) {
+    if (result == QDialog::Accepted) {
         Q_EMIT new_mask(mask_);
     }
 
@@ -62,62 +61,58 @@ void StaticMaskPainter::buttonClicked(QAbstractButton* btn)
     }
 }
 
-
 bool StaticMaskPainter::eventFilter(QObject* obj, QEvent* event)
 {
-    switch(event->type()) {
-    case QEvent::GraphicsSceneMousePress: {
-        QGraphicsSceneMouseEvent* me = static_cast<QGraphicsSceneMouseEvent*>(event);
-
-        if(dragging) {
-            dragging = false;
-            mask_backup.copyTo(mask_);
-            break;
-
-        } else  {
-            mask_.copyTo(mask_backup);
-
-            dragging = true;
-
-            start_drag = me->scenePos();
-            start_btn = me->button();
-        }
-        break;
-    }
-    case QEvent::GraphicsSceneMouseMove: {
-        if(dragging) {
+    switch (event->type()) {
+        case QEvent::GraphicsSceneMousePress: {
             QGraphicsSceneMouseEvent* me = static_cast<QGraphicsSceneMouseEvent*>(event);
 
-            QPointF current = me->scenePos();
-            cv::Rect rec(cv::Point(start_drag.x(), start_drag.y()),
-                         cv::Point(current.x(), current.y()));
+            if (dragging) {
+                dragging = false;
+                mask_backup.copyTo(mask_);
+                break;
+
+            } else {
+                mask_.copyTo(mask_backup);
+
+                dragging = true;
+
+                start_drag = me->scenePos();
+                start_btn = me->button();
+            }
+            break;
+        }
+        case QEvent::GraphicsSceneMouseMove: {
+            if (dragging) {
+                QGraphicsSceneMouseEvent* me = static_cast<QGraphicsSceneMouseEvent*>(event);
+
+                QPointF current = me->scenePos();
+                cv::Rect rec(cv::Point(start_drag.x(), start_drag.y()), cv::Point(current.x(), current.y()));
+                mask_backup.copyTo(mask_);
+                cv::rectangle(mask_, rec, cv::Scalar::all(0), 2);
+            }
+            break;
+        }
+
+        case QEvent::GraphicsSceneMouseRelease: {
+            QGraphicsSceneMouseEvent* me = static_cast<QGraphicsSceneMouseEvent*>(event);
+
             mask_backup.copyTo(mask_);
-            cv::rectangle(mask_, rec, cv::Scalar::all(0), 2);
-        }
-        break;
-    }
 
-    case QEvent::GraphicsSceneMouseRelease: {
-        QGraphicsSceneMouseEvent* me = static_cast<QGraphicsSceneMouseEvent*>(event);
+            if (me->button() == start_btn) {
+                QPointF stop_drag = me->scenePos();
 
-        mask_backup.copyTo(mask_);
+                cv::Rect rec(cv::Point(start_drag.x(), start_drag.y()), cv::Point(stop_drag.x(), stop_drag.y()));
 
-        if(me->button() == start_btn) {
+                cv::rectangle(mask_, rec, cv::Scalar::all(0), CV_FILLED);
+            }
 
-            QPointF stop_drag = me->scenePos();
-
-            cv::Rect rec(cv::Point(start_drag.x(), start_drag.y()),
-                         cv::Point(stop_drag.x(), stop_drag.y()));
-
-            cv::rectangle(mask_, rec, cv::Scalar::all(0), CV_FILLED);
+            dragging = false;
+            break;
         }
 
-        dragging = false;
-        break;
-    }
-
-    default:
-        break;
+        default:
+            break;
     }
 
     return QObject::eventFilter(obj, event);
@@ -125,7 +120,7 @@ bool StaticMaskPainter::eventFilter(QObject* obj, QEvent* event)
 
 void StaticMaskPainter::setMask(cv::Mat mask)
 {
-    if(!mask.empty()) {
+    if (!mask.empty()) {
         mask.copyTo(this->mask_);
     }
 }
@@ -133,7 +128,7 @@ void StaticMaskPainter::setMask(cv::Mat mask)
 void StaticMaskPainter::input(cv::Mat img)
 {
     cv::Mat masked;
-    if(mask_.empty()) {
+    if (mask_.empty()) {
         mask_ = cv::Mat(img.rows, img.cols, CV_8UC1, cv::Scalar(255));
     }
     img.copyTo(masked, mask_);
@@ -144,7 +139,7 @@ void StaticMaskPainter::input(cv::Mat img)
     scene->setSceneRect(0, 0, img.cols, img.rows);
     scene->addPixmap(QPixmap::fromImage(image));
 
-    view->fitInView(scene->itemsBoundingRect() ,Qt::KeepAspectRatio);
+    view->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 }
 /// MOC
 #include "moc_filter_static_mask_painter.cpp"

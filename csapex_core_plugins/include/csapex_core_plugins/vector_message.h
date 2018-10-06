@@ -1,5 +1,4 @@
 #ifndef VECTOR_MESSAGE_H
 #define VECTOR_MESSAGE_H
 
-
-#endif // VECTOR_MESSAGE_H
+#endif  // VECTOR_MESSAGE_H

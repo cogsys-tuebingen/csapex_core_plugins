@@ -1,19 +1,17 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class BinaryBoolean : public Node
 {
 public:
@@ -41,18 +39,10 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        std::map<std::string, Operation> operations
-        {
-            {"A AND B", Operation::AND},
-            {"A OR B", Operation::OR},
-            {"A NAND B", Operation::NAND},
-            {"A NOR B", Operation::NOR},
-            {"A XOR B", Operation::XOR}
+        std::map<std::string, Operation> operations{
+            { "A AND B", Operation::AND }, { "A OR B", Operation::OR }, { "A NAND B", Operation::NAND }, { "A NOR B", Operation::NOR }, { "A XOR B", Operation::XOR }
         };
-        params.addParameter(param::factory::declareParameterSet("operation",
-                                                                         operations,
-                                                                         Operation::AND),
-                            operation_);
+        params.addParameter(param::factory::declareParameterSet("operation", operations, Operation::AND), operation_);
     }
 
     void process() override
@@ -63,21 +53,21 @@ public:
         bool res;
 
         switch (operation_) {
-        case Operation::AND:
-            res = a && b;
-            break;
-        case Operation::OR:
-            res = a || b;
-            break;
-        case Operation::NAND:
-            res = !(a && b);
-            break;
-        case Operation::NOR:
-            res = !(a || b);
-            break;
-        case Operation::XOR:
-            res = a ^ b;
-            break;
+            case Operation::AND:
+                res = a && b;
+                break;
+            case Operation::OR:
+                res = a || b;
+                break;
+            case Operation::NAND:
+                res = !(a && b);
+                break;
+            case Operation::NOR:
+                res = !(a || b);
+                break;
+            case Operation::XOR:
+                res = a ^ b;
+                break;
         }
 
         msg::publish(out, res);
@@ -91,8 +81,6 @@ private:
     Operation operation_;
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::BinaryBoolean, csapex::Node)
-

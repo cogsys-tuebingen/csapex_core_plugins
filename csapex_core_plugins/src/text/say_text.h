@@ -7,8 +7,8 @@
 /// SYSTEM
 #include <future>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN SayText : public Node
 {
 public:
@@ -34,6 +34,6 @@ private:
     std::future<void> future_;
 };
 
-}
+}  // namespace csapex
 
-#endif // TEXT_DISPLAY_H_
+#endif  // TEXT_DISPLAY_H_

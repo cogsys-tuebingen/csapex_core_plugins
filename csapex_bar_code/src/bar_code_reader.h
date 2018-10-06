@@ -6,7 +6,6 @@
 
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN BarCodeReader : public csapex::Node
 {
 public:
@@ -26,6 +25,6 @@ private:
     std::string data_;
 };
 
-}
+}  // namespace csapex
 
-#endif // BAR_CODE_READER_
+#endif  // BAR_CODE_READER_

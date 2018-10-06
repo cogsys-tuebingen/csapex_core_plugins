@@ -2,12 +2,13 @@
 
 #include "../data/feature_color.hpp"
 #include "../data/feature_helpers.hpp"
-#include "noop_validator.hpp"
 #include "color_differences.hpp"
+#include "noop_validator.hpp"
 
-namespace csapex { namespace clustering
+namespace csapex
 {
-
+namespace clustering
+{
 enum ColorDifferenceType
 {
     CIE76,
@@ -15,18 +16,13 @@ enum ColorDifferenceType
     CIE94Textiles
 };
 
-template<typename Data>
+template <typename Data>
 class ColorValidatorImpl
 {
 public:
-    ColorValidatorImpl(ColorDifferenceType type,
-                       const std::array<double, 3>& weights,
-                       double threshold) :
-        weights_(weights),
-        threshold_(threshold)
+    ColorValidatorImpl(ColorDifferenceType type, const std::array<double, 3>& weights, double threshold) : weights_(weights), threshold_(threshold)
     {
-        switch (type)
-        {
+        switch (type) {
             default:
             case CIE76:
                 difference_ = color_differences::CIE76;
@@ -65,22 +61,13 @@ private:
     double threshold_;
 };
 
-template<typename Data>
-struct ColorValidator :
-        std::conditional<
-                detail::tuple_contains<typename Data::FeatureList, ColorFeature>::value,
-                ColorValidatorImpl<Data>,
-                NoOpValidator<Data>
-        >::type
+template <typename Data>
+struct ColorValidator : std::conditional<detail::tuple_contains<typename Data::FeatureList, ColorFeature>::value, ColorValidatorImpl<Data>, NoOpValidator<Data>>::type
 {
-    using BaseType = typename std::conditional<
-            detail::tuple_contains<typename Data::FeatureList, ColorFeature>::value,
-            ColorValidatorImpl<Data>,
-            NoOpValidator<Data>
-    >::type;
+    using BaseType = typename std::conditional<detail::tuple_contains<typename Data::FeatureList, ColorFeature>::value, ColorValidatorImpl<Data>, NoOpValidator<Data>>::type;
 
     using BaseType::BaseType;
-
 };
 
-}}
+}  // namespace clustering
+}  // namespace csapex

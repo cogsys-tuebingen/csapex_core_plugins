@@ -7,8 +7,7 @@
 
 namespace csapex
 {
-
-class CSAPEX_EXPORT_PLUGIN  MLPCv : public Node
+class CSAPEX_EXPORT_PLUGIN MLPCv : public Node
 {
 public:
     MLPCv();
@@ -18,7 +17,7 @@ public:
     virtual void process() override;
 
 private:
-    void classify(const connection_types::FeaturesMessage &input, connection_types::FeaturesMessage &output);
+    void classify(const connection_types::FeaturesMessage& input, connection_types::FeaturesMessage& output);
     void loadMLP();
     void reloadMLP();
 
@@ -36,4 +35,4 @@ private:
     std::string path_;
 };
 
-}
+}  // namespace csapex

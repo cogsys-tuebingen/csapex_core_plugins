@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class LocalPatterns : public csapex::Node
 {
 public:
@@ -15,13 +16,25 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    enum Type {LBP, LBP_EXT, LBP_VAR, LBP_CS,
-               LTP, LTP_EXT, LTP_SHORT, LTP_CS,
-               WLD, WLD_SHORT, WLD_ORIENTED,
-               HOMOGENITY, HOMOGENITY_TEX};
+    enum Type
+    {
+        LBP,
+        LBP_EXT,
+        LBP_VAR,
+        LBP_CS,
+        LTP,
+        LTP_EXT,
+        LTP_SHORT,
+        LTP_CS,
+        WLD,
+        WLD_SHORT,
+        WLD_ORIENTED,
+        HOMOGENITY,
+        HOMOGENITY_TEX
+    };
 
-    csapex::Input  *in_;
-    csapex::Output *out_;
+    csapex::Input* in_;
+    csapex::Output* out_;
 };
-}
-#endif // LOCALPATTERNS_H
+}  // namespace csapex
+#endif  // LOCALPATTERNS_H

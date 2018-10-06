@@ -2,11 +2,11 @@
 #include "sum_channels.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
-#include <csapex/model/node_modifier.h>
 
 CSAPEX_REGISTER_CLASS(csapex::SumChannels, csapex::Node)
 
@@ -27,26 +27,26 @@ void SumChannels::process()
     std::vector<cv::Mat> channels;
     cv::split(in->value, channels);
     bool abs = readParameter<bool>("abs");
-    for(std::vector<cv::Mat>::iterator it = channels.begin() ; it != channels.end() ; ++it) {
+    for (std::vector<cv::Mat>::iterator it = channels.begin(); it != channels.end(); ++it) {
         it->convertTo(*it, CV_32FC1);
-        if(abs)
+        if (abs)
             *it = cv::abs(*it);
         cv::add(*it, out->value, out->value);
     }
-    if(readParameter<bool>("mean")) {
-       out->value = out->value * (1.0 / (double) channels.size());
+    if (readParameter<bool>("mean")) {
+        out->value = out->value * (1.0 / (double)channels.size());
     }
     msg::publish(output_, out);
 }
 
 void SumChannels::setup(NodeModifier& node_modifier)
 {
-    input_  = node_modifier.addInput<CvMatMessage>("original");
+    input_ = node_modifier.addInput<CvMatMessage>("original");
     output_ = node_modifier.addOutput<CvMatMessage>("sum");
 }
 
 void SumChannels::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareBool("mean", true));
-    parameters.addParameter(csapex::param::factory::declareBool("abs",  false));
+    parameters.addParameter(csapex::param::factory::declareBool("abs", false));
 }

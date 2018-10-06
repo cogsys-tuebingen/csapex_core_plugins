@@ -1,20 +1,18 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/msg/io.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ml/features_message.h>
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class FeatureMessageGetClassification : public Node
 {
 public:
@@ -37,7 +35,7 @@ public:
         std::shared_ptr<std::vector<FeaturesMessage> const> input = msg::getMessage<GenericVectorMessage, FeaturesMessage>(in_);
 
         std::shared_ptr<std::vector<int>> out(new std::vector<int>);
-        for(const FeaturesMessage& f : *input){
+        for (const FeaturesMessage& f : *input) {
             apex_assert(f.type == FeaturesMessage::Type::CLASSIFICATION);
             int classification = f.classification;
             out->emplace_back(classification);
@@ -48,11 +46,8 @@ public:
 private:
     Input* in_;
     Output* out_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::FeatureMessageGetClassification, csapex::Node)
-

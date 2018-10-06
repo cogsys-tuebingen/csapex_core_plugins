@@ -7,25 +7,25 @@
 /// SYSTEM
 #include <pcl/point_cloud.h>
 
-namespace csapex {
+namespace csapex
+{
 class PlaneSegmentation : public csapex::Node
 {
 public:
     PlaneSegmentation() = default;
 
-    virtual void setup(csapex::NodeModifier &node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
-    template<class PointT>
+    template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 protected:
-    Input  *input_cloud_;
+    Input* input_cloud_;
 
-    Output *output_normals_;
-
+    Output* output_normals_;
 };
-}
+}  // namespace csapex
 
-#endif // PLANE_SEGMENTATION_H
+#endif  // PLANE_SEGMENTATION_H

@@ -4,15 +4,15 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ExtractROI : public csapex::Node
 {
 public:
     ExtractROI();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
@@ -22,5 +22,5 @@ private:
     Output* output_;
 };
 
-}
-#endif // RENDER_ROIS_H
+}  // namespace csapex
+#endif  // RENDER_ROIS_H

@@ -6,7 +6,6 @@
 
 namespace csapex
 {
-
 class ImagePadding : public Node
 {
 public:
@@ -22,6 +21,6 @@ private:
     Output* output_mask_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // IMAGE_PADDING_H
+#endif  // IMAGE_PADDING_H

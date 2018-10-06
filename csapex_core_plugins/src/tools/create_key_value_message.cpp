@@ -1,12 +1,12 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/any_message.h>
+#include <csapex/msg/generic_value_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_value_message.hpp>
-#include <csapex/msg/any_message.h>
 #include <csapex_core_plugins/key_value_message.h>
 
 using namespace csapex;
@@ -14,8 +14,6 @@ using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class CreateKeyValueMessage : public Node
 {
 public:
@@ -31,13 +29,8 @@ public:
 
     void setupParameters(csapex::Parameterizable& params) override
     {
-        params.addParameter(param::factory::declareText(
-                                "key",
-                               param::ParameterDescription("key of the KeyValueMessage (name of the message)"),
-                                "something"),
-                            key_);
+        params.addParameter(param::factory::declareText("key", param::ParameterDescription("key of the KeyValueMessage (name of the message)"), "something"), key_);
     }
-
 
     void process() override
     {
@@ -46,7 +39,6 @@ public:
         KeyValueMessage::ConstPtr key_value(new KeyValueMessage(key_, msg));
 
         msg::publish(out_, key_value);
-
     }
 
 private:
@@ -54,11 +46,8 @@ private:
     Output* out_;
 
     std::string key_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::CreateKeyValueMessage, csapex::Node)
-

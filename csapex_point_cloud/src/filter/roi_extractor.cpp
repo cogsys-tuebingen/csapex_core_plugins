@@ -1,12 +1,12 @@
 #include "roi_extractor.hpp"
 
-#include <csapex/msg/io.h>
-#include <csapex/msg/input.h>
-#include <csapex/msg/output.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/input.h>
+#include <csapex/msg/io.h>
+#include <csapex/msg/output.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex_opencv/roi_message.h>
 #include <csapex_point_cloud/msg/indices_message.h>
 
@@ -19,21 +19,15 @@ using namespace csapex::connection_types;
 
 ROIExtractor::ROIExtractor()
 {
-
 }
 
 void ROIExtractor::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::factory::declareRange<int>("outputs", 0, 10, 0, 1),
-                            std::bind(&ROIExtractor::updateOutputs, this));
+    parameters.addParameter(csapex::param::factory::declareRange<int>("outputs", 0, 10, 0, 1), std::bind(&ROIExtractor::updateOutputs, this));
 
     param::ParameterPtr filter_param = param::factory::declareBool("filter", false);
-    parameters.addParameter(filter_param,
-                            filter_);
-    parameters.addConditionalParameter(param::factory::declareRange("filter/class", -100, 100, 0, 1),
-                                       [filter_param]() { return filter_param->as<bool>(); },
-                                       filter_class_);
-
+    parameters.addParameter(filter_param, filter_);
+    parameters.addConditionalParameter(param::factory::declareRange("filter/class", -100, 100, 0, 1), [filter_param]() { return filter_param->as<bool>(); }, filter_class_);
 }
 
 void ROIExtractor::setup(NodeModifier& node_modifier)
@@ -49,21 +43,15 @@ void ROIExtractor::updateOutputs()
 {
     // TODO: implement variadic outputs
     std::size_t new_count = readParameter<int>("outputs");
-    if (new_count != output_clouds_single_.size())
-    {
-        if (new_count > output_clouds_single_.size())
-        {
-            for (std::size_t i = output_clouds_single_.size(); i < new_count; ++i)
-            {
+    if (new_count != output_clouds_single_.size()) {
+        if (new_count > output_clouds_single_.size()) {
+            for (std::size_t i = output_clouds_single_.size(); i < new_count; ++i) {
                 std::stringstream name;
                 name << "Single Cloud " << i;
                 output_clouds_single_.push_back(node_modifier_->addOutput<PointCloudMessage>(name.str()));
             }
-        }
-        else
-        {
-            for (int i = ((int) output_clouds_single_.size()) - 1; i >= (int) new_count; --i)
-            {
+        } else {
+            for (int i = ((int)output_clouds_single_.size()) - 1; i >= (int)new_count; --i) {
                 node_modifier_->removeOutput(msg::getUUID(output_clouds_single_[i]));
                 output_clouds_single_.pop_back();
             }
@@ -71,7 +59,7 @@ void ROIExtractor::updateOutputs()
     }
 }
 
-void ROIExtractor::publish(const std::shared_ptr< std::vector<PointCloudMessage::ConstPtr> >& message)
+void ROIExtractor::publish(const std::shared_ptr<std::vector<PointCloudMessage::ConstPtr>>& message)
 {
     for (std::size_t i = 0; i < output_clouds_single_.size() && i < message->size(); ++i)
         msg::publish(output_clouds_single_[i], message->at(i));
@@ -86,17 +74,16 @@ void ROIExtractor::process()
     boost::apply_visitor(PointCloudMessage::Dispatch<ROIExtractor>(this, pcl), pcl->value);
 }
 
-template<typename PointT>
+template <typename PointT>
 void ROIExtractor::extract_organized(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     std::shared_ptr<std::vector<RoiMessage> const> roi_vector(msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_));
-    std::shared_ptr< std::vector<PointCloudMessage::ConstPtr> > out_vector(new std::vector<PointCloudMessage::ConstPtr> );
+    std::shared_ptr<std::vector<PointCloudMessage::ConstPtr>> out_vector(new std::vector<PointCloudMessage::ConstPtr>);
 
     if (!cloud->isOrganized())
         throw std::runtime_error("Cluster index list required for unorganized clouds");
 
-    for (const auto& roi_msg : *roi_vector)
-    {
+    for (const auto& roi_msg : *roi_vector) {
         if (filter_)
             if (roi_msg.value.classification() != filter_class_)
                 continue;
@@ -118,24 +105,21 @@ void ROIExtractor::extract_organized(typename pcl::PointCloud<PointT>::ConstPtr 
     publish(out_vector);
 }
 
-template<typename PointT>
+template <typename PointT>
 void ROIExtractor::extract_unorganized(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     std::shared_ptr<std::vector<RoiMessage> const> roi_vector(msg::getMessage<GenericVectorMessage, RoiMessage>(input_rois_));
     std::shared_ptr<std::vector<pcl::PointIndices> const> indices = msg::getMessage<GenericVectorMessage, pcl::PointIndices>(input_indices_);
 
-    std::shared_ptr< std::vector<PointCloudMessage::ConstPtr> > out_vector(new std::vector<PointCloudMessage::ConstPtr> );
+    std::shared_ptr<std::vector<PointCloudMessage::ConstPtr>> out_vector(new std::vector<PointCloudMessage::ConstPtr>);
 
     if (roi_vector->size() != indices->size())
         throw std::runtime_error("ROIs and Indices vectors do not have equal length");
 
     int idx = 0;
-    for (const auto& roi_msg : *roi_vector)
-    {
-        if (filter_)
-        {
-            if (roi_msg.value.classification() != filter_class_)
-            {
+    for (const auto& roi_msg : *roi_vector) {
+        if (filter_) {
+            if (roi_msg.value.classification() != filter_class_) {
                 ++idx;
                 continue;
             }
@@ -176,7 +160,7 @@ void ROIExtractor::extract_unorganized(typename pcl::PointCloud<PointT>::ConstPt
     publish(out_vector);
 }
 
-template<typename PointT>
+template <typename PointT>
 void ROIExtractor::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     if (msg::hasMessage(input_indices_))
@@ -184,4 +168,3 @@ void ROIExtractor::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     else
         extract_organized<PointT>(cloud);
 }
-

@@ -7,8 +7,8 @@
 /// SYSTEM
 #include <boost/optional.hpp>
 
-namespace csapex {
-
+namespace csapex
+{
 class ExportRos : public RosNode
 {
 public:
@@ -33,5 +33,5 @@ private:
     int target_type_;
 };
 
-}
-#endif // EXPORTROS_H
+}  // namespace csapex
+#endif  // EXPORTROS_H

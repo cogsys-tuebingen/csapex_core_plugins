@@ -2,18 +2,17 @@
 #include "color_labeled_point_cloud.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/view/utility/color.hpp>
 #include <csapex/model/node_modifier.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/view/utility/color.hpp>
+#include <csapex_opencv/cv_mat_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
-#include <pcl/point_types.h>
 #include <pcl/conversions.h>
-
+#include <pcl/point_types.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ColorLabeledPointCloud, csapex::Node)
 
@@ -30,40 +29,40 @@ void ColorLabeledPointCloud::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<ColorLabeledPointCloud>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<ColorLabeledPointCloud>(this, msg), msg->value);
 }
 
 void ColorLabeledPointCloud::setup(NodeModifier& node_modifier)
 {
-    input_  = node_modifier.addInput<PointCloudMessage>("Labeled PointCloud");
+    input_ = node_modifier.addInput<PointCloudMessage>("Labeled PointCloud");
     output_ = node_modifier.addOutput<PointCloudMessage>("Colored PointCloud");
 }
 
-namespace implementation {
-
-struct Color {
-    Color(uchar _r = 0, uchar _g = 0, uchar _b = 0) :
-        r(_r),
-        g(_g),
-        b(_b){}
+namespace implementation
+{
+struct Color
+{
+    Color(uchar _r = 0, uchar _g = 0, uchar _b = 0) : r(_r), g(_g), b(_b)
+    {
+    }
 
     uchar r;
     uchar g;
     uchar b;
 };
 
-template<class PointT>
-struct Impl {
-    inline static void convert(const typename pcl::PointCloud<PointT>::ConstPtr& src,
-                               typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
+template <class PointT>
+struct Impl
+{
+    inline static void convert(const typename pcl::PointCloud<PointT>::ConstPtr& src, typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
     {
         std::map<unsigned int, Color> colors;
         colors.insert(std::make_pair(FLOOD_DEFAULT_LABEL, Color()));
-        for(typename pcl::PointCloud<PointT>::const_iterator it = src->begin() ; it != src->end() ; ++it) {
-            if(colors.find(it->label) == colors.end()) {
+        for (typename pcl::PointCloud<PointT>::const_iterator it = src->begin(); it != src->end(); ++it) {
+            if (colors.find(it->label) == colors.end()) {
                 double r = 0.0, g = 0.0, b = 0.0;
-                color::fromCount(it->label+1, r,g,b);
-                colors.insert(std::make_pair(it->label,Color(r,g,b)));
+                color::fromCount(it->label + 1, r, g, b);
+                colors.insert(std::make_pair(it->label, Color(r, g, b)));
             }
             Color c = colors.at(it->label);
             pcl::PointXYZRGB p(c.r, c.g, c.b);
@@ -75,34 +74,33 @@ struct Impl {
     }
 };
 
-template<class PointT>
-struct Conversion {
-    static void apply(const typename pcl::PointCloud<PointT>::ConstPtr& src,
-                      typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
+template <class PointT>
+struct Conversion
+{
+    static void apply(const typename pcl::PointCloud<PointT>::ConstPtr& src, typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
     {
         throw std::runtime_error("Type of pointcloud must be labeled!");
     }
 };
 
-template<>
-struct Conversion<pcl::PointXYZL>{
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::ConstPtr& src,
-                      typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
+template <>
+struct Conversion<pcl::PointXYZL>
+{
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZL>::ConstPtr& src, typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
     {
         Impl<pcl::PointXYZL>::convert(src, dst);
     }
-
 };
 
-template<>
-struct Conversion<pcl::PointXYZRGBL>{
-    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGBL>::ConstPtr& src,
-                      typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
+template <>
+struct Conversion<pcl::PointXYZRGBL>
+{
+    static void apply(const typename pcl::PointCloud<pcl::PointXYZRGBL>::ConstPtr& src, typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& dst)
     {
         Impl<pcl::PointXYZRGBL>::convert(src, dst);
     }
 };
-}
+}  // namespace implementation
 
 template <class PointT>
 void ColorLabeledPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
@@ -114,7 +112,7 @@ void ColorLabeledPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstP
 
     out_cloud->height = cloud->height;
     out_cloud->header = cloud->header;
-    out_cloud->width  = cloud->width;
+    out_cloud->width = cloud->width;
     out_cloud->is_dense = cloud->is_dense;
 
     out->value = out_cloud;

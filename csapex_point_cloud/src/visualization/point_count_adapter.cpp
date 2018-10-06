@@ -10,8 +10,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(PointCountAdapter, csapex::PointCount)
 
-PointCountAdapter::PointCountAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<PointCount> node)
-    : DefaultNodeAdapter(worker, parent), wrapped_(node)
+PointCountAdapter::PointCountAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<PointCount> node) : DefaultNodeAdapter(worker, parent), wrapped_(node)
 {
     auto n = wrapped_.lock();
 

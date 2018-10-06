@@ -3,7 +3,8 @@
 
 /// COMPONENT
 #include <csapex/model/node.h>
-namespace csapex {
+namespace csapex
+{
 class SumChannels : public csapex::Node
 {
 public:
@@ -15,8 +16,7 @@ public:
 
 protected:
     csapex::Output* output_;
-    csapex::Input*  input_;
-
+    csapex::Input* input_;
 };
-}
-#endif // SUM_CHANNELS_H
+}  // namespace csapex
+#endif  // SUM_CHANNELS_H

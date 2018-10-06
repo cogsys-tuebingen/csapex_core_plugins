@@ -7,26 +7,15 @@
 
 using namespace csapex;
 
-Circle::Circle() :
-  center_x(0),
-  center_y(0),
-  radius(0),
-  id(0)
+Circle::Circle() : center_x(0), center_y(0), radius(0), id(0)
 {
-
 }
 
-Circle::Circle(double cx, double cy, double r) :
-  center_x(cx),
-  center_y(cy),
-  radius(r),
-  id(0)
+Circle::Circle(double cx, double cy, double r) : center_x(cx), center_y(cy), radius(r), id(0)
 {
-
 }
 
-
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const Circle& c)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const Circle& c)
 {
   data << c.center_x;
   data << c.center_y;
@@ -35,7 +24,7 @@ SerializationBuffer& csapex::operator << (SerializationBuffer& data, const Circl
   return data;
 }
 
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, Circle& c)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, Circle& c)
 {
   data >> c.center_x;
   data >> c.center_y;

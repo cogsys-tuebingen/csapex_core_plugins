@@ -5,15 +5,15 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class CropBox : public Node
 {
 public:
     CropBox();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
     template <class PointT>
@@ -25,6 +25,6 @@ private:
     Output* output_neg_;
 };
 
-}
+}  // namespace csapex
 
-#endif // CROP_BOX_H_
+#endif  // CROP_BOX_H_

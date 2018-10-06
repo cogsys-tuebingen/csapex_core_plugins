@@ -13,6 +13,6 @@ public:
 
     virtual void filter(cv::Mat& img, cv::Mat& mask);
 };
-}
+}  // namespace csapex
 
-#endif // FILTER_APPLY_MASK_H
+#endif  // FILTER_APPLY_MASK_H

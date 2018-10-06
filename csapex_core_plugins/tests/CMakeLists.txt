@@ -32,8 +32,7 @@ include( CTest )
 
 find_package(catkin REQUIRED COMPONENTS csapex_testing)
 
-include_directories(${catkin_INCLUDE_DIRS})
-include_directories(${catkin_INCLUDE_DIR} ${GTEST_INCLUDE_DIR} include)
+include_directories(${catkin_INCLUDE_DIRS} ${GTEST_INCLUDE_DIR} include)
 
 
 # tests that are not yet distributed across the project

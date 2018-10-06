@@ -4,8 +4,8 @@
 /// HEADER
 #include <csapex/core/core_plugin.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class RegisterScan2DPlugin : public CorePlugin
 {
 public:
@@ -15,6 +15,6 @@ public:
     void shutdown() override;
 };
 
-}
+}  // namespace csapex
 
-#endif // REGISTER_PLUGIN_H
+#endif  // REGISTER_PLUGIN_H

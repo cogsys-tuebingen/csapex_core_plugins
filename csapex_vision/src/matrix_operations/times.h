@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class Times : public csapex::Node
 {
 public:
@@ -16,12 +17,12 @@ public:
 
 protected:
     csapex::Output* output_;
-    csapex::Input*  input_a_;
-    csapex::Input*  input_b_;
+    csapex::Input* input_a_;
+    csapex::Input* input_b_;
 
     double scale_;
-    int    dtype_;
+    int dtype_;
 };
-}
+}  // namespace csapex
 
-#endif // TIMES_H
+#endif  // TIMES_H

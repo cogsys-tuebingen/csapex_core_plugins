@@ -6,14 +6,13 @@
 
 namespace csapex
 {
-
 class HoughCircle : public Node
 {
 public:
     HoughCircle();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
@@ -22,6 +21,6 @@ private:
     Output* out_circles_;
 };
 
-}
+}  // namespace csapex
 
-#endif // HOUGH_CIRCLE_H
+#endif  // HOUGH_CIRCLE_H

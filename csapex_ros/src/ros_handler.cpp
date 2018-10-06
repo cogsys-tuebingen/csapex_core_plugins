@@ -2,21 +2,18 @@
 #include <csapex_ros/ros_handler.h>
 
 /// SYSTEM
-#include <topic_tools/shape_shifter.h>
-#include <thread>
 #include <chrono>
+#include <thread>
+#include <topic_tools/shape_shifter.h>
 
 using namespace csapex;
 
 ROSHandler* ROSHandler::g_instance_ = nullptr;
 
-ROSHandler::ROSHandler(Settings& settings)
-    : settings_(settings), initialized_(false), has_connection(false), check_is_running(false)
-{    
+ROSHandler::ROSHandler(Settings& settings) : settings_(settings), initialized_(false), has_connection(false), check_is_running(false)
+{
     init();
-    connection_thread_ = std::thread([this]() {
-        checkMasterConnection();
-    });
+    connection_thread_ = std::thread([this]() { checkMasterConnection(); });
 }
 
 ROSHandler::~ROSHandler()
@@ -25,7 +22,7 @@ ROSHandler::~ROSHandler()
 
     stop();
 
-    if(connection_thread_.joinable()) {
+    if (connection_thread_.joinable()) {
         connection_thread_.join();
     }
 
@@ -37,13 +34,13 @@ void ROSHandler::stop()
     std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
     has_connection = false;
 
-    if(ros::isStarted()) {
-        if(nh_) {
+    if (ros::isStarted()) {
+        if (nh_) {
             nh_.reset();
         }
         ros::shutdown();
 
-        if(spinner_) {
+        if (spinner_) {
             spinner_->stop();
             spinner_.reset();
         }
@@ -64,17 +61,17 @@ bool ROSHandler::isConnected()
     return has_connection;
 }
 
-bool ROSHandler::topicExists(const std::string &topic)
+bool ROSHandler::topicExists(const std::string& topic)
 {
-    if(!isConnected()) {
+    if (!isConnected()) {
         return false;
     }
 
     ros::master::V_TopicInfo topics;
     ros::master::getTopics(topics);
 
-    for(ros::master::V_TopicInfo::iterator it = topics.begin(); it != topics.end(); ++it) {
-        if(it->name == topic) {
+    for (ros::master::V_TopicInfo::iterator it = topics.begin(); it != topics.end(); ++it) {
+        if (it->name == topic) {
             return true;
         }
     }
@@ -82,37 +79,35 @@ bool ROSHandler::topicExists(const std::string &topic)
     return false;
 }
 
-
 void ROSHandler::init()
 {
-    if(!initialized_) {
-        //if(!ros::isInitialized()) {
-            std::vector<std::string> additional_args;
-            if(settings_.knows("additional_args")) {
-                try {
-                    additional_args = settings_.get< std::vector<std::string> >("additional_args");
-                } catch(const std::exception& e) {
-                    // ignore loading invalid additional args
-                    // hack: without this, empty vectors are not correctly handled...
-                }
+    if (!initialized_) {
+        // if(!ros::isInitialized()) {
+        std::vector<std::string> additional_args;
+        if (settings_.knows("additional_args")) {
+            try {
+                additional_args = settings_.get<std::vector<std::string>>("additional_args");
+            } catch (const std::exception& e) {
+                // ignore loading invalid additional args
+                // hack: without this, empty vectors are not correctly handled...
             }
-            additional_args.insert(additional_args.begin(), settings_.get< std::string >("path_to_bin"));
+        }
+        additional_args.insert(additional_args.begin(), settings_.get<std::string>("path_to_bin"));
 
-            std::vector<char*> cstrings;
-            for(const std::string& string : additional_args) {
-                cstrings.push_back(const_cast<char*>(string.c_str()));
-            }
+        std::vector<char*> cstrings;
+        for (const std::string& string : additional_args) {
+            cstrings.push_back(const_cast<char*>(string.c_str()));
+        }
 
-            int argc = (int) cstrings.size();
-            char** argv = (char**) cstrings.data();
-            ros::init(argc, argv, "csapex", ros::init_options::AnonymousName);
-       // }
+        int argc = (int)cstrings.size();
+        char** argv = (char**)cstrings.data();
+        ros::init(argc, argv, "csapex", ros::init_options::AnonymousName);
+        // }
         initialized_ = true;
 
         std::string host = ros::master::getHost();
-        if(host != "localhost") {
-            std::cerr << "checking connection to host " << host <<
-                         ", startup may block, if the host is not reachable!" << std::endl;
+        if (host != "localhost") {
+            std::cerr << "checking connection to host " << host << ", startup may block, if the host is not reachable!" << std::endl;
         }
         ros::master::setRetryTimeout(ros::WallDuration(0.25));
     }
@@ -122,14 +117,13 @@ void ROSHandler::checkMasterConnection()
 {
     check_is_running = true;
 
-    while(check_is_running)
-    {
+    while (check_is_running) {
         bool c = ros::master::check();
         {
             std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
-            if(has_connection != c) {
+            if (has_connection != c) {
                 has_connection = c;
-                if(has_connection) {
+                if (has_connection) {
                     connectionEstablished();
                 } else {
                     connectionLost();
@@ -145,7 +139,7 @@ void ROSHandler::connectionEstablished()
 {
     std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
 
-    if(has_connection) {
+    if (has_connection) {
         nh_.reset(new ros::NodeHandle("~"));
         spinner_.reset(new ros::AsyncSpinner(1));
         spinner_->start();
@@ -163,49 +157,46 @@ void ROSHandler::connectionLost()
     init();
 }
 
-
 void ROSHandler::waitForConnection()
 {
     std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
-    if(!has_connection) {
+    if (!has_connection) {
         connection_established.wait(lock);
     }
 }
 
 void ROSHandler::waitForInitializatedHandle()
 {
-    if(nh_) {
+    if (nh_) {
         return;
     }
 
-    if(!isConnected()) {
+    if (!isConnected()) {
         waitForConnection();
     }
 }
 
-
 void ROSHandler::waitForTopic(const std::string& name, std::function<void()> callback)
 {
-    if(isConnected()) {
+    if (isConnected()) {
         doWaitForTopic(name, callback);
     } else {
-        connected.connect([this, name, callback](){
-            doWaitForTopic(name, callback);
-        });
+        connected.connect([this, name, callback]() { doWaitForTopic(name, callback); });
     }
 }
 void ROSHandler::doWaitForTopic(const std::string& name, std::function<void()> callback)
 {
-    if(topicExists(name)) {
+    if (topicExists(name)) {
         // if the topic already exists -> call back
         callback();
 
     } else {
-        // if the topic doesn't exist, create a 'one-shot' subscription that calls back
+        // if the topic doesn't exist, create a 'one-shot' subscription that calls
+        // back
         ros::SubscribeOptions ops;
         ops.template init<topic_tools::ShapeShifter>(name, 0, [this, name](const boost::shared_ptr<topic_tools::ShapeShifter const>& ros_msg) {
             auto pos = topic_callbacks_.find(name);
-            if(pos != topic_callbacks_.end()) {
+            if (pos != topic_callbacks_.end()) {
                 // execute callback
                 pos->second();
                 // forget the callback and the subscriber (one-shot)

@@ -4,29 +4,29 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class Clock : public Node
 {
 private:
-    enum Type {
+    enum Type
+    {
         ZERO = 0,
         CURRENT = 1,
         CHRONO = 2
     };
 
-public:    
+public:
     Clock();
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
-
+    virtual void setupParameters(Parameterizable& parameters) override;
 
 private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
-#endif // CLOCK_H
+#endif  // CLOCK_H

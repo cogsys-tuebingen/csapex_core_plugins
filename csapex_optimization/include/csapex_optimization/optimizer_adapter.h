@@ -11,8 +11,8 @@
 class QDialog;
 class QProgressBar;
 
-namespace csapex {
-
+namespace csapex
+{
 class OptimizerAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -50,6 +50,6 @@ protected:
     std::string next_type_;
 };
 
-}
+}  // namespace csapex
 
-#endif // OPTIMIZER_ADAPTER_H
+#endif  // OPTIMIZER_ADAPTER_H

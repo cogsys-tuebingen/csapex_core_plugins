@@ -2,18 +2,20 @@
 #define DYNAMIC_TRANSFORM_H
 
 /// PROJECT
-#include <csapex_ros/ros_node.h>
 #include <csapex/param/set_parameter.h>
+#include <csapex_ros/ros_node.h>
 
 /// SYSTEM
-#include <ros/time.h>
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <tf/tf.h>
-#include <csapex/utility/suppress_warnings_end.h>
 #include <boost/optional.hpp>
+#include <ros/time.h>
+#include <tf/tf.h>
+#include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
-namespace csapex {
-
+namespace csapex
+{
 class DynamicTransform : public csapex::RosNode
 {
 public:
@@ -62,6 +64,6 @@ private:
     boost::optional<tf::Transform> last_transform;
 };
 
-}
+}  // namespace csapex
 
-#endif // DYNAMIC_TRANSFORM_H
+#endif  // DYNAMIC_TRANSFORM_H

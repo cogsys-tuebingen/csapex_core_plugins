@@ -3,11 +3,11 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
-#include <csapex/utility/assert.h>
 #include <csapex/model/variadic_io.h>
+#include <csapex/utility/assert.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class GenericTextCombiner : public csapex::Node, public csapex::VariadicInputs
 {
 public:
@@ -28,6 +28,6 @@ private:
     std::string format;
 };
 
-}
+}  // namespace csapex
 
-#endif // GENERIC_IMAGE_COMBINER_H
+#endif  // GENERIC_IMAGE_COMBINER_H

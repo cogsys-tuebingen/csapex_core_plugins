@@ -2,17 +2,16 @@
 #define FILE_IMPORTER_H
 
 /// PROJECT
-#include <csapex/msg/message_provider.h>
 #include <csapex/model/node.h>
-#include <csapex/signal/signal_fwd.h>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/message_provider.h>
+#include <csapex/signal/signal_fwd.h>
 
 /// SYSTEM
 #include <QString>
 
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN FileImporter : public Node
 {
 public:
@@ -30,7 +29,6 @@ public:
 
     bool createMessageProvider(const QString& file_path);
     void doImportDir(const QString& dir);
-
 
 private:
     void changeDirIndex();
@@ -88,6 +86,6 @@ private:
     connection_types::GenericVectorMessage::ConstPtr current_container_msg_;
 };
 
-}
+}  // namespace csapex
 
-#endif // FILE_IMPORTER_H
+#endif  // FILE_IMPORTER_H

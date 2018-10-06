@@ -1,7 +1,6 @@
 #ifndef TEXT_DISPLAY_ADAPTER_H
 #define TEXT_DISPLAY_ADAPTER_H
 
-
 /// PROJECT
 #include <csapex/view/node/resizable_node_adapter.h>
 
@@ -11,8 +10,8 @@
 /// SYSTEM
 #include <QLabel>
 
-namespace csapex {
-
+namespace csapex
+{
 class TextDisplayAdapter : public QObject, public ResizableNodeAdapter
 {
     Q_OBJECT
@@ -38,5 +37,5 @@ private:
     QLabel* txt_;
 };
 
-}
-#endif // TEXT_DISPLAY_ADAPTER_H
+}  // namespace csapex
+#endif  // TEXT_DISPLAY_ADAPTER_H

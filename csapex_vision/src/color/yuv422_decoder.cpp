@@ -1,17 +1,15 @@
 /// COMPONENT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 
 using namespace csapex::connection_types;
 
-
 namespace csapex
 {
-
 class YUV422Decoder : public Node
 {
 public:
@@ -30,7 +28,7 @@ public:
         CvMatMessage::ConstPtr img_in = msg::getMessage<CvMatMessage>(in_);
         cv::Mat img = img_in->value;
 
-        if(img.channels() != 2) {
+        if (img.channels() != 2) {
             throw std::logic_error("image has to be 2-channel.");
         }
 
@@ -57,7 +55,7 @@ public:
 
         CvMatMessage::Ptr img_out(new CvMatMessage(img_in->getEncoding(), img_in->frame_id, img_in->stamp_micro_seconds));
         cv::Mat& out = img_out->value;
-//        out = cv::Mat(img.rows, img.cols, CV_8UC3, cv::Scalar::all(128));
+        //        out = cv::Mat(img.rows, img.cols, CV_8UC3, cv::Scalar::all(128));
 
         cv::merge(out_channels, out);
 
@@ -69,7 +67,6 @@ private:
     Output* out_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::YUV422Decoder, csapex::Node)
-

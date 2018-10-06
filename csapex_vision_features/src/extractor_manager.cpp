@@ -31,19 +31,19 @@ Extractor::Initializer::Ptr ExtractorManager::getInitializer(const std::string& 
     KeypointInitializer kc;
     DescriptorInitializer dc;
 
-    if(!keypoint.empty()) {
+    if (!keypoint.empty()) {
         try {
             kc = available_keypoints.at(keypoint_lower);
-        } catch(...) {
+        } catch (...) {
             FATAL("invalid keypoint type: '" << keypoint_lower << "'");
             throw Extractor::IllegalKeypointException();
         }
     }
 
-    if(!descriptor.empty()) {
+    if (!descriptor.empty()) {
         try {
             dc = available_descriptors.at(descriptor_lower);
-        } catch(...) {
+        } catch (...) {
             FATAL("invalid descriptor type: '" << descriptor_lower << "'");
             throw Extractor::IllegalDescriptorException();
         }
@@ -67,7 +67,6 @@ void ExtractorManager::registerKeypointConstructor(const std::string& key, Keypo
     available_keypoints[key_lower] = c;
 }
 
-
 void ExtractorManager::registerDescriptorConstructor(const std::string& key, DescriptorInit dc)
 {
     std::string key_lower = key;
@@ -78,7 +77,6 @@ void ExtractorManager::registerDescriptorConstructor(const std::string& key, Des
     c.setConstructor(dc);
     available_descriptors[key_lower] = c;
 }
-
 
 void ExtractorManager::registerKeypointParameters(const std::string& key, ParameterFunction f)
 {
@@ -96,13 +94,15 @@ void ExtractorManager::registerDescriptorParameters(const std::string& des, Para
     param_des[descriptor_lower] = f;
 }
 
-std::vector<csapex::param::Parameter::Ptr> ExtractorManager::featureDetectorParameters(const std::string& keypoint) {
+std::vector<csapex::param::Parameter::Ptr> ExtractorManager::featureDetectorParameters(const std::string& keypoint)
+{
     std::string keypoint_lower = keypoint;
     std::transform(keypoint_lower.begin(), keypoint_lower.end(), keypoint_lower.begin(), ::tolower);
 
     return param_key[keypoint_lower]();
 }
-std::vector<csapex::param::Parameter::Ptr> ExtractorManager::featureDescriptorParameters(const std::string& descriptor) {
+std::vector<csapex::param::Parameter::Ptr> ExtractorManager::featureDescriptorParameters(const std::string& descriptor)
+{
     std::string descriptor_lower = descriptor;
     std::transform(descriptor_lower.begin(), descriptor_lower.end(), descriptor_lower.begin(), ::tolower);
 

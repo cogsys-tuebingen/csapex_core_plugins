@@ -5,7 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_opencv/cv_mat_message.h>
 
-namespace csapex {
+namespace csapex
+{
 class Split : public csapex::Node
 {
     friend class SplitSerializer;
@@ -20,13 +21,12 @@ public:
     virtual void process() override;
 
 private:
-    Input *input_;
+    Input* input_;
 
     void updateOutputs();
 
     Encoding encoding_;
     int channel_count_;
-
 };
-}
-#endif // FILTER_SPLITTER_H
+}  // namespace csapex
+#endif  // FILTER_SPLITTER_H

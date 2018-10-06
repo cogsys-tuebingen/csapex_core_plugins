@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class MeanStdDevNormalization : public Node
 {
 public:
@@ -15,12 +16,12 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 private:
-    Input  *in_mean_;
-    Input  *in_dev_;
-    Input  *in_mat_;
+    Input* in_mean_;
+    Input* in_dev_;
+    Input* in_mat_;
 
-    Output *out_;
+    Output* out_;
 };
-}
+}  // namespace csapex
 
-#endif // MEAN_DEV_NORMALIZATION_H
+#endif  // MEAN_DEV_NORMALIZATION_H

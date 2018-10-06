@@ -4,12 +4,10 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
-
+namespace csapex
+{
 class ConfidenceClassToggle : public csapex::Node
 {
-
 public:
     ConfidenceClassToggle();
 
@@ -22,7 +20,6 @@ private:
     Output* out_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // CONFIDENCE_CLASS_TOGGLE_H
+#endif  // CONFIDENCE_CLASS_TOGGLE_H

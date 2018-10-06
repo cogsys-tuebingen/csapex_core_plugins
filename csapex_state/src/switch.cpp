@@ -1,19 +1,17 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/any_message.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/any_message.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class Switch : public Node
 {
 public:
@@ -25,14 +23,15 @@ public:
     {
         in_ = modifier.addInput<AnyMessage>("Input");
         out_true_ = modifier.addOutput<AnyMessage>("True");
-        out_false_= modifier.addOutput<AnyMessage>("False");
+        out_false_ = modifier.addOutput<AnyMessage>("False");
     }
 
     void setupParameters(csapex::Parameterizable& params) override
     {
         params.addParameter(param::factory::declareBool("predicate",
-                                                                 param::ParameterDescription("hint: make the parameter <b>connectable</b> for dynamic switching."),
-                                                                 true),
+                                                        param::ParameterDescription("hint: make the parameter <b>connectable</b> "
+                                                                                    "for dynamic switching."),
+                                                        true),
                             predicate_);
     }
 
@@ -41,7 +40,7 @@ public:
         auto message = msg::getMessage(in_);
         apex_assert(message);
 
-        if(predicate_) {
+        if (predicate_) {
             msg::publish(out_true_, message);
 
         } else {
@@ -55,11 +54,8 @@ private:
     Output* out_false_;
 
     bool predicate_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::Switch, csapex::Node)
-

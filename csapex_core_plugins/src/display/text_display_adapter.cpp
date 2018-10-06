@@ -2,12 +2,12 @@
 #include "text_display_adapter.h"
 
 /// PROJECT
+#include <csapex/io/raw_message.h>
+#include <csapex/model/node_facade.h>
 #include <csapex/model/node_facade_impl.h>
 #include <csapex/msg/io.h>
-#include <csapex/view/utility/register_node_adapter.h>
-#include <csapex/model/node_facade.h>
-#include <csapex/io/raw_message.h>
 #include <csapex/serialization/io/std_io.h>
+#include <csapex/view/utility/register_node_adapter.h>
 
 /// SYSTEM
 #include <QBoxLayout>
@@ -17,12 +17,10 @@ using namespace csapex;
 
 CSAPEX_REGISTER_NODE_ADAPTER(TextDisplayAdapter, csapex::TextDisplay)
 
-
-TextDisplayAdapter::TextDisplayAdapter(NodeFacadePtr node, NodeBox* parent)
-    : ResizableNodeAdapter(node, parent)
+TextDisplayAdapter::TextDisplayAdapter(NodeFacadePtr node, NodeBox* parent) : ResizableNodeAdapter(node, parent)
 {
     observe(node->raw_data_connection, [this](StreamableConstPtr msg) {
-        if(std::shared_ptr<RawMessage const> raw = std::dynamic_pointer_cast<RawMessage const>(msg)) {
+        if (std::shared_ptr<RawMessage const> raw = std::dynamic_pointer_cast<RawMessage const>(msg)) {
             SerializationBuffer buffer(raw->getData());
             std::string text;
             buffer >> text;
@@ -36,35 +34,41 @@ TextDisplayAdapter::~TextDisplayAdapter()
     stopObserving();
 }
 
-namespace {
-static bool isFixedPitch(const QFont & font) {
+namespace
+{
+static bool isFixedPitch(const QFont& font)
+{
     const QFontInfo fi(font);
     return fi.fixedPitch();
 }
 
-static QFont getMonospaceFont(){
+static QFont getMonospaceFont()
+{
     QFont font("monospace");
-    if (isFixedPitch(font)) return font;
+    if (isFixedPitch(font))
+        return font;
     font.setStyleHint(QFont::Monospace);
-    if (isFixedPitch(font)) return font;
+    if (isFixedPitch(font))
+        return font;
     font.setStyleHint(QFont::TypeWriter);
-    if (isFixedPitch(font)) return font;
+    if (isFixedPitch(font))
+        return font;
     font.setFamily("courier");
-    if (isFixedPitch(font)) return font;
+    if (isFixedPitch(font))
+        return font;
     return font;
 }
-}
+}  // namespace
 
-bool TextDisplayAdapter::eventFilter(QObject *o, QEvent *e)
+bool TextDisplayAdapter::eventFilter(QObject* o, QEvent* e)
 {
-    if (e->type() == QEvent::Resize){
+    if (e->type() == QEvent::Resize) {
         QSize s = txt_->sizeHint();
         setSize(s.width(), s.height());
     }
 
     return false;
 }
-
 
 void TextDisplayAdapter::setupUi(QBoxLayout* layout)
 {
@@ -86,7 +90,7 @@ void TextDisplayAdapter::resize(const QSize& size)
 
 void TextDisplayAdapter::setManualResize(bool manual)
 {
-    if(manual) {
+    if (manual) {
         txt_->setMinimumSize(QSize(10, 10));
     } else {
         txt_->setMinimumSize(txt_->size());
@@ -101,4 +105,3 @@ void TextDisplayAdapter::display(const std::string& txt)
 
 /// MOC
 #include "moc_text_display_adapter.cpp"
-

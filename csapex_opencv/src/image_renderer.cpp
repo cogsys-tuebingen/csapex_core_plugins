@@ -17,9 +17,9 @@ namespace
 {
 struct mat_lifetime_extender
 {
-    mat_lifetime_extender(const cv::Mat& mat)
-        : mat(mat)
-    {}
+    mat_lifetime_extender(const cv::Mat& mat) : mat(mat)
+    {
+    }
 
     cv::Mat mat;
 };
@@ -28,29 +28,26 @@ void clean_mat(void* mat)
     delete static_cast<mat_lifetime_extender*>(mat);
 }
 
-}
+}  // namespace
 
-std::unique_ptr<QImage> ImageRenderer::doRender(const connection_types::CvMatMessage &msg)
+std::unique_ptr<QImage> ImageRenderer::doRender(const connection_types::CvMatMessage& msg)
 {
     Encoding encoding = msg.getEncoding();
 
     QImage result;
 
-    if(!msg.value.empty()) {
-        if(encoding.matches(enc::rgb)) {
+    if (!msg.value.empty()) {
+        if (encoding.matches(enc::rgb)) {
             cv::Mat mat = msg.value;
-            result = QImage((uchar*) mat.data,
-                          mat.cols, mat.rows, mat.step,
-                          QImage::Format_RGB888,
-                          clean_mat, new mat_lifetime_extender(mat));
+            result = QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888, clean_mat, new mat_lifetime_extender(mat));
 
-        } else if(encoding.matches(enc::bgr) || encoding.matches(enc::mono)) {
+        } else if (encoding.matches(enc::bgr) || encoding.matches(enc::mono)) {
             result = QtCvImageConverter::Converter::mat2QImage(msg.value);
 
-        } else if(encoding.matches(enc::depth)) {
+        } else if (encoding.matches(enc::depth)) {
             result = QtCvImageConverter::Converter::mat2QImage(msg.value);
 
-        } else if(msg.value.channels() == 1 || msg.value.channels() == 3) {
+        } else if (msg.value.channels() == 1 || msg.value.channels() == 3) {
             result = QtCvImageConverter::Converter::mat2QImage(msg.value);
 
         } else {

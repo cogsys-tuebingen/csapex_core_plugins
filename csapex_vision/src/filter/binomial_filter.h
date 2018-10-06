@@ -5,7 +5,8 @@
 #include <csapex/model/node.h>
 #include <opencv2/core/core.hpp>
 
-namespace csapex {
+namespace csapex
+{
 class BinomialFilter : public csapex::Node
 {
 public:
@@ -16,11 +17,10 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
-    int                     kernel_size_;
-    cv::Mat                 kernel_;
-    csapex::Output*   output_;
-    csapex::Input*    input_;
-
+    int kernel_size_;
+    cv::Mat kernel_;
+    csapex::Output* output_;
+    csapex::Input* input_;
 };
-}
-#endif // BINOMIAL_FILTER_H
+}  // namespace csapex
+#endif  // BINOMIAL_FILTER_H

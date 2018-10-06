@@ -6,7 +6,6 @@
 
 namespace csapex
 {
-
 class VectorizePyramid : public Node
 {
 public:
@@ -16,10 +15,9 @@ public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
 
 private:
-    Input  *input_;
-    Output *output_;
-
+    Input* input_;
+    Output* output_;
 };
 
-}
-#endif // VECTORIZE_PYRAMID_H
+}  // namespace csapex
+#endif  // VECTORIZE_PYRAMID_H

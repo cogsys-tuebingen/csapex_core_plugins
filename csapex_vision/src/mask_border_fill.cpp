@@ -1,9 +1,9 @@
 
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
 
@@ -12,8 +12,6 @@ using namespace csapex::connection_types;
 
 namespace csapex
 {
-
-
 class MaskBorderFill : public Node
 {
 public:
@@ -41,32 +39,30 @@ public:
         apex_assert(image->value.type() == CV_8UC1);
 
         std::deque<cv::Point> Q;
-        for(int c = 0, cols = mask.cols; c < cols; ++c)
-        {
+        for (int c = 0, cols = mask.cols; c < cols; ++c) {
             {
                 cv::Point pt(c, 0);
-                if(mask.at<uchar>(pt)) {
+                if (mask.at<uchar>(pt)) {
                     Q.push_back(pt);
                 }
             }
             {
-                cv::Point pt(c, mask.rows-1);
-                if(mask.at<uchar>(pt)) {
+                cv::Point pt(c, mask.rows - 1);
+                if (mask.at<uchar>(pt)) {
                     Q.push_back(pt);
                 }
             }
         }
-        for(int r = 1, rows = mask.rows-1; r < rows; ++r)
-        {
+        for (int r = 1, rows = mask.rows - 1; r < rows; ++r) {
             {
                 cv::Point pt(0, r);
-                if(mask.at<uchar>(pt)) {
+                if (mask.at<uchar>(pt)) {
                     Q.push_back(pt);
                 }
             }
             {
-                cv::Point pt(mask.cols-1, r);
-                if(mask.at<uchar>(pt)) {
+                cv::Point pt(mask.cols - 1, r);
+                if (mask.at<uchar>(pt)) {
                     Q.push_back(pt);
                 }
             }
@@ -74,29 +70,28 @@ public:
 
         cv::Rect rect(0, 0, mask.cols, mask.rows);
 
-        while(!Q.empty()) {
+        while (!Q.empty()) {
             cv::Point front = Q.front();
             Q.pop_front();
 
             mask.at<uchar>(front) = 0;
 
-            static const int dx[] = {-1, 0, 1, 0};
-            static const int dy[] = {0, -1, 0, 1};
+            static const int dx[] = { -1, 0, 1, 0 };
+            static const int dy[] = { 0, -1, 0, 1 };
 
-            for(int i = 0; i < 4; ++i) {
+            for (int i = 0; i < 4; ++i) {
                 cv::Point n = front;
                 n.x += dx[i];
                 n.y += dy[i];
 
-                if(rect.contains(n)) {
+                if (rect.contains(n)) {
                     uchar val = mask.at<uchar>(n);
-                    if(val) {
+                    if (val) {
                         mask.at<uchar>(n) = 0;
                         Q.push_back(n);
                     }
                 }
             }
-
         }
 
         auto result = std::make_shared<connection_types::CvMatMessage>(image->getEncoding(), image->frame_id, image->stamp_micro_seconds);
@@ -107,11 +102,8 @@ public:
 private:
     Input* in_;
     Output* out_;
-
 };
 
-} // csapex
-
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::MaskBorderFill, csapex::Node)
-

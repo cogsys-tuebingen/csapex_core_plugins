@@ -2,9 +2,9 @@
 #include "filter_debayer.h"
 
 /// PROJECT
-#include <csapex/param/parameter_factory.h>
-#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex_opencv/cv_mat_message.h>
 
 /// SYSTEM
@@ -20,7 +20,7 @@ Debayer::Debayer()
 {
 }
 
-void Debayer::setup(NodeModifier &node_modifier)
+void Debayer::setup(NodeModifier& node_modifier)
 {
     input_img_ = node_modifier.addInput<CvMatMessage>("Image");
     output_img_ = node_modifier.addOutput<CvMatMessage>("Image");
@@ -29,13 +29,9 @@ void Debayer::setup(NodeModifier &node_modifier)
 void Debayer::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> methods = {
-        {"BayerBG2RGB", (int) CV_BayerBG2RGB},
-        {"BayerGB2RGB", (int) CV_BayerGB2RGB},
-        {"BayerRG2RGB", (int) CV_BayerRG2RGB},
-        {"BayerGR2RGB", (int) CV_BayerGR2RGB},
-        {"NNRG2RGB", 667}
+        { "BayerBG2RGB", (int)CV_BayerBG2RGB }, { "BayerGB2RGB", (int)CV_BayerGB2RGB }, { "BayerRG2RGB", (int)CV_BayerRG2RGB }, { "BayerGR2RGB", (int)CV_BayerGR2RGB }, { "NNRG2RGB", 667 }
     };
-    parameters.addParameter(csapex::param::factory::declareParameterSet("method", methods, (int) CV_BayerBG2RGB));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("method", methods, (int)CV_BayerBG2RGB));
 }
 
 void Debayer::process(csapex::Parameterizable& parameters)
@@ -47,7 +43,7 @@ void Debayer::process(csapex::Parameterizable& parameters)
 
     // assume 1 channel raw image comes in
     cv::Mat raw;
-    if(img.channels() == 1) {
+    if (img.channels() == 1) {
         raw = img;
     } else {
         cv::cvtColor(img, raw, CV_RGB2GRAY);
@@ -57,8 +53,7 @@ void Debayer::process(csapex::Parameterizable& parameters)
     if (mode == 667) {
         debayerAndResize(raw, img_out->value);
         cv::cvtColor(img_out->value, img_out->value, CV_BGR2RGB);
-    }
-    else {
+    } else {
         cv::cvtColor(raw, img_out->value, mode);
     }
 
@@ -73,17 +68,16 @@ bool Debayer::usesMask()
 // Debayer: bayer-Pattern
 // - every pixel has it's own color filter (e.g. only sees red)
 // - pixel returns brightness value
-void Debayer::debayerAndResize(const cv::Mat& source, cv::Mat& dest) {
+void Debayer::debayerAndResize(const cv::Mat& source, cv::Mat& dest)
+{
+    cv::MatConstIterator_<uchar> it = source.begin<uchar>(), itEnd = source.end<uchar>();
+    uchar* destination = (uchar*)dest.data;
 
-    cv::MatConstIterator_<uchar> it = source.begin<uchar>(),
-            itEnd = source.end<uchar>();
-    uchar* destination = (uchar*) dest.data;
-
-    while(it != itEnd) {
+    while (it != itEnd) {
         // r g r g r g
         // g b g b g b
         cv::MatConstIterator_<uchar> itLineEnd = it + 640;
-        while(it != itLineEnd) {
+        while (it != itLineEnd) {
             *destination = *it;
             ++it;
             ++destination;
@@ -93,8 +87,8 @@ void Debayer::debayerAndResize(const cv::Mat& source, cv::Mat& dest) {
             ++destination;
         }
         itLineEnd = it + 640;
-        destination -= 320*3;
-        while(it != itLineEnd) {
+        destination -= 320 * 3;
+        while (it != itLineEnd) {
             // maybe add some green
             ++it;
             ++destination;
@@ -104,7 +98,6 @@ void Debayer::debayerAndResize(const cv::Mat& source, cv::Mat& dest) {
             ++it;
             ++destination;
         }
-        destination += 320*3;
+        destination += 320 * 3;
     }
 }
-

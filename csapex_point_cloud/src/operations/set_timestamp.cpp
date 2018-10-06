@@ -2,11 +2,11 @@
 #include "set_timestamp.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex_core_plugins/timestamp_message.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_core_plugins/timestamp_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::SetTimeStamp, csapex::Node)
 
@@ -30,7 +30,7 @@ void SetTimeStamp::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<SetTimeStamp>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<SetTimeStamp>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -48,10 +48,10 @@ void SetTimeStamp::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 
     typename pcl::PointCloud<PointT>::Ptr out_cloud = boost::get<typename pcl::PointCloud<PointT>::Ptr>(msg->value);
 
-    if(msg::hasMessage(input_frame_)) {
+    if (msg::hasMessage(input_frame_)) {
         out_cloud->header.frame_id = msg::getValue<std::string>(input_frame_);
     }
-    out_cloud->header.stamp = nano.count() / 1e3; // microseconds
+    out_cloud->header.stamp = nano.count() / 1e3;  // microseconds
 
     msg::publish(output_, msg);
 }

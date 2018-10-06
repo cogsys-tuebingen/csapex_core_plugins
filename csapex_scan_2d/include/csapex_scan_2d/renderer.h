@@ -3,18 +3,18 @@
 
 /// PROJECT
 #include <csapex/model/parameterizable.h>
-#include <csapex_scan_2d/scan_message.h>
-#include <csapex_scan_2d/labeled_scan_message.h>
+#include <csapex/profiling/interlude.hpp>
 #include <csapex/profiling/timable.h>
 #include <csapex/profiling/timer.h>
-#include <csapex/profiling/interlude.hpp>
 #include <csapex/view/utility/color.hpp>
+#include <csapex_scan_2d/labeled_scan_message.h>
+#include <csapex_scan_2d/scan_message.h>
 
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
-
+namespace csapex
+{
 class Renderer : public Parameterizable, public Timable
 {
 public:
@@ -30,7 +30,7 @@ public:
 
         double radius = readParameter<double>("radius");
 
-        const std::vector<int>& color = readParameter<std::vector<int> >("color/bg");
+        const std::vector<int>& color = readParameter<std::vector<int>>("color/bg");
         cv::Scalar bgColor(color[2], color[1], color[0]);
 
         cv::Mat(h, w, CV_8UC3, bgColor).copyTo(output);
@@ -38,16 +38,16 @@ public:
         cv::Point2f origin = getOrigin();
         double angle = readParameter<double>("rotation");
 
-        if(readParameter<bool>("drawRays")) {
+        if (readParameter<bool>("drawRays")) {
             INTERLUDE("draw rays");
-            const std::vector<int>& color = readParameter<std::vector<int> >("color/ray");
+            const std::vector<int>& color = readParameter<std::vector<int>>("color/ray");
             cv::Scalar rayColor(color[2], color[1], color[0]);
             drawRays(scan, output, origin, rayColor, angle, scale, radius);
         }
-        if(readParameter<bool>("drawHits")) {
+        if (readParameter<bool>("drawHits")) {
             INTERLUDE("draw hits");
-            const std::vector<int>& color = readParameter<std::vector<int> >("color/hit");
-            const std::vector<int>& marked = readParameter<std::vector<int> >("color/marked");
+            const std::vector<int>& color = readParameter<std::vector<int>>("color/hit");
+            const std::vector<int>& marked = readParameter<std::vector<int>>("color/marked");
             cv::Scalar hitColor(color[2], color[1], color[0]);
             cv::Scalar markedColor(marked[2], marked[1], marked[0]);
 
@@ -59,21 +59,18 @@ public:
     double getScale() const;
 
 protected:
-    void drawRays(const lib_laser_processing::Scan& scan, cv::Mat& img, const cv::Point2f& origin, cv::Scalar color,
-                  double angle_offset, double scale, double radius);
+    void drawRays(const lib_laser_processing::Scan& scan, cv::Mat& img, const cv::Point2f& origin, cv::Scalar color, double angle_offset, double scale, double radius);
 
-    void drawHits(const lib_laser_processing::Scan& scan, cv::Mat& img, const cv::Point2f& origin, cv::Scalar color, cv::Scalar,
-                  double angle_offset, double scale, double radius);
-    void drawHits(const lib_laser_processing::LabeledScan& scan, cv::Mat& img, const cv::Point2f& origin, cv::Scalar color, cv::Scalar marked,
-                  double angle_offset, double scale, double radius);
+    void drawHits(const lib_laser_processing::Scan& scan, cv::Mat& img, const cv::Point2f& origin, cv::Scalar color, cv::Scalar, double angle_offset, double scale, double radius);
+    void drawHits(const lib_laser_processing::LabeledScan& scan, cv::Mat& img, const cv::Point2f& origin, cv::Scalar color, cv::Scalar marked, double angle_offset, double scale, double radius);
 
 private:
     int w;
     int h;
     double scale;
-    bool   mark_random_color;
+    bool mark_random_color;
 };
 
-}
+}  // namespace csapex
 
-#endif // RENDERER_H
+#endif  // RENDERER_H

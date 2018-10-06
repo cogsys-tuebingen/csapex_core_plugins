@@ -8,14 +8,14 @@
 #include "cloud_renderer.h"
 
 /// SYSTEM
+#include <QGLFramebufferObject>
 #include <QGLWidget>
-#include <QVector3D>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QGLFramebufferObject>
+#include <QVector3D>
 
-namespace csapex {
-
+namespace csapex
+{
 class CloudRendererAdapter : public QGLWidget, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -37,12 +37,12 @@ public:
 protected:
     void initializeGL();
     void resizeGL(int width, int height);
-    void mousePressEventImpl(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEventImpl(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEventImpl(QGraphicsSceneMouseEvent *event);
-    void wheelEventImpl(QGraphicsSceneWheelEvent *event);
+    void mousePressEventImpl(QGraphicsSceneMouseEvent* event);
+    void mouseReleaseEventImpl(QGraphicsSceneMouseEvent* event);
+    void mouseMoveEventImpl(QGraphicsSceneMouseEvent* event);
+    void wheelEventImpl(QGraphicsSceneWheelEvent* event);
 
-    bool eventFilter(QObject *, QEvent *);
+    bool eventFilter(QObject*, QEvent*);
 
 public:
     template <class PointT>
@@ -106,6 +106,6 @@ protected:
     GLuint list_augmentation_;
 };
 
-}
+}  // namespace csapex
 
-#endif // CLOUD_RENDERER_ADAPTER_H
+#endif  // CLOUD_RENDERER_ADAPTER_H

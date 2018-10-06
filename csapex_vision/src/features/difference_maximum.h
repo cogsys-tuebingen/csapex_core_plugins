@@ -4,7 +4,8 @@
 /// COMPONENT
 #include "corner_line_detection.h"
 
-namespace csapex {
+namespace csapex
+{
 class DifferenceMaximum : public CornerLineDetection
 {
 public:
@@ -12,7 +13,6 @@ public:
 
     virtual void process() override;
     virtual void setupParameters(Parameterizable& parameters);
-
 };
-}
-#endif // DIFFERENCE_MAXIMUM_H
+}  // namespace csapex
+#endif  // DIFFERENCE_MAXIMUM_H

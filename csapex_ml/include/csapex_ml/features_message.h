@@ -8,17 +8,18 @@
 /// SYSTEM
 #include <yaml-cpp/yaml.h>
 
-namespace csapex {
-namespace connection_types {
-
-
+namespace csapex
+{
+namespace connection_types
+{
 struct CSAPEX_ML_EXPORT FeaturesMessage : public Message
 {
 protected:
     CLONABLE_IMPLEMENTATION(FeaturesMessage);
 
 public:
-    enum class Type {
+    enum class Type
+    {
         CLASSIFICATION = 0,
         REGRESSION = 1
     };
@@ -35,7 +36,7 @@ public:
 
     Type type;
 
-    int   classification;
+    int classification;
     std::vector<float> regression_result;
 
     float confidence;
@@ -43,21 +44,25 @@ public:
 
 /// TRAITS
 template <>
-struct CSAPEX_ML_EXPORT type<FeaturesMessage> {
-    static std::string name() {
+struct CSAPEX_ML_EXPORT type<FeaturesMessage>
+{
+    static std::string name()
+    {
         return "FeaturesMessage";
     }
 };
-}
-}
+}  // namespace connection_types
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct CSAPEX_ML_EXPORT convert<csapex::connection_types::FeaturesMessage> {
-  static Node encode(const csapex::connection_types::FeaturesMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::FeaturesMessage& rhs);
+namespace YAML
+{
+template <>
+struct CSAPEX_ML_EXPORT convert<csapex::connection_types::FeaturesMessage>
+{
+    static Node encode(const csapex::connection_types::FeaturesMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::FeaturesMessage& rhs);
 };
-}
+}  // namespace YAML
 
-#endif // FEATURES_MESSAGE_H
+#endif  // FEATURES_MESSAGE_H

@@ -2,11 +2,11 @@
 #define TEXT_DISPLAY_H_
 
 /// PROJECT
-#include <csapex/model/node.h>
 #include "csapex_core_plugins_node_export.h"
+#include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_CORE_PLUGINS_NODE_EXPORT TextDisplay : public Node
 {
 public:
@@ -20,13 +20,13 @@ public:
 
 protected:
     void display(const TokenDataConstPtr msg);
-    void convert(std::stringstream& ss, const YAML::Node& node, const std::string &prefix);
+    void convert(std::stringstream& ss, const YAML::Node& node, const std::string& prefix);
 
 private:
     Input* input_;
     Slot* slot_;
 };
 
-}
+}  // namespace csapex
 
-#endif // TEXT_DISPLAY_H_
+#endif  // TEXT_DISPLAY_H_

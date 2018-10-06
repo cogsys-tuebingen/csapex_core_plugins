@@ -14,26 +14,24 @@
 #include <csapex/view/gui_exception_handler.h>
 
 /// SYSTEM
-#include <pluginlib/class_list_macros.h>
-#include <QStringList>
-#include <QMenuBar>
 #include <QBoxLayout>
+#include <QMenuBar>
+#include <QStringList>
+#include <pluginlib/class_list_macros.h>
 
 PLUGINLIB_DECLARE_CLASS(csapex_rqt, CsApex, csapex_rqt::CsApex, rqt_gui_cpp::Plugin)
 
 using namespace csapex_rqt;
 using namespace csapex;
 
-CsApex::CsApex()
-    : handler(false)
+CsApex::CsApex() : handler(false)
 {
 }
 
 CsApex::~CsApex()
 {
-//    delete window;
+    //    delete window;
 }
-
 
 void CsApex::initPlugin(qt_gui_cpp::PluginContext& context)
 {
@@ -43,7 +41,7 @@ void CsApex::initPlugin(qt_gui_cpp::PluginContext& context)
     view_core.reset(new CsApexViewCore(*core));
 
     window = new CsApexWindow(*view_core);
-//    eva_->showMenu();
+    //    eva_->showMenu();
 
     context_->addWidget(window);
 
@@ -66,7 +64,7 @@ void CsApex::saveSettings(qt_gui_cpp::Settings& /*plugin_settings*/, qt_gui_cpp:
 void CsApex::restoreSettings(const qt_gui_cpp::Settings& plugin_settings, const qt_gui_cpp::Settings& instance_settings)
 {
     QString file = instance_settings.value("file").toString();
-    if(!file.isEmpty()) {
+    if (!file.isEmpty()) {
         core->getSettings().set("config", file.toStdString());
         window->reload();
     }

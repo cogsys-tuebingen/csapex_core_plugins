@@ -25,8 +25,18 @@ qt5_add_resources(QT_RESOURCES res/csapex_math_resources.qrc)
 
 add_library(${PROJECT_NAME} SHARED
     src/param/angle_parameter.cpp
+    src/param/linear_vector_parameter.cpp
+    src/param/linear_matrix_parameter.cpp
     src/param/factory.cpp
-    #src/param/vector_parameter.cpp
+
+    src/model/vector.cpp
+    src/model/matrix.cpp
+
+    src/msg/linear_vector_message.cpp
+    src/msg/linear_matrix_message.cpp
+
+    src/serialization/yaml_io.cpp
+    src/serialization/binary_io.cpp
 )
 target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
@@ -46,8 +56,11 @@ target_link_libraries(${PROJECT_NAME}_core
 
 
 add_library(${PROJECT_NAME}_qt SHARED
-    #src/view/vector_param_adapter.cpp
+    src/view/vector_param_adapter.cpp
+    src/view/matrix_param_adapter.cpp
     src/view/angle_param_adapter.cpp
+    src/view/matrix_dialog.cpp
+    src/view/matrix_table_model.cpp
     ${QT_RESOURCES}
 )
 target_link_libraries(${PROJECT_NAME}_qt
@@ -59,13 +72,15 @@ target_link_libraries(${PROJECT_NAME}_qt
 
 
 add_library(${PROJECT_NAME}_node SHARED
-    src/norm_of_generic_vector_message.cpp
-    src/invert_values.cpp
-    src/multiply_values.cpp
-    src/generic_vector_message_get_extremum.cpp
-    src/scale_generic_vector_message.cpp
-    src/negate_number.cpp
-    src/sum.cpp
+    src/node/vector_input.cpp
+    src/node/matrix_input.cpp
+    src/node/norm_of_generic_vector_message.cpp
+    src/node/invert_values.cpp
+    src/node/multiply_values.cpp
+    src/node/generic_vector_message_get_extremum.cpp
+    src/node/scale_generic_vector_message.cpp
+    src/node/negate_number.cpp
+    src/node/sum.cpp
 
     ${QT_RESOURCES}
 )
@@ -74,6 +89,12 @@ target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
     ${csapex_LIBRARIES}
 )
+
+#
+# TESTS
+#
+
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/tests)
 
 #
 # INSTALL

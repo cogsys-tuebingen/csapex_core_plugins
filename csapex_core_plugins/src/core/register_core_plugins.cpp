@@ -6,25 +6,25 @@
 
 /// PROJECT
 #include <csapex/factory/message_factory.h>
-#include <csapex/model/tag.h>
 #include <csapex/factory/node_factory_impl.h>
 #include <csapex/model/graph.h>
 #include <csapex/model/node_state.h>
-#include <csapex/param/parameter_factory.h>
+#include <csapex/model/tag.h>
 #include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/utility/yaml_io.hpp>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex/utility/yaml_io.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::RegisterCorePlugins, csapex::CorePlugin)
 
 using namespace csapex;
 
-
 RegisterCorePlugins::RegisterCorePlugins()
 {
 }
 
-namespace {
+namespace
+{
 template <typename M>
 void registerMessage()
 {
@@ -32,7 +32,7 @@ void registerMessage()
     MessageFactory::registerMessage<connection_types::GenericValueMessage<M>>();
     MessageSerializer::registerMessage<connection_types::GenericValueMessage<M>>();
 }
-}
+}  // namespace
 
 void RegisterCorePlugins::prepare(Settings&)
 {
@@ -48,7 +48,7 @@ void RegisterCorePlugins::prepare(Settings&)
     registerMessage<double>();
     registerMessage<std::string>();
 
-    //registerMessage<bool>();
+    // registerMessage<bool>();
     MessageFactory::registerMessage<connection_types::GenericValueMessage<bool>>();
     MessageSerializer::registerMessage<connection_types::GenericValueMessage<bool>>();
 }

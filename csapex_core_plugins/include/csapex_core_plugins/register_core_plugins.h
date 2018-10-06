@@ -4,8 +4,8 @@
 /// HEADER
 #include <csapex/core/core_plugin.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN RegisterCorePlugins : public CorePlugin
 {
 public:
@@ -15,6 +15,6 @@ public:
     void shutdown() override;
 };
 
-}
+}  // namespace csapex
 
-#endif // REGISTER_CORE_PLUGINS_H
+#endif  // REGISTER_CORE_PLUGINS_H

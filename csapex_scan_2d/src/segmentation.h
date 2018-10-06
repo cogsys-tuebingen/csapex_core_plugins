@@ -7,7 +7,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class ScanSegmentation : public csapex::Node
 {
 public:
@@ -18,12 +19,12 @@ protected:
     ScanSegmentation();
 
     /// APEX
-    Input            *input_;
-    Output           *output_scan_;
-    Output           *output_segments_;
+    Input* input_;
+    Output* output_scan_;
+    Output* output_segments_;
 
     /// ALGORITHM
     lib_laser_processing::LaserScanSegmentation::Ptr segmentation_;
 };
-}
-#endif // SCAN_SEGMENTATION_H
+}  // namespace csapex
+#endif  // SCAN_SEGMENTATION_H

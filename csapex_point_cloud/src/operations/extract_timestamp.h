@@ -5,8 +5,8 @@
 #include <csapex/model/node.h>
 #include <csapex_point_cloud/msg/point_cloud_message.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ExtractTimeStampCloud : public Node
 {
 public:
@@ -24,6 +24,6 @@ private:
     Output* output_frame_;
 };
 
-}
+}  // namespace csapex
 
-#endif // EXTRACT_TIMESTAMP_CLOUD_H_
+#endif  // EXTRACT_TIMESTAMP_CLOUD_H_

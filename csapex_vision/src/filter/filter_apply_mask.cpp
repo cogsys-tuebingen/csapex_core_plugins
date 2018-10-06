@@ -4,7 +4,6 @@
 /// SYSTEM
 #include <csapex/utility/register_apex_plugin.h>
 
-
 CSAPEX_REGISTER_CLASS(csapex::FilterApplyMask, csapex::Node)
 
 using namespace csapex;
@@ -15,7 +14,7 @@ FilterApplyMask::FilterApplyMask()
 
 void FilterApplyMask::filter(cv::Mat& img, cv::Mat& mask)
 {
-    if(!mask.empty()) {
+    if (!mask.empty()) {
         cv::Mat tmp;
         img.copyTo(tmp, mask);
         img = tmp;

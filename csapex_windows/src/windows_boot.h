@@ -6,19 +6,18 @@
 
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN WindowsBoot : public BootstrapPlugin
 {
 public:
-	WindowsBoot();
-    void boot(csapex::PluginLocator *locator);
+    WindowsBoot();
+    void boot(csapex::PluginLocator* locator);
 
-	std::string install_dir_;
+    std::string install_dir_;
 
 private:
-	template <typename PluginType>
-	void get_plugin_xml_paths(std::vector<std::string>& paths);
+    template <typename PluginType>
+    void get_plugin_xml_paths(std::vector<std::string>& paths);
 };
 
-}
-#endif // ROS_BOOT_H
+}  // namespace csapex
+#endif  // ROS_BOOT_H

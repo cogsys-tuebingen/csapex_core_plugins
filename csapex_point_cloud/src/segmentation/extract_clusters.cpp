@@ -1,48 +1,44 @@
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
-#include <csapex_point_cloud/msg/indices_message.h>
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/msg/generic_value_message.hpp>
-#include <csapex_ros/yaml_io.hpp>
-#include <csapex_ros/ros_message_conversion.h>
-#include <csapex/view/utility/color.hpp>
-#include <csapex/profiling/timer.h>
 #include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/timer.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/view/utility/color.hpp>
+#include <csapex_point_cloud/msg/indices_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
+#include <csapex_ros/ros_message_conversion.h>
+#include <csapex_ros/yaml_io.hpp>
 
 /// SYSTEM
-#include <visualization_msgs/MarkerArray.h>
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <tf/tf.h>
-#include <csapex/utility/suppress_warnings_end.h>
-#include <pcl/common/pca.h>
 #include <pcl/common/io.h>
+#include <pcl/common/pca.h>
+#include <tf/tf.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 using namespace csapex::connection_types;
 
-
 namespace csapex
 {
-
-
-namespace impl {
-
+namespace impl
+{
 template <class PointT>
 struct Impl;
-
 }
-
 
 class ExtractClusters : public Node
 {
 public:
     ExtractClusters()
     {
-
     }
 
     void setup(csapex::NodeModifier& modifier) override
@@ -61,7 +57,7 @@ public:
     {
         PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_));
 
-        boost::apply_visitor (PointCloudMessage::Dispatch<ExtractClusters>(this, msg), msg->value);
+        boost::apply_visitor(PointCloudMessage::Dispatch<ExtractClusters>(this, msg), msg->value);
     }
 
     template <class PointT>
@@ -74,11 +70,10 @@ public:
 
         std::shared_ptr<std::vector<PointCloudMessage::ConstPtr>> clusters = std::make_shared<std::vector<PointCloudMessage::ConstPtr>>();
 
-        for(const pcl::PointIndices& cluster_idx : indices) {
-
+        for (const pcl::PointIndices& cluster_idx : indices) {
             typename pcl::PointCloud<PointT>::Ptr cluster_pts(new pcl::PointCloud<PointT>);
             cluster_pts->reserve(cluster_idx.indices.size());
-            for(int i : cluster_idx.indices) {
+            for (int i : cluster_idx.indices) {
                 cluster_pts->push_back(cloud.at(i));
             }
             cluster_pts->header = cloud_ptr->header;
@@ -91,7 +86,6 @@ public:
         msg::publish<GenericVectorMessage, PointCloudMessage::ConstPtr>(out_, clusters);
     }
 
-
 private:
     Input* in_;
     Input* in_indices_;
@@ -99,9 +93,8 @@ private:
     Output* out_;
 };
 
-
-namespace impl {
-
+namespace impl
+{
 template <class PointT>
 struct Impl
 {
@@ -111,9 +104,8 @@ struct Impl
     }
 };
 
-}
+}  // namespace impl
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::ExtractClusters, csapex::Node)
-

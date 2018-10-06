@@ -2,24 +2,22 @@
 #define IMAGE_PROVIDER_H
 
 /// PROJECT
-#include <csapex/serialization/serializable.h>
 #include <csapex/msg/message_provider.h>
+#include <csapex/serialization/serializable.h>
 
 /// SYSTEM
-#include <boost/algorithm/string.hpp>
-#include <functional>
-#include <boost/signals2.hpp>
-#include <map>
-#include <opencv2/opencv.hpp>
 #include <QBoxLayout>
 #include <QFrame>
+#include <boost/algorithm/string.hpp>
+#include <boost/signals2.hpp>
+#include <functional>
+#include <map>
+#include <opencv2/opencv.hpp>
 #include <string>
 #include <vector>
 
-
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN ImageProvider : public MessageProvider
 {
 public:
@@ -39,7 +37,9 @@ public:
 
 public:
     void init();
-    virtual void doInit() {}
+    virtual void doInit()
+    {
+    }
     virtual void next(cv::Mat&, cv::Mat&) = 0;
     virtual int sleepTime();
 
@@ -48,9 +48,8 @@ public:
 
 private:
     static std::map<std::string, ProviderConstructor> plugins;
-
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // IMAGE_PROVIDER_H
+#endif  // IMAGE_PROVIDER_H

@@ -4,8 +4,10 @@
 
 #include <csapex_opencv/roi.h>
 
-namespace csapex { namespace vision {
-
+namespace csapex
+{
+namespace vision
+{
 class PartitionROIsBySize : public csapex::Node
 {
 private:
@@ -15,9 +17,18 @@ private:
         void create(csapex::Node* node, csapex::NodeModifier& node_modifier, std::size_t index);
         void destroy(csapex::Node* node, csapex::NodeModifier& node_modifier);
 
-        std::size_t getIndex() const { return index_; }
-        Output* getOutput() { return output_; }
-        std::pair<int, int> getSize() const { return std::make_pair(param_width_->as<int>(), param_height_->as<int>()); };
+        std::size_t getIndex() const
+        {
+            return index_;
+        }
+        Output* getOutput()
+        {
+            return output_;
+        }
+        std::pair<int, int> getSize() const
+        {
+            return std::make_pair(param_width_->as<int>(), param_height_->as<int>());
+        };
 
     private:
         std::size_t index_ = 0;
@@ -26,11 +37,21 @@ private:
         param::ParameterPtr param_height_;
     };
 
-    enum class Method { NONE, AREA, WIDTH, HEIGHT };
-    enum class RelativeTo { LOWER, UPPER, CENTER };
+    enum class Method
+    {
+        NONE,
+        AREA,
+        WIDTH,
+        HEIGHT
+    };
+    enum class RelativeTo
+    {
+        LOWER,
+        UPPER,
+        CENTER
+    };
 
 public:
-
     PartitionROIsBySize();
 
     void setupParameters(csapex::Parameterizable& parameters) override;
@@ -52,4 +73,5 @@ private:
     int default_scale_;
 };
 
-}}
+}  // namespace vision
+}  // namespace csapex

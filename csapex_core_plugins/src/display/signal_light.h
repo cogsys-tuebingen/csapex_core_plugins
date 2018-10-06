@@ -4,14 +4,14 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class CSAPEX_EXPORT_PLUGIN SignalLight : public Node
 {
 public:
     SignalLight();
 
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
 
     virtual void process() override;
     virtual void setup(csapex::NodeModifier& node_modifier) override;
@@ -25,6 +25,6 @@ private:
     Slot* slot_green_;
 };
 
-}
+}  // namespace csapex
 
-#endif // SIGNAL_LIGHT_H_
+#endif  // SIGNAL_LIGHT_H_

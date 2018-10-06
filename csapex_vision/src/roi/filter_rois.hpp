@@ -6,19 +6,18 @@
 
 namespace csapex
 {
-
 class FilterROIs : public csapex::Node
 {
 public:
     FilterROIs();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
     bool check(const Roi& roi) const;
-    template<typename T>
+    template <typename T>
     static bool check_range(const T& value, const std::pair<T, T>& range)
     {
         // check deactivated
@@ -38,4 +37,4 @@ private:
     std::pair<double, double> aspect_;
 };
 
-}
+}  // namespace csapex

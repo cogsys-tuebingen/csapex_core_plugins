@@ -6,11 +6,13 @@
 #include <csapex/signal/signal_fwd.h>
 
 /// SYSTEM
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <ros/ros.h>
-#include <csapex/utility/suppress_warnings_end.h>
-#include <std_msgs/String.h>
+#include <ros/ros.h>
 #include <rosgraph_msgs/Clock.h>
+#include <std_msgs/String.h>
+#include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 // TODO:
 // * move ros specific stuff here
@@ -24,7 +26,7 @@ public:
     ~APEXRosInterface();
     void prepare(Settings& settings);
     void init(CsApexCore& core);
-    void setupGraph(SubgraphNode *graph);
+    void setupGraph(SubgraphNode* graph);
     void shutdown() override;
 
 private:
@@ -32,8 +34,8 @@ private:
     void registerClockWatchdog();
 
     void clock(const rosgraph_msgs::ClockConstPtr& clock);
-    void command(const std_msgs::StringConstPtr &cmd, bool global_cmd);
-    void loadParameterValue(const std::string &prefix, const std::string &parameter_name, const XmlRpc::XmlRpcValue &parameter_value);
+    void command(const std_msgs::StringConstPtr& cmd, bool global_cmd);
+    void loadParameterValue(const std::string& prefix, const std::string& parameter_name, const XmlRpc::XmlRpcValue& parameter_value);
 
 private:
     ros::Subscriber global_command_sub_;
@@ -50,5 +52,5 @@ private:
 
     slim_signal::ScopedConnection connection_;
 };
-}
-#endif // APEX_ROS_INTERFACE_H
+}  // namespace csapex
+#endif  // APEX_ROS_INTERFACE_H

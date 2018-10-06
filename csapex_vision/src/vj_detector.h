@@ -7,7 +7,8 @@
 class CascadeDetector;
 class ImageScanner;
 
-namespace csapex {
+namespace csapex
+{
 class VJDetector : public csapex::Node
 {
 public:
@@ -27,6 +28,6 @@ private:
     CascadeDetector* vj_detector;
     ImageScanner* image_scanner;
 };
-}
+}  // namespace csapex
 
-#endif // VJ_DETECTOR_H
+#endif  // VJ_DETECTOR_H

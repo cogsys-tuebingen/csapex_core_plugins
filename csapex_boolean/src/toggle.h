@@ -4,10 +4,10 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
-namespace boolean {
-
+namespace csapex
+{
+namespace boolean
+{
 class CSAPEX_EXPORT_PLUGIN Toggle : public Node
 {
 public:
@@ -15,7 +15,7 @@ public:
 
 public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
@@ -28,8 +28,8 @@ private:
     bool signal_;
 };
 
-}
+}  // namespace boolean
 
-}
+}  // namespace csapex
 
-#endif // TOGGLE_H
+#endif  // TOGGLE_H

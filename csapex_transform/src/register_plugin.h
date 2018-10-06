@@ -5,8 +5,8 @@
 #include <csapex/core/core_plugin.h>
 #include <csapex/model/observer.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class RegisterTransformPlugin : public CorePlugin, public Observer
 {
 public:
@@ -15,6 +15,6 @@ public:
     void prepare(Settings&) override;
 };
 
-}
+}  // namespace csapex
 
-#endif // REGISTER_PLUGIN_H
+#endif  // REGISTER_PLUGIN_H

@@ -11,13 +11,12 @@
 /// SYSTEM
 #include <opencv2/opencv.hpp>
 
-namespace csapex {
-
-
+namespace csapex
+{
 #if CV_MAJOR_VERSION == 2
-    typedef cv::RandomTrees RandomTree;
+typedef cv::RandomTrees RandomTree;
 #elif CV_MAJOR_VERSION == 3
-    typedef cv::Ptr<cv::ml::RTrees> RandomTree;
+typedef cv::Ptr<cv::ml::RTrees> RandomTree;
 #endif
 
 class CSAPEX_EXPORT_PLUGIN RandomTrees : public csapex::Node
@@ -33,20 +32,19 @@ private:
     void reloadTree();
 
 private:
-    Input*  in_features_;
+    Input* in_features_;
     Output* out_features_;
     Output* out_class_weights_;
 
-    Slot*   reload_;
+    Slot* reload_;
 
-    RandomTree                 random_trees_;
-    std::string                path_;
-    bool                       loaded_;
-    bool                       compute_class_weights_;
+    RandomTree random_trees_;
+    std::string path_;
+    bool loaded_;
+    bool compute_class_weights_;
     std::map<int, std::size_t> class_labels_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // RANDOM_TREES_H
+#endif  // RANDOM_TREES_H

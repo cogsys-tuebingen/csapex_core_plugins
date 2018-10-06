@@ -11,13 +11,14 @@
 
 namespace YAML
 {
-template<typename T, typename S>
+template <typename T, typename S>
 struct as_if;
 }
 
-namespace csapex {
-namespace connection_types {
-
+namespace csapex
+{
+namespace connection_types
+{
 struct NormalsMessage : public Message
 {
 protected:
@@ -41,32 +42,33 @@ private:
     NormalsMessage();
 };
 
-
 /// TRAITS
 template <>
-struct type<NormalsMessage> {
-    static std::string name() {
+struct type<NormalsMessage>
+{
+    static std::string name()
+    {
         return "Normals";
     }
 };
 
-}
+}  // namespace connection_types
 
 template <>
 inline std::shared_ptr<connection_types::NormalsMessage> makeEmpty<connection_types::NormalsMessage>()
 {
     return std::shared_ptr<connection_types::NormalsMessage>(new connection_types::NormalsMessage("/", 0));
 }
-}
-
-
+}  // namespace csapex
 
 /// YAML
-namespace YAML {
-template<>
-struct convert<csapex::connection_types::NormalsMessage> {
-  static Node encode(const csapex::connection_types::NormalsMessage& rhs);
-  static bool decode(const Node& node, csapex::connection_types::NormalsMessage& rhs);
+namespace YAML
+{
+template <>
+struct convert<csapex::connection_types::NormalsMessage>
+{
+    static Node encode(const csapex::connection_types::NormalsMessage& rhs);
+    static bool decode(const Node& node, csapex::connection_types::NormalsMessage& rhs);
 };
-}
-#endif // NORMALS_MESSAGE_H
+}  // namespace YAML
+#endif  // NORMALS_MESSAGE_H

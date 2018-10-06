@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class Gabor : public csapex::Node
 {
 public:
@@ -15,16 +16,15 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Output *output_;
-    csapex::Input  *input_;
+    csapex::Output* output_;
+    csapex::Input* input_;
 
-    int     ksize_;
-    double  sigma_;
-    double  theta_;
-    double  lambda_;
-    double  gamma_;
-    double  psi_;
-
+    int ksize_;
+    double sigma_;
+    double theta_;
+    double lambda_;
+    double gamma_;
+    double psi_;
 };
-}
-#endif // GABOR_H
+}  // namespace csapex
+#endif  // GABOR_H

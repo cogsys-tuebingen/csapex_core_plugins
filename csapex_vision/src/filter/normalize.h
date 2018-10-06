@@ -4,7 +4,8 @@
 /// COMPONENT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class Normalize : public csapex::Node
 {
 public:
@@ -15,10 +16,10 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 protected:
-    csapex::Output *output_;
-    csapex::Input  *input_;
-    csapex::Input  *mask_;
+    csapex::Output* output_;
+    csapex::Input* input_;
+    csapex::Input* mask_;
 };
-}
+}  // namespace csapex
 
-#endif // NORMALIZE_H
+#endif  // NORMALIZE_H

@@ -3,7 +3,8 @@
 
 #include "corner_line_detection.h"
 
-namespace csapex {
+namespace csapex
+{
 class Operator : public CornerLineDetection
 {
 public:
@@ -13,12 +14,12 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
-    int     ddepth_;
-    int     ksize_;
-    double  scale_;
-    double  delta_;
+    int ddepth_;
+    int ksize_;
+    double scale_;
+    double delta_;
 
     virtual void update();
 };
-}
-#endif // OPERATOR_H
+}  // namespace csapex
+#endif  // OPERATOR_H

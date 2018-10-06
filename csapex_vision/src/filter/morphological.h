@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class Morpholocial : public csapex::Node
 {
 public:
@@ -19,6 +20,6 @@ private:
 
     Input* input_;
 };
-}
+}  // namespace csapex
 
-#endif // MORPOLOCIAL_H
+#endif  // MORPOLOCIAL_H

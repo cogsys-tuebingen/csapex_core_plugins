@@ -2,15 +2,15 @@
 #include "covariance.h"
 
 /// PROJECT
-#include <cslibs_laser_processing/data/segment.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/model/node_modifier.h>
 #include <csapex/utility/register_apex_plugin.h>
-#include <cslibs_laser_processing/common/yaml-io.hpp>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex_scan_2d/binary_io.h>
+#include <cslibs_laser_processing/common/yaml-io.hpp>
+#include <cslibs_laser_processing/data/segment.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -18,12 +18,11 @@ using namespace lib_laser_processing;
 
 CSAPEX_REGISTER_CLASS(csapex::ScanCovariance, csapex::Node)
 
-
 ScanCovariance::ScanCovariance()
 {
 }
 
-void ScanCovariance::setupParameters(Parameterizable &parameters)
+void ScanCovariance::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(csapex::param::factory::declareRange("width", 100, 2000, 1000, 1));
     parameters.addParameter(csapex::param::factory::declareRange("height", 100, 2000, 1000, 1));
@@ -31,7 +30,7 @@ void ScanCovariance::setupParameters(Parameterizable &parameters)
 
 void ScanCovariance::setup(NodeModifier& node_modifier)
 {
-    input_  = node_modifier.addInput<GenericVectorMessage, Segment>("Segments");
+    input_ = node_modifier.addInput<GenericVectorMessage, Segment>("Segments");
     output_ = node_modifier.addOutput<CvMatMessage>("Debug Output");
 }
 
@@ -49,7 +48,7 @@ void ScanCovariance::process()
 
     cv::Mat pcaset(n, 2, CV_32F, cv::Scalar::all(0));
 
-    for(int i = 0; i < n; ++i) {
+    for (int i = 0; i < n; ++i) {
         const Segment& segment = segments[i];
 
         const Eigen::Vector2d from(segment.rays.front().posX(), segment.rays.front().posY());
@@ -70,10 +69,10 @@ void ScanCovariance::process()
 
     output->value = cv::Mat(h, w, CV_8UC1, cv::Scalar::all(255));
 
-    cv::Point2f center(w/2., h/2.);
+    cv::Point2f center(w / 2., h / 2.);
 
-    cv::line(output->value, center, center + e1 * (w/4.), cv::Scalar(0,0,255), 6, CV_AA);
-    cv::line(output->value, center, center + e2 * (w/4.), cv::Scalar(0,255,0), 6, CV_AA);
+    cv::line(output->value, center, center + e1 * (w / 4.), cv::Scalar(0, 0, 255), 6, CV_AA);
+    cv::line(output->value, center, center + e2 * (w / 4.), cv::Scalar(0, 255, 0), 6, CV_AA);
 
     msg::publish(output_, output);
 }

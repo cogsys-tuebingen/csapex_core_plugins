@@ -18,25 +18,23 @@ public:
     void setupParameters(Parameterizable& parameters) override;
 
 protected:
-    virtual bool processCollection(std::vector<connection_types::FeaturesMessage> &collection) override;
+    virtual bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;
 
 private:
     std::string path_;
     std::vector<param::ParameterPtr> priors_params_;
     std::vector<float> priors_;
 
-    double  subsample_portion_;
-    double  shrinkage_;
-    int     classes_;
-    double  regression_accuracy_;
+    double subsample_portion_;
+    double shrinkage_;
+    int classes_;
+    double regression_accuracy_;
 
     cv::GradientBoostingTreeParams params_;
 
     void updatePriors();
     void udpatePriorValues();
-
-
 };
-}
+}  // namespace csapex
 
-#endif // GRADIENT_BOOSTED_TREES_TRAINER_Hs
+#endif  // GRADIENT_BOOSTED_TREES_TRAINER_Hs

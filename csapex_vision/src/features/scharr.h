@@ -4,20 +4,26 @@
 /// COMPONENT
 #include "operator.h"
 
-namespace csapex {
+namespace csapex
+{
 class Scharr : public Operator
 {
 public:
     Scharr();
 
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 protected:
-    enum Type {DX1, DY1, STRENGTH};
+    enum Type
+    {
+        DX1,
+        DY1,
+        STRENGTH
+    };
     Type type_;
 
     void update();
 };
-}
-#endif // SCHARR_H
+}  // namespace csapex
+#endif  // SCHARR_H

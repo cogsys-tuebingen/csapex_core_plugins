@@ -4,8 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class ExtractTimeStamp : public Node
 {
 public:
@@ -19,6 +19,6 @@ private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
-#endif // EXTRACT_TIMESTAMP_H_
+#endif  // EXTRACT_TIMESTAMP_H_

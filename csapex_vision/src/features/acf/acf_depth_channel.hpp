@@ -4,13 +4,24 @@
 
 #include <csapex_opencv/roi.h>
 
-namespace csapex { namespace vision {
-
+namespace csapex
+{
+namespace vision
+{
 class ACFDepthChannel : public csapex::Node
 {
 public:
-    enum class Type { BINARY, TERNARY };
-    enum class Method { MEDIAN, MEAN, HISTOGRAM };
+    enum class Type
+    {
+        BINARY,
+        TERNARY
+    };
+    enum class Method
+    {
+        MEDIAN,
+        MEAN,
+        HISTOGRAM
+    };
 
     void setupParameters(csapex::Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
@@ -21,8 +32,8 @@ private:
     void updateWindow();
 
 private:
-    Input*  in_image_;
-    Input*  in_rois_;
+    Input* in_image_;
+    Input* in_rois_;
     Output* out_channels_;
     Output* out_visualize_;
 
@@ -38,4 +49,5 @@ private:
     bool normalize_;
 };
 
-}}
+}  // namespace vision
+}  // namespace csapex

@@ -6,19 +6,19 @@
 #include <csapex_ros/ros_message_conversion.h>
 
 /// PROJECT
-#include <csapex/msg/io.h>
 #include <csapex/factory/message_factory.h>
-#include <csapex/utility/stream_interceptor.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/any_message.h>
+#include <csapex/msg/io.h>
 #include <csapex/msg/message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/set_parameter.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex_core_plugins/timestamp_message.h>
-#include <csapex/profiling/timer.h>
-#include <csapex/msg/any_message.h>
 #include <csapex/profiling/interlude.hpp>
-#include <csapex/model/node_handle.h>
+#include <csapex/profiling/timer.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/utility/stream_interceptor.h>
+#include <csapex_core_plugins/timestamp_message.h>
 
 #include <functional>
 
@@ -28,21 +28,23 @@ using namespace csapex;
 
 const std::string ImportRos::no_topic_("-----");
 
-namespace {
-ros::Time rosTime(u_int64_t stamp_micro_seconds) {
+namespace
+{
+ros::Time rosTime(u_int64_t stamp_micro_seconds)
+{
     ros::Time t;
     t.fromNSec(stamp_micro_seconds * 1e3);
     return t;
 }
-}
+}  // namespace
 
-enum ImportMode{
+enum ImportMode
+{
     BackAndLatch = 0,
     FrontAndPop = 1
 };
 
-ImportRos::ImportRos()
-    : connector_(nullptr), buffer_size_(1024), running_(true), mode_( (int) BackAndLatch)
+ImportRos::ImportRos() : connector_(nullptr), buffer_size_(1024), running_(true), mode_((int)BackAndLatch)
 {
 }
 
@@ -62,45 +64,29 @@ void ImportRos::setupParameters(Parameterizable& parameters)
 {
     std::vector<std::string> set;
     set.push_back(no_topic_);
-    parameters.addParameter(csapex::param::factory::declareParameterStringSet("topic", set),
-                            std::bind(&ImportRos::update, this));
+    parameters.addParameter(csapex::param::factory::declareParameterStringSet("topic", set), std::bind(&ImportRos::update, this));
 
-    parameters.addParameter(csapex::param::factory::declareTrigger("refresh"),
-                            std::bind(&ImportRos::refresh, this));
+    parameters.addParameter(csapex::param::factory::declareTrigger("refresh"), std::bind(&ImportRos::refresh, this));
 
-    parameters.addParameter(csapex::param::factory::declareRange("queue", 0, 30, 1, 1),
-                            std::bind(&ImportRos::updateSubscriber, this));
+    parameters.addParameter(csapex::param::factory::declareRange("queue", 0, 30, 1, 1), std::bind(&ImportRos::updateSubscriber, this));
     parameters.addParameter(csapex::param::factory::declareBool("latch", false));
 
-
-
-
-
-    std::function<bool()> buffer_condition = [this](){
+    std::function<bool()> buffer_condition = [this]() {
         mode_ = readParameter<int>("import_mode");
-        return mode_ == (int) FrontAndPop;};
-
-    parameters.addConditionalParameter(csapex::param::factory::declareRange("buffer_size",1,1024,1024,1),
-                                       buffer_condition,
-                                       buffer_size_);
-
-    std::function<bool()> connected_condition_mode = [this]() { return !msg::isConnected(input_time_); };
-    std::map<std::string, int> map = {
-        {"BackAndLatch", (int) BackAndLatch},
-        {"FrontAndPop",  (int) FrontAndPop}
+        return mode_ == (int)FrontAndPop;
     };
 
+    parameters.addConditionalParameter(csapex::param::factory::declareRange("buffer_size", 1, 1024, 1024, 1), buffer_condition, buffer_size_);
 
-    csapex::param::Parameter::Ptr mode_p  = param::factory::declareParameterSet
-                                                   ("import_mode",
-                                                    csapex::param::ParameterDescription
-                                                    ("Select a import mode. BackAndLatch publishes the most recent message. FrontAndPop collects the messages in a queue."),
-                                                    map,
-                                                    (int) BackAndLatch);
+    std::function<bool()> connected_condition_mode = [this]() { return !msg::isConnected(input_time_); };
+    std::map<std::string, int> map = { { "BackAndLatch", (int)BackAndLatch }, { "FrontAndPop", (int)FrontAndPop } };
+
+    csapex::param::Parameter::Ptr mode_p = param::factory::declareParameterSet("import_mode",
+                                                                               csapex::param::ParameterDescription("Select a import mode. BackAndLatch publishes the most recent "
+                                                                                                                   "message. FrontAndPop collects the messages in a queue."),
+                                                                               map, (int)BackAndLatch);
 
     parameters.addConditionalParameter(mode_p, connected_condition_mode);
-
-
 
     std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
     csapex::param::Parameter::Ptr buffer_p = csapex::param::factory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
@@ -127,22 +113,22 @@ void ImportRos::refresh()
     ros::master::getTopics(topics);
 
     param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
-    if(setp) {
+    if (setp) {
         bool found = false;
         std::vector<std::string> topics_str;
         topics_str.push_back(no_topic_);
-        for(ros::master::V_TopicInfo::const_iterator it = topics.begin(); it != topics.end(); ++it) {
+        for (ros::master::V_TopicInfo::const_iterator it = topics.begin(); it != topics.end(); ++it) {
             topics_str.push_back(it->name);
-            if(it->name == old_topic) {
+            if (it->name == old_topic) {
                 found = true;
             }
         }
-        if(!found) {
+        if (!found) {
             topics_str.push_back(old_topic);
         }
         setp->setSet(topics_str);
 
-        if(old_topic != no_topic_) {
+        if (old_topic != no_topic_) {
             setp->set(old_topic);
         }
     }
@@ -152,14 +138,14 @@ void ImportRos::refresh()
 
 void ImportRos::update()
 {
-    if(isConnected() && doSetTopic()) {
+    if (isConnected() && doSetTopic()) {
         yield();
     }
 }
 
 void ImportRos::updateSubscriber()
 {
-    if(!current_topic_.name.empty()) {
+    if (!current_topic_.name.empty()) {
         current_subscriber = RosMessageConversion::instance().subscribe(current_topic_, readParameter<int>("queue"), std::bind(&ImportRos::callback, this, std::placeholders::_1));
     }
 }
@@ -173,23 +159,23 @@ bool ImportRos::doSetTopic()
 
     std::string topic = readParameter<std::string>("topic");
 
-    if(topic == no_topic_) {
+    if (topic == no_topic_) {
         return true;
     }
 
-    for(ros::master::V_TopicInfo::iterator it = topics.begin(); it != topics.end(); ++it) {
-        if(it->name == topic) {
+    for (ros::master::V_TopicInfo::iterator it = topics.begin(); it != topics.end(); ++it) {
+        if (it->name == topic) {
             setTopic(*it);
             return true;
         }
     }
 
-    if(!node_modifier_->isError()) {
+    if (!node_modifier_->isError()) {
         std::stringstream ss;
         ss << "cannot set topic, " << topic << " doesn't exist";
         node_modifier_->setWarning(ss.str());
 
-        getRosHandler().waitForTopic(topic, [topic, this](){
+        getRosHandler().waitForTopic(topic, [topic, this]() {
             ainfo << "topic " << topic << " exists now" << std::endl;
             node_modifier_->setNoError();
             refresh();
@@ -210,13 +196,13 @@ void ImportRos::processROS()
     INTERLUDE("process");
 
     // first check if connected -> if not connected, we only use tick
-    if(!msg::isConnected(input_time_)) {
+    if (!msg::isConnected(input_time_)) {
         processSource();
         return;
     }
 
     // now that we are connected, check that we have a valid message
-    if(!msg::hasMessage(input_time_)) {
+    if (!msg::hasMessage(input_time_)) {
         processSource();
         return;
     }
@@ -228,8 +214,8 @@ void ImportRos::processROS()
 void ImportRos::processNotSource()
 {
     connection_types::TimestampMessage::ConstPtr time = msg::getMessage<connection_types::TimestampMessage>(input_time_);
-    mode_ = (int) FrontAndPop;
-    if(msgs_.empty()) {
+    mode_ = (int)FrontAndPop;
+    if (msgs_.empty()) {
         return;
     }
 
@@ -237,13 +223,13 @@ void ImportRos::processNotSource()
     auto nano = std::chrono::duration_cast<std::chrono::nanoseconds>(time->value.time_since_epoch());
     time_value = time_value.fromNSec(nano.count());
 
-    if(time_value == ros::Time(0)) {
+    if (time_value == ros::Time(0)) {
         node_modifier_->setWarning("incoming time is 0, using default behaviour");
         publishLatestMessage();
         return;
     }
 
-    if(msgs_.back()->stamp_micro_seconds == 0) {
+    if (msgs_.back()->stamp_micro_seconds == 0) {
         ainfo << msgs_.back()->stamp_micro_seconds << std::endl;
         node_modifier_->setWarning("buffered time is 0, using default behaviour");
         publishLatestMessage();
@@ -252,58 +238,56 @@ void ImportRos::processNotSource()
 
     // drop old messages
     ros::Duration keep_duration(readParameter<double>("buffer/length"));
-    while(!msgs_.empty() && rosTime(msgs_.front()->stamp_micro_seconds) + keep_duration < time_value) {
+    while (!msgs_.empty() && rosTime(msgs_.front()->stamp_micro_seconds) + keep_duration < time_value) {
         msgs_.pop_front();
     }
 
     ros::Duration max_wait_duration(readParameter<double>("buffer/max_wait"));
 
-    if(!msgs_.empty()) {
-        if(rosTime(msgs_.front()->stamp_micro_seconds) > time_value) {
+    if (!msgs_.empty()) {
+        if (rosTime(msgs_.front()->stamp_micro_seconds) > time_value) {
             aerr << "time stamp " << time_value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp_micro_seconds) << std::endl;
             return;
         }
 
-        if(rosTime(msgs_.front()->stamp_micro_seconds) + max_wait_duration < time_value) {
+        if (rosTime(msgs_.front()->stamp_micro_seconds) + max_wait_duration < time_value) {
             // aerr << "[1] time stamp " << time_value << " is too new" << std::endl;
             // return;
         }
     }
 
-
-
     // wait until we have a message
     ros::Time start = ros::Time::now();
-    if(!isStampCovered(time_value)) {
+    if (!isStampCovered(time_value)) {
         ros::Rate r(10);
-        while(!isStampCovered(time_value) && running_) {
+        while (!isStampCovered(time_value) && running_) {
             r.sleep();
             ros::spinOnce();
 
-            if(start + max_wait_duration < ros::Time::now()) {
+            if (start + max_wait_duration < ros::Time::now()) {
                 break;
             }
         }
     }
 
-    if(msgs_.empty()) {
+    if (msgs_.empty()) {
         node_modifier_->setWarning("No messages received");
         return;
     }
 
     std::deque<connection_types::Message::ConstPtr>::iterator first_after = msgs_.begin();
-    while(rosTime((*first_after)->stamp_micro_seconds) < time_value) {
+    while (rosTime((*first_after)->stamp_micro_seconds) < time_value) {
         ++first_after;
-        if(first_after == msgs_.end()) {
+        if (first_after == msgs_.end()) {
             break;
         }
     }
 
-    if(first_after == msgs_.begin()) {
+    if (first_after == msgs_.begin()) {
         msg::publish(connector_, *first_after);
         return;
 
-    } else if(first_after == msgs_.end()) {
+    } else if (first_after == msgs_.end()) {
         msg::publish(connector_, msgs_.back());
         return;
 
@@ -313,7 +297,7 @@ void ImportRos::processNotSource()
         ros::Duration diff1 = rosTime((*first_after)->stamp_micro_seconds) - time_value;
         ros::Duration diff2 = rosTime((*last_before)->stamp_micro_seconds) - time_value;
 
-        if(diff1 < diff2) {
+        if (diff1 < diff2) {
             msg::publish(connector_, *first_after);
         } else {
             msg::publish(connector_, *last_before);
@@ -325,11 +309,11 @@ void ImportRos::processSource()
 {
     INTERLUDE("tick");
 
-    if(current_topic_.name.empty()) {
+    if (current_topic_.name.empty()) {
         update();
     }
 
-    if(current_topic_.name.empty()) {
+    if (current_topic_.name.empty()) {
         throw std::runtime_error("no topic set");
     }
 
@@ -341,15 +325,14 @@ void ImportRos::processSource()
     node_modifier_->setNoError();
 }
 
-bool ImportRos::isStampCovered(const ros::Time &stamp)
+bool ImportRos::isStampCovered(const ros::Time& stamp)
 {
     std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
-    if(msgs_.empty()) {
+    if (msgs_.empty()) {
         return false;
     }
     return rosTime(msgs_.back()->stamp_micro_seconds) >= stamp;
 }
-
 
 void ImportRos::publishLatestMessage()
 {
@@ -359,54 +342,54 @@ void ImportRos::publishLatestMessage()
 
     INTERLUDE("publish");
 
-    if(!ROSHandler::instance().isConnected()) {
+    if (!ROSHandler::instance().isConnected()) {
         return;
     }
 
-    if(msgs_.empty()) {
+    if (msgs_.empty()) {
         INTERLUDE("wait for message");
         ros::WallRate r(10);
-        while(msgs_.empty() && running_) {
+        while (msgs_.empty() && running_) {
             lock.unlock();
             r.sleep();
             ros::spinOnce();
             lock.lock();
         }
 
-        if(!running_) {
+        if (!running_) {
             return;
         }
     }
 
-    if(mode_ == FrontAndPop){
+    if (mode_ == FrontAndPop) {
         msg::publish(connector_, msgs_.front());
-    }
-    else {
+    } else {
         buffer_size_ = 1;
         msg::publish(connector_, msgs_.back());
     }
 
-    if(msgs_.size() > 1 || !readParameter<bool>("latch")) {
+    if (msgs_.size() > 1 || !readParameter<bool>("latch")) {
         msgs_.pop_front();
     }
 
-//    ainfo << "deque size: " << msgs_.size() << std::endl;
+    //    ainfo << "deque size: " << msgs_.size() << std::endl;
 }
 
 void ImportRos::callback(TokenDataConstPtr message)
 {
     connection_types::Message::ConstPtr msg = std::dynamic_pointer_cast<connection_types::Message const>(message);
-    if(msg) {
+    if (msg) {
         std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
 
-        if(!msgs_.empty() && msg->stamp_micro_seconds + int(2*1e9) < msgs_.back()->stamp_micro_seconds) {
-            awarn << "detected time anomaly -> reset (" << msg->stamp_micro_seconds + int(2*1e9) << " < " << msgs_.back()->stamp_micro_seconds << ")" << std::endl;;
+        if (!msgs_.empty() && msg->stamp_micro_seconds + int(2 * 1e9) < msgs_.back()->stamp_micro_seconds) {
+            awarn << "detected time anomaly -> reset (" << msg->stamp_micro_seconds + int(2 * 1e9) << " < " << msgs_.back()->stamp_micro_seconds << ")" << std::endl;
+            ;
             msgs_.clear();
         }
 
         msgs_.push_back(msg);
 
-        while((int) msgs_.size() > buffer_size_) {
+        while ((int)msgs_.size() > buffer_size_) {
             msgs_.pop_front();
         }
         yield();
@@ -420,25 +403,24 @@ void ImportRos::tearDown()
     current_subscriber.shutdown();
 }
 
-void ImportRos::setTopic(const ros::master::TopicInfo &topic)
+void ImportRos::setTopic(const ros::master::TopicInfo& topic)
 {
-    if(topic.name == current_topic_.name) {
+    if (topic.name == current_topic_.name) {
         return;
     }
 
     current_subscriber.shutdown();
 
-    //if(RosMessageConversion::instance().isTopicTypeRegistered(topic)) {
+    // if(RosMessageConversion::instance().isTopicTypeRegistered(topic)) {
     node_modifier_->setNoError();
 
     current_topic_ = topic;
     updateSubscriber();
 
     //    } else {
-    //        node_modifier_->setError(std::string("cannot import topic of type ") + topic.datatype);
-    //        return;
+    //        node_modifier_->setError(std::string("cannot import topic of type ")
+    //        + topic.datatype); return;
     //    }
-
 }
 
 void ImportRos::reset()

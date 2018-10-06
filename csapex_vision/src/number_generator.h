@@ -4,7 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
+namespace csapex
+{
 class NumberGenerator : public csapex::Node
 {
 public:
@@ -19,6 +20,6 @@ private:
 
     int n;
 };
-}
+}  // namespace csapex
 
-#endif // NUMBER_GENERATOR_H
+#endif  // NUMBER_GENERATOR_H

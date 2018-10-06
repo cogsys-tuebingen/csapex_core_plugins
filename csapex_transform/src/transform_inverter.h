@@ -4,8 +4,8 @@
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
+namespace csapex
+{
 class TransformInverter : public csapex::Node
 {
 public:
@@ -19,6 +19,6 @@ private:
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
-#endif // TRANSFORM_INVERTER_H
+#endif  // TRANSFORM_INVERTER_H

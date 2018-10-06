@@ -1,19 +1,19 @@
 #include "cluster.hpp"
 #include "data/voxel_data.hpp"
-#include "storage/storage_ops.hpp"
 #include "storage/cluster_op.hpp"
+#include "storage/storage_ops.hpp"
 
-#include <csapex/msg/io.h>
 #include <csapex/model/node_modifier.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/profiling/timer.h>
-#include <csapex/profiling/interlude.hpp>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/msg/generic_vector_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/timer.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/view/utility/color.hpp>
 
-#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <csapex_point_cloud/msg/indices_message.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 #include <cslibs_indexed_storage/backends.hpp>
 
 #include <csapex_math/param/factory.h>
@@ -30,15 +30,15 @@ namespace
 /// Used tight representation during voxel visualization
 struct Color
 {
-    Color(uint8_t r, uint8_t g, uint8_t b) :
-        r(r), g(g), b(b)
-    {}
+    Color(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b)
+    {
+    }
 
     uint8_t r;
     uint8_t g;
     uint8_t b;
 };
-}
+}  // namespace
 
 void ClusterPointCloud::setupParameters(Parameterizable& parameters)
 {
@@ -49,145 +49,110 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
         { "array", static_cast<int>(BackendType::ARRAY) },
     };
     parameters.addParameter(param::factory::declareParameterSet("backend",
-                                                                         param::ParameterDescription("Backend used for clustering. Available methods:"
-                                                                                                     "<ul>"
-                                                                                                     "<li>Page: by-axis nested maps</li>"
-                                                                                                     "<li>k-d tree: unbalanced k-d tree</li>"
-                                                                                                     "<li>array: pre-allocated array, with O(1) access</li>"
-                                                                                                     "</ul>"),
-                                                                         backend_types,
-                                                                         static_cast<int>(BackendType::PAGED)),
+                                                                param::ParameterDescription("Backend used for clustering. Available methods:"
+                                                                                            "<ul>"
+                                                                                            "<li>Page: by-axis nested maps</li>"
+                                                                                            "<li>k-d tree: unbalanced k-d tree</li>"
+                                                                                            "<li>array: pre-allocated array, with O(1) access</li>"
+                                                                                            "</ul>"),
+                                                                backend_types, static_cast<int>(BackendType::PAGED)),
                             reinterpret_cast<int&>(backend_));
 
-
     // general clustering config
-    parameters.addParameter(param::factory::declareRange("voxel/size/x",
-                                                                  param::ParameterDescription("Voxel size (in m) (along x-axis)"),
-                                                                  0.01, 10.0, 0.1, 0.01),
-                            voxel_size_[0]);
-    parameters.addParameter(param::factory::declareRange("voxel/size/y",
-                                                                  param::ParameterDescription("Voxel size (in m) (along y-axis)"),
-                                                                  0.01, 10.0, 0.1, 0.01),
-                            voxel_size_[1]);
-    parameters.addParameter(param::factory::declareRange("voxel/size/z",
-                                                                  param::ParameterDescription("Voxel size (in m) (along z-axis)"),
-                                                                  0.01, 10.0, 0.1, 0.01),
-                            voxel_size_[2]);
-
+    parameters.addParameter(param::factory::declareRange("voxel/size/x", param::ParameterDescription("Voxel size (in m) (along x-axis)"), 0.01, 10.0, 0.1, 0.01), voxel_size_[0]);
+    parameters.addParameter(param::factory::declareRange("voxel/size/y", param::ParameterDescription("Voxel size (in m) (along y-axis)"), 0.01, 10.0, 0.1, 0.01), voxel_size_[1]);
+    parameters.addParameter(param::factory::declareRange("voxel/size/z", param::ParameterDescription("Voxel size (in m) (along z-axis)"), 0.01, 10.0, 0.1, 0.01), voxel_size_[2]);
 
     parameters.addParameter(param::factory::declareInterval("filter/point_count",
-                                                                     param::ParameterDescription("Filter by points within final clusters,"
-                                                                                                 " e.g. to reject small noisy clustering or extremly large ones."),
-                                                                     1, 10000000, 1, 10000000, 1),
+                                                            param::ParameterDescription("Filter by points within final clusters,"
+                                                                                        " e.g. to reject small noisy clustering or extremly large ones."),
+                                                            1, 10000000, 1, 10000000, 1),
                             cluster_point_count_);
-
 
     /// voxel pre-clustering validation
     /// by point count
-    param::ParameterPtr param_voxel_validation
-            = param::factory::declareBool("filter/voxel_validation/points",
-                                                   param::ParameterDescription("Pre-filter voxels by point count, optionally scaled by distance."
-                                                                               " Allows to remove voxels which are likely sensor noise."),
-                                                   false);
+    param::ParameterPtr param_voxel_validation = param::factory::declareBool("filter/voxel_validation/points",
+                                                                             param::ParameterDescription("Pre-filter voxels by point count, optionally scaled by distance."
+                                                                                                         " Allows to remove voxels which are likely sensor noise."),
+                                                                             false);
     std::function<bool()> enable_voxel_validation = [param_voxel_validation]() -> bool { return param_voxel_validation->as<bool>(); };
 
-    parameters.addParameter(param_voxel_validation,
-                            voxel_validation_enabled_);
-    parameters.addConditionalParameter(param::factory::declareRange("filter/voxel_validation/points/min_count",
-                                                                             param::ParameterDescription("Minimal point count in a valid voxel"),
-                                                                             1, 1000, 1, 1),
-                                       enable_voxel_validation,
-                                       voxel_validation_min_count_);
+    parameters.addParameter(param_voxel_validation, voxel_validation_enabled_);
+    parameters.addConditionalParameter(param::factory::declareRange("filter/voxel_validation/points/min_count", param::ParameterDescription("Minimal point count in a valid voxel"), 1, 1000, 1, 1),
+                                       enable_voxel_validation, voxel_validation_min_count_);
     parameters.addConditionalParameter(param::factory::declareRange("filter/voxel_validation/points/decrease",
-                                                                             param::ParameterDescription("Scale min count with the voxel distance."
-                                                                                                         " Allows to adjust non-linear relationship between point denstity and distance."
-                                                                                                         "<br>Scale factor: 1 / (scale * depth^2)"),
-                                                                             0.0, 1.0, 0.0, 0.001),
-                                       enable_voxel_validation,
-                                       voxel_validation_scale_);
+                                                                    param::ParameterDescription("Scale min count with the voxel distance."
+                                                                                                " Allows to adjust non-linear relationship between point "
+                                                                                                "denstity and distance."
+                                                                                                "<br>Scale factor: 1 / (scale * depth^2)"),
+                                                                    0.0, 1.0, 0.0, 0.001),
+                                       enable_voxel_validation, voxel_validation_scale_);
 
     /// by normal
     parameters.addParameter(param::factory::declareBool("filter/voxel_validation/normal",
-                                                                 param::ParameterDescription("Only cluster voxels which have a normal vector parallel to the given one."),
-                                                                 false),
+                                                        param::ParameterDescription("Only cluster voxels which have a normal "
+                                                                                    "vector parallel to the given one."),
+                                                        false),
                             validate_normal_);
-    parameters.addConditionalParameter(param::factory::declareAngle("filter/voxel_validation/normal/angle_eps",
-                                                                             param::ParameterDescription("Maximum angle difference to normal."),
-                                                                             0.0),
-                                       [this]{return validate_normal_;},
-    validation_normal_angle_eps_);
+    parameters.addConditionalParameter(param::factory::declareAngle("filter/voxel_validation/normal/angle_eps", param::ParameterDescription("Maximum angle difference to normal."), 0.0),
+                                       [this] { return validate_normal_; }, validation_normal_angle_eps_);
 
-    parameters.addConditionalParameter(param::factory::declareValue("filter/normal/x",
-                                                                             param::ParameterDescription("x coordinate of the normal vector."),
-                                                                             0.0),
-                                       [this]{return validate_normal_;},
-    validation_normal_(0));
-    parameters.addConditionalParameter(param::factory::declareValue("filter/normal/y",
-                                                                             param::ParameterDescription("y coordinate of the normal vector."),
-                                                                             0.0),
-                                       [this]{return validate_normal_;},
-    validation_normal_(1));
-    parameters.addConditionalParameter(param::factory::declareValue("filter/normal/z",
-                                                                             param::ParameterDescription("z coordinate of the normal vector."),
-                                                                             1.0),
-                                       [this]{return validate_normal_;},
-    validation_normal_(2));
+    parameters.addConditionalParameter(param::factory::declareValue("filter/normal/x", param::ParameterDescription("x coordinate of the normal vector."), 0.0), [this] { return validate_normal_; },
+                                       validation_normal_(0));
+    parameters.addConditionalParameter(param::factory::declareValue("filter/normal/y", param::ParameterDescription("y coordinate of the normal vector."), 0.0), [this] { return validate_normal_; },
+                                       validation_normal_(1));
+    parameters.addConditionalParameter(param::factory::declareValue("filter/normal/z", param::ParameterDescription("z coordinate of the normal vector."), 1.0), [this] { return validate_normal_; },
+                                       validation_normal_(2));
 
     // cluster distribution validation
-    param::ParameterPtr param_distribution
-            = param::factory::declareBool("filter/distribution",
-                                                   param::ParameterDescription("Filter clusters by their point distribution."
-                                                                               " Allows to distinguish between e.g. walls and persons based on their apprearance."),
-                                                   false);
-    std::function<bool()> enable_distribution = [param_distribution]() -> bool  { return param_distribution->as<bool>(); };
+    param::ParameterPtr param_distribution = param::factory::declareBool("filter/distribution",
+                                                                         param::ParameterDescription("Filter clusters by their point distribution."
+                                                                                                     " Allows to distinguish between e.g. walls "
+                                                                                                     "and persons based on their apprearance."),
+                                                                         false);
+    std::function<bool()> enable_distribution = [param_distribution]() -> bool { return param_distribution->as<bool>(); };
     static const std::map<std::string, int> distribution_types{
         { "DEFAULT", static_cast<int>(DistributionAnalysisType::DEFAULT) },
         { "PCA2D", static_cast<int>(DistributionAnalysisType::PCA2D) },
         { "PCA3D", static_cast<int>(DistributionAnalysisType::PCA3D) },
     };
 
-    parameters.addParameter(param_distribution,
-                            distribution_enabled_);
+    parameters.addParameter(param_distribution, distribution_enabled_);
     parameters.addConditionalParameter(param::factory::declareParameterSet("filter/distribution/type",
-                                                                                    param::ParameterDescription("Distribution analysis type to determine axis. Available methods:"
-                                                                                                                "<ul>"
-                                                                                                                "<li>default: assume axis alignment</li>"
-                                                                                                                "<li>PCA 2D: use 2D PCA analysis, ignores z-axis value</li>"
-                                                                                                                "<li>PCA 3D: use 3D PCA analysis</li>"
-                                                                                                                "</ul>"),
-                                                                                    distribution_types,
-                                                                                    static_cast<int>(DistributionAnalysisType::DEFAULT)),
-                                       enable_distribution,
-                                       reinterpret_cast<int&>(distribution_type_));
+                                                                           param::ParameterDescription("Distribution analysis type to determine axis. Available methods:"
+                                                                                                       "<ul>"
+                                                                                                       "<li>default: assume axis alignment</li>"
+                                                                                                       "<li>PCA 2D: use 2D PCA analysis, ignores z-axis value</li>"
+                                                                                                       "<li>PCA 3D: use 3D PCA analysis</li>"
+                                                                                                       "</ul>"),
+                                                                           distribution_types, static_cast<int>(DistributionAnalysisType::DEFAULT)),
+                                       enable_distribution, reinterpret_cast<int&>(distribution_type_));
     parameters.addConditionalParameter(param::factory::declareInterval("filter/distribution/std_dev/x",
-                                                                                param::ParameterDescription("Standard Deviation threshold (in m) (along x-axis)."
-                                                                                                            " A range of [0,0] deactivates the threshold."),
-                                                                                0.0, 10.0, 0.0, 10.0, 0.01),
-                                       enable_distribution,
-                                       distribution_std_dev_[0]);
+                                                                       param::ParameterDescription("Standard Deviation threshold (in m) (along x-axis)."
+                                                                                                   " A range of [0,0] deactivates the threshold."),
+                                                                       0.0, 10.0, 0.0, 10.0, 0.01),
+                                       enable_distribution, distribution_std_dev_[0]);
     parameters.addConditionalParameter(param::factory::declareInterval("filter/distribution/std_dev/y",
-                                                                                param::ParameterDescription("Standard Deviation threshold (in m) (along y-axis)."
-                                                                                                            " A range of [0,0] deactivates the threshold."),
-                                                                                0.0, 10.0, 0.0, 10.0, 0.01),
-                                       enable_distribution,
-                                       distribution_std_dev_[1]);
+                                                                       param::ParameterDescription("Standard Deviation threshold (in m) (along y-axis)."
+                                                                                                   " A range of [0,0] deactivates the threshold."),
+                                                                       0.0, 10.0, 0.0, 10.0, 0.01),
+                                       enable_distribution, distribution_std_dev_[1]);
     parameters.addConditionalParameter(param::factory::declareInterval("filter/distribution/std_dev/z",
-                                                                                param::ParameterDescription("Standard Deviation threshold (in m) (along z-axis) (unused when using 2D PCA)"
-                                                                                                            " A range of [0,0] deactivates the threshold."),
-                                                                                0.0, 10.0, 0.0, 10.0, 0.01),
-                                       enable_distribution,
-                                       distribution_std_dev_[2]);
-
+                                                                       param::ParameterDescription("Standard Deviation threshold (in m) (along z-axis) (unused when "
+                                                                                                   "using 2D PCA)"
+                                                                                                   " A range of [0,0] deactivates the threshold."),
+                                                                       0.0, 10.0, 0.0, 10.0, 0.01),
+                                       enable_distribution, distribution_std_dev_[2]);
 
     /// neighour color validation
-    param::ParameterPtr param_color
-            = param::factory::declareBool("filter/color",
-                                                   param::ParameterDescription("Filter considered neighboring voxels by their color."
-                                                                               " Allows to distinguish persons near walls if the general color appearance is distinct enough."
-                                                                               " Works for greyscale and color data."
-                                                                               " Uses absolute grayscale value difference in the grayscale case"
-                                                                               " or the selected color difference method for color data."),
-                                                   false);
+    param::ParameterPtr param_color = param::factory::declareBool("filter/color",
+                                                                  param::ParameterDescription("Filter considered neighboring voxels by their color."
+                                                                                              " Allows to distinguish persons near walls if the general color "
+                                                                                              "appearance is distinct enough."
+                                                                                              " Works for greyscale and color data."
+                                                                                              " Uses absolute grayscale value difference in the grayscale case"
+                                                                                              " or the selected color difference method for color data."),
+                                                                  false);
     std::function<bool()> enable_color = [param_color]() -> bool { return param_color->as<bool>(); };
     static const std::map<std::string, int> color_types{
         { "CIE76", static_cast<int>(ColorDifferenceType::CIE76) },
@@ -195,134 +160,102 @@ void ClusterPointCloud::setupParameters(Parameterizable& parameters)
         { "CIE94Textiles", static_cast<int>(ColorDifferenceType::CIE94Textiles) },
     };
 
-    parameters.addParameter(param_color,
-                            color_enabled_);
+    parameters.addParameter(param_color, color_enabled_);
     parameters.addConditionalParameter(param::factory::declareParameterSet("filter/color/type",
-                                                                                    param::ParameterDescription("Methods used to determine the color difference."
-                                                                                                                " Uses the LAB color-space."),
-                                                                                    color_types,
-                                                                                    static_cast<int>(ColorDifferenceType::CIE76)),
-                                       enable_color,
-                                       reinterpret_cast<int&>(color_type_));
-    parameters.addConditionalParameter(param::factory::declareRange("filter/color/max_difference",
-                                                                             param::ParameterDescription("Maximum allowed color difference."),
-                                                                             0.0, 4000.0, 0.0, 0.1),
-                                       enable_color,
-                                       color_threshold_);
-    parameters.addConditionalParameter(param::factory::declareRange("filter/color/weights/l",
-                                                                             param::ParameterDescription("Weighting factor for the l-channel"),
-                                                                             0.0, 1.0, 1.0, 0.01),
-                                       enable_color,
+                                                                           param::ParameterDescription("Methods used to determine the color difference."
+                                                                                                       " Uses the LAB color-space."),
+                                                                           color_types, static_cast<int>(ColorDifferenceType::CIE76)),
+                                       enable_color, reinterpret_cast<int&>(color_type_));
+    parameters.addConditionalParameter(param::factory::declareRange("filter/color/max_difference", param::ParameterDescription("Maximum allowed color difference."), 0.0, 4000.0, 0.0, 0.1),
+                                       enable_color, color_threshold_);
+    parameters.addConditionalParameter(param::factory::declareRange("filter/color/weights/l", param::ParameterDescription("Weighting factor for the l-channel"), 0.0, 1.0, 1.0, 0.01), enable_color,
                                        color_weights_[0]);
-    parameters.addConditionalParameter(param::factory::declareRange("filter/color/weights/a",
-                                                                             param::ParameterDescription("Weighting factor for the a-channel"),
-                                                                             0.0, 1.0, 1.0, 0.01),
-                                       enable_color,
+    parameters.addConditionalParameter(param::factory::declareRange("filter/color/weights/a", param::ParameterDescription("Weighting factor for the a-channel"), 0.0, 1.0, 1.0, 0.01), enable_color,
                                        color_weights_[1]);
-    parameters.addConditionalParameter(param::factory::declareRange("filter/color/weights/b",
-                                                                             param::ParameterDescription("Weighting factor for the b-channel"),
-                                                                             0.0, 1.0, 1.0, 0.01),
-                                       enable_color,
+    parameters.addConditionalParameter(param::factory::declareRange("filter/color/weights/b", param::ParameterDescription("Weighting factor for the b-channel"), 0.0, 1.0, 1.0, 0.01), enable_color,
                                        color_weights_[2]);
     /// neighbour normal validation
-    parameters.addParameter(param::factory::declareBool("filter/normal",
-                                                                 param::ParameterDescription("Only cluster voxels togehter which have similar normals."),
-                                                                 false),
-                                                                 normal_enabled_);
+    parameters.addParameter(param::factory::declareBool("filter/normal", param::ParameterDescription("Only cluster voxels togehter which have similar normals."), false), normal_enabled_);
 
-    parameters.addConditionalParameter(param::factory::declareAngle("filter/normal/angle_eps",
-                                                                             param::ParameterDescription("Maximum angle between normals."),
-                                                                             0.0),
-                                       [this](){return normal_enabled_;},
-                                       normal_angle_eps_);
+    parameters.addConditionalParameter(param::factory::declareAngle("filter/normal/angle_eps", param::ParameterDescription("Maximum angle between normals."), 0.0),
+                                       [this]() { return normal_enabled_; }, normal_angle_eps_);
 }
 
 void ClusterPointCloud::setup(NodeModifier& node_modifier)
 {
     in_pointcloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
-    in_indices_    = node_modifier.addOptionalInput<PointIndicesMessage>("Indices");
+    in_indices_ = node_modifier.addOptionalInput<PointIndicesMessage>("Indices");
 
     out_clusters_accepted_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Clusters (accepted)");
     out_clusters_rejected_ = node_modifier.addOutput<GenericVectorMessage, pcl::PointIndices>("Clusters (rejected)");
-    out_voxels_            = node_modifier.addOutput<PointCloudMessage>("Voxels");
+    out_voxels_ = node_modifier.addOutput<PointCloudMessage>("Voxels");
 }
 
 void ClusterPointCloud::process()
 {
     PointCloudMessage::ConstPtr pointcloud_message(msg::getMessage<PointCloudMessage>(in_pointcloud_));
-    boost::apply_visitor(PointCloudMessage::Dispatch<ClusterPointCloud>(this, pointcloud_message),
-                         pointcloud_message->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<ClusterPointCloud>(this, pointcloud_message), pointcloud_message->value);
 }
 
-template<typename PointT>
+template <typename PointT>
 void ClusterPointCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     selectData<PointT>(cloud);
 }
 
-template<typename PointT>
+template <typename PointT>
 void ClusterPointCloud::selectData(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     /* When adding a new filter:
-     * - Define feature, add parameters, create validator (inclusive no-op fallback)
+     * - Define feature, add parameters, create validator (inclusive no-op
+     * fallback)
      * - Add combination cases below
      *
      * TODO: find better method for dynamic -> static type dispatch
      */
 
-    if (distribution_enabled_ && color_enabled_)
-    {
+    if (distribution_enabled_ && color_enabled_) {
         using Data = VoxelData<DistributionFeature, ColorFeature>;
         selectStorage<Data, PointT>(cloud);
-    }
-    else if (distribution_enabled_ || validate_normal_ || normal_enabled_)
-    {
+    } else if (distribution_enabled_ || validate_normal_ || normal_enabled_) {
         using Data = VoxelData<DistributionFeature, NormalFeature>;
         selectStorage<Data, PointT>(cloud);
-    }
-    else if (color_enabled_)
-    {
+    } else if (color_enabled_) {
         using Data = VoxelData<ColorFeature>;
         selectStorage<Data, PointT>(cloud);
-    }
-    else
-    {
+    } else {
         using Data = VoxelData<>;
         selectStorage<Data, PointT>(cloud);
     }
 }
 
-
-template<typename DataType, typename PointT>
+template <typename DataType, typename PointT>
 void ClusterPointCloud::selectStorage(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     /* When adding new types:
      * - define and add BackendType value and add description
      * - if dynamic sized: use dense/default storage hint
-     * - if fixed sized  : use non_owning storage hint, data is stored elsewhere to allow size precomputation
+     * - if fixed sized  : use non_owning storage hint, data is stored elsewhere
+     * to allow size precomputation
      */
-    switch (backend_)
-    {
-    default:
-    case BackendType::PAGED:
-    {
-        using Storage = cis::AutoIndexStorage<DataType, cis::backend::simple::UnorderedComponentMap>;
-        return clusterCloud<Storage, PointT>(cloud);
-    }
-    case BackendType::KDTREE:
-    {
-        using Storage = cis::AutoIndexStorage<DataType, cis::backend::kdtree::KDTreeBuffered>;
-        return clusterCloud<Storage, PointT>(cloud);
-    }
-    case BackendType::ARRAY:
-    {
-        using Storage = cis::AutoIndexStorage<cis::interface::non_owning<DataType>, cis::backend::array::Array>;
-        return clusterCloud<Storage, PointT>(cloud);
-    }
+    switch (backend_) {
+        default:
+        case BackendType::PAGED: {
+            using Storage = cis::AutoIndexStorage<DataType, cis::backend::simple::UnorderedComponentMap>;
+            return clusterCloud<Storage, PointT>(cloud);
+        }
+        case BackendType::KDTREE: {
+            using Storage = cis::AutoIndexStorage<DataType, cis::backend::kdtree::KDTreeBuffered>;
+            return clusterCloud<Storage, PointT>(cloud);
+        }
+        case BackendType::ARRAY: {
+            using Storage = cis::AutoIndexStorage<cis::interface::non_owning<DataType>, cis::backend::array::Array>;
+            return clusterCloud<Storage, PointT>(cloud);
+        }
     }
 }
 
-template<typename Storage, typename PointT>
+template <typename Storage, typename PointT>
 void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
     // no cloud -> nothing todo
@@ -331,8 +264,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
     // allocate/extract messages
     pcl::PointIndices::ConstPtr input_indices;
-    if (msg::isConnected(in_indices_))
-    {
+    if (msg::isConnected(in_indices_)) {
         auto indices_message = msg::getMessage<PointIndicesMessage>(in_indices_);
         input_indices = indices_message->value;
     }
@@ -345,7 +277,8 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     using BackendTraits = cis::backend::backend_traits<typename Storage::backend_tag>;
     using Clusterer = ClusterOperation<Storage, DistributionValidator<DataType>, ColorValidator<DataType>, NormalValidator<DataType>>;
 
-    // offsite storage is only used for fixed storage types where we have to precompute the size
+    // offsite storage is only used for fixed storage types where we have to
+    // precompute the size
     std::vector<DataType> offsite_storage;
     Storage storage;
     {
@@ -353,63 +286,45 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
         // create indexer and fill storage
         VoxelIndex indexer(voxel_size_[0], voxel_size_[1], voxel_size_[2]);
-        StorageOperation::init(*cloud, input_indices, indexer, storage,
-                               offsite_storage, std::integral_constant<bool, BackendTraits::IsFixedSize>{});
+        StorageOperation::init(*cloud, input_indices, indexer, storage, offsite_storage, std::integral_constant<bool, BackendTraits::IsFixedSize>{});
     }
 
     // pre-filter voxel based on point count (if enabled)
-    if (voxel_validation_enabled_)
-    {
+    if (voxel_validation_enabled_) {
         NAMED_INTERLUDE(validate_voxels);
 
-        storage.traverse([this](const VoxelIndex::Type&, DataType& data)
-        {
+        storage.traverse([this](const VoxelIndex::Type&, DataType& data) {
             std::size_t min_count = static_cast<std::size_t>(voxel_validation_min_count_);
             if (voxel_validation_scale_ > 0.0) {
                 const double depth = data.depth.getMean();
-                min_count = static_cast<std::size_t>(voxel_validation_min_count_
-                                                     * std::floor(1.0
-                                                                  / (voxel_validation_scale_ * depth * depth)
-                                                                  + 0.5));
+                min_count = static_cast<std::size_t>(voxel_validation_min_count_ * std::floor(1.0 / (voxel_validation_scale_ * depth * depth) + 0.5));
             }
             if (data.indices.size() < min_count)
                 data.state = VoxelState::INVALID;
         });
     }
 
-    if(validate_normal_) {
+    if (validate_normal_) {
         NAMED_INTERLUDE(validate_normals);
-        NormalValidator<DataType> validator(validation_normal_,
-                                            normal_angle_eps_,
-                                            validation_normal_angle_eps_);
+        NormalValidator<DataType> validator(validation_normal_, normal_angle_eps_, validation_normal_angle_eps_);
 
-        storage.traverse([this, &validator](const VoxelIndex::Type&, DataType& data)
-        {
+        storage.traverse([this, &validator](const VoxelIndex::Type&, DataType& data) {
             validator.start(data);
-            if(!validator.finish())
+            if (!validator.finish())
                 data.state = VoxelState::INVALID;
         });
     }
 
-
     // register feature validators
     // - validators default to no-op (aka. always true) if feature is not selected
     // - add your validators for new features here
-    NormalValidator<DataType> normal_validator(validation_normal_,
-                                               normal_enabled_ ? normal_angle_eps_ : 0.0,
-                                               normal_enabled_ && validate_normal_ ? validation_normal_angle_eps_ : 0.0);
+    NormalValidator<DataType> normal_validator(validation_normal_, normal_enabled_ ? normal_angle_eps_ : 0.0, normal_enabled_ && validate_normal_ ? validation_normal_angle_eps_ : 0.0);
 
-    DistributionValidator<DataType> distribution_validator(distribution_type_,
-                                                           distribution_std_dev_);
-    ColorValidator<DataType> color_validator(color_type_,
-                                             color_weights_,
-                                             color_threshold_);
+    DistributionValidator<DataType> distribution_validator(distribution_type_, distribution_std_dev_);
+    ColorValidator<DataType> color_validator(color_type_, color_weights_, color_threshold_);
 
     // define the cluster operation
-    Clusterer cluster_op(storage,
-                         distribution_validator,
-                         color_validator,
-                         normal_validator);
+    Clusterer cluster_op(storage, distribution_validator, color_validator, normal_validator);
     {
         NAMED_INTERLUDE(cluster);
 
@@ -422,25 +337,20 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
         NAMED_INTERLUDE(extract_clusters);
 
         // extract point cloud indices for each cluster
-        StorageOperation::extract(storage,
-                                  cluster_op,
-                                  *clusters_accepted_message_,
-                                  *clusters_rejected_message_);
+        StorageOperation::extract(storage, cluster_op, *clusters_accepted_message_, *clusters_rejected_message_);
     }
 
     {
         NAMED_INTERLUDE(count_filter);
         // filter clusters by size
-        // we consider invalid sizes as "not-a-cluster" and not as "rejected/invalid"
-        const auto filter = [this](std::vector<pcl::PointIndices>& indices)
-        {
+        // we consider invalid sizes as "not-a-cluster" and not as
+        // "rejected/invalid"
+        const auto filter = [this](std::vector<pcl::PointIndices>& indices) {
             indices.erase(std::remove_if(indices.begin(), indices.end(),
-                                         [this](const pcl::PointIndices& list)
-            {
-                const int size = static_cast<int>(list.indices.size());
-                return !(size >= cluster_point_count_.first
-                         && size <= cluster_point_count_.second);
-            }),
+                                         [this](const pcl::PointIndices& list) {
+                                             const int size = static_cast<int>(list.indices.size());
+                                             return !(size >= cluster_point_count_.first && size <= cluster_point_count_.second);
+                                         }),
                           indices.end());
         };
 
@@ -449,8 +359,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     }
 
     // if requested visualize clusters and voxels
-    if (msg::isConnected(out_voxels_))
-    {
+    if (msg::isConnected(out_voxels_)) {
         NAMED_INTERLUDE(voxel_cloud);
 
         using VoxelCloud = pcl::PointCloud<pcl::PointXYZRGB>;
@@ -464,15 +373,13 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
         VoxelIndex::Type min_index;
         min_index.fill(std::numeric_limits<int>::max());
 
-        storage.traverse([&min_index](const VoxelIndex::Type& index, const DataType&)
-        {
+        storage.traverse([&min_index](const VoxelIndex::Type& index, const DataType&) {
             for (std::size_t i = 0; i < 3; ++i)
                 min_index[i] = std::min(min_index[i], index[i]);
         });
 
         // projects index to 3D position
-        auto create_point = [min_index, this](const VoxelIndex::Type& index)
-        {
+        auto create_point = [min_index, this](const VoxelIndex::Type& index) {
             pcl::PointXYZRGB point;
             point.x = static_cast<float>((index[0] + min_index[0]) * voxel_size_[0] + voxel_size_[0] * 0.5);
             point.y = static_cast<float>((index[1] + min_index[1]) * voxel_size_[1] + voxel_size_[1] * 0.5);
@@ -481,13 +388,11 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
         };
 
         // visualize each (valid) voxel, invalid voxels are grey
-        storage.traverse([&voxel_cloud, &colors, default_color, create_point](const VoxelIndex::Type& index, const DataType& data)
-        {
+        storage.traverse([&voxel_cloud, &colors, default_color, create_point](const VoxelIndex::Type& index, const DataType& data) {
             auto point = create_point(index);
             const auto cluster = data.cluster;
 
-            if (colors.find(cluster) == colors.end())
-            {
+            if (colors.find(cluster) == colors.end()) {
                 double r = default_color.r, g = default_color.g, b = default_color.b;
                 if (data.state == VoxelState::ACCEPTED)
                     color::fromCount(cluster + 1, r, g, b);

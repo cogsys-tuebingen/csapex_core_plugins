@@ -3,12 +3,12 @@
 
 /// PROJECT
 #include <csapex/param/register_parameter.h>
-#include <csapex/serialization/io/std_io.h>
 #include <csapex/param/value_parameter.h>
+#include <csapex/serialization/io/std_io.h>
 
 /// SYSTEM
-#include <yaml-cpp/yaml.h>
 #include <boost/any.hpp>
+#include <yaml-cpp/yaml.h>
 
 CSAPEX_REGISTER_PARAM(AngleParameter)
 
@@ -65,21 +65,27 @@ double AngleParameter::max() const
     return max_;
 }
 
-void AngleParameter::cloneDataFrom(const Clonable& other)
+bool AngleParameter::cloneDataFrom(const Clonable& other)
 {
     if (const AngleParameter* angle = dynamic_cast<const AngleParameter*>(&other)) {
         if (angle_ != angle->angle_) {
             *this = *angle;
             triggerChange();
         }
+        return true;
+
     } else if (const ValueParameter* value = dynamic_cast<const ValueParameter*>(&other)) {
         if (angle_ != value->as<double>()) {
             angle_ = value->as<double>();
             triggerChange();
         }
+        return true;
+
     } else {
         throw std::runtime_error("bad setFrom, invalid types");
     }
+
+    return false;
 }
 
 void AngleParameter::doSerialize(YAML::Node& n) const

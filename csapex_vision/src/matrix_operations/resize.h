@@ -7,7 +7,8 @@
 /// SYSTEM
 #include <opencv2/core/core.hpp>
 
-namespace csapex {
+namespace csapex
+{
 class Resize : public csapex::Node
 {
 public:
@@ -18,13 +19,13 @@ public:
     virtual void setupParameters(Parameterizable& parameters) override;
 
 protected:
-    csapex::Output*            output_;
-    csapex::Input*             input_;
+    csapex::Output* output_;
+    csapex::Input* input_;
 
-    cv::Size                         size_;
-    int                              mode_;
+    cv::Size size_;
+    int mode_;
     void update();
 };
 
-}
-#endif // RESIZE_H
+}  // namespace csapex
+#endif  // RESIZE_H

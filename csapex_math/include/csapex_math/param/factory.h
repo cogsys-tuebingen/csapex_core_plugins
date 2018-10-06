@@ -4,9 +4,15 @@
 /// PROJECT
 #include <csapex/param/parameter_builder.h>
 
-namespace csapex {
-namespace param {
-namespace factory {
+/// COMPONENT
+#include <csapex_math/math_fwd.h>
+
+namespace csapex
+{
+namespace param
+{
+namespace factory
+{
 /**
  * @brief declareAngleParameter
  * @param name
@@ -14,12 +20,20 @@ namespace factory {
  * @param angle default value
  * @return
  */
-ParameterBuilder declareAngle(const std::string &name,
-                              const ParameterDescription &description,
-                              double angle);
-ParameterBuilder declareAngle(const std::string &name, double angle);
-} // namespace factory
-} // namespace param
-} // namespace csapex
+ParameterBuilder declareAngle(const std::string& name, const ParameterDescription& description, double angle);
+ParameterBuilder declareAngle(const std::string& name, double angle);
 
-#endif // FACTORY_H
+ParameterBuilder declareVector(const std::string& name, const std::vector<double>& vector);
+ParameterBuilder declareVector(const std::string& name, const ParameterDescription& description, const std::vector<double>& vector);
+
+ParameterBuilder declareVector(const std::string& name, const math::linear::Vector& vector);
+ParameterBuilder declareVector(const std::string& name, const ParameterDescription& description, const math::linear::Vector& vector);
+
+ParameterBuilder declareMatrix(const std::string& name, const math::linear::Matrix& matrix);
+ParameterBuilder declareMatrix(const std::string& name, const ParameterDescription& description, const math::linear::Matrix& matrix);
+
+}  // namespace factory
+}  // namespace param
+}  // namespace csapex
+
+#endif  // FACTORY_H

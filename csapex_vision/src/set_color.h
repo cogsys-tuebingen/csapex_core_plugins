@@ -16,11 +16,9 @@ public:
     virtual void setupParameters(Parameterizable& parameters);
 
 private:
-    Input  *input_;
-    Input  *input_mask_;
-    Output *output_;
-
-
+    Input* input_;
+    Input* input_mask_;
+    Output* output_;
 };
-}
-#endif // SETCOLOR_H
+}  // namespace csapex
+#endif  // SETCOLOR_H

@@ -9,16 +9,15 @@
 
 namespace csapex
 {
-
 class CSAPEX_EXPORT_PLUGIN ImageProviderImg : public ImageProvider
 {
 public:
     ImageProviderImg();
     void load(const std::string& file);
 
-
 public:
     static std::function<bool(ImageProvider*)> Identity;
+
 private:
     static bool checkIdentity(ImageProvider*);
 
@@ -34,6 +33,6 @@ private:
     bool sent_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // IMAGE_PROVIDER_IMG_H
+#endif  // IMAGE_PROVIDER_IMG_H

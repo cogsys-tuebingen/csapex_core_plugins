@@ -2,25 +2,25 @@
 #define VECTOR_OPTIMIZER_H
 
 #include <condition_variable>
-#include <thread>
 #include <mutex>
+#include <thread>
 /// PROJECT
 #include <csapex/model/node.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/model/token.h>
+#include <csapex/msg/end_of_sequence_message.h>
+#include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex/msg/end_of_sequence_message.h>
-#include <csapex/model/token.h>
 #include <csapex/signal/event.h>
-#include <random>
 #include <csapex/utility/exceptions.h>
-#include <csapex/model/node_handle.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_optimization/optimization_params.h>
+#include <random>
 
-namespace csapex {
-
+namespace csapex
+{
 class VectorOptimizer : public Node
 {
 public:
@@ -33,20 +33,19 @@ public:
     virtual void start() = 0;
     virtual void stop() = 0;
 
-
     void createStart();
     void tearDown() override;
     bool canProcess() const override;
     void process() override;
 
-    void residualCb(const TokenPtr&  value);
+    void residualCb(const TokenPtr& value);
     void gradCb(const TokenPtr& grad);
 
     void startParamCb(const TokenPtr& msg);
     void nextParams();
     bool canNotifiy();
 
-    double realMinfunc(const std::vector<double> &x, std::vector<double> &grad);
+    double realMinfunc(const std::vector<double>& x, std::vector<double>& grad);
 
 protected:
     void publishOptimalParameters();
@@ -80,5 +79,5 @@ protected:
     std::vector<double> ext_start_params_;
     OptimizationParams params_;
 };
-}
-#endif // VECTOR_OPTIMIZER_H
+}  // namespace csapex
+#endif  // VECTOR_OPTIMIZER_H

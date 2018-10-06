@@ -1,12 +1,12 @@
 
 /// PROJECT
-#include <csapex_opencv/cv_mat_message.h>
-#include <csapex/msg/io.h>
-#include <csapex_core_plugins/timestamp_message.h>
-#include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/model/node.h>
+#include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex_core_plugins/timestamp_message.h>
+#include <csapex_opencv/cv_mat_message.h>
 #include <csapex_point_cloud/msg/normals_message.h>
 
 using namespace csapex;
@@ -14,7 +14,6 @@ using namespace csapex::connection_types;
 
 namespace csapex
 {
-
 class NormalsToColorImage : public Node
 {
 public:
@@ -22,7 +21,7 @@ public:
     {
     }
 
-    virtual void setupParameters(Parameterizable &parameters) override
+    virtual void setupParameters(Parameterizable& parameters) override
     {
     }
 
@@ -41,10 +40,10 @@ public:
 
         unsigned n = cloud->points.size();
 
-        if(n == 0)
+        if (n == 0)
             return;
 
-        if(cloud->width * cloud->height != n) {
+        if (cloud->width * cloud->height != n) {
             throw std::logic_error("the input cloud is not correctly formated, width * height != count");
         }
 
@@ -52,12 +51,12 @@ public:
         int rows = n / cols;
 
         CvMatMessage::Ptr output(new CvMatMessage(enc::bgr, cloud->header.frame_id, cloud->header.stamp));
-        output->value.create(rows,cols, CV_8UC3);
+        output->value.create(rows, cols, CV_8UC3);
 
         typename pcl::PointCloud<pcl::Normal>::const_iterator pt = cloud->points.begin();
-        cv::Vec3b* data = (cv::Vec3b*) output->value.data;
+        cv::Vec3b* data = (cv::Vec3b*)output->value.data;
 
-        for(unsigned idx = 0; idx < n; ++idx) {
+        for (unsigned idx = 0; idx < n; ++idx) {
             const pcl::Normal& p = *pt;
             cv::Vec3b& val = *data;
             val[0] = std::abs(p.normal_z) * 255;
@@ -70,12 +69,12 @@ public:
 
         msg::publish(output_, output);
     }
+
 private:
     Input* input_;
     Output* output_;
 };
 
-}
+}  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::NormalsToColorImage, csapex::Node)
-

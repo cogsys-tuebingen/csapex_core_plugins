@@ -2,17 +2,19 @@
 #include "crop_box.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
-#include <csapex/param/parameter_factory.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
+#include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 /// SYSTEM
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <pcl_ros/transforms.h>
-    #include <pcl/filters/crop_box.h>
+#include <pcl/filters/crop_box.h>
+#include <pcl_ros/transforms.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 CSAPEX_REGISTER_CLASS(csapex::CropBox, csapex::Node)
 
@@ -23,7 +25,7 @@ CropBox::CropBox()
 {
 }
 
-void CropBox::setupParameters(Parameterizable &parameters)
+void CropBox::setupParameters(Parameterizable& parameters)
 {
     static const auto min_value = -100.0;
     static const auto max_value = 100.0;
@@ -46,15 +48,15 @@ void CropBox::process()
 {
     PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_cloud_));
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<CropBox>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<CropBox>(this, msg), msg->value);
 }
 
 template <class PointT>
 void CropBox::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
 {
-    std::pair<double,double> dx = readParameter<std::pair<double, double> >("dx");
-    std::pair<double,double> dy = readParameter<std::pair<double, double> >("dy");
-    std::pair<double,double> dz = readParameter<std::pair<double, double> >("dz");
+    std::pair<double, double> dx = readParameter<std::pair<double, double>>("dx");
+    std::pair<double, double> dy = readParameter<std::pair<double, double>>("dy");
+    std::pair<double, double> dz = readParameter<std::pair<double, double>>("dz");
 
     Eigen::Vector4f min_pt_(dx.first, dy.first, dz.first, 0);
     Eigen::Vector4f max_pt_(dx.second, dy.second, dz.second, 0);
@@ -65,7 +67,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
     crop.setKeepOrganized(readParameter<bool>("keep organized"));
     crop.setInputCloud(cloud);
 
-    if(msg::isConnected(output_pos_)) {
+    if (msg::isConnected(output_pos_)) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
         crop.filter(*out);
         out->header = cloud->header;
@@ -75,7 +77,7 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
         msg::publish(output_pos_, msg);
     }
 
-    if(msg::isConnected(output_neg_)) {
+    if (msg::isConnected(output_neg_)) {
         typename pcl::PointCloud<PointT>::Ptr out(new pcl::PointCloud<PointT>);
         crop.setNegative(true);
         crop.filter(*out);
@@ -85,5 +87,4 @@ void CropBox::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud)
         msg->value = out;
         msg::publish(output_neg_, msg);
     }
-
 }

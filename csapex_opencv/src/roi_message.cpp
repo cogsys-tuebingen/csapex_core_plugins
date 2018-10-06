@@ -11,13 +11,11 @@ CSAPEX_REGISTER_MESSAGE(csapex::connection_types::RoiMessage)
 using namespace csapex;
 using namespace connection_types;
 
+RoiMessage::RoiMessage() : MessageTemplate<Roi, RoiMessage>("/")
+{
+}
 
-RoiMessage::RoiMessage()
-    : MessageTemplate<Roi, RoiMessage> ("/")
-{}
-
-
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const Roi& roi)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const Roi& roi)
 {
     data << roi.x();
     data << roi.y();
@@ -26,22 +24,23 @@ SerializationBuffer& csapex::operator << (SerializationBuffer& data, const Roi& 
 
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, Roi& roi)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, Roi& roi)
 {
-    int x,y,w,h;
+    int x, y, w, h;
 
     data >> x;
     data >> y;
     data >> w;
     data >> h;
 
-    roi = Roi(x,y,w,h);
+    roi = Roi(x, y, w, h);
 
     return data;
 }
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
 CSAPEX_EXPORT_PLUGIN Node convert<csapex::connection_types::RoiMessage>::encode(const csapex::connection_types::RoiMessage& rhs)
 {
     Node node = convert<csapex::connection_types::Message>::encode(rhs);
@@ -52,7 +51,7 @@ CSAPEX_EXPORT_PLUGIN Node convert<csapex::connection_types::RoiMessage>::encode(
 
 CSAPEX_EXPORT_PLUGIN bool convert<csapex::connection_types::RoiMessage>::decode(const Node& node, csapex::connection_types::RoiMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
@@ -60,4 +59,4 @@ CSAPEX_EXPORT_PLUGIN bool convert<csapex::connection_types::RoiMessage>::decode(
     rhs.value = node["value"].as<Roi>();
     return true;
 }
-}
+}  // namespace YAML

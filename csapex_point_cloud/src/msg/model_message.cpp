@@ -10,10 +10,9 @@ using namespace csapex;
 
 ModelMessage::ModelMessage()
 {
-
 }
 
-SerializationBuffer& csapex::operator << (SerializationBuffer& data, const ModelMessage& rhs)
+SerializationBuffer& csapex::operator<<(SerializationBuffer& data, const ModelMessage& rhs)
 {
     data << rhs.model_type;
     data << rhs.coefficients;
@@ -22,7 +21,7 @@ SerializationBuffer& csapex::operator << (SerializationBuffer& data, const Model
 
     return data;
 }
-const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data, ModelMessage& rhs)
+const SerializationBuffer& csapex::operator>>(const SerializationBuffer& data, ModelMessage& rhs)
 {
     data >> rhs.model_type;
     data >> rhs.coefficients;
@@ -33,12 +32,13 @@ const SerializationBuffer& csapex::operator >> (const SerializationBuffer& data,
 }
 
 /// YAML
-namespace YAML {
-
-Node convert<csapex::ModelMessage>::encode(const csapex::ModelMessage& rhs) {
+namespace YAML
+{
+Node convert<csapex::ModelMessage>::encode(const csapex::ModelMessage& rhs)
+{
     Node node;
 
-    node["model_type"] = static_cast<int> (rhs.model_type);
+    node["model_type"] = static_cast<int>(rhs.model_type);
     node["frame_id"] = rhs.frame_id;
     node["probability"] = rhs.probability;
 
@@ -51,11 +51,12 @@ Node convert<csapex::ModelMessage>::encode(const csapex::ModelMessage& rhs) {
     return node;
 }
 
-bool convert<csapex::ModelMessage>::decode(const Node& node, csapex::ModelMessage& rhs) {
-    if(!node.IsMap()) {
+bool convert<csapex::ModelMessage>::decode(const Node& node, csapex::ModelMessage& rhs)
+{
+    if (!node.IsMap()) {
         return false;
     }
-    rhs.model_type = static_cast<pcl::SacModel> (node["model_type"].as<int>());
+    rhs.model_type = static_cast<pcl::SacModel>(node["model_type"].as<int>());
     rhs.frame_id = node["frame_id"].as<std::string>();
     rhs.probability = node["probability"].as<double>();
 
@@ -64,7 +65,7 @@ bool convert<csapex::ModelMessage>::decode(const Node& node, csapex::ModelMessag
     rhs.coefficients->header.seq = node["coefficients/header/seq"].as<unsigned int>();
     rhs.coefficients->header.stamp = node["coefficients/header/stamp"].as<unsigned long>();
 
-    rhs.coefficients->values = node["coefficients/values"].as<std::vector<float> >();
+    rhs.coefficients->values = node["coefficients/values"].as<std::vector<float>>();
     return true;
 }
-}
+}  // namespace YAML

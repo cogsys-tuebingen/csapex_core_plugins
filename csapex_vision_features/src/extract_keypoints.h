@@ -9,7 +9,6 @@
 
 namespace csapex
 {
-
 class ExtractKeypoints : public csapex::Node
 {
 public:
@@ -17,7 +16,7 @@ public:
 
 public:
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
@@ -33,6 +32,6 @@ private:
     bool refresh_;
 };
 
-}
+}  // namespace csapex
 
-#endif // EXTRACT_FEATURES_H
+#endif  // EXTRACT_FEATURES_H

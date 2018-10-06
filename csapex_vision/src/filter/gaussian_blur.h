@@ -6,14 +6,13 @@
 
 namespace csapex
 {
-
 class GaussianBlur : public Node
 {
 public:
     GaussianBlur();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
@@ -23,11 +22,11 @@ private:
     Input* input_mask_;
     Output* output_;
 
-    int           kernel_;
-    double        sigma_x_;
-    double        sigma_y_;
+    int kernel_;
+    double sigma_x_;
+    double sigma_y_;
 };
 
-} /// NAMESPACE
+}  // namespace csapex
 
-#endif // FilterBlur_H
+#endif  // FilterBlur_H

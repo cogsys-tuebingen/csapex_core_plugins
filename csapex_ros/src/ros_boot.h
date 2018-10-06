@@ -4,23 +4,24 @@
 /// PROJECT
 #include <csapex/core/bootstrap_plugin.h>
 #include <csapex/core/core_fwd.h>
-#include <csapex/view/view_fwd.h>
-#include <csapex/msg/msg_fwd.h>
 #include <csapex/model/model_fwd.h>
+#include <csapex/msg/msg_fwd.h>
+#include <csapex/view/view_fwd.h>
 
 /// SYSTEM
+// clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-    #include <pluginlib/class_loader.h>
+#include <pluginlib/class_loader.h>
 #include <csapex/utility/suppress_warnings_end.h>
+// clang-format on
 
 namespace csapex
 {
-
 class RosBoot : public BootstrapPlugin
 {
 public:
     RosBoot();
-    void boot(csapex::PluginLocator *locator);
+    void boot(csapex::PluginLocator* locator);
 
 private:
     std::vector<std::string> valid_plugin_xml_files_;
@@ -34,5 +35,5 @@ private:
     pluginlib::ClassLoader<DragIOHandler> loader_drag_io_;
 };
 
-}
-#endif // ROS_BOOT_H
+}  // namespace csapex
+#endif  // ROS_BOOT_H

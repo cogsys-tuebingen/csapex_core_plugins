@@ -11,9 +11,7 @@ using namespace csapex;
 
 CSAPEX_REGISTER_LOCAL_NODE_ADAPTER(BFOptimizerAdapter, csapex::BFOptimizer)
 
-
-BFOptimizerAdapter::BFOptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node)
-    : OptimizerAdapter(worker, parent, node), wrapped_(node)
+BFOptimizerAdapter::BFOptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node) : OptimizerAdapter(worker, parent, node), wrapped_(node)
 {
     auto n = wrapped_.lock();
     observe(n->step, this, &BFOptimizerAdapter::triggerStep);
@@ -33,7 +31,7 @@ void BFOptimizerAdapter::setupUi(QBoxLayout* layout)
 void BFOptimizerAdapter::triggerStep(int s)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     progress_->setValue(s);
@@ -43,7 +41,7 @@ void BFOptimizerAdapter::triggerStep(int s)
 void BFOptimizerAdapter::parameterAdded(param::ParameterPtr p)
 {
     auto node = wrapped_.lock();
-    if(!node) {
+    if (!node) {
         return;
     }
     progress_->setMaximum(node->stepsNecessary());

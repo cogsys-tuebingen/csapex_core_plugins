@@ -28,7 +28,6 @@ void TransformInverter::process()
     msg::publish(output_, msg);
 }
 
-
 void TransformInverter::setup(NodeModifier& node_modifier)
 {
     input_ = node_modifier.addInput<connection_types::TransformMessage>("T");

@@ -2,8 +2,8 @@
 #include "segmentation_p2pline.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <cslibs_laser_processing/segmentation/p2pline.h>
 
 using namespace csapex;
@@ -15,15 +15,15 @@ P2PLineSegmentation::P2PLineSegmentation()
 {
 }
 
-void P2PLineSegmentation::setupParameters(Parameterizable &parameters)
+void P2PLineSegmentation::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(csapex::param::factory::declareRange("sigma",          0.01, 2.0, 0.01, 0.01), std::bind(&P2PLineSegmentation::update, this));
-    parameters.addParameter(csapex::param::factory::declareRange("max. distance",  0.01, 2.0, 0.01, 0.01), std::bind(&P2PLineSegmentation::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange("sigma", 0.01, 2.0, 0.01, 0.01), std::bind(&P2PLineSegmentation::update, this));
+    parameters.addParameter(csapex::param::factory::declareRange("max. distance", 0.01, 2.0, 0.01, 0.01), std::bind(&P2PLineSegmentation::update, this));
 }
 
 void P2PLineSegmentation::update()
 {
-    double sigma    = readParameter<double>("sigma");
+    double sigma = readParameter<double>("sigma");
     double max_dist = readParameter<double>("max. distance");
     segmentation_.reset(new P2PLine(sigma, max_dist));
 }

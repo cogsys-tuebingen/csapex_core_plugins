@@ -12,18 +12,20 @@ public:
     ROIExtractor();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
 private:
-    template <class PointT> void extract_organized(typename pcl::PointCloud<PointT>::ConstPtr cloud);
-    template <class PointT> void extract_unorganized(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+    template <class PointT>
+    void extract_organized(typename pcl::PointCloud<PointT>::ConstPtr cloud);
+    template <class PointT>
+    void extract_unorganized(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
     void updateOutputs();
-    void publish(const std::shared_ptr<std::vector<connection_types::PointCloudMessage::ConstPtr> >& message);
+    void publish(const std::shared_ptr<std::vector<connection_types::PointCloudMessage::ConstPtr>>& message);
 
 private:
     Input* input_cloud_;
@@ -34,4 +36,4 @@ private:
     int filter_class_;
     std::vector<Output*> output_clouds_single_;
 };
-}
+}  // namespace csapex

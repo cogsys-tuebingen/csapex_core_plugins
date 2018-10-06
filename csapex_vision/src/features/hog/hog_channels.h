@@ -6,7 +6,8 @@
 
 /// EXTRACT HOG FEATURE
 
-namespace csapex {
+namespace csapex
+{
 class HOGChannels : public csapex::Node
 {
 public:
@@ -17,13 +18,13 @@ public:
     void process() override;
 
 private:
-    csapex::Input  *in_img_;
-    csapex::Output *out_img_;
+    csapex::Input* in_img_;
+    csapex::Output* out_img_;
 
-    int  bins_;
+    int bins_;
     bool signed_;
-    int  ksize_;
+    int ksize_;
     bool invert_order_;
 };
-}
-#endif // HOG_CHANNELS_H
+}  // namespace csapex
+#endif  // HOG_CHANNELS_H

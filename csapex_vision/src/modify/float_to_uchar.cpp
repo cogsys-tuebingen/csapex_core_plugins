@@ -2,11 +2,11 @@
 #include "float_to_uchar.h"
 
 /// PROJECT
-#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
+#include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
-#include <csapex/model/node_modifier.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;
@@ -25,11 +25,7 @@ void FloatToUchar::process()
 
     std::vector<cv::Mat> channels;
     cv::split(in->value, channels);
-    for(std::vector<cv::Mat>::iterator
-        it = channels.begin() ;
-        it!= channels.end() ;
-        ++it) {
-
+    for (std::vector<cv::Mat>::iterator it = channels.begin(); it != channels.end(); ++it) {
         cv::normalize(*it, *it, 0.0, 255.0, cv::NORM_MINMAX);
         it->convertTo(*it, CV_8UC1);
     }
@@ -46,4 +42,3 @@ void FloatToUchar::setup(NodeModifier& node_modifier)
 void FloatToUchar::setupParameters(Parameterizable& parameters)
 {
 }
-

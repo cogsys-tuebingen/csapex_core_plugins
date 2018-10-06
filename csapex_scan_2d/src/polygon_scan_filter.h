@@ -3,13 +3,11 @@
 
 /// PROJECT
 #include <csapex_core_plugins/interactive_node.h>
-#include <cslibs_laser_processing/data/scan.h>
 #include <csapex_scan_2d/labeled_scan_message.h>
-
+#include <cslibs_laser_processing/data/scan.h>
 
 namespace csapex
 {
-
 class Input;
 
 class PolygonScanFilter : public InteractiveNode
@@ -17,7 +15,6 @@ class PolygonScanFilter : public InteractiveNode
     friend class PolygonScanFilterAdapter;
 
 public:
-
     PolygonScanFilter();
     virtual ~PolygonScanFilter();
 
@@ -31,16 +28,16 @@ protected:
     virtual void finishProcess() override;
 
 protected:
-    Input*  input_;
+    Input* input_;
     Output* output_;
-    bool    invert_;
+    bool invert_;
 
     connection_types::LabeledScanMessage::Ptr result_;
 
 public:
-    slim_signal::Signal<void(const lib_laser_processing::Scan*, const bool )> display_request;
+    slim_signal::Signal<void(const lib_laser_processing::Scan*, const bool)> display_request;
 };
 
-}
+}  // namespace csapex
 
-#endif // POLYGONSCANFILTER_H
+#endif  // POLYGONSCANFILTER_H

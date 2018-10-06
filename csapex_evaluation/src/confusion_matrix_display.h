@@ -10,8 +10,8 @@
 /// SYSTEM
 #include <mutex>
 
-namespace csapex {
-
+namespace csapex
+{
 class ConfusionMatrixDisplay : public Node
 {
 public:
@@ -26,11 +26,9 @@ public:
 
     void exportCsv(const std::string& file);
 
-
 public:
     slim_signal::Signal<void()> display_request;
     slim_signal::Signal<void()> export_request;
-
 
 private:
     Input* connector_;
@@ -41,6 +39,6 @@ private:
     std::string path_;
 };
 
-}
+}  // namespace csapex
 
-#endif // CONFUSION_MATRIX_DISPLAY_H
+#endif  // CONFUSION_MATRIX_DISPLAY_H

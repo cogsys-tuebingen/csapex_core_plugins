@@ -2,30 +2,28 @@
 #include <csapex_point_cloud/msg/normals_message.h>
 
 /// PROJECT
+#include <csapex/serialization/io/csapex_io.h>
+#include <csapex/serialization/io/std_io.h>
 #include <csapex/utility/assert.h>
 #include <csapex/utility/register_msg.h>
-#include <csapex/serialization/io/std_io.h>
-#include <csapex/serialization/io/csapex_io.h>
 
 /// SYSTEM
+#include <boost/mpl/for_each.hpp>
+#include <pcl/PCLPointCloud2.h>
 #include <pcl/PCLPointField.h>
 #include <pcl/console/print.h>
-#include <pcl/PCLPointCloud2.h>
 #include <pcl/conversions.h>
-#include <boost/mpl/for_each.hpp>
 
 CSAPEX_REGISTER_MESSAGE(csapex::connection_types::NormalsMessage)
 
 using namespace csapex;
 using namespace connection_types;
 
-NormalsMessage::NormalsMessage(const std::string& frame_id, Message::Stamp stamp)
-    : Message (type<NormalsMessage>::name(), frame_id, stamp)
+NormalsMessage::NormalsMessage(const std::string& frame_id, Message::Stamp stamp) : Message(type<NormalsMessage>::name(), frame_id, stamp)
 {
 }
 
-NormalsMessage::NormalsMessage()
-    : Message (type<NormalsMessage>::name(), "/", 0)
+NormalsMessage::NormalsMessage() : Message(type<NormalsMessage>::name(), "/", 0)
 {
 }
 
@@ -36,54 +34,55 @@ std::string NormalsMessage::descriptiveName() const
 
 bool NormalsMessage::acceptsConnectionFrom(const TokenData* other_side) const
 {
-    return dynamic_cast<const NormalsMessage*> (other_side);
+    return dynamic_cast<const NormalsMessage*>(other_side);
 }
 
 /// YAML
-namespace YAML {
+namespace YAML
+{
+template <>
+struct convert<pcl::PCLHeader>
+{
+    static Node encode(const pcl::PCLHeader& rhs)
+    {
+        Node n;
+        n["seq"] = rhs.seq;
+        n["stamp"] = rhs.stamp;
+        n["frame_id"] = rhs.frame_id;
+        return n;
+    }
 
-template<>
-struct convert<pcl::PCLHeader> {
-  static Node encode(const pcl::PCLHeader& rhs)
-  {
-      Node n;
-      n["seq"] = rhs.seq;
-      n["stamp"] = rhs.stamp;
-      n["frame_id"] = rhs.frame_id;
-      return n;
-  }
-
-  static bool decode(const Node& node, pcl::PCLHeader& rhs)
-  {
-      rhs.seq = node["seq"].as<pcl::uint32_t>();
-      rhs.stamp = node["stamp"].as<pcl::uint64_t>();
-      rhs.frame_id = node["frame_id"].as<std::string>();
-      return true;
-  }
+    static bool decode(const Node& node, pcl::PCLHeader& rhs)
+    {
+        rhs.seq = node["seq"].as<pcl::uint32_t>();
+        rhs.stamp = node["stamp"].as<pcl::uint64_t>();
+        rhs.frame_id = node["frame_id"].as<std::string>();
+        return true;
+    }
 };
 
-template<>
-struct convert<pcl::PCLPointField> {
-  static Node encode(const pcl::PCLPointField& rhs)
-  {
-      Node n;
-      n["name"] = rhs.name;
-      n["offset"] = rhs.offset;
-      n["datatype"] = rhs.datatype;
-      n["count"] = rhs.count;
-      return n;
-  }
+template <>
+struct convert<pcl::PCLPointField>
+{
+    static Node encode(const pcl::PCLPointField& rhs)
+    {
+        Node n;
+        n["name"] = rhs.name;
+        n["offset"] = rhs.offset;
+        n["datatype"] = rhs.datatype;
+        n["count"] = rhs.count;
+        return n;
+    }
 
-  static bool decode(const Node& node, pcl::PCLPointField& rhs)
-  {
-      rhs.name = node["name"].as<std::string>();
-      rhs.offset = node["offset"].as<pcl::uint32_t>();
-      rhs.datatype = node["datatype"].as<pcl::uint8_t>();
-      rhs.count = node["count"].as<pcl::uint32_t>();
-      return true;
-  }
+    static bool decode(const Node& node, pcl::PCLPointField& rhs)
+    {
+        rhs.name = node["name"].as<std::string>();
+        rhs.offset = node["offset"].as<pcl::uint32_t>();
+        rhs.datatype = node["datatype"].as<pcl::uint8_t>();
+        rhs.count = node["count"].as<pcl::uint32_t>();
+        return true;
+    }
 };
-
 
 Node convert<csapex::connection_types::NormalsMessage>::encode(const csapex::connection_types::NormalsMessage& rhs)
 {
@@ -93,14 +92,14 @@ Node convert<csapex::connection_types::NormalsMessage>::encode(const csapex::con
 
 bool convert<csapex::connection_types::NormalsMessage>::decode(const Node& node, csapex::connection_types::NormalsMessage& rhs)
 {
-    if(!node.IsMap()) {
+    if (!node.IsMap()) {
         return false;
     }
 
-    if(!node["point_type"].IsDefined()) {
+    if (!node["point_type"].IsDefined()) {
         return false;
     }
-    if(!node["data"].IsDefined()) {
+    if (!node["data"].IsDefined()) {
         return false;
     }
     convert<csapex::connection_types::Message>::decode(node, rhs);
@@ -109,5 +108,4 @@ bool convert<csapex::connection_types::NormalsMessage>::decode(const Node& node,
 
     return true;
 }
-}
-
+}  // namespace YAML

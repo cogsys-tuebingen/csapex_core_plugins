@@ -8,14 +8,15 @@
 /// SYSTEM
 #include <visualization_msgs/MarkerArray.h>
 
-namespace csapex {
+namespace csapex
+{
 class ModelToMarker : public csapex::Node
 {
 public:
     ModelToMarker();
 
     virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable &parameters) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
     virtual void process() override;
 
 private:
@@ -26,5 +27,5 @@ private:
     void publishText(const ModelMessage model_message);
 };
 
-} // end namespace csapex
-#endif // MODEL_TO_MARKER_H
+}  // end namespace csapex
+#endif  // MODEL_TO_MARKER_H

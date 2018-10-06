@@ -2,10 +2,10 @@
 #include "transform_cloud.h"
 
 /// PROJECT
-#include <csapex/msg/io.h>
-#include <csapex_transform/transform_message.h>
 #include <csapex/model/node_modifier.h>
+#include <csapex/msg/io.h>
 #include <csapex/utility/register_apex_plugin.h>
+#include <csapex_transform/transform_message.h>
 
 /// SYSTEM
 #include <boost/mpl/for_each.hpp>
@@ -31,7 +31,7 @@ void TransformCloud::process()
 {
     PointCloudMessage::ConstPtr msg = msg::getMessage<PointCloudMessage>(input_cloud_);
 
-    boost::apply_visitor (PointCloudMessage::Dispatch<TransformCloud>(this, msg), msg->value);
+    boost::apply_visitor(PointCloudMessage::Dispatch<TransformCloud>(this, msg), msg->value);
 }
 
 template <class PointT>
@@ -46,11 +46,10 @@ void TransformCloud::inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud
     out->height = cloud->height;
     out->is_dense = cloud->is_dense;
 
-
     std::size_t N = cloud->points.size();
     out->points.resize(N);
 
-    for(std::size_t i = 0; i < N; ++i) {
+    for (std::size_t i = 0; i < N; ++i) {
         PointT pt = cloud->points[i];
 
         tf::Vector3 p(pt.x, pt.y, pt.z);

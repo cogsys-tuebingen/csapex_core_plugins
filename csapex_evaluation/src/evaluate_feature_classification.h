@@ -2,18 +2,16 @@
 #define ML_EVALUATOR_H
 
 /// COMPONENT
-#include <csapex_ml/features_message.h>
 #include <csapex_evaluation/confusion_matrix_message.h>
+#include <csapex_ml/features_message.h>
 
 /// PROJECT
 #include <csapex/model/node.h>
 
-namespace csapex {
-
-
+namespace csapex
+{
 class EvaluateFeatureClassification : public csapex::Node
 {
-
     struct BinaryClassificationResult
     {
         int p;
@@ -32,7 +30,8 @@ class EvaluateFeatureClassification : public csapex::Node
 
         BinaryClassificationResult classification;
 
-        union {
+        union
+        {
             double sensitivity;
             double true_positive_rate;
             double tpr;
@@ -40,51 +39,60 @@ class EvaluateFeatureClassification : public csapex::Node
             double recall;
         };
 
-        union {
+        union
+        {
             double specificity;
             double spc;
             double true_negative_rate;
             double tnr;
         };
 
-        union {
+        union
+        {
             double precision;
             double positive_predictive_value;
             double ppv;
         };
 
-        union {
+        union
+        {
             double negative_predictive_value;
             double npv;
         };
 
-        union {
+        union
+        {
             double fall_out;
             double false_positive_rate;
             double fpr;
         };
 
-        union {
+        union
+        {
             double false_discovery_rate;
             double fdr;
         };
 
-        union {
+        union
+        {
             double negative_rate;
             double fnr;
         };
 
-        union {
+        union
+        {
             double accuracy;
             double acc;
         };
 
-        union {
+        union
+        {
             double f1_score;
             double f1s;
         };
 
-        union {
+        union
+        {
             double matthews_correlation_coefficient;
             double mcc;
         };
@@ -105,7 +113,6 @@ private:
     ConfusionMatrix confusion_;
 };
 
+}  // namespace csapex
 
-}
-
-#endif // ML_EVALUATOR_H
+#endif  // ML_EVALUATOR_H

@@ -17,22 +17,21 @@ class CSAPEX_EXPORT_PLUGIN GradientBoostedTrees : public Node
 public:
     GradientBoostedTrees() = default;
 
-    virtual void setupParameters(Parameterizable &parameters) override;
-    virtual void setup(NodeModifier &node_modifier) override;
+    virtual void setupParameters(Parameterizable& parameters) override;
+    virtual void setup(NodeModifier& node_modifier) override;
     virtual void process() override;
 
 private:
     std::shared_ptr<cv::GradientBoostingTrees> trees_;
 
-    Input   *in_;
-    Output  *out_;
+    Input* in_;
+    Output* out_;
 
-    Slot    *reload_;
+    Slot* reload_;
 
     void load();
-    void classify(const connection_types::FeaturesMessage &input,
-                  connection_types::FeaturesMessage &output);
+    void classify(const connection_types::FeaturesMessage& input, connection_types::FeaturesMessage& output);
 };
-}
+}  // namespace csapex
 
-#endif // GRADIENT_BOOSTED_TREES_H
+#endif  // GRADIENT_BOOSTED_TREES_H

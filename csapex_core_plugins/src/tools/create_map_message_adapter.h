@@ -10,8 +10,8 @@
 class QDialog;
 class QProgressBar;
 
-namespace csapex {
-
+namespace csapex
+{
 class CreateMapMessageAdapter : public QObject, public DefaultNodeAdapter
 {
     Q_OBJECT
@@ -46,6 +46,6 @@ protected:
     std::string next_type_;
 };
 
-}
+}  // namespace csapex
 
-#endif // CREATEMAPMESSAGEADAPTER_H
+#endif  // CREATEMAPMESSAGEADAPTER_H

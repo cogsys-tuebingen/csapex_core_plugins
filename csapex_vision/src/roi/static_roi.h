@@ -8,9 +8,8 @@
 
 /// SYSTEM
 
-namespace csapex {
-
-
+namespace csapex
+{
 class StaticRoi : public csapex::Node
 {
 public:
@@ -21,11 +20,10 @@ public:
     virtual void process() override;
 
 private:
-    Input*   in_;
+    Input* in_;
     Output* out_;
-
 };
 
-}
+}  // namespace csapex
 
-#endif // STATIC_ROI_H
+#endif  // STATIC_ROI_H

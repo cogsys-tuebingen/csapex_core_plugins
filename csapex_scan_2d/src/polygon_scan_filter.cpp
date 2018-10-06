@@ -2,17 +2,15 @@
 #include "polygon_scan_filter.h"
 
 /// PROJECT
+#include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
-#include <csapex/view/utility/QtCvImageConverter.h>
-#include <csapex_scan_2d/scan_message.h>
-#include <csapex_scan_2d/labeled_scan_message.h>
-#include <csapex/model/node_modifier.h>
-#include <csapex/utility/register_apex_plugin.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/model/node_modifier.h>
+#include <csapex/utility/register_apex_plugin.h>
+#include <csapex/view/utility/QtCvImageConverter.h>
+#include <csapex_scan_2d/labeled_scan_message.h>
+#include <csapex_scan_2d/scan_message.h>
 
 CSAPEX_REGISTER_CLASS(csapex::PolygonScanFilter, csapex::Node)
-
 
 using namespace csapex;
 using namespace connection_types;
@@ -28,9 +26,7 @@ PolygonScanFilter::~PolygonScanFilter()
 
 void PolygonScanFilter::setupParameters(Parameterizable& parameters)
 {
-    parameters.addParameter(param::factory::declareBool("invert",
-                                                                 false),
-                            invert_);
+    parameters.addParameter(param::factory::declareBool("invert", false), invert_);
 }
 
 void PolygonScanFilter::setup(NodeModifier& node_modifier)
@@ -43,10 +39,10 @@ void PolygonScanFilter::beginProcess()
 {
     result_.reset();
 
-    if(msg::isMessage<LabeledScanMessage>(input_)) {
+    if (msg::isMessage<LabeledScanMessage>(input_)) {
         LabeledScanMessage::ConstPtr scan_msg = msg::getMessage<LabeledScanMessage>(input_);
         display_request(&scan_msg->value, invert_);
-    } else if(msg::isMessage<ScanMessage>(input_)) {
+    } else if (msg::isMessage<ScanMessage>(input_)) {
         ScanMessage::ConstPtr scan_msg = msg::getMessage<ScanMessage>(input_);
         display_request(&scan_msg->value, invert_);
     } else {

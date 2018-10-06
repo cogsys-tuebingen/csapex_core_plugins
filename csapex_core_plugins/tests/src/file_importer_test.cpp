@@ -1,39 +1,34 @@
 #include <csapex_testing/stepping_test.h>
 
-#include <csapex/model/graph/graph_impl.h>
-#include <csapex/core/graphio.h>
 #include <csapex/core/csapex_core.h>
-#include <csapex/plugin/plugin_locator.h>
+#include <csapex/core/graphio.h>
 #include <csapex/core/settings/settings_impl.h>
-#include <csapex/model/node_handle.h>
-#include <csapex/msg/output.h>
-#include <csapex/msg/io.h>
-#include <csapex/msg/generic_value_message.hpp>
-#include <csapex/model/token.h>
+#include <csapex/model/graph/graph_impl.h>
 #include <csapex/model/io.h>
+#include <csapex/model/node_handle.h>
+#include <csapex/model/token.h>
 #include <csapex/msg/direct_connection.h>
+#include <csapex/msg/generic_value_message.hpp>
+#include <csapex/msg/io.h>
+#include <csapex/msg/output.h>
+#include <csapex/plugin/plugin_locator.h>
 
-#include <csapex_core_plugins/register_core_plugins.h>
 #include "../../src/io/file_importer.h"
+#include <csapex_core_plugins/register_core_plugins.h>
 
 using namespace csapex;
 using namespace connection_types;
 
-namespace csapex {
-
+namespace csapex
+{
 class TestPluginLocator : public PluginLocator
 {
 public:
-    TestPluginLocator(Settings& settings)
-        : PluginLocator(settings)
+    TestPluginLocator(Settings& settings) : PluginLocator(settings)
     {
 #ifdef PACKAGE_XML
-        registerLocator<CorePlugin>([this](std::vector<std::string>& paths){
-            paths.push_back(std::string(PACKAGE_XML));
-        });
-        registerLocator<Node>([this](std::vector<std::string>& paths){
-            paths.push_back(std::string(PACKAGE_XML));
-        });
+        registerLocator<CorePlugin>([this](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
+        registerLocator<Node>([this](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
 #else
         std::cerr << "Cannot find plugins for this test!" << std::endl;
 #endif
@@ -114,17 +109,17 @@ TEST_F(FileImporterTest, ImportDirectory)
     ConnectionPtr connection = DirectConnection::connect(output, input);
     EXPECT_NE(nullptr, connection);
 
-    importer_node->process(*importer->getNodeHandle(), *importer_node, [&](ProcessingFunction fn){
+    importer_node->process(*importer->getNodeHandle(), *importer_node, [&](ProcessingFunction fn) {
         auto value_msg = testing::getAddedMessage<std::string>(output);
         ASSERT_NE(nullptr, value_msg);
         ASSERT_EQ("1", value_msg->value);
 
-        importer_node->process(*importer->getNodeHandle(), *importer_node, [&](ProcessingFunction fn){
+        importer_node->process(*importer->getNodeHandle(), *importer_node, [&](ProcessingFunction fn) {
             auto value_msg = testing::getAddedMessage<std::string>(output);
             ASSERT_NE(nullptr, value_msg);
             ASSERT_EQ("2", value_msg->value);
 
-            importer_node->process(*importer->getNodeHandle(), *importer_node, [&](ProcessingFunction fn){
+            importer_node->process(*importer->getNodeHandle(), *importer_node, [&](ProcessingFunction fn) {
                 auto value_msg = testing::getAddedMessage<std::string>(output);
                 ASSERT_NE(nullptr, value_msg);
                 ASSERT_EQ("3", value_msg->value);
@@ -205,4 +200,4 @@ TEST_F(FileImporterTest, StoreAndReloadKeepsConnections)
     }
 }
 
-}
+}  // namespace csapex
