@@ -26,12 +26,14 @@ qt5_add_resources(QT_RESOURCES res/csapex_math_resources.qrc)
 add_library(${PROJECT_NAME} SHARED
     src/param/angle_parameter.cpp
     src/param/linear_vector_parameter.cpp
+    src/param/linear_matrix_parameter.cpp
     src/param/factory.cpp
 
     src/model/vector.cpp
     src/model/matrix.cpp
 
     src/msg/linear_vector_message.cpp
+    src/msg/linear_matrix_message.cpp
 
     src/serialization/yaml_io.cpp
     src/serialization/binary_io.cpp
@@ -55,6 +57,7 @@ target_link_libraries(${PROJECT_NAME}_core
 
 add_library(${PROJECT_NAME}_qt SHARED
     src/view/vector_param_adapter.cpp
+    src/view/matrix_param_adapter.cpp
     src/view/angle_param_adapter.cpp
     src/view/matrix_dialog.cpp
     src/view/matrix_table_model.cpp
@@ -70,6 +73,7 @@ target_link_libraries(${PROJECT_NAME}_qt
 
 add_library(${PROJECT_NAME}_node SHARED
     src/node/vector_input.cpp
+    src/node/matrix_input.cpp
     src/node/norm_of_generic_vector_message.cpp
     src/node/invert_values.cpp
     src/node/multiply_values.cpp

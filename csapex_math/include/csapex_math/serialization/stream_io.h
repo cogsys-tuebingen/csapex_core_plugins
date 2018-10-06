@@ -15,11 +15,25 @@ namespace linear
 {
 inline std::ostream& operator<<(std::ostream& stream, const Vector& vector)
 {
-    for (std::size_t i = 0; i < vector.size(); ++i) {
-        if (i > 0) {
+    for (std::size_t row = 0; row < vector.size(); ++row) {
+        if (row > 0) {
             stream << ", ";
         }
-        stream << vector[i];
+        stream << vector[row];
+    }
+    return stream;
+}
+inline std::ostream& operator<<(std::ostream& stream, const Matrix& matrix)
+{
+    int rows = matrix.rows();
+    int cols = matrix.cols();
+    for (int row = 0; row < rows; ++row) {
+        if (row > 0) {
+            stream << "\n";
+        }
+        for (int col = 0; col < cols; ++col) {
+            stream << matrix(row, col) << " ";
+        }
     }
     return stream;
 }

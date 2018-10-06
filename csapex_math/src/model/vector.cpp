@@ -5,55 +5,29 @@ using namespace csapex;
 using namespace csapex::math;
 using namespace csapex::math::linear;
 
-Vector::Vector(std::vector<double> value) : data_(std::move(value))
+Vector::Vector(std::vector<double> value) : Matrix(value.size(), 1, value)
 {
 }
 
-Vector::Vector(std::initializer_list<double> value) : data_{ value }
+Vector::Vector(std::initializer_list<double> value) : Matrix(value.size(), 1, { value })
 {
 }
 
-double Vector::operator()(int row) const
+double Vector::operator()(const int row) const
 {
-    return operator[](row);
+    return Matrix::operator()(row, 0);
 }
-double& Vector::operator()(int row)
+double& Vector::operator()(const int row)
 {
-    return operator[](row);
+    return Matrix::operator()(row, 0);
 }
-double Vector::operator[](int row) const
+double Vector::operator[](const int row) const
 {
-    return data_[row];
+    return Matrix::operator()(row, 0);
 }
-double& Vector::operator[](int row)
+double& Vector::operator[](const int row)
 {
-    return data_[row];
-}
-
-int Vector::rows() const
-{
-    return data_.size();
-}
-int Vector::cols() const
-{
-    return 1;
-}
-
-const std::vector<double>& Vector::getDataRef() const
-{
-    return data_;
-}
-std::vector<double> Vector::getData() const
-{
-    return data_;
-}
-std::size_t Vector::size() const
-{
-    return data_.size();
-}
-void Vector::resize(std::size_t new_size, double value)
-{
-    data_.resize(new_size, value);
+    return Matrix::operator()(row, 0);
 }
 
 bool Vector::isEqual(const Vector& rhs) const

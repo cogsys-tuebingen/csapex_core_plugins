@@ -39,6 +39,8 @@ public:
     }
 };
 
+namespace
+{
 class VectorOutputNode
 {
 public:
@@ -118,14 +120,14 @@ public:
     }
 };
 
-class VectorParameterTest : public SteppingTest
+class LinearVectorTest : public SteppingTest
 {
 public:
-    VectorParameterTest()
+    LinearVectorTest()
     {
-        factory.registerNodeType(std::make_shared<NodeConstructor>("VectorOutputNode", std::bind(&VectorParameterTest::makeSource)));
-        factory.registerNodeType(std::make_shared<NodeConstructor>("VectorInputNode", std::bind(&VectorParameterTest::makeSink)));
-        factory.registerNodeType(std::make_shared<NodeConstructor>("VectorParamNode", std::bind(&VectorParameterTest::makeParamSink)));
+        factory.registerNodeType(std::make_shared<NodeConstructor>("VectorOutputNode", std::bind(&LinearVectorTest::makeSource)));
+        factory.registerNodeType(std::make_shared<NodeConstructor>("VectorInputNode", std::bind(&LinearVectorTest::makeSink)));
+        factory.registerNodeType(std::make_shared<NodeConstructor>("VectorParamNode", std::bind(&LinearVectorTest::makeParamSink)));
     }
 
 private:
@@ -150,7 +152,9 @@ private:
     csapex::CsApexCorePtr core;
 };
 
-TEST_F(VectorParameterTest, VectorParameterCanBeSerialized)
+}  // namespace
+
+TEST_F(LinearVectorTest, VectorParameterCanBeSerialized)
 {
     SerializationBuffer buffer;
     math::linear::Vector value({ 1, 2, 3 });
@@ -166,7 +170,7 @@ TEST_F(VectorParameterTest, VectorParameterCanBeSerialized)
     }
 }
 
-TEST_F(VectorParameterTest, VectorParameterCanBeSerializedWithYaml)
+TEST_F(LinearVectorTest, VectorParameterCanBeSerializedWithYaml)
 {
     YAML::Node buffer;
     math::linear::Vector value({ 1, 2, 3 });
@@ -182,7 +186,7 @@ TEST_F(VectorParameterTest, VectorParameterCanBeSerializedWithYaml)
     }
 }
 
-TEST_F(VectorParameterTest, VectorMessageCanCloneDataFromVectorParameter)
+TEST_F(LinearVectorTest, VectorMessageCanCloneDataFromVectorParameter)
 {
     param::LinearVectorParameter p("test", param::ParameterDescription(""), { 1, 2, 3 });
     connection_types::LinearVectorMessage m;
@@ -196,7 +200,7 @@ TEST_F(VectorParameterTest, VectorMessageCanCloneDataFromVectorParameter)
     ASSERT_EQ(p.getValue(), m.value);
 }
 
-TEST_F(VectorParameterTest, VectorParameterCanCloneDataFromVectorMessage)
+TEST_F(LinearVectorTest, VectorParameterCanCloneDataFromVectorMessage)
 {
     param::LinearVectorParameter p("test", param::ParameterDescription(""), { 1, 2, 3 });
     connection_types::LinearVectorMessage m;
@@ -210,7 +214,7 @@ TEST_F(VectorParameterTest, VectorParameterCanCloneDataFromVectorMessage)
     ASSERT_EQ(p.getValue(), m.value);
 }
 
-TEST_F(VectorParameterTest, VectorMessageIsTransmitted)
+TEST_F(LinearVectorTest, VectorMessageIsTransmitted)
 {
     auto source_p = factory.makeNode("VectorOutputNode", UUIDProvider::makeUUID_without_parent("VectorOutputNode"), graph);
     std::shared_ptr<VectorOutputNode> source = std::dynamic_pointer_cast<VectorOutputNode>(source_p->getNode());
@@ -245,7 +249,7 @@ TEST_F(VectorParameterTest, VectorMessageIsTransmitted)
     }
 }
 
-TEST_F(VectorParameterTest, VectorMessageCanBeConnectedToParameter)
+TEST_F(LinearVectorTest, VectorMessageCanBeConnectedToParameter)
 {
     auto source_p = factory.makeNode("VectorOutputNode", UUIDProvider::makeUUID_without_parent("VectorOutputNode"), graph);
     std::shared_ptr<VectorOutputNode> source = std::dynamic_pointer_cast<VectorOutputNode>(source_p->getNode());

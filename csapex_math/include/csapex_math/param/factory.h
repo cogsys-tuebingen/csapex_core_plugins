@@ -5,7 +5,7 @@
 #include <csapex/param/parameter_builder.h>
 
 /// COMPONENT
-#include <csapex_math/param/linear_vector_parameter.h>
+#include <csapex_math/math_fwd.h>
 
 namespace csapex
 {
@@ -25,6 +25,12 @@ ParameterBuilder declareAngle(const std::string& name, double angle);
 
 ParameterBuilder declareVector(const std::string& name, const std::vector<double>& vector);
 ParameterBuilder declareVector(const std::string& name, const ParameterDescription& description, const std::vector<double>& vector);
+
+ParameterBuilder declareVector(const std::string& name, const math::linear::Vector& vector);
+ParameterBuilder declareVector(const std::string& name, const ParameterDescription& description, const math::linear::Vector& vector);
+
+ParameterBuilder declareMatrix(const std::string& name, const math::linear::Matrix& matrix);
+ParameterBuilder declareMatrix(const std::string& name, const ParameterDescription& description, const math::linear::Matrix& matrix);
 
 }  // namespace factory
 }  // namespace param

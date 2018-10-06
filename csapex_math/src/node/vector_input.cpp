@@ -33,21 +33,20 @@ public:
         std::vector<double> default_vector{ 0.0, 0.0, 0.0 };
 
         params.addParameter(param::factory::declareRange<int>("dimension", 1, 8, default_vector.size(), 1), [this](param::Parameter* p) {
-            vector_.resize(p->as<int>());
-            setParameter("vector", math::linear::Vector(vector_));
+            auto vector = readParameter<math::linear::Vector>("vector");
+            vector.resize(p->as<int>(), 1);
+            setParameter("vector", math::linear::Vector(vector));
         });
-        params.addParameter(param::factory::declareVector("vector", default_vector), vector_);
+        params.addParameter(param::factory::declareVector("vector", default_vector));
     }
 
     void process() override
     {
-        msg::publish(out_, std::make_shared<LinearVectorMessage>(vector_));
+        msg::publish(out_, std::make_shared<LinearVectorMessage>(readParameter<math::linear::Vector>("vector")));
     }
 
 private:
     Output* out_;
-
-    math::linear::Vector vector_;
 };
 
 }  // namespace csapex

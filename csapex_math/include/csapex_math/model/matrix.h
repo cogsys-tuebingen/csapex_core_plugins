@@ -1,7 +1,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-
 /// COMPONENT
 #include <csapex_math/csapex_math_export.h>
 #include <csapex_math/model/matrix.h>
@@ -22,13 +21,11 @@ class CSAPEX_MATH_EXPORT Matrix
 
 public:
     Matrix() = default;
-    Matrix(int rows, int cols, std::vector<double> value);
-    Matrix(int rows, int cols, std::initializer_list<double> value);
+    Matrix(const int rows, const int cols, std::vector<double> value);
+    Matrix(const int rows, const int cols, std::initializer_list<double> value);
 
-    double operator()(int row) const;
-    double& operator()(int row);
-    double operator[](int row) const;
-    double& operator[](int row);
+    double operator()(const int row, const int col) const;
+    double& operator()(const int row, const int col);
 
     bool isEqual(const Matrix& rhs) const;
 
@@ -46,12 +43,12 @@ public:
     int cols() const;
 
     std::size_t size() const;
-    void resize(std::size_t new_size, double value = 0.0);
+    void resize(int rows, int cols, double value = 0.0);
 
     const std::vector<double>& getDataRef() const;
     std::vector<double> getData() const;
 
-private:
+protected:
     int rows_;
     int cols_;
     std::vector<double> data_;

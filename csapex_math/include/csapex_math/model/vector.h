@@ -15,7 +15,7 @@ namespace math
 {
 namespace linear
 {
-class CSAPEX_MATH_EXPORT Vector
+class CSAPEX_MATH_EXPORT Vector : public Matrix
 {
     friend std::ostream& operator<<(std::ostream& stream, const Vector& v);
 
@@ -24,10 +24,10 @@ public:
     Vector(std::vector<double> value);
     Vector(std::initializer_list<double> value);
 
-    double operator()(int row) const;
-    double& operator()(int row);
-    double operator[](int row) const;
-    double& operator[](int row);
+    double operator()(const int row) const;
+    double& operator()(const int row);
+    double operator[](const int row) const;
+    double& operator[](const int row);
 
     bool isEqual(const Vector& rhs) const;
 
@@ -40,18 +40,6 @@ public:
     {
         return !(lhs.isEqual(rhs));
     }
-
-    int rows() const;
-    int cols() const;
-
-    std::size_t size() const;
-    void resize(std::size_t new_size, double value = 0.0);
-
-    const std::vector<double>& getDataRef() const;
-    std::vector<double> getData() const;
-
-private:
-    std::vector<double> data_;
 };
 
 }  // namespace linear
