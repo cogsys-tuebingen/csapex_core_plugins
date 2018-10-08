@@ -9,9 +9,6 @@
 <class type="csapex::ScaleCircleMessages" base_class_type="csapex::Node">
   <description>Scales entire CircleMessages</description>
 </class>
-<class type="csapex::Scale CircleMessages" base_class_type="csapex::Node">
-  <description>Scales entire CircleMessages</description>
-</class>
 <class type="csapex::RenderCircles" base_class_type="csapex::Node">
   <description>Renders CicleMessages</description>
 </class>
