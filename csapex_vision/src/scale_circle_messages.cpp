@@ -52,11 +52,12 @@ public:
             apex_assert(std::dynamic_pointer_cast<CircleMessage>(message->nestedType()));
             std::size_t n_circles = message->nestedValueCount();
             std::shared_ptr<std::vector<CircleMessage>> out(new std::vector<CircleMessage>);
+
             for (std::size_t i = 0; i < n_circles; ++i) {
                 CircleMessage::ConstPtr circle = std::dynamic_pointer_cast<CircleMessage const>(message->nestedValue(i));
                 CircleMessage tmp;
                 scale(*circle, tmp);
-                out->emplace_back(tmp);
+                out->push_back(tmp);
             }
             msg::publish<GenericVectorMessage, CircleMessage>(out_, out);
         }
@@ -69,7 +70,7 @@ public:
         out.center_x = scales_[0] * in.center_x;
         out.center_y = scales_[1] * in.center_y;
         out.radius = 0.5*(scales_[0] + scales_[1]) * in.radius;
-        out.id = in.radius;
+        out.id = in.id;
     }
 
 private:

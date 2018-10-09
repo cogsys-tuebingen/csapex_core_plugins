@@ -43,6 +43,9 @@ public:
                                            std::vector<int> c = p->as<std::vector<int>>();
                                            color_ = cv::Scalar(c[2], c[1], c[0]);
                                        });
+
+        params.addParameter(param::factory::declareBool("render_id",false),
+                            render_id_);
     }
 
     void process() override
@@ -77,6 +80,11 @@ public:
             color = cv::Scalar(b, g, r);
         }
         cv::circle(image->value, center, (int)c.radius, color, thickness_, 8, 0);
+        if(render_id_){
+            std::string text = std::to_string(c.id);
+            cv::putText(image->value, text, center, cv::FONT_HERSHEY_SIMPLEX, 1., color, 1, CV_AA);
+
+        }
     }
 
 private:
@@ -84,8 +92,7 @@ private:
     Input* in_img_;
     Output* out_;
     bool diff_colors_;
-    //    std::size_t width_;
-    //    std::size_t height_;
+    bool render_id_;
     int thickness_;
     std::size_t c_counter_;
     cv::Scalar color_;
