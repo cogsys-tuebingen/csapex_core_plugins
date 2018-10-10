@@ -11,6 +11,10 @@ struct Circle
 {
     Circle();
     Circle(double cx, double cy, double r);
+    inline const double& x() const {return center_x;}
+    inline const double& y() const{return center_y;}
+    inline double& x(){return center_x;}
+    inline double& y(){return center_y;}
     double center_x;
     double center_y;
     double radius;
