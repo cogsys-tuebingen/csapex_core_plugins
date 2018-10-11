@@ -65,24 +65,14 @@ public:
                 // Max= 0.5 + log(255) - alpha*log(b) - log(r) + alpha*log(r) = 0.5 +
                 // log(255)   (alpha,b,r = 0) Min= 0.5 + log(1) - alpha*log(b) - log(r) +
                 // alpha*log(r) = 0.5 - log(255) (alpha=1,b=255, r=0)
-                double min = 0.5 - std::log(255.0);
-                double max = 0.5 + std::log(255.0);
+//                double min = 0.5 - std::log(255.0);
+//                double max = 0.5 + std::log(255.0);
 
                 const cv::Vec3b* src = in->value.ptr<cv::Vec3b>();
                 float* dst = out->value.ptr<float>();
                 uchar* mask = out_mask->value.ptr<uchar>();
                 const std::size_t size = static_cast<std::size_t>(out->value.cols * out->value.rows);
 
-                auto get_thresholded = [&](int i) -> std::pair<double, double> {
-                    if (use_threshold) {
-                        if (dst[i] < threshold_min_max.first) {
-                            return std::make_pair(threshold_min_max.first, 2);
-                        } else if (dst[i] > threshold_min_max.second) {
-                            return std::make_pair(threshold_min_max.second, 3);
-                        }
-                    }
-                    return std::make_pair(dst[i], mask[i]);
-                };
 
                 for (std::size_t i = 0; i < size; ++i) {
                     const cv::Vec3b& p = src[i];
@@ -92,9 +82,19 @@ public:
                         continue;
                     }
                     dst[i] = (0.5 + std::log(c[1]) - alpha_ * std::log(c[0]) - (1.0 - alpha_) * std::log(c[2]));
-                    dst[i] = ((dst[i] - min) / (max - min));         // normalize 0-1
-                    std::tie(dst[i], mask[i]) = get_thresholded(i);  // threshold min/max
-                                                                     // vals
+                    dst[i] = ((dst[i] - newman_min) / (newman_max - newman_min));         // normalize 0-1
+
+                    //threshold min/max
+                    if (use_threshold) {
+                      if (dst[i] < threshold_min_max.first) {
+                        dst[i] = threshold_min_max.first;
+                        mask[i] = 2;
+                      } else if (dst[i] > threshold_min_max.second) {
+                        dst[i] = threshold_min_max.second;
+                        mask[i] = 3;
+                      }
+                    }
+
                     dst[i] = dst[i] * 255.0;                         // discretize 0-255
                 }
             } break;
@@ -153,19 +153,8 @@ public:
                 // psi_1*cos(theta)+psi_2*sin(theta)   max/min = +/-
                 // (log(255)*(1/2+1/sqrt(3))
 
-                double max = std::log(255.0) * (0.5 + (1.0 / std::sqrt(3)));
-                double min = -max;
-
-                auto get_thresholded = [&](int i) -> std::pair<double, double> {
-                    if (use_threshold) {
-                        if (dst[i] < threshold_min_max.first) {
-                            return std::make_pair(threshold_min_max.first, 2);
-                        } else if (dst[i] > threshold_min_max.second) {
-                            return std::make_pair(threshold_min_max.second, 3);
-                        }
-                    }
-                    return std::make_pair(dst[i], mask[i]);
-                };
+//                double max = std::log(255.0) * (0.5 + (1.0 / std::sqrt(3)));
+//                double min = -max;
 
                 for (std::size_t i = 0; i < size; ++i) {
                     const cv::Vec3b& p = src[i];
@@ -173,21 +162,31 @@ public:
                         mask[i] = 1;
                         //                    dst[i] = 128;
                         dst[i] = (p[2] > p[1] || p[2] > p[0]) ? 1 : 0;
+//                        dst[i] = 0;
                         continue;
                     }
 
                     cv::Vec3f c(p[0] / 255.0, p[1] / 255.0, p[2] / 255.0);
+//                    const double rho = std::pow((c[0] * c[1] * c[2]), 1.0 / 3);
+                    const double rho = LUT_rho_cbrt[p[0]][p[1]][p[2]];
 
-                    const double rho = std::pow((c[0] * c[1] * c[2]), 1.0 / 3);
                     c /= rho;
-                    c[0] = std::log(c[0]);
+                    c[0] = std::log(c[0]); //comment logs for optimization
                     c[1] = std::log(c[1]);
                     c[2] = std::log(c[2]);
                     const cv::Vec2f psi(c.ddot(v1), c.ddot(v2));
-                    dst[i] = ((psi[0] * ct + psi[1] * st) - min) / (max - min);  // normalize
+                    dst[i] = ((psi[0] * ct + psi[1] * st) - santos_min) / (santos_max - santos_min);  // normalize
 
-                    std::tie(dst[i], mask[i]) = get_thresholded(i);  // threshold min/max
-                                                                     // vals
+                    //threshold values
+                    if (use_threshold) {
+                      if (dst[i] < threshold_min_max.first) {
+                        dst[i] = threshold_min_max.first;
+                        mask[i] = 2;
+                      } else if (dst[i] > threshold_min_max.second) {
+                        dst[i] = threshold_min_max.second;
+                        mask[i] = 3;
+                      }
+                    }
 
                     dst[i] = dst[i] * 255.0;  // discretize 0-255
                 }
@@ -204,6 +203,22 @@ public:
         input_ = node_modifier.addInput<CvMatMessage>("original");
         output_ = node_modifier.addOutput<CvMatMessage>("adjusted");
         output_mask_ = node_modifier.addOutput<CvMatMessage>("label mask");
+
+        for (int i = 0; i < 255; i++) {
+          for (int j = 0; j < 255; j++) {
+            for (int k = 0; k < 255; k++) {
+              LUT_rho_cbrt[i][j][k] = std::pow((i/255.0 * j/255.0 * k/255.0), 1.0/3);
+            }
+          }
+        }
+        santos_max = std::log(255.0) * (0.5 + (1.0 / std::sqrt(3)));
+        santos_min = -santos_max;
+
+        newman_min = 0.5 - std::log(255.0);
+        newman_max = 0.5 + std::log(255.0);
+//        ct = std::cos(M_PI);
+//        st = std::sin(M_PI);
+
     }
 
     virtual void setupParameters(Parameterizable& parameters)
@@ -243,6 +258,13 @@ protected:
     double alpha_;
     int method_;
     bool recover_bgr_;
+    float LUT_rho_cbrt[256][256][256];
+    double santos_min;
+    double santos_max;
+    double newman_min;
+    double newman_max;
+//    double ct;
+//    double st;
 };
 }  // namespace csapex
 
