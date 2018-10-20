@@ -6,7 +6,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/utility/register_apex_plugin.h>
 
@@ -50,7 +50,7 @@ void ColorSegmentation::process()
     }
 
     {
-        INTERLUDE("update");
+        TRACE("update");
         update();
     }
 

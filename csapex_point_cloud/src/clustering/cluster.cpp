@@ -7,7 +7,7 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/view/utility/color.hpp>
@@ -282,7 +282,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     std::vector<DataType> offsite_storage;
     Storage storage;
     {
-        NAMED_INTERLUDE(fill_voxel_grid);
+        NAMED_TRACE(fill_voxel_grid);
 
         // create indexer and fill storage
         VoxelIndex indexer(voxel_size_[0], voxel_size_[1], voxel_size_[2]);
@@ -291,7 +291,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
     // pre-filter voxel based on point count (if enabled)
     if (voxel_validation_enabled_) {
-        NAMED_INTERLUDE(validate_voxels);
+        NAMED_TRACE(validate_voxels);
 
         storage.traverse([this](const VoxelIndex::Type&, DataType& data) {
             std::size_t min_count = static_cast<std::size_t>(voxel_validation_min_count_);
@@ -305,7 +305,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     }
 
     if (validate_normal_) {
-        NAMED_INTERLUDE(validate_normals);
+        NAMED_TRACE(validate_normals);
         NormalValidator<DataType> validator(validation_normal_, normal_angle_eps_, validation_normal_angle_eps_);
 
         storage.traverse([this, &validator](const VoxelIndex::Type&, DataType& data) {
@@ -326,7 +326,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     // define the cluster operation
     Clusterer cluster_op(storage, distribution_validator, color_validator, normal_validator);
     {
-        NAMED_INTERLUDE(cluster);
+        NAMED_TRACE(cluster);
 
         // run the clustering
         cis::operations::clustering::Clustering<Storage> clustering(storage);
@@ -334,14 +334,14 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
     }
 
     {
-        NAMED_INTERLUDE(extract_clusters);
+        NAMED_TRACE(extract_clusters);
 
         // extract point cloud indices for each cluster
         StorageOperation::extract(storage, cluster_op, *clusters_accepted_message_, *clusters_rejected_message_);
     }
 
     {
-        NAMED_INTERLUDE(count_filter);
+        NAMED_TRACE(count_filter);
         // filter clusters by size
         // we consider invalid sizes as "not-a-cluster" and not as
         // "rejected/invalid"
@@ -360,7 +360,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
 
     // if requested visualize clusters and voxels
     if (msg::isConnected(out_voxels_)) {
-        NAMED_INTERLUDE(voxel_cloud);
+        NAMED_TRACE(voxel_cloud);
 
         using VoxelCloud = pcl::PointCloud<pcl::PointXYZRGB>;
         auto voxel_cloud = boost::make_shared<VoxelCloud>();

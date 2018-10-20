@@ -5,7 +5,7 @@
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
@@ -50,7 +50,7 @@ void GrabCut::setup(NodeModifier& node_modifier)
 
 void GrabCut::process()
 {
-    INTERLUDE("process");
+    TRACE("process");
 
     CvMatMessage::ConstPtr img_msg = msg::getMessage<CvMatMessage>(in_);
     CvMatMessage::ConstPtr fg_msg = msg::getMessage<CvMatMessage>(in_fg_);
@@ -72,7 +72,7 @@ void GrabCut::process()
     cv::Mat mask(img.rows, img.cols, CV_8UC1, cv::Scalar::all(readParameter<int>("initial value")));
 
     {
-        INTERLUDE("create mask");
+        TRACE("create mask");
 
         unsigned char threshold = readParameter<int>("threshold");
         for (int i = 0; i < img.rows; ++i) {
@@ -111,7 +111,7 @@ void GrabCut::process()
     cv::Mat fg, bg;
 
     {
-        INTERLUDE("GrabCut");
+        TRACE("GrabCut");
         cv::grabCut(img, mask, roi, bg, fg, iter, mode);
     }
 

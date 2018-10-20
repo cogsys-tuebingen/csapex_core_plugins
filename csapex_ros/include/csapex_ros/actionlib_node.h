@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex/msg/io.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex_ros/ros_node.h>
 
 /// SYSTEM
@@ -51,7 +51,7 @@ class ActionlibNode : public ActionlibNodeBase
 protected:
     virtual void abortAction() override
     {
-        INTERLUDE("abort");
+        TRACE("abort");
 
         if (active_client_) {
             active_client_->cancelAllGoals();
@@ -67,7 +67,7 @@ protected:
 
     virtual void detachAction() override
     {
-        INTERLUDE("detach");
+        TRACE("detach");
 
         if (active_client_) {
             active_client_->stopTrackingGoal();
@@ -84,7 +84,7 @@ protected:
 
     virtual void resultCallback(const actionlib::SimpleClientGoalState& state, const ResultConstPtr& result)
     {
-        INTERLUDE("result callback");
+        TRACE("result callback");
 
         if (!result) {
             aerr << "Received an empty result message. Did the action server crash?" << std::endl;
@@ -122,7 +122,7 @@ protected:
 
     void sendGoal(const Goal& goal)
     {
-        INTERLUDE("send goal");
+        TRACE("send goal");
         startTimer();
         active_client_->sendGoal(goal, boost::bind(&ActionlibNode<ActionSpec>::resultCallback, this, _1, _2), boost::bind(&ActionlibNode<ActionSpec>::activeCallback, this),
                                  boost::bind(&ActionlibNode<ActionSpec>::feedbackCallback, this, _1));
@@ -130,7 +130,7 @@ protected:
 
     void sendGoalAndWait(const Goal& goal, ros::Duration execution_timeout = ros::Duration(0, 0), ros::Duration preempt_timeout = ros::Duration(0, 0))
     {
-        INTERLUDE("send goal & wait");
+        TRACE("send goal & wait");
         active_client_->sendGoalAndWait(goal, execution_timeout, preempt_timeout);
         //        active_client_.reset();
     }

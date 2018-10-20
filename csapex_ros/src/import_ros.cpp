@@ -14,7 +14,7 @@
 #include <csapex/msg/message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/set_parameter.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/utility/stream_interceptor.h>
@@ -193,7 +193,7 @@ bool ImportRos::canProcess() const
 void ImportRos::processROS()
 {
     std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
-    INTERLUDE("process");
+    TRACE("process");
 
     // first check if connected -> if not connected, we only use tick
     if (!msg::isConnected(input_time_)) {
@@ -307,7 +307,7 @@ void ImportRos::processNotSource()
 
 void ImportRos::processSource()
 {
-    INTERLUDE("tick");
+    TRACE("tick");
 
     if (current_topic_.name.empty()) {
         update();
@@ -340,14 +340,14 @@ void ImportRos::publishLatestMessage()
 
     mode_ = readParameter<int>("import_mode");
 
-    INTERLUDE("publish");
+    TRACE("publish");
 
     if (!ROSHandler::instance().isConnected()) {
         return;
     }
 
     if (msgs_.empty()) {
-        INTERLUDE("wait for message");
+        TRACE("wait for message");
         ros::WallRate r(10);
         while (msgs_.empty() && running_) {
             lock.unlock();

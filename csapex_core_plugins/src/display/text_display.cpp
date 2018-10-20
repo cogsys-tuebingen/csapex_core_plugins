@@ -8,7 +8,7 @@
 #include <csapex/model/token.h>
 #include <csapex/msg/any_message.h>
 #include <csapex/msg/io.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/serialization/io/std_io.h>
 #include <csapex/serialization/message_serializer.h>
@@ -43,13 +43,13 @@ void TextDisplay::display(TokenDataConstPtr msg)
 {
     YAML::Node node;
     {
-        INTERLUDE("serialize");
+        TRACE("serialize");
         node = MessageSerializer::serializeYamlMessage(*msg);
     }
 
     std::stringstream ss;
     {
-        INTERLUDE("convert");
+        TRACE("convert");
         convert(ss, node, "");
     }
 

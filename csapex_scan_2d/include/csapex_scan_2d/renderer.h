@@ -3,7 +3,7 @@
 
 /// PROJECT
 #include <csapex/model/parameterizable.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/profiling/timable.h>
 #include <csapex/profiling/timer.h>
 #include <csapex/view/utility/color.hpp>
@@ -39,13 +39,13 @@ public:
         double angle = readParameter<double>("rotation");
 
         if (readParameter<bool>("drawRays")) {
-            INTERLUDE("draw rays");
+            TRACE("draw rays");
             const std::vector<int>& color = readParameter<std::vector<int>>("color/ray");
             cv::Scalar rayColor(color[2], color[1], color[0]);
             drawRays(scan, output, origin, rayColor, angle, scale, radius);
         }
         if (readParameter<bool>("drawHits")) {
-            INTERLUDE("draw hits");
+            TRACE("draw hits");
             const std::vector<int>& color = readParameter<std::vector<int>>("color/hit");
             const std::vector<int>& marked = readParameter<std::vector<int>>("color/marked");
             cv::Scalar hitColor(color[2], color[1], color[0]);

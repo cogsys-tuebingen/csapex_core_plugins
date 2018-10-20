@@ -5,7 +5,7 @@
 #include <csapex/msg/generic_vector_message.hpp>
 #include <csapex/msg/io.h>
 #include <csapex/param/parameter_factory.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex/view/utility/color.hpp>

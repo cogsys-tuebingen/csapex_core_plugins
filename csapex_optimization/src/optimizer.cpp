@@ -12,7 +12,7 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
 #include <csapex/param/trigger_parameter.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/utility/register_apex_plugin.h>
 
 using namespace csapex;
@@ -131,7 +131,7 @@ void Optimizer::start()
 
 void Optimizer::stop()
 {
-    INTERLUDE("stop");
+    TRACE("stop");
     stop_->trigger();
 
     connection_types::GenericValueMessage<double>::Ptr msg = std::make_shared<connection_types::GenericValueMessage<double>>();
@@ -157,7 +157,7 @@ void Optimizer::doStop()
 
 void Optimizer::finish()
 {
-    INTERLUDE("finish");
+    TRACE("finish");
     if (validation_running_) {
         validation_running_ = false;
         return;
@@ -174,7 +174,7 @@ void Optimizer::finish()
     }
 
     if (best_fitness_ > fitness_) {
-        INTERLUDE("update fitness");
+        TRACE("update fitness");
         ainfo << "got better fitness: " << fitness_ << ", best was " << best_fitness_ << std::endl;
         best_fitness_ = fitness_;
 
@@ -184,9 +184,9 @@ void Optimizer::finish()
         }
     }
 
-    INTERLUDE("generate and trigger");
+    TRACE("generate and trigger");
     if (generateNextParameterSet()) {
-        INTERLUDE("trigger");
+        TRACE("trigger");
         msg::trigger(trigger_start_evaluation_);
         can_send_next_parameters_ = true;
         yield();

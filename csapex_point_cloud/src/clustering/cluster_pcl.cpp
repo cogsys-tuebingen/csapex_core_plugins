@@ -8,7 +8,7 @@
 #define BOOST_SIGNALS_NO_DEPRECATION_WARNING
 #include <csapex/model/node_modifier.h>
 #include <csapex/msg/generic_value_message.hpp>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_math/param/factory.h>
@@ -142,7 +142,7 @@ std::shared_ptr<std::vector<pcl::PointIndices>> ClusterPointCloudPCL::pclEuclide
 
     std::shared_ptr<std::vector<pcl::PointIndices>> cluster_indices(new std::vector<pcl::PointIndices>);
     {
-        INTERLUDE("clustering");
+        TRACE("clustering");
         typename pcl::EuclideanClusterExtraction<PointT> ec;
         ec.setClusterTolerance(cluster_tolerance_);  // 2cm
 
@@ -174,7 +174,7 @@ std::shared_ptr<std::vector<pcl::PointIndices>> ClusterPointCloudPCL::pclPolar(t
     tree->setInputCloud(cloud, indices);
     std::shared_ptr<std::vector<pcl::PointIndices>> cluster_indices(new std::vector<pcl::PointIndices>);
     {
-        INTERLUDE("clustering");
+        TRACE("clustering");
         PolarClustering<PointT> ec;
         ec.setClusterTolerance(cluster_tolerance_);
         ec.setOpeningAngle(polar_opening_angle_);

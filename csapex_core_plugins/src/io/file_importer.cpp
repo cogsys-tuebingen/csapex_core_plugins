@@ -12,7 +12,7 @@
 #include <csapex/msg/message.h>
 #include <csapex/param/parameter_factory.h>
 #include <csapex/param/range_parameter.h>
-#include <csapex/profiling/interlude.hpp>
+#include <csapex/profiling/trace.hpp>
 #include <csapex/profiling/timer.h>
 #include <csapex/signal/event.h>
 #include <csapex/signal/slot.h>
@@ -263,7 +263,7 @@ void FileImporter::sendToken()
     provider_->prepareNext();
 
     for (std::size_t slot = 0, total = provider_->slotCount(); slot < total; ++slot) {
-        INTERLUDE_STREAM("slot " << slot);
+        TRACE_STREAM("slot " << slot);
 
         Output* output = outputs_.at(slot);
 
@@ -375,7 +375,7 @@ void FileImporter::doImportDir(const QString& dir_string)
 
 bool FileImporter::createMessageProvider(const QString& file_path)
 {
-    INTERLUDE("doImport");
+    TRACE("doImport");
     if (file_path.isEmpty()) {
         node_modifier_->setWarning("no file selected");
         return false;
@@ -417,7 +417,7 @@ bool FileImporter::createMessageProvider(const QString& file_path)
             provider_->slot_count_changed.disconnectAll();
 
         } else {
-            INTERLUDE("createMessageProvider");
+            TRACE("createMessageProvider");
             provider_ = MessageProviderManager::createMessageProvider(path.toStdString());
             if (cache_enabled_) {
                 cache_[path_str] = provider_;
@@ -431,7 +431,7 @@ bool FileImporter::createMessageProvider(const QString& file_path)
         }
 
         {
-            INTERLUDE("load");
+            TRACE("load");
             provider_->load(path.toStdString());
         }
 
@@ -601,7 +601,7 @@ void FileImporter::createProviderForNextFile()
     if (!isPlaying() && !latch && !index_changed) {
         return;
     }
-    INTERLUDE("directory");
+    TRACE("directory");
 
     int files = dir_files_.size();
 
