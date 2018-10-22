@@ -117,7 +117,7 @@ public:
 
                 for (std::size_t i = 0; i < size; ++i) {
                     const cv::Vec3b& p = src[i];
-                    if (p[0] == 0 && p[1] == 0 && p[2] == 0) {
+                    if (p[0] == 0 || p[1] == 0 || p[2] == 0) {
                         mask[i] = 0;
                         dst[i] = 0;
                         continue;
@@ -125,8 +125,12 @@ public:
                     cv::Vec3f c(p[0] / 255.0, p[1] / 255.0, p[2] / 255.0);
                     const double rho = std::sqrt(c.ddot(c));
                     c /= rho;
+                    c[0] = std::log(c[0]); //comment logs for optimization
+                    c[1] = std::log(c[1]);
+                    c[2] = std::log(c[2]);
+
                     const cv::Vec2f psi(c.ddot(v1), c.ddot(v2));
-                    dst[i] = (psi[0] * ct + psi[1] * st) / max;
+                    dst[i] = (psi[0] * ct + psi[1] * st);
                 }
 
                 /// sqrt2(1) <=> sqrt2(1/255.)
