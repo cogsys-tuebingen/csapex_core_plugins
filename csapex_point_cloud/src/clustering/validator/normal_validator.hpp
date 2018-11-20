@@ -13,7 +13,7 @@ namespace csapex
 namespace clustering
 {
 template <typename Data>
-struct NormalValidatorImpl
+struct EIGEN_ALIGN16 NormalValidatorImpl
 {
 public:
     NormalValidatorImpl(const Eigen::Vector3d& normal_final, const double normal_angle_eps, const double normal_final_angle_eps)

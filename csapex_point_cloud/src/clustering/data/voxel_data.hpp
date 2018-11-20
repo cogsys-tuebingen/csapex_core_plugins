@@ -31,7 +31,7 @@ enum class VoxelState
  * - void merge(const Feature&); for voxel merge
  */
 template <typename... Features>
-struct VoxelData
+struct EIGEN_ALIGN16 VoxelData
 {
     using FeatureList = std::tuple<Features...>;
 

@@ -11,7 +11,7 @@ ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
 #set(ROS_BUILD_TYPE RelWithDebInfo)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-add_definitions("-O3")
+#add_definitions("-O3")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -34,8 +34,6 @@ set(CMAKE_AUTOMOC ON)
 find_package(PCL REQUIRED COMPONENTS common filters segmentation io)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
-
 
 catkin_package(
   INCLUDE_DIRS include ${PCL_INCLUDE_DIRS}

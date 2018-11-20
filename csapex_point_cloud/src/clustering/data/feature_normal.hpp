@@ -7,7 +7,7 @@ namespace csapex
 {
 namespace clustering
 {
-struct NormalFeature
+struct EIGEN_ALIGN16 NormalFeature
 {
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     mutable Eigen::Vector3d normal = { 0.0, 0.0, 0.0 };

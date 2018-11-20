@@ -11,7 +11,7 @@ namespace csapex
 {
 namespace clustering
 {
-class ClusterPointCloud : public csapex::Node
+class EIGEN_ALIGN16 ClusterPointCloud : public csapex::Node
 {
 public:
     enum class BackendType

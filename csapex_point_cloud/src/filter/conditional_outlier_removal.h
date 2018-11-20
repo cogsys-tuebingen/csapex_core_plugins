@@ -7,7 +7,7 @@
 
 namespace csapex
 {
-class ConditionalOutlierRemoval : public Node
+class EIGEN_ALIGN16 ConditionalOutlierRemoval : public Node
 {
 public:
     ConditionalOutlierRemoval();

@@ -12,7 +12,7 @@ namespace csapex
 namespace math
 {
 template <std::size_t Dim>
-class Mean
+class EIGEN_ALIGN16 Mean
 {
 public:
     typedef std::shared_ptr<Mean<Dim>> Ptr;

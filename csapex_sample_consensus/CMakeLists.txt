@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(PCL REQUIRED COMPONENTS common filters segmentation io)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
+#add_definitions(${PCL_DEFINITIONS})
 
 catkin_package(
     INCLUDE_DIRS include

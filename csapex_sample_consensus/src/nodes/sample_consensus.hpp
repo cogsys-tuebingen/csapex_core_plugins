@@ -31,7 +31,7 @@ namespace csapex
 {
 using namespace connection_types;
 
-class SampleConsensus : public csapex::Node
+class EIGEN_ALIGN16 SampleConsensus : public csapex::Node
 {
 public:
     SampleConsensus() = default;

@@ -42,10 +42,10 @@ void TimePlotAdapter::display()
 
     plot_widget_->detachItems();
 
-    std::vector<QwtPlotCurve*> curve(n->getVDataCountNumCurves()) /*= new
-                                                                     QwtPlotCurve[n->getVDataCountNumCurves()];*/
-        ;
-    for (std::size_t i = 0; i < n->getVDataCountNumCurves(); ++i) {
+    std::size_t n_curves = n->getVDataCountNumCurves();
+    std::vector<QwtPlotCurve*> curve;
+    curve.resize(n_curves);
+    for (std::size_t i = 0; i < n_curves; ++i) {
         curve[i] = new QwtPlotCurve;
         curve[i]->setBaseline(0.0);
         curve[i]->setPen(n->getLineColor(i), n->getLineWidth());

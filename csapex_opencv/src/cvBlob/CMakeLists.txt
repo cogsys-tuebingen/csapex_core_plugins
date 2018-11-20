@@ -33,7 +33,7 @@ set(cvBlob_CVBLOB cvblob.cpp
 
 set_source_files_properties(${cvBlob_SRC}
                             PROPERTIES
-                            COMPILE_FLAGS "-O3"
+                            COMPILE_FLAGS "-O2"
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)

@@ -14,7 +14,7 @@ namespace csapex
 namespace math
 {
 template <std::size_t Dim, bool limit_covariance = false>
-class Distribution
+class EIGEN_ALIGN16 Distribution
 {
 public:
     typedef std::shared_ptr<Distribution<Dim, limit_covariance>> Ptr;
