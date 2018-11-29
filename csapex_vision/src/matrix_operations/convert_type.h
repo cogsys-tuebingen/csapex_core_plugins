@@ -21,8 +21,10 @@ private:
 
     void update();
 
-    int mode_;
-    bool normalize_;
+    int    mode_;
+    bool   normalize_;
+    double alpha_;
+    double beta_;
 };
 }  // namespace csapex
 #endif  // TYPE_CONVERTER_H

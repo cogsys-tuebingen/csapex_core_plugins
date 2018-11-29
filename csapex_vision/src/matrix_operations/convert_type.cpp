@@ -42,37 +42,37 @@ void ConvertType::process()
         case CV_8U:
             if (normalize_)
                 normalize<unsigned char>(out->value);
-            in->value.convertTo(out->value, CV_8UC(in->value.channels()));
+            in->value.convertTo(out->value, CV_8UC(in->value.channels()), alpha_, beta_);
             break;
         case CV_8S:
             if (normalize_)
                 normalize<signed char>(out->value);
-            in->value.convertTo(out->value, CV_8SC(in->value.channels()));
+            in->value.convertTo(out->value, CV_8SC(in->value.channels()), alpha_, beta_);
             break;
         case CV_16U:
             if (normalize_)
                 normalize<unsigned short int>(out->value);
-            in->value.convertTo(out->value, CV_16UC(in->value.channels()));
+            in->value.convertTo(out->value, CV_16UC(in->value.channels()), alpha_, beta_);
             break;
         case CV_16S:
             if (normalize_)
                 normalize<signed short int>(out->value);
-            in->value.convertTo(out->value, CV_16SC(in->value.channels()));
+            in->value.convertTo(out->value, CV_16SC(in->value.channels()), alpha_, beta_);
             break;
         case CV_32S:
             if (normalize_)
                 normalize<signed int>(out->value);
-            in->value.convertTo(out->value, CV_32SC(in->value.channels()));
+            in->value.convertTo(out->value, CV_32SC(in->value.channels()), alpha_, beta_);
             break;
         case CV_32F:
             if (normalize_)
                 normalize<float>(out->value);
-            in->value.convertTo(out->value, CV_32FC(in->value.channels()));
+            in->value.convertTo(out->value, CV_32FC(in->value.channels()), alpha_, beta_);
             break;
         case CV_64F:
             if (normalize_)
                 normalize<double>(out->value);
-            in->value.convertTo(out->value, CV_64FC(in->value.channels()));
+            in->value.convertTo(out->value, CV_64FC(in->value.channels()), alpha_, beta_);
             break;
         default:
             throw std::runtime_error("Unknown conversion goal type!");
@@ -97,6 +97,11 @@ void ConvertType::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::factory::declareParameterSet("convert to", types, CV_8U), std::bind(&ConvertType::update, this));
 
     parameters.addParameter(csapex::param::factory::declareBool("normalize", false), std::bind(&ConvertType::update, this));
+
+    parameters.addParameter(csapex::param::factory::declareRange("alpha", 0.0, 255.0, 1.0, 0.01),
+                            alpha_);
+    parameters.addParameter(csapex::param::factory::declareRange("beta", 0.0, 255.0, 0.0, 0.01),
+                            beta_);
 }
 
 void ConvertType::update()
