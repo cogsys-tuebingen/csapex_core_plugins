@@ -84,12 +84,15 @@ void FileImporter::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(param::factory::declareBool("directory/latch", false), cond_dir);
     parameters.addConditionalParameter(param::factory::declareBool("directory/quit on end", false), cond_dir, quit_on_end_);
 
-    parameters.addParameter(param::factory::declareBool("cache", 0), [this](param::Parameter* p) {
-        cache_enabled_ = p->as<bool>();
-        if (!cache_enabled_) {
-            cache_.clear();
-        }
-    });
+    parameters.addConditionalParameter(param::factory::declareBool("cache",
+                                                                   param::ParameterDescription("If enabled, re-use old message providers on loops."),
+                                                                   false),
+                                       cond_dir, [this](param::Parameter* p) {
+                                       cache_enabled_ = p->as<bool>();
+                                           if (!cache_enabled_) {
+                                               cache_.clear();
+                                           }
+                                       });
 
     parameters.addHiddenParameter(param::factory::declareValue("output_count", 0), [this](param::Parameter* p) { createDummyOutputs(*node_modifier_); });
 
