@@ -21,7 +21,7 @@ namespace csapex
 class CSAPEX_EXPORT_PLUGIN BagWriter : public Node, public VariadicInputs, public VariadicSlots
 {
 public:
-    BagWriter() : is_open_(false)
+    BagWriter() : is_open_(false), compress_(false)
     {
     }
 
@@ -57,6 +57,16 @@ public:
         parameters.addParameter(param::factory::declareTrigger("reset"), [this](param::Parameter* p) { start(); });
 
         parameters.addParameter(param::factory::declareTrigger("save and close"), [this](param::Parameter* p) { stop(); });
+
+        parameters.addParameter(param::factory::declareBool("use_lz4_compression", false),
+                                [this](param::Parameter* p) {
+            bool compress = p->as<bool>();
+            if( compress == compress_){
+                return;
+            }
+            compress_ = compress;
+            start();
+        });
     }
 
     bool canProcess() const override
@@ -149,6 +159,11 @@ public:
                 stop();
             }
             bag.open(file_name_, rosbag::bagmode::Write);
+            if(compress_){
+                bag.setCompression(rosbag::CompressionType::LZ4);
+            } else {
+                bag.setCompression(rosbag::CompressionType::Uncompressed);
+            }
             is_open_ = true;
         } catch (const rosbag::BagException& e) {
             is_open_ = false;
@@ -208,6 +223,7 @@ private:
 
     rosbag::Bag bag;
     bool is_open_;
+    bool compress_;
     std::string file_name_;
 
     std::map<std::string, int> topic_to_type_;
