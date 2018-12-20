@@ -377,7 +377,9 @@ void APEXRosInterface::clock(const rosgraph_msgs::ClockConstPtr& clock)
 
 void APEXRosInterface::shutdown()
 {
-    ROSHandler::instance().stop();
+    if(ROSHandler::hasInstance()) {
+        ROSHandler::instance().stop();
+    }
 
     RosMessageConversion::instance().shutdown();
 }

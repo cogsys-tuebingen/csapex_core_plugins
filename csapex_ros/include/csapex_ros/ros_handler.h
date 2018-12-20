@@ -19,9 +19,13 @@ namespace csapex
 class ROSHandler : public boost::noncopyable
 {
 public:
+    static bool hasInstance()
+    {
+        return g_instance_ != nullptr;
+    }
     static ROSHandler& instance()
     {
-        assert(g_instance_);
+        assert(hasInstance());
         return *g_instance_;
     }
     static void createInstance(Settings& settings)
