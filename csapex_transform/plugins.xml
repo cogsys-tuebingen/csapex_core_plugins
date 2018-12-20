@@ -5,6 +5,9 @@
 </library>
 
 <library path="libcsapex_transform_plugin_node">
+<class type="csapex::DHTransform" base_class_type="csapex::Node">
+  <description>Creates a transformation using DH convention</description>
+</class>
 <class type="csapex::TransformAddNoise" base_class_type="csapex::Node">
   <description>Adds white noise to transform message</description>
 </class>
