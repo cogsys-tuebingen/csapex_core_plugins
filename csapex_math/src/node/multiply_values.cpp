@@ -37,16 +37,21 @@ public:
         double res = 1.0;
         for (std::size_t i_inputs = 0; i_inputs < num_inputs; ++i_inputs) {
             InputPtr in = VariadicInputs::getVariadicInput(i_inputs);
-            if (msg::isValue<int>(in.get())) {
+            if (msg::isExactValue<int>(in.get())) {
                 res *= msg::getValue<int>(in.get());
 
             } else if (msg::isValue<double>(in.get())) {
+                if(msg::isExactMessage<double>(in.get())){
+                    node_modifier_->setWarning("Multiplation for the inserted type is not implented. Value is casted to double!");
+                } else{
+                    node_modifier_->setNoError();
+                }
                 res *= msg::getValue<double>(in.get());
             }
         }
 
         InputPtr in = VariadicInputs::getVariadicInput(0);
-        if (msg::isValue<int>(in.get())) {
+        if (msg::isExactValue<int>(in.get())) {
             int out = (int)res;
             msg::publish(out_, out);
         } else if (msg::isValue<double>(in.get())) {
