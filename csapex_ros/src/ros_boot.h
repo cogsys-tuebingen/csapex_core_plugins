@@ -11,7 +11,7 @@
 /// SYSTEM
 // clang-format off
 #include <csapex/utility/suppress_warnings_start.h>
-#include <pluginlib/class_loader.h>
+#include <pluginlib/class_loader.hpp>
 #include <csapex/utility/suppress_warnings_end.h>
 // clang-format on
 
