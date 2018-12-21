@@ -68,8 +68,9 @@ double AngleParameter::max() const
 bool AngleParameter::cloneDataFrom(const Clonable& other)
 {
     if (const AngleParameter* angle = dynamic_cast<const AngleParameter*>(&other)) {
-        if (angle_ != angle->angle_) {
-            *this = *angle;
+        bool value_changed = angle_ != angle->angle_;
+        *this = *angle;
+        if (value_changed) {
             triggerChange();
         }
         return true;
