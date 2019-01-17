@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <topic_tools/shape_shifter.h>
+#include <ros/xmlrpc_manager.h>
 
 using namespace csapex;
 
@@ -118,7 +119,8 @@ void ROSHandler::checkMasterConnection()
     check_is_running = true;
 
     while (check_is_running) {
-        bool c = ros::master::check();
+        auto manager = ros::XMLRPCManager::instance();
+        bool c = manager != nullptr && ros::master::check();
         {
             std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
             if (has_connection != c) {
