@@ -24,7 +24,7 @@ add_library(${PROJECT_NAME}_plugin_node SHARED
     src/boolean_trigger.cpp
     src/binary_boolean.cpp
     src/threshold.cpp
-
+    src/and.cpp
     src/nand.cpp
     src/toggle.cpp
     src/indicator.cpp

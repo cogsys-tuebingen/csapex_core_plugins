@@ -21,6 +21,10 @@
   <description>Computes a logical not and of its two inputs</description>
   <tags>Boolean</tags>
 </class>
+<class type="csapex::boolean::AND" base_class_type="csapex::Node">
+  <description>Computes a logical and of its two inputs</description>
+  <tags>Boolean</tags>
+</class>
 <class type="csapex::boolean::Toggle" base_class_type="csapex::Node">
   <description>Generates a boolean signal, <i>true</i> or <i>false</i></description>
   <tags>Boolean</tags>
