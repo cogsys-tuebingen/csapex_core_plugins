@@ -256,6 +256,9 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
 
     cv::Mat var_type;
     var_type = cv::Mat(train_data.cols + var_type_size, 1, CV_8U, cv::ml::VAR_NUMERICAL);
+    if(is_classification_){
+        var_type.at<uint8_t>(0,var_type.cols) = cv::ml::VAR_CATEGORICAL;
+    }
 
     cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(train_data, tflag, responses, cv::noArray(), cv::noArray(), cv::noArray(), var_type);
 

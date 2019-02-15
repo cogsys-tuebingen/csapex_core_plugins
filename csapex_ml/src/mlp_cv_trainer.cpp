@@ -123,6 +123,7 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage>& collection)
     cv::Mat trainig_data(collection.size(), feature_length, CV_32FC1);
 
     std::size_t responses_cols = 0;
+    bool is_classification = first_feature.type ==FeaturesMessage::Type::CLASSIFICATION;
     if (first_feature.type == FeaturesMessage::Type::CLASSIFICATION) {
         responses_cols = classes;
     } else if (first_feature.type == FeaturesMessage::Type::REGRESSION) {
@@ -197,7 +198,12 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage>& collection)
 
     std::cout << "[ANN]: Started training with " << trainig_data.rows << " samples!" << std::endl;
 
-    cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(trainig_data, cv::ml::ROW_SAMPLE, responses, cv::noArray(), cv::noArray(), cv::noArray(), cv::noArray());
+    cv::Mat var_type;
+    var_type = cv::Mat(trainig_data.cols + responses_cols, 1, CV_8U, cv::ml::VAR_NUMERICAL);
+    if(is_classification){
+        var_type.at<uint8_t>(0,var_type.cols) = cv::ml::VAR_CATEGORICAL;
+    }
+    cv::Ptr<cv::ml::TrainData> train_data_struct = cv::ml::TrainData::create(trainig_data, cv::ml::ROW_SAMPLE, responses, cv::noArray(), cv::noArray(), cv::noArray(), var_type);
 
     if (mlp->train(train_data_struct)) {
         mlp->save(readParameter<std::string>("file"));

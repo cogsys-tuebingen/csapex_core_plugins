@@ -5,6 +5,9 @@
 </library>
 
 <library path="libcsapex_point_cloud_plugin_node">
+<class type="csapex::CloudMahalanobisDistance" base_class_type="csapex::Node">
+  <description>Calculates the Mahalanobis distance between two point clouds</description>
+</class>
 <class type="csapex::VectorOfIndiciesToIndices" base_class_type="csapex::Node">
   <description>Converts vector of PointIndicesMessage</description>
 </class>

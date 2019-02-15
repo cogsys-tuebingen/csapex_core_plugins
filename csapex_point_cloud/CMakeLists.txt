@@ -81,6 +81,7 @@ target_link_libraries(${PROJECT_NAME}_plugin_core
 )
 
 add_library(${PROJECT_NAME}_plugin_node
+    src/operations/cloud_mahalanobis_distance.cpp
     src/conversion/vector_of_indicies_to_indices.cpp
     src/operations/merge_clouds.cpp
     src/operations/transform_cloud.cpp
