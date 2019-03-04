@@ -1,3 +1,10 @@
+<library path="libcsapex_ml_core">
+<class type="csapex::RegisterMlPlugins" base_class_type="csapex::CorePlugin">
+  <description></description>
+</class>
+</library>
+
+
 <library path="libcsapex_ml_plugin">
 <class type="csapex::RegressionTrees" base_class_type="csapex::Node">
   <description>Evaluate multi dimensional regression problem with random forests</description>

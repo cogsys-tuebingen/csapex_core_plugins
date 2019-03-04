@@ -25,6 +25,7 @@ include_directories(
     ${csapex_opencv_INCLUDE_DIRS}
     ${catkin_INCLUDE_DIRS}
     )
+
 add_library(${PROJECT_NAME} SHARED
     src/feature/features_message.cpp
     )
@@ -47,6 +48,16 @@ set(${PROJECT_NAME}_additional_libs "")
 #        src/feature/features_message_to_labelled_pointcloud.cpp
 #        )
 #endif()
+
+
+add_library(${PROJECT_NAME}_core SHARED
+    src/register_ml_plugins.cpp
+)
+target_link_libraries(${PROJECT_NAME}_core ${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+    ${csapex_LIBRARIES}
+)
+
 
 add_library(${PROJECT_NAME}_plugin SHARED
     src/regression_trees.cpp
