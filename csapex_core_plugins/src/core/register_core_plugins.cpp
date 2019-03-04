@@ -47,6 +47,7 @@ void RegisterCorePlugins::prepare(Settings&)
     registerMessage<int>();
     registerMessage<double>();
     registerMessage<std::string>();
+    registerMessage<std::pair<int, int>>();
 
     // registerMessage<bool>();
     MessageFactory::registerMessage<connection_types::GenericValueMessage<bool>>();
