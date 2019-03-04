@@ -1,5 +1,5 @@
 /// HEADER
-#include <csapex_ros/ros_handler.h>
+#include "csapex_ros/ros_handler.h"
 
 /// SYSTEM
 #include <chrono>
@@ -119,17 +119,27 @@ void ROSHandler::checkMasterConnection()
     check_is_running = true;
 
     while (check_is_running) {
-        auto manager = ros::XMLRPCManager::instance();
-        bool c = manager != nullptr && ros::master::check();
-        {
-            std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
-            if (has_connection != c) {
-                has_connection = c;
-                if (has_connection) {
-                    connectionEstablished();
-                } else {
-                    connectionLost();
+        try {
+            auto manager = ros::XMLRPCManager::instance();
+            bool c = manager != nullptr && ros::master::check();
+            {
+                std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
+                if (has_connection != c) {
+                    has_connection = c;
+                    if (has_connection) {
+                        connectionEstablished();
+                    } else {
+                        connectionLost();
+                    }
                 }
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Checking connection to master failed: " << e.what() << std::endl;
+
+            std::unique_lock<std::recursive_mutex> lock(has_connection_mutex);
+            if (has_connection) {
+                has_connection = false;
+                connectionLost();
             }
         }
 
