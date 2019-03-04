@@ -113,7 +113,7 @@ public:
                                           -2.0 / std::sqrt(6.0));  //// Entropy Minimization for Shadow Removal
 
                 // double min = 0.0;
-                double max = std::log(1.0 / std::sqrt(1.0 / 255.0)) / std::sqrt(2.0);
+                // double max = std::log(1.0 / std::sqrt(1.0 / 255.0)) / std::sqrt(2.0);
 
                 for (std::size_t i = 0; i < size; ++i) {
                     const cv::Vec3b& p = src[i];
