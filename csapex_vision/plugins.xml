@@ -6,6 +6,9 @@
 
 
 <library path="libcsapex_vision_plugin_node">
+<class type="csapex::Scale16BitTo8Bit" base_class_type="csapex::Node">
+  <description>Scales a 16 bit image to 8 bits</description>
+</class>
 <class type="csapex::ScaleCircleMessages" base_class_type="csapex::Node">
   <description>Scales entire CircleMessages</description>
 </class>

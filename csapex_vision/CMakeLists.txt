@@ -122,6 +122,7 @@ add_library(${PROJECT_NAME}_plugin_node
     src/filter/filter_perspective.cpp
     src/filter/filter_debayer.cpp
     src/filter/morphological.cpp
+    src/filter/scale16_bit_to8_bit.cpp
 #    src/vj_detector.cpp
 
     src/filter/filter_apply_mask.cpp
