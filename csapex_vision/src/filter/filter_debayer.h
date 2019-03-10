@@ -18,15 +18,15 @@ class Debayer : public csapex::Node
 public:
     Debayer();
 
-    void setup(csapex::NodeModifier& node_modifier);
+    void setup(csapex::NodeModifier& node_modifier) override;
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
 
     /**
      * @brief See base class definition.
      */
 
-    virtual void process(csapex::Parameterizable& parameters);
+    void process() override;
 
 private:
     virtual bool usesMask();

@@ -34,7 +34,7 @@ void Debayer::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::factory::declareParameterSet("method", methods, (int)CV_BayerBG2RGB));
 }
 
-void Debayer::process(csapex::Parameterizable& parameters)
+void Debayer::process()
 {
     CvMatMessage::ConstPtr img_msg = msg::getMessage<CvMatMessage>(input_img_);
     const cv::Mat& img = img_msg->value;
@@ -46,16 +46,21 @@ void Debayer::process(csapex::Parameterizable& parameters)
     if (img.channels() == 1) {
         raw = img;
     } else {
+        ainfo << "first converting to gray image" << std::endl;
         cv::cvtColor(img, raw, CV_RGB2GRAY);
     }
 
+    cv::Mat intermediate(raw.cols, raw.rows, CV_MAKE_TYPE(raw.depth(), 3));
+
     CvMatMessage::Ptr img_out(new CvMatMessage(enc::bgr, img_msg->frame_id, img_msg->stamp_micro_seconds));
     if (mode == 667) {
-        debayerAndResize(raw, img_out->value);
-        cv::cvtColor(img_out->value, img_out->value, CV_BGR2RGB);
+        debayerAndResize(raw, intermediate);
+        cv::cvtColor(intermediate, intermediate, CV_BGR2RGB);
     } else {
-        cv::cvtColor(raw, img_out->value, mode);
+        cv::cvtColor(raw, intermediate, mode);
     }
+
+    img_out->value = intermediate;
 
     msg::publish(output_img_, img_out);
 }
