@@ -2,7 +2,7 @@
 #define OUTPUT_DISPLAY_H
 
 /// PROJECT
-#include "csapex_core_plugins_node_export.h"
+#include <csapex_core_plugins_node_export.h>
 #include <csapex/model/node.h>
 #include <csapex/view/view_fwd.h>
 

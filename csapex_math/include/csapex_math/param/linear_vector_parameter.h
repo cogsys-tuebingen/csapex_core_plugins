@@ -7,7 +7,7 @@
 #include <csapex_math/serialization/binary_io.h>
 #include <csapex_math/serialization/stream_io.h>
 #include <csapex_math/serialization/yaml_io.h>
-#include <csapex_param_export.h>
+#include <csapex_core/csapex_param_export.h>
 
 /// SYSTEM
 #define _USE_MATH_DEFINES

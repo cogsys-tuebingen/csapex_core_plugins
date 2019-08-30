@@ -9,17 +9,12 @@ add_definitions(-std=c++11)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
     csapex
-    
-    )
+)
 
 
 catkin_package(
-#    INCLUDE_DIRS include
-#    LIBRARIES 
     CATKIN_DEPENDS
-     
-    DEPENDS system_lib
-    )
+)
 
 ###########
 ## Build ##
@@ -31,7 +26,7 @@ catkin_package(
 include_directories(
     #include
     ${catkin_INCLUDE_DIRS}
-    )
+)
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}_node
@@ -43,13 +38,15 @@ add_library(${PROJECT_NAME}_node
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
-    )
+)
 
 install(FILES plugins.xml
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 
 install(TARGETS ${PROJECT_NAME}_node
     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

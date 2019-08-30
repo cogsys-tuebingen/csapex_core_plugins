@@ -3,7 +3,7 @@
 
 /// COMPONENT
 #include <csapex_math/view/matrix_table_model.h>
-#include <csapex_qt_export.h>
+#include <csapex_qt/export.h>
 
 /// PROJECT
 #include <csapex/model/model_fwd.h>

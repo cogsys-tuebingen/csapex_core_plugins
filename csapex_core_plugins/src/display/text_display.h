@@ -2,7 +2,7 @@
 #define TEXT_DISPLAY_H_
 
 /// PROJECT
-#include "csapex_core_plugins_node_export.h"
+#include <csapex_core_plugins_node_export.h>
 #include <csapex/model/node.h>
 
 namespace csapex

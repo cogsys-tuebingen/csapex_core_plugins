@@ -94,7 +94,15 @@ target_link_libraries(${PROJECT_NAME}_plugin_qt ${PROJECT_NAME}_core
 install(FILES plugins.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-install(TARGETS ${PROJECT_NAME}_boot ${PROJECT_NAME}_core ${PROJECT_NAME}_plugin_core ${PROJECT_NAME}_plugin_node ${PROJECT_NAME}_plugin_qt
+install(TARGETS
+          ${PROJECT_NAME}_boot
+          ${PROJECT_NAME}_core
+          ${PROJECT_NAME}_plugin_core
+          ${PROJECT_NAME}_plugin_node
+          ${PROJECT_NAME}_plugin_qt
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})

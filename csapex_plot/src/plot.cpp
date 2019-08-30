@@ -12,7 +12,7 @@
 #include <csapex/view/utility/color.hpp>
 #include <csapex_opencv/cv_mat_message.h>
 /// SYSTEM
-#include <qwt_scale_engine.h>
+#include <libqwt/qwt_scale_engine.h>
 
 using namespace csapex;
 using namespace csapex::connection_types;

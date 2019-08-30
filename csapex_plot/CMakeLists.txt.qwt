@@ -39,4 +39,4 @@ install(TARGETS qwt-qt5
                 LIBRARY DESTINATION lib
                 ARCHIVE DESTINATION lib)
 
-install(FILES ${QWT_HDR} DESTINATION include)
+install(FILES ${QWT_HDR} DESTINATION include/libqwt/)

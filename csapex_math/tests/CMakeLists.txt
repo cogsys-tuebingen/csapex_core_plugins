@@ -39,7 +39,7 @@ include_directories(${catkin_INCLUDE_DIRS} ${GTEST_INCLUDE_DIR} include)
 file(GLOB tests_SRC
     "src/*.cpp"
 )
-add_executable(${PROJECT_NAME}
+catkin_add_gtest(${PROJECT_NAME}
     ${tests_SRC}
 )
 target_compile_definitions(${PROJECT_NAME}
@@ -48,8 +48,8 @@ target_compile_definitions(${PROJECT_NAME}
     TEST_RES_DIR="${CMAKE_CURRENT_LIST_DIR}/res"
 )
 
-add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
-set_tests_properties(${PROJECT_NAME} PROPERTIES TIMEOUT 60)
+#add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+#set_tests_properties(${PROJECT_NAME} PROPERTIES TIMEOUT 10)
 target_link_libraries(${PROJECT_NAME}
     csapex_math_core
     csapex_math
