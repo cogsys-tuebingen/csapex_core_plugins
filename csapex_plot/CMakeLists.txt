@@ -21,10 +21,10 @@ ExternalProject_add(QWT
   SVN_REVISION -r "2365"
   PATCH_COMMAND ""
   UPDATE_COMMAND ""
-  BUILD_COMMAND make
+  BUILD_COMMAND  $(MAKE)
   SOURCE_DIR QWT
   BINARY_DIR lib
-  INSTALL_COMMAND make install
+  INSTALL_COMMAND $(MAKE) install
   "${cmakeversion_external_update}"
   PATCH_COMMAND ${CMAKE_COMMAND} -E
   copy ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt.qwt

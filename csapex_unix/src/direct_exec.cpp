@@ -34,7 +34,12 @@ public:
     {
         params.addParameter(param::factory::declareTrigger("execute"), [this](param::Parameter* param) {
             std::string command = cmd_;
-            auto call = [command]() { system(command.c_str()); };
+            auto call = [this, command]() {
+                const auto code = system(command.c_str());
+                if (code != 0) {
+                    aerr << "executing command " << command << " failed with code " << code << std::endl;
+                }
+            };
             if (async_)
                 std::thread(call).detach();
             else

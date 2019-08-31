@@ -57,8 +57,16 @@ private:
         int pipe_in[2];
         int pipe_out[2];
 
-        pipe(pipe_in);
-        pipe(pipe_out);
+        if(pipe(pipe_in) == -1) {
+            aerr << "Cannot open pipe in" << std::endl;
+            continuation({});
+            return;
+        }
+        if(pipe(pipe_out) == -1) {
+            aerr << "Cannot open pipe out" << std::endl;
+            continuation({});
+            return;
+        }
 
         pid = fork();
 

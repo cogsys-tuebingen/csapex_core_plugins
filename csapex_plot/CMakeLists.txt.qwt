@@ -33,6 +33,7 @@ list(REMOVE_ITEM QWT_HDR ${QWT_HDR_IGNORE})
 
 add_library(qwt-qt5 SHARED ${QWT_SOURCE} ${UIHeaders})
 target_link_libraries(qwt-qt5 ${QT_LIBRARIES})
+target_compile_options(qwt-qt5 PRIVATE -w)
 
 install(TARGETS qwt-qt5
                 RUNTIME DESTINATION lib

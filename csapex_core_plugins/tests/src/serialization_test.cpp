@@ -72,7 +72,7 @@ TEST_F(CorePluginsSerializationTest, CompositeMessageSerialization)
         CompositeMessage::Ptr message = std::make_shared<CompositeMessage>();
         message->deserializeVersioned(data);
 
-        ASSERT_EQ(2, message->value.size());
+        ASSERT_EQ(2u, message->value.size());
 
         std::shared_ptr<TimestampMessage const> ts = std::dynamic_pointer_cast<TimestampMessage const>(message->value.at(0));
         std::shared_ptr<DurationMessage const> dur = std::dynamic_pointer_cast<DurationMessage const>(message->value.at(1));
