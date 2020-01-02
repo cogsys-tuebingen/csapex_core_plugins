@@ -32,6 +32,11 @@ void convertImage(const connection_types::CvMatMessage::ConstPtr& in, cv_bridge:
         case CV_8UC1:
             out.encoding = sensor_msgs::image_encodings::MONO8;
             break;
+        case CV_8UC4:
+            if (in->getEncoding().matches(enc::rgba)) {
+                out.encoding = sensor_msgs::image_encodings::RGBA8;
+            }
+            break;
         default:
         case CV_8UC3:
             if (in->getEncoding().matches(enc::bgr)) {
@@ -64,6 +69,8 @@ csapex::Encoding convertEncoding(const std::string& in)
         return enc::bgr;
     } else if (in == sensor_msgs::image_encodings::RGB8 || in == sensor_msgs::image_encodings::RGB16) {
         return enc::rgb;
+    } else if (in == sensor_msgs::image_encodings::RGBA8 || in == sensor_msgs::image_encodings::RGBA16) {
+        return enc::rgba;
     } else if (in == sensor_msgs::image_encodings::MONO8 || in == sensor_msgs::image_encodings::MONO16) {
         return enc::mono;
     } else if (in == sensor_msgs::image_encodings::YUV422) {

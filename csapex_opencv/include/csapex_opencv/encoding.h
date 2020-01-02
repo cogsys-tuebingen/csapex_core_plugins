@@ -23,17 +23,20 @@ struct CSAPEX_OPENCV_EXPORT Channel
         return !operator==(lhs, rhs);
     }
 
-    Channel(const std::string& name, int min, int max, std::vector<Channel>& container) : name(name), fp(false), min_i(min), max_i(max)
+    Channel(const std::string& _name, int min, int max, std::vector<Channel>& container)
+      : name(_name), fp(false), min_i(min), max_i(max)
     {
         container.push_back(*this);
     }
 
-    Channel(const std::string& name, float min, float max, std::vector<Channel>& container) : name(name), fp(true), min_f(min), max_f(max)
+    Channel(const std::string& _name, float min, float max, std::vector<Channel>& container)
+      : name(_name), fp(true), min_f(min), max_f(max)
     {
         container.push_back(*this);
     }
 
-    Channel(const std::string& name, double min, double max, std::vector<Channel>& container) : name(name), fp(true), min_f(min), max_f(max)
+    Channel(const std::string& _name, double min, double max, std::vector<Channel>& container)
+      : name(_name), fp(true), min_f(static_cast<float>(min)), max_f(static_cast<float>(max))
     {
         container.push_back(*this);
     }
@@ -138,9 +141,12 @@ static const Channel L("L", 0.f, 1.f, g_channels);
 static const Channel C("C", 0.f, 1.f, g_channels);
 static const Channel H("H", 0.f, 1.f, g_channels);
 
-static const Channel Integer("int", std::numeric_limits<int>::lowest(), std::numeric_limits<int>::max(), g_channels);
-static const Channel Float("float", std::numeric_limits<float>::lowest(), std::numeric_limits<float>::max(), g_channels);
-static const Channel Double("double", std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max(), g_channels);
+static const Channel Integer("int", std::numeric_limits<int>::lowest(),
+                             std::numeric_limits<int>::max(), g_channels);
+static const Channel Float("float", std::numeric_limits<float>::lowest(),
+                           std::numeric_limits<float>::max(), g_channels);
+static const Channel Double("double", std::numeric_limits<double>::lowest(),
+                            std::numeric_limits<double>::max(), g_channels);
 static const Channel intensity("I", 0.f, std::numeric_limits<float>::max(), g_channels);
 }  // namespace channel
 
@@ -148,6 +154,7 @@ static const Encoding mono = { channel::gray };
 static const Encoding bgr = { channel::blue, channel::green, channel::red };
 static const Encoding unknown = bgr;
 static const Encoding rgb = { channel::red, channel::green, channel::blue };
+static const Encoding rgba = { channel::red, channel::green, channel::blue, channel::a };
 static const Encoding hsv = { channel::hue, channel::saturation, channel::v };
 static const Encoding hsl = { channel::hue, channel::saturation, channel::l };
 static const Encoding yuv = { channel::y, channel::u, channel::v };
@@ -156,9 +163,12 @@ static const Encoding lab = { channel::l, channel::a, channel::b };
 static const Encoding luv = { channel::l, channel::u, channel::v };
 static const Encoding LCh = { channel::L, channel::C, channel::H };
 static const Encoding pointXYZ = { channel::Float, channel::Float, channel::Float };
-static const Encoding pointXYZNormal = { channel::Float, channel::Float, channel::Float, channel::Float, channel::Float, channel::Float };
-static const Encoding pointXYZI = { channel::Float, channel::Float, channel::Float, channel::intensity };
-static const Encoding pointXYZRGB = { channel::Float, channel::Float, channel::Float, channel::red, channel::green, channel::blue };
+static const Encoding pointXYZNormal = { channel::Float, channel::Float, channel::Float,
+                                         channel::Float, channel::Float, channel::Float };
+static const Encoding pointXYZI = { channel::Float, channel::Float, channel::Float,
+                                    channel::intensity };
+static const Encoding pointXYZRGB = { channel::Float, channel::Float, channel::Float,
+                                      channel::red,   channel::green, channel::blue };
 static const Encoding disparity = { channel::Float };
 static const Encoding depth_f = { channel::Float };
 }  // namespace enc

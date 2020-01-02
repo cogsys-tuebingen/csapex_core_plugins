@@ -41,6 +41,10 @@ std::unique_ptr<QImage> ImageRenderer::doRender(const connection_types::CvMatMes
             cv::Mat mat = msg.value;
             result = QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888, clean_mat, new mat_lifetime_extender(mat));
 
+        } else if (encoding.matches(enc::rgba)) {
+            cv::Mat mat = msg.value;
+            result = QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGBA8888, clean_mat, new mat_lifetime_extender(mat));
+
         } else if (encoding.matches(enc::bgr) || encoding.matches(enc::mono)) {
             result = QtCvImageConverter::Converter::mat2QImage(msg.value);
 

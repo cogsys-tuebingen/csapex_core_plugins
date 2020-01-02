@@ -50,12 +50,12 @@ void CvMatMessage::setEncoding(const Encoding& e)
 
 bool CvMatMessage::hasChannels(std::size_t count) const
 {
-    return value.channels() == (int)count && encoding.channelCount() == count;
+    return value.channels() == static_cast<int>(count) && encoding.channelCount() == count;
 }
 
 bool CvMatMessage::hasChannels(std::size_t count, int mat_type) const
 {
-    return value.channels() == (int)count && encoding.channelCount() == count && value.type() == mat_type;
+    return value.channels() == static_cast<int>(count) && encoding.channelCount() == count && value.type() == mat_type;
 }
 
 /// YAML
