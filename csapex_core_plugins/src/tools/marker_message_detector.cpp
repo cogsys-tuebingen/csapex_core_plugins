@@ -51,7 +51,7 @@ public:
         params.addParameter(types_);
     }
 
-    bool processNothingMarkers() const
+    bool processNothingMarkers() const override
     {
         return true;
     }

@@ -59,7 +59,7 @@ public:
         out_min_idx_ = node_modifier.addOutput<GenericVectorMessage, int>("min_idx");
     }
 
-    virtual void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
     }
 

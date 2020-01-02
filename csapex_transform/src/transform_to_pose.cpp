@@ -35,7 +35,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
         TransformMessage::ConstPtr trafo = msg::getMessage<TransformMessage>(in_);
         tf::Transform fixed_to_container = trafo->value;

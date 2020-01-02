@@ -30,7 +30,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
         GenericValueMessage<int>::ConstPtr in = msg::getMessage<connection_types::GenericValueMessage<int>>(in_);
         if (in->value != last_val_) {

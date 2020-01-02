@@ -11,7 +11,7 @@ class Laplacian : public Operator
 public:
     Laplacian();
 
-    virtual void process() override;
+    void process() override;
 };
 }  // namespace csapex
 #endif  // LAPLACIAN_H

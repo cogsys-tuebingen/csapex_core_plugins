@@ -35,7 +35,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
         std::shared_ptr<nav_msgs::Odometry const> odom = msg::getMessage<nav_msgs::Odometry>(in_);
 

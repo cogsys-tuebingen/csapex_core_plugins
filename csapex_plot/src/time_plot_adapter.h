@@ -21,7 +21,7 @@ class TimePlotAdapter : public QObject, public DefaultNodeAdapter
 public:
     TimePlotAdapter(NodeFacadeImplementationPtr node_facade, NodeBox* parent, std::weak_ptr<TimePlot> node);
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
 public Q_SLOTS:
     void display();

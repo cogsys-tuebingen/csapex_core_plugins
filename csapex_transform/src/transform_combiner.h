@@ -11,9 +11,9 @@ class TransformCombiner : public csapex::Node
 public:
     TransformCombiner();
 
-    virtual void process() override;
-    virtual void setup(NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& params) override;
+    void process() override;
+    void setup(NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& params) override;
 
 private:
     Output* output_;

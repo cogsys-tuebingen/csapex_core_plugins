@@ -16,7 +16,7 @@ public:
         reset();
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         in_ = node_modifier.addMultiInput<double, int>("number");
 
@@ -24,7 +24,7 @@ public:
         out_std_dev_ = node_modifier.addOutput<double>("std dev");
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareTrigger("reset"), [this](param::Parameter*) { reset(); });
 
@@ -32,7 +32,7 @@ public:
         parameters.addParameter(param::factory::declareOutputText("std dev"));
     }
 
-    void process()
+    void process() override
     {
         double x = 0.0;
 
@@ -59,7 +59,7 @@ public:
         msg::publish(out_std_dev_, std);
     }
 
-    void reset()
+    void reset() override
     {
         S = 0;
         m = 0;

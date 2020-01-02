@@ -60,7 +60,6 @@ public:
     }
 
 private:
-    Input* in_;
     Output* out_;
 };
 

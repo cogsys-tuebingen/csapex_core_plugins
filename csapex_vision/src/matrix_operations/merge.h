@@ -26,12 +26,12 @@ public:
     /**
      * @brief See base class documentation.
      */
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
-    virtual void process() override;
+    void process() override;
 
-    virtual Input* createVariadicInput(TokenDataConstPtr type, const std::string& label, bool optional) override;
+    Input* createVariadicInput(TokenDataConstPtr type, const std::string& label, bool optional) override;
 
 private:
     Output* output_;

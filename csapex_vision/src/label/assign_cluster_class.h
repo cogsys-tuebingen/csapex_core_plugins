@@ -21,10 +21,10 @@ public:
     virtual ~AssignClusterClass();
 
     void setup(csapex::NodeModifier& node_modifier) override;
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
 
-    virtual void beginProcess() override;
-    virtual void finishProcess() override;
+    void beginProcess() override;
+    void finishProcess() override;
 
     void setResult(std::vector<int>& result);
     void setActiveClassColor(const int r, const int g, const int b);

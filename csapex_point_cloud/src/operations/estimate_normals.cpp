@@ -34,7 +34,7 @@ public:
         output_ = node_modifier.addOutput<NormalsMessage>("normals");
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareBool("use_pca_based_estimation", false), use_pca_);
         parameters.addConditionalParameter(param::factory::declareBool("use_open_mp", false), [this]() { return use_pca_; }, use_omp_);

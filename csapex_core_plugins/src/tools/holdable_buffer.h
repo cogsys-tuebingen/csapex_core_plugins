@@ -15,9 +15,9 @@ class CSAPEX_EXPORT_PLUGIN HoldableBuffer : public Node
 public:
     HoldableBuffer();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
-    virtual void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
+    void setupParameters(Parameterizable& parameters) override;
 
 private:
     Input* in_;

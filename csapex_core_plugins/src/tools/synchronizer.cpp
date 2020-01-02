@@ -17,16 +17,16 @@ public:
     {
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         addParameter(csapex::param::factory::declareRange("inputs", 1, 10, 2, 1), [this](csapex::param::Parameter* p) { updateInputs(); });
     }
 
-    void process()
+    void process() override
     {
     }
 

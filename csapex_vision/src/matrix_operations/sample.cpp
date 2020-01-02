@@ -56,7 +56,7 @@ public:
         out_ = node_modifier.addOutput<CvMatMessage>("Sampled");
     }
 
-    virtual void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareRange("step x", 1, 100, 2, 1), step_x_);
         parameters.addParameter(param::factory::declareRange("step y", 1, 100, 2, 1), step_y_);

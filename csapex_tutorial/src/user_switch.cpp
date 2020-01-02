@@ -45,7 +45,7 @@ public:
     }
 
     /// register parameters
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         /// for demonstration we map an enum to a set parameter of type int
         std::map<std::string, int> selector = {

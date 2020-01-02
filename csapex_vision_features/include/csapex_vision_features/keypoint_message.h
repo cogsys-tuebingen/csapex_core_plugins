@@ -19,9 +19,9 @@ struct KeypointMessage : public MessageTemplate<std::vector<cv::KeyPoint>, Keypo
 
     bool isContainer() const override;
     TokenData::Ptr nestedType() const override;
-    virtual void addNestedValue(const TokenData::ConstPtr& msg) override;
-    virtual TokenData::ConstPtr nestedValue(std::size_t i) const override;
-    virtual std::size_t nestedValueCount() const override;
+    void addNestedValue(const TokenData::ConstPtr& msg) override;
+    TokenData::ConstPtr nestedValue(std::size_t i) const override;
+    std::size_t nestedValueCount() const override;
 };
 
 /// TRAITS

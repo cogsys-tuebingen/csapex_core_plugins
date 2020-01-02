@@ -16,8 +16,8 @@ class CSAPEX_QT_EXPORT AngleParameterAdapter : public ParameterAdapter
 public:
     AngleParameterAdapter(param::AngleParameter::Ptr p);
 
-    virtual QWidget* setup(QBoxLayout* layout, const std::string& display_name) override;
-    virtual void setupContextMenu(ParameterContextMenu* context_handler) override;
+    QWidget* setup(QBoxLayout* layout, const std::string& display_name) override;
+    void setupContextMenu(ParameterContextMenu* context_handler) override;
 
 private:
     void set(double angle);

@@ -10,7 +10,7 @@ class Ransac : public SampleConsensus
 public:
     Ransac() = default;
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         SampleConsensus::setupParameters(parameters);
 

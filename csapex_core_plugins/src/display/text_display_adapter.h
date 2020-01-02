@@ -20,12 +20,12 @@ public:
     TextDisplayAdapter(NodeFacadePtr worker, NodeBox* parent);
     ~TextDisplayAdapter();
 
-    bool eventFilter(QObject* o, QEvent* e);
+    bool eventFilter(QObject* o, QEvent* e) override;
 
-    virtual void setupUi(QBoxLayout* layout);
-    virtual void resize(const QSize& size) override;
+    void setupUi(QBoxLayout* layout) override;
+    void resize(const QSize& size) override;
 
-    virtual void setManualResize(bool manual) override;
+    void setManualResize(bool manual) override;
 
 public Q_SLOTS:
     void display(const std::string& txt);

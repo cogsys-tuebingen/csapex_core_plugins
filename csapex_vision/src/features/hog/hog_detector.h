@@ -12,9 +12,9 @@ class HOGDetector : public csapex::Node
 public:
     HOGDetector();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void process() override;
 
 private:
     enum SVMType
@@ -50,7 +50,6 @@ private:
     int block_size_;
     int block_stride_;
 
-    int adaption_type_;
     int scan_mode_;
     std::vector<float> svm_;
     int svm_type_;

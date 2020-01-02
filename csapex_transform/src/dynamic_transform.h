@@ -21,11 +21,11 @@ class DynamicTransform : public csapex::RosNode
 public:
     DynamicTransform();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupROS();
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupROS() override;
+    void setupParameters(Parameterizable& parameters) override;
 
-    virtual void processROS() override;
+    void processROS() override;
 
     void update();
 

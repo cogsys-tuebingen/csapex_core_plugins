@@ -28,7 +28,7 @@ public:
         in_b_ = node_modifier.addSlot("B", std::bind(&EventAND::catchB, this));
         and_event_ = node_modifier.addEvent("AND");
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
     }
 

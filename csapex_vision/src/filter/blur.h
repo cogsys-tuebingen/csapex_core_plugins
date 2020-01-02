@@ -11,9 +11,9 @@ class BoxBlur : public Node
 public:
     BoxBlur();
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 private:
     Input* input_;

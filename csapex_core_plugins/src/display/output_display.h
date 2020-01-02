@@ -24,7 +24,7 @@ public:
 
     void setup(csapex::NodeModifier& node_modifier) override;
     void setupParameters(Parameterizable& params) override;
-    virtual void process() override;
+    void process() override;
 
 protected:
     Input* input_;

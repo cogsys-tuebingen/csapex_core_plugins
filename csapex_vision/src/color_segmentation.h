@@ -13,12 +13,12 @@ public:
     ColorSegmentation();
 
 public:
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& params) override;
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& params) override;
 
 protected:
-    virtual void setParameterState(GenericStatePtr memento);
+    void setParameterState(GenericStatePtr memento) override;
 
 private:
     void updateParameters();

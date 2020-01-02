@@ -35,7 +35,7 @@ public:
         parameters.addParameter(param::factory::declareValue("component", 0), cb);
     }
 
-    void process()
+    void process() override
     {
         auto in_msg = msg::getMessage<connection_types::GenericVectorMessage>(in_);
 

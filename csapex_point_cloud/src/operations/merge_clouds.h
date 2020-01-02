@@ -17,14 +17,14 @@ class MergeClouds : public csapex::Node, public VariadicInputs
 public:
     MergeClouds();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void process() override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);
 
-    virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override;
+    csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override;
 
 private:
     void updateInputs();

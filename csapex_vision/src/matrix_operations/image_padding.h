@@ -12,8 +12,8 @@ public:
     ImagePadding();
 
     void setup(csapex::NodeModifier& node_modifier) override;
-    void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 private:
     Input* input_;

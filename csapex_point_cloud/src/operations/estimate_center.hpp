@@ -1,11 +1,14 @@
 #pragma once
 
-#include <csapex/model/node.h>
-#include <csapex/msg/generic_vector_message.hpp>
-#include <csapex_point_cloud/msg/point_cloud_message.h>
+/// SYSTEM
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
+
+/// PROJECT
+#include <csapex/model/node.h>
+#include <csapex/msg/generic_vector_message.hpp>
+#include <csapex_point_cloud/msg/point_cloud_message.h>
 
 namespace csapex
 {
@@ -14,9 +17,9 @@ class EstimateCenter : public Node
 public:
     EstimateCenter();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);

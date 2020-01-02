@@ -18,7 +18,7 @@ public:
     void setupParameters(Parameterizable& parameters) override;
 
 protected:
-    virtual bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;
+    bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;
 
 private:
     std::string path_;

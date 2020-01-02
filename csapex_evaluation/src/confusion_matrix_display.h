@@ -17,9 +17,9 @@ class ConfusionMatrixDisplay : public Node
 public:
     ConfusionMatrixDisplay();
 
-    virtual void process() override;
-    virtual void setupParameters(csapex::Parameterizable& params) override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
+    void setupParameters(csapex::Parameterizable& params) override;
+    void setup(csapex::NodeModifier& node_modifier) override;
 
     ConfusionMatrix getConfusionMatrix() const;
     void save();

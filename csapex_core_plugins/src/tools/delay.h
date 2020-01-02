@@ -16,15 +16,15 @@ public:
     Delay();
     ~Delay();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
-    virtual void process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters, Continuation continuation);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process(csapex::NodeModifier& node_modifier, csapex::Parameterizable& parameters, Continuation continuation) override;
 
-    virtual void tearDown() override;
+    void tearDown() override;
 
-    virtual bool isAsynchronous() const;
+    bool isAsynchronous() const override;
 
-    virtual void reset() override;
+    void reset() override;
 
 private:
     void doSleep();

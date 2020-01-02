@@ -119,7 +119,7 @@ public:
         params.addParameter(param::factory::declareRange("min cluster distance factor", 0.0, 100.0, 0.0, 0.001), cluster_min_size_distance_factor_);
     }
 
-    void process()
+    void process() override
     {
         PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_));
 

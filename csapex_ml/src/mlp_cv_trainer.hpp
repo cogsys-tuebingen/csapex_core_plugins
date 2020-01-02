@@ -10,8 +10,8 @@ class CSAPEX_EXPORT_PLUGIN MLPCvTrainer : public CollectionNode<connection_types
 public:
     MLPCvTrainer();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 private:
     bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;

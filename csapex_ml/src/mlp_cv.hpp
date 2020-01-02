@@ -12,9 +12,9 @@ class CSAPEX_EXPORT_PLUGIN MLPCv : public Node
 public:
     MLPCv();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void process() override;
 
 private:
     void classify(const connection_types::FeaturesMessage& input, connection_types::FeaturesMessage& output);

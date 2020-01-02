@@ -11,9 +11,9 @@ class LabelRegions : public csapex::Node
 public:
     LabelRegions();
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 protected:
     csapex::Output* output_;

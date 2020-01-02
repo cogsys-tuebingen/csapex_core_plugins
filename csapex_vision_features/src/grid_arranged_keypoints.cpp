@@ -30,7 +30,7 @@ public:
         out_key = node_modifier.addOutput<csapex::connection_types::KeypointMessage>("Keypoints");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(csapex::param::ParameterFactory::declareRange("dimension x", 1, 1000, 64, 1));
         parameters.addParameter(csapex::param::ParameterFactory::declareRange("dimension y", 1, 1000, 48, 1));

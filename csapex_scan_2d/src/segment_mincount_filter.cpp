@@ -33,7 +33,7 @@ public:
         params.addParameter(csapex::param::factory::declareInterval("threshold", 1, (int)max_size_, 1, (int)max_size_, 1));
     }
 
-    void process()
+    void process() override
     {
         std::shared_ptr<std::vector<Segment> const> segments_in = msg::getMessage<GenericVectorMessage, Segment>(in_);
         std::shared_ptr<std::vector<Segment>> segments_out(new std::vector<Segment>());

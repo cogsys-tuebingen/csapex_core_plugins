@@ -23,9 +23,9 @@ private:
 public:
     MatchDescriptors();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 private:
     void update();

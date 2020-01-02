@@ -11,10 +11,10 @@ class CSAPEX_EXPORT_PLUGIN SignalLight : public Node
 public:
     SignalLight();
 
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void setupParameters(Parameterizable& parameters) override;
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
 
 protected:
     void display(int state);

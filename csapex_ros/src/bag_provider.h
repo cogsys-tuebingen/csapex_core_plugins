@@ -22,25 +22,25 @@ class BagProvider : public MessageProvider
 {
 public:
     BagProvider();
-    void load(const std::string& file);
+    void load(const std::string& file) override;
 
     ~BagProvider();
 
 public:
-    virtual bool hasNext();
-    virtual connection_types::Message::Ptr next(std::size_t slot);
-    virtual std::string getLabel(std::size_t slot) const;
+    bool hasNext() override;
+    connection_types::Message::Ptr next(std::size_t slot) override;
+    std::string getLabel(std::size_t slot) const override;
 
-    virtual void restart() override;
+    void restart() override;
 
-    virtual std::vector<std::string> getExtensions() const;
+    std::vector<std::string> getExtensions() const override;
 
-    virtual GenericStatePtr getState() const;
-    virtual void setParameterState(GenericStatePtr memento);
+    GenericStatePtr getState() const override;
+    void setParameterState(GenericStatePtr memento) override;
 
-    virtual void prepareNext() override;
+    void prepareNext() override;
 
-    void parameterChanged();
+    void parameterChanged() override;
 
 private:
     void setupRosPublisher();

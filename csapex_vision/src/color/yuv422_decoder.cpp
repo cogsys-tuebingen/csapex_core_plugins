@@ -23,7 +23,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
         CvMatMessage::ConstPtr img_in = msg::getMessage<CvMatMessage>(in_);
         cv::Mat img = img_in->value;

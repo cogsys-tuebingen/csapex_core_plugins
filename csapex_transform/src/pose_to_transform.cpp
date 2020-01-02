@@ -37,7 +37,7 @@ public:
         params.addParameter(param::factory::declareText("child frame", "/pose"), child_frame_);
     }
 
-    void process()
+    void process() override
     {
         geometry_msgs::PoseStamped ps;
 

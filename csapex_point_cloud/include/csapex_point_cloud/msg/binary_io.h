@@ -6,9 +6,9 @@
 /// FORWARD DECLARATION
 namespace pcl
 {
-class PCLHeader;
-class PointIndices;
-class ModelCoefficients;
+struct PCLHeader;
+struct PointIndices;
+struct ModelCoefficients;
 }  // namespace pcl
 
 namespace csapex

@@ -13,9 +13,9 @@ class ImageCollage : public csapex::Node
 public:
     ImageCollage();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void process() override;
 
 private:
     Input* in_main_;

@@ -15,9 +15,9 @@ class ConfidenceEvaluator : public csapex::Node
 public:
     ConfidenceEvaluator();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void process() override;
 
 private:
     Input* in_classified_;

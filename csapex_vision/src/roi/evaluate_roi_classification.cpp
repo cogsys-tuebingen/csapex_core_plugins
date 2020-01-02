@@ -28,7 +28,7 @@ public:
 
         node_modifier.addSlot("Reset", std::bind(&EvaluateROIClassification::reset, this));
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareTrigger("reset"), std::bind(&EvaluateROIClassification::reset, this));
     }
@@ -61,7 +61,7 @@ private:
 
     ConfusionMatrix confusion_;
 
-    void reset()
+    void reset() override
     {
         confusion_.reset();
     }

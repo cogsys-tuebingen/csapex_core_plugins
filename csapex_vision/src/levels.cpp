@@ -146,7 +146,7 @@ public:
         updateLut();
     }
 
-    void process()
+    void process() override
     {
         CvMatMessage::ConstPtr img_in = msg::getMessage<CvMatMessage>(in_);
         img_ = img_in->value;

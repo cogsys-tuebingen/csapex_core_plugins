@@ -13,9 +13,9 @@ class RayAngles : public Node
 public:
     RayAngles();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);

@@ -14,8 +14,8 @@ public:
     FilterStaticMask();
 
 public:
-    virtual void filter(cv::Mat& img, cv::Mat& mask) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void filter(cv::Mat& img, cv::Mat& mask) override;
+    void setupParameters(Parameterizable& parameters) override;
 
     void setMask(const cv::Mat& m);
     cv::Mat getMask() const;

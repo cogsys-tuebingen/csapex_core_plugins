@@ -12,10 +12,7 @@ class MachineLearningNode : public CollectionNode<connection_types::FeaturesMess
 public:
     MachineLearningNode(std::string default_file_name = "ml_config.yaml");
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-
-protected:
-    virtual bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) = 0;
+    void setupParameters(Parameterizable& parameters) override;
 
 protected:
     bool is_classification_;

@@ -24,7 +24,7 @@ public:
         output_cloud_ = node_modifier.addOutput<PointCloudMessage>("scaled PointCloud");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareValue("scale", 1.0), scale_);
     }
@@ -67,7 +67,6 @@ public:
 private:
     Input* input_cloud_;
     Output* output_cloud_;
-    Output* output_cloud_complement_;
 
     param::RangeParameter::Ptr col_;
 

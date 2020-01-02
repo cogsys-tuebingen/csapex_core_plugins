@@ -139,7 +139,6 @@ MLP::MLP(const MLPConfig& config)
   , layer_bias_(config.layer_bias)
   , input_size_(config.input_size)
   , output_size_(layer_sizes_.back())
-  , weights_num_(config.weights_num)
   , weights_(config.weights)
   , out_type_(config.output_type)
   , act_func_(config.function)
@@ -147,8 +146,8 @@ MLP::MLP(const MLPConfig& config)
     initialize();
 }
 
-MLP::MLP(const size_t input_size, const size_t layers_num, const std::vector<size_t>& layer_sizes, const std::vector<bool>& layer_bias, const size_t weights_num, const std::vector<double>& weights)
-  : layers_num_(layers_num), layer_sizes_(layer_sizes), layer_bias_(layer_bias), input_size_(input_size), output_size_(layer_sizes_.back()), weights_num_(weights_num), weights_(weights)
+MLP::MLP(const size_t input_size, const size_t layers_num, const std::vector<size_t>& layer_sizes, const std::vector<bool>& layer_bias, const std::vector<double>& weights)
+  : layers_num_(layers_num), layer_sizes_(layer_sizes), layer_bias_(layer_bias), input_size_(input_size), output_size_(layer_sizes_.back()), weights_(weights)
 {
     initialize();
 }

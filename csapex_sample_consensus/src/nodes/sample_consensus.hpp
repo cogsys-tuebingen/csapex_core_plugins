@@ -36,7 +36,7 @@ class EIGEN_ALIGN16 SampleConsensus : public csapex::Node
 public:
     SampleConsensus() = default;
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareRange("model search distance", 0.0, 10.0, 0.1, 0.001), sac_parameters_.model_search_distance);
         parameters.addParameter(param::factory::declareRange("model validation ratio", 0.0, 1.0, 0.0, 0.01), sac_parameters_.model_validation_ratio);

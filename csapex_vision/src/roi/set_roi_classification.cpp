@@ -23,7 +23,7 @@ public:
         input_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("ROIs");
         output_rois_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareValue("set", -1), set_);
     }

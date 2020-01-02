@@ -20,9 +20,9 @@ public:
     OutputDisplayAdapter(NodeFacadePtr node, NodeBox* parent);
     ~OutputDisplayAdapter();
 
-    virtual void setupUi(QBoxLayout* layout) override;
+    void setupUi(QBoxLayout* layout) override;
 
-    virtual void setManualResize(bool manual) override;
+    void setManualResize(bool manual) override;
 
 public Q_SLOTS:
     void display(const QImage& img);
@@ -32,8 +32,8 @@ Q_SIGNALS:
     void displayRequest(QImage img);
 
 protected:
-    bool eventFilter(QObject* o, QEvent* e);
-    virtual void resize(const QSize& size) override;
+    bool eventFilter(QObject* o, QEvent* e) override;
+    void resize(const QSize& size) override;
 
 private:
     QSize last_image_size_;

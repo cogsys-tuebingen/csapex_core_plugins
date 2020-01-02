@@ -24,25 +24,25 @@ public:
     CloudRendererAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CloudRenderer> node);
     ~CloudRendererAdapter();
 
-    void stop();
+    void stop() override;
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
     void display();
     void refresh();
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+    QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
 
 protected:
-    void initializeGL();
-    void resizeGL(int width, int height);
+    void initializeGL() override;
+    void resizeGL(int width, int height) override;
     void mousePressEventImpl(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEventImpl(QGraphicsSceneMouseEvent* event);
     void mouseMoveEventImpl(QGraphicsSceneMouseEvent* event);
     void wheelEventImpl(QGraphicsSceneWheelEvent* event);
 
-    bool eventFilter(QObject*, QEvent*);
+    bool eventFilter(QObject*, QEvent*) override;
 
 public:
     template <class PointT>

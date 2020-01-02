@@ -47,7 +47,7 @@ public:
         params.addParameter(param::factory::declareText("child_frame_id", ""));
     }
 
-    void process()
+    void process() override
     {
         TransformMessage::ConstPtr trafo = msg::getMessage<TransformMessage>(in_);
         tf::Transform tf_trafo = trafo->value;

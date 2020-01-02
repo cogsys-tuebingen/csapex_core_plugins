@@ -11,9 +11,9 @@ class HoughCircle : public Node
 public:
     HoughCircle();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 private:
     Input* input_;

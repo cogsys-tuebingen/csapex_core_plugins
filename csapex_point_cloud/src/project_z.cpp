@@ -24,7 +24,7 @@ public:
         output_cloud_ = node_modifier.addOutput<PointCloudMessage>("scaled PointCloud");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
     }
 
@@ -68,11 +68,8 @@ public:
 private:
     Input* input_cloud_;
     Output* output_cloud_;
-    Output* output_cloud_complement_;
 
     param::RangeParameter::Ptr col_;
-
-    double scale_;
 };
 CSAPEX_REGISTER_CLASS(csapex::ProjectZ, csapex::Node)
 }  // namespace csapex

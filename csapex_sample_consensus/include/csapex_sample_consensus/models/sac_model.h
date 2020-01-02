@@ -25,6 +25,8 @@ public:
     };
 
     Model(const typename PointCloud::ConstPtr& pointcloud);
+    
+    virtual ~Model() = default;
 
     inline bool computeModelCoefficients(const std::vector<int>& indices);
 

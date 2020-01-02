@@ -17,9 +17,9 @@ class CSAPEX_EXPORT_PLUGIN GradientBoostedTrees : public Node
 public:
     GradientBoostedTrees() = default;
 
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void setup(NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void setupParameters(Parameterizable& parameters) override;
+    void setup(NodeModifier& node_modifier) override;
+    void process() override;
 
 private:
     std::shared_ptr<cv::GradientBoostingTrees> trees_;

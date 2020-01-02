@@ -18,26 +18,26 @@ public:
 
     NormalPlane(const typename PointCloud::ConstPtr& pointcloud, const typename NormalCloud::ConstPtr& normalcloud, const float normal_distance_weight = 0.f);
 
-    virtual typename Base::Ptr clone() const override;
+    typename Base::Ptr clone() const override;
 
-    virtual bool isValid() const override;
+    bool isValid() const override;
 
-    virtual bool optimizeModelCoefficients(const float maximum_distance) override;
+    bool optimizeModelCoefficients(const float maximum_distance) override;
 
-    virtual bool optimizeModelCoefficients(const std::vector<int>& src_indices, const float maximum_distance) override;
+    bool optimizeModelCoefficients(const std::vector<int>& src_indices, const float maximum_distance) override;
 
-    virtual bool validateSamples(const std::vector<int>& indices) const override;
+    bool validateSamples(const std::vector<int>& indices) const override;
 
-    virtual bool validateSamples(const std::set<int>& indices) const override;
+    bool validateSamples(const std::set<int>& indices) const override;
 
-    virtual std::size_t getModelDimension() const override;
+    std::size_t getModelDimension() const override;
 
-    virtual double getDistanceToModel(const int& index) const override;
+    double getDistanceToModel(const int& index) const override;
 
-    virtual void getDistancesToModel(const std::vector<int>& indices, std::vector<float>& distances) const override;
+    void getDistancesToModel(const std::vector<int>& indices, std::vector<float>& distances) const override;
 
 protected:
-    virtual bool doComputeModelCoefficients(const std::vector<int>& indices) override;
+    bool doComputeModelCoefficients(const std::vector<int>& indices) override;
     inline float dot(const PointT& p) const;
 };
 }  // namespace models

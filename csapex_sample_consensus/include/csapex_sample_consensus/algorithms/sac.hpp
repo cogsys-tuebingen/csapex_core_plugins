@@ -37,6 +37,8 @@ public:
     {
     }
 
+    virtual ~SampleConsensus() = default;
+
     virtual bool computeModel(typename Model::Ptr& model) = 0;
 
     virtual void setIndices(const std::vector<int>& indices)

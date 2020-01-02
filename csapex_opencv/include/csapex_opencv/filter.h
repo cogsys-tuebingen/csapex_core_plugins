@@ -22,12 +22,12 @@ public:
 public:
     virtual ~Filter();
 
-    void setup(NodeModifier& node_modifier);
+    void setup(NodeModifier& node_modifier) override;
 
 public:
     virtual void filter(cv::Mat& img, cv::Mat& mask) = 0;
 
-    void process();
+    void process() override;
 
 protected:
     Filter();

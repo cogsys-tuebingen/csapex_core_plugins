@@ -17,9 +17,9 @@ class CSAPEX_EXPORT_PLUGIN DecisionTree : public csapex::Node
 public:
     DecisionTree();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void process() override;
 
 private:
     void loadTree();

@@ -24,18 +24,18 @@ public:
     {
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
 
         output_ = node_modifier.addOutput<PointCloudMessage>("XYZ");
     }
 
-    void process()
+    void process() override
     {
         PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 

@@ -20,7 +20,7 @@ public:
     {
     }
 
-    virtual void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
     }
 

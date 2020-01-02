@@ -17,17 +17,17 @@ public:
     {
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         output_ = node_modifier.addOutput<connection_types::CompositeMessage>("Composed");
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         addParameter(csapex::param::factory::declareRange("inputs", 1, 10, 2, 1), [this](csapex::param::Parameter* p) { updateInputs(); });
     }
 
-    void process()
+    void process() override
     {
         auto composite = std::make_shared<connection_types::CompositeMessage>();
 

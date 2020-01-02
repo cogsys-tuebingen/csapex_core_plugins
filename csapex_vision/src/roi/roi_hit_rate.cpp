@@ -34,7 +34,7 @@ public:
         input_prediction_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("Predicted");
         output_hit_rate_ = node_modifier.addOutput<std::string>("Hitrate");
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         std::map<std::string, int> overlap_mode_types = {
             { "MAX", OVERLAP_MAX },
@@ -124,7 +124,7 @@ private:
         out.close();
     }
 
-    void reset()
+    void reset() override
     {
         ground_truth_rois_ = 0;
         ground_truth_rois_hit_ = 0;

@@ -11,8 +11,8 @@ class VectorizePyramid : public Node
 public:
     VectorizePyramid();
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
 
 private:
     Input* input_;

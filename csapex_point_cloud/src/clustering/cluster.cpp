@@ -308,7 +308,7 @@ void ClusterPointCloud::clusterCloud(typename pcl::PointCloud<PointT>::ConstPtr 
         NAMED_TRACE(validate_normals);
         NormalValidator<DataType> validator(validation_normal_, normal_angle_eps_, validation_normal_angle_eps_);
 
-        storage.traverse([this, &validator](const VoxelIndex::Type&, DataType& data) {
+        storage.traverse([&validator](const VoxelIndex::Type&, DataType& data) {
             validator.start(data);
             if (!validator.finish())
                 data.state = VoxelState::INVALID;

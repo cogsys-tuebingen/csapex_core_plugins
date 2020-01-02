@@ -22,9 +22,9 @@ class PolygonScanFilterAdapter : public QObject, public DefaultNodeAdapter
 public:
     PolygonScanFilterAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<PolygonScanFilter> node);
 
-    virtual GenericStatePtr getState() const;
-    virtual void setParameterState(GenericStatePtr memento);
-    virtual void setupUi(QBoxLayout* layout);
+    GenericStatePtr getState() const override;
+    void setParameterState(GenericStatePtr memento) override;
+    void setupUi(QBoxLayout* layout) override;
 
 public Q_SLOTS:
     void display(const lib_laser_processing::Scan* img, const bool invert);
@@ -33,7 +33,7 @@ Q_SIGNALS:
     void displayRequest(const lib_laser_processing::Scan* img, const bool invert);
 
 protected:
-    bool eventFilter(QObject* o, QEvent* e);
+    bool eventFilter(QObject* o, QEvent* e) override;
     void updatePolygon();
 
     std::weak_ptr<PolygonScanFilter> wrapped_;

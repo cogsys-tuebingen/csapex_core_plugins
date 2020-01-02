@@ -10,8 +10,8 @@ class SegmentLengthSegmentation : public ScanSegmentation
 public:
     SegmentLengthSegmentation();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 protected:
     void update();

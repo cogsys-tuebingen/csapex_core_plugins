@@ -24,7 +24,9 @@ private:
 
     int boost_type_;
     int weak_count_;
+#if CV_MAJOR_VERSION == 2
     int split_criteria_;
+#endif
 
     int max_depth_;
     bool use_surrogates_;

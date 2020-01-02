@@ -25,7 +25,7 @@ public:
         output_cloud_complement_ = node_modifier.addOutput<PointCloudMessage>("Complement");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         param::Parameter::Ptr row_ptr = param::factory::declareRange("col", 0, 0, 0, 1);
         col_ = std::dynamic_pointer_cast<param::RangeParameter>(row_ptr);

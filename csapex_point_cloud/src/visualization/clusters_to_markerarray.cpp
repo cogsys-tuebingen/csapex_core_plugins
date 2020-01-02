@@ -54,7 +54,7 @@ public:
         params.addParameter(param::factory::declareBool("PCA", false), pca_);
     }
 
-    void process()
+    void process() override
     {
         PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_));
 

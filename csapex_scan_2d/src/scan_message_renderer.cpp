@@ -14,7 +14,7 @@ std::unique_ptr<QImage> ScanMessageRenderer::doRender(const connection_types::Sc
 {
     cv::Mat mat;
     renderer.render(msg.value, mat);
-    return std::unique_ptr<QImage>(new QImage(std::move(QtCvImageConverter::Converter::mat2QImage(mat))));
+    return std::unique_ptr<QImage>(new QImage(QtCvImageConverter::Converter::mat2QImage(mat)));
 }
 
 std::vector<csapex::param::ParameterPtr> ScanMessageRenderer::getParameters() const
@@ -26,7 +26,7 @@ std::unique_ptr<QImage> LabeledScanMessageRenderer::doRender(const connection_ty
 {
     cv::Mat mat;
     renderer.render(msg.value, mat);
-    return std::unique_ptr<QImage>(new QImage(std::move(QtCvImageConverter::Converter::mat2QImage(mat))));
+    return std::unique_ptr<QImage>(new QImage(QtCvImageConverter::Converter::mat2QImage(mat)));
 }
 
 std::vector<csapex::param::ParameterPtr> LabeledScanMessageRenderer::getParameters() const

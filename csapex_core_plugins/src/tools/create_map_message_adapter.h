@@ -20,7 +20,7 @@ public:
     CreateMapMessageAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CreateMapMessage> node);
     ~CreateMapMessageAdapter();
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
 protected:
     virtual void parameterAdded(param::ParameterPtr param);

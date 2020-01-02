@@ -11,9 +11,9 @@ class MeanStdDev : public Node
 public:
     MeanStdDev();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 private:
     Input* in_mat_;

@@ -63,7 +63,7 @@ public:
         params.addConditionalParameter(csapex::param::factory::declareValue("loop", true), playing, loop_);
     }
 
-    void reset()
+    void reset() override
     {
         msgs.clear();
         update();

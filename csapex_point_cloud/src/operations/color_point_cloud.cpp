@@ -20,11 +20,11 @@ public:
     {
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         input_cloud_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
         input_image_ = node_modifier.addInput<CvMatMessage>("Image");

@@ -22,10 +22,10 @@ class AssignClusterClassAdapter : public QObject, public csapex::DefaultNodeAdap
 public:
     AssignClusterClassAdapter(csapex::NodeFacadeImplementationPtr worker, csapex::NodeBox* parent, std::weak_ptr<AssignClusterClass> node);
 
-    virtual csapex::GenericStatePtr getState() const;
-    virtual void setParameterState(csapex::GenericStatePtr memento);
+    csapex::GenericStatePtr getState() const override;
+    void setParameterState(csapex::GenericStatePtr memento) override;
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
 public Q_SLOTS:
     void display(QImage img, const cv::Mat& clusters);
@@ -45,7 +45,7 @@ Q_SIGNALS:
     void setClassRequest(int c);
 
 protected:
-    bool eventFilter(QObject* o, QEvent* e);
+    bool eventFilter(QObject* o, QEvent* e) override;
     void updateClusterClass(const QPoint& pos);
 
     struct State : public GenericState

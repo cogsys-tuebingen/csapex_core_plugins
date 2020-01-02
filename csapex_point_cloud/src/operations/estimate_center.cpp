@@ -75,7 +75,7 @@ void EstimateCenter::process()
     }
 
     if (output_poses_covariance_->isConnected()) {
-        std::shared_ptr<std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>>> msgs(new std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>>);
+        auto msgs = std::make_shared<std::vector<std::shared_ptr<geometry_msgs::PoseWithCovarianceStamped const>>>();
 
         *msgs = output_;
 

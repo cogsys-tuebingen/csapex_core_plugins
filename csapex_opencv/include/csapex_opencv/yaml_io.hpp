@@ -139,7 +139,8 @@ struct convert<cv::Mat>
         fs << "data" << rhs;
 
         std::string data = fs.releaseAndGetString();
-        node["data"] = YAML::Binary((unsigned char*)data.data(), data.size());
+        static_assert(sizeof(const unsigned char*) == sizeof(decltype(data.data())), "Invalid byte size!?");
+        node["data"] = YAML::Binary(reinterpret_cast<const unsigned char*>(data.data()), data.size());
 
         return node;
     }

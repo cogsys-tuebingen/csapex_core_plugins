@@ -15,19 +15,19 @@ public:
     {
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         setupVariadic(node_modifier);
 
         output = node_modifier.addOutput<connection_types::GenericVectorMessage>("merged vector");
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         setupVariadicParameters(parameters);
     }
 
-    void process()
+    void process() override
     {
         connection_types::GenericVectorMessage::Ptr result;
 

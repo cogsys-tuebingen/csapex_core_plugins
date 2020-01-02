@@ -11,8 +11,8 @@ class CSAPEX_EXPORT_PLUGIN ExportCout : public Node
 public:
     ExportCout();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
 
 private:
     Input* connector_;

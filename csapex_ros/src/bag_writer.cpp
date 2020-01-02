@@ -30,7 +30,7 @@ public:
         stop();
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         setupVariadic(node_modifier);
     }
@@ -219,8 +219,6 @@ public:
     }
 
 private:
-    Output* output;
-
     rosbag::Bag bag;
     bool is_open_;
     bool compress_;

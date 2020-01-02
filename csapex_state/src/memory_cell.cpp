@@ -102,12 +102,12 @@ public:
         empty_event_ = modifier.addEvent("empty");
     }
 
-    bool canProcess() const
+    bool canProcess() const override
     {
         return changed_;
     }
 
-    void process()
+    void process() override
     {
         if (changed_cell_) {
             TokenPtr token;

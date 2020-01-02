@@ -29,18 +29,18 @@ class RotateScan : public csapex::Node
 public:
     RotateScan() = default;
 
-    virtual void setupParameters(Parameterizable& params)
+    void setupParameters(Parameterizable& params) override
     {
         params.addParameter(param::ParameterFactory::declareAngle("rotation", 0.0), angle_);
     }
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         input_ = node_modifier.addMultiInput<ScanMessage, LabeledScanMessage>("Scan");
         output_ = node_modifier.addOutput<AnyMessage>("Rotated Scan");
     }
 
-    virtual void process() override
+    void process() override
     {
         if (msg::isMessage<LabeledScanMessage>(input_)) {
             LabeledScanMessage::ConstPtr scan_msg = msg::getMessage<LabeledScanMessage>(input_);

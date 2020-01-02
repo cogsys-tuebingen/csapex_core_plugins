@@ -22,10 +22,10 @@ class ScanLabelerAdapter : public QObject, public DefaultNodeAdapter
 public:
     ScanLabelerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ScanLabeler> node);
 
-    virtual GenericStatePtr getState() const;
-    virtual void setParameterState(GenericStatePtr memento);
+    GenericStatePtr getState() const override;
+    void setParameterState(GenericStatePtr memento) override;
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
     void updateLabel(int label);
 
@@ -39,7 +39,7 @@ Q_SIGNALS:
     void submitRequest();
 
 protected:
-    bool eventFilter(QObject* o, QEvent* e);
+    bool eventFilter(QObject* o, QEvent* e) override;
     void labelSelected(int label);
     void updatePolygon();
     void labelInside();

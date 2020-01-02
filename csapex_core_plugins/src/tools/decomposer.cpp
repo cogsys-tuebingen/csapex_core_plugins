@@ -24,16 +24,16 @@ public:
     {
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         input_ = node_modifier.addInput<CompositeMessage>("Composed");
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
     }
 
-    void process()
+    void process() override
     {
         CompositeMessage::ConstPtr message = msg::getMessage<CompositeMessage>(input_);
 

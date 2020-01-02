@@ -31,7 +31,7 @@ public:
         output_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(csapex::param::factory::declareRange("dimension x", 1, 1000, 64, 1));
         parameters.addParameter(csapex::param::factory::declareRange("dimension y", 1, 1000, 48, 1));

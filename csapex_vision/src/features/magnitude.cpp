@@ -22,7 +22,7 @@ public:
         input_ = node_modifier.addInput<CvMatMessage>("Matrix");
         output_ = node_modifier.addOutput<CvMatMessage>("Magnitude");
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
     }
     virtual void process() override

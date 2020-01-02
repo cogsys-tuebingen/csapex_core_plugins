@@ -225,7 +225,7 @@ public:
 
     }
 
-    virtual void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::ParameterFactory::declareRange("alpha", 0.0, 1.0, 1.5, 0.001), alpha_);
         std::map<std::string, int> methods = { { "Newman", (int)Newman }, { "NewmanOriginal", (int)NewmanOriginal }, { "Santos", (int)Santos }, { "SantosOriginal", (int)SantosOriginal } };

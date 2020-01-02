@@ -16,16 +16,16 @@ public:
     BFOptimizer();
 
     int stepsNecessary();
-    virtual void reset() override;
+    void reset() override;
 
 public:
     slim_signal::Signal<void(int)> step;
 
 protected:
-    virtual bool generateNextParameterSet() override;
+    bool generateNextParameterSet() override;
 
 private:
-    virtual void doStop() override;
+    void doStop() override;
 
     bool increaseParameter(std::size_t i);
 

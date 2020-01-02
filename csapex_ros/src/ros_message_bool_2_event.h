@@ -21,7 +21,7 @@ public:
 
     void setupParameters(csapex::Parameterizable& parameters) override;
 
-    void process();
+    void process() override;
 
 private:
     Input* in_;

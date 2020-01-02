@@ -21,20 +21,20 @@ public:
     {
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(csapex::param::factory::declareRange("scale", 1.0, 1000.0, 1.0, 0.5));
         parameters.addParameter(csapex::param::factory::declareBool("fit", false));
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         input_ = node_modifier.addInput<PointCloudMessage>("PointCloud");
 
         output_ = node_modifier.addOutput<CvMatMessage>("DepthImage");
     }
 
-    void process()
+    void process() override
     {
         PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(input_));
 

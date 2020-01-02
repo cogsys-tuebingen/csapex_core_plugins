@@ -18,14 +18,14 @@ public:
     FileImporter();
     ~FileImporter();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
 
     void requestImport();
     void import();
 
-    virtual void process() override;
-    virtual bool canProcess() const override;
+    void process() override;
+    bool canProcess() const override;
 
     bool createMessageProvider(const QString& file_path);
     void doImportDir(const QString& dir);

@@ -52,7 +52,7 @@ public:
         output_ = node_modifier.addOutput<CvMatMessage>("adjusted");
     }
 
-    virtual void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::ParameterFactory::declareRange("alpha", 0.0, 1.0, 1.5, 0.001), alpha_);
     }

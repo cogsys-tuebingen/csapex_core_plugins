@@ -20,9 +20,9 @@ private:
     typedef std::chrono::system_clock::time_point timepoint;
 
 public:
-    void setup(NodeModifier& node_modifier);
-    void setupParameters(Parameterizable& parameters);
-    void process();
+    void setup(NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
     double getLineWidth() const;
 
@@ -32,7 +32,7 @@ public:
     std::size_t getCount() const;
 
 protected:
-    void reset();
+    void reset() override;
     void init();
 
     void preparePlot();

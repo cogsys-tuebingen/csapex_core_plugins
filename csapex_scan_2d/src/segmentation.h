@@ -12,8 +12,8 @@ namespace csapex
 class ScanSegmentation : public csapex::Node
 {
 public:
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
 
 protected:
     ScanSegmentation();

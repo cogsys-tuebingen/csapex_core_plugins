@@ -21,7 +21,7 @@ public:
     OptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<Optimizer> node);
     ~OptimizerAdapter();
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
 protected:
     virtual void parameterAdded(param::ParameterPtr param);

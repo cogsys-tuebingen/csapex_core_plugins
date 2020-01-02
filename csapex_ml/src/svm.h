@@ -12,9 +12,9 @@ class CSAPEX_EXPORT_PLUGIN SVM : public Node
 public:
     SVM();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 private:
     enum ThresholdType

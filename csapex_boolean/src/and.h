@@ -15,8 +15,8 @@ public:
     AND();
 
 public:
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
 
 private:
     Input* in_a;

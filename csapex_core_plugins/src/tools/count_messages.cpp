@@ -26,7 +26,7 @@ public:
         reset_ = node_modifier.addSlot("Reset", std::bind(&CountMessages::reset, this));
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareTrigger("reset"), std::bind(&CountMessages::reset, this));
     }
@@ -44,7 +44,7 @@ private:
 
     int count_;
 
-    void reset()
+    void reset() override
     {
         count_ = 0;
     }

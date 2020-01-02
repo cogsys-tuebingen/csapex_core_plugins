@@ -10,7 +10,7 @@ class Antsac : public SampleConsensus
 public:
     Antsac() = default;
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         SampleConsensus::setupParameters(parameters);
 

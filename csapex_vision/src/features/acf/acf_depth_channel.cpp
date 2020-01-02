@@ -159,7 +159,7 @@ std::vector<float> ACFDepthChannel::extractChannel(const cv::Mat& depth_map) con
             break;
     }
 
-    return std::move(feature);
+    return feature;
 }
 
 void ACFDepthChannel::process()

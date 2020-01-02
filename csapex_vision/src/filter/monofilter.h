@@ -11,9 +11,9 @@ class MonoFilter : public csapex::Node
 public:
     MonoFilter();
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 protected:
     csapex::Output* output_;

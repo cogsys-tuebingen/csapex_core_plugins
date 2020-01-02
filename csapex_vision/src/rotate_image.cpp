@@ -17,7 +17,7 @@ public:
     {
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(csapex::param::factory::declareRange("angle", -M_PI, M_PI, 0.0, 0.001));
         std::map<std::string, int> modes = {
@@ -26,13 +26,13 @@ public:
         parameters.addParameter(csapex::param::factory::declareParameterSet("mode", modes, (int)cv::INTER_NEAREST));
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         in_ = node_modifier.addInput<CvMatMessage>("image");
         out_ = node_modifier.addOutput<CvMatMessage>("rotated image");
     }
 
-    void process()
+    void process() override
     {
         CvMatMessage::ConstPtr src = msg::getMessage<CvMatMessage>(in_);
         CvMatMessage::Ptr dst(new CvMatMessage(src->getEncoding(), src->frame_id, src->stamp_micro_seconds));

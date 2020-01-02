@@ -36,7 +36,7 @@ public:
         out_rois_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("Scaled ROIs");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         std::map<std::string, int> modes = { { "centered", CENTERED }, { "linear", LINEAR } };
 

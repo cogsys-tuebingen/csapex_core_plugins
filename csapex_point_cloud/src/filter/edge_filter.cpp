@@ -45,7 +45,7 @@ public:
         output_ = node_modifier.addOutput<PointCloudMessage>("filtered cloud");
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareRange("max distance", 0.0, 0.1, 0.05, 0.0001), max_distance_);
         parameters.addParameter(param::factory::declareRange("offset", 1, 16, 1, 1), offset_);

@@ -11,9 +11,9 @@ class Reshape : public Node
 public:
     Reshape();
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 private:
     Input* input_;
@@ -24,7 +24,7 @@ private:
     unsigned int out_rows_;
     unsigned int out_cols_;
 
-    void reset();
+    void reset() override;
     bool reset_;
 };
 }  // namespace csapex

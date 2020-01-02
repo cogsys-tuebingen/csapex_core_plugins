@@ -40,7 +40,7 @@ class EvaluateBinaryClassifierAdapter : public QObject, public DefaultNodeAdapte
 public:
     EvaluateBinaryClassifierAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<EvaluateBinaryClassifier> node);
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
 public Q_SLOTS:
     void display();

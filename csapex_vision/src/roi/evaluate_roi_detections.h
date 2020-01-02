@@ -51,8 +51,6 @@ private:
     Output* out_tn_;
     Output* out_fn_;
 
-    Slot* slot_save_;
-    Slot* slot_reset_;
     ConfusionMatrix confusion_;
     std::array<std::size_t, 2> human_parts_found_;
     std::size_t frame_count_;

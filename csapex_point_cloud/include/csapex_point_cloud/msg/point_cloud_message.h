@@ -81,7 +81,7 @@ protected:
     CLONABLE_IMPLEMENTATION(PointCloudMessage);
 
 public:
-    friend class YAML::as_if<PointCloudMessage, void>;
+    friend struct YAML::as_if<PointCloudMessage, void>;
 
     template <typename T>
     struct Dispatch : public boost::static_visitor<void>
@@ -110,7 +110,7 @@ public:
 
     PointCloudMessage(const std::string& frame_id, Stamp stamp_micro_seconds);
 
-    virtual std::string descriptiveName() const override;
+    std::string descriptiveName() const override;
 
     bool acceptsConnectionFrom(const TokenData* other_side) const override;
 

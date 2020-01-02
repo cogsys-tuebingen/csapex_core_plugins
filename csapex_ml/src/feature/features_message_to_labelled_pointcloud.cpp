@@ -25,7 +25,7 @@ public:
         in_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("FeaturesMessage");
         out_ = node_modifier.addOutput<PointCloudMessage>("Labelled PointCloud");
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
     }
 

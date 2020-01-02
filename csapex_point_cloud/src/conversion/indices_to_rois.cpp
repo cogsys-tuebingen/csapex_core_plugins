@@ -46,7 +46,7 @@ public:
         params.addConditionalParameter(param::factory::declareBool("use_projection", false), dense_, use_projection_);
     }
 
-    void process()
+    void process() override
     {
         PointCloudMessage::ConstPtr cloud(msg::getMessage<PointCloudMessage>(in_cloud_));
 

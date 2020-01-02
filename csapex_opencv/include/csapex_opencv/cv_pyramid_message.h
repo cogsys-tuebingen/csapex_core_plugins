@@ -28,7 +28,7 @@ namespace connection_types
 struct CSAPEX_OPENCV_EXPORT CvPyramidMessage : public MessageTemplate<std::vector<cv::Mat>, CvPyramidMessage>
 {
     friend class MessageTemplate<std::vector<cv::Mat>, CvPyramidMessage>;
-    friend class YAML::as_if<CvPyramidMessage, void>;
+    friend struct YAML::as_if<CvPyramidMessage, void>;
 
     template <typename, typename, typename>
     friend class csapex::ConverterTemplate;

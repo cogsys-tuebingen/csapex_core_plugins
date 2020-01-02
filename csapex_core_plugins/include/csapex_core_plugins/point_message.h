@@ -20,7 +20,7 @@ struct CSAPEX_CORE_LIB_EXPORT PointMessage : public Message
 protected:
     CLONABLE_IMPLEMENTATION(PointMessage);
 
-    friend class YAML::as_if<PointMessage, void>;
+    friend struct YAML::as_if<PointMessage, void>;
 
 public:
     typedef std::shared_ptr<PointMessage> Ptr;

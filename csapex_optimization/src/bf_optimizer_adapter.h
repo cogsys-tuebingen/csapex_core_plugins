@@ -20,9 +20,9 @@ public:
     BFOptimizerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<BFOptimizer> node);
     ~BFOptimizerAdapter();
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
-    virtual void parameterAdded(param::ParameterPtr p) override;
+    void parameterAdded(param::ParameterPtr p) override;
 
 private:
     void triggerStep(int step);

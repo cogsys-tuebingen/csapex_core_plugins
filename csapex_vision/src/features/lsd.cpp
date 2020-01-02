@@ -81,9 +81,9 @@ void LineSegmentDetector::process()
     //    image[ x + y * X ] = (double) image_cv.at<image_cv.type()>(x,y);
 }
 
-void LineSegmentDetector::setup()
+void LineSegmentDetector::setup(csapex::NodeModifier& node_modifier)
 {
-    input_ = node_modifier_->addInput<connection_types::CvMatMessage>("Image");
+    input_ = node_modifier.addInput<connection_types::CvMatMessage>("Image");
 
-    output_ = node_modifier_->addOutput<connection_types::CvMatMessage>("Image");
+    output_ = node_modifier.addOutput<connection_types::CvMatMessage>("Image");
 }

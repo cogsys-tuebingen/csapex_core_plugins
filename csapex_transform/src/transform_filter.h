@@ -17,9 +17,9 @@ class TransformFilter : public csapex::Node
 public:
     TransformFilter();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
     std::vector<std::vector<double>> median_matrix_;
 

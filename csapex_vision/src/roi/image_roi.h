@@ -22,10 +22,10 @@ public:
     virtual ~ImageRoi();
 
     void setup(csapex::NodeModifier& node_modifier) override;
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
 
-    virtual void beginProcess() override;
-    virtual void finishProcess() override;
+    void beginProcess() override;
+    void finishProcess() override;
 
     void setResult(connection_types::RoiMessage::Ptr result);
 

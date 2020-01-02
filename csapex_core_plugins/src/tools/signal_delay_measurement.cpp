@@ -40,7 +40,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
     }
 

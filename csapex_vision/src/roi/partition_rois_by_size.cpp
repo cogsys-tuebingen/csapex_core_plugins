@@ -124,7 +124,7 @@ std::size_t PartitionROIsBySize::selectScale(const Roi& roi) const
     };
 
     std::map<float, std::size_t> breaks;
-    std::transform(scales_.begin(), scales_.end(), std::inserter(breaks, breaks.begin()), [this, &get_value](const ScaleInfo& info) {
+    std::transform(scales_.begin(), scales_.end(), std::inserter(breaks, breaks.begin()), [&get_value](const ScaleInfo& info) {
         auto size = info.getSize();
         float value = get_value(size.first, size.second);
 

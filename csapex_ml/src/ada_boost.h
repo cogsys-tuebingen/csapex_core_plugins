@@ -17,9 +17,9 @@ class CSAPEX_EXPORT_PLUGIN AdaBoost : public Node
 public:
     AdaBoost();
 
-    virtual void setup(NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void process() override;
+    void setup(NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 private:
     Input* in_;

@@ -24,7 +24,7 @@ public:
         input_features_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
         output_features_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Features");
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareValue("exchange", -1), exchange_);
         parameters.addParameter(param::factory::declareValue("by", 0), by_);

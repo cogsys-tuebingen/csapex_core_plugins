@@ -28,12 +28,12 @@ public:
     /**
      * @brief See base class definition.
      */
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
     /**
      * @brief See base class definition.
      */
-    virtual void process() override;
+    void process() override;
 
 protected:
     /// internal typdefs

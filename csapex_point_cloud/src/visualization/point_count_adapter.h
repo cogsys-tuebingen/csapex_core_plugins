@@ -19,7 +19,7 @@ class PointCountAdapter : public QObject, public DefaultNodeAdapter
 public:
     PointCountAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<PointCount> node);
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
     void display(int img);
 

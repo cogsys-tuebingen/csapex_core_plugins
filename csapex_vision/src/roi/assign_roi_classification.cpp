@@ -25,7 +25,7 @@ public:
         input_features_ = node_modifier.addInput<GenericVectorMessage, FeaturesMessage>("Features");
         output_rois_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("ROIs");
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
     }
     virtual void process() override

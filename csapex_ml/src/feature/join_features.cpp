@@ -20,7 +20,7 @@ public:
         VariadicInputs::setupVariadic(node_modifier);
         output_features_ = node_modifier.addOutput<GenericVectorMessage, FeaturesMessage>("Features");
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         VariadicInputs::setupVariadicParameters(parameters);
     }

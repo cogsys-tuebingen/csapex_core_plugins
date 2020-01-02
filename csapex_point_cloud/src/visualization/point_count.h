@@ -12,9 +12,9 @@ class PointCount : public Node
 public:
     PointCount();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& params) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& params) override;
+    void process() override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);

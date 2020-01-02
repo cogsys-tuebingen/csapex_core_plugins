@@ -28,6 +28,7 @@
 #include <QFormLayout>
 #include <QProgressBar>
 #include <QPushButton>
+#include <iostream>
 
 using namespace csapex;
 

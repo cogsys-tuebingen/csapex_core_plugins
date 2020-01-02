@@ -26,7 +26,7 @@ public:
         out_ = node_modifier.addOutput<T>(type2name(typeid(T)));
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         param_ = param::factory::declareRange<T>("range", param::ParameterDescription("Adjust the properties of this parameter to your needs."), (T)0.0, (T)10.0, (T)10.0, (T)1.0)
                      .template instantiate<param::RangeParameter>();

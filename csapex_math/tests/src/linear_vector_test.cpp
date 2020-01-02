@@ -31,8 +31,8 @@ public:
     TestPluginLocator(Settings& settings) : PluginLocator(settings)
     {
 #ifdef PACKAGE_XML
-        registerLocator<CorePlugin>([this](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
-        registerLocator<Node>([this](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
+        registerLocator<CorePlugin>([](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
+        registerLocator<Node>([](std::vector<std::string>& paths) { paths.push_back(std::string(PACKAGE_XML)); });
 #else
         std::cerr << "Cannot find plugins for this test!" << std::endl;
 #endif

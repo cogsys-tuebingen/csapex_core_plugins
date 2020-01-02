@@ -34,7 +34,15 @@ void neigh_diff(const cv::Mat& src, cv::Mat& dst, const bool abs = false)
                     continue;
 
                 Tp neighbour_diff = value - src.at<Tp>(neighbour_y, neighbour_x);
+#if __clang__
+/// Clang warns in the following line for _Tp == bool
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wabsolute-value"
+#endif
                 Tp neighbour_abs_diff = std::abs(neighbour_diff);
+#if __clang__
+#pragma clang diagnostic pop
+#endif
                 if (neighbour_abs_diff > abs_diff) {
                     diff = neighbour_diff;
                     abs_diff = neighbour_abs_diff;

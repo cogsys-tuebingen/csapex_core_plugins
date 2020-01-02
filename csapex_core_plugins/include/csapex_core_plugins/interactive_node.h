@@ -17,13 +17,13 @@ class CSAPEX_CORE_LIB_EXPORT InteractiveNode : public Node
 public:
     InteractiveNode();
 
-    virtual void process() final override;
-    virtual void process(csapex::NodeModifier& node_modifier, Parameterizable& parameters) final override;
+    void process() final override;
+    void process(csapex::NodeModifier& node_modifier, Parameterizable& parameters) final override;
 
-    virtual void process(csapex::NodeModifier& node_modifier, Parameterizable& parameters, Continuation continuation) final override;
-    virtual void reset() override;
+    void process(csapex::NodeModifier& node_modifier, Parameterizable& parameters, Continuation continuation) final override;
+    void reset() override;
 
-    virtual bool isAsynchronous() const override;
+    bool isAsynchronous() const override;
 
     void done();
 

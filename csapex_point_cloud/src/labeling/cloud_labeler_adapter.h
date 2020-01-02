@@ -25,28 +25,28 @@ public:
     CloudLabelerAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<CloudLabeler> node);
     ~CloudLabelerAdapter();
 
-    void stop();
+    void stop() override;
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
     void display();
     void refresh();
     void done();
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+    QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
 
     void updateLabel(int labelArea);
 
 protected:
-    void initializeGL();
-    void resizeGL(int width, int height);
+    void initializeGL() override;
+    void resizeGL(int width, int height) override;
     void mousePressEventImpl(QGraphicsSceneMouseEvent* event);
     void mouseReleaseEventImpl(QGraphicsSceneMouseEvent* event);
     void mouseMoveEventImpl(QGraphicsSceneMouseEvent* event);
     void wheelEventImpl(QGraphicsSceneWheelEvent* event);
 
-    bool eventFilter(QObject*, QEvent*);
+    bool eventFilter(QObject*, QEvent*) override;
 
     std::pair<QVector3D, QVector3D> calculateRay(const QPointF& cursor);
 

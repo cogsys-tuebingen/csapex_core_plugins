@@ -24,7 +24,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
         DurationMessage::ConstPtr dur = msg::getMessage<DurationMessage>(in_);
         std::chrono::microseconds s = dur->value;

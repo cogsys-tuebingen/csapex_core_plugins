@@ -15,14 +15,14 @@ public:
     MaskRefinement();
 
 public:
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
     void setMask(const QImage& m);
 
 protected:
-    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
-    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
+    void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
+    void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
 
 private:
     void ok();

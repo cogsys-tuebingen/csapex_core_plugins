@@ -9,7 +9,7 @@
 class RandomVector
 {
 public:
-    RandomVector(std::size_t seed) : seed_(seed), gen_(seed)
+    RandomVector(std::size_t seed) : gen_(seed)
     {
     }
 
@@ -25,7 +25,6 @@ public:
     }
 
 private:
-    std::size_t seed_;
     std::mt19937 gen_;
 };
 #endif  // RANDOM_VECTOR_HPP

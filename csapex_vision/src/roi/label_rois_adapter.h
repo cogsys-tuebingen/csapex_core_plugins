@@ -25,10 +25,10 @@ class LabelROIsAdapter : public QObject, public csapex::DefaultNodeAdapter
 public:
     LabelROIsAdapter(csapex::NodeFacadeImplementationPtr worker, csapex::NodeBox* parent, std::weak_ptr<LabelROIs> node);
 
-    virtual csapex::GenericStatePtr getState() const;
-    virtual void setParameterState(csapex::GenericStatePtr memento);
+    csapex::GenericStatePtr getState() const override;
+    void setParameterState(csapex::GenericStatePtr memento) override;
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
 public Q_SLOTS:
     void display(QImage img);
@@ -48,7 +48,7 @@ Q_SIGNALS:
     void setClassRequest(int c);
 
 protected:
-    bool eventFilter(QObject* o, QEvent* e);
+    bool eventFilter(QObject* o, QEvent* e) override;
 
     struct State : public GenericState
     {

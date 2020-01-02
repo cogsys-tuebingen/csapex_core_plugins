@@ -16,7 +16,7 @@ public:
     {
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         selector_ = node_modifier.addInput<connection_types::GenericValueMessage<int>>("select");
         input_ = node_modifier.addInput<connection_types::AnyMessage>("message");
@@ -24,12 +24,12 @@ public:
         VariadicOutputs::setupVariadic(node_modifier);
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         VariadicOutputs::setupVariadicParameters(parameters);
     }
 
-    void process()
+    void process() override
     {
         int select = msg::getValue<int>(selector_);
         if (select < 0 || select >= static_cast<int>(variadic_outputs_.size()))

@@ -17,13 +17,13 @@ class Optimizer : public csapex::Node
 public:
     Optimizer();
 
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void setupParameters(Parameterizable& parameters) override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
 
-    virtual bool canProcess() const override;
+    bool canProcess() const override;
 
-    virtual void reset() override;
+    void reset() override;
 
     void setBest();
 

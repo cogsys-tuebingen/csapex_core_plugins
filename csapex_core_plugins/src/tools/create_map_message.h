@@ -27,7 +27,7 @@ public:
 
     void process() override;
 
-    virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override;
+    csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override;
 
 private:
     Input* in_;

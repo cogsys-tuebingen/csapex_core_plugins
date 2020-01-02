@@ -24,9 +24,9 @@ class APEXRosInterface : public CorePlugin
 public:
     APEXRosInterface();
     ~APEXRosInterface();
-    void prepare(Settings& settings);
-    void init(CsApexCore& core);
-    void setupGraph(SubgraphNode* graph);
+    void prepare(Settings& settings) override;
+    void init(CsApexCore& core) override;
+    void setupGraph(SubgraphNode* graph) override;
     void shutdown() override;
 
 private:

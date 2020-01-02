@@ -74,7 +74,7 @@ public:
         output_ = node_modifier.addOutput<CvMatMessage>("adjusted");
     }
 
-    virtual void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareBool("/float/use_lut", true), float_use_lut_);
     }

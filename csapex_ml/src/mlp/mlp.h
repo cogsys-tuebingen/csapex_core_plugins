@@ -57,7 +57,7 @@ public:
     typedef std::shared_ptr<MLP> Ptr;
 
     MLP(const MLPConfig& mlp);
-    MLP(const size_t input_size_, const size_t layers_num_, const std::vector<size_t>& layer_sizes_, const std::vector<bool>& layer_bias_, const size_t weights_num_,
+    MLP(const size_t input_size_, const size_t layers_num_, const std::vector<size_t>& layer_sizes_, const std::vector<bool>& layer_bias_,
         const std::vector<double>& weights_);
 
     void setOutputType(const OutputType& type);
@@ -77,7 +77,6 @@ private:
     size_t input_size_;
     size_t output_size_;
 
-    size_t weights_num_;
     std::vector<double> weights_;
 
     std::vector<double> buffer_;

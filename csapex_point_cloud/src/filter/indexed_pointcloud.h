@@ -11,8 +11,8 @@ class IndexedPointCloud : public Node
 public:
     IndexedPointCloud();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
 
 protected:
     Input* input_;

@@ -27,7 +27,7 @@ public:
         params.addParameter(param::factory::declareValue("expected classification", 1), exp_classification_);
     }
 
-    void process()
+    void process() override
     {
         if (msg::isMessage<FeaturesMessage>(in_features_)) {
             FeaturesMessage::ConstPtr in_features = msg::getMessage<FeaturesMessage>(in_features_);

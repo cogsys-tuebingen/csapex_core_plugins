@@ -14,8 +14,8 @@ class ConfidenceMatrixDisplay : public Node
 public:
     ConfidenceMatrixDisplay();
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
 
     const ConfidenceMatrix& getConfidenceMatrix() const;
 

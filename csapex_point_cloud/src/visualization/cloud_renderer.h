@@ -13,11 +13,11 @@ class CloudRenderer : public InteractiveNode
 public:
     CloudRenderer();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
-    virtual void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
-    virtual void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
+    void beginProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
+    void finishProcess(csapex::NodeModifier& node_modifier, Parameterizable& parameters) override;
 
     void publishImage(const cv::Mat& img);
 

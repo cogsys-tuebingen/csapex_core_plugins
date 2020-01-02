@@ -26,7 +26,7 @@ public:
         trigger_not_empty_ = node_modifier.addEvent("not empty");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         addParameter(param::factory::declareRange("min count for not empty", 0, 1024, 1, 1), min_count_);
     }

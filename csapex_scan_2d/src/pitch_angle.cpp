@@ -43,7 +43,7 @@ public:
         output_ = node_modifier.addOutput<double>("pitch");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareRange("height", 0.05, 1.0, 0.1, 0.001));
         parameters.addParameter(param::factory::declareTrigger("reset"), std::bind(&PitchAngle::reset, this));
@@ -76,7 +76,7 @@ private:
 
     accumulator_set<double, stats<tag::mean>> mean_dist_;
 
-    void reset()
+    void reset() override
     {
         mean_dist_ = accumulator_set<double, stats<tag::mean>>();
     }

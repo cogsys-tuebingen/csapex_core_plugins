@@ -18,7 +18,7 @@ public:
     {
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareValue("label/old", 0), label_old_);
         parameters.addParameter(param::factory::declareValue("label/new", -1), label_new_);

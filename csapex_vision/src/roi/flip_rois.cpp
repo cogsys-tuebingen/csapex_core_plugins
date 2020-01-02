@@ -30,7 +30,7 @@ public:
         out_rois_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("Flipped ROIs");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         std::map<std::string, int> types = { { "v", 0 }, { "h", 1 }, { "+90", 2 }, { "-90", 3 }, { "v+h", -1 } };
         parameters.addParameter(csapex::param::factory::declareParameterSet("type", types, -1), mode_);

@@ -15,11 +15,11 @@ public:
     LKTracking();
 
 public:
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
-    void reset();
+    void reset() override;
 
 private:
     void update(const csapex::param::Parameter*);

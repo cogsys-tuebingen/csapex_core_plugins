@@ -23,7 +23,7 @@ public:
         output_indices_ = node_modifier.addOutput<PointIndicesMessage>("Indices");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
     }
 

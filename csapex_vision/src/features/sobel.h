@@ -11,14 +11,14 @@ class Sobel : public Operator
 public:
     Sobel();
 
-    virtual void process() override;
-    virtual void setupParameters(Parameterizable& parameters);
+    void process() override;
+    void setupParameters(Parameterizable& parameters) override;
 
 protected:
     int dx_;
     int dy_;
 
-    void update();
+    void update() override;
 };
 }  // namespace csapex
 #endif  // SOBEL_H

@@ -16,9 +16,9 @@ public:
     ~Split();
 
     void setup(csapex::NodeModifier& node_modifier) override;
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
 
-    virtual void process() override;
+    void process() override;
 
 private:
     Input* input_;

@@ -32,7 +32,7 @@ public:
         output_ = node_modifier.addOutput<double>("rad");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareRange("angle", -180.0, 180.0, 0.0, 0.01), std::bind(&DegToRad::publish, this));
     }

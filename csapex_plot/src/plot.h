@@ -20,7 +20,7 @@ class Plot : public csapex::Node
 public:
     virtual ~Plot();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
 
     const QwtScaleMap& getXMap() const;
     const QwtScaleMap& getYMap() const;

@@ -32,7 +32,7 @@ public:
     virtual void processROS() override
     {
     }
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(csapex::param::factory::declareText("topic", "trigger"), [this](param::Parameter* p) { setTopic(p->as<std::string>()); });
     }
@@ -50,7 +50,7 @@ protected:
             sub = RosMessageConversion::instance().subscribe(ti, 1, [this](const TokenDataConstPtr& msg) {
                 ainfo << "trigger" << std::endl;
                 msg::trigger(trigger_);
-            }, [this](const std::exception_ptr& e) {
+            }, [](const std::exception_ptr& e) {
                 std::rethrow_exception(e);
             });
         }

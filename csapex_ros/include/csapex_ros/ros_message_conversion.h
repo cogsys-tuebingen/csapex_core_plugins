@@ -29,6 +29,8 @@ public:
     typedef std::function<void(const std::exception_ptr& e)> ErrorCallback;
 
 public:
+    virtual ~Convertor() = default;
+
     virtual void write(rosbag::Bag& bag, const connection_types::Message::ConstPtr& source,
                        const std::string& topic) = 0;
 
@@ -107,8 +109,8 @@ public:
             std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const>(
                 apex_msg_raw);
         if (!msg) {
-            typename connection_types::GenericPointerMessage<T const>::ConstPtr msg =
-                std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T const> const>(
+            typename connection_types::GenericPointerMessage<T>::ConstPtr msg =
+                std::dynamic_pointer_cast<connection_types::GenericPointerMessage<T> const>(
                     apex_msg_raw);
             if (!msg) {
                 throw std::runtime_error("cannot cast message to publish");
@@ -186,7 +188,7 @@ public:
         bag.write(topic, time, *ros_msg);
     }
 
-    ros::Subscriber subscribe(const ros::master::TopicInfo& topic, int queue, Callback callback, ErrorCallback error_callback)
+    ros::Subscriber subscribe(const ros::master::TopicInfo& topic, int queue, Callback callback, ErrorCallback error_callback) override
     {
         std::shared_ptr<ros::NodeHandle> nh = ROSHandler::instance().nh();
         if (!nh) {
@@ -232,7 +234,7 @@ public:
         }
     }
 
-    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source)
+    connection_types::Message::Ptr instantiate(const rosbag::MessageInstance& source) override
     {
         return Converter::ros2apex(source.instantiate<ROS>());
     }

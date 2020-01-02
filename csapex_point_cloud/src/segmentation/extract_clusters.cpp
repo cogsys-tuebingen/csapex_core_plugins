@@ -53,7 +53,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
         PointCloudMessage::ConstPtr msg(msg::getMessage<PointCloudMessage>(in_));
 

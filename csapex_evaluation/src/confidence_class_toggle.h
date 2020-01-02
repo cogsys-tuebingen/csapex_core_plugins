@@ -11,9 +11,9 @@ class ConfidenceClassToggle : public csapex::Node
 public:
     ConfidenceClassToggle();
 
-    void setupParameters(Parameterizable& parameters);
+    void setupParameters(Parameterizable& parameters) override;
     void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void process() override;
 
 private:
     Input* in_;

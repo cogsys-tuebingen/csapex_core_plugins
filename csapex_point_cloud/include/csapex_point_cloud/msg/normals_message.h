@@ -25,14 +25,14 @@ protected:
     CLONABLE_IMPLEMENTATION(NormalsMessage);
 
 public:
-    friend class YAML::as_if<NormalsMessage, void>;
+    friend struct YAML::as_if<NormalsMessage, void>;
 
     typedef std::shared_ptr<NormalsMessage> Ptr;
     typedef std::shared_ptr<NormalsMessage const> ConstPtr;
 
     NormalsMessage(const std::string& frame_id, Stamp stamp_micro_seconds);
 
-    virtual std::string descriptiveName() const override;
+    std::string descriptiveName() const override;
 
     bool acceptsConnectionFrom(const TokenData* other_side) const override;
 

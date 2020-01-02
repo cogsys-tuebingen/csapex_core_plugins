@@ -12,8 +12,8 @@ class SetTimeStamp : public Node
 public:
     SetTimeStamp();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);

@@ -11,7 +11,7 @@ class CornerLineDetection : public csapex::Node
 public:
     CornerLineDetection();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    void setup(csapex::NodeModifier& node_modifier) override;
 
 protected:
     csapex::Output* output_;

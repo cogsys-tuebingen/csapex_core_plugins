@@ -116,7 +116,6 @@ public:
 private:
     bool save_one_;
     Input* in_;
-    Output* out_;
     cv::Mat mat_;
     std::string delimiter_;
     std::string filename_;

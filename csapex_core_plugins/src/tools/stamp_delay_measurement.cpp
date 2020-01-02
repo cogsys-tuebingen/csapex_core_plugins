@@ -22,7 +22,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
         Message::ConstPtr msg(msg::getMessage<Message>(in_));
 

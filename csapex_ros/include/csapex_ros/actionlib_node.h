@@ -18,11 +18,12 @@ namespace csapex
 class ActionlibNodeBase : public RosNode
 {
 public:
-    bool isAsynchronous() const;
+    bool isAsynchronous() const override;
 
     void tearDown() override;
 
-    virtual void process(csapex::NodeModifier&, csapex::Parameterizable&, Continuation continuation) override;
+    using RosNode::process;
+    void process(csapex::NodeModifier&, csapex::Parameterizable&, Continuation continuation) override;
 
 protected:
     virtual void abortAction() = 0;
@@ -101,7 +102,7 @@ protected:
         }
     }
 
-    virtual void processResultCallback(const actionlib::SimpleClientGoalState& state, const ResultConstPtr& result)
+    virtual void processResultCallback(const actionlib::SimpleClientGoalState& state, const ResultConstPtr& result) override
     {
     }
 
@@ -158,7 +159,7 @@ class ChanneledActionlibNode : public ActionlibNode<ActionSpec>
     //    using Parent::event_error_;
 
 protected:
-    void processROS()
+    void processROS() override
     {
         std::string channel = getChannel();
         if (active_client_) {

@@ -21,10 +21,10 @@ class ImageRoiAdapter : public QObject, public DefaultNodeAdapter
 public:
     ImageRoiAdapter(NodeFacadeImplementationPtr worker, NodeBox* parent, std::weak_ptr<ImageRoi> node);
 
-    virtual GenericStatePtr getState() const;
-    virtual void setParameterState(GenericStatePtr memento);
+    GenericStatePtr getState() const override;
+    void setParameterState(GenericStatePtr memento) override;
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
 public Q_SLOTS:
     void display(const QImage& img);
@@ -38,7 +38,7 @@ Q_SIGNALS:
     void dropRequest();
 
 protected:
-    bool eventFilter(QObject* o, QEvent* e);
+    bool eventFilter(QObject* o, QEvent* e) override;
 
     struct State : public GenericState
     {

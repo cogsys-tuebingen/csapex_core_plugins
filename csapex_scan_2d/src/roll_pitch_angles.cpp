@@ -64,7 +64,7 @@ public:
         roll_output_ = node_modifier.addOutput<double>("roll");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareRange("height", 0.05, 1.0, 0.1, 0.001));
 
@@ -118,7 +118,7 @@ private:
 
     std::shared_ptr<ceres::Problem> problem_;
 
-    void reset()
+    void reset() override
     {
         problem_.reset(new ceres::Problem());
         pitch_ = 1.0;

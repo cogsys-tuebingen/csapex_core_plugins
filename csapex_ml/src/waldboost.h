@@ -12,9 +12,9 @@ class CSAPEX_EXPORT_PLUGIN WaldBoost : public Node
 public:
     WaldBoost();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 private:
     Input* in_;
@@ -24,7 +24,6 @@ private:
     cv::WaldBoost wb_;
     std::string path_;
     bool loaded_;
-    bool compute_labels_;
 
     void reload();
 };

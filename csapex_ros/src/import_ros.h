@@ -18,13 +18,13 @@ public:
     ImportRos();
     ~ImportRos();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void setupROS() override;
-    virtual void processROS() override;
-    virtual bool canProcess() const override;
-    virtual void reset() override;
-    virtual void tearDown() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void setupROS() override;
+    void processROS() override;
+    bool canProcess() const override;
+    void reset() override;
+    void tearDown() override;
 
     void callback(TokenDataConstPtr message);
 

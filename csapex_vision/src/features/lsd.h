@@ -34,8 +34,9 @@ public:
 
     LineSegmentDetector();
 
-    virtual void process();
-    virtual void setup();
+    void process() override;
+
+    void setup(csapex::NodeModifier& node_modifier) override;
 
     double* image;
     int X, Y;
@@ -47,7 +48,6 @@ public:
     int i, j;
 
 private:
-    csapex::Output* output_vector_;
     csapex::Input* input_;
 };
 }  // namespace csapex

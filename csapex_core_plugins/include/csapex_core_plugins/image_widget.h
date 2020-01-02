@@ -20,8 +20,8 @@ public:
     void setSize(const QSize& size);
     void setSize(int w, int h);
 
-    virtual QSize sizeHint() const override;
-    virtual QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
 
 public Q_SLOTS:
     void setPixmap(const QPixmap&);

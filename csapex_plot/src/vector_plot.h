@@ -20,11 +20,11 @@ class VectorPlot : public Plot, public csapex::VariadicInputs
 public:
     VectorPlot();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
-    virtual csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override;
+    csapex::Input* createVariadicInput(csapex::TokenDataConstPtr type, const std::string& label, bool optional) override;
 
     double getLineWidth() const;
 
@@ -36,7 +36,7 @@ public:
     std::size_t getCount() const;
 
 protected:
-    void reset();
+    void reset() override;
     void init();
 
     void preparePlot();
@@ -48,9 +48,7 @@ private:
     csapex::Output* out_;
 
     bool initialize_;
-    bool basic_line_color_changed_;
     bool has_time_in_;
-    Input* in_;
 
     double line_width_;
 

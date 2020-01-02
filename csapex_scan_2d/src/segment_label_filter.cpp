@@ -28,7 +28,7 @@ public:
         params.addParameter(csapex::param::factory::declareInterval("labels", 0, 10, 1, 1, 1));
     }
 
-    void process()
+    void process() override
     {
         std::shared_ptr<std::vector<Segment> const> segments_in = msg::getMessage<GenericVectorMessage, Segment>(in_);
 

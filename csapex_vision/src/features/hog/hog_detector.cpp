@@ -202,7 +202,7 @@ void HOGDetector::setParameters(const int cell_size, const int cells_x, const in
         setParameter<int>("hog/gradient_bins", bins);
     }
 
-    if (hog_.signedGradient |= signed_gradient) {
+    if (hog_.signedGradient != signed_gradient) {
         hog_.signedGradient = signed_gradient;
         setParameter<bool>("hog/signed_gradient", signed_gradient);
     }

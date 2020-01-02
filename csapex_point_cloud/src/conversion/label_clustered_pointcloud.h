@@ -26,8 +26,8 @@ public:
 public:
     LabelClusteredPointCloud();
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
 
     template <class PointT>
     void inputCloud(typename pcl::PointCloud<PointT>::ConstPtr cloud);

@@ -17,8 +17,8 @@ class CSAPEX_EXPORT_PLUGIN ARFFFileExporter : public CollectionNode<connection_t
 public:
     ARFFFileExporter();
 
-    virtual void setup(NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
+    void setup(NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 protected:
     bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;

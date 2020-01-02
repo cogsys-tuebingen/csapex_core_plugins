@@ -30,7 +30,7 @@ public:
         out_roi_ = node_modifier.addOutput<RoiMessage>("Scaled ROI");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(csapex::param::factory::declareRange("percent x", 1.0, 400.0, 100.0, 1.0), scales_[0]);
         parameters.addParameter(csapex::param::factory::declareRange("percent y", 1.0, 400.0, 100.0, 1.0), scales_[1]);

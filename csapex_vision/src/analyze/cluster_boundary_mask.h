@@ -10,9 +10,9 @@ class ClusterBoundaryMask : public csapex::Node
 {
 public:
     ClusterBoundaryMask();
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 private:
     csapex::Output* output_;

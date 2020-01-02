@@ -11,8 +11,8 @@ class TransformInverter : public csapex::Node
 public:
     TransformInverter();
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
 
 private:
     Input* input_;

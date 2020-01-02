@@ -27,7 +27,7 @@ namespace connection_types
 struct CSAPEX_OPENCV_EXPORT CvMatMessage : public MessageTemplate<cv::Mat, CvMatMessage>
 {
     friend class MessageTemplate<cv::Mat, CvMatMessage>;
-    friend class YAML::as_if<CvMatMessage, void>;
+    friend struct YAML::as_if<CvMatMessage, void>;
 
     template <typename, typename, typename>
     friend class csapex::ConverterTemplate;
@@ -36,7 +36,7 @@ public:
     CvMatMessage(const Encoding& encoding, const std::string& frame_id, Stamp stamp_micro_seconds);
     ~CvMatMessage();
 
-    virtual void writeNative(const std::string& file, const std::string& base, const std::string& suffix) const override;
+    void writeNative(const std::string& file, const std::string& base, const std::string& suffix) const override;
 
     const Encoding& getEncoding() const;
     void setEncoding(const Encoding& e);
@@ -44,7 +44,7 @@ public:
     bool hasChannels(std::size_t count) const;
     bool hasChannels(std::size_t count, int mat_type) const;
 
-    bool cloneData(const CvMatMessage& other);
+    bool cloneData(const CvMatMessage& other) override;
 
 private:
     Encoding encoding;

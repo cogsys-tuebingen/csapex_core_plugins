@@ -26,7 +26,7 @@ public:
     {
     }
 
-    void process()
+    void process() override
     {
         TimestampMessage::ConstPtr msg_a(msg::getMessage<TimestampMessage>(in_a_));
         auto tp_a = msg_a->value;

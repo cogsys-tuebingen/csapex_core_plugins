@@ -89,7 +89,6 @@ public:
 private:
     Slot* in_;
     Slot* in_params_;
-    Output* out_;
     Event* out_best_;
     std::vector<double> fitness_;
     std::vector<TokenData::ConstPtr> params_;

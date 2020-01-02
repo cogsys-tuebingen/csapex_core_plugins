@@ -36,7 +36,6 @@ private:
     int bins_;
     int cells_x_;
     int cells_y_;
-    int cell_size_;
     int block_size_;
     int block_stride_;
     double scale_hog_image_;

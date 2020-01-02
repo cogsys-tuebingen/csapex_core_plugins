@@ -16,7 +16,7 @@ public:
     {
     }
 
-    void setup(csapex::NodeModifier& node_modifier)
+    void setup(csapex::NodeModifier& node_modifier) override
     {
         selector_ = node_modifier.addOptionalInput<connection_types::GenericValueMessage<int>>("select");
         VariadicInputs::setupVariadic(node_modifier);
@@ -24,12 +24,12 @@ public:
         output_ = node_modifier.addOutput<connection_types::AnyMessage>("message");
     }
 
-    void setupParameters(Parameterizable& parameters)
+    void setupParameters(Parameterizable& parameters) override
     {
         VariadicInputs::setupVariadicParameters(parameters);
     }
 
-    void process()
+    void process() override
     {
         TokenData::ConstPtr msg;
 

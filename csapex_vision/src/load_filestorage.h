@@ -15,10 +15,10 @@ public:
     LoadFilestorage();
     ~LoadFilestorage();
 
-    virtual void process() override;
-    virtual bool canProcess() const override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
+    void process() override;
+    bool canProcess() const override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
 
 private:
     Output* output_;

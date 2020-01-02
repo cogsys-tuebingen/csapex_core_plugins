@@ -13,10 +13,10 @@ public:
     ColorAdjustment();
 
     void setup(csapex::NodeModifier& node_modifier) override;
-    void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
-    void setParameterState(GenericStatePtr memento);
+    void setParameterState(GenericStatePtr memento) override;
     void setPreset();
 
 private:

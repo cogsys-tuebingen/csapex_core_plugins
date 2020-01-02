@@ -19,18 +19,18 @@ public:
     {
     }
 
-    void setupParameters(Parameterizable& parameter)
+    void setupParameters(Parameterizable& parameter) override
     {
     }
 
-    void setup(NodeModifier& node_modifier)
+    void setup(NodeModifier& node_modifier) override
     {
         in_votes_ = node_modifier.addInput<GenericVectorMessage, std::vector<double>>("class votes");
         in_rois_ = node_modifier.addInput<GenericVectorMessage, RoiMessage>("rois");
         out_rois_ = node_modifier.addOutput<GenericVectorMessage, RoiMessage>("features");
     }
 
-    void process()
+    void process() override
     {
         std::shared_ptr<std::vector<RoiMessage> const> rois_in = msg::getMessage<GenericVectorMessage, RoiMessage>(in_rois_);
         std::shared_ptr<std::vector<std::vector<double>> const> votes_in = msg::getMessage<GenericVectorMessage, std::vector<double>>(in_votes_);

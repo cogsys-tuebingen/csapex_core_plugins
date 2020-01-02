@@ -11,8 +11,8 @@ class FeatureToHistogram : public csapex::Node
 public:
     FeatureToHistogram();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
 
 protected:
     csapex::Input* in_;

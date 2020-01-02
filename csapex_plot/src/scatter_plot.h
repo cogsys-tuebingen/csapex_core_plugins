@@ -18,9 +18,9 @@ namespace csapex
 class ScatterPlot : public Plot, public csapex::VariadicInputs
 {
 public:
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
     const double* getXData() const;
     const double* getYData() const;
@@ -31,7 +31,7 @@ public:
     double getPointSize() const;
 
 private:
-    void reset();
+    void reset() override;
 
 private:
     Input* in_x_;

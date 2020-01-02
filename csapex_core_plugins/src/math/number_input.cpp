@@ -23,7 +23,7 @@ public:
         out_ = node_modifier.addOutput<T>(type2name(typeid(T)));
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(csapex::param::factory::declareValue<T>("value", (T)0.0));
     }

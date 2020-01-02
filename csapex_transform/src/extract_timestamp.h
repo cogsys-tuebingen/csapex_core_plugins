@@ -11,8 +11,8 @@ class ExtractTimeStamp : public Node
 public:
     ExtractTimeStamp();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
 
 private:
     Input* input_;

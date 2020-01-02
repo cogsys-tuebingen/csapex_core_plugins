@@ -11,8 +11,8 @@ class Scharr : public Operator
 public:
     Scharr();
 
-    virtual void setupParameters(Parameterizable& parameters) override;
-    virtual void process() override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 protected:
     enum Type
@@ -23,7 +23,7 @@ protected:
     };
     Type type_;
 
-    void update();
+    void update() override;
 };
 }  // namespace csapex
 #endif  // SCHARR_H

@@ -45,7 +45,7 @@ public:
         output_height_ = node_modifier.addOutput<double>("height");
     }
 
-    virtual void setupParameters(Parameterizable& parameters) override
+    void setupParameters(Parameterizable& parameters) override
     {
         parameters.addParameter(param::factory::declareRange("start height", 0.05, 1.0, 0.1, 0.001), std::bind(&HeightPitchAngle::updateStartParameters, this));
         parameters.addParameter(param::factory::declareRange("start pitch", -M_PI, M_PI, 0.0, 0.01), std::bind(&HeightPitchAngle::updateStartParameters, this));
@@ -104,7 +104,7 @@ private:
 
     accumulator_set<double, stats<tag::mean>> mean_dist_;
 
-    void reset()
+    void reset() override
     {
         mean_dist_ = accumulator_set<double, stats<tag::mean>>();
     }

@@ -11,8 +11,8 @@ class DifferenceMaximum : public CornerLineDetection
 public:
     DifferenceMaximum();
 
-    virtual void process() override;
-    virtual void setupParameters(Parameterizable& parameters);
+    void process() override;
+    void setupParameters(Parameterizable& parameters) override;
 };
 }  // namespace csapex
 #endif  // DIFFERENCE_MAXIMUM_H

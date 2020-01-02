@@ -16,9 +16,9 @@ class CSAPEX_EXPORT_PLUGIN SVMEnsemble : public Node
 public:
     SVMEnsemble();
 
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
-    virtual void setupParameters(Parameterizable& parameters);
-    virtual void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
+    void setupParameters(Parameterizable& parameters) override;
+    void process() override;
 
 private:
 #if CV_MAJOR_VERSION == 2

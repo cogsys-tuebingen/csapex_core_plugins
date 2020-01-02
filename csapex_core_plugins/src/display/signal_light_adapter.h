@@ -112,11 +112,11 @@ public:
     SignalLightAdapter(NodeFacadePtr node, NodeBox* parent);
     ~SignalLightAdapter();
 
-    virtual void setupUi(QBoxLayout* layout);
+    void setupUi(QBoxLayout* layout) override;
 
-    virtual void setManualResize(bool manual) override;
+    void setManualResize(bool manual) override;
 
-    virtual void resize(const QSize& size) override;
+    void resize(const QSize& size) override;
 
 public Q_SLOTS:
     void display(int state);

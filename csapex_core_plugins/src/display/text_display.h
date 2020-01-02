@@ -12,8 +12,8 @@ class CSAPEX_CORE_PLUGINS_NODE_EXPORT TextDisplay : public Node
 public:
     TextDisplay();
 
-    virtual void process() override;
-    virtual void setup(csapex::NodeModifier& node_modifier) override;
+    void process() override;
+    void setup(csapex::NodeModifier& node_modifier) override;
 
 public:
     slim_signal::Signal<void(const std::string&)> display_request;
