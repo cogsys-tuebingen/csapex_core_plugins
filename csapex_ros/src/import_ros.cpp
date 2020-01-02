@@ -44,7 +44,8 @@ enum ImportMode
     FrontAndPop = 1
 };
 
-ImportRos::ImportRos() : connector_(nullptr), buffer_size_(1024), running_(true), mode_((int)BackAndLatch)
+ImportRos::ImportRos()
+  : connector_(nullptr), buffer_size_(1024), running_(true), mode_((int)BackAndLatch)
 {
 }
 
@@ -64,11 +65,14 @@ void ImportRos::setupParameters(Parameterizable& parameters)
 {
     std::vector<std::string> set;
     set.push_back(no_topic_);
-    parameters.addParameter(csapex::param::factory::declareParameterStringSet("topic", set), std::bind(&ImportRos::update, this));
+    parameters.addParameter(csapex::param::factory::declareParameterStringSet("topic", set),
+                            std::bind(&ImportRos::update, this));
 
-    parameters.addParameter(csapex::param::factory::declareTrigger("refresh"), std::bind(&ImportRos::refresh, this));
+    parameters.addParameter(csapex::param::factory::declareTrigger("refresh"),
+                            std::bind(&ImportRos::refresh, this));
 
-    parameters.addParameter(csapex::param::factory::declareRange("queue", 0, 30, 1, 1), std::bind(&ImportRos::updateSubscriber, this));
+    parameters.addParameter(csapex::param::factory::declareRange("queue", 0, 30, 1, 1),
+                            std::bind(&ImportRos::updateSubscriber, this));
     parameters.addParameter(csapex::param::factory::declareBool("latch", false));
 
     std::function<bool()> buffer_condition = [this]() {
@@ -76,22 +80,38 @@ void ImportRos::setupParameters(Parameterizable& parameters)
         return mode_ == (int)FrontAndPop;
     };
 
-    parameters.addConditionalParameter(csapex::param::factory::declareRange("buffer_size", 1, 1024, 1024, 1), buffer_condition, buffer_size_);
+    parameters.addConditionalParameter(
+        csapex::param::factory::declareRange("buffer_size", 1, 1024, 1024, 1), buffer_condition,
+        buffer_size_);
 
-    std::function<bool()> connected_condition_mode = [this]() { return !msg::isConnected(input_time_); };
-    std::map<std::string, int> map = { { "BackAndLatch", (int)BackAndLatch }, { "FrontAndPop", (int)FrontAndPop } };
+    std::function<bool()> connected_condition_mode = [this]() {
+        return !msg::isConnected(input_time_);
+    };
+    std::map<std::string, int> map = { { "BackAndLatch", (int)BackAndLatch },
+                                       { "FrontAndPop", (int)FrontAndPop } };
 
-    csapex::param::Parameter::Ptr mode_p = param::factory::declareParameterSet("import_mode",
-                                                                               csapex::param::ParameterDescription("Select a import mode. BackAndLatch publishes the most recent "
-                                                                                                                   "message. FrontAndPop collects the messages in a queue."),
-                                                                               map, (int)BackAndLatch);
+    csapex::param::Parameter::Ptr mode_p =
+        param::factory::declareParameterSet("import_mode",
+                                            csapex::param::ParameterDescription("Select a import "
+                                                                                "mode. "
+                                                                                "BackAndLatch "
+                                                                                "publishes the "
+                                                                                "most recent "
+                                                                                "message. "
+                                                                                "FrontAndPop "
+                                                                                "collects the "
+                                                                                "messages in a "
+                                                                                "queue."),
+                                            map, (int)BackAndLatch);
 
     parameters.addConditionalParameter(mode_p, connected_condition_mode);
 
     std::function<bool()> connected_condition = [&]() { return msg::isConnected(input_time_); };
-    csapex::param::Parameter::Ptr buffer_p = csapex::param::factory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
+    csapex::param::Parameter::Ptr buffer_p =
+        csapex::param::factory::declareRange("buffer/length", 0.0, 10.0, 1.0, 0.1);
     parameters.addConditionalParameter(buffer_p, connected_condition);
-    csapex::param::Parameter::Ptr max_wait_p = csapex::param::factory::declareRange("buffer/max_wait", 0.0, 10.0, 1.0, 0.1);
+    csapex::param::Parameter::Ptr max_wait_p =
+        csapex::param::factory::declareRange("buffer/max_wait", 0.0, 10.0, 1.0, 0.1);
     parameters.addConditionalParameter(max_wait_p, connected_condition);
 }
 
@@ -112,12 +132,14 @@ void ImportRos::refresh()
     ros::master::V_TopicInfo topics;
     ros::master::getTopics(topics);
 
-    param::SetParameter::Ptr setp = std::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
+    param::SetParameter::Ptr setp =
+        std::dynamic_pointer_cast<param::SetParameter>(getParameter("topic"));
     if (setp) {
         bool found = false;
         std::vector<std::string> topics_str;
         topics_str.push_back(no_topic_);
-        for (ros::master::V_TopicInfo::const_iterator it = topics.begin(); it != topics.end(); ++it) {
+        for (ros::master::V_TopicInfo::const_iterator it = topics.begin(); it != topics.end();
+             ++it) {
             topics_str.push_back(it->name);
             if (it->name == old_topic) {
                 found = true;
@@ -146,7 +168,16 @@ void ImportRos::update()
 void ImportRos::updateSubscriber()
 {
     if (!current_topic_.name.empty()) {
-        current_subscriber = RosMessageConversion::instance().subscribe(current_topic_, readParameter<int>("queue"), std::bind(&ImportRos::callback, this, std::placeholders::_1));
+        current_subscriber = RosMessageConversion::instance().subscribe(
+            current_topic_, readParameter<int>("queue"),
+            std::bind(&ImportRos::callback, this, std::placeholders::_1),
+            [this](std::exception_ptr e) {
+                try {
+                    std::rethrow_exception(e);
+                } catch (const std::exception& e) {
+                    node_modifier_->setError(e.what());
+                }
+            });
     }
 }
 
@@ -213,14 +244,16 @@ void ImportRos::processROS()
 
 void ImportRos::processNotSource()
 {
-    connection_types::TimestampMessage::ConstPtr time = msg::getMessage<connection_types::TimestampMessage>(input_time_);
+    connection_types::TimestampMessage::ConstPtr time =
+        msg::getMessage<connection_types::TimestampMessage>(input_time_);
     mode_ = (int)FrontAndPop;
     if (msgs_.empty()) {
         return;
     }
 
     ros::Time time_value;
-    auto nano = std::chrono::duration_cast<std::chrono::nanoseconds>(time->value.time_since_epoch());
+    auto nano =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(time->value.time_since_epoch());
     time_value = time_value.fromNSec(nano.count());
 
     if (time_value == ros::Time(0)) {
@@ -238,7 +271,8 @@ void ImportRos::processNotSource()
 
     // drop old messages
     ros::Duration keep_duration(readParameter<double>("buffer/length"));
-    while (!msgs_.empty() && rosTime(msgs_.front()->stamp_micro_seconds) + keep_duration < time_value) {
+    while (!msgs_.empty() &&
+           rosTime(msgs_.front()->stamp_micro_seconds) + keep_duration < time_value) {
         msgs_.pop_front();
     }
 
@@ -246,7 +280,8 @@ void ImportRos::processNotSource()
 
     if (!msgs_.empty()) {
         if (rosTime(msgs_.front()->stamp_micro_seconds) > time_value) {
-            aerr << "time stamp " << time_value << " is too old, oldest buffered is " << rosTime(msgs_.front()->stamp_micro_seconds) << std::endl;
+            aerr << "time stamp " << time_value << " is too old, oldest buffered is "
+                 << rosTime(msgs_.front()->stamp_micro_seconds) << std::endl;
             return;
         }
 
@@ -377,12 +412,15 @@ void ImportRos::publishLatestMessage()
 
 void ImportRos::callback(TokenDataConstPtr message)
 {
-    connection_types::Message::ConstPtr msg = std::dynamic_pointer_cast<connection_types::Message const>(message);
+    connection_types::Message::ConstPtr msg =
+        std::dynamic_pointer_cast<connection_types::Message const>(message);
     if (msg) {
         std::unique_lock<std::recursive_mutex> lock(msgs_mtx_);
 
-        if (!msgs_.empty() && msg->stamp_micro_seconds + int(2 * 1e9) < msgs_.back()->stamp_micro_seconds) {
-            awarn << "detected time anomaly -> reset (" << msg->stamp_micro_seconds + int(2 * 1e9) << " < " << msgs_.back()->stamp_micro_seconds << ")" << std::endl;
+        if (!msgs_.empty() &&
+            msg->stamp_micro_seconds + int(2 * 1e9) < msgs_.back()->stamp_micro_seconds) {
+            awarn << "detected time anomaly -> reset (" << msg->stamp_micro_seconds + int(2 * 1e9)
+                  << " < " << msgs_.back()->stamp_micro_seconds << ")" << std::endl;
             ;
             msgs_.clear();
         }

@@ -4,7 +4,8 @@ project(csapex_ros)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins rosbag tf pluginlib REQUIRED)
+find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins topic_tools tf pluginlib REQUIRED)
+find_package(rosbag REQUIRED)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
@@ -20,7 +21,13 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include ${catkin_INCLUDE_DIRS} ${Qt5Core_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS})
+include_directories(include 
+  ${catkin_INCLUDE_DIRS} 
+  ${rosbag_INCLUDE_DIRS} 
+  ${Qt5Core_INCLUDE_DIRS} 
+  ${Qt5Widgets_INCLUDE_DIRS} 
+  ${Qt5Gui_INCLUDE_DIRS}
+)
 
 ## booting
 add_library(${PROJECT_NAME}_boot

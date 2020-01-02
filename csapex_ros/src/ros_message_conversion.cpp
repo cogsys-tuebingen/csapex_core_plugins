@@ -57,12 +57,12 @@ void RosMessageConversion::doRegisterConversion(const std::string& apex_type, co
     }
 }
 
-ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo& topic, int queue, Callback output, int target_type)
+ros::Subscriber RosMessageConversion::subscribe(const ros::master::TopicInfo& topic, int queue, Callback output, ErrorCallback error_callback, int target_type)
 {
     if (isTopicTypeRegistered(topic)) {
         const auto& converters = converters_.at(topic.datatype);
         if (converters.size() == 1) {
-            return converters.front()->subscribe(topic, queue, output);
+            return converters.front()->subscribe(topic, queue, output, error_callback);
         } else {
             throw AmbigousRosConversion(topic.datatype);
         }

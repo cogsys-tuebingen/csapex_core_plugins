@@ -50,6 +50,8 @@ protected:
             sub = RosMessageConversion::instance().subscribe(ti, 1, [this](const TokenDataConstPtr& msg) {
                 ainfo << "trigger" << std::endl;
                 msg::trigger(trigger_);
+            }, [this](const std::exception_ptr& e) {
+                std::rethrow_exception(e);
             });
         }
     }
