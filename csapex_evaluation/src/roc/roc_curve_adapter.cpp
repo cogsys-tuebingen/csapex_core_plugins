@@ -12,8 +12,8 @@
 #include <QLabel>
 #include <QPainter>
 #include <QTableView>
-#include <libqwt/qwt_plot.h>
-#include <libqwt/qwt_plot_curve.h>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
 
 using namespace csapex;
 

@@ -29,7 +29,6 @@ add_library(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME} ${csapex_plot_EXPORTED_TARGETS})
 
 
 add_library(${PROJECT_NAME}_plugin_node
@@ -46,7 +45,6 @@ add_library(${PROJECT_NAME}_plugin_node
 
 target_link_libraries(${PROJECT_NAME}_plugin_node ${PROJECT_NAME}
     yaml-cpp ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME}_plugin_node ${csapex_plot_EXPORTED_TARGETS})
 
 
 add_library(${PROJECT_NAME}_plugin_qt
@@ -59,7 +57,6 @@ add_library(${PROJECT_NAME}_plugin_qt
 
 target_link_libraries(${PROJECT_NAME}_plugin_qt ${PROJECT_NAME}
     yaml-cpp ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME}_plugin_qt ${csapex_plot_EXPORTED_TARGETS})
 
 #
 # INSTALL

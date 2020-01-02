@@ -8,9 +8,9 @@
 #include <QColor>
 #include <chrono>
 #include <deque>
-#include <libqwt/qwt_plot_curve.h>
-#include <libqwt/qwt_plot_scaleitem.h>
-#include <libqwt/qwt_scale_map.h>
+#include <qwt_plot_curve.h>
+#include <qwt_plot_scaleitem.h>
+#include <qwt_scale_map.h>
 
 namespace csapex
 {

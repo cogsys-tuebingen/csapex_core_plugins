@@ -5,10 +5,10 @@
 #include <csapex/model/node_facade_impl.h>
 
 /// SYSTEM
-#include <libqwt/qwt_legend.h>
-#include <libqwt/qwt_legend_label.h>
-#include <libqwt/qwt_plot.h>
-#include <libqwt/qwt_plot_curve.h>
+#include <qwt_legend.h>
+#include <qwt_legend_label.h>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
 
 using namespace csapex;
 

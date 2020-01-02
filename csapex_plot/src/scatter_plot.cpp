@@ -12,7 +12,7 @@
 #include <csapex_opencv/cv_mat_message.h>
 
 /// SYSTEM
-#include <libqwt/qwt_scale_engine.h>
+#include <qwt_scale_engine.h>
 
 CSAPEX_REGISTER_CLASS(csapex::ScatterPlot, csapex::Node)
 

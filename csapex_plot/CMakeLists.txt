@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(csapex_plot)
 
-include(ExternalProject)
-
+## Add our own cmake subdirectory
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 set(CMAKE_AUTOMOC ON)
@@ -12,39 +12,14 @@ find_package(catkin REQUIRED COMPONENTS
   csapex_opencv
 )
 
+find_package(Qwt REQUIRED)
 
-file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/include)
-
-
-ExternalProject_add(QWT
-  SVN_REPOSITORY svn://svn.code.sf.net/p/qwt/code/trunk/qwt
-  SVN_REVISION -r "2365"
-  PATCH_COMMAND ""
-  UPDATE_COMMAND ""
-  BUILD_COMMAND  $(MAKE)
-  SOURCE_DIR QWT
-  BINARY_DIR lib
-  INSTALL_COMMAND $(MAKE) install
-  "${cmakeversion_external_update}"
-  PATCH_COMMAND ${CMAKE_COMMAND} -E
-  copy ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt.qwt
-  <SOURCE_DIR>/CMakeLists.txt
-  CMAKE_ARGS ${COMMON_EXTERNAL_PROJECT_ARGS}
-    -DCMAKE_INSTALL_PREFIX:PATH=${CATKIN_DEVEL_PREFIX}
-  INSTALL_DIR ${CATKIN_DEVEL_PREFIX}
-)
-
-message(STATUS ${CATKIN_DEVEL_PREFIX})
-
-set(QWT_LIBRARY ${CATKIN_DEVEL_PREFIX}/lib/libqwt-qt5.so)
-set(QWT_INCLUDE_DIR ${CATKIN_DEVEL_PREFIX}/include)
+set(QWT_LIBRARIES ${QWT_LIBRARY})
+set(QWT_INCLUDE_DIRS ${QWT_INCLUDE_DIR})
 
 catkin_package(
-    INCLUDE_DIRS ${QWT_INCLUDE_DIR}
-    LIBRARIES ${QWT_LIBRARY}
-    EXPORTED_TARGETS QWT
+    DEPENDS QWT
 )
-
 
 include_directories(
   ${catkin_INCLUDE_DIRS} ${QWT_INCLUDE_DIR}
@@ -62,7 +37,6 @@ add_library(${PROJECT_NAME}_node
 target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES} ${QWT_LIBRARY} ${QT_LIBRARIES}
 )
-add_dependencies(${PROJECT_NAME}_node QWT)
 
 
 add_library(${PROJECT_NAME}_plugin_qt
@@ -72,7 +46,6 @@ add_library(${PROJECT_NAME}_plugin_qt
 )
 target_link_libraries(${PROJECT_NAME}_plugin_qt
     yaml-cpp ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME}_plugin_qt QWT)
 
 
 
