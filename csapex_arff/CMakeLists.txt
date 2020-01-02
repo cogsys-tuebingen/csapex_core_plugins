@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(csapex_arff)
+cmake_minimum_required(VERSION 3.8.2)
+project(csapex_arff CXX)
 
 list(APPEND CMAKE_PREFIX_PATH ${CSAPEX_CMAKE_MODULE_PATHS})
 

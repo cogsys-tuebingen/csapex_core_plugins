@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(csapex_vision)
+cmake_minimum_required(VERSION 3.8.2)
+project(csapex_vision CXX)
 
 # Set the build type.  Options are:
 #  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage

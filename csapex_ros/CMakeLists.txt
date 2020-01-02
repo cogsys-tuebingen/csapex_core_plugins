@@ -1,11 +1,10 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(csapex_ros)
+cmake_minimum_required(VERSION 3.8.2)
+project(csapex_ros CXX)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin COMPONENTS roscpp csapex csapex_core_plugins topic_tools tf pluginlib REQUIRED)
-find_package(rosbag REQUIRED)
+find_package(catkin COMPONENTS csapex csapex_core_plugins  roscpp rosbag topic_tools tf pluginlib REQUIRED)
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
@@ -23,7 +22,6 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(include 
   ${catkin_INCLUDE_DIRS} 
-  ${rosbag_INCLUDE_DIRS} 
   ${Qt5Core_INCLUDE_DIRS} 
   ${Qt5Widgets_INCLUDE_DIRS} 
   ${Qt5Gui_INCLUDE_DIRS}

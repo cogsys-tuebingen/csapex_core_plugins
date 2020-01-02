@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(csapex_bar_code)
+cmake_minimum_required(VERSION 3.8.2)
+project(csapex_bar_code CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 

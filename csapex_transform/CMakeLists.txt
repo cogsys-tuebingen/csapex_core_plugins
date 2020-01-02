@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(csapex_transform)
+cmake_minimum_required(VERSION 3.8.2)
+project(csapex_transform CXX)
 
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 

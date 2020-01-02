@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.11)
-project(csapex_optimization)
+cmake_minimum_required(VERSION 3.8.2)
+project(csapex_optimization CXX)
 
 find_package(catkin REQUIRED COMPONENTS
   csapex_core_plugins

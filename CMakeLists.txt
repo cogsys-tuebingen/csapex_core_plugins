@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(csapex_core_plugins)
+cmake_minimum_required(VERSION 3.8.2)
+project(csapex_core_plugins CXX)
 
 if(NOT Boost_USE_STATIC_LIBS)
 	set(Boost_USE_STATIC_LIBS TRUE)
