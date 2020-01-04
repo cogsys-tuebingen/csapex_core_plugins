@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>csapex_opencv</name>
   <version>0.0.1</version>
   <description>The csapex_opencv package contains basic opencv plug-ins without further depenencies</description>
@@ -11,9 +11,10 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>csapex</build_depend>
+  <depend>csapex</depend>
 
-  <run_depend>csapex</run_depend>
+  <depend>libopencv-dev</depend>
+  <depend>libopencv-contrib-dev</depend>
 
   <export>
     <csapex plugin="${prefix}/plugins.xml" />

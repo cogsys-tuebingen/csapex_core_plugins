@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package>
+<package format="2">
   <name>csapex_ros</name>
   <version>0.0.0</version>
   <description>The csapex_ros package</description>
@@ -9,21 +9,15 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>roscpp</build_depend>
-  <build_depend>csapex</build_depend>
-  <build_depend>csapex_core_plugins</build_depend>
-  <build_depend>rosbag</build_depend>
-  <build_depend>topic_tools</build_depend>
-  <build_depend>tf</build_depend>
-  <build_depend>pluginlib</build_depend>
+  <depend>csapex</depend>
 
-  <run_depend>roscpp</run_depend>
-  <run_depend>csapex</run_depend>
-  <run_depend>csapex_core_plugins</run_depend>
-  <run_depend>rosbag</run_depend>
-  <run_depend>topic_tools</run_depend>
-  <run_depend>tf</run_depend>
-  <run_depend>pluginlib</run_depend>
+  <depend>csapex_core_plugins</depend>
+  
+  <depend>roscpp</depend>
+  <depend>rosbag</depend>
+  <depend>topic_tools</depend>
+  <depend>tf</depend>
+  <depend>pluginlib</depend>
 
   <export>
     <csapex plugin="${prefix}/plugins.xml" />
