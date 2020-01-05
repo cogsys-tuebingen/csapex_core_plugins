@@ -25,7 +25,6 @@
 /// SYSTEM
 #include <QMimeData>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/regex.hpp>
 #include <chrono>
 #include <console_bridge/console.h>
 #include <geometry_msgs/PoseArray.h>

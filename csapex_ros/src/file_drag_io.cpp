@@ -15,16 +15,16 @@
 #include <csapex/view/designer/graph_view.h>
 
 /// SYSTEM
+#include <regex>
 #include <QMimeData>
 #include <QStringList>
 #include <QUrl>
-#include <boost/regex.hpp>
 
 namespace csapex
 {
 class RosIoHandler : public DragIOHandler
 {
-    static const boost::regex fmt;
+    static const std::regex fmt;
 
     std::string getCmd(QDropEvent* e)
     {
@@ -43,7 +43,7 @@ class RosIoHandler : public DragIOHandler
         if (e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
             std::string cmd = getCmd(e);
 
-            bool cmd_could_be_topic = boost::regex_match(cmd, fmt);
+            bool cmd_could_be_topic = std::regex_match(cmd, fmt);
 
             if (cmd_could_be_topic) {
                 if (ROSHandler::instance().isConnected() && ROSHandler::instance().topicExists(cmd)) {
@@ -63,7 +63,7 @@ class RosIoHandler : public DragIOHandler
         if (e->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
             std::string cmd = getCmd(e);
 
-            bool cmd_could_be_topic = boost::regex_match(cmd, fmt);
+            bool cmd_could_be_topic = std::regex_match(cmd, fmt);
 
             if (cmd_could_be_topic) {
                 if (ROSHandler::instance().topicExists(cmd)) {
@@ -89,7 +89,7 @@ class RosIoHandler : public DragIOHandler
     }
 };
 
-const boost::regex RosIoHandler::fmt("[a-zA-Z0-9_\\-/]+");
+const std::regex RosIoHandler::fmt("[a-zA-Z0-9_\\-/]+");
 }  // namespace csapex
 
 CSAPEX_REGISTER_CLASS(csapex::RosIoHandler, csapex::DragIOHandler)

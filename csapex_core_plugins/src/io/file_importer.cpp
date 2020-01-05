@@ -21,9 +21,9 @@
 /// SYSTEM
 #include <QDir>
 #include <QUrl>
+#include <regex>
 #include <boost/filesystem.hpp>
 #include <boost/lambda/lambda.hpp>
-#include <boost/regex.hpp>
 
 CSAPEX_REGISTER_CLASS(csapex::FileImporter, csapex::Node)
 
@@ -302,13 +302,13 @@ bool is_not_digit(char c)
 
 bool numeric_string_compare(const std::string& s1, const std::string& s2)
 {
-    boost::regex re("(.*)_([\\d]+)\\.[^\\.]+");
-    boost::smatch result1, result2;
+    std::regex re("(.*)_([\\d]+)\\.[^\\.]+");
+    std::smatch result1, result2;
 
-    if (!boost::regex_search(s1, result1, re)) {
+    if (!std::regex_search(s1, result1, re)) {
         return false;
     }
-    if (!boost::regex_search(s2, result2, re)) {
+    if (!std::regex_search(s2, result2, re)) {
         return false;
     }
     std::string prefix_n1(result1[1].first, result1[1].second);
@@ -333,7 +333,7 @@ void FileImporter::doImportDir(const QString& dir_string)
     bool recursive = readParameter<bool>("recursive import");
 
     //    directory_filter_ = readParameter<std::string>("directory/filter");
-    boost::regex filter_regex(directory_filter_);
+    std::regex filter_regex(directory_filter_);
 
     std::function<void(const boost::filesystem::path&)> crawl_dir = [&](const boost::filesystem::path& directory) {
         if (boost::filesystem::exists(directory)) {
@@ -348,7 +348,7 @@ void FileImporter::doImportDir(const QString& dir_string)
                     }
                 } else {
                     std::string path_string = path.string();
-                    if (boost::regex_match(path_string, filter_regex)) {
+                    if (std::regex_match(path_string, filter_regex)) {
                         dir_files_.push_back(path_string);
                     }
                 }
