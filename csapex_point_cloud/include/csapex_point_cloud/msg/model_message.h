@@ -3,6 +3,7 @@
 
 /// APEX
 #include <csapex/serialization/serialization_buffer.h>
+#include <csapex/utility/yaml.h>
 
 /// PCL
 #include <pcl/ModelCoefficients.h>
@@ -14,8 +15,6 @@
 #include <pcl/sample_consensus/model_types.h>
 #pragma pop_macro("PCL_DEPRECATED")
 
-/// SYSTEM
-#include <yaml-cpp/yaml.h>
 
 namespace csapex
 {

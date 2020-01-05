@@ -2,9 +2,6 @@
 /// HEADER
 #include <csapex_opencv/circle.h>
 
-/// COMPONENT
-//#include <yaml-cpp/yaml.h>
-
 using namespace csapex;
 
 Circle::Circle() : center_x(0), center_y(0), radius(0), id(-1)

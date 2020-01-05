@@ -3,6 +3,7 @@
 
 /// PROJECT
 #include <csapex/view/node/resizable_node_adapter.h>
+#include <csapex/utility/yaml.h>
 
 /// COMPONENT
 #include "signal_light.h"
@@ -10,7 +11,6 @@
 /// SYSTEM
 #include <QLabel>
 #include <QPainter>
-#include <yaml-cpp/yaml.h>
 
 namespace csapex
 {

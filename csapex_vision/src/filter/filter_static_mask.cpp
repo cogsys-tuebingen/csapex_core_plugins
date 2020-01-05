@@ -6,11 +6,11 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/serialization/node_serializer.h>
 #include <csapex/utility/assert.h>
+#include <csapex/utility/yaml.h>
 
 /// SYSTEM
 #include <QByteArray>
 #include <csapex/utility/register_apex_plugin.h>
-#include <yaml-cpp/yaml.h>
 
 CSAPEX_REGISTER_CLASS(csapex::FilterStaticMask, csapex::Node)
 

@@ -8,9 +8,7 @@
 #include <csapex/utility/assert.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_opencv/cv_mat_message.h>
-
-/// SYSTEM
-#include <yaml-cpp/yaml.h>
+#include <csapex/utility/yaml.h>
 
 CSAPEX_REGISTER_CLASS(csapex::Split, csapex::Node)
 

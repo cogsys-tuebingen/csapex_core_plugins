@@ -4,9 +4,7 @@
 /// PROJECT
 #include <csapex/view/node/resizable_node_adapter.h>
 #include <csapex_core_plugins/image_widget.h>
-
-/// SYSTEM
-#include <yaml-cpp/yaml.h>
+#include <csapex/utility/yaml.h>
 
 namespace csapex
 {

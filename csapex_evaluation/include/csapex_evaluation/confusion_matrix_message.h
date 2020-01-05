@@ -6,9 +6,7 @@
 
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
-
-/// SYSTEM
-#include <yaml-cpp/yaml.h>
+#include <csapex/utility/yaml.h>
 
 namespace csapex
 {

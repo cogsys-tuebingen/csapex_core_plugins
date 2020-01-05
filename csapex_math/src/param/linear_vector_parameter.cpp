@@ -9,10 +9,10 @@
 #include <csapex/param/register_parameter.h>
 #include <csapex/param/value_parameter.h>
 #include <csapex/serialization/io/std_io.h>
+#include <csapex/utility/yaml.h>
 
 /// SYSTEM
 #include <boost/any.hpp>
-#include <yaml-cpp/yaml.h>
 
 CSAPEX_REGISTER_PARAM(LinearVectorParameter)
 

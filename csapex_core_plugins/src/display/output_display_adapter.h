@@ -4,12 +4,10 @@
 /// PROJECT
 #include <csapex/view/node/resizable_node_adapter.h>
 #include <csapex_core_plugins/image_widget.h>
+#include <csapex/utility/yaml.h>
 
 /// COMPONENT
 #include "output_display.h"
-
-/// SYSTEM
-#include <yaml-cpp/yaml.h>
 
 namespace csapex
 {

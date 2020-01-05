@@ -1,9 +1,11 @@
 /// COMPONENT
 #include <csapex_opencv/roi.h>
 
+/// PROJECT
+#include <csapex/utility/yaml.h>
+
 /// SYSTEM
 #include <opencv2/opencv.hpp>
-#include <yaml-cpp/yaml.h>
 
 /// YAML
 namespace YAML

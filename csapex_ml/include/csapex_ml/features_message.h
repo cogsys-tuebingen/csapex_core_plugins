@@ -4,9 +4,7 @@
 /// PROJECT
 #include <csapex/msg/message_template.hpp>
 #include <csapex_ml/csapex_ml_export.h>
-
-/// SYSTEM
-#include <yaml-cpp/yaml.h>
+#include <csapex/utility/yaml.h>
 
 namespace csapex
 {

@@ -2,9 +2,10 @@
 #define CIRCLE_H
 /// COMPONENT
 #include <csapex/serialization/serialization_buffer.h>
+#include <csapex/utility/yaml.h>
 #include <csapex_opencv/csapex_opencv_export.h>
+
 #include <opencv2/core/core.hpp>
-#include <yaml-cpp/yaml.h>
 namespace csapex
 {
 struct Circle

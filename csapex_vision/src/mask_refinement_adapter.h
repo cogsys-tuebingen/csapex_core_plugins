@@ -4,13 +4,13 @@
 /// PROJECT
 #include <csapex/model/generic_state.h>
 #include <csapex/view/node/default_node_adapter.h>
+#include <csapex/utility/yaml.h>
 
 /// COMPONENT
 #include "mask_refinement.h"
 
 /// SYSTEM
 #include <QGraphicsView>
-#include <yaml-cpp/yaml.h>
 
 namespace csapex
 {

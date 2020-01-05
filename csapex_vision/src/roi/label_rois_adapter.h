@@ -4,6 +4,7 @@
 /// PROJECT
 #include <csapex/model/generic_state.h>
 #include <csapex/view/node/default_node_adapter.h>
+#include <csapex/utility/yaml.h>
 
 /// COMPONENT
 #include "label_rois.h"
@@ -12,7 +13,6 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsView>
 #include <QImage>
-#include <yaml-cpp/yaml.h>
 
 namespace csapex
 {

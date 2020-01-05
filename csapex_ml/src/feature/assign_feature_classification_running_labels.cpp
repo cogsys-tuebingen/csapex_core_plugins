@@ -9,9 +9,11 @@
 #include <csapex/param/parameter_factory.h>
 #include <csapex/utility/register_apex_plugin.h>
 #include <csapex_ml/features_message.h>
+#include <csapex/utility/yaml.h>
+
 /// SYSTEM
 #include <fstream>
-#include <yaml-cpp/yaml.h>
+
 using namespace csapex;
 using namespace csapex::connection_types;
 

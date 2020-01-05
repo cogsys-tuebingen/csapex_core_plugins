@@ -1,9 +1,11 @@
 #ifndef FEATURE_CLASSIFICATION_MAPPING_HPP
 #define FEATURE_CLASSIFICATION_MAPPING_HPP
+
 #include <csapex_ml/features_message.h>
+#include <csapex/utility/yaml.h>
+
 #include <fstream>
 #include <vector>
-#include <yaml-cpp/yaml.h>
 class FeatureClassificationMapping
 {
 public:

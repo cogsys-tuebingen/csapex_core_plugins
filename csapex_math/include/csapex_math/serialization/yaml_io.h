@@ -4,8 +4,8 @@
 /// COMPONENT
 #include <csapex_math/model/vector.h>
 
-/// SYSTEM
-#include <yaml-cpp/yaml.h>
+/// PROJECT
+#include <csapex/utility/yaml.h>
 
 /// YAML
 ///
