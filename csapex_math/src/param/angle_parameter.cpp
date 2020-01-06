@@ -8,7 +8,7 @@
 #include <csapex/utility/yaml.h>
 
 /// SYSTEM
-#include <boost/any.hpp>
+#include <any>
 
 CSAPEX_REGISTER_PARAM(AngleParameter)
 
@@ -36,14 +36,14 @@ std::string AngleParameter::toStringImpl() const
     return std::string("[angle: ") + std::to_string(angle_) + "rad, " + std::to_string(angle_ / M_PI * 180.0) + "°]";
 }
 
-void AngleParameter::get_unsafe(boost::any& out) const
+void AngleParameter::get_unsafe(std::any& out) const
 {
     out = angle_;
 }
 
-bool AngleParameter::set_unsafe(const boost::any& v)
+bool AngleParameter::set_unsafe(const std::any& v)
 {
-    double a = boost::any_cast<double>(v);
+    double a = std::any_cast<double>(v);
     if (a < min_ || a >= max_) {
         throw std::out_of_range(std::string("angle ") + std::to_string(a) + " is not in the valid interval [" + std::to_string(min_) + ", " + std::to_string(max_) + "]");
     }

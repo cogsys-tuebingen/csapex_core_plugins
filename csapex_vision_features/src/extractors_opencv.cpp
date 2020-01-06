@@ -91,8 +91,8 @@ struct Orb : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Orb, ORB)
-BOOST_STATIC_ASSERT(DetectorTraits<Orb>::HasKeypoint);
-BOOST_STATIC_ASSERT(DetectorTraits<Orb>::HasDescriptor);
+static_assert(DetectorTraits<Orb>::HasKeypoint);
+static_assert(DetectorTraits<Orb>::HasDescriptor);
 
 struct Brisk : public ExtractorManager::ExtractorInitializer
 {
@@ -152,8 +152,8 @@ struct Brisk : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Brisk, BRISK)
-BOOST_STATIC_ASSERT(DetectorTraits<Brisk>::HasKeypoint);
-BOOST_STATIC_ASSERT(DetectorTraits<Brisk>::HasDescriptor);
+static_assert(DetectorTraits<Brisk>::HasKeypoint);
+static_assert(DetectorTraits<Brisk>::HasDescriptor);
 
 #if CV_NON_FREE
 struct Sift : public ExtractorManager::ExtractorInitializer
@@ -206,8 +206,8 @@ struct Sift : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Sift, SIFT);
-BOOST_STATIC_ASSERT(DetectorTraits<Sift>::HasKeypoint);
-BOOST_STATIC_ASSERT(DetectorTraits<Sift>::HasDescriptor);
+static_assert(DetectorTraits<Sift>::HasKeypoint);
+static_assert(DetectorTraits<Sift>::HasDescriptor);
 
 struct Surf : public ExtractorManager::ExtractorInitializer
 {
@@ -261,8 +261,8 @@ struct Surf : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Surf, SURF);
-BOOST_STATIC_ASSERT(DetectorTraits<Surf>::HasKeypoint);
-BOOST_STATIC_ASSERT(DetectorTraits<Surf>::HasDescriptor);
+static_assert(DetectorTraits<Surf>::HasKeypoint);
+static_assert(DetectorTraits<Surf>::HasDescriptor);
 #endif
 
 /// KEYPOINTS ONLY
@@ -303,8 +303,8 @@ struct Fast : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Fast, FAST)
-BOOST_STATIC_ASSERT(DetectorTraits<Fast>::HasKeypoint);
-BOOST_STATIC_ASSERT(!DetectorTraits<Fast>::HasDescriptor);
+static_assert(DetectorTraits<Fast>::HasKeypoint);
+static_assert(!DetectorTraits<Fast>::HasDescriptor);
 
 struct Mser : public ExtractorManager::ExtractorInitializer
 {
@@ -358,8 +358,8 @@ struct Mser : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Mser, MSER)
-BOOST_STATIC_ASSERT(DetectorTraits<Mser>::HasKeypoint);
-BOOST_STATIC_ASSERT(!DetectorTraits<Mser>::HasDescriptor);
+static_assert(DetectorTraits<Mser>::HasKeypoint);
+static_assert(!DetectorTraits<Mser>::HasDescriptor);
 
 #if CV_MAJOR_VERSION == 2
 
@@ -395,8 +395,8 @@ struct Star : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Star, STAR);
-BOOST_STATIC_ASSERT(DetectorTraits<Star>::HasKeypoint);
-BOOST_STATIC_ASSERT(!DetectorTraits<Star>::HasDescriptor);
+static_assert(DetectorTraits<Star>::HasKeypoint);
+static_assert(!DetectorTraits<Star>::HasDescriptor);
 
 #endif
 
@@ -436,8 +436,8 @@ struct Gftt : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Gftt, GFTT)
-BOOST_STATIC_ASSERT(DetectorTraits<Gftt>::HasKeypoint);
-BOOST_STATIC_ASSERT(!DetectorTraits<Gftt>::HasDescriptor);
+static_assert(DetectorTraits<Gftt>::HasKeypoint);
+static_assert(!DetectorTraits<Gftt>::HasDescriptor);
 
 struct GfttHarris : public ExtractorManager::ExtractorInitializer
 {
@@ -475,8 +475,8 @@ struct GfttHarris : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(GfttHarris, GFTT_HARRIS)
-BOOST_STATIC_ASSERT(DetectorTraits<GfttHarris>::HasKeypoint);
-BOOST_STATIC_ASSERT(!DetectorTraits<GfttHarris>::HasDescriptor);
+static_assert(DetectorTraits<GfttHarris>::HasKeypoint);
+static_assert(!DetectorTraits<GfttHarris>::HasDescriptor);
 
 /// DESCRIPTORS ONLY
 
@@ -515,8 +515,8 @@ struct Brief : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Brief, BRIEF);
-BOOST_STATIC_ASSERT(!DetectorTraits<Brief>::HasKeypoint);
-BOOST_STATIC_ASSERT(DetectorTraits<Brief>::HasDescriptor);
+static_assert(!DetectorTraits<Brief>::HasKeypoint);
+static_assert(DetectorTraits<Brief>::HasDescriptor);
 
 struct Freak : public ExtractorManager::ExtractorInitializer
 {
@@ -546,8 +546,8 @@ struct Freak : public ExtractorManager::ExtractorInitializer
     }
 };
 REGISTER_FEATURE_DETECTOR(Freak, FREAK);
-BOOST_STATIC_ASSERT(!DetectorTraits<Freak>::HasKeypoint);
-BOOST_STATIC_ASSERT(DetectorTraits<Freak>::HasDescriptor);
+static_assert(!DetectorTraits<Freak>::HasKeypoint);
+static_assert(DetectorTraits<Freak>::HasDescriptor);
 
 #endif
 #endif  // EXTRACTORS_DEFAULT_HPP

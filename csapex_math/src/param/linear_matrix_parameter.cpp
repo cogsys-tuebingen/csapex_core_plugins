@@ -12,7 +12,7 @@
 #include <csapex/utility/yaml.h>
 
 /// SYSTEM
-#include <boost/any.hpp>
+#include <any>
 
 CSAPEX_REGISTER_PARAM(LinearMatrixParameter)
 
