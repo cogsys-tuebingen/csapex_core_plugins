@@ -102,7 +102,7 @@ protected:
         }
     }
 
-    virtual void processResultCallback(const actionlib::SimpleClientGoalState& state, const ResultConstPtr& result) override
+    virtual void processResultCallback(const actionlib::SimpleClientGoalState& state, const ResultConstPtr& result)
     {
     }
 
