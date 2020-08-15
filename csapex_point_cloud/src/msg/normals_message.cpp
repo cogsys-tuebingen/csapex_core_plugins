@@ -54,8 +54,8 @@ struct convert<pcl::PCLHeader>
 
     static bool decode(const Node& node, pcl::PCLHeader& rhs)
     {
-        rhs.seq = node["seq"].as<pcl::uint32_t>();
-        rhs.stamp = node["stamp"].as<pcl::uint64_t>();
+        rhs.seq = node["seq"].as<std::uint32_t>();
+        rhs.stamp = node["stamp"].as<std::uint64_t>();
         rhs.frame_id = node["frame_id"].as<std::string>();
         return true;
     }
@@ -77,9 +77,9 @@ struct convert<pcl::PCLPointField>
     static bool decode(const Node& node, pcl::PCLPointField& rhs)
     {
         rhs.name = node["name"].as<std::string>();
-        rhs.offset = node["offset"].as<pcl::uint32_t>();
-        rhs.datatype = node["datatype"].as<pcl::uint8_t>();
-        rhs.count = node["count"].as<pcl::uint32_t>();
+        rhs.offset = node["offset"].as<std::uint32_t>();
+        rhs.datatype = node["datatype"].as<std::uint8_t>();
+        rhs.count = node["count"].as<std::uint32_t>();
         return true;
     }
 };

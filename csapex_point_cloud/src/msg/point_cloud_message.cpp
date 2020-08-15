@@ -53,17 +53,17 @@ struct Import
         pcl::PCLPointCloud2 pcl_pc;
 
         pcl_pc.header = node["header"].as<pcl::PCLHeader>();
-        pcl_pc.height = node["height"].as<pcl::uint32_t>();
-        pcl_pc.width = node["width"].as<pcl::uint32_t>();
+        pcl_pc.height = node["height"].as<std::uint32_t>();
+        pcl_pc.width = node["width"].as<std::uint32_t>();
         pcl_pc.fields = node["fields"].as<std::vector<::pcl::PCLPointField>>();
-        pcl_pc.is_bigendian = node["is_bigendian"].as<pcl::uint8_t>();
-        pcl_pc.point_step = node["point_step"].as<pcl::uint32_t>();
-        pcl_pc.row_step = node["row_step"].as<pcl::uint32_t>();
+        pcl_pc.is_bigendian = node["is_bigendian"].as<std::uint8_t>();
+        pcl_pc.point_step = node["point_step"].as<std::uint32_t>();
+        pcl_pc.row_step = node["row_step"].as<std::uint32_t>();
 
         YAML::Binary data = node["data"].as<YAML::Binary>();
         data.swap(pcl_pc.data);
 
-        pcl_pc.is_dense = node["is_dense"].as<pcl::uint8_t>();
+        pcl_pc.is_dense = node["is_dense"].as<std::uint8_t>();
 
         boost::shared_ptr<pcl::PointCloud<PointT>> cloud(new pcl::PointCloud<PointT>);
         pcl::fromPCLPointCloud2(pcl_pc, *cloud);
@@ -139,8 +139,8 @@ struct convert<pcl::PCLHeader>
 
     static bool decode(const Node& node, pcl::PCLHeader& rhs)
     {
-        rhs.seq = node["seq"].as<pcl::uint32_t>();
-        rhs.stamp = node["stamp"].as<pcl::uint64_t>();
+        rhs.seq = node["seq"].as<std::uint32_t>();
+        rhs.stamp = node["stamp"].as<std::uint64_t>();
         rhs.frame_id = node["frame_id"].as<std::string>();
         return true;
     }
@@ -162,9 +162,9 @@ struct convert<pcl::PCLPointField>
     static bool decode(const Node& node, pcl::PCLPointField& rhs)
     {
         rhs.name = node["name"].as<std::string>();
-        rhs.offset = node["offset"].as<pcl::uint32_t>();
-        rhs.datatype = node["datatype"].as<pcl::uint8_t>();
-        rhs.count = node["count"].as<pcl::uint32_t>();
+        rhs.offset = node["offset"].as<std::uint32_t>();
+        rhs.datatype = node["datatype"].as<std::uint8_t>();
+        rhs.count = node["count"].as<std::uint32_t>();
         return true;
     }
 };
