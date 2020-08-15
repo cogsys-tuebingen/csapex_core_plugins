@@ -104,7 +104,7 @@ bool StaticMaskPainter::eventFilter(QObject* obj, QEvent* event)
 
                 cv::Rect rec(cv::Point(start_drag.x(), start_drag.y()), cv::Point(stop_drag.x(), stop_drag.y()));
 
-                cv::rectangle(mask_, rec, cv::Scalar::all(0), CV_FILLED);
+                cv::rectangle(mask_, rec, cv::Scalar::all(0), cv::FILLED);
             }
 
             dragging = false;

@@ -12,7 +12,7 @@ namespace csapex
 {
 #if CV_MAJOR_VERSION == 2
 typedef std::shared_ptr<cv::RandomTrees> RandomTreePtr;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
 typedef cv::Ptr<cv::ml::RTrees> RandomTreePtr;
 #endif
 

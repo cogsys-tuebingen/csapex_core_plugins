@@ -34,7 +34,7 @@ private:
     double nu_;                 // for CV_SVM_NU_SVC, CV_SVM_ONE_CLASS, and CV_SVM_NU_SVR
     double p_;                  // for CV_SVM_EPS_SVR
                                 //    CvMat*      class_weights; // for CV_SVM_C_SVC
-    CvTermCriteria term_crit_;  // termination criteria
+    cv::TermCriteria term_crit_;  // termination criteria
 
     bool processCollection(std::vector<connection_types::FeaturesMessage>& collection) override;
 };

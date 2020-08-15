@@ -32,14 +32,6 @@ csapex_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
-include_directories(include
-  ${catkin_INCLUDE_DIRS}
-  ${csapex_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
-  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
-)
-
 add_subdirectory(src/cvBlob)
 
 qt5_add_resources(QT_RESOURCES res/csapex_vision_resources.qrc)
@@ -61,10 +53,20 @@ add_library(${PROJECT_NAME} SHARED
 generate_export_header(${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
-    ${OpenCV_LIBS}
-    ${catkin_LIBRARIES}
-    ${csapex_LIBRARIES}
-    Qt5::Core
+    PUBLIC
+        ${OpenCV_LIBS}
+        ${catkin_LIBRARIES}
+        ${csapex_LIBRARIES}
+        Qt5::Core
+)
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        include
+    SYSTEM PUBLIC
+        ${catkin_INCLUDE_DIRS}
+        ${csapex_INCLUDE_DIRS}
+        ${OpenCV_INCLUDE_DIRS}
+        ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 
@@ -78,10 +80,15 @@ add_library(${PROJECT_NAME}_core SHARED
 )
 target_link_libraries(${PROJECT_NAME}_core
     ${PROJECT_NAME}
-    ${catkin_LIBRARIES}
-    ${csapex_LIBRARIES}
-    ${OpenCV_LIBRARIES}
-    Qt5::Core Qt5::Gui
+)
+target_include_directories(${PROJECT_NAME}_core
+    PUBLIC
+        include
+    SYSTEM PUBLIC
+        ${catkin_INCLUDE_DIRS}
+        ${csapex_INCLUDE_DIRS}
+        ${OpenCV_INCLUDE_DIRS}
+        ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
 )
 
 
@@ -94,8 +101,8 @@ target_link_libraries(${PROJECT_NAME}_node
     ${PROJECT_NAME}
 	${catkin_LIBRARIES}
 	${csapex_LIBRARIES}
-        ${OpenCV_LIBRARIES}
-    cvblob  
+    ${OpenCV_LIBRARIES}
+    cvblob
     Qt5::Core Qt5::Gui)
 
 #

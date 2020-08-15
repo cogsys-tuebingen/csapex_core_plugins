@@ -85,10 +85,10 @@ void ImageTextLabel::process()
 
     if (boxed) {
         cv::Rect rect(origin.x - 2, origin.y - text_size.height, text_size.width + 2, basel_line + text_size.height + 2);
-        cv::rectangle(output->value, rect, cv_color_box, CV_FILLED);
+        cv::rectangle(output->value, rect, cv_color_box, cv::FILLED);
     }
 
-    cv::putText(output->value, label, origin, cv::FONT_HERSHEY_SIMPLEX, font_scale, cv_color_label, thickness, CV_AA);
+    cv::putText(output->value, label, origin, cv::FONT_HERSHEY_SIMPLEX, font_scale, cv_color_label, thickness, cv::LINE_AA);
 
     msg::publish(output_, output);
 }

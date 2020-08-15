@@ -44,7 +44,7 @@ void AdaBoost::process()
         if (path_ != "") {
 #if CV_MAJOR_VERSION == 2
             boost_.load(path_.c_str(), "adaboost");
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             boost_ = cv::Algorithm::load<cv::ml::Boost>(path_);
 #endif
             loaded_ = true;
@@ -59,13 +59,13 @@ void AdaBoost::process()
         if (compute_labels_) {
 #if CV_MAJOR_VERSION == 2
             output->at(i).classification = boost_.predict(sample);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             output->at(i).classification = boost_->predict(sample);
 #endif
         } else {
 #if CV_MAJOR_VERSION == 2
             const float response = boost_.predict(sample, cv::Mat(), cv::Range::all(), false, false);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             const float response = boost_->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
 #endif
             output->at(i).classification = std::floor(response + 0.5f);

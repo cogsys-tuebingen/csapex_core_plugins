@@ -118,17 +118,17 @@ void ScanSegmentation2DRenderer::render(const std::vector<Segment>& segments)
             for (std::size_t i = 1, n = segment.rays.size(); i < n; ++i) {
                 const Eigen::Vector2d pt(segment.rays[i].posX(), segment.rays[i].posY());
                 cv::Point2f current(pt(0), pt(1));
-                cv::line(output->value, origin + scale * last, origin + scale * current, color, 6, CV_AA);
+                cv::line(output->value, origin + scale * last, origin + scale * current, color, 6, cv::LINE_AA);
                 last = current;
             }
             if (segment.rays.size() == 1) {
-                cv::circle(output->value, origin + scale * last, 3, color, 1, CV_AA);
+                cv::circle(output->value, origin + scale * last, 3, color, 1, cv::LINE_AA);
             }
 
         } else {
             cv::Point2f from(segment.rays.front().posX(), segment.rays.front().posY());
             cv::Point2f to(segment.rays.back().posX(), segment.rays.back().posY());
-            cv::line(output->value, origin + scale * from, origin + scale * to, color, 6, CV_AA);
+            cv::line(output->value, origin + scale * from, origin + scale * to, color, 6, cv::LINE_AA);
         }
     }
 

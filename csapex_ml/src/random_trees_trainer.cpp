@@ -50,7 +50,7 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
 
 #if CV_MAJOR_VERSION == 2
     bool use_surrogates = true;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     bool use_surrogates = false;  // not yet supported
 #endif
 
@@ -62,7 +62,7 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
                            .build();
     addParameter(surrogate_p, use_surrogates);
 
-#if CV_MAJOR_VERSION == 3
+#if CV_MAJOR_VERSION >= 3
     surrogate_p->setHidden(true);
 #endif
 
@@ -107,18 +107,18 @@ void RandomTreesTrainer::setupParameters(Parameterizable& parameters)
                                                            1, 1024, 16, 1));
     addParameter(csapex::param::factory::declareRange<double>("forest_accuracy", csapex::param::ParameterDescription("Sufficient accuracy (OOB error)."), 0.0, 1.0, 0.5, 0.01));
 
-    std::map<std::string, int> termcrit_type = { { "CV_TERMCRIT_ITER", (int)CV_TERMCRIT_ITER },
-                                                 { "CV_TERMCRIT_EPS", (int)CV_TERMCRIT_EPS },
-                                                 { "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int)CV_TERMCRIT_ITER | CV_TERMCRIT_EPS } };
+    std::map<std::string, int> termcrit_type = { { "cv::TermCriteria::MAX_ITER", (int)cv::TermCriteria::MAX_ITER },
+                                                 { "cv::TermCriteria::EPS", (int)cv::TermCriteria::EPS },
+                                                 { "cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS", (int)cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS } };
 
     csapex::param::Parameter::Ptr termcrit_type_p = csapex::param::factory::declareParameterSet("termcrit_type",
                                                                                                 csapex::param::ParameterDescription("The type of the termination criteria:\n"
-                                                                                                                                    "CV_TERMCRIT_ITER Terminate learning by the "
+                                                                                                                                    "cv::TermCriteria::MAX_ITER Terminate learning by the "
                                                                                                                                     "max_num_of_trees_in_the_forest;\n"
-                                                                                                                                    "CV_TERMCRIT_EPS Terminate learning by the forest_accuracy;\n"
-                                                                                                                                    "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS Use both termination "
+                                                                                                                                    "cv::TermCriteria::EPS Terminate learning by the forest_accuracy;\n"
+                                                                                                                                    "cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS Use both termination "
                                                                                                                                     "criteria."),
-                                                                                                termcrit_type, (int)(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS));
+                                                                                                termcrit_type, (int)(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS));
     parameters.addParameter(termcrit_type_p);
 }
 
@@ -179,7 +179,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
 
 #if CV_MAJOR_VERSION == 2
     int tflag = CV_ROW_SAMPLE;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     int tflag = cv::ml::ROW_SAMPLE;
 #endif
 
@@ -233,7 +233,7 @@ bool RandomTreesTrainer::processCollection(std::vector<connection_types::Feature
         return false;
     }
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     auto rtrees = cv::ml::RTrees::create();
     rtrees->setMaxDepth(readParameter<int>("max depth"));
     rtrees->setMinSampleCount(readParameter<int>("min sample count"));

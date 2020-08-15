@@ -18,8 +18,8 @@ ImageProviderMov::ImageProviderMov()
 void ImageProviderMov::load(const std::string& movie_file)
 {
     capture_.open(movie_file);
-    fps_ = capture_.get(CV_CAP_PROP_FPS);
-    frames_ = capture_.get(CV_CAP_PROP_FRAME_COUNT);
+    fps_ = capture_.get(cv::CAP_PROP_FPS);
+    frames_ = capture_.get(cv::CAP_PROP_FRAME_COUNT);
 
     csapex::param::Parameter::Ptr p = state.getParameter("set/current_frame");
     param::RangeParameter::Ptr range_p = std::dynamic_pointer_cast<param::RangeParameter>(p);
@@ -66,14 +66,14 @@ void ImageProviderMov::reallyNext(cv::Mat& img, cv::Mat& mask)
     }
 
     if (skip) {
-        capture_.set(CV_CAP_PROP_POS_FRAMES, requested_frame);
+        capture_.set(cv::CAP_PROP_POS_FRAMES, requested_frame);
     }
 
     capture_ >> last_frame_;
 
     img = last_frame_;
 
-    next_frame = (int)capture_.get(CV_CAP_PROP_POS_FRAMES);
+    next_frame = (int)capture_.get(cv::CAP_PROP_POS_FRAMES);
     state["set/current_frame"] = next_frame;
 
     if (next_frame == frames_) {

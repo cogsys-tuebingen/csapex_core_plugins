@@ -89,7 +89,7 @@ void HOGVisualizer::process()
         }
 
         if (scale != 1.0) {
-            cv::resize(block_msg.value, block_msg.value, cv::Size(), scale, scale, CV_INTER_NN);
+            cv::resize(block_msg.value, block_msg.value, cv::Size(), scale, scale, cv::InterpolationFlags::INTER_NEAREST);
         }
 
         blocks_visulalizations.emplace_back(block_msg);
@@ -129,7 +129,7 @@ void HOGVisualizer::renderHOGFeatures(const cv::Mat& src, const std::vector<floa
     //                      = 3780
 
     if (src.channels() == 1) {
-        cv::cvtColor(src, dst, CV_GRAY2BGR);
+        cv::cvtColor(src, dst, cv::COLOR_GRAY2BGR);
     } else {
         dst = src.clone();
     }
@@ -215,7 +215,7 @@ void HOGVisualizer::renderHOGFeatures(const cv::Mat& src, const std::vector<floa
                 float y2 = my + dy * current_gradient_magnitude * scale_gradient_;
 
                 // draw gradient dstalization
-                cv::line(dst, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(0, 255 * current_gradient_magnitude / magnitude_max), 1, CV_AA);
+                cv::line(dst, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(0, 255 * current_gradient_magnitude / magnitude_max), 1, cv::LINE_AA);
             }
         }
     }

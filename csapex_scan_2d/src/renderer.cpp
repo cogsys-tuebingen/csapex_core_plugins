@@ -43,7 +43,7 @@ void Renderer::drawRays(const Scan& scan, cv::Mat& img, const cv::Point2f& origi
 
         if (range.valid()) {
             cv::Point2f pt(range.posX(), range.posY());
-            cv::line(img, origin, origin + pt * scale, color, radius, CV_AA);
+            cv::line(img, origin, origin + pt * scale, color, radius, cv::LINE_AA);
         }
         angle += angle_step;
     }
@@ -57,7 +57,7 @@ void Renderer::drawHits(const Scan& scan, cv::Mat& img, const cv::Point2f& origi
 
         if (range.valid()) {
             cv::Point2f pt(range.posX(), range.posY());
-            cv::circle(img, origin + pt * scale, radius, color, CV_FILLED, CV_AA);
+            cv::circle(img, origin + pt * scale, radius, color, cv::FILLED, cv::LINE_AA);
         }
         angle += angle_step;
     }
@@ -82,7 +82,7 @@ void Renderer::drawHits(const LabeledScan& scan, cv::Mat& img, const cv::Point2f
                 color::fromCount(label, marked[2], marked[1], marked[0]);
             }
 
-            cv::circle(img, origin + pt * scale, radius, label != 0 ? marked : color, CV_FILLED, CV_AA);
+            cv::circle(img, origin + pt * scale, radius, label != 0 ? marked : color, cv::FILLED, cv::LINE_AA);
         }
 
         angle += angle_step;

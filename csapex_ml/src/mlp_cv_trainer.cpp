@@ -39,7 +39,7 @@ void MLPCvTrainer::setupParameters(Parameterizable& parameters)
 #if CV_MAJOR_VERSION == 2
     typedef cv::ANN_MLP_TrainParams Params;
     typedef cv::NeuralNet_MLP Ann;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     typedef cv::ml::ANN_MLP Params;
     typedef cv::ml::ANN_MLP Ann;
 #endif
@@ -67,26 +67,26 @@ void MLPCvTrainer::setupParameters(Parameterizable& parameters)
     parameters.addConditionalParameter(csapex::param::factory::declareRange<double>("activation alpha", -10, 10, 1.0, 0.01), [=]() { return activation_parameter->as<int>() != Ann::IDENTITY; });
     parameters.addConditionalParameter(csapex::param::factory::declareRange<double>("activation beta", -10, 10, 1.0, 0.01), [=]() { return activation_parameter->as<int>() != Ann::IDENTITY; });
 
-    std::map<std::string, int> termcrit_type = { { "CV_TERMCRIT_ITER", (int)CV_TERMCRIT_ITER },
-                                                 { "CV_TERMCRIT_EPS", (int)CV_TERMCRIT_EPS },
-                                                 { "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int)CV_TERMCRIT_ITER | CV_TERMCRIT_EPS } };
+    std::map<std::string, int> termcrit_type = { { "cv::TermCriteria::MAX_ITER", (int)cv::TermCriteria::MAX_ITER },
+                                                 { "cv::TermCriteria::EPS", (int)cv::TermCriteria::EPS },
+                                                 { "cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS", (int)cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS } };
 
     csapex::param::Parameter::Ptr termcrit_parameter = csapex::param::factory::declareParameterSet("termcrit_type",
                                                                                                    csapex::param::ParameterDescription("The type of the termination criteria:\n"
-                                                                                                                                       "CV_TERMCRIT_ITER Terminate learning by the "
+                                                                                                                                       "cv::TermCriteria::MAX_ITER Terminate learning by the "
                                                                                                                                        "max_num_of_trees_in_the_forest;\n"
-                                                                                                                                       "CV_TERMCRIT_EPS Terminate learning by the forest_accuracy;\n"
-                                                                                                                                       "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS Use both termination "
+                                                                                                                                       "cv::TermCriteria::EPS Terminate learning by the forest_accuracy;\n"
+                                                                                                                                       "cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS Use both termination "
                                                                                                                                        "criteria."),
-                                                                                                   termcrit_type, (int)(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS));
+                                                                                                   termcrit_type, (int)(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS));
     parameters.addParameter(termcrit_parameter);
 
     parameters.addConditionalParameter(
         csapex::param::factory::declareRange<int>("max iterations", csapex::param::ParameterDescription("Maximum number of training iterations."), 0, 1000000, 10000, 100),
-        [=]() { return (termcrit_parameter->as<int>() & CV_TERMCRIT_ITER) != 0; });
+        [=]() { return (termcrit_parameter->as<int>() & cv::TermCriteria::MAX_ITER) != 0; });
 
     parameters.addConditionalParameter(csapex::param::factory::declareValue<double>("epsilon", csapex::param::ParameterDescription("Training epsilon"), 0.001),
-                                       [=]() { return (termcrit_parameter->as<int>() & CV_TERMCRIT_EPS) != 0; });
+                                       [=]() { return (termcrit_parameter->as<int>() & cv::TermCriteria::EPS) != 0; });
 }
 
 void MLPCvTrainer::updateLayers()
@@ -180,7 +180,7 @@ bool MLPCvTrainer::processCollection(std::vector<FeaturesMessage>& collection)
     }
     return true;
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     cv::Ptr<cv::ml::ANN_MLP> mlp = cv::ml::ANN_MLP::create();
     cv::TermCriteria term(readParameter<int>("termcrit_type"), readParameter<int>("max iterations"), readParameter<double>("epsilon"));
     mlp->setTermCriteria(term);

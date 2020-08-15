@@ -16,7 +16,7 @@ ImageProviderImg::ImageProviderImg() : sent_(false)
 
 void ImageProviderImg::load(const std::string& path)
 {
-    img_ = cv::imread(path, CV_LOAD_IMAGE_UNCHANGED);
+    img_ = cv::imread(path, cv::IMREAD_UNCHANGED);
     sent_ = false;
 }
 

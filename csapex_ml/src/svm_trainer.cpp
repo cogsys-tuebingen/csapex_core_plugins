@@ -34,7 +34,7 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
 
 #if CV_MAJOR_VERSION == 2
     std::map<std::string, int> kernel_types = { { "LINEAR", cv::SVM::LINEAR }, { "POLY", cv::SVM::POLY }, { "RBF", cv::SVM::RBF }, { "SIGMOID", cv::SVM::SIGMOID } };
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     std::map<std::string, int> kernel_types = {
         { "LINEAR", cv::ml::SVM::LINEAR }, { "POLY", cv::ml::SVM::POLY }, { "RBF", cv::ml::SVM::RBF }, { "SIGMOID", cv::ml::SVM::SIGMOID }  //,
                                                                                                                                             //{"CHI2", cv::ml::SVM::CHI2},
@@ -45,7 +45,7 @@ void SVMTrainer::setupParameters(Parameterizable& parameters)
 
 #if CV_MAJOR_VERSION == 2
     typedef cv::SVM SVM;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     typedef cv::ml::SVM SVM;
 #endif
 
@@ -136,7 +136,7 @@ bool SVMTrainer::processCollection(std::vector<FeaturesMessage>& collection)
         return false;
     }
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
     svm->setType(svm_type_);

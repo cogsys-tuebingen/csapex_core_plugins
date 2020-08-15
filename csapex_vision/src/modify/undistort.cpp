@@ -65,12 +65,12 @@ void Undistort::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::factory::declareRange("margin", param::ParameterDescription("Add a margin to the undistorted image."), 0, 1000, 0, 1), std::bind(&Undistort::update, this));
 
     std::map<std::string, int> modes;
-    modes["nearest"] = (int)CV_INTER_NN;
-    modes["linear"] = (int)CV_INTER_LINEAR;
-    modes["area"] = (int)CV_INTER_AREA;
-    modes["cubic"] = (int)CV_INTER_CUBIC;
-    modes["lanczos4"] = (int)CV_INTER_LANCZOS4;
-    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("mode", modes, (int)CV_INTER_NN), std::bind(&Undistort::update, this));
+    modes["nearest"] = (int)cv::INTER_NEAREST;
+    modes["linear"] = (int)cv::INTER_LINEAR;
+    modes["area"] = (int)cv::INTER_AREA;
+    modes["cubic"] = (int)cv::INTER_CUBIC;
+    modes["lanczos4"] = (int)cv::INTER_LANCZOS4;
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("mode", modes, (int)cv::INTER_NEAREST), std::bind(&Undistort::update, this));
 }
 
 bool Undistort::read_matrices(const std::string& path, cv::Mat& intrinsics, cv::Mat& distortion_coeffs)

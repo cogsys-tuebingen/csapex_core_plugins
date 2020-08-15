@@ -70,6 +70,8 @@ struct Orb : public ExtractorManager::ExtractorInitializer
         e->detector = new cv::ORB((200 - et) * 10, scale, levels, edge, first_level, WTA_K, type, patch_size);
 #elif CV_MAJOR_VERSION == 3
         e->detector = cv::ORB::create((200 - et) * 10, scale, levels, edge, first_level, WTA_K, type, patch_size);
+#elif CV_MAJOR_VERSION > 3
+        e->detector = cv::ORB::create((200 - et) * 10, scale, levels, edge, first_level, WTA_K, cv::ORB::ScoreType(type), patch_size);
 #endif
 
         if (complete) {
@@ -85,7 +87,7 @@ struct Orb : public ExtractorManager::ExtractorInitializer
         e->descriptor = "orb";
 #if CV_MAJOR_VERSION == 2
         e->descriptor_extractor = new cv::ORB();
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         e->descriptor_extractor = cv::ORB::create();
 #endif
     }
@@ -127,7 +129,7 @@ struct Brisk : public ExtractorManager::ExtractorInitializer
         e->has_orientation = true;
 #if CV_MAJOR_VERSION == 2
         e->detector = new cv::BRISK(et, octaves, scale);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         e->descriptor_extractor = cv::BRISK::create(et, octaves, scale);
 #endif
         if (complete) {
@@ -146,7 +148,7 @@ struct Brisk : public ExtractorManager::ExtractorInitializer
         e->descriptor = "brisk";
 #if CV_MAJOR_VERSION == 2
         e->descriptor_extractor = new cv::BRISK(et, octaves);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         e->descriptor_extractor = cv::BRISK::create(et, octaves);
 #endif
     }
@@ -297,7 +299,7 @@ struct Fast : public ExtractorManager::ExtractorInitializer
         e->has_orientation = false;
 #if CV_MAJOR_VERSION == 2
         e->detector = new cv::FastFeatureDetector(et, nonmaxSuppression);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         e->detector = cv::FastFeatureDetector::create(et, nonmaxSuppression);
 #endif
     }
@@ -352,7 +354,7 @@ struct Mser : public ExtractorManager::ExtractorInitializer
 
 #if CV_MAJOR_VERSION == 2
         e->detector = new cv::MSER(delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         e->detector = cv::MSER::create(delta, minArea, maxArea, maxVariation, minDiversity, maxEvolution, areaThreshold, minMargin, edgeBlurSize);
 #endif
     }
@@ -430,7 +432,7 @@ struct Gftt : public ExtractorManager::ExtractorInitializer
 
 #if CV_MAJOR_VERSION == 2
         e->detector = new cv::GoodFeaturesToTrackDetector(et * 50.0, 0.005);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         e->detector = cv::GFTTDetector::create(et * 50.0, 0.005);
 #endif
     }
@@ -469,7 +471,7 @@ struct GfttHarris : public ExtractorManager::ExtractorInitializer
 
 #if CV_MAJOR_VERSION == 2
         e->detector = new cv::GoodFeaturesToTrackDetector(et * 50.0, 0.005, 2, 3, true);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         e->detector = cv::GFTTDetector::create(et * 50.0, 0.005, 2, 3, true);
 #endif
     }
@@ -509,7 +511,7 @@ struct Brief : public ExtractorManager::ExtractorInitializer
 
 #if CV_MAJOR_VERSION == 2
         e->descriptor_extractor = new cv::BriefDescriptorExtractor(64);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         e->descriptor_extractor = cv::BriefDescriptorExtractor(64);
 #endif
     }

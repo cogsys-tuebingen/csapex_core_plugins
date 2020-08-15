@@ -146,7 +146,7 @@ public:
         if (points1.size() > 0 && points2.size() > 0) {
             cv::Mat fundemental = cv::findFundamentalMat(cv::Mat(points1), cv::Mat(points2),  // matching points
                                                          inliers,                             // match status (inlier or outlier)
-                                                         CV_FM_RANSAC,                        // RANSAC method
+                                                         cv::FM_RANSAC,                        // RANSAC method
                                                          distance,                            // distance to epipolar line
                                                          confidence);                         // confidence probability
             // extract the surviving (inliers) matches
@@ -179,7 +179,7 @@ public:
                 if (points1.size() > 0 && points2.size() > 0) {
                     fundemental = cv::findFundamentalMat(cv::Mat(points1),
                                                          cv::Mat(points2),  // matches
-                                                         CV_FM_8POINT);     // 8-point method
+                                                         cv::FM_8POINT);     // 8-point method
                 }
             }
         }
@@ -313,7 +313,7 @@ void MatchDescriptors::process()
     cv::Scalar singlePointColor = cv::Scalar(c[2], c[1], c[0]);
 
     std::vector<std::vector<char>> mask;
-    int flag = cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS;
+    auto flag = cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS;
 
     cv::drawMatches(image1->value, keypoints1->value, image2->value, keypoints2->value, matches, out->value, matchColor, singlePointColor, mask, flag);
 

@@ -24,7 +24,7 @@ void EigenValsAndVecs::process()
 
     cv::Mat tmp;
     if (in->value.type() != CV_8UC1) {
-        cv::cvtColor(in->value, tmp, CV_BGR2GRAY);
+        cv::cvtColor(in->value, tmp, cv::COLOR_BGR2GRAY);
     } else {
         tmp = in->value;
     }

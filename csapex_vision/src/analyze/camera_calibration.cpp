@@ -48,10 +48,10 @@ void csapex::CameraCalibration::process()
             if (found) {
                 if (image.type() == CV_8UC3) {
                     cv::Mat gray;
-                    cv::cvtColor(image, gray, CV_BGR2GRAY);
-                    cv::cornerSubPix(gray, corners, cv::Size(kernel_size_, kernel_size_), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+                    cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+                    cv::cornerSubPix(gray, corners, cv::Size(kernel_size_, kernel_size_), cv::Size(-1, -1), cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 30, 0.1));
                 } else {
-                    cv::cornerSubPix(image, corners, cv::Size(kernel_size_, kernel_size_), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+                    cv::cornerSubPix(image, corners, cv::Size(kernel_size_, kernel_size_), cv::Size(-1, -1), cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 30, 0.1));
                 }
             }
             break;
@@ -66,7 +66,7 @@ void csapex::CameraCalibration::process()
     }
     /// 2. render corners found
     CvMatMessage::Ptr out_corners(new CvMatMessage(enc::bgr, in->frame_id, in->stamp_micro_seconds));
-    cv::cvtColor(image, out_corners->value, CV_GRAY2BGR);
+    cv::cvtColor(image, out_corners->value, cv::COLOR_GRAY2BGR);
     cv::drawChessboardCorners(out_corners->value, pattern_size_, corners, found);
     msg::publish(output_corners_, out_corners);
     /// 3. add corners to detected queue
@@ -128,15 +128,15 @@ void csapex::CameraCalibration::setupParameters(Parameterizable& parameters)
 
     parameters.addParameter(csapex::param::factory::declareParameterSet<int>("pattern_type", types, static_cast<int>(CHESSBOARD)), std::bind(&CameraCalibration::updateParameters, this));
 
-    std::map<std::string, std::pair<int, bool>> corner_flags = { { "CV_CALIB_CB_ADAPTIVE_THRESH", std::make_pair(CV_CALIB_CB_ADAPTIVE_THRESH, true) },
-                                                                 { "CV_CALIB_CB_FAST_CHECK", std::make_pair(CV_CALIB_CB_FAST_CHECK, false) },
-                                                                 { "CV_CALIB_CB_NORMALIZE_IMAGE", std::make_pair(CV_CALIB_CB_NORMALIZE_IMAGE, false) },
-                                                                 { "CV_CALIB_CB_FILTER_QUADS", std::make_pair(CV_CALIB_CB_FILTER_QUADS, true) } };
+    std::map<std::string, std::pair<int, bool>> corner_flags = { { "cv::CALIB_CB_ADAPTIVE_THRESH", std::make_pair(cv::CALIB_CB_ADAPTIVE_THRESH, true) },
+                                                                 { "cv::CALIB_CB_FAST_CHECK", std::make_pair(cv::CALIB_CB_FAST_CHECK, false) },
+                                                                 { "cv::CALIB_CB_NORMALIZE_IMAGE", std::make_pair(cv::CALIB_CB_NORMALIZE_IMAGE, false) },
+                                                                 { "cv::CALIB_CB_FILTER_QUADS", std::make_pair(cv::CALIB_CB_FILTER_QUADS, true) } };
     parameters.addParameter(csapex::param::factory::declareParameterBitSet("corner_flags", corner_flags), std::bind(&CameraCalibration::updateParameters, this));
 
-    std::map<std::string, std::pair<int, bool>> calib_flags = { { "CV_CALIB_FIX_K4", std::make_pair(CV_CALIB_FIX_K4, true) },
-                                                                { "CV_CALIB_FIX_K5", std::make_pair(CV_CALIB_FIX_K5, true) },
-                                                                { "C_CALIB_FIX_K6", std::make_pair(CV_CALIB_FIX_K6, false) } };
+    std::map<std::string, std::pair<int, bool>> calib_flags = { { "cv::CALIB_FIX_K4", std::make_pair(cv::CALIB_FIX_K4, true) },
+                                                                { "cv::CALIB_FIX_K5", std::make_pair(cv::CALIB_FIX_K5, true) },
+                                                                { "cv::CALIB_FIX_K6", std::make_pair(cv::CALIB_FIX_K6, false) } };
     parameters.addParameter(csapex::param::factory::declareParameterBitSet("calibration_flags", calib_flags), std::bind(&CameraCalibration::updateParameters, this));
 }
 

@@ -28,6 +28,7 @@ void MakeVideo::setupParameters(Parameterizable& parameters)
 {
     parameters.addParameter(param::factory::declareFileOutputPath("path", ""), path_);
 
+#if CV_MAJOR_VERSION <=3
     std::map<std::string, int> codec_types = { { "Uncompressed", 0 },
                                                { "H.263", CV_FOURCC('U', '2', '6', '3') },
                                                { "motion-jpeg", CV_FOURCC('M', 'J', 'P', 'G') },
@@ -38,6 +39,19 @@ void MakeVideo::setupParameters(Parameterizable& parameters)
                                                { "MPEG-4.3", CV_FOURCC('D', 'I', 'V', '3') },
                                                { "DIVX", CV_FOURCC('D', 'I', 'V', 'X') },
                                                { "XVID", CV_FOURCC('X', 'V', 'I', 'D') } };
+#else
+    std::map<std::string, int> codec_types = { { "Uncompressed", 0 },
+                                               { "H.263", cv::VideoWriter::fourcc('U', '2', '6', '3') },
+                                               { "motion-jpeg", cv::VideoWriter::fourcc('M', 'J', 'P', 'G') },
+                                               { "MPEG-1", cv::VideoWriter::fourcc('P', 'I', 'M', '1') },
+                                               { "MPEG-2", cv::VideoWriter::fourcc('m', 'p', 'g', '2') },
+                                               { "MPEG-4", cv::VideoWriter::fourcc('D', 'I', 'V', 'X') },
+                                               { "MPEG-4.2", cv::VideoWriter::fourcc('M', 'P', '4', '2') },
+                                               { "MPEG-4.3", cv::VideoWriter::fourcc('D', 'I', 'V', '3') },
+                                               { "DIVX", cv::VideoWriter::fourcc('D', 'I', 'V', 'X') },
+                                               { "XVID", cv::VideoWriter::fourcc('X', 'V', 'I', 'D') } };
+#endif
+
 
     file_extensions_ = {
         { codec_types["Uncompressed"], ".avi" }, { codec_types["H.263"], ".avi" },    { codec_types["motion-jpeg"], ".mpg" }, { codec_types["MPEG-1"], ".mpg" }, { codec_types["MPEG-2"], ".mpg" },
@@ -80,7 +94,7 @@ void MakeVideo::writeOnline(const CvMatMessage::ConstPtr& msg)
         throw std::runtime_error("Need 8UC1 or 8UC3!");
     }
     if (image.type() == CV_8UC1)
-        cv::cvtColor(image, image, CV_GRAY2BGR);
+        cv::cvtColor(image, image, cv::COLOR_GRAY2BGR);
 
     vw_ << image;
 }
@@ -111,7 +125,7 @@ void MakeVideo::writeBuffer()
     for (CvMatMessage::ConstPtr& mat : msg_buffer_) {
         cv::Mat image = mat->value.clone();
         if (image.type() == CV_8UC1)
-            cv::cvtColor(image, image, CV_GRAY2BGR);
+            cv::cvtColor(image, image, cv::COLOR_GRAY2BGR);
         vw_ << image;
     }
     vw_.release();

@@ -24,7 +24,7 @@ void AdaBoostTrainer::setupParameters(Parameterizable& parameters)
 
 #if CV_MAJOR_VERSION == 2
     typedef cv::Boost Boost;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     typedef cv::ml::Boost Boost;
 #endif
 
@@ -93,7 +93,7 @@ bool AdaBoostTrainer::processCollection(std::vector<FeaturesMessage>& collection
         return false;
     }
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
     boost->setBoostType(boost_type_);
     boost->setWeakCount(weak_count_);

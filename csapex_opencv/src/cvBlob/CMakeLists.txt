@@ -23,31 +23,36 @@ find_package(OpenCV REQUIRED)
 
 add_definitions(-w)
 
-set(cvBlob_CVBLOB cvblob.cpp
-                   cvlabel.cpp
-		   cvaux.cpp
-		   cvcontour.cpp
-		   cvtrack.cpp
-		   cvcolor.cpp
+set(cvBlob_CVBLOB
+	cvblob.cpp
+    cvlabel.cpp
+	cvaux.cpp
+	cvcontour.cpp
+	cvtrack.cpp
+	cvcolor.cpp
 )
 
 set_source_files_properties(${cvBlob_SRC}
-                            PROPERTIES
-                            COMPILE_FLAGS "-O2"
+	PROPERTIES
+	COMPILE_FLAGS "-O2"
 )
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/..)
 
 add_library(cvblob SHARED ${cvBlob_CVBLOB})
 generate_export_header(cvblob)
 
+target_include_directories(cvblob
+	SYSTEM PUBLIC
+		${CMAKE_CURRENT_LIST_DIR}/../../include
+		${CMAKE_CURRENT_BINARY_DIR}/..
+)
 target_link_libraries(cvblob ${OpenCV_LIBS})
 
 install(TARGETS cvblob
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-		
+
 if(WIN32)
 	file(COPY ${CMAKE_CURRENT_BINARY_DIR}/cvblob_export.h
 		 DESTINATION ${CMAKE_CURRENT_LIST_DIR}/../../include/cvBlob/)

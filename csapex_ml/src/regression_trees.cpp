@@ -55,7 +55,7 @@ void RegressionTrees::process()
             RandomTreePtr tree = forests_.at(j);
 #if CV_MAJOR_VERSION == 2
             float prediction_value = tree->predict(sample);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             std::vector<float> results;
             float prediction_value = tree->predict(sample, results, cv::ml::StatModel::Flags::RAW_OUTPUT);
 #endif
@@ -92,7 +92,7 @@ void RegressionTrees::load()
 #if CV_MAJOR_VERSION == 2
         RandomTreePtr tree(new cv::RandomTrees);
         tree->read(fs.fs, (CvFileNode*)fs[label].node);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         RandomTreePtr tree = cv::ml::RTrees::create();
         cv::FileNode node = trees_node[label];
         tree->read(node);

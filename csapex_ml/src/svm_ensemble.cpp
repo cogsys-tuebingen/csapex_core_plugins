@@ -113,7 +113,7 @@ void SVMEnsemble::process()
 
 #if CV_MAJOR_VERSION == 2
             ExtendedSVM::Ptr svm = svms_.at(j);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             SVMPtr svm = svms_.at(j);
 #endif
             if (compute_label) {
@@ -162,6 +162,9 @@ void SVMEnsemble::load()
 #elif CV_MAJOR_VERSION == 3
         SVMPtr svm = cv::ml::SVM::create();
         svm->read(*(cv::FileNode*)fs[label].node);
+#elif CV_MAJOR_VERSION >= 3
+        SVMPtr svm = cv::ml::SVM::create();
+        svm->read(fs.getFirstTopLevelNode());
 #endif
 
         svms_.push_back(svm);
@@ -169,7 +172,7 @@ void SVMEnsemble::load()
 
 #if CV_MAJOR_VERSION == 2
         auto rho = svm->rho();
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         auto rho = svm->getDecisionFunction(0, cv::noArray(), cv::noArray());
 #endif
 

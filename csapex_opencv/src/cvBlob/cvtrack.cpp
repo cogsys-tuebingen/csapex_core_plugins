@@ -25,7 +25,14 @@ using namespace std;
 #if (defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__) || (defined(__APPLE__) & defined(__MACH__)))
 #include <cv.h>
 #else
+#include <opencv2/core/version.hpp>
+#if CV_MAJOR_VERSION <= 3
 #include <opencv/cv.h>
+#else
+#include <opencv2/core/types_c.h>
+#include <opencv2/core/core_c.h>
+#include <opencv2/imgproc/imgproc_c.h>
+#endif
 #endif
 
 #include <csapex_opencv/cvblob.h>
@@ -344,14 +351,14 @@ void cvRenderTracks(CvTracks const tracks, IplImage* imgSource, IplImage* imgDes
                 if (!it->second->inactive) {
                     stringstream buffer;
                     buffer << it->first;
-                    cvPutText(imgDest, buffer.str().c_str(), cvPoint((int)it->second->centroid.x, (int)it->second->centroid.y), font, CV_RGB(0., 255., 0.));
+                    cvPutText(imgDest, buffer.str().c_str(), cvPoint((int)it->second->centroid.x, (int)it->second->centroid.y), font, CvScalar{0., 255., 0., 0});
                 }
 
             if (mode & CV_TRACK_RENDER_BOUNDING_BOX) {
                 if (it->second->inactive) {
-                    cvRectangle(imgDest, cvPoint(it->second->minx, it->second->miny), cvPoint(it->second->maxx - 1, it->second->maxy - 1), CV_RGB(0., 0., 50.));
+                    cvRectangle(imgDest, cvPoint(it->second->minx, it->second->miny), cvPoint(it->second->maxx - 1, it->second->maxy - 1), CvScalar{0., 0., 50., 0.});
                 } else {
-                    cvRectangle(imgDest, cvPoint(it->second->minx, it->second->miny), cvPoint(it->second->maxx - 1, it->second->maxy - 1), CV_RGB(0., 0., 255.));
+                    cvRectangle(imgDest, cvPoint(it->second->minx, it->second->miny), cvPoint(it->second->maxx - 1, it->second->maxy - 1), CvScalar{0., 0., 255., 0.});
                 }
             }
             if (mode & CV_TRACK_RENDER_TO_LOG) {

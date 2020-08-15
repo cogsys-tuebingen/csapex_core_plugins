@@ -43,7 +43,7 @@ void LKTracking::process()
     KeypointMessage::ConstPtr keypoints = msg::getMessage<KeypointMessage>(in_keypoints_);
 
     // TODO: parameterize
-    cv::TermCriteria termcrit(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03);
+    cv::TermCriteria termcrit(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS, 20, 0.03);
 
     if (init_) {
         points[0].clear();
@@ -82,7 +82,7 @@ void LKTracking::process()
 
         bool debug = msg::isConnected(out_debug_);
         if (debug) {
-            cv::cvtColor(img->value, out_dbg->value, CV_GRAY2BGR);
+            cv::cvtColor(img->value, out_dbg->value, cv::COLOR_GRAY2BGR);
         }
 
         int circlesize = readParameter<int>("debug/circlesize");

@@ -42,7 +42,7 @@ inline void classify(const RandomTree& random_trees, const FeaturesMessage& in_f
     out_feature.confidence = votes[max_class_id] / (float)ntrees;
     out_feature.classification = max_class_id;
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     std::vector<float> results;
     float prediction_value = random_trees->predict(sample, results, cv::ml::StatModel::Flags::RAW_OUTPUT);
     if (in_feature.type == FeaturesMessage::Type::REGRESSION) {
@@ -109,7 +109,7 @@ void RandomTrees::process()
                 }
                 fs.release();
             }
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             random_trees_ = cv::ml::RTrees::create();
             random_trees_->read(fs.root());
 #endif
@@ -123,7 +123,7 @@ void RandomTrees::process()
 
 #if CV_MAJOR_VERSION == 2
     apex_assert_equal((int)input_feature->at(0).value.size(), random_trees_.get_tree(0)->get_var_count());
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     apex_assert_equal((int)input_feature->at(0).value.size(), random_trees_.get()->getVarCount());
 #endif
 
@@ -139,7 +139,7 @@ void RandomTrees::process()
 
 #if CV_MAJOR_VERSION == 2
             float n = (float)random_trees_.get_tree_count();
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             float n = (float)random_trees_->getRoots().size();
 #endif
 

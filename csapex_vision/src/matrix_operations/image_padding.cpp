@@ -64,7 +64,7 @@ void ImagePadding::process()
 
         int mask_offset = readParameter<int>("mask offset");
         cv::Rect roi_rect(border + mask_offset, border + mask_offset, cols - 2 * mask_offset, rows - 2 * mask_offset);
-        cv::rectangle(result->value, roi_rect, cv::Scalar::all(255), CV_FILLED);
+        cv::rectangle(result->value, roi_rect, cv::Scalar::all(255), cv::FILLED);
 
         msg::publish(output_mask_, result);
     }

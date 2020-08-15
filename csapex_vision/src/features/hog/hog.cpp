@@ -53,6 +53,10 @@ direct,
 #include <iterator>
 #include <limits>
 #include <stdexcept>
+#include <opencv2/core/persistence.hpp>
+#include <opencv2/core/core_c.h>
+#include <opencv2/core/types_c.h>
+#include <opencv2/imgproc/imgproc_c.h>
 
 /****************************************************************************************\
       The code below is implementation of HOG (Histogram-of-Oriented Gradients)
@@ -1803,6 +1807,7 @@ public:
             *dbptr = 0;
         }
     }
+#if CV_MAJOR_VERSION <= 3
     static void* read(CvFileStorage* fs, CvFileNode* n)
     {
         cv::FileNode fn(fs, n);
@@ -1820,6 +1825,7 @@ public:
             ((const _ClsName*)ptr)->write(fs, std::string(name));
         }
     }
+#endif
 
     static void* clone(const void* ptr)
     {
@@ -1831,7 +1837,9 @@ public:
 
 typedef RTTIImpl<HOGDescriptor> HOGRTTI;
 
+#if CV_MAJOR_VERSION <= 3
 CvType hog_type(CV_TYPE_NAME_HOG_DESCRIPTOR, HOGRTTI::isInstance, HOGRTTI::release, HOGRTTI::read, HOGRTTI::write, HOGRTTI::clone);
+#endif
 
 std::vector<float> HOGDescriptor::getDefaultPeopleDetector()
 {

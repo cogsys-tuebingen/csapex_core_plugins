@@ -101,14 +101,18 @@ void BlobDetector::process()
     const cv::Mat& gray = img->value;
 
     CvMatMessage::Ptr debug(new CvMatMessage(enc::bgr, img->frame_id, img->stamp_micro_seconds));
-    cv::cvtColor(gray, debug->value, CV_GRAY2BGR);
+    cv::cvtColor(gray, debug->value, cv::COLOR_GRAY2BGR);
 
     CvMatMessage::Ptr reduced(new CvMatMessage(enc::mono, img->frame_id, img->stamp_micro_seconds));
     reduced->value = cv::Mat::zeros(img->value.rows, img->value.cols, CV_8U);
 
     CvBlobs blobs;
 
+#if CV_MAJOR_VERSION <= 3
     IplImage grayPtr(gray);
+#else
+    IplImage grayPtr(cvIplImage(gray));
+#endif
     IplImage* labelImgPtr = cvCreateImage(cvGetSize(&grayPtr), IPL_DEPTH_LABEL, 1);
 
     cvLabel(&grayPtr, labelImgPtr, blobs);
@@ -145,7 +149,11 @@ void BlobDetector::process()
     msg::publish<GenericVectorMessage, RoiMessage>(output_, out);
 
     if (msg::isConnected(output_debug_)) {
+#if CV_MAJOR_VERSION <= 3
         IplImage debugPtr(debug->value);
+#else
+        IplImage debugPtr(cvIplImage(debug->value));
+#endif
         cvRenderBlobs(labelImgPtr, blobs, &debugPtr, &debugPtr);
 
         for (CvBlobs::const_iterator it = blobs.begin(); it != blobs.end(); ++it) {
@@ -160,7 +168,7 @@ void BlobDetector::process()
                 double r, g, b;
                 _HSV2RGB_((double)((blob.label * 77) % 360), .5, 1., r, g, b);
                 cv::Scalar color(b, g, r);
-                cv::line(debug->value, p, next, color, 1, CV_AA);
+                cv::line(debug->value, p, next, color, 1, cv::LINE_AA);
 
                 p = next;
             }
@@ -184,7 +192,11 @@ void BlobDetector::process()
     }
 
     if (msg::isConnected(output_reduce_)) {
+#if CV_MAJOR_VERSION <= 3
         IplImage reducedPtr(reduced->value);
+#else
+        IplImage reducedPtr(cvIplImage(reduced->value));
+#endif
 
         cvFilterByArea(blobs, range_area.first, range_area.second);
 

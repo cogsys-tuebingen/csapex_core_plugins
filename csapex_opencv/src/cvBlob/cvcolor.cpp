@@ -24,7 +24,12 @@ using namespace std;
 #if (defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__) || (defined(__APPLE__) & defined(__MACH__)))
 #include <cv.h>
 #else
+#include <opencv2/core/version.hpp>
+#if CV_MAJOR_VERSION <= 3
 #include <opencv/cv.h>
+#else
+#include <opencv2/core/types_c.h>
+#endif
 #endif
 
 #include <csapex_opencv/cvblob.h>

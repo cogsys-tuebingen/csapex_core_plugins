@@ -47,7 +47,7 @@ void RenderROIs::process()
     bool force_color = readParameter<bool>("force color");
 
     if (img->hasChannels(1, CV_8U)) {
-        cv::cvtColor(img->value, out->value, CV_GRAY2BGR);
+        cv::cvtColor(img->value, out->value, cv::COLOR_GRAY2BGR);
         out->setEncoding(enc::bgr);
     } else {
         img->value.copyTo(out->value);
@@ -73,8 +73,8 @@ void RenderROIs::process()
 
         if (!text.empty()) {
             cv::Point pt = roi.value.rect().tl();
-            cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar::all(0), 4, CV_AA);
-            cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., roi.value.color(), 1, CV_AA);
+            cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., cv::Scalar::all(0), 4, cv::LINE_AA);
+            cv::putText(out->value, text, pt, cv::FONT_HERSHEY_SIMPLEX, 1., roi.value.color(), 1, cv::LINE_AA);
         }
     }
 

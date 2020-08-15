@@ -23,7 +23,7 @@ public:
 private:
 #if CV_MAJOR_VERSION == 2
     typedef std::shared_ptr<cv::SVM> SVMPtr;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     typedef cv::Ptr<cv::ml::SVM> SVMPtr;
 #endif
 
@@ -47,7 +47,7 @@ private:
     bool loaded_;
 #if CV_MAJOR_VERSION == 2
     std::vector<ExtendedSVM::Ptr> svms_;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     std::vector<SVMPtr> svms_;
 #endif
     std::size_t svms_size_;

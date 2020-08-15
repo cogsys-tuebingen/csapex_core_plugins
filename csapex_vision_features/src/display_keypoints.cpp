@@ -47,8 +47,11 @@ void DisplayKeypoints::process()
 
     int flags = readParameter<int>("flags");
 
+#if CV_MAJOR_VERSION <=3
     cv::drawKeypoints(img_msg->value, key_msg->value, out->value, color, flags);
-
+#else
+    cv::drawKeypoints(img_msg->value, key_msg->value, out->value, color, static_cast<cv::DrawMatchesFlags>(flags));
+#endif
     msg::publish(out_img, out);
 }
 

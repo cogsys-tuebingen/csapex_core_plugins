@@ -169,7 +169,7 @@ bool DecisionTreeForestTrainer::processCollection(std::vector<connection_types::
 
 #if CV_MAJOR_VERSION == 2
     int tflag = CV_ROW_SAMPLE;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
 //    int tflag = cv::ml::ROW_SAMPLE;
 #endif
 
@@ -270,7 +270,7 @@ bool DecisionTreeForestTrainer::processCollection(std::vector<connection_types::
             } else {
                 return false;
             }
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             throw std::runtime_error("Not implemented yet!");
 #endif
         }
@@ -350,7 +350,7 @@ bool DecisionTreeForestTrainer::processCollection(std::vector<connection_types::
             } else {
                 return false;
             }
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             throw std::runtime_error("Not implemented yet!");
 #endif
         }

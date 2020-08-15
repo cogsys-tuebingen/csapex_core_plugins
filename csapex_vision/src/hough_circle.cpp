@@ -23,12 +23,12 @@ HoughCircle::HoughCircle()
 void HoughCircle::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> methods;
-    methods["CV_HOUGH_GRADIENT"] = (int)CV_HOUGH_GRADIENT;
-    methods["CV_HOUGH_STANDARD"] = (int)CV_HOUGH_STANDARD;
-    methods["CV_HOUGH_PROBABILISTIC"] = (int)CV_HOUGH_PROBABILISTIC;
-    methods["CV_HOUGH_MULTI_SCALE"] = (int)CV_HOUGH_MULTI_SCALE;
+    methods["cv::HOUGH_GRADIENT"] = (int)cv::HOUGH_GRADIENT;
+    methods["cv::HOUGH_STANDARD"] = (int)cv::HOUGH_STANDARD;
+    methods["cv::HOUGH_PROBABILISTIC"] = (int)cv::HOUGH_PROBABILISTIC;
+    methods["cv::HOUGH_MULTI_SCALE"] = (int)cv::HOUGH_MULTI_SCALE;
 
-    parameters.addParameter(csapex::param::factory::declareParameterSet("method", methods, (int)CV_HOUGH_STANDARD));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("method", methods, (int)cv::HOUGH_STANDARD));
 
     parameters.addParameter(csapex::param::factory::declareRange<double>("dp", 0.01, 10.00, 1.0, 0.01));
     parameters.addParameter(csapex::param::factory::declareRange<double>("minDist", 0.0, 800.0, 100.0, 0.1));
@@ -64,7 +64,7 @@ void HoughCircle::process()
 
     CvMatMessage::Ptr out(new CvMatMessage(msg->getEncoding(), msg->frame_id, msg->stamp_micro_seconds));
     if (msg->value.type() == CV_8UC1) {
-        cv::cvtColor(msg->value, out->value, CV_GRAY2BGR);
+        cv::cvtColor(msg->value, out->value, cv::COLOR_GRAY2BGR);
     } else {
         msg->value.copyTo(out->value);
     }

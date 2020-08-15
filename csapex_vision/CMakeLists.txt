@@ -24,7 +24,6 @@ find_package(catkin REQUIRED COMPONENTS cslibs_vision
                                         cv_bridge)
 
 find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS})
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
@@ -60,17 +59,17 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include
-  ${catkin_INCLUDE_DIRS}
-  ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${OpenCV_INCLUED_DIRS}
-)
-
 add_library(${PROJECT_NAME}
     src/ros_converters.cpp
 )
 target_link_libraries(${PROJECT_NAME}
     yaml-cpp ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
-
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        include
+    SYSTEM PUBLIC
+        ${catkin_INCLUDE_DIRS}
+)
 
 add_library(${PROJECT_NAME}_plugin_core
     src/register_plugin.cpp
@@ -78,7 +77,12 @@ add_library(${PROJECT_NAME}_plugin_core
 target_link_libraries(${PROJECT_NAME}_plugin_core
     ${PROJECT_NAME}
     yaml-cpp ${QT_LIBRARIES} ${catkin_LIBRARIES})
-
+target_include_directories(${PROJECT_NAME}_plugin_core
+    PUBLIC
+        include
+    SYSTEM PUBLIC
+        ${catkin_INCLUDE_DIRS}
+)
 
 add_library(${PROJECT_NAME}_plugin_node
     src/scale_circle_messages.cpp
@@ -239,6 +243,15 @@ add_library(${PROJECT_NAME}_plugin_node
 )
 target_link_libraries(${PROJECT_NAME}_plugin_node
     yaml-cpp ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+target_include_directories(${PROJECT_NAME}_plugin_node
+    PUBLIC
+        include
+    SYSTEM PUBLIC
+        ${catkin_INCLUDE_DIRS}
+        ${OPENGL_INCLUDE_DIRS}
+        ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
+        ${OpenCV_INCLUED_DIRS}
+)
 
 add_library(${PROJECT_NAME}_plugin_qt
     src/filter/filter_static_mask_painter.cpp
@@ -252,6 +265,15 @@ add_library(${PROJECT_NAME}_plugin_qt
 )
 target_link_libraries(${PROJECT_NAME}_plugin_qt
     yaml-cpp ${QT_LIBRARIES} ${OPENGL_LIBRARIES} ${catkin_LIBRARIES})
+target_include_directories(${PROJECT_NAME}_plugin_qt
+    PUBLIC
+        include
+    SYSTEM PUBLIC
+        ${catkin_INCLUDE_DIRS}
+        ${OPENGL_INCLUDE_DIRS}
+        ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
+        ${OpenCV_INCLUED_DIRS}
+)
 
 #
 # INSTALL

@@ -35,38 +35,38 @@ void ColorConvert::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::factory::declareParameterSet("output", encodings, (int)MONO));
     parameters.addParameter(csapex::param::factory::declareParameterSet("input", encodings, (int)BGR));
 
-    cs_pair_to_operation_.insert(csiPair(csPair(RGB, BGR), (int)CV_RGB2BGR));
-    cs_pair_to_operation_.insert(csiPair(csPair(BGR, RGB), (int)CV_BGR2RGB));
+    cs_pair_to_operation_.insert(csiPair(csPair(RGB, BGR), (int)cv::COLOR_RGB2BGR));
+    cs_pair_to_operation_.insert(csiPair(csPair(BGR, RGB), (int)cv::COLOR_BGR2RGB));
 
-    cs_pair_to_operation_.insert(csiPair(csPair(RGB, YUV), (int)CV_RGB2YUV));
-    cs_pair_to_operation_.insert(csiPair(csPair(BGR, YUV), (int)CV_BGR2YUV));
-    cs_pair_to_operation_.insert(csiPair(csPair(YUV, RGB), (int)CV_YUV2RGB));
-    cs_pair_to_operation_.insert(csiPair(csPair(YUV, BGR), (int)CV_YUV2BGR));
+    cs_pair_to_operation_.insert(csiPair(csPair(RGB, YUV), (int)cv::COLOR_RGB2YUV));
+    cs_pair_to_operation_.insert(csiPair(csPair(BGR, YUV), (int)cv::COLOR_BGR2YUV));
+    cs_pair_to_operation_.insert(csiPair(csPair(YUV, RGB), (int)cv::COLOR_YUV2RGB));
+    cs_pair_to_operation_.insert(csiPair(csPair(YUV, BGR), (int)cv::COLOR_YUV2BGR));
 
-    cs_pair_to_operation_.insert(csiPair(csPair(RGB, HSV), (int)CV_RGB2HSV));
-    cs_pair_to_operation_.insert(csiPair(csPair(BGR, HSV), (int)CV_BGR2HSV));
-    cs_pair_to_operation_.insert(csiPair(csPair(HSV, RGB), (int)CV_HSV2RGB));
-    cs_pair_to_operation_.insert(csiPair(csPair(HSV, BGR), (int)CV_HSV2BGR));
+    cs_pair_to_operation_.insert(csiPair(csPair(RGB, HSV), (int)cv::COLOR_RGB2HSV));
+    cs_pair_to_operation_.insert(csiPair(csPair(BGR, HSV), (int)cv::COLOR_BGR2HSV));
+    cs_pair_to_operation_.insert(csiPair(csPair(HSV, RGB), (int)cv::COLOR_HSV2RGB));
+    cs_pair_to_operation_.insert(csiPair(csPair(HSV, BGR), (int)cv::COLOR_HSV2BGR));
 
-    cs_pair_to_operation_.insert(csiPair(csPair(RGB, HSL), (int)CV_RGB2HLS));
-    cs_pair_to_operation_.insert(csiPair(csPair(BGR, HSL), (int)CV_BGR2HLS));
-    cs_pair_to_operation_.insert(csiPair(csPair(HSL, RGB), (int)CV_HLS2RGB));
-    cs_pair_to_operation_.insert(csiPair(csPair(HSL, BGR), (int)CV_HLS2BGR));
+    cs_pair_to_operation_.insert(csiPair(csPair(RGB, HSL), (int)cv::COLOR_RGB2HLS));
+    cs_pair_to_operation_.insert(csiPair(csPair(BGR, HSL), (int)cv::COLOR_BGR2HLS));
+    cs_pair_to_operation_.insert(csiPair(csPair(HSL, RGB), (int)cv::COLOR_HLS2RGB));
+    cs_pair_to_operation_.insert(csiPair(csPair(HSL, BGR), (int)cv::COLOR_HLS2BGR));
 
-    cs_pair_to_operation_.insert(csiPair(csPair(RGB, MONO), (int)CV_RGB2GRAY));
-    cs_pair_to_operation_.insert(csiPair(csPair(BGR, MONO), (int)CV_BGR2GRAY));
-    cs_pair_to_operation_.insert(csiPair(csPair(MONO, RGB), (int)CV_GRAY2RGB));
-    cs_pair_to_operation_.insert(csiPair(csPair(MONO, BGR), (int)CV_GRAY2BGR));
+    cs_pair_to_operation_.insert(csiPair(csPair(RGB, MONO), (int)cv::COLOR_RGB2GRAY));
+    cs_pair_to_operation_.insert(csiPair(csPair(BGR, MONO), (int)cv::COLOR_BGR2GRAY));
+    cs_pair_to_operation_.insert(csiPair(csPair(MONO, RGB), (int)cv::COLOR_GRAY2RGB));
+    cs_pair_to_operation_.insert(csiPair(csPair(MONO, BGR), (int)cv::COLOR_GRAY2BGR));
 
-    cs_pair_to_operation_.insert(csiPair(csPair(RGB, LAB), (int)CV_RGB2Lab));
-    cs_pair_to_operation_.insert(csiPair(csPair(BGR, LAB), (int)CV_BGR2Lab));
-    cs_pair_to_operation_.insert(csiPair(csPair(LAB, RGB), (int)CV_Lab2RGB));
-    cs_pair_to_operation_.insert(csiPair(csPair(LAB, BGR), (int)CV_Lab2BGR));
+    cs_pair_to_operation_.insert(csiPair(csPair(RGB, LAB), (int)cv::COLOR_RGB2Lab));
+    cs_pair_to_operation_.insert(csiPair(csPair(BGR, LAB), (int)cv::COLOR_BGR2Lab));
+    cs_pair_to_operation_.insert(csiPair(csPair(LAB, RGB), (int)cv::COLOR_Lab2RGB));
+    cs_pair_to_operation_.insert(csiPair(csPair(LAB, BGR), (int)cv::COLOR_Lab2BGR));
 
-    cs_pair_to_operation_.insert(csiPair(csPair(RGB, LUV), (int)CV_RGB2Luv));
-    cs_pair_to_operation_.insert(csiPair(csPair(BGR, LUV), (int)CV_BGR2Luv));
-    cs_pair_to_operation_.insert(csiPair(csPair(LUV, RGB), (int)CV_Luv2RGB));
-    cs_pair_to_operation_.insert(csiPair(csPair(LUV, BGR), (int)CV_Luv2BGR));
+    cs_pair_to_operation_.insert(csiPair(csPair(RGB, LUV), (int)cv::COLOR_RGB2Luv));
+    cs_pair_to_operation_.insert(csiPair(csPair(BGR, LUV), (int)cv::COLOR_BGR2Luv));
+    cs_pair_to_operation_.insert(csiPair(csPair(LUV, RGB), (int)cv::COLOR_Luv2RGB));
+    cs_pair_to_operation_.insert(csiPair(csPair(LUV, BGR), (int)cv::COLOR_Luv2BGR));
 
     cs_to_encoding_[YUV] = enc::yuv;
     cs_to_encoding_[RGB] = enc::rgb;

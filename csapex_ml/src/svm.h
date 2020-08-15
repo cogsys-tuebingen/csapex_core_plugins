@@ -31,7 +31,7 @@ private:
 
 #if CV_MAJOR_VERSION == 2
     ExtendedSVM svm_;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     cv::Ptr<cv::ml::SVM> svm_;
 #endif
     std::string path_;

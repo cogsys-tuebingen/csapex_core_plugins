@@ -82,7 +82,7 @@ public:
         cv::circle(image->value, center, (int)c.radius, color, thickness_, 8, 0);
         if(render_id_){
             std::string text = std::to_string(c.id);
-            cv::putText(image->value, text, center, cv::FONT_HERSHEY_SIMPLEX, 1., color, 1, CV_AA);
+            cv::putText(image->value, text, center, cv::FONT_HERSHEY_SIMPLEX, 1., color, 1, cv::LINE_AA);
 
         }
     }

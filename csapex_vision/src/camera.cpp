@@ -82,10 +82,10 @@ void Camera::update()
     }
 
     //    ainfo << "camera settings" << std::endl;
-    //    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " <<
-    //    cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
-    //    cap_.set(CV_CAP_PROP_FRAME_WIDTH, w);
-    //    cap_.set(CV_CAP_PROP_FRAME_HEIGHT, h);
-    //    ainfo << cap_.get(CV_CAP_PROP_FRAME_WIDTH) << " x " <<
-    //    cap_.get(CV_CAP_PROP_FRAME_HEIGHT) << std::endl;
+    //    ainfo << cap_.get(cv::CAP_PROP_FRAME_WIDTH) << " x " <<
+    //    cap_.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
+    //    cap_.set(cv::CAP_PROP_FRAME_WIDTH, w);
+    //    cap_.set(cv::CAP_PROP_FRAME_HEIGHT, h);
+    //    ainfo << cap_.get(cv::CAP_PROP_FRAME_WIDTH) << " x " <<
+    //    cap_.get(cv::CAP_PROP_FRAME_HEIGHT) << std::endl;
 }

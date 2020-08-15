@@ -51,7 +51,7 @@ void DecisionTreeForest::process()
             DTreePtr& dtree = forest_.at(j);
 #if CV_MAJOR_VERSION == 2
             result_value.at<float>(j, 1) = dtree->predict(sample)->class_idx;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             result_value.at<float>(j, 1) = dtree->predict(sample);
 #endif
         }
@@ -83,7 +83,7 @@ void DecisionTreeForest::load()
 #if CV_MAJOR_VERSION == 2
         DTreePtr dtree(new cv::DecisionTree);
         dtree->read(fs.fs, (CvFileNode*)fs[label].node);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         DTreePtr dtree(cv::ml::StatModel::read<cv::ml::DTrees>(fs[label]));
 #endif
 

@@ -55,7 +55,7 @@ void SVM::process()
         if (path_ != "") {
 #if CV_MAJOR_VERSION == 2
             svm_.load(path_.c_str(), "svm");
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             svm_ = cv::ml::SVM::load(path_.c_str());
 #endif
             loaded_ = true;
@@ -94,14 +94,14 @@ void SVM::process()
         if (compute_label) {
 #if CV_MAJOR_VERSION == 2
             output->at(i).classification = svm_.predict(sample);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             cv::transpose(sample, sample);
             output->at(i).classification = svm_->predict(sample);
 #endif
         } else {
 #if CV_MAJOR_VERSION == 2
             const float response = svm_.predict(sample, true);
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             cv::transpose(sample, sample);
             const float response = svm_->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
 #endif

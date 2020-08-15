@@ -12,6 +12,9 @@
 #include <cslibs_laser_processing/common/yaml-io.hpp>
 #include <cslibs_laser_processing/data/segment.h>
 
+/// SYSTEM
+#include <opencv2/core/core_c.h>
+
 using namespace csapex;
 using namespace csapex::connection_types;
 using namespace lib_laser_processing;
@@ -71,8 +74,8 @@ void ScanCovariance::process()
 
     cv::Point2f center(w / 2., h / 2.);
 
-    cv::line(output->value, center, center + e1 * (w / 4.), cv::Scalar(0, 0, 255), 6, CV_AA);
-    cv::line(output->value, center, center + e2 * (w / 4.), cv::Scalar(0, 255, 0), 6, CV_AA);
+    cv::line(output->value, center, center + e1 * (w / 4.), cv::Scalar(0, 0, 255), 6, cv::LINE_AA);
+    cv::line(output->value, center, center + e2 * (w / 4.), cv::Scalar(0, 255, 0), 6, cv::LINE_AA);
 
     msg::publish(output_, output);
 }

@@ -33,7 +33,7 @@ private:
 
 #if CV_MAJOR_VERSION == 2
     cv::DecisionTree dtree_;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     cv::Ptr<cv::ml::DTrees> dtree_;
 #endif
 

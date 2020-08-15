@@ -160,7 +160,7 @@ bool DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
 
 #if CV_MAJOR_VERSION == 2
     int tflag = CV_ROW_SAMPLE;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     int tflag = cv::ml::ROW_SAMPLE;
 #endif
 
@@ -194,7 +194,7 @@ bool DecisionTreeTrainer::processCollection(std::vector<connection_types::Featur
         return false;
     }
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     auto dtree = cv::ml::DTrees::create();
     dtree->setMaxDepth(max_depth_);
     dtree->setMinSampleCount(min_sample_count_);

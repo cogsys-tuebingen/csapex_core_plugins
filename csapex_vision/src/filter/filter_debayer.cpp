@@ -29,9 +29,9 @@ void Debayer::setup(NodeModifier& node_modifier)
 void Debayer::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> methods = {
-        { "BayerBG2RGB", (int)CV_BayerBG2RGB }, { "BayerGB2RGB", (int)CV_BayerGB2RGB }, { "BayerRG2RGB", (int)CV_BayerRG2RGB }, { "BayerGR2RGB", (int)CV_BayerGR2RGB }, { "NNRG2RGB", 667 }
+        { "BayerBG2RGB", (int)cv::COLOR_BayerBG2RGB }, { "BayerGB2RGB", (int)cv::COLOR_BayerGB2RGB }, { "BayerRG2RGB", (int)cv::COLOR_BayerRG2RGB }, { "BayerGR2RGB", (int)cv::COLOR_BayerGR2RGB }, { "NNRG2RGB", 667 }
     };
-    parameters.addParameter(csapex::param::factory::declareParameterSet("method", methods, (int)CV_BayerBG2RGB));
+    parameters.addParameter(csapex::param::factory::declareParameterSet("method", methods, (int)cv::COLOR_BayerBG2RGB));
 }
 
 void Debayer::process()
@@ -47,7 +47,7 @@ void Debayer::process()
         raw = img;
     } else {
         ainfo << "first converting to gray image" << std::endl;
-        cv::cvtColor(img, raw, CV_RGB2GRAY);
+        cv::cvtColor(img, raw, cv::COLOR_RGB2GRAY);
     }
 
     cv::Mat intermediate(raw.cols, raw.rows, CV_MAKE_TYPE(raw.depth(), 3));
@@ -55,7 +55,7 @@ void Debayer::process()
     CvMatMessage::Ptr img_out(new CvMatMessage(enc::bgr, img_msg->frame_id, img_msg->stamp_micro_seconds));
     if (mode == 667) {
         debayerAndResize(raw, intermediate);
-        cv::cvtColor(intermediate, intermediate, CV_BGR2RGB);
+        cv::cvtColor(intermediate, intermediate, cv::COLOR_BGR2RGB);
     } else {
         cv::cvtColor(raw, intermediate, mode);
     }

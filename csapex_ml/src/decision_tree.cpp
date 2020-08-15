@@ -61,7 +61,7 @@ connection_types::FeaturesMessage DecisionTree::classify(const FeaturesMessage& 
 #if CV_MAJOR_VERSION == 2
     CvDTreeNode* node = dtree_.predict(feature);
     result.classification = node->class_idx;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     result.classification = dtree_->predict(feature);
 #endif
 
@@ -75,7 +75,7 @@ void DecisionTree::loadTree()
 #if CV_MAJOR_VERSION == 2
     dtree_.load(file.c_str());
     loaded_ = dtree_.get_root() != nullptr;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     dtree_ = cv::ml::StatModel::load<cv::ml::DTrees>(file);
 #endif
 }

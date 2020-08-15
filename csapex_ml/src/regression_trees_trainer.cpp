@@ -48,7 +48,7 @@ void RegressionTreesTrainer::setupParameters(csapex::Parameterizable& params)
 
 #if CV_MAJOR_VERSION == 2
     bool use_surrogates = false;  // not yet supported
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     bool use_surrogates = false;  // not yet supported
 #endif
 
@@ -98,18 +98,18 @@ void RegressionTreesTrainer::setupParameters(csapex::Parameterizable& params)
                                                                   1, 1024, 16, 1));
     params.addParameter(csapex::param::factory::declareRange<double>("forest_accuracy", csapex::param::ParameterDescription("Sufficient accuracy (OOB error)."), 0.0, 1.0, 0.5, 0.01));
 
-    std::map<std::string, int> termcrit_type = { { "CV_TERMCRIT_ITER", (int)CV_TERMCRIT_ITER },
-                                                 { "CV_TERMCRIT_EPS", (int)CV_TERMCRIT_EPS },
-                                                 { "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int)CV_TERMCRIT_ITER | CV_TERMCRIT_EPS } };
+    std::map<std::string, int> termcrit_type = { { "cv::TermCriteria::MAX_ITER", (int)cv::TermCriteria::MAX_ITER },
+                                                 { "cv::TermCriteria::EPS", (int)cv::TermCriteria::EPS },
+                                                 { "cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS", (int)cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS } };
 
     csapex::param::Parameter::Ptr termcrit_type_p = csapex::param::factory::declareParameterSet("termcrit_type",
                                                                                                 csapex::param::ParameterDescription("The type of the termination criteria:\n"
-                                                                                                                                    "CV_TERMCRIT_ITER Terminate learning by the "
+                                                                                                                                    "cv::TermCriteria::MAX_ITER Terminate learning by the "
                                                                                                                                     "max_num_of_trees_in_the_forest;\n"
-                                                                                                                                    "CV_TERMCRIT_EPS Terminate learning by the forest_accuracy;\n"
-                                                                                                                                    "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS Use both termination "
+                                                                                                                                    "cv::TermCriteria::EPS Terminate learning by the forest_accuracy;\n"
+                                                                                                                                    "cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS Use both termination "
                                                                                                                                     "criteria."),
-                                                                                                termcrit_type, (int)(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS));
+                                                                                                termcrit_type, (int)(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS));
     params.addParameter(termcrit_type_p);
 }
 
@@ -136,7 +136,7 @@ bool RegressionTreesTrainer::processCollection(std::vector<connection_types::Fea
        << "{";
 
 #if CV_MAJOR_VERSION == 2
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     int tflag = cv::ml::ROW_SAMPLE;
 #endif
 
@@ -162,7 +162,7 @@ bool RegressionTreesTrainer::processCollection(std::vector<connection_types::Fea
     for (std::size_t i = 0; i < responses_length; ++i) {
 #if CV_MAJOR_VERSION == 2
 #pragma message "Regression Trees are currently not implemented for OpenCV 2."
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
         cv::Ptr<cv::ml::RTrees> rtrees = cv::ml::RTrees::create();
         rtrees->setMaxDepth(readParameter<int>("max depth"));
         rtrees->setMinSampleCount(readParameter<int>("min sample count"));

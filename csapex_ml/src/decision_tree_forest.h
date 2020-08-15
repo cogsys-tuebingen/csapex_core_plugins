@@ -33,7 +33,7 @@ private:
     typedef std::shared_ptr<cv::DecisionTree> DTreePtr;
     std::vector<DTreePtr> forest_;
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     typedef cv::Ptr<cv::ml::DTrees> DTreePtr;
     std::vector<DTreePtr> forest_;
 #endif

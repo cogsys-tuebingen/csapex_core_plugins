@@ -39,7 +39,7 @@ private:
     double epsilon_;      // termination criteria accuracy
     int term_crit_type_;  // termination criteria type
     int term_crit_iterations_;
-    CvTermCriteria term_crit_;  // termination criteria
+    cv::TermCriteria term_crit_;  // termination criteria
 
     enum ClassTypes
     {

@@ -30,7 +30,7 @@
 #ifndef CVBLOB_H
 #define CVBLOB_H
 
-#include <cvBlob/cvblob_export.h>
+#include "cvBlob/cvblob_export.h"
 #include <iostream>
 #include <limits>
 #include <list>
@@ -40,7 +40,8 @@
 #if (defined(_WIN32) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__) || (defined(__APPLE__) & defined(__MACH__)))
 #include <cv.h>
 #else
-#include <opencv/cv.h>
+#include <opencv2/core/core_c.h>
+#include <opencv2/imgproc/imgproc_c.h>
 #endif
 
 #ifndef __CV_BEGIN__
@@ -116,10 +117,10 @@ typedef std::list<CvContourChainCode*> CvContoursChainCode;  ///< List of contou
 typedef std::vector<CvPoint> CvContourPolygon;
 
 /// \fn void cvRenderContourChainCode(CvContourChainCode const *contour,
-/// IplImage const *img, CvScalar const &color=CV_RGB(255, 255, 255)) \brief
+/// IplImage const *img, cv::Scalar const &color=CV_RGB(255, 255, 255)) \brief
 /// Draw a contour. \param contour Chain code contour. \param img Image to draw
 /// on. \param color Color to draw (default, white). \see CvContourChainCode
-CVBLOB_EXPORT void cvRenderContourChainCode(CvContourChainCode const* contour, IplImage const* img, CvScalar const& color = CV_RGB(255, 255, 255));
+CVBLOB_EXPORT void cvRenderContourChainCode(CvContourChainCode const* contour, IplImage const* img, cv::Scalar const& color = CV_RGB(255, 255, 255));
 
 /// \fn CvContourPolygon *cvConvertChainCodesToPolygon(CvContourChainCode const
 /// *cc) \brief Convert a chain code contour to a polygon. \param cc Chain code
@@ -127,12 +128,12 @@ CVBLOB_EXPORT void cvRenderContourChainCode(CvContourChainCode const* contour, I
 CVBLOB_EXPORT CvContourPolygon* cvConvertChainCodesToPolygon(CvContourChainCode const* cc);
 
 /// \fn void cvRenderContourPolygon(CvContourPolygon const *contour, IplImage
-/// *img, CvScalar const &color=CV_RGB(255, 255, 255)) \brief Draw a polygon.
+/// *img, cv::Scalar const &color=CV_RGB(255, 255, 255)) \brief Draw a polygon.
 /// \param contour Polygon contour.
 /// \param img Image to draw on.
 /// \param color Color to draw (default, white).
 /// \see CvContourPolygon
-CVBLOB_EXPORT void cvRenderContourPolygon(CvContourPolygon const* contour, IplImage* img, CvScalar const& color = CV_RGB(255, 255, 255));
+CVBLOB_EXPORT void cvRenderContourPolygon(CvContourPolygon const* contour, IplImage* img, cv::Scalar const& color = CV_RGB(255, 255, 255));
 
 /// \fn double cvContourPolygonArea(CvContourPolygon const *p)
 /// \brief Calculates area of a polygonal contour.
@@ -181,12 +182,12 @@ CVBLOB_EXPORT CvContourPolygon* cvPolygonContourConvexHull(CvContourPolygon cons
 CVBLOB_EXPORT void cvWriteContourPolygonCSV(const CvContourPolygon& p, const std::string& filename);
 
 /// \fn void cvWriteContourPolygonSVG(const CvContourPolygon& p, const
-/// std::string& filename, const CvScalar& stroke=cvScalar(0,0,0), const
-/// CvScalar& fill=cvScalar(255,255,255)) \brief Write a contour to a SVG file
+/// std::string& filename, const cv::Scalar& stroke=cv::Scalar(0,0,0), const
+/// cv::Scalar& fill=cv::Scalar(255,255,255)) \brief Write a contour to a SVG file
 /// (http://en.wikipedia.org/wiki/Scalable_Vector_Graphics). \param p Polygon
 /// contour. \param filename File name. \param stroke Stroke color (black by
 /// default). \param fill Fill color (white by default).
-CVBLOB_EXPORT void cvWriteContourPolygonSVG(const CvContourPolygon& p, const std::string& filename, const CvScalar& stroke = cvScalar(0, 0, 0), const CvScalar& fill = cvScalar(255, 255, 255));
+CVBLOB_EXPORT void cvWriteContourPolygonSVG(const CvContourPolygon& p, const std::string& filename, const cv::Scalar& stroke = cv::Scalar(0, 0, 0), const cv::Scalar& fill = cv::Scalar(255, 255, 255));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Blobs
@@ -381,7 +382,7 @@ CVBLOB_EXPORT void cvSaveImageBlob(const char* filename, IplImage* img, CvBlob c
 #define CV_BLOB_RENDER_TO_STD 0x0020        ///< Print blob data to std out. \see cvRenderBlobs
 
 /// \fn void cvRenderBlob(const IplImage *imgLabel, CvBlob *blob, IplImage
-/// *imgSource, IplImage *imgDest, unsigned short mode=0x000f, CvScalar const
+/// *imgSource, IplImage *imgDest, unsigned short mode=0x000f, cv::Scalar const
 /// &color=CV_RGB(255, 255, 255), double alpha=1.) \brief Draws or prints
 /// information about a blob. \param imgLabel Label image (depth=IPL_DEPTH_LABEL
 /// and num. channels=1). \param blob Blob. \param imgSource Input image
@@ -394,7 +395,7 @@ CVBLOB_EXPORT void cvSaveImageBlob(const char* filename, IplImage* img, CvBlob c
 /// 0.0 translucent (1.0 by default). \see CV_BLOB_RENDER_COLOR \see
 /// CV_BLOB_RENDER_CENTROID \see CV_BLOB_RENDER_BOUNDING_BOX \see
 /// CV_BLOB_RENDER_ANGLE \see CV_BLOB_RENDER_TO_LOG \see CV_BLOB_RENDER_TO_STD
-CVBLOB_EXPORT void cvRenderBlob(const IplImage* imgLabel, CvBlob* blob, IplImage* imgSource, IplImage* imgDest, unsigned short mode = 0x000f, CvScalar const& color = CV_RGB(255, 255, 255),
+CVBLOB_EXPORT void cvRenderBlob(const IplImage* imgLabel, CvBlob* blob, IplImage* imgSource, IplImage* imgDest, unsigned short mode = 0x000f, cv::Scalar const& color = CV_RGB(255, 255, 255),
                                 double alpha = 1.);
 
 /// \fn void cvRenderBlobs(const IplImage *imgLabel, CvBlobs &blobs, IplImage

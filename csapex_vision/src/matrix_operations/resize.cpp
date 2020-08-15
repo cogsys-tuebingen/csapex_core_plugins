@@ -45,7 +45,7 @@ void Resize::setupParameters(Parameterizable& parameters)
     parameters.addParameter(csapex::param::factory::declareRange("size height", 1, 10000, 480, 1), std::bind(&Resize::update, this));
 
     std::map<std::string, int> modes = {
-        { "nearest", (int)CV_INTER_NN }, { "linear", (int)CV_INTER_LINEAR }, { "area", (int)CV_INTER_AREA }, { "cubic", (int)CV_INTER_CUBIC }, { "lanczos4", (int)CV_INTER_LANCZOS4 }
+        { "nearest", (int)cv::INTER_NEAREST }, { "linear", (int)cv::INTER_LINEAR }, { "area", (int)cv::INTER_AREA }, { "cubic", (int)cv::INTER_CUBIC }, { "lanczos4", (int)cv::INTER_LANCZOS4 }
     };
     parameters.addParameter(csapex::param::factory::declareParameterSet<int>("mode", modes, (int)cv::INTER_NEAREST), std::bind(&Resize::update, this));
 }

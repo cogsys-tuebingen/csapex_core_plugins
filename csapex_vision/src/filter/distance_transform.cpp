@@ -20,16 +20,16 @@ DistanceTransform::DistanceTransform()
 void DistanceTransform::setupParameters(Parameterizable& parameters)
 {
     std::map<std::string, int> distanceType;
-    distanceType["CV_DIST_L1"] = (int)CV_DIST_L1;
-    distanceType["CV_DIST_L2"] = (int)CV_DIST_L2;
-    distanceType["CV_DIST_C"] = (int)CV_DIST_C;
+    distanceType["cv::DIST_L1"] = (int)cv::DIST_L1;
+    distanceType["cv::DIST_L2"] = (int)cv::DIST_L2;
+    distanceType["cv::DIST_C"] = (int)cv::DIST_C;
 
-    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("distanceType", distanceType, (int)CV_DIST_L1));
+    parameters.addParameter(csapex::param::factory::declareParameterSet<int>("distanceType", distanceType, (int)cv::DIST_L1));
 
     std::map<std::string, int> maskSize;
     maskSize["3"] = 3;
     maskSize["4"] = 5;
-    maskSize["CV_DIST_MASK_PRECISE"] = (int)CV_DIST_MASK_PRECISE;
+    maskSize["cv::DIST_MASK_PRECISE"] = (int)cv::DIST_MASK_PRECISE;
 
     parameters.addParameter(csapex::param::factory::declareParameterSet<int>("maskSize", maskSize, 3));
 

@@ -32,7 +32,7 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
 
 #if CV_MAJOR_VERSION == 2
     std::map<std::string, int> kernel_types = { { "LINEAR", cv::SVM::LINEAR }, { "POLY", cv::SVM::POLY }, { "RBF", cv::SVM::RBF }, { "SIGMOID", cv::SVM::SIGMOID } };
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     std::map<std::string, int> kernel_types = {
         { "LINEAR", cv::ml::SVM::LINEAR }, { "POLY", cv::ml::SVM::POLY }, { "RBF", cv::ml::SVM::RBF }, { "SIGMOID", cv::ml::SVM::SIGMOID }  //,
                                                                                                                                             //{"CHI2", cv::ml::SVM::CHI2},
@@ -43,7 +43,7 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
 
 #if CV_MAJOR_VERSION == 2
     typedef cv::SVM SVM;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     typedef cv::ml::SVM SVM;
 #endif
 
@@ -82,18 +82,18 @@ void SVMEnsembleTrainer::setupParameters(Parameterizable& parameters)
 
     parameters.addParameter(param::factory::declareRange("svm_training_iterations", 0, 10000, 1000, 100), term_crit_iterations_);
 
-    std::map<std::string, int> termcrit_type = { { "CV_TERMCRIT_ITER", (int)CV_TERMCRIT_ITER },
-                                                 { "CV_TERMCRIT_EPS", (int)CV_TERMCRIT_EPS },
-                                                 { "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS", (int)CV_TERMCRIT_ITER | CV_TERMCRIT_EPS } };
+    std::map<std::string, int> termcrit_type = { { "cv::TermCriteria::MAX_ITER", (int)cv::TermCriteria::MAX_ITER },
+                                                 { "cv::TermCriteria::EPS", (int)cv::TermCriteria::EPS },
+                                                 { "cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS", (int)cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS } };
 
     parameters.addParameter(param::factory::declareParameterSet("termcrit_type",
                                                                 csapex::param::ParameterDescription("The type of the termination criteria:\n"
-                                                                                                    "CV_TERMCRIT_ITER Terminate learning by the "
+                                                                                                    "cv::TermCriteria::MAX_ITER Terminate learning by the "
                                                                                                     "max_num_of_trees_in_the_forest;\n"
-                                                                                                    "CV_TERMCRIT_EPS Terminate learning by the forest_accuracy;\n"
-                                                                                                    "CV_TERMCRIT_ITER | CV_TERMCRIT_EPS Use both termination "
+                                                                                                    "cv::TermCriteria::EPS Terminate learning by the forest_accuracy;\n"
+                                                                                                    "cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS Use both termination "
                                                                                                     "criteria."),
-                                                                termcrit_type, (int)(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS)),
+                                                                termcrit_type, (int)(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS)),
                             term_crit_type_);
 }
 
@@ -114,7 +114,7 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage>& collect
     const static std::string prefix = "svm_";
 #if CV_MAJOR_VERSION == 2
     if (svm_type_ != cv::SVM::ONE_CLASS) {
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     if (svm_type_ != cv::ml::SVM::ONE_CLASS) {
 #endif
         if (indices_by_label.size() == 1) {
@@ -222,7 +222,7 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage>& collect
                     return false;
                 }
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
                 cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
                 svm->setType(svm_type_);
@@ -242,7 +242,11 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage>& collect
                 if (svm->train(train_data_struct)) {
                     std::cout << "Finished training for '" << it->first << "'!" << std::endl;
                     std::string label = prefix + std::to_string(it->first);
+#if CV_MAJOR_VERSION == 3
                     fs.writeObj(label, svm);
+#else
+                    svm->write(fs);
+#endif
                     svm_labels.push_back(it->first);
                 } else {
                     return false;
@@ -331,7 +335,7 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage>& collect
                     return false;
                 }
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
                 cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
                 svm->setType(svm_type_);
@@ -351,7 +355,11 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage>& collect
                 if (svm->train(train_data_struct)) {
                     std::cout << "Finished training for '" << it->first << "'!" << std::endl;
                     std::string label = prefix + std::to_string(it->first);
+#if CV_MAJOR_VERSION == 3
                     fs.writeObj(label, svm);
+#else
+                    svm->write(fs);
+#endif
                     svm_labels.push_back(it->first);
                 } else {
                     return false;
@@ -360,7 +368,11 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage>& collect
                 std::cout << "[SVMEnsemble]: Started training for svm #" << it->first << " with " << samples.rows << std::endl;
                 if (svm->train(train_data_struct)) {
                     std::string label = prefix + std::to_string(it->first);
+#if CV_MAJOR_VERSION == 3
                     fs.writeObj(label, svm);
+#else
+                    svm->write(fs);
+#endif
                     svm_labels.push_back(it->first);
                     std::cout << "[SVMEnsemble]: Finished training for svm #" << it->first << "!" << std::endl;
                 } else {
@@ -411,7 +423,7 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage>& collect
             svm_params_.C = C_;
             svm_params_.nu = nu_;
             svm_params_.p = p_;
-            svm_params_.term_crit = cv::TermCriteria(CV_TERMCRIT_ITER, 1000, FLT_EPSILON);
+            svm_params_.term_crit = cv::TermCriteria(cv::TermCriteria::MAX_ITER, 1000, FLT_EPSILON);
             // svm_params_.term_crit; // termination criteria
 
             /// train the svm
@@ -425,7 +437,7 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage>& collect
                 return false;
             }
 
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
             cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 
             svm->setType(svm_type_);
@@ -444,7 +456,11 @@ bool SVMEnsembleTrainer::processCollection(std::vector<FeaturesMessage>& collect
 
             if (svm->train(train_data_struct)) {
                 std::string label = prefix + std::to_string(it->first);
-                fs.writeObj(label, svm);
+#if CV_MAJOR_VERSION == 3
+                    fs.writeObj(label, svm);
+#else
+                    svm->write(fs);
+#endif
                 svm_labels.push_back(it->first);
                 std::cout << "[SVMEnsemble]: Finished training for svm #" << it->first << "!" << std::endl;
             } else {

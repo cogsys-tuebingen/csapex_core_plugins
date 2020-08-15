@@ -38,11 +38,11 @@ void FindHomography::setupParameters(Parameterizable& parameters)
 {
     std::function<void(csapex::param::Parameter*)> update = std::bind(&FindHomography::update, this);
 
-    std::map<std::string, int> methods = { { "Regular", (int)0 }, { "RANSAC", (int)CV_RANSAC }, { "LMedS", (int)CV_LMEDS } };
+    std::map<std::string, int> methods = { { "Regular", (int)0 }, { "RANSAC", (int)cv::RANSAC }, { "LMedS", (int)cv::LMEDS } };
 
     csapex::param::Parameter::Ptr method = csapex::param::ParameterFactory::declareParameterSet("method", methods, (int)0);
     parameters.addParameter(method, update);
-    std::function<bool()> cond_ransac = [this]() { return method_ == CV_RANSAC; };
+    std::function<bool()> cond_ransac = [this]() { return method_ == cv::RANSAC; };
 
     parameters.addConditionalParameter(csapex::param::ParameterFactory::declareRange("ransac/threshold", 0.5, 10., 3., 0.5), cond_ransac);
 }
@@ -81,10 +81,10 @@ void FindHomography::process()
 
     // Transform corners of image 1 to image 2
     std::vector<cv::Point2f> corners1(4);
-    corners1[0] = cvPoint(0, 0);
-    corners1[1] = cvPoint(image1->value.cols, 0);
-    corners1[2] = cvPoint(image1->value.cols, image1->value.rows);
-    corners1[3] = cvPoint(0, image1->value.rows);
+    corners1[0] = cv::Point(0, 0);
+    corners1[1] = cv::Point(image1->value.cols, 0);
+    corners1[2] = cv::Point(image1->value.cols, image1->value.rows);
+    corners1[3] = cv::Point(0, image1->value.rows);
     std::vector<cv::Point2f> corners2(4);
     cv::perspectiveTransform(corners1, corners2, H);
 

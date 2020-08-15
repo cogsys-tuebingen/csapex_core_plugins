@@ -61,7 +61,7 @@ public:
 
         cv::Mat color_data;
         if (input_image->getEncoding().matches(enc::mono)) {
-            cv::cvtColor(input_image->value, color_data, CV_GRAY2BGR);
+            cv::cvtColor(input_image->value, color_data, cv::COLOR_GRAY2BGR);
         } else {
             color_data = input_image->value.clone();
         }

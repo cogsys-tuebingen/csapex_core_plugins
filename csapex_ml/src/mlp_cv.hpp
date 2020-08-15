@@ -28,7 +28,7 @@ private:
 
 #if CV_MAJOR_VERSION == 2
     cv::NeuralNet_MLP mlp_;
-#elif CV_MAJOR_VERSION == 3
+#elif CV_MAJOR_VERSION >= 3
     cv::Ptr<cv::ml::ANN_MLP> mlp_;
 #endif
     bool loaded_;

@@ -25,8 +25,14 @@ using namespace std;
 #include <cv.h>
 #include <highgui.h>
 #else
+#include <opencv2/core/version.hpp>
+#if CV_MAJOR_VERSION <= 3
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
+#else
+#include <opencv2/core/types_c.h>
+#include <opencv2/imgcodecs.hpp>
+#endif
 #endif
 
 #include <csapex_opencv/cvblob.h>
@@ -122,7 +128,7 @@ void cvFilterByLabel(CvBlobs& blobs, CvLabel label)
     __CV_END__;
   }*/
 
-void cvRenderBlob(const IplImage* imgLabel, CvBlob* blob, IplImage* imgSource, IplImage* imgDest, unsigned short mode, CvScalar const& color, double alpha)
+void cvRenderBlob(const IplImage* imgLabel, CvBlob* blob, IplImage* imgSource, IplImage* imgDest, unsigned short mode, cv::Scalar const& color, double alpha)
 {
     CV_FUNCNAME("cvRenderBlob");
     __CV_BEGIN__;
@@ -181,7 +187,7 @@ void cvRenderBlob(const IplImage* imgLabel, CvBlob* blob, IplImage* imgSource, I
         }
 
         if (mode & CV_BLOB_RENDER_BOUNDING_BOX)
-            cvRectangle(imgDest, cvPoint(blob->minx, blob->miny), cvPoint(blob->maxx - 1, blob->maxy - 1), CV_RGB(255., 0., 0.));
+            cvRectangle(imgDest, cvPoint(blob->minx, blob->miny), cvPoint(blob->maxx - 1, blob->maxy - 1), CvScalar{255., 0., 0., 0.});
 
         if (mode & CV_BLOB_RENDER_ANGLE) {
             double angle = cvAngle(blob);
@@ -193,12 +199,12 @@ void cvRenderBlob(const IplImage* imgLabel, CvBlob* blob, IplImage* imgSource, I
             y1 = blob->centroid.y - lengthLine * sin(angle);
             x2 = blob->centroid.x + lengthLine * cos(angle);
             y2 = blob->centroid.y + lengthLine * sin(angle);
-            cvLine(imgDest, cvPoint(int(x1), int(y1)), cvPoint(int(x2), int(y2)), CV_RGB(0., 255., 0.));
+            cvLine(imgDest, cvPoint(int(x1), int(y1)), cvPoint(int(x2), int(y2)), CvScalar{0., 255., 0., 0.});
         }
 
         if (mode & CV_BLOB_RENDER_CENTROID) {
-            cvLine(imgDest, cvPoint(int(blob->centroid.x) - 3, int(blob->centroid.y)), cvPoint(int(blob->centroid.x) + 3, int(blob->centroid.y)), CV_RGB(0., 0., 255.));
-            cvLine(imgDest, cvPoint(int(blob->centroid.x), int(blob->centroid.y) - 3), cvPoint(int(blob->centroid.x), int(blob->centroid.y) + 3), CV_RGB(0., 0., 255.));
+            cvLine(imgDest, cvPoint(int(blob->centroid.x) - 3, int(blob->centroid.y)), cvPoint(int(blob->centroid.x) + 3, int(blob->centroid.y)), CvScalar{0., 0., 255., 0.});
+            cvLine(imgDest, cvPoint(int(blob->centroid.x), int(blob->centroid.y) - 3), cvPoint(int(blob->centroid.x), int(blob->centroid.y) + 3), CvScalar{0., 0., 255., 0.});
         }
     }
 
@@ -256,7 +262,7 @@ void cvRenderBlob(const IplImage* imgLabel, CvBlob* blob, IplImage* imgSource, I
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-typedef std::map<CvLabel, CvScalar> Palete;
+typedef std::map<CvLabel, cv::Scalar> Palete;
 
 void cvRenderBlobs(const IplImage* imgLabel, CvBlobs& blobs, IplImage* imgSource, IplImage* imgDest, unsigned short mode, double alpha)
 {
@@ -277,7 +283,7 @@ void cvRenderBlobs(const IplImage* imgLabel, CvBlobs& blobs, IplImage* imgSource
                 _HSV2RGB_((double)((colorCount * 77) % 360), .5, 1., r, g, b);
                 colorCount++;
 
-                pal[label] = CV_RGB(r, g, b);
+                pal[label] = CvScalar{r, g, b, 0.};
             }
         }
 
@@ -301,7 +307,12 @@ void cvSaveImageBlob(const char* filename, IplImage* img, CvBlob const* blob)
 {
     CvRect roi = cvGetImageROI(img);
     cvSetImageROItoBlob(img, blob);
+#if CV_MAJOR_VERSION <= 3
     cvSaveImage(filename, img);
+#else
+    cv::imwrite(filename, cv::cvarrToMat(img));
+#endif
+    
     cvSetImageROI(img, roi);
 }
 

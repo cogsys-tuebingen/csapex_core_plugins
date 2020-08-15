@@ -34,7 +34,7 @@ void HoughLinesP::process()
     }
 
     CvMatMessage::Ptr out(new connection_types::CvMatMessage(enc::bgr, in->frame_id, in->stamp_micro_seconds));
-    cv::cvtColor(in->value, out->value, CV_GRAY2BGR);
+    cv::cvtColor(in->value, out->value, cv::COLOR_GRAY2BGR);
 
     std::shared_ptr<std::vector<cv::Vec4i>> lines_ptr(new std::vector<cv::Vec4i>);
     std::vector<cv::Vec4i>& lines = *lines_ptr;
@@ -43,7 +43,7 @@ void HoughLinesP::process()
     for (size_t i = 0; i < lines.size(); i++) {
         double b, g, r;
         color::fromCount(i, r, g, b);
-        cv::line(out->value, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(b, g, r), 1, CV_AA);
+        cv::line(out->value, cv::Point(lines[i][0], lines[i][1]), cv::Point(lines[i][2], lines[i][3]), cv::Scalar(b, g, r), 1, cv::LINE_AA);
     }
 
     msg::publish<GenericVectorMessage, cv::Vec4i>(output_vector_, lines_ptr);

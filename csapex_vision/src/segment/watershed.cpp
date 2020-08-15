@@ -25,7 +25,7 @@ void WaterShed::process()
     cv::Mat marker_mask;
     switch (in->value.type()) {
         case CV_8UC3:
-            cv::cvtColor(in->value, marker_mask, CV_BGR2GRAY);
+            cv::cvtColor(in->value, marker_mask, cv::COLOR_BGR2GRAY);
             break;
         case CV_8UC1:
             marker_mask = in->value.clone();
