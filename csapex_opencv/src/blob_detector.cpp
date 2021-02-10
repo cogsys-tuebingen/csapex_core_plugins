@@ -107,8 +107,11 @@ void BlobDetector::process()
     reduced->value = cv::Mat::zeros(img->value.rows, img->value.cols, CV_8U);
 
     CvBlobs blobs;
-
-    IplImage grayPtr(cvIplImage(gray));
+    #if CV_MAJOR_VERSION == 3 && CV_MINOR_VERSION == 4
+        IplImage grayPtr(cvIplImage(gray));
+    #else
+        IplImage grayPtr(gray);
+    #endif
     IplImage* labelImgPtr = cvCreateImage(cvGetSize(&grayPtr), IPL_DEPTH_LABEL, 1);
 
     cvLabel(&grayPtr, labelImgPtr, blobs);
@@ -145,7 +148,11 @@ void BlobDetector::process()
     msg::publish<GenericVectorMessage, RoiMessage>(output_, out);
 
     if (msg::isConnected(output_debug_)) {
-        IplImage debugPtr(cvIplImage(debug->value));
+        #if CV_MAJOR_VERSION == 3 && CV_MINOR_VERSION == 4
+            IplImage debugPtr(cvIplImage(debug->value));
+        #else
+            IplImage debugPtr(debug->value);
+        #endif
         cvRenderBlobs(labelImgPtr, blobs, &debugPtr, &debugPtr);
 
         for (CvBlobs::const_iterator it = blobs.begin(); it != blobs.end(); ++it) {
@@ -184,7 +191,11 @@ void BlobDetector::process()
     }
 
     if (msg::isConnected(output_reduce_)) {
-        IplImage reducedPtr(cvIplImage(reduced->value));
+        #if CV_MAJOR_VERSION == 3 && CV_MINOR_VERSION == 4
+            IplImage reducedPtr(cvIplImage(reduced->value));
+        #else
+            IplImage reducedPtr(reduced->value);
+        #endif
 
         cvFilterByArea(blobs, range_area.first, range_area.second);
 
