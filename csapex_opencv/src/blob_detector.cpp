@@ -108,7 +108,7 @@ void BlobDetector::process()
 
     CvBlobs blobs;
 
-    IplImage grayPtr(gray);
+    IplImage grayPtr(cvIplImage(gray));
     IplImage* labelImgPtr = cvCreateImage(cvGetSize(&grayPtr), IPL_DEPTH_LABEL, 1);
 
     cvLabel(&grayPtr, labelImgPtr, blobs);
@@ -145,7 +145,7 @@ void BlobDetector::process()
     msg::publish<GenericVectorMessage, RoiMessage>(output_, out);
 
     if (msg::isConnected(output_debug_)) {
-        IplImage debugPtr(debug->value);
+        IplImage debugPtr(cvIplImage(debug->value));
         cvRenderBlobs(labelImgPtr, blobs, &debugPtr, &debugPtr);
 
         for (CvBlobs::const_iterator it = blobs.begin(); it != blobs.end(); ++it) {
@@ -184,7 +184,7 @@ void BlobDetector::process()
     }
 
     if (msg::isConnected(output_reduce_)) {
-        IplImage reducedPtr(reduced->value);
+        IplImage reducedPtr(cvIplImage(reduced->value));
 
         cvFilterByArea(blobs, range_area.first, range_area.second);
 
