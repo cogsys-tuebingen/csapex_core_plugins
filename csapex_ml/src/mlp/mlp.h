@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace mlp
@@ -57,8 +58,7 @@ public:
     typedef std::shared_ptr<MLP> Ptr;
 
     MLP(const MLPConfig& mlp);
-    MLP(const size_t input_size_, const size_t layers_num_, const std::vector<size_t>& layer_sizes_, const std::vector<bool>& layer_bias_,
-        const std::vector<double>& weights_);
+    MLP(const size_t input_size_, const size_t layers_num_, const std::vector<size_t>& layer_sizes_, const std::vector<bool>& layer_bias_, const std::vector<double>& weights_);
 
     void setOutputType(const OutputType& type);
     void setActivationFunction(const ActivationFunction& func_type);
