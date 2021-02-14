@@ -108,7 +108,7 @@ void BlobDetector::process()
 
     CvBlobs blobs;
 
-#if CV_MAJOR_VERSION <= 3
+#if CV_MAJOR_VERSION <= 3 && CV_MINOR_VERSION <= 3
     IplImage grayPtr(gray);
 #else
     IplImage grayPtr(cvIplImage(gray));
@@ -149,7 +149,7 @@ void BlobDetector::process()
     msg::publish<GenericVectorMessage, RoiMessage>(output_, out);
 
     if (msg::isConnected(output_debug_)) {
-#if CV_MAJOR_VERSION <= 3
+#if CV_MAJOR_VERSION <= 3 && CV_MINOR_VERSION <= 3
         IplImage debugPtr(debug->value);
 #else
         IplImage debugPtr(cvIplImage(debug->value));
@@ -192,7 +192,7 @@ void BlobDetector::process()
     }
 
     if (msg::isConnected(output_reduce_)) {
-#if CV_MAJOR_VERSION <= 3
+#if CV_MAJOR_VERSION <= 3 && CV_MINOR_VERSION <= 3
         IplImage reducedPtr(reduced->value);
 #else
         IplImage reducedPtr(cvIplImage(reduced->value));
