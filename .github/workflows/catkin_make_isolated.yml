@@ -1,6 +1,6 @@
 name: catkin_make_isolated
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build-16-kinetic:
@@ -31,7 +31,7 @@ jobs:
         git clone https://github.com/cogsys-tuebingen/cslibs_laser_processing
         git clone https://github.com/cogsys-tuebingen/cslibs_arff
         git clone https://github.com/cogsys-tuebingen/cslibs_indexed_storage
-    - uses: betwo/github-setup-catkin@v1.1.1
+    - uses: betwo/github-setup-catkin@master
       with:
         ros-version: 'kinetic'
         workspace: $HOME/work/csapex_core_plugins/ws
@@ -71,7 +71,7 @@ jobs:
         git clone https://github.com/cogsys-tuebingen/cslibs_laser_processing
         git clone https://github.com/cogsys-tuebingen/cslibs_arff
         git clone https://github.com/cogsys-tuebingen/cslibs_indexed_storage
-    - uses: betwo/github-setup-catkin@v1.1.1
+    - uses: betwo/github-setup-catkin@master
       with:
         ros-version: 'melodic'
         workspace: $HOME/work/csapex_core_plugins/ws
@@ -106,7 +106,7 @@ jobs:
         git clone https://github.com/cogsys-tuebingen/cslibs_laser_processing
         git clone https://github.com/cogsys-tuebingen/cslibs_arff
         git clone https://github.com/cogsys-tuebingen/cslibs_indexed_storage
-    - uses: betwo/github-setup-catkin@v1.1.1
+    - uses: betwo/github-setup-catkin@master
       with:
         ros-version: 'noetic'
         workspace: $HOME/work/csapex_core_plugins/ws
